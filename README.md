@@ -4,7 +4,7 @@
 
 第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛参赛项目。个人版：一个人、一台 Mac、一台自己的 Spark。
 
-**演示视频 / 征文**：[演示视频：待补 B 站链接] · [「十日谈」征文（CSDN）](https://blog.csdn.net/BronyaZaychik818/article/details/166849977)
+**演示视频 / 征文**：[演示视频（B 站）](https://www.bilibili.com/video/BV1CbaW6pEcX/) · [「十日谈」征文（CSDN）](https://blog.csdn.net/BronyaZaychik818/article/details/166849977)
 
 ## 记录 → 组织 → 行动
 
@@ -275,7 +275,7 @@ defaults write com.bestasr.app preferences.spark-organizer-token-path '~/hack/or
 
 - **黑客松之前（2026-07 至 2026-09-23）**：Mac 端的口述底座从 2026-07-23 就在开发（此前 266 个提交）：音频采集与落盘、按 App 的系统内录、说话人与全局人物身份、本地口述识别与整理、投递层。织机的「按住 Fn 口述」建立在这个已有的底座上。
 - **黑客松期间（北京时间 2026-09-26 至 09-29）**：
-  - Spark 端全部新做（89 个提交）：整理服务、7 个 Agent Skills、读图和读文件、长会议切段、手机收件箱、评测驱动与评分器、小场景和三个规模场景、多轮评测与过拟合审计、System One 的数据 / 训练 / 校准 / 服务、最新模型对比；在 Spark 上部署 vLLM NVFP4 + MTP、llama.cpp、双机 DeepSeek-V4-Flash 和多个对照模型。
+  - Spark 端全部新做（90 个提交）：整理服务、7 个 Agent Skills、读图和读文件、长会议切段、手机收件箱、评测驱动与评分器、小场景和三个规模场景、多轮评测与过拟合审计、System One 的数据 / 训练 / 校准 / 服务、最新模型对比；在 Spark 上部署 vLLM NVFP4 + MTP、llama.cpp、双机 DeepSeek-V4-Flash 和多个对照模型。
   - Mac 端 52 个提交（188 个文件，+34,933 / −571 行）：Mac↔Spark 可撤销整理链路（端口归属核对、链路令牌、按修订号发送、合成数据闸门）；粘贴 / 拖入任何文件并带来源 App；会议逐字稿导入；视频关键帧；手机收件箱拉取；事件导出为纯文字；首页、事件页、人物页；规模场景的端到端 harness 和渲染。
 - 公开仓库是一个全新的单提交快照（不含私有仓库的历史）。
 
