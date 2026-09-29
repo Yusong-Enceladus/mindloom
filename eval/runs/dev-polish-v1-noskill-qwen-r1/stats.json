@@ -1,0 +1,82 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 73,
+   "retried": 9,
+   "latency_median_s": 4.253,
+   "latency_p95_s": 6.847,
+   "latency_total_s": 359.4,
+   "prompt_tokens_mean": 3907.4,
+   "completion_tokens_mean": 222.1,
+   "prompt_tokens_total": 320406,
+   "completion_tokens_total": 18213,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 73,
+   "ok": 43,
+   "ok_first_attempt": 19,
+   "retried": 54,
+   "latency_median_s": 7.473,
+   "latency_p95_s": 13.227,
+   "latency_total_s": 618.7,
+   "prompt_tokens_mean": 3043.5,
+   "completion_tokens_mean": 518.5,
+   "prompt_tokens_total": 222173,
+   "completion_tokens_total": 37851,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[3] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[0] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 8.121,
+   "latency_p95_s": 13.272,
+   "latency_total_s": 34.4,
+   "prompt_tokens_mean": 4672.2,
+   "completion_tokens_mean": 490,
+   "prompt_tokens_total": 18689,
+   "completion_tokens_total": 1960,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 7.96,
+   "latency_p95_s": 10.278,
+   "latency_total_s": 23.5,
+   "prompt_tokens_mean": 1847,
+   "completion_tokens_mean": 446.3,
+   "prompt_tokens_total": 5541,
+   "completion_tokens_total": 1339,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 63,
+  "none": 9
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 58,
+  "none": 9,
+  "ask_suppressed": 5
+ },
+ "final_live_events": 15,
+ "status_line_chars_mean": 17,
+ "title_chars_mean": 7.5,
+ "wall_s": 1042.5,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

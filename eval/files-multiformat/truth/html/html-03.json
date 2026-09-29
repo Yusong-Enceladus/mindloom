@@ -1,0 +1,55 @@
+{
+ "file_id": "html-03",
+ "path": "corpus/html/html-03.html",
+ "type": "html",
+ "ext": "html",
+ "mime": "text/html",
+ "filename": "苏州一日游路线.html",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "内部页面\n苏州一日游路线\n适合周末的苏州城市漫步路线，全程步行加地铁。\n时间\t地点\t门票（元）\n09:00\t湿地公园\t20\n11:00\t美术馆\t35\n14:30\t古塔\t20\n18:30\t江边步道\t0\n门票合计 75 元。建议穿舒适的鞋。（合成数据）\n合成数据",
+ "key_lines": [
+  "09:00\t湿地公园\t20",
+  "14:30\t古塔\t20",
+  "门票合计 75 元。建议穿舒适的鞋。（合成数据）"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "城市": "苏州",
+  "第一站": "湿地公园",
+  "门票合计": 75
+ },
+ "numbers": [
+  {
+   "value": 75,
+   "label": "门票合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第一站去哪？",
+   "a": "湿地公园",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "门票合计多少元？",
+   "a": 75,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "几点到古塔？",
+   "a": "14:30",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 1349,
+ "sha256": "4731c6004f956f87914ca3385d7d56b8eb01762061104661baa5eff4ef57eb6f",
+ "family": "travel"
+}

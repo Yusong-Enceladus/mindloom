@@ -1,0 +1,198 @@
+{
+ "items_total": 82,
+ "items_scored": 69,
+ "items_first_mention": 9,
+ "items_noise": 4,
+ "mean_pool_size": 7.75,
+ "fused": {
+  "recall@1": 0.4493,
+  "recall@3": 0.7826,
+  "recall@5": 0.9275,
+  "mrr": 0.6405,
+  "hits@5": 64
+ },
+ "similarity_only": {
+  "recall@1": 0.6087,
+  "recall@3": 0.8406,
+  "recall@5": 0.9275,
+  "mrr": 0.7469,
+  "hits@5": 64
+ },
+ "random": {
+  "recall@1": 0.1974,
+  "recall@3": 0.4774,
+  "recall@5": 0.688
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 28,
+   "hit@1": 13,
+   "hit@3": 22,
+   "hit@5": 26
+  },
+  "dictation": {
+   "n": 34,
+   "hit@1": 16,
+   "hit@3": 27,
+   "hit@5": 32
+  },
+  "image": {
+   "n": 3,
+   "hit@1": 1,
+   "hit@3": 3,
+   "hit@5": 3
+  },
+  "meeting_online": {
+   "n": 2,
+   "hit@1": 0,
+   "hit@3": 0,
+   "hit@5": 1
+  },
+  "meeting_offline": {
+   "n": 1,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 1
+  },
+  "document": {
+   "n": 1,
+   "hit@1": 0,
+   "hit@3": 1,
+   "hit@5": 1
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d4-10",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_sign",
+    "ev_lease",
+    "ev_anniv",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d4-11",
+   "kind": "dictation",
+   "gold": [
+    "ev_beans"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_anniv",
+    "ev_reno",
+    "ev_menu",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d5-11",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_anniv",
+    "ev_beans",
+    "ev_sign",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d7-02",
+   "kind": "text",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_momflat",
+    "ev_reno",
+    "ev_menu",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_momflat",
+    "ev_member",
+    "ev_anniv",
+    "ev_reno"
+   ]
+  }
+ ],
+ "label": "lexical-hash",
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "embedder": "hash",
+ "embed_model": "hash-bigram-256",
+ "embed_url": null,
+ "embed_dim": 256,
+ "embed_calls": 82,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 0.04,
+  "p95": 0.18,
+  "max": 0.25,
+  "mean": 0.06
+ },
+ "embed_chars": {
+  "p50": 41,
+  "max": 392
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 0,
+  "misses": 3
+ },
+ "screenshot_readings": [
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 59,
+   "messages": 5
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 84,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 66,
+   "messages": 6
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 29.6,
+ "date": "2026-09-29T01:06:11+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "repo/eval/scenarios/dev-week-v1/scenario.json",
+  "--embedder",
+  "hash",
+  "--reading-cache",
+  "readings/dev-week-v1",
+  "--label",
+  "lexical-hash",
+  "--out",
+  "out/dev-hash"
+ ]
+}

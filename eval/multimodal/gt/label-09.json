@@ -1,0 +1,94 @@
+{
+ "id": "label-09",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-09.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "cef92f7bc078eb84e13820cd66fab7b4a8ec5f6a85a8e2f4d2365775ecb73368",
+ "gt": {
+  "label_kind": "hours_sign",
+  "fields": [
+   {
+    "key": "shop",
+    "label": "",
+    "value": "青禾便利店"
+   },
+   {
+    "key": "weekday_hours",
+    "label": "周一至周五",
+    "value": "09:00至21:00"
+   },
+   {
+    "key": "weekend_hours",
+    "label": "周六、周日",
+    "value": "09:00至18:00"
+   },
+   {
+    "key": "parking_limit",
+    "label": "限时",
+    "value": "1 小时"
+   },
+   {
+    "key": "parking_fee",
+    "label": "超时收费",
+    "value": "5元/小时"
+   }
+  ],
+  "lines": [
+   "青禾便利店",
+   "营业时间",
+   "周一至周五 09:00至21:00",
+   "周六、周日 09:00至18:00",
+   "法定节假日另行通知",
+   "顾客临时停车",
+   "限时 1 小时",
+   "超时收费 5元/小时",
+   "消费满 50 元可免费停车 1 小时"
+  ]
+ },
+ "text_lines": [
+  "青禾便利店",
+  "营业时间",
+  "周一至周五 09:00至21:00",
+  "周六、周日 09:00至18:00",
+  "法定节假日另行通知",
+  "顾客临时停车",
+  "限时 1 小时",
+  "超时收费 5元/小时",
+  "消费满 50 元可免费停车 1 小时"
+ ],
+ "qa": [
+  {
+   "q": "周六几点开门？",
+   "a": "09:00",
+   "match": "exact"
+  },
+  {
+   "q": "工作日几点关门？",
+   "a": "21:00",
+   "match": "exact"
+  },
+  {
+   "q": "超时停车怎么收费？",
+   "a": "5元/小时",
+   "match": "number"
+  },
+  {
+   "q": "临时停车限时多久？",
+   "a": "1 小时",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "hours_sign",
+  "background": "wall"
+ },
+ "variant": {
+  "kind": "hours_sign"
+ }
+}

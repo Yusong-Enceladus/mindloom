@@ -1,0 +1,481 @@
+{
+ "scenario_id": "dev-week-v1",
+ "split": "dev",
+ "n_items": 82,
+ "summary": {
+  "bcubed_precision": 0.40614111498257843,
+  "bcubed_recall": 0.6600437810053195,
+  "bcubed_f1": 0.5028600914598965,
+  "link_precision": 0.36585365853658536,
+  "link_recall": 0.3157894736842105,
+  "link_f1": 0.3389830508474576,
+  "hard_decoy_leakage": 0.5476190476190477,
+  "easy_decoy_leakage": 0.3888888888888889,
+  "noise_abstention": 0.0,
+  "pred_event_count": 16,
+  "gold_event_count": 9,
+  "question_count": 0,
+  "status_fact_recall": 0.0,
+  "stale_fact_rate": null,
+  "person_link_accuracy": 0.06944444444444445,
+  "person_link_accuracy_cross_source": 0.06944444444444445,
+  "checkpoints_scored": 4,
+  "checkpoints_total": 4
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.40614111498257843,
+    "recall": 0.6600437810053195,
+    "f1": 0.5028600914598965
+   },
+   "link": {
+    "precision": 0.36585365853658536,
+    "recall": 0.3157894736842105,
+    "f1": 0.3389830508474576,
+    "tp": 30,
+    "n_pred": 82,
+    "n_gold": 95
+   },
+   "decoy_leakage": {
+    "hard": 0.5476190476190477,
+    "easy": 0.3888888888888889,
+    "per_decoy": {
+     "ev_momflat": {
+      "difficulty": "hard",
+      "decoy_of": "ev_reno",
+      "pairs": 84,
+      "leakage": 0.5476190476190477,
+      "decoy_items": 7
+     },
+     "ev_grinder": {
+      "difficulty": "easy",
+      "decoy_of": "ev_beans",
+      "pairs": 36,
+      "leakage": 0.3888888888888889,
+      "decoy_items": 4
+     }
+    }
+   },
+   "noise_abstention": {
+    "noise_items": 4,
+    "abstained": 0,
+    "rate": 0.0
+   },
+   "pred_event_count": 16,
+   "pred_event_count_multi_item": 5,
+   "gold_event_count": 9,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "0aa1bbda-55e2-40df-bb97-7f8a490a0ed9": "ev_anniv",
+   "1c4e1e3a-a168-4212-a1d9-811935baa289": "ev_beans",
+   "db617fe2-6564-4082-8686-f9fc545c8b63": "ev_grinder",
+   "c695ac80-557b-4135-8cc6-0271717c76b4": "ev_lease",
+   "2a4d6c76-d53c-4908-826a-4544c1c2b010": "ev_member",
+   "9558818b-5330-4776-b6ff-040a815e893c": "ev_menu",
+   "b438030a-0e57-4762-9177-377bb0d8ff21": "ev_momflat",
+   "1f439681-2301-454d-99d7-e5a75ff27845": "ev_reno",
+   "61fcf683-06bc-4413-9b0c-b57cc96665ef": "ev_sign"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.06944444444444445,
+   "pairs": 72,
+   "accuracy_cross_source": 0.06944444444444445,
+   "pairs_cross_source": 72,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 2.6,
+   "name_match": 0.75,
+   "mapping": {
+    "dfdb0e53-639c-54fd-a1c5-60009599f4f4": "p_gao",
+    "fafb3a58-6d9a-55a2-b74c-c79558ba8f7b": "p_lin",
+    "79606bc9-0821-5ab3-85dc-24b2f287f5c0": "p_owner",
+    "75f7185c-af77-5e23-b6cf-8d63f15750dc": "p_su",
+    "802f2b75-a0a3-51c6-b1c2-d02ae668e6ae": "p_zhou"
+   }
+  },
+  "questions": {
+   "count": 0,
+   "asked_total": 0,
+   "by_kind": {},
+   "per_100_items": 0.0,
+   "resolvable": 0,
+   "true_yes_rate": null
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-d2",
+   "label": "周二晚",
+   "n_items": 27,
+   "bcubed_f1": 0.5214422776562989,
+   "link_f1": 0.4210526315789474,
+   "pred_event_count": 8,
+   "gold_event_count": 9,
+   "expected": 11,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "1f439681-2301-454d-99d7-e5a75ff27845",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_stage_1",
+      "f_reno_date_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "61fcf683-06bc-4413-9b0c-b57cc96665ef",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_1"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "9558818b-5330-4776-b6ff-040a815e893c",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_choice",
+      "f_sign_install_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "3744eb68-4cce-45d0-8737-0c360b95364d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "2a4d6c76-d53c-4908-826a-4544c1c2b010",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_rule"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "b438030a-0e57-4762-9177-377bb0d8ff21",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "db617fe2-6564-4082-8686-f9fc545c8b63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d3",
+   "label": "周三晚",
+   "n_items": 38,
+   "bcubed_f1": 0.5471398445752894,
+   "link_f1": 0.4444444444444444,
+   "pred_event_count": 9,
+   "gold_event_count": 9,
+   "expected": 10,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "1f439681-2301-454d-99d7-e5a75ff27845",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "61fcf683-06bc-4413-9b0c-b57cc96665ef",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_term"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "2a4d6c76-d53c-4908-826a-4544c1c2b010",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_redeem"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "b438030a-0e57-4762-9177-377bb0d8ff21",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "9558818b-5330-4776-b6ff-040a815e893c",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "3744eb68-4cce-45d0-8737-0c360b95364d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "db617fe2-6564-4082-8686-f9fc545c8b63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d5",
+   "label": "周五晚",
+   "n_items": 64,
+   "bcubed_f1": 0.5023833296022555,
+   "link_f1": 0.35036496350364965,
+   "pred_event_count": 14,
+   "gold_event_count": 9,
+   "expected": 15,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "1f439681-2301-454d-99d7-e5a75ff27845",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "61fcf683-06bc-4413-9b0c-b57cc96665ef",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "9558818b-5330-4776-b6ff-040a815e893c",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_2",
+      "f_menu_cake"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "1c4e1e3a-a168-4212-a1d9-811935baa289",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_2",
+      "f_beans_first"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "0aa1bbda-55e2-40df-bb97-7f8a490a0ed9",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_stalls_2",
+      "f_anniv_poster_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "2a4d6c76-d53c-4908-826a-4544c1c2b010",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_launch"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "b438030a-0e57-4762-9177-377bb0d8ff21",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "db617fe2-6564-4082-8686-f9fc545c8b63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 82,
+   "bcubed_f1": 0.5028600914598965,
+   "link_f1": 0.3389830508474576,
+   "pred_event_count": 16,
+   "gold_event_count": 9,
+   "expected": 16,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "1f439681-2301-454d-99d7-e5a75ff27845",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_stage_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "c695ac80-557b-4135-8cc6-0271717c76b4",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "9558818b-5330-4776-b6ff-040a815e893c",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_2",
+      "f_menu_launch"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "1c4e1e3a-a168-4212-a1d9-811935baa289",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_trial",
+      "f_beans_first"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "0aa1bbda-55e2-40df-bb97-7f8a490a0ed9",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date",
+      "f_anniv_poster_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "61fcf683-06bc-4413-9b0c-b57cc96665ef",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "2a4d6c76-d53c-4908-826a-4544c1c2b010",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_launch",
+      "f_member_android"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "b438030a-0e57-4762-9177-377bb0d8ff21",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_start",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "db617fe2-6564-4082-8686-f9fc545c8b63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  }
+ ]
+}

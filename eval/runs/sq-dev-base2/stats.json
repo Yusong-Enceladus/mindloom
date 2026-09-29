@@ -1,0 +1,124 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 83,
+   "retried": 0,
+   "latency_median_s": 5.124,
+   "latency_p95_s": 7.012,
+   "latency_total_s": 370.0,
+   "prompt_tokens_mean": 5115.8,
+   "completion_tokens_mean": 185.7,
+   "prompt_tokens_total": 424613,
+   "completion_tokens_total": 15411,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 66,
+   "ok_first_attempt": 34,
+   "retried": 45,
+   "latency_median_s": 6.729,
+   "latency_p95_s": 16.43,
+   "latency_total_s": 637.0,
+   "prompt_tokens_mean": 6548.4,
+   "completion_tokens_mean": 408.1,
+   "prompt_tokens_total": 517320,
+   "completion_tokens_total": 32243,
+   "errors_sample": [
+    "[unsupported_completion] 事实「咖啡机和磨豆机已搬至后仓」的 quote「先搬到了后面仓库」不是所引用素材里的原话",
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「周四下午我们开个线上会」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「周四下午我们开个线上会」里有「会」，说的是计划或条件，不能标 done; [unsupported_completion] 事实「已决定9月17日开线上会」标为 done，但日期"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.209,
+   "latency_p95_s": 1.612,
+   "latency_total_s": 3.3,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 13.3,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 40,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 7.32,
+   "latency_p95_s": 20.179,
+   "latency_total_s": 30.5,
+   "prompt_tokens_mean": 6195.3,
+   "completion_tokens_mean": 514,
+   "prompt_tokens_total": 18586,
+   "completion_tokens_total": 1542,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 12.112,
+   "latency_p95_s": 15.776,
+   "latency_total_s": 40.7,
+   "prompt_tokens_mean": 6178.8,
+   "completion_tokens_mean": 619,
+   "prompt_tokens_total": 24715,
+   "completion_tokens_total": 2476,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 2.631,
+   "latency_p95_s": 7.754,
+   "latency_total_s": 11.5,
+   "prompt_tokens_mean": 3257.7,
+   "completion_tokens_mean": 147.7,
+   "prompt_tokens_total": 9773,
+   "completion_tokens_total": 443,
+   "errors_sample": [
+    "segments[0].gist is wider than 20 (中文字算1)"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 66,
+  "none": 4,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 61,
+  "none": 4,
+  "ask": 4,
+  "ask_suppressed": 4
+ },
+ "final_live_events": 18,
+ "status_line_chars_mean": 13.6,
+ "title_chars_mean": 9.9,
+ "wall_s": 1098.2,
+ "items_per_min": 4.48,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

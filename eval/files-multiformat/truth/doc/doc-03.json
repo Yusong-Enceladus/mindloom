@@ -1,0 +1,63 @@
+{
+ "file_id": "doc-03",
+ "path": "corpus/doc/doc-03.doc",
+ "type": "doc",
+ "ext": "doc",
+ "mime": "application/msword",
+ "filename": "产品组周报（7月16日—7月20日）.doc",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "产品组周报（7月16日—7月20日）\n填写人：钟楠\n整体进度：48%\n本周完成\n- 完成需求评审\n- 处理工单 25 个\n- 更新项目排期\n风险\n- 测试环境不稳定\n下周计划\n- 提交季度汇报\n- 周五前同步进度\n（合成数据）\n合成数据",
+ "key_lines": [
+  "填写人：钟楠",
+  "整体进度：48%",
+  "- 测试环境不稳定",
+  "- 提交季度汇报"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "填写人": "钟楠",
+  "进度": "48%",
+  "风险": "测试环境不稳定",
+  "下周": "提交季度汇报"
+ },
+ "numbers": [
+  {
+   "value": 48,
+   "label": "进度%"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "整体进度是多少？",
+   "a": 48,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "本周最大的风险是什么？",
+   "a": "测试环境不稳定",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "下周的主要计划是什么？",
+   "a": "提交季度汇报",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "周报是谁写的？",
+   "a": "钟楠",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 19456,
+ "sha256": "b4d7d02511f9d184b57ee7832ffb52cf89b116aca55aa18810935aff1a5c395e",
+ "family": "weekly"
+}

@@ -1,0 +1,50 @@
+.DS_Store
+
+# Xcode and SwiftPM
+DerivedData/
+.build/
+.swiftpm/
+build/
+*.profraw
+*.xcodeproj/xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+
+# Packaged products
+*.app
+*.dmg
+*.pkg
+*.dSYM
+
+# Local configuration, credentials, and signing material
+.env
+.env.*
+!.env.example
+LocalConfig.xcconfig
+Secrets.xcconfig
+*.p12
+*.cer
+*.mobileprovision
+*.provisionprofile
+
+# Downloaded/runtime artifacts
+Models/
+ModelCache/
+RuntimeData/
+Corpus/private/
+Corpus/private-consented/assets/
+Corpus/private-consented/raw/
+Corpus/device-lab/captures/
+Corpus/release-holdout/assets/
+benchmarks/results/local/
+diagnostics/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Editor state
+.idea/
+.vscode/

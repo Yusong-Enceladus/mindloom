@@ -1,0 +1,112 @@
+{
+ "id": "label-18",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-18.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "baf89a9f842509807fe72b3c5c07239128db76977fad586906fde1a7060cb4ff",
+ "gt": {
+  "label_kind": "repair_form",
+  "fields": [
+   {
+    "key": "reporter",
+    "label": "报修人",
+    "value": "冯晨"
+   },
+   {
+    "key": "room",
+    "label": "房号",
+    "value": "1-804"
+   },
+   {
+    "key": "phone",
+    "label": "联系电话",
+    "value": "155-14**-4372"
+   },
+   {
+    "key": "issue",
+    "label": "故障描述",
+    "value": "厨房水龙头漏水"
+   },
+   {
+    "key": "visit_time",
+    "label": "期望上门时间",
+    "value": "8月16日 上午9点至11点"
+   },
+   {
+    "key": "emergency_contact",
+    "label": "紧急联系人",
+    "value": "罗佳宁"
+   }
+  ],
+  "lines": [
+   "物业报修单",
+   "编号：BX081645",
+   "报修人",
+   "冯晨",
+   "房号",
+   "1-804",
+   "联系电话",
+   "155-14**-4372",
+   "故障描述",
+   "厨房水龙头漏水",
+   "期望上门时间",
+   "8月16日 上午9点至11点",
+   "紧急联系人",
+   "罗佳宁",
+   "说明：本单一式两联，维修完成后请住户签字确认。"
+  ]
+ },
+ "text_lines": [
+  "物业报修单",
+  "编号：BX081645",
+  "报修人",
+  "冯晨",
+  "房号",
+  "1-804",
+  "联系电话",
+  "155-14**-4372",
+  "故障描述",
+  "厨房水龙头漏水",
+  "期望上门时间",
+  "8月16日 上午9点至11点",
+  "紧急联系人",
+  "罗佳宁",
+  "说明：本单一式两联，维修完成后请住户签字确认。"
+ ],
+ "qa": [
+  {
+   "q": "报修人是谁？",
+   "a": "冯晨",
+   "match": "exact"
+  },
+  {
+   "q": "房号是多少？",
+   "a": "1-804",
+   "match": "exact"
+  },
+  {
+   "q": "什么故障？",
+   "a": "厨房水龙头漏水",
+   "match": "exact"
+  },
+  {
+   "q": "紧急联系人是谁？",
+   "a": "罗佳宁",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "repair_form",
+  "background": "wood"
+ },
+ "variant": {
+  "kind": "repair_form",
+  "hand_font": "hand_xing"
+ }
+}

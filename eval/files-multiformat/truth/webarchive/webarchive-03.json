@@ -1,0 +1,59 @@
+{
+ "file_id": "webarchive-03",
+ "path": "corpus/webarchive/webarchive-03.webarchive",
+ "type": "webarchive",
+ "ext": "webarchive",
+ "mime": "application/x-webarchive",
+ "filename": "苏州一日游路线.webarchive",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "社区服务平台\n苏州一日游路线\n适合周末的苏州城市漫步路线，全程步行加地铁。\n时间\t地点\t门票（元）\n09:00\t博物馆\t0\n11:00\t植物园\t0\n14:30\t江边步道\t35\n18:30\t古塔\t80\n门票合计 115 元。建议穿舒适的鞋。（合成数据）\n合成数据\n社区服务平台\n合成数据",
+ "key_lines": [
+  "09:00\t博物馆\t0",
+  "14:30\t江边步道\t35",
+  "门票合计 115 元。建议穿舒适的鞋。（合成数据）"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "城市": "苏州",
+  "第一站": "博物馆",
+  "门票合计": 115
+ },
+ "numbers": [
+  {
+   "value": 115,
+   "label": "门票合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第一站去哪？",
+   "a": "博物馆",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "门票合计多少元？",
+   "a": 115,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "几点到江边步道？",
+   "a": "14:30",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "url": "https://www.city.example.com/page/5844",
+  "subresources": 1
+ },
+ "notes": "Safari 网页归档，含一个 PNG 子资源。",
+ "bytes": 8935,
+ "sha256": "e12e2a3248d1250d419d03a2112c3f37c0a19c169ba1c252484edd1023009102",
+ "family": "travel"
+}

@@ -1,0 +1,67 @@
+{
+ "file_id": "mbox-05",
+ "path": "corpus/mbox/mbox-05.mbox",
+ "type": "mbox",
+ "ext": "mbox",
+ "mime": "application/mbox",
+ "filename": "报修工单 WX22710.mbox",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[message 1]\nFrom: 报修系统 <noreply@example.com>\nTo: 用户 <user@example.com>\nDate: Sat, 10 Oct 2026 08:00:00 +0800\nSubject: [WX22710] 工单已创建\n工单 WX22710：708 房间空调不制冷，已登记。\n[message 2]\nFrom: 报修系统 <noreply@example.com>\nTo: 用户 <user@example.com>\nDate: Sun, 11 Oct 2026 09:00:00 +0800\nSubject: [WX22710] 已派单\n工单 WX22710 已派给维修员 田欣怡，预计今天 16:00 前上门。\n[message 3]\nFrom: 报修系统 <noreply@example.com>\nTo: 用户 <user@example.com>\nDate: Mon, 12 Oct 2026 10:00:00 +0800\nSubject: [WX22710] 处理中\n田欣怡 已到场，需更换电容，等待配件。\n[message 4]\nFrom: 报修系统 <noreply@example.com>\nTo: 用户 <user@example.com>\nDate: Tue, 13 Oct 2026 11:00:00 +0800\nSubject: [WX22710] 已完成\n工单 WX22710 已完成：更换电容 1 个，费用 0 元（保修期内）。\n[message 5]\nFrom: 报修系统 <noreply@example.com>\nTo: 用户 <user@example.com>\nDate: Wed, 14 Oct 2026 12:00:00 +0800\nSubject: [WX22710] 请评价\n请为本次服务打分（1–5 分）。（合成数据）",
+ "key_lines": [
+  "Subject: [WX22710] 工单已创建",
+  "工单 WX22710：708 房间空调不制冷，已登记。",
+  "Subject: [WX22710] 已派单",
+  "工单 WX22710 已派给维修员 田欣怡，预计今天 16:00 前上门。",
+  "Subject: [WX22710] 处理中",
+  "田欣怡 已到场，需更换电容，等待配件。",
+  "Subject: [WX22710] 已完成",
+  "工单 WX22710 已完成：更换电容 1 个，费用 0 元（保修期内）。",
+  "Subject: [WX22710] 请评价"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "工单号": "WX22710",
+  "房间": "708",
+  "维修员": "田欣怡",
+  "更换": "电容 1 个"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "工单号是多少？",
+   "a": "WX22710",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "维修员是谁？",
+   "a": "田欣怡",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "换了什么配件？",
+   "a": "电容",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "一共几封通知邮件？",
+   "a": 5,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "messages": 5,
+  "attachments": []
+ },
+ "bytes": 2458,
+ "sha256": "080ff1fce7add097dcce7201bbb08daf44d65a50f4ef207b2cbed9052b928d23",
+ "family": "tickets"
+}

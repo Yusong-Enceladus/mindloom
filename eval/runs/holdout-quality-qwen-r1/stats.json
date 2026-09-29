@@ -1,0 +1,82 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 32,
+   "ok": 32,
+   "ok_first_attempt": 31,
+   "retried": 1,
+   "latency_median_s": 2.295,
+   "latency_p95_s": 2.789,
+   "latency_total_s": 76.6,
+   "prompt_tokens_mean": 4299.2,
+   "completion_tokens_mean": 179.7,
+   "prompt_tokens_total": 137573,
+   "completion_tokens_total": 5751,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 30,
+   "ok": 28,
+   "ok_first_attempt": 20,
+   "retried": 10,
+   "latency_median_s": 3.211,
+   "latency_p95_s": 7.428,
+   "latency_total_s": 108.3,
+   "prompt_tokens_mean": 4305,
+   "completion_tokens_mean": 347.4,
+   "prompt_tokens_total": 129150,
+   "completion_tokens_total": 10423,
+   "errors_sample": [
+    "[unsupported_completion] quote「帮我列一个30分钟分享的大纲」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] 事实「已咨询售后，确认保修期内免费维修」的 quote「已咨询售后」不是所引用素材里的原话"
+   ]
+  },
+  "rank": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 1.827,
+   "latency_p95_s": 2.545,
+   "latency_total_s": 4.4,
+   "prompt_tokens_mean": 3027.5,
+   "completion_tokens_mean": 191.5,
+   "prompt_tokens_total": 6055,
+   "completion_tokens_total": 383,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 3.731,
+   "latency_p95_s": 3.731,
+   "latency_total_s": 3.7,
+   "prompt_tokens_mean": 2400,
+   "completion_tokens_mean": 372,
+   "prompt_tokens_total": 2400,
+   "completion_tokens_total": 372,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 4,
+  "attach": 25,
+  "none": 2,
+  "ask": 1
+ },
+ "assign_actions": {
+  "new": 4,
+  "attach": 25,
+  "none": 2,
+  "ask": 1
+ },
+ "final_live_events": 5,
+ "status_line_chars_mean": 34,
+ "title_chars_mean": 10,
+ "wall_s": 194.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

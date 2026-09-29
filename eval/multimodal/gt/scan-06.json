@@ -1,0 +1,128 @@
+{
+ "id": "scan-06",
+ "type": "scanned_document",
+ "split": "test",
+ "image": "images/scan-06.jpg",
+ "lang": "en",
+ "hard": [
+  "similar_names",
+  "table",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "2cfd17a412b77571c649d1f319a34c141e55f79a872592fce6b0889ed0ffaf3d",
+ "gt": {
+  "title": "Product Sync - Meeting Minutes",
+  "fields": [
+   {
+    "key": "Date",
+    "value": "Oct 3, 2026"
+   },
+   {
+    "key": "Attendees",
+    "value": "Chen Wei, Chen Wen, Noah Grant"
+   },
+   {
+    "key": "Note taker",
+    "value": "Noah Grant"
+   }
+  ],
+  "blocks": [
+   {
+    "type": "heading",
+    "text": "Decisions"
+   },
+   {
+    "type": "list_item",
+    "text": "1. Ship ordering in the next release; payments follow in a separate release."
+   },
+   {
+    "type": "list_item",
+    "text": "2. Raise the checkout timeout alert threshold to 450 ms."
+   },
+   {
+    "type": "heading",
+    "text": "Discussion"
+   },
+   {
+    "type": "paragraph",
+    "text": "Chen Wei reported that weekly active users grew 15% after the loyalty launch. Chen Wen raised concerns about support load during the rollout and asked for a staged release."
+   },
+   {
+    "type": "heading",
+    "text": "Action items"
+   },
+   {
+    "type": "table",
+    "header": [
+     "Action",
+     "Owner",
+     "Due"
+    ],
+    "rows": [
+     [
+      "Staged rollout plan",
+      "Chen Wen",
+      "Friday"
+     ],
+     [
+      "Alert threshold change",
+      "Chen Wei",
+      "Monday"
+     ],
+     [
+      "Release notes",
+      "Noah Grant",
+      "Tuesday"
+     ]
+    ]
+   }
+  ],
+  "full_text": "Product Sync - Meeting Minutes\nDate: Oct 3, 2026\nAttendees: Chen Wei, Chen Wen, Noah Grant\nNote taker: Noah Grant\nDecisions\n1. Ship ordering in the next release; payments follow in a separate release.\n2. Raise the checkout timeout alert threshold to 450 ms.\nDiscussion\nChen Wei reported that weekly active users grew 15% after the loyalty launch. Chen Wen raised concerns about support load during the rollout and asked for a staged release.\nAction items\nAction | Owner | Due\nStaged rollout plan | Chen Wen | Friday\nAlert threshold change | Chen Wei | Monday\nRelease notes | Noah Grant | Tuesday\nPage 1 of 1"
+ },
+ "text_lines": [
+  "Product Sync - Meeting Minutes",
+  "Date: Oct 3, 2026",
+  "Attendees: Chen Wei, Chen Wen, Noah Grant",
+  "Note taker: Noah Grant",
+  "Decisions",
+  "1. Ship ordering in the next release; payments follow in a separate release.",
+  "2. Raise the checkout timeout alert threshold to 450 ms.",
+  "Discussion",
+  "Chen Wei reported that weekly active users grew 15% after the loyalty launch. Chen Wen raised concerns about support load during the rollout and asked for a staged release.",
+  "Action items",
+  "Action | Owner | Due",
+  "Staged rollout plan | Chen Wen | Friday",
+  "Alert threshold change | Chen Wei | Monday",
+  "Release notes | Noah Grant | Tuesday",
+  "Page 1 of 1"
+ ],
+ "qa": [
+  {
+   "q": "By how much did weekly active users grow?",
+   "a": "15%",
+   "match": "number"
+  },
+  {
+   "q": "Who owns the staged rollout plan?",
+   "a": "Chen Wen",
+   "match": "exact"
+  },
+  {
+   "q": "What is the new alert threshold?",
+   "a": "450 ms",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "rotate_deg": 0.96,
+  "blur": 0.6,
+  "dpi": 150,
+  "body_pt": 11.0,
+  "engine": "reportlab+pdfium"
+ },
+ "variant": {
+  "content": "en_minutes",
+  "similar": true
+ }
+}

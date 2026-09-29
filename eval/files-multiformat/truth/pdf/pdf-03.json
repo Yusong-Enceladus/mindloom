@@ -1,0 +1,58 @@
+{
+ "file_id": "pdf-03",
+ "path": "corpus/pdf/pdf-03.pdf",
+ "type": "pdf",
+ "ext": "pdf",
+ "mime": "application/pdf",
+ "filename": "健身中心团课时间表.pdf",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "B72E010B-036C-5ACC-9256-CF4A7F6F0934",
+  "ref": "noise_gym",
+  "events": []
+ },
+ "text_layer": "full",
+ "text": "校健身中心 10月团课时间表\n课程\t时间\t教练\t教室\n瑜伽\t周一 19:00\t严老师\t操房1\n动感单车\t周二 18:30\t韩教练\t单车房\n普拉提\t周四 19:30\t严老师\t操房2\n搏击操\t周六 10:00\t韩教练\t操房1\n每节课限 20 人，需提前一天在小程序预约。\n合成数据",
+ "key_lines": [
+  "动感单车\t周二 18:30\t韩教练\t单车房",
+  "普拉提\t周四 19:30\t严老师\t操房2",
+  "搏击操\t周六 10:00\t韩教练\t操房1",
+  "每节课限 20 人，需提前一天在小程序预约。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "普拉提": "周四 19:30",
+  "限额": 20
+ },
+ "numbers": [
+  {
+   "value": 20,
+   "label": "每节限额"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "普拉提在什么时间？",
+   "a": "周四 19:30",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "每节课限多少人？",
+   "a": 20,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "动感单车的教练是谁？",
+   "a": "韩教练",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 69034,
+ "sha256": "eee33f141e599bc44da27a76759e98797de6c115f7e0eb384230fc460d4c5475"
+}

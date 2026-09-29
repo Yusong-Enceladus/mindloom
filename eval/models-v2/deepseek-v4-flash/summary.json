@@ -1,0 +1,97 @@
+{
+ "slug": "deepseek-v4-flash",
+ "organizer": [
+  {
+   "run": "dev-skills-dsv4-r1",
+   "scenario": "dev-week-v1",
+   "model": "deepseek-v4-flash",
+   "items": 82,
+   "b3_f1": 0.784,
+   "link_f1": 0.809,
+   "card_fact_recall": 0.731,
+   "status_fact_recall": 0.365,
+   "asks_per_100": 3.66,
+   "ungrounded_dates": 0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 1,
+   "unsupported_completion": 1,
+   "hard_decoy_leakage": 0.0,
+   "noise_abstention": 1.0,
+   "relative_date_in_card": 1,
+   "stale_fact_rate": 0.1,
+   "absorbed_matters": "none",
+   "brief_ok": "61/79",
+   "home_ndcg5": 0.797,
+   "pred_gold_events": "15/9",
+   "wall_s": 1305.7,
+   "s_per_item": 15.92,
+   "llm_s_per_item": 15.46,
+   "completion_tok_s": 27.9,
+   "llm_calls": 169,
+   "llm_failed": 18,
+   "retried": {
+    "assign": 0,
+    "brief": 51,
+    "rank": 0,
+    "split": 1
+   },
+   "latency_median_s": {
+    "assign": 4.218,
+    "brief": 10.219,
+    "rank": 9.757,
+    "split": 2.795
+   },
+   "image_jobs": {
+    "image_detect": "3/3",
+    "image_read": "3/3"
+   },
+   "path": "deepseek-v4-flash/raw/dev-skills-dsv4-r1"
+  },
+  {
+   "run": "h2-skills-dsv4-r1",
+   "scenario": "holdout-week-v2",
+   "model": "deepseek-v4-flash",
+   "items": 46,
+   "b3_f1": 0.735,
+   "link_f1": 0.71,
+   "card_fact_recall": 0.609,
+   "status_fact_recall": 0.287,
+   "asks_per_100": 4.35,
+   "ungrounded_dates": 0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "unsupported_completion": 1,
+   "hard_decoy_leakage": 0.4166666666666667,
+   "noise_abstention": 0.5,
+   "relative_date_in_card": 0,
+   "stale_fact_rate": 0.0,
+   "absorbed_matters": "ev_peggy_quote",
+   "brief_ok": "24/50",
+   "home_ndcg5": 0.96,
+   "pred_gold_events": "9/7",
+   "wall_s": 1115.9,
+   "s_per_item": 24.26,
+   "llm_s_per_item": 23.06,
+   "completion_tok_s": 28.3,
+   "llm_calls": 123,
+   "llm_failed": 26,
+   "retried": {
+    "assign": 0,
+    "brief": 46,
+    "rank": 0,
+    "split": 0
+   },
+   "latency_median_s": {
+    "assign": 4.693,
+    "brief": 16.144,
+    "rank": 8.327,
+    "split": 2.309
+   },
+   "image_jobs": {
+    "image_detect": "4/4",
+    "image_read": "4/4"
+   },
+   "path": "deepseek-v4-flash/raw/h2-skills-dsv4-r1"
+  }
+ ]
+}

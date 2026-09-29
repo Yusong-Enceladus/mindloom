@@ -1,0 +1,107 @@
+{
+ "id": "receipt-16",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-16.jpg",
+ "lang": "zh",
+ "hard": [
+  "low_contrast",
+  "similar_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "247ba2937561a852ce1a928db5ab596b48e693871b15f20cdf38d55defc0e07b",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "南巷咖啡",
+  "date": "2026-09-14",
+  "date_text": "2026-09-14 20:16",
+  "time": "20:16",
+  "doc_no": "202609141682",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "拿铁（大杯）",
+    "qty": 3,
+    "unit": "杯",
+    "unit_price": "28.00",
+    "amount": "84.00"
+   },
+   {
+    "name": "手冲 耶加雪菲",
+    "qty": 2,
+    "unit": "杯",
+    "unit_price": "38.00",
+    "amount": "76.00"
+   },
+   {
+    "name": "拿铁（中杯）",
+    "qty": 3,
+    "unit": "杯",
+    "unit_price": "25.00",
+    "amount": "75.00"
+   },
+   {
+    "name": "可颂",
+    "qty": 2,
+    "unit": "个",
+    "unit_price": "16.00",
+    "amount": "32.00"
+   }
+  ],
+  "subtotal": "267.00",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "267.00",
+  "payment_method": "扫码支付"
+ },
+ "text_lines": [
+  "南巷咖啡",
+  "江枫市桂香区桂香路135号",
+  "电话：0000-6512",
+  "单号：202609141682 收银员：02",
+  "日期：2026-09-14 20:16",
+  "拿铁（大杯） 3 28.00 84.00",
+  "手冲 耶加雪菲 2 38.00 76.00",
+  "拿铁（中杯） 3 25.00 75.00",
+  "可颂 2 16.00 32.00",
+  "合计件数：4",
+  "小计 267.00",
+  "实付 ¥267.00",
+  "支付方式：扫码支付",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥267.00",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "南巷咖啡",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-09-14",
+   "match": "date"
+  },
+  {
+   "q": "拿铁（大杯）的金额是多少？",
+   "a": "84.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": true,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "similar": true,
+  "faint": true
+ }
+}

@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/dictation-alpha-readiness.schema.json",
+  "title": "bestASR dictation alpha readiness report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "dictationAlphaConclusion",
+    "dictationAlphaReady",
+    "formalMVPConclusion",
+    "formalMVPReady",
+    "v1Conclusion",
+    "v1Ready",
+    "separationInvariant",
+    "gatesSHA256",
+    "alphaGateCounts",
+    "alphaGates",
+    "wholeProductGaps",
+    "unresolvedAlphaBlockers",
+    "unresolvedWholeProductGaps",
+    "formalGateCount",
+    "v1GateCount"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "dictation-alpha-readiness-report" },
+    "dictationAlphaConclusion": { "type": "string", "enum": ["pass", "conditional", "fail"] },
+    "dictationAlphaReady": { "type": "boolean" },
+    "formalMVPConclusion": { "type": "string", "enum": ["pass", "conditional", "fail"] },
+    "formalMVPReady": { "type": "boolean" },
+    "v1Conclusion": { "type": "string", "enum": ["pass", "conditional", "fail"] },
+    "v1Ready": { "type": "boolean" },
+    "separationInvariant": { "type": "boolean", "const": true },
+    "gatesSHA256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "alphaGateCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pass", "conditional", "fail"],
+      "properties": {
+        "pass": { "type": "integer", "minimum": 0 },
+        "conditional": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "alphaGates": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "wholeProductGaps": { "type": "array", "minItems": 1, "items": { "type": "object" } },
+    "unresolvedAlphaBlockers": { "type": "array", "items": { "type": "string" } },
+    "unresolvedWholeProductGaps": { "type": "array", "items": { "type": "object" } },
+    "formalGateCount": { "type": "integer", "minimum": 1 },
+    "v1GateCount": { "type": "integer", "minimum": 1 }
+  }
+}

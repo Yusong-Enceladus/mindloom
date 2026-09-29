@@ -1,0 +1,99 @@
+{
+ "id": "chat-03",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-03.png",
+ "lang": "zh",
+ "hard": [
+  "non_text_bubbles",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "97b0927334be6a5023714242b6db10cee086ad77e7edc38e00a305d74af954ca",
+ "gt": {
+  "chat_title": "新家装修",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "18:48",
+    "text": "瓷砖到了，24箱，每箱0.96㎡",
+    "kind": "text"
+   },
+   {
+    "sender": "罗佳宁",
+    "is_self": false,
+    "time": "",
+    "text": "客厅要铺24㎡，够吗",
+    "kind": "text"
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "18:53",
+    "text": "按损耗10%算，还差4箱",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "那再补4箱，师傅周六能来吗",
+    "kind": "text"
+   },
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "19:05",
+    "text": "周六上午9:00到",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "19:28",
+    "text": "[语音 14秒]",
+    "kind": "voice",
+    "seconds": 14
+   }
+  ]
+ },
+ "text_lines": [
+  "新家装修",
+  "袁野：瓷砖到了，24箱，每箱0.96㎡",
+  "罗佳宁：客厅要铺24㎡，够吗",
+  "袁野：按损耗10%算，还差4箱",
+  "我：那再补4箱，师傅周六能来吗",
+  "冯晨：周六上午9:00到",
+  "我：[语音 14秒]"
+ ],
+ "qa": [
+  {
+   "q": "到货的瓷砖每箱多少平方米？",
+   "a": "0.96㎡",
+   "match": "number"
+  },
+  {
+   "q": "还要补几箱？",
+   "a": "4箱",
+   "match": "number"
+  },
+  {
+   "q": "师傅几点到？",
+   "a": "周六上午9:00",
+   "match": "contains"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "tiles",
+  "theme": "dark"
+ }
+}

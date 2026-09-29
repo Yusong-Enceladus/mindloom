@@ -1,0 +1,98 @@
+{
+ "id": "slide-18",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-18.png",
+ "lang": "en",
+ "hard": [
+  "dense",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "436a1fc0fde9f2eb4050476eeefc16978b5589448b25ca08dac91b80e476b76e",
+ "gt": {
+  "title": "Launch Checklist",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Code freeze: Sep 14"
+   },
+   {
+    "level": 0,
+    "text": "QA sign-off by the release owner"
+   },
+   {
+    "level": 0,
+    "text": "Staged rollout: 10% / 50% / 100% over 3 days"
+   },
+   {
+    "level": 1,
+    "text": "Roll back if crash rate exceeds 0.5%"
+   },
+   {
+    "level": 0,
+    "text": "Store review buffer: 5 business days"
+   },
+   {
+    "level": 0,
+    "text": "Post-launch review: Oct 20"
+   },
+   {
+    "level": 1,
+    "text": "Owner: see the project tracker for details"
+   },
+   {
+    "level": 1,
+    "text": "Numbers as of the Friday snapshot"
+   }
+  ],
+  "kpis": [],
+  "footer": "Northwind Labs Ltd. · Internal",
+  "page": "3 / 16"
+ },
+ "text_lines": [
+  "Launch Checklist",
+  "Code freeze: Sep 14",
+  "QA sign-off by the release owner",
+  "Staged rollout: 10% / 50% / 100% over 3 days",
+  "Roll back if crash rate exceeds 0.5%",
+  "Store review buffer: 5 business days",
+  "Post-launch review: Oct 20",
+  "Owner: see the project tracker for details",
+  "Numbers as of the Friday snapshot",
+  "Northwind Labs Ltd. · Internal",
+  "3 / 16"
+ ],
+ "qa": [
+  {
+   "q": "When is code freeze?",
+   "a": "Sep 14",
+   "match": "exact"
+  },
+  {
+   "q": "What crash rate triggers a rollback?",
+   "a": "0.5%",
+   "match": "number"
+  },
+  {
+   "q": "How long is the store review buffer?",
+   "a": "5 business days",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "Launch Checklist",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "minimal",
+  "dense": true
+ },
+ "variant": {
+  "content": "en_launch",
+  "theme": "minimal",
+  "dense": true
+ }
+}

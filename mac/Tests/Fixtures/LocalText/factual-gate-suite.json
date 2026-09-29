@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "llm-factual-gate-suite",
+  "suiteID": "dangerous-facts-v1",
+  "sources": [
+    {
+      "sampleUUID": "69000000-0000-4000-8000-000000000001",
+      "sourceText": "预算是 42 万。",
+      "dangerousTokens": [{"category": "number", "value": "42"}]
+    },
+    {
+      "sampleUUID": "69000000-0000-4000-8000-000000000002",
+      "sourceText": "计划在 2026-07-23 发布。",
+      "dangerousTokens": [{"category": "date", "value": "2026-07-23"}]
+    },
+    {
+      "sampleUUID": "69000000-0000-4000-8000-000000000003",
+      "sourceText": "不要删除原始录音。",
+      "dangerousTokens": [{"category": "negation", "value": "不要"}]
+    },
+    {
+      "sampleUUID": "69000000-0000-4000-8000-000000000004",
+      "sourceText": "参会人是小林。",
+      "dangerousTokens": [{"category": "person", "value": "小林"}]
+    },
+    {
+      "sampleUUID": "69000000-0000-4000-8000-000000000005",
+      "sourceText": "小林负责复核。",
+      "dangerousTokens": [{"category": "action-owner", "value": "小林"}]
+    }
+  ],
+  "candidates": [
+    {
+      "candidateID": "fact-preserving-fixture",
+      "modelArtifactSHA256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "samples": [
+        {"sampleUUID": "69000000-0000-4000-8000-000000000001", "outputText": "预算明确为 42 万。", "dangerousTokens": [{"category": "number", "value": "42"}], "stylePreferenceScore": 0.80},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000002", "outputText": "发布日期定为 2026-07-23。", "dangerousTokens": [{"category": "date", "value": "2026-07-23"}], "stylePreferenceScore": 0.80},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000003", "outputText": "请不要删除原始录音。", "dangerousTokens": [{"category": "negation", "value": "不要"}], "stylePreferenceScore": 0.80},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000004", "outputText": "参会人为小林。", "dangerousTokens": [{"category": "person", "value": "小林"}], "stylePreferenceScore": 0.80},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000005", "outputText": "复核工作由小林负责。", "dangerousTokens": [{"category": "action-owner", "value": "小林"}], "stylePreferenceScore": 0.80}
+      ]
+    },
+    {
+      "candidateID": "style-preferred-factually-unsafe-fixture",
+      "modelArtifactSHA256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "samples": [
+        {"sampleUUID": "69000000-0000-4000-8000-000000000001", "outputText": "预算优化为 24 万，更加清晰。", "dangerousTokens": [{"category": "number", "value": "24"}], "stylePreferenceScore": 0.99},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000002", "outputText": "发布日期调整为 2026-07-24。", "dangerousTokens": [{"category": "date", "value": "2026-07-24"}], "stylePreferenceScore": 0.99},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000003", "outputText": "请删除原始录音。", "dangerousTokens": [], "stylePreferenceScore": 0.99},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000004", "outputText": "参会人为小王。", "dangerousTokens": [{"category": "person", "value": "小王"}], "stylePreferenceScore": 0.99},
+        {"sampleUUID": "69000000-0000-4000-8000-000000000005", "outputText": "复核工作由小王负责。", "dangerousTokens": [{"category": "action-owner", "value": "小王"}], "stylePreferenceScore": 0.99}
+      ]
+    }
+  ]
+}

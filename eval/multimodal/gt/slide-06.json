@@ -1,0 +1,92 @@
+{
+ "id": "slide-06",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-06.jpg",
+ "lang": "zh",
+ "hard": [
+  "photo",
+  "perspective",
+  "glare",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "1e4fb10c95c606981d8c6ca4102c4432c2d6462c451580ce98655d3353d0c66f",
+ "gt": {
+  "title": "项目例会议程",
+  "subtitle": "8月例会",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "14:00  上周行动项回顾"
+   },
+   {
+    "level": 0,
+    "text": "14:15  支付接入方案评审"
+   },
+   {
+    "level": 1,
+    "text": "方案 A：聚合支付，费率 0.38%"
+   },
+   {
+    "level": 1,
+    "text": "方案 B：直连银行，费率 0.25%，开发 3 周"
+   },
+   {
+    "level": 0,
+    "text": "14:45  门店灰度计划"
+   },
+   {
+    "level": 0,
+    "text": "15:00  其他事项"
+   }
+  ],
+  "kpis": [],
+  "footer": "示例科技有限公司 · 内部资料",
+  "page": "14 / 18"
+ },
+ "text_lines": [
+  "项目例会议程",
+  "8月例会",
+  "14:00  上周行动项回顾",
+  "14:15  支付接入方案评审",
+  "方案 A：聚合支付，费率 0.38%",
+  "方案 B：直连银行，费率 0.25%，开发 3 周",
+  "14:45  门店灰度计划",
+  "15:00  其他事项",
+  "示例科技有限公司 · 内部资料",
+  "14 / 18"
+ ],
+ "qa": [
+  {
+   "q": "方案 A 的费率是多少？",
+   "a": "0.38%",
+   "match": "number"
+  },
+  {
+   "q": "方案 B 开发需要多久？",
+   "a": "3 周",
+   "match": "number"
+  },
+  {
+   "q": "门店灰度计划几点开始讨论？",
+   "a": "14:45",
+   "match": "exact"
+  },
+  {
+   "q": "这页幻灯片的标题是什么？",
+   "a": "项目例会议程",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "corporate",
+  "dense": false,
+  "photo": "projected"
+ },
+ "variant": {
+  "content": "agenda",
+  "theme": "corporate",
+  "photo": true
+ }
+}

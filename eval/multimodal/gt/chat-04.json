@@ -1,0 +1,97 @@
+{
+ "id": "chat-04",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-04.png",
+ "lang": "zh",
+ "hard": [
+  "low_contrast"
+ ],
+ "synthetic": true,
+ "image_sha256": "e32e6703d431b8f885f2c43385047ec6e2512bb60094c75aa19de2e5b69afa01",
+ "gt": {
+  "chat_title": "三年二班家长群",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "蒋南",
+    "is_self": false,
+    "time": "20:51",
+    "text": "各位家长：8月5日秋游，7:40在校门口集合，请带水和午餐",
+    "kind": "text"
+   },
+   {
+    "sender": "林欣",
+    "is_self": false,
+    "time": "",
+    "text": "需要另外交费吗？",
+    "kind": "text"
+   },
+   {
+    "sender": "蒋南",
+    "is_self": false,
+    "time": "",
+    "text": "车费每人45元，已从班费扣除",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "收到，谢谢老师",
+    "kind": "text"
+   },
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "20:58",
+    "text": "请问下雨还去吗",
+    "kind": "text"
+   },
+   {
+    "sender": "蒋南",
+    "is_self": false,
+    "time": "",
+    "text": "如遇下雨顺延一周，另行通知",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "三年二班家长群",
+  "蒋南：各位家长：8月5日秋游，7:40在校门口集合，请带水和午餐",
+  "林欣：需要另外交费吗？",
+  "蒋南：车费每人45元，已从班费扣除",
+  "我：收到，谢谢老师",
+  "冯晨：请问下雨还去吗",
+  "蒋南：如遇下雨顺延一周，另行通知"
+ ],
+ "qa": [
+  {
+   "q": "秋游是哪天？",
+   "a": "8月5日",
+   "match": "exact"
+  },
+  {
+   "q": "几点集合？",
+   "a": "7:40",
+   "match": "exact"
+  },
+  {
+   "q": "车费每人多少？",
+   "a": "45元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "lowc_light",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "school",
+  "theme": "lowc_light"
+ }
+}

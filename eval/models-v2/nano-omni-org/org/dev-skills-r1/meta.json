@@ -1,0 +1,125 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8130/v1",
+ "model": "nano-omni-org",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-29T17:19:41+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8130/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "/home/YOU/hack/claude-models/v2/out/nano-omni-org/org/dev-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "1d1c034f-8186-49fc-be7d-09e2a1a4286c",
+  "E2": "5959b59a-3f28-4dcb-a743-c60b0df310e4",
+  "E3": "637ec293-e876-41d9-8057-0c1544fe5428",
+  "E4": "d5e92ed8-ba5c-495e-824a-ce15dfae3a23",
+  "E5": "10c61797-ce39-4b05-849e-727a8195c020",
+  "E6": "c80d1bcd-9a8b-4b9a-b075-d474a7f9a098",
+  "E7": "b8be560c-d264-43a7-a38f-c1029881f867",
+  "E8": "4c83f1c2-f64d-47b9-b2bd-a756132b1538",
+  "E9": "cd290e79-f277-45a6-ae64-efdb2722dc17",
+  "E10": "a6fd75b3-938b-4373-9bf9-04ef098698b9",
+  "E11": "42429102-ef42-415e-86e1-9264552816cf",
+  "E12": "dd897ed3-ada6-46e4-91ed-33e42f8e9fe8",
+  "E13": "35af17d4-c95d-4452-bd18-96856b42b1c0",
+  "E14": "b07c0611-f71e-46ab-a68b-6cc7085d966f",
+  "E15": "e03dfcf8-ecee-415e-9235-3ef438bf92a0",
+  "E16": "0731f2f1-dbc4-46de-8944-0197c7eff842",
+  "E17": "377e329f-c75d-44b6-9ad8-6dcbbc9c29a7",
+  "E18": "6a7c9eaf-e67b-43d0-bdbc-f5a21de1fa72",
+  "E19": "5d18f169-cb84-4b47-8ed9-51be3dddd847",
+  "E20": "cf507cd2-a197-486c-8616-b9bcd2886567",
+  "E21": "41cfca38-56d6-49a2-9ef3-3582025384d6",
+  "E22": "53590e84-15bd-4f80-8343-dee0e43891aa",
+  "E23": "0b5e97f7-266c-4a09-86c7-2c04dce62996",
+  "E24": "c9d6d638-5f6d-42eb-93de-08bd553ec712",
+  "E25": "3d23c442-a46a-4d1c-8d89-0170f1e4c2c9",
+  "E26": "9f8a98b9-e8d1-4a37-8e01-063c4d8e8649",
+  "E27": "dbd7115c-cf47-416e-8767-ef77c1e1008e",
+  "E28": "66ae32f4-464e-437c-b61f-1808a3209c8e",
+  "E29": "5a9d62d7-28b3-4a83-b32e-0c4a4bb4d03b",
+  "E30": "40bd355c-ed6b-42d3-b99d-fc8f841426cb",
+  "E31": "c1934fe5-cdcf-4596-8e9b-d648e84bf101",
+  "E32": "31bd3e12-9e56-4560-91be-9a5dff6d515c",
+  "E33": "804dda1a-3e0b-46bc-9660-e105d962bed9",
+  "E34": "b88da26c-1803-428b-ae8e-db6f91a778e1",
+  "E35": "d89bc5af-83a1-4abe-9e38-ef2068cedf21",
+  "E36": "e0637934-1e2a-4d51-8399-0bcf583b9b97",
+  "E37": "f20e78e6-52ea-4b90-b152-1ee2e59ed58b",
+  "E38": "1b5977cf-824d-4658-a9ef-fa96579d366e",
+  "E39": "3b847d28-eff0-404f-b7be-7866597b0eef",
+  "E40": "e4c27f0f-22b6-46ac-bdf6-871c1af1f0ae",
+  "E41": "91de8154-6896-4cac-a40c-fc6e8b271b06",
+  "E42": "51175eb9-771f-4469-a1a4-d5cf8d750323",
+  "E43": "4e0af498-a15d-42df-8aa0-fecb628c434e",
+  "E44": "501a7fb4-a6be-4560-b6f7-c27a45f6d264",
+  "E45": "19bb7456-653b-489e-8cda-9180e491f756",
+  "E46": "a031011d-b065-46b8-9553-989814617546",
+  "E47": "46fd870f-11a1-41fd-a506-b89c15e46375"
+ },
+ "bare_max_tokens": null
+}

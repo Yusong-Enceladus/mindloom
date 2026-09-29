@@ -1,0 +1,99 @@
+{
+ "id": "receipt-07",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-07.jpg",
+ "lang": "en",
+ "hard": [
+  "similar_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "e4d3e079f2fb16cc2080705c9ca1a5d090ea8512333cfc1553364d8b5da269c6",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "Harborlane Coffee Co.",
+  "date": "2026-09-06",
+  "date_text": "09/06/2026 2:23 PM",
+  "time": "14:23",
+  "doc_no": "5483",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Latte (L)",
+    "qty": 2,
+    "unit": "ea",
+    "unit_price": "5.25",
+    "amount": "10.50"
+   },
+   {
+    "name": "Oat milk add-on",
+    "qty": 1,
+    "unit": "ea",
+    "unit_price": "0.60",
+    "amount": "0.60"
+   },
+   {
+    "name": "Latte (M)",
+    "qty": 2,
+    "unit": "ea",
+    "unit_price": "4.75",
+    "amount": "9.50"
+   }
+  ],
+  "subtotal": "20.60",
+  "discount": "0.00",
+  "tax": "1.29",
+  "total": "21.89",
+  "payment_method": "Mobile pay",
+  "tax_rate": 6.25
+ },
+ "text_lines": [
+  "Harborlane Coffee Co.",
+  "263 Orchard Road, Lakeside",
+  "Tel (555) 018-2160",
+  "Order #5483 Cashier 02",
+  "09/06/2026 2:23 PM",
+  "Latte (L) 2 5.25 10.50",
+  "Oat milk add-on 1 0.60 0.60",
+  "Latte (M) 2 4.75 9.50",
+  "Subtotal 20.60",
+  "Tax 6.25% 1.29",
+  "Total $21.89",
+  "Paid: Mobile pay",
+  "Thank you!",
+  "Returns within 14 days with receipt"
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$21.89",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Harborlane Coffee Co.",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-09-06",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$1.29",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "lang": "en",
+  "similar": true
+ }
+}

@@ -1,0 +1,33 @@
+{
+  "boundaryFractionWithin200Milliseconds": 0.8911174785100286,
+  "containsPrivateContent": false,
+  "corpusVersion": "1.0.0",
+  "datasetVersion": "1.6.2",
+  "invalidRangeWords": 0,
+  "kind": "forced-alignment-tuning-measurement",
+  "limitations": [
+    "English AMI tuning only; reference text is supplied, so this measures alignment rather than ASR accuracy.",
+    "AMI word timings are themselves automatically forced-aligned; deviations alone do not establish absolute word-boundary accuracy.",
+    "One meeting / four speakers; no Chinese timestamp accuracy or release-holdout claim.",
+    "200 ms fraction is descriptive, not a newly invented product acceptance threshold.",
+    "Raw out-of-range predictions are counted, not silently clamped."
+  ],
+  "manifestID": "ami-public-alignment-tuning-v1",
+  "maximumBoundaryErrorMilliseconds": 2879.9999999999727,
+  "meanBoundaryErrorMilliseconds": 108.23782234957241,
+  "medianBoundaryErrorMilliseconds": 30.000000000020677,
+  "modelArtifactID": "qwen3-forced-aligner-0.6b-8bit-0e1a68e9",
+  "modelRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+  "modelTreeSHA256": "8826e6c77a767e8370966e821357f96167fec399b67c829ae1c5efb9185d374e",
+  "networkDenied": true,
+  "p95BoundaryErrorMilliseconds": 589.9999999999887,
+  "releaseHoldout": false,
+  "runtimeRevision": "cae704f53bc32a3d0b606823828fbc5bedaaf388",
+  "samples": 16,
+  "schemaVersion": 1,
+  "selectionEligible": false,
+  "totalInferenceSeconds": 3.3369947916362435,
+  "words": 349,
+  "referenceTimingProvenance": "AMI manual transcripts with automatically forced-aligned word timings; not human phonetic boundary ground truth",
+  "referenceTimingDocumentation": "https://groups.inf.ed.ac.uk/ami/corpus/transcription.shtml"
+}

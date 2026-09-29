@@ -1,0 +1,31 @@
+{
+ "id": "notice-a",
+ "template": "notice",
+ "split": "dev",
+ "filename": "停水通知.docx",
+ "path": "data/notice-a.docx",
+ "sha256": "346d32f39026dfa13d9c0d1430436be5943ba6cde7ec687fe0226a274a1460d5",
+ "size": 234886,
+ "error": null,
+ "must_contain_image": [
+  "会议室",
+  "C-208"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "3 栋全楼停水",
+  "8:00-18:00"
+ ],
+ "summary_groups": [
+  [
+   "停水"
+  ],
+  [
+   "10月12日",
+   "10 月 12 日"
+  ]
+ ],
+ "doc_kind": "notice"
+}

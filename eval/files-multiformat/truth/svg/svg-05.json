@@ -1,0 +1,50 @@
+{
+ "file_id": "svg-05",
+ "path": "corpus/svg/svg-05.svg",
+ "type": "svg",
+ "ext": "svg",
+ "mime": "image/svg+xml",
+ "filename": "302 会议室 座位表.svg",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "302 会议室 座位表\n讲台\nA1\n邵婉清\nA2\n侯昊天\nA3\n韩若曦\nB1\n徐梓轩\nB2\n邓文博\nB3\n徐欣怡\n合成数据",
+ "key_lines": [
+  "邵婉清",
+  "徐欣怡"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "房间": "302 会议室",
+  "A1": "邵婉清",
+  "B3": "徐欣怡"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "A1 座是谁？",
+   "a": "邵婉清",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "B3 座是谁？",
+   "a": "徐欣怡",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "一共几个座位？",
+   "a": 6,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {},
+ "bytes": 3750,
+ "sha256": "44c17fd61beb1c52a85293f8a99447fdd8c5637314c1ac30c3d91bb5954d19d3",
+ "family": "seat_map"
+}

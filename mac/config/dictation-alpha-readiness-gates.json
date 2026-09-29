@@ -1,0 +1,110 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictation-alpha-readiness-gates",
+  "alphaGates": [
+    {
+      "id": "deterministic-vertical-slice",
+      "evidencePath": "artifacts/evidence/dictation-alpha/deterministic-vertical-slice.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["4.1", "4.2", "4.3"],
+      "blocker": "The hardware-free capture, ASR, protected polish, exactly-once insertion, history, and speaker-scheduling fixture must pass."
+    },
+    {
+      "id": "repository-check",
+      "evidencePath": "artifacts/evidence/environment/check-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["8.5"],
+      "blocker": "The complete repository gate must pass after the latest dictation implementation."
+    },
+    {
+      "id": "alpha-permissions",
+      "evidencePath": "artifacts/evidence/permissions/permission-lint-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["3.3", "8.1"],
+      "blocker": "Microphone and Accessibility declarations must remain minimal and fail closed."
+    },
+    {
+      "id": "local-asr-alpha-default",
+      "evidencePath": "config/inference-candidates.json",
+      "field": "selectionStatus",
+      "expectedValue": "alpha-default-selected-from-local-corpus",
+      "unmetStatus": "conditional",
+      "taskRefs": ["5.1", "5.2", "5.3", "5.4", "5.5"],
+      "blocker": "An exact local ASR runtime and artifact must pass the versioned alpha corpus before dictation alpha is ready."
+    },
+    {
+      "id": "built-in-microphone-live-smoke",
+      "evidencePath": "artifacts/evidence/dictation-alpha/builtin-microphone-validation.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["5.6", "8.1"],
+      "blocker": "The built-in default microphone path still needs a permission-granted, offline, installed-model device run."
+    },
+    {
+      "id": "installed-model-offline-loop",
+      "evidencePath": "artifacts/evidence/privacy/installed-model-dictation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["5.6", "6.6", "8.3", "8.4"],
+      "blocker": "The complete installed-model dictation loop must pass with outbound network denied and measured latency/memory."
+    },
+    {
+      "id": "local-polish-real-model-gate",
+      "evidencePath": "artifacts/evidence/local-text/validation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["6.1", "6.2", "6.6"],
+      "blocker": "The exact local Qwen runtime and artifact must pass the bilingual factual, deterministic-repeat, latency, memory, and privacy gates."
+    },
+    {
+      "id": "alpha-target-compatibility",
+      "evidencePath": "artifacts/evidence/dictation-alpha/target-compatibility-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["8.2"],
+      "blocker": "The selected TextEdit, Chrome, and VS Code alpha support set must pass direct, fallback, conflict, secure-field, clipboard, and exactly-once cases."
+    }
+  ],
+  "wholeProductGaps": [
+    {
+      "id": "process-tap-system-audio",
+      "scope": "both",
+      "evidencePath": "artifacts/evidence/SPIKE-CAP-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["PRD 8", "formal MVP/V1"],
+      "blocker": "Process Tap system-audio capture remains outside the dictation alpha and visible as a formal MVP/V1 gap."
+    },
+    {
+      "id": "second-output-device",
+      "scope": "both",
+      "evidencePath": "artifacts/evidence/SPIKE-CAP-001/matrix.json",
+      "field": "scenarios.5.status",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["PRD 8.5", "formal MVP/V1"],
+      "blocker": "A physical second-output route/change matrix is deferred and must not be hidden by dictation alpha readiness."
+    },
+    {
+      "id": "multi-speaker-global-person",
+      "scope": "both",
+      "evidencePath": "artifacts/evidence/SPIKE-SPK-001/recommended-memory-synthetic-smoke-summary.json",
+      "field": "releaseEligible",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["7.1", "7.2", "7.4"],
+      "blocker": "Real 1/2/3-person and cross-mode global identity evidence remains required for formal MVP/V1 readiness."
+    }
+  ]
+}

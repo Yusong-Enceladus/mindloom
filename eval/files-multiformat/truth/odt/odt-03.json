@@ -1,0 +1,64 @@
+{
+ "file_id": "odt-03",
+ "path": "corpus/odt/odt-03.odt",
+ "type": "odt",
+ "ext": "odt",
+ "mime": "application/vnd.oasis.opendocument.text",
+ "filename": "出差行程单（邱心怡）.odt",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "出差行程单（邱心怡）\n出差人：邱心怡\n事由：行业展会\n目的地：长沙\n日期\t车次/航班\t出发\t到达\n2026年8月21日\tMU8963\t杭州 10:15\t长沙 12:30\n2026年8月23日\tMU3753\t长沙 16:10\t杭州\n酒店：长沙望江酒店\n入住：2026年8月21日，共 2 晚\n确认号：BK118024\n房价：380元/晚\n住宿合计 760 元，按差旅标准报销。（合成数据）\n合成数据",
+ "key_lines": [
+  "2026年8月21日\tMU8963\t杭州 10:15\t长沙 12:30",
+  "确认号：BK118024",
+  "住宿合计 760 元，按差旅标准报销。（合成数据）"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "出差人": "邱心怡",
+  "去程": "MU8963",
+  "到达时间": "12:30",
+  "酒店确认号": "BK118024",
+  "晚数": 2,
+  "住宿合计": 760
+ },
+ "numbers": [
+  {
+   "value": 760,
+   "label": "住宿合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "去程车次/航班号是什么？",
+   "a": "MU8963",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "几点到达目的地？",
+   "a": "12:30",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "酒店确认号？",
+   "a": "BK118024",
+   "match": "exact"
+  },
+  {
+   "id": "q4",
+   "q": "住宿合计多少元？",
+   "a": 760,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 2535,
+ "sha256": "6370edeb488b1b4bc6d0b19a06c882305705649e09aad9dced78c3501f8996f7",
+ "family": "itinerary"
+}

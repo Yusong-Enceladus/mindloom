@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "appTarget": "BestASR",
+  "infoPlistFile": "App/Info.plist",
+  "entitlementsFile": "App/BestASR.entitlements",
+  "appSandboxEnabled": false,
+  "injectBaseEntitlements": false,
+  "requestPolicy": "on-demand-per-feature",
+  "requiredEntitlements": [
+    "com.apple.security.device.audio-input"
+  ],
+  "forbiddenEntitlements": [
+    "com.apple.security.app-sandbox",
+    "com.apple.security.automation.apple-events",
+    "com.apple.security.network.client",
+    "com.apple.security.network.server"
+  ],
+  "permissions": [
+    {
+      "id": "microphone",
+      "requirementRefs": [
+        "PRD-18.1"
+      ],
+      "usageDescriptionKey": "NSMicrophoneUsageDescription",
+      "usageDescription": "织机 uses the microphone only for recordings you start.",
+      "runtimeAuthorizationAPI": "AVCaptureDevice.authorizationStatus/requestAccess",
+      "requestTiming": "on-demand",
+      "deniedBehavior": "Keep import, history, and system-audio-independent features available; show a System Settings recovery action without reprompting in a loop."
+    },
+    {
+      "id": "system-audio",
+      "requirementRefs": [
+        "PRD-18.1",
+        "SYS-001..012"
+      ],
+      "usageDescriptionKey": "NSAudioCaptureUsageDescription",
+      "usageDescription": "织机 records audio only from the app or Mac output you choose for a recording.",
+      "runtimeAuthorizationAPI": "Core Audio Process Tap authorization at tap creation",
+      "requestTiming": "on-demand",
+      "deniedBehavior": "Create no tap or aggregate device, retain prior recordings, and show a System Settings recovery action without widening the selected source."
+    },
+    {
+      "id": "accessibility",
+      "requirementRefs": [
+        "PRD-18.1",
+        "DICT-006..008"
+      ],
+      "usageDescriptionKey": null,
+      "usageDescription": null,
+      "runtimeAuthorizationAPI": "AXIsProcessTrustedWithOptions(kAXTrustedCheckOptionPrompt)",
+      "requestTiming": "on-demand",
+      "deniedBehavior": "Do not inspect or write another app; preserve the transcript and offer manual copy plus a System Settings recovery action."
+    }
+  ],
+  "workerPolicy": {
+    "target": "InferenceWorker",
+    "protectedResourceEntitlements": [],
+    "networkEntitlements": [],
+    "rationale": "Inference receives only bounded local requests from the host and never requests TCC capture or Accessibility access."
+  }
+}

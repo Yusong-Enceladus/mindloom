@@ -1,0 +1,116 @@
+{
+  "conclusion" : "conditional",
+  "contractConclusion" : "pass",
+  "kind" : "text-insertion-policy-contract",
+  "liveCompatibilityEvaluated" : false,
+  "runID" : "51000000-0000-4000-8000-000000000001",
+  "scenarios" : [
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 1,
+      "expectedAttemptStatus" : "pass",
+      "observedAttemptStatus" : "pass",
+      "observedMethod" : "accessibility-selection",
+      "scenarioID" : "selection-replace-uses-accessibility",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "targetNotEditable",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "targetNotEditable",
+      "observedMethod" : "none",
+      "scenarioID" : "noneditable-target-fails-closed",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "secureTarget",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "secureTarget",
+      "observedMethod" : "none",
+      "scenarioID" : "secure-field-fails-closed",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "permissionDenied",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "permissionDenied",
+      "observedMethod" : "none",
+      "scenarioID" : "permission-denial-reads-and-writes-nothing",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "focusChanged",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "focusChanged",
+      "observedMethod" : "none",
+      "scenarioID" : "focus-race-does-not-write-new-target",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "selectionChanged",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "selectionChanged",
+      "observedMethod" : "none",
+      "scenarioID" : "selection-race-does-not-replace-stale-range",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 1,
+      "directWriteCount" : 1,
+      "expectedAttemptStatus" : "pass",
+      "observedAttemptStatus" : "pass",
+      "observedMethod" : "clipboard-paste",
+      "scenarioID" : "unsupported-accessibility-replacement-uses-clipboard-fallback",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 0,
+      "directWriteCount" : 1,
+      "expectedAttemptStatus" : "fail",
+      "expectedFailure" : "accessibilityWriteFailed",
+      "observedAttemptStatus" : "fail",
+      "observedFailure" : "accessibilityWriteFailed",
+      "observedMethod" : "none",
+      "scenarioID" : "unknown-accessibility-write-effect-never-risks-duplicate-paste",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "clipboardPasteCount" : 1,
+      "directWriteCount" : 0,
+      "expectedAttemptStatus" : "pass",
+      "observedAttemptStatus" : "pass",
+      "observedMethod" : "clipboard-paste",
+      "scenarioID" : "clipboard-race-never-overwrites-new-clipboard-content",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    }
+  ],
+  "schemaVersion" : 1,
+  "unmetCriteria" : [
+    "Accessibility permission and real AX element behavior require an unlocked-device run.",
+    "Apple editors, browser fields, Office, and chat applications remain in the SPIKE-INS-001 compatibility matrix."
+  ]
+}

@@ -1,0 +1,98 @@
+{
+ "file_id": "mp4-05",
+ "path": "corpus/mp4/mp4-05.mp4",
+ "type": "mp4",
+ "ext": "mp4",
+ "mime": "video/mp4",
+ "filename": "Open Science Day — Agenda.mp4",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "Open Science Day — Agenda\nSynthetic data · evaluation only\n合成数据\nOpen Science Day — Agenda\nDate: July 23, 2026\nVenue: Lab Annex 1\nCapacity: 60 participants\n合成数据\nTable\nTime\tSession\tSpeaker\n09:00\tWelcome and goals\tEthan Novak\n09:30\tHands-on session 1\tHana Sato\n11:00\tCase study\tGrace Liu\n13:30\tGroup exercise\tMaya Chen\n15:30\tWrap-up and feedback\tEthan Novak\n合成数据\nOpen Science Day — Agenda\nLunch is served 12:15–13:30. Synthetic agenda for evaluation only.\n合成数据",
+ "key_lines": [
+  "Venue: Lab Annex 1",
+  "Capacity: 60 participants",
+  "11:00\tCase study\tGrace Liu",
+  "13:30\tGroup exercise\tMaya Chen",
+  "Lunch is served 12:15–13:30. Synthetic agenda for evaluation only."
+ ],
+ "picture_only_lines": [
+  "Venue: Lab Annex 1",
+  "Capacity: 60 participants",
+  "11:00\tCase study\tGrace Liu",
+  "13:30\tGroup exercise\tMaya Chen",
+  "Lunch is served 12:15–13:30. Synthetic agenda for evaluation only."
+ ],
+ "key_fields": {
+  "date": "2026-07-23",
+  "venue": "Lab Annex 1",
+  "capacity": 60,
+  "case_study_speaker": "Grace Liu"
+ },
+ "numbers": [
+  {
+   "value": 60,
+   "label": "capacity"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Where is the workshop held?",
+   "a": "Lab Annex 1",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Who presents the case study?",
+   "a": "Grace Liu",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the group exercise start?",
+   "a": "13:30",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How many participants can attend?",
+   "a": 60,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "slides": 4,
+  "seconds": [
+   2.5,
+   2.5,
+   2.5,
+   2.5
+  ],
+  "duration_s": 10.0,
+  "audio": "none",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "Open Science Day — Agenda"
+   },
+   {
+    "start_s": 2.5,
+    "title": "Open Science Day — Agenda"
+   },
+   {
+    "start_s": 5.0,
+    "title": "Table"
+   },
+   {
+    "start_s": 7.5,
+    "title": "Open Science Day — Agenda"
+   }
+  ]
+ },
+ "bytes": 51454,
+ "sha256": "c1e9fb9427b68418658ce1e7318ee525b79207216db63ae7adf2c24316b09456",
+ "family": "agenda_en"
+}

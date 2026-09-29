@@ -1,0 +1,75 @@
+{
+ "file_id": "odp-04",
+ "path": "corpus/odp/odp-04.odp",
+ "type": "odp",
+ "ext": "odp",
+ "mime": "application/vnd.oasis.opendocument.presentation",
+ "filename": "Project Status Update_ Customer Portal v2.odp",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "Project Status Update: Customer Portal v2\nSynthetic data · evaluation only\n合成数据\nProject Status Update: Customer Portal v2\nOwner: Omar Haddad\nOverall status: Red\nBudget: USD 288,000\nBudget spent: 68%\n合成数据\nTable\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tin progress\nFull rollout\tplanned\n合成数据\nTop risk\nVendor delivery slipped by 10 days\n合成数据\nNext report\nNext update due on 2026-06-25. Synthetic report for evaluation only.\n合成数据\nMilestones\n合成数据",
+ "key_lines": [
+  "Owner: Omar Haddad",
+  "Overall status: Red",
+  "Budget: USD 288,000",
+  "Budget spent: 68%",
+  "Vendor delivery slipped by 10 days"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "owner": "Omar Haddad",
+  "status": "Red",
+  "budget_usd": 288000,
+  "spent_pct": 68,
+  "top_risk": "Vendor delivery slipped by 10 days"
+ },
+ "numbers": [
+  {
+   "value": 288000,
+   "label": "budget"
+  },
+  {
+   "value": 68,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Red",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 68,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Vendor delivery slipped by 10 days",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Omar Haddad",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "slides": 6,
+  "picture_only_slides": [
+   3
+  ],
+  "notes_slides": []
+ },
+ "bytes": 15147,
+ "sha256": "0792368b7c871418268d0839325aa1e48023332114fc3bc0c5750a8cb869c024",
+ "family": "status_en"
+}

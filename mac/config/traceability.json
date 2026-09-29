@@ -1,0 +1,261 @@
+{
+  "schemaVersion": 1,
+  "kind": "traceability",
+  "manifestID": "establish-v1-engineering-foundation-v1",
+  "entries": [
+    {
+      "requirementIDs": [
+        "SYS-001",
+        "SYS-002",
+        "SYS-003",
+        "SYS-004",
+        "SYS-005",
+        "SYS-006",
+        "SYS-007",
+        "SYS-008",
+        "SYS-009",
+        "SYS-010",
+        "SYS-011"
+      ],
+      "threatIDs": ["TM-01", "TM-02"],
+      "scenarioIDs": ["Process Tap boundary is evaluated"],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRProcessTapProbeTests/ProcessTapProbeTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-CAP-001/summary.json",
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json",
+        "artifacts/evidence/SPIKE-CAP-001/tcc-denial.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "REL-001",
+        "REL-002",
+        "REL-003",
+        "REL-004",
+        "REL-005",
+        "REL-006",
+        "REL-007",
+        "REL-008",
+        "REL-009"
+      ],
+      "threatIDs": ["TM-02", "TM-03", "TM-13"],
+      "scenarioIDs": [
+        "Crash recovery is evaluated",
+        "Worker crashes during recording",
+        "Inference backlog reaches limit",
+        "Permanent source retention under disk pressure",
+        "Conditional result blocks dependent commitment"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRAudioJournalProbeTests/AudioJournalProbeTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAudioTimelineProbeTests/AudioTimelineProbeTests.swift",
+        "Packages/BestASRCore/Tests/BestASRInferenceQueueProbeTests/InferenceQueueProbeTests.swift",
+        "Packages/BestASRCore/Tests/BestASRLongRecordingProbeTests/LongRecordingProbeTests.swift",
+        "Packages/BestASRCore/Tests/BestASRResourcePolicyProbeTests/ResourcePolicyProbeTests.swift",
+        "Tests/Shell/audio_decision_tests.sh"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-JRN-001/summary.json",
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json",
+        "artifacts/evidence/SPIKE-JRN-001/long-recording.json",
+        "artifacts/evidence/SPIKE-JRN-001/audio-decision-validation.json",
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json",
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json",
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "ASR-001",
+        "ASR-002",
+        "ASR-003",
+        "ASR-004",
+        "ASR-005",
+        "ASR-006",
+        "ASR-007",
+        "ASR-008",
+        "ASR-009",
+        "ASR-010"
+      ],
+      "threatIDs": ["TM-05", "TM-07", "TM-13"],
+      "scenarioIDs": [
+        "Comparable ASR run",
+        "Release holdout remains isolated",
+        "Offline inference verification"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRBenchmarkTests/BenchmarkMetricTests.swift",
+        "Packages/BestASRCore/Tests/BestASRBenchmarkTests/CorpusIsolationTests.swift",
+        "Packages/BestASRCore/Tests/BestASRCandidateAdaptersTests/CandidateAdapterTests.swift",
+        "Packages/BestASRCore/Tests/BestASRInferenceTests/InferenceContractTests.swift",
+        "Packages/BestASRCore/Tests/BestASROfflineProbeTests/OfflineSmokeSuiteTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-ASR-001/adapter-contract-smoke.json",
+        "artifacts/evidence/SPIKE-ASR-001/recommended-memory-smoke-summary.json",
+        "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-ASR-001/whisperkit-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-ASR-001/sherpa-onnx-recommended-memory-smoke.json",
+        "artifacts/evidence/benchmark/contract-smoke.json",
+        "artifacts/evidence/benchmark/inference-evidence-integrity.json",
+        "artifacts/evidence/privacy/offline-smoke-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "INTEL-001",
+        "INTEL-002",
+        "INTEL-003",
+        "INTEL-004",
+        "INTEL-005"
+      ],
+      "threatIDs": ["TM-05", "TM-10"],
+      "scenarioIDs": [
+        "Dangerous factual regression",
+        "Diagnostic generation",
+        "Offline inference verification"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRBenchmarkTests/LLMFactualGateTests.swift",
+        "Packages/BestASRCore/Tests/BestASRCoreTests/PrivacySafeDiagnosticsTests.swift",
+        "Packages/BestASRCore/Tests/BestASRLocalTextTests/LocalTextAdapterTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json",
+        "artifacts/evidence/privacy/offline-smoke-summary.json",
+        "artifacts/evidence/privacy/privacy-scan-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "DICT-016",
+        "DICT-017",
+        "DICT-018",
+        "DICT-019",
+        "DICT-020",
+        "GSPK-001",
+        "GSPK-002",
+        "GSPK-003",
+        "GSPK-004",
+        "GSPK-005",
+        "GSPK-006",
+        "GSPK-007",
+        "GSPK-008",
+        "GSPK-009",
+        "SPK-001",
+        "SPK-002",
+        "SPK-003",
+        "SPK-004",
+        "SPK-005",
+        "SPK-006",
+        "SPK-007",
+        "SYS-012"
+      ],
+      "threatIDs": ["TM-11"],
+      "scenarioIDs": [
+        "Equivalent global-person semantics across input modes"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRSpeakerRoutingTests/SpeakerRoutingTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSpeakerEvidenceTests/SpeakerEvidenceCollatorTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSpeakerEvidenceTests/SpeakerIdentityEvaluatorTests.swift",
+        "Tests/Shell/inference_evidence_tests.sh"
+      ],
+      "evidence": [
+        "fixture://Tests/Fixtures/SpeakerRouting/paired-routing.json",
+        "artifacts/evidence/SPIKE-SPK-001/recommended-memory-synthetic-smoke-summary.json",
+        "artifacts/evidence/SPIKE-SPK-001/fluid-automatic-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-SPK-001/fluid-oracle-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-SPK-001/argmax-automatic-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-SPK-001/argmax-oracle-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-SPK-001/sherpa-automatic-recommended-memory-smoke.json",
+        "artifacts/evidence/SPIKE-SPK-001/sherpa-oracle-recommended-memory-smoke.json",
+        "artifacts/evidence/benchmark/inference-evidence-integrity.json"
+      ]
+    },
+    {
+      "requirementIDs": ["DICT-006", "DICT-007", "DICT-008"],
+      "threatIDs": ["TM-04"],
+      "scenarioIDs": ["Conditional result blocks dependent commitment"],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRDeliveryTests/DeliveryInsertionPortTests.swift",
+        "Packages/BestASRCore/Tests/BestASRDeliveryTests/DeliveryVerdictTests.swift",
+        "Packages/BestASRCore/Tests/BestASRDeliveryTests/PasteboardPromiseTests.swift",
+        "Packages/BestASRCore/Tests/BestASRDeliveryTests/TextDelivererFixtureTests.swift",
+        "Tests/Shell/delivery_contract_tests.py",
+        "script/run_text_insertion_policy_probe.sh",
+        "Packages/BestASRCore/Tests/BestASREvidenceTests/GeneratedSpikeEvidenceTests.swift",
+        "script/run_text_insertion_live_probe.sh",
+        "script/run_text_insertion_compatibility_probe.sh"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-INS-001/contract-summary.json",
+        "artifacts/evidence/SPIKE-INS-001/live-summary.json",
+        "artifacts/evidence/SPIKE-INS-001/compatibility-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": ["REL-010", "REL-012"],
+      "threatIDs": ["TM-07"],
+      "scenarioIDs": [
+        "Verified model artifact",
+        "Digest or license is missing",
+        "Interrupted model update"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRModelManagerProbeTests/ModelManagerProbeTests.swift",
+        "Packages/BestASRCore/Tests/BestASRUpdateProbeTests/UpdateRollbackProbeTests.swift",
+        "Tests/Shell/artifact_manifest_tests.sh",
+        "Tests/Shell/supply_chain_tests.sh"
+      ],
+      "evidence": [
+        "artifacts/evidence/supply-chain/artifact-validation-summary.json",
+        "artifacts/evidence/supply-chain/model-activation-summary.json",
+        "artifacts/evidence/updates/update-rollback-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": ["REL-010", "REL-012", "REL-013"],
+      "threatIDs": ["TM-09", "TM-14"],
+      "scenarioIDs": [
+        "Database round-trip on another root path",
+        "Delete and person correction history",
+        "Derived output becomes stale"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRDomainTests/DerivedDocumentInvalidationTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMigrationProbeTests/CrossRootFixtureTransferTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMigrationProbeTests/PersonHistoryReducerTests.swift",
+        "Packages/BestASRCore/Tests/BestASRPersistenceProbeTests/PersistenceMigrationProbeTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/persistence/cross-root-roundtrip-summary.json",
+        "artifacts/evidence/persistence/migration-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "EXPORT-006",
+        "EXPORT-007",
+        "EXPORT-008",
+        "EXPORT-009"
+      ],
+      "threatIDs": ["TM-03", "TM-09", "TM-15"],
+      "scenarioIDs": [
+        "Export a retained source audio asset",
+        "Restore a complete archive on another Mac identity",
+        "Reject an unsafe or incomplete archive",
+        "Permanent source retention under disk pressure"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRPortableArchiveProbeTests/PortableArchiveProbeTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-MIG-001/summary.json",
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ]
+    }
+  ]
+}

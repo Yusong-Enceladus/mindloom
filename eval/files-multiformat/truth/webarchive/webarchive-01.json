@@ -1,0 +1,81 @@
+{
+ "file_id": "webarchive-01",
+ "path": "corpus/webarchive/webarchive-01.webarchive",
+ "type": "webarchive",
+ "ext": "webarchive",
+ "mime": "application/x-webarchive",
+ "filename": "清屿会堂酒店 - 预订确认.webarchive",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "7E9EF71D-BB93-5AF1-ABC6-D72985B440FC",
+  "ref": "talk_webarchive",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "partial",
+ "text": "清屿会堂酒店在线预订\n预订确认 · 清屿会堂酒店\n您的预订已确认，确认邮件已发送至 songyt@example.org。\n确认号：QYH-88213\n入住人：Elena Park\n入住：2026年10月15日（周四）14:00后\n离店：2026年10月17日（周六）12:00前\n房型：高级大床房（无烟）\n晚数：2晚\n房价：680元/晚（含早）\n总价：1,360元\n预订人：宋雨桐（清屿大学计算机学院）\n如需延迟入住（22:00以后），请提前致电前台 +86-10-5550-0199。\n合成数据\n清屿会堂酒店在线预订\n合成数据",
+ "key_lines": [
+  "确认号：QYH-88213",
+  "房型：高级大床房（无烟）",
+  "房价：680元/晚（含早）",
+  "总价：1,360元",
+  "如需延迟入住（22:00以后），请提前致电前台 +86-10-5550-0199。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "确认号": "QYH-88213",
+  "入住": "2026-10-15",
+  "离店": "2026-10-17",
+  "总价": 1360,
+  "房型": "高级大床房（无烟）"
+ },
+ "numbers": [
+  {
+   "value": 680,
+   "label": "房价"
+  },
+  {
+   "value": 1360,
+   "label": "总价"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "酒店确认号是多少？",
+   "a": "QYH-88213",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "总价多少元？",
+   "a": 1360,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "订的什么房型？",
+   "a": "高级大床房",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "前台电话是多少？",
+   "a": "5550-0199",
+   "match": "contains",
+   "accept": [
+    "+86-10-5550-0199"
+   ]
+  }
+ ],
+ "structure": {
+  "url": "https://booking.qingyuhall.example.com/confirm/QYH-88213",
+  "subresources": 1
+ },
+ "notes": "Safari 网页归档（二进制 plist），含一个 PNG 子资源。",
+ "bytes": 12009,
+ "sha256": "ee99df431b194fed4ead44ec42b2d6af00deff1e594899a32205a4b2481f5deb"
+}

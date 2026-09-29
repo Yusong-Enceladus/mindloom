@@ -1,0 +1,70 @@
+{
+ "file_id": "bmp-02",
+ "path": "corpus/bmp/bmp-02.bmp",
+ "type": "bmp",
+ "ext": "bmp",
+ "mime": "image/bmp",
+ "filename": "云杉建筑杯足球联赛积分榜.bmp",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "足球联赛积分\n银杏队  飞鹰队  青松队  火焰队  海豚队\n积分: 银杏队 18, 飞鹰队 15, 青松队 15, 火焰队 15, 海豚队 6\n合成数据",
+ "key_lines": [
+  "银杏队  飞鹰队  青松队  火焰队  海豚队",
+  "积分: 银杏队 18, 飞鹰队 15, 青松队 15, 火焰队 15, 海豚队 6"
+ ],
+ "picture_only_lines": [
+  "银杏队  飞鹰队  青松队  火焰队  海豚队",
+  "积分: 银杏队 18, 飞鹰队 15, 青松队 15, 火焰队 15, 海豚队 6"
+ ],
+ "key_fields": {
+  "第一名": "银杏队"
+ },
+ "numbers": [
+  {
+   "value": 18,
+   "label": "银杏队"
+  },
+  {
+   "value": 15,
+   "label": "飞鹰队"
+  },
+  {
+   "value": 15,
+   "label": "青松队"
+  },
+  {
+   "value": 15,
+   "label": "火焰队"
+  },
+  {
+   "value": 6,
+   "label": "海豚队"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分最高的是哪个队？",
+   "a": "银杏队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "火焰队积多少分？",
+   "a": 15,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   720,
+   448
+  ]
+ },
+ "bytes": 323638,
+ "sha256": "e253878d8bbb24084da69362ca7d2f6fd51f05bff1b0cf4b8a1ddc51cd2bcd5d",
+ "family": "league_chart"
+}

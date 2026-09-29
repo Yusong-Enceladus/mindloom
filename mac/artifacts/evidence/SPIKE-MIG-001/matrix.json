@@ -1,0 +1,105 @@
+{
+  "generatedAt" : "2026-08-30T03:48:53Z",
+  "kdf" : "PBKDF2-HMAC-SHA256/100000 + AES-256-GCM",
+  "kind" : "portable-migration-matrix",
+  "runID" : "3DC9765B-F3D7-480D-A67A-7C01DA7CC6F3",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "byteIdentical" : "true",
+        "sourceUnchanged" : "true"
+      },
+      "scenarioID" : "export-imported-original-byte-identical",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "byteIdentical" : "true",
+        "sourceUnchanged" : "true"
+      },
+      "scenarioID" : "export-native-capture-byte-identical",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "format" : "PCM16-WAV",
+        "sourceUnchanged" : "true"
+      },
+      "scenarioID" : "export-lossless-range-without-source-rewrite",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "archiveBytes" : "6531",
+        "kdfIterations" : "100000",
+        "plaintextMarkers" : "0"
+      },
+      "scenarioID" : "portable-archive-encrypted-export",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "destinationKeychainIndependent" : "true",
+        "sourceKeychainItemsUsed" : "0",
+        "stableUUIDsPreserved" : "true"
+      },
+      "scenarioID" : "restore-without-source-keychain",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "outcome" : "alreadyImported",
+        "writes" : "0"
+      },
+      "scenarioID" : "duplicate-import-is-idempotent",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "tamperRejected" : "true",
+        "truncationRejected" : "true",
+        "wrongSecretRejected" : "true"
+      },
+      "scenarioID" : "wrong-secret-tamper-and-truncation-rejected",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "partialCommit" : "false",
+        "stagingCreated" : "false"
+      },
+      "scenarioID" : "insufficient-space-preflight-rejects-before-staging",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "cancelled" : "true",
+        "orphanEncryptedOnly" : "true",
+        "recoveredStagingCount" : "1"
+      },
+      "scenarioID" : "cancel-and-kill-recovery-has-no-plaintext-staging",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "fromSchema" : "0",
+        "stableUUIDsPreserved" : "true",
+        "toSchema" : "1"
+      },
+      "scenarioID" : "legacy-n-minus-one-migrates-to-current",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-MIG-001"
+}

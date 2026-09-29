@@ -1,0 +1,75 @@
+{
+ "file_id": "odt-01",
+ "path": "corpus/odt/odt-01.odt",
+ "type": "odt",
+ "ext": "odt",
+ "mime": "application/vnd.oasis.opendocument.text",
+ "filename": "设备采购申请表_视觉智能实验室.odt",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "FFDA192E-7C8E-55C1-BF20-2633EBC41103",
+  "ref": "gpu_odt",
+  "events": [
+   "ev_gpu"
+  ]
+ },
+ "text_layer": "full",
+ "text": "清屿大学 大型仪器设备采购申请表\n申请单位：计算机学院 视觉智能实验室\n申请人：沈知遥\n经办人：顾青\n申请日期：2026年10月13日\n经费卡号：KY-2026-0371\n设备名称：8卡 GPU 服务器（HS-G8820）\n数量：2台\n预算金额：1,196,000元\n采购方式：三家比价后定点采购（附比价表）\n用途说明\n用于长视频理解与多模态记忆方向的模型训练，支撑实验室论文投稿与横向项目实验。现有集群 16 卡长期满载。\n审批意见\n（待学院审批）\n合成数据",
+ "key_lines": [
+  "申请日期：2026年10月13日",
+  "经费卡号：KY-2026-0371",
+  "数量：2台",
+  "预算金额：1,196,000元"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "经费卡号": "KY-2026-0371",
+  "预算金额": 1196000,
+  "申请日期": "2026-10-13",
+  "数量": 2
+ },
+ "numbers": [
+  {
+   "value": 1196000,
+   "label": "预算金额"
+  },
+  {
+   "value": 2,
+   "label": "数量"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "经费卡号是什么？",
+   "a": "KY-2026-0371",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "预算金额多少元？",
+   "a": 1196000,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "申请日期是哪天？",
+   "a": "10月13日",
+   "match": "contains",
+   "accept": [
+    "2026-10-13"
+   ]
+  },
+  {
+   "id": "q4",
+   "q": "申请采购几台？",
+   "a": 2,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 2551,
+ "sha256": "bf4b2106fcd886b243350c699f1ae1850d91700a69baaabdb9b9843e6b62b6d7"
+}

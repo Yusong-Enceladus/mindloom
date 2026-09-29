@@ -1,0 +1,83 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 74,
+   "retried": 9,
+   "latency_median_s": 4.166,
+   "latency_p95_s": 8.032,
+   "latency_total_s": 361.1,
+   "prompt_tokens_mean": 3874.7,
+   "completion_tokens_mean": 221.6,
+   "prompt_tokens_total": 321598,
+   "completion_tokens_total": 18394,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 76,
+   "ok": 40,
+   "ok_first_attempt": 20,
+   "retried": 56,
+   "latency_median_s": 9.487,
+   "latency_p95_s": 13.006,
+   "latency_total_s": 663.6,
+   "prompt_tokens_mean": 2973.5,
+   "completion_tokens_mean": 552.0,
+   "prompt_tokens_total": 225987,
+   "completion_tokens_total": 41951,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「我想续签」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「谈判建议」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.618,
+   "latency_p95_s": 10.952,
+   "latency_total_s": 33.1,
+   "prompt_tokens_mean": 4964.5,
+   "completion_tokens_mean": 488.8,
+   "prompt_tokens_total": 19858,
+   "completion_tokens_total": 1955,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 7.11,
+   "latency_p95_s": 8.531,
+   "latency_total_s": 20.4,
+   "prompt_tokens_mean": 1847,
+   "completion_tokens_mean": 442.7,
+   "prompt_tokens_total": 5541,
+   "completion_tokens_total": 1328,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 66,
+  "none": 7
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 59,
+  "none": 7,
+  "ask": 2,
+  "ask_suppressed": 5
+ },
+ "final_live_events": 17,
+ "status_line_chars_mean": 26.9,
+ "title_chars_mean": 6.6,
+ "wall_s": 1084.8,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

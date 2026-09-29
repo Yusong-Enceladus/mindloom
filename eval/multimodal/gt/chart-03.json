@@ -1,0 +1,94 @@
+{
+ "id": "chart-03",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-03.png",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "cf08b50518664645367a77b6f9a16c305a2ebf7aaafbbf5f8244f77e2c8741be",
+ "gt": {
+  "chart_type": "line",
+  "title": "仓库室内温度记录",
+  "x_label": "时间",
+  "y_label": "温度（℃）",
+  "unit": "℃",
+  "categories": [
+   "08:00",
+   "10:00",
+   "12:00",
+   "14:00",
+   "16:00",
+   "18:00",
+   "20:00"
+  ],
+  "series": [
+   {
+    "name": "温度",
+    "values": [
+     20.4,
+     24.9,
+     28.6,
+     32.4,
+     28.7,
+     26.0,
+     22.7
+    ],
+    "labels": [
+     "20.4",
+     "24.9",
+     "28.6",
+     "32.4",
+     "28.7",
+     "26.0",
+     "22.7"
+    ]
+   }
+  ],
+  "trend": {
+   "温度": "rise_then_fall"
+  }
+ },
+ "text_lines": [
+  "仓库室内温度记录",
+  "温度 08:00: 20.4",
+  "温度 10:00: 24.9",
+  "温度 12:00: 28.6",
+  "温度 14:00: 32.4",
+  "温度 16:00: 28.7",
+  "温度 18:00: 26.0",
+  "温度 20:00: 22.7"
+ ],
+ "qa": [
+  {
+   "q": "仓库室内温度记录中，14:00的温度是多少？",
+   "a": "32.4℃",
+   "match": "number"
+  },
+  {
+   "q": "温度最高的是哪一项？",
+   "a": "14:00",
+   "match": "exact"
+  },
+  {
+   "q": "温度的整体趋势？",
+   "a": "先升后降",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "line"
+ },
+ "variant": {
+  "chart": "line",
+  "topic": "temp",
+  "patterns": [
+   "rise_then_fall"
+  ],
+  "small": true
+ }
+}

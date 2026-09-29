@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "selectionStatus": "developer-challenger-not-selected",
+  "models": [
+    {
+      "id": "qwen3-asr-1.7b-8bit-a8379a2e",
+      "exactVersion": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/resolve/a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "source": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/tree/a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "sourceRevision": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "treeSHA256": "78e581bde728363d93dc3afc5e3b2bceae0acc2ee65805bb94d9f61e43a3edd1",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseRevision": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "licenseSource": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/blob/a8379a2e2f9e313c9292cdf1af4055ab56d50d55/README.md",
+      "requiredAttribution": "Qwen3-ASR by Qwen; MLX conversion by mlx-community using mlx-audio 0.3.1. Retain Apache-2.0 license and source attribution.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; evaluation host only, not a minimum-memory release claim",
+      "totalSizeBytes": 2467857511,
+      "networkBehavior": "Explicit pinned public download only. The evaluator constructs its tokenizer in memory and loads verified local files under a parent deny-all-network sandbox.",
+      "runtimeBehavior": "Developer-only Qwen3-ASR 1.7B MLX 8bit text / upstream floating audio encoder. Exact MLX Audio Swift revision cae704f53bc32a3d0b606823828fbc5bedaaf388; greedy auto-language decoding, 30 second chunks and 2048 tokens per chunk. No production routing change or verified model directory mutation.",
+      "distributionImpact": "External evaluation only; not included in the App catalog or release package. Native Swift/MLX requires no Python runtime.",
+      "productionCandidate": false,
+      "shipped": false,
+      "files": [
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/README.md",
+          "sizeBytes": 1008,
+          "sha256": "b356d4bdfbe7287b06b9b5ad084d9557a24ca98ca277a839beb2e682037b08f6"
+        },
+        {
+          "relativePath": "chat_template.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/chat_template.json",
+          "sizeBytes": 1161,
+          "sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/config.json",
+          "sizeBytes": 7188,
+          "sha256": "1b76b3b6c655fc54595da025f7a96474ad9fa86363303fbdd61a7d8483ccfaf7"
+        },
+        {
+          "relativePath": "generation_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/generation_config.json",
+          "sizeBytes": 142,
+          "sha256": "1da527824d81e07118facff437e03f2e24a23311e3bdeb2368973fe77e5f275c"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/model.safetensors",
+          "sizeBytes": 2463307541,
+          "sha256": "bf304b009cc7eca79283056f787b44c952d24ac22cec787b39732bba3c23c13c"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/model.safetensors.index.json",
+          "sizeBytes": 78968,
+          "sha256": "0a5d0ec11188602242ff81a9969883d0fdeb98cd5d85cd1413089d897c201af5"
+        },
+        {
+          "relativePath": "preprocessor_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/preprocessor_config.json",
+          "sizeBytes": 330,
+          "sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/tokenizer_config.json",
+          "sizeBytes": 12487,
+          "sha256": "4942d005604266809309cabc9f4e9cb89ce855d59b14681fdc0e1cc62ea26c4c"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    {
+      "id": "qwen3-forced-aligner-0.6b-8bit-0e1a68e9",
+      "exactVersion": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/resolve/0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "source": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/tree/0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "sourceRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "treeSHA256": "8826e6c77a767e8370966e821357f96167fec399b67c829ae1c5efb9185d374e",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "licenseSource": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/blob/0e1a68e91d815300c7c9754b2a7639378b23db15/README.md",
+      "requiredAttribution": "Qwen3 ForcedAligner by Qwen; MLX conversion by mlx-community using mlx-audio 0.3.1. Retain Apache-2.0 license and source attribution.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; evaluation host only, not a minimum-memory release claim",
+      "totalSizeBytes": 1276474460,
+      "networkBehavior": "Explicit pinned public download only. The evaluator constructs its tokenizer in memory and loads verified local files under a parent deny-all-network sandbox.",
+      "runtimeBehavior": "Developer-only native Qwen3 ForcedAligner 0.6B 8bit model. Exact MLX Audio Swift revision cae704f53bc32a3d0b606823828fbc5bedaaf388; verified local weights and in-memory tokenizer, bounded 16 kHz mono files with provided reference text. Model/tokenizer timestamp-ID contract is checked before inference. Raw timing deviations are compared with public AMI word references, which are automatically forced-aligned from human transcripts rather than human phonetic boundary ground truth.",
+      "distributionImpact": "External developer alignment evaluation only; not selected or included in the App catalog/release package. No source audio or existing corpus is moved or overwritten.",
+      "productionCandidate": false,
+      "shipped": false,
+      "files": [
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/README.md",
+          "sizeBytes": 1068,
+          "sha256": "28c8a32f6bb223a4082f6bc38062890abbc1c702b13957388e52465dfdc06a56"
+        },
+        {
+          "relativePath": "chat_template.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/chat_template.json",
+          "sizeBytes": 1161,
+          "sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/config.json",
+          "sizeBytes": 6940,
+          "sha256": "8dc126e1a4ac001acb02f3a9ca6277c8a20a25485fde293bc99eeab3aedc604d"
+        },
+        {
+          "relativePath": "generation_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/generation_config.json",
+          "sizeBytes": 115,
+          "sha256": "948d089b23bca1d214e768d59c4438365665f52ec6d33678f4062206b3fbbb8c"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/model.safetensors",
+          "sizeBytes": 1271924386,
+          "sha256": "be19ef8ac4326d032e7673342930b14c2df30bd68c1632493b0f563e30829f91"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/model.safetensors.index.json",
+          "sizeBytes": 79108,
+          "sha256": "766eb50873855eeb4d95ab92def358cfd173bfc8c7aabd8635ababa1edf6db79"
+        },
+        {
+          "relativePath": "preprocessor_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/preprocessor_config.json",
+          "sizeBytes": 330,
+          "sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/tokenizer_config.json",
+          "sizeBytes": 12666,
+          "sha256": "3ab80063f8511deb9566e6ad438d17b7a6277fcffd52d92854112f19d36bd81c"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+ "id": "invoice-b",
+ "template": "invoice",
+ "split": "test",
+ "filename": "发票.pdf",
+ "path": "data/invoice-b.pdf",
+ "sha256": "451aedc826837bd2cc75d272fb990df8282b38a89bcb07938c7535d01b227640",
+ "size": 27097,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "merchant": "云岭电器有限公司",
+  "doc_no": "05510987",
+  "date": "2026年10月02日"
+ },
+ "det_fields": {},
+ "type": "pdf",
+ "must_contain": [
+  "发票号码：05510987",
+  "云岭电器有限公司"
+ ],
+ "summary_groups": [
+  [
+   "发票"
+  ],
+  [
+   "云岭电器"
+  ]
+ ],
+ "doc_kind": "receipt_invoice"
+}

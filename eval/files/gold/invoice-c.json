@@ -1,0 +1,31 @@
+{
+ "id": "invoice-c",
+ "template": "invoice",
+ "split": "test",
+ "filename": "发票.pdf",
+ "path": "data/invoice-c.pdf",
+ "sha256": "2d7ad3e4fc78cc1de44f262599d2506b19f178d446bcc3b42c67a45d59f9851c",
+ "size": 26715,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "merchant": "穗禾里食品有限公司",
+  "doc_no": "06623145",
+  "date": "2026年10月11日"
+ },
+ "det_fields": {},
+ "type": "pdf",
+ "must_contain": [
+  "发票号码：06623145",
+  "穗禾里食品有限公司"
+ ],
+ "summary_groups": [
+  [
+   "发票"
+  ],
+  [
+   "穗禾里食"
+  ]
+ ],
+ "doc_kind": "receipt_invoice"
+}

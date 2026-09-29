@@ -1,0 +1,43 @@
+[
+ {
+  "id": "file-001",
+  "question": "一个 docx：物业通知「10 月 12 日（周日）8:00-18:00 全楼停水检修，请提前储水。青松物业 2026-10-08」。写 summary。",
+  "expected_skill": "file-read",
+  "ground_truth": "summary 说停水时间和发通知的物业；doc_kind=notice；fields=[]",
+  "expected_behavior": [
+   "summary 里的数字（10、12、8、18）都在正文里",
+   "不写「这是一份通知」之类的开场",
+   "doc_kind 不是票据类时 fields 为 []"
+  ]
+ },
+ {
+  "id": "file-002",
+  "question": "一个 PDF 发票：销售方「晨星文具有限公司」，发票号码 04412233，开票日期 2026年09月18日，价税合计 ¥1,280.00。",
+  "expected_skill": "file-read",
+  "ground_truth": "doc_kind=receipt_invoice；fields 含 merchant=晨星文具有限公司、doc_no=04412233、date=2026年09月18日、total=¥1,280.00（或 1,280.00）",
+  "expected_behavior": [
+   "每个字段的 value 都能在正文里逐字找到",
+   "不自己计算税额，正文没有的 tax 不输出",
+   "summary 里的金额写法与正文一致"
+  ]
+ },
+ {
+  "id": "file-003",
+  "question": "一个 xlsx：工作表「9月报销」，列 姓名/项目/金额/状态，5 行数据。",
+  "expected_skill": "file-read",
+  "ground_truth": "summary 说这是 9 月报销明细、按人列金额和状态；doc_kind=dataset；不求和",
+  "expected_behavior": [
+   "不写表格里没有的合计金额",
+   "fields 为 []"
+  ]
+ },
+ {
+  "id": "file-004",
+  "question": "用户拖进来一张聊天截图（kind=image）。",
+  "expected_skill": null,
+  "ground_truth": "不用 file-read：图片走 image-read",
+  "expected_behavior": [
+   "file-read 只在 kind=file 的读取文字准备好之后调用"
+  ]
+ }
+]

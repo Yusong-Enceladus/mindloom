@@ -1,0 +1,30 @@
+{
+ "id": "scan-b",
+ "template": "scan",
+ "split": "test",
+ "filename": "扫描件.pdf",
+ "path": "data/scan-b.pdf",
+ "sha256": "7a98c042ceda14b72bf26eab836dcb242855e0b4dc9361aaf3bff0b34c265b68",
+ "size": 490355,
+ "error": null,
+ "must_contain_image": [
+  "点单小程序项目会议纪要",
+  "聚合支付接入快、费率较高；直连方案费率为0.25%",
+  "秋季新品上市执行计划",
+  "8月14日"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "scanned_pdf",
+ "must_contain": [],
+ "summary_groups": [
+  [
+   "点单小程序"
+  ],
+  [
+   "会议",
+   "纪要"
+  ]
+ ],
+ "doc_kind": ""
+}

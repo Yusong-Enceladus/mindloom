@@ -1,0 +1,27 @@
+{
+ "id": "expense-c",
+ "template": "expense",
+ "split": "test",
+ "filename": "报销明细.xlsx",
+ "path": "data/expense-c.xlsx",
+ "sha256": "4e5da11620f3619905f21720996aafa212dd7ceb574f55130d7fbe66a44e564f",
+ "size": 5561,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "## 工作表：11月报销",
+  "| 吴十 | 茶歇 |"
+ ],
+ "summary_groups": [
+  [
+   "报销"
+  ],
+  [
+   "11月"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

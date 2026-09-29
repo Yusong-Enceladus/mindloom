@@ -1,0 +1,80 @@
+{
+ "file_id": "png-01",
+ "path": "corpus/png/png-01.png",
+ "type": "png",
+ "ext": "png",
+ "mime": "image/png",
+ "filename": "loss曲线_run42.png",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "7E3473A9-223D-5463-B8AE-EDF0763A10C7",
+  "ref": "paper_png",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "none",
+ "text": "run42 训练/验证 loss（LoomNet）\n2k  6k  10k  14k  18k\ntrain: 2k 1.84, 6k 1.02, 10k 0.71, 14k 0.52, 18k 0.44\nval: 2k 1.91, 6k 1.1, 10k 0.76, 14k 0.55, 18k 0.412\nbest val @ 18k: 0.412\nlr 3e-4 · cosine\nloss\n合成数据",
+ "key_lines": [
+  "2k  6k  10k  14k  18k",
+  "train: 2k 1.84, 6k 1.02, 10k 0.71, 14k 0.52, 18k 0.44",
+  "val: 2k 1.91, 6k 1.1, 10k 0.76, 14k 0.55, 18k 0.412",
+  "best val @ 18k: 0.412",
+  "lr 3e-4 · cosine"
+ ],
+ "picture_only_lines": [
+  "2k  6k  10k  14k  18k",
+  "train: 2k 1.84, 6k 1.02, 10k 0.71, 14k 0.52, 18k 0.44",
+  "val: 2k 1.91, 6k 1.1, 10k 0.76, 14k 0.55, 18k 0.412",
+  "best val @ 18k: 0.412",
+  "lr 3e-4 · cosine"
+ ],
+ "key_fields": {
+  "best_val_loss": 0.412,
+  "best_step": "18k",
+  "lr": "3e-4"
+ },
+ "numbers": [
+  {
+   "value": 0.412,
+   "label": "最佳验证 loss"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "最佳验证 loss 是多少？",
+   "a": 0.412,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "最佳验证 loss 出现在第几步？",
+   "a": "18k",
+   "match": "contains",
+   "accept": [
+    "18000",
+    "1.8万"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "图里标注的学习率是多少？",
+   "a": "3e-4",
+   "match": "contains",
+   "accept": [
+    "0.0003"
+   ]
+  }
+ ],
+ "structure": {
+  "size": [
+   1200,
+   760
+  ]
+ },
+ "bytes": 43030,
+ "sha256": "809594d3e5973365d95fc08d5d2a6c5c43fcccc083980bd364e3124c47826f69"
+}

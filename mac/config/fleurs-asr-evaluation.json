@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "kind": "fleurs-public-asr-evaluation-plan",
+  "datasetID": "google/fleurs",
+  "datasetRevision": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
+  "source": "https://huggingface.co/datasets/google/fleurs",
+  "license": "CC-BY-4.0",
+  "licenseNotice": "Legal/FLEURS-Corpus-NOTICE-CC-BY-4.0.txt",
+  "split": "dev",
+  "manifestID": "fleurs-public-asr-tuning-v1",
+  "version": "1.0.0",
+  "runID": "632c6f8b-dd80-5f21-bb7d-77a8f4017f99",
+  "stageRunIDs": {
+    "zh-CN": "7d8cf011-dca8-4da2-ab70-618d82774625",
+    "en-US": "1c46fb1f-49bf-4980-8c43-400f8404dc0c"
+  },
+  "sampleNamespace": "852f91d7-7eee-5ecb-b3a2-493dd8b16278",
+  "selection": {
+    "strategy": "sha256-stratified-gender-duration",
+    "referenceField": "normalized_transcription",
+    "samplesPerGenderAndBand": 4,
+    "durationBands": [
+      {
+        "id": "short",
+        "minimumSeconds": 3.0,
+        "maximumSecondsExclusive": 7.0
+      },
+      {
+        "id": "medium",
+        "minimumSeconds": 7.0,
+        "maximumSecondsExclusive": 12.0
+      },
+      {
+        "id": "long",
+        "minimumSeconds": 12.0,
+        "maximumSecondsExclusive": 20.000001
+      }
+    ]
+  },
+  "subsets": [
+    {
+      "id": "cmn_hans_cn",
+      "language": "zh-CN",
+      "languageTag": "mandarin",
+      "metadata": {
+        "fileName": "dev.tsv",
+        "url": "https://huggingface.co/datasets/google/fleurs/resolve/70bb2e84b976b7e960aa89f1c648e09c59f894dd/data/cmn_hans_cn/dev.tsv",
+        "sizeBytes": 205248,
+        "sha256": "6b4efd804b543048feb278db06f3b58b5ea171cdd4ba072e328ad630ca25384b"
+      },
+      "audioArchive": {
+        "fileName": "dev.tar.gz",
+        "url": "https://huggingface.co/datasets/google/fleurs/resolve/70bb2e84b976b7e960aa89f1c648e09c59f894dd/data/cmn_hans_cn/audio/dev.tar.gz",
+        "sizeBytes": 217347747,
+        "sha256": "3bc33212d5974eef7feb04bc4792458d6cd7e14ff10a1a24772f3c45ea87a822"
+      }
+    },
+    {
+      "id": "en_us",
+      "language": "en-US",
+      "languageTag": "english",
+      "metadata": {
+        "fileName": "dev.tsv",
+        "url": "https://huggingface.co/datasets/google/fleurs/resolve/70bb2e84b976b7e960aa89f1c648e09c59f894dd/data/en_us/dev.tsv",
+        "sizeBytes": 213065,
+        "sha256": "9d57ee7e91e9d4c92edb39f6bbea668ef8dc2a3ff96eb510d5580b2ad05d17ec"
+      },
+      "audioArchive": {
+        "fileName": "dev.tar.gz",
+        "url": "https://huggingface.co/datasets/google/fleurs/resolve/70bb2e84b976b7e960aa89f1c648e09c59f894dd/data/en_us/audio/dev.tar.gz",
+        "sizeBytes": 171250900,
+        "sha256": "2658fda72f199e12676ecac9415094667a4e14e149b146e568ea00b2a2f0954c"
+      }
+    }
+  ],
+  "syntheticComponent": {
+    "manifestID": "product-synthetic-alpha-asr-v1",
+    "version": "1.1.0"
+  }
+}

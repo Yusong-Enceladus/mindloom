@@ -1,0 +1,666 @@
+{
+ "summary": {
+  "items": 51,
+  "decision_accuracy": 0.98,
+  "count_exact": 0.784,
+  "part_precision": 0.927,
+  "part_recall": 0.927,
+  "part_f1": 0.927,
+  "oversplit_single": 0,
+  "unsplit_multi": 1,
+  "salvaged": 1,
+  "invalid": 0,
+  "skill_version": "1.1.1",
+  "prompt_hash": "116cc81338c06f19",
+  "model": "qwen3.6-35b-a3b-nvfp4"
+ },
+ "items": [
+  {
+   "rep": 0,
+   "ref": "m01",
+   "gold": 3,
+   "pred": 4,
+   "matched": 3,
+   "gists": [
+    "存档读档崩溃，周五前修掉",
+    "森林关卡帧率低，减半粒子",
+    "手绘风格面试，周三下午两点",
+    "成都展倾向三乘六方案"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m02",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "房租涨至12960，月底答复续租",
+    "周五前交苗苗插班户口本和疫苗证明",
+    "陈医生复诊改至周四下午四点"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m03",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "分成比例待汇报，预付款拆两期",
+    "联系樱桥翻译，许蔓导出算字数",
+    "周一锁版构建，二十号前评审"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m04",
+   "gold": 3,
+   "pred": 0,
+   "matched": 0,
+   "gists": [],
+   "valid": false,
+   "salvaged": true
+  },
+  {
+   "rep": 0,
+   "ref": "m05",
+   "gold": 2,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "游戏配乐三首，十一月五号前交",
+    "小满婚礼歌改编，问副歌加和声"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m06",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "旧存档兼容修复，今晚打新包",
+    "梁晨面试约在周三下午两点",
+    "展位费三乘六一万二，周四前定"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m07",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "梁晨面试通过下月入职",
+    "周四给陆骁背包地图图标",
+    "考虑换有自然光的房子"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m08",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "周四家长会，插班家长带体检表",
+    "婚礼歌加和声，林听雨发小样",
+    "明天看创意园120平办公室"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m09",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "Steam Deck 优化达标，周五提交审核",
+    "日本文本已发，需正式报价单",
+    "成都展定展位，周四前交物料",
+    "下午两点梁晨面试"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m10",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "老板同意分成，要求PC独占十二个月",
+    "樱桥报价三万八，十一月十号交付",
+    "试玩版评审定在二十一号上午"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m11",
+   "gold": 3,
+   "pred": 4,
+   "matched": 3,
+   "gists": [
+    "创意园采光好但贵且远",
+    "王建平同意涨5%至12600",
+    "周四下午五点看牙",
+    "苗苗入园材料已备好"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m12",
+   "gold": 3,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "日文版翻译报价、术语表及试玩版UI翻译",
+    "成都展日文宣传单制作"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m13",
+   "gold": 5,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "构建检查单及图标确认",
+    "发logo、做易拉宝、发offer",
+    "催主题曲小样并发参考",
+    "晚上七点家长会带体检表"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m14",
+   "gold": 3,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "合同分成、独占期、预付款及日文化费用",
+    "21号评审会议邀请及主讲人确认"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m15",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "苗苗下周一入园，备换洗衣物水杯",
+    "让林听雨删掉婚礼歌八个小节",
+    "游戏配乐定竹笛加合成器，节奏快"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m16",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "Steam 审核中，过审后发郑毅",
+    "易拉宝下周一出稿，灯箱报价四千五",
+    "梁晨十一月二号入职，本周订电脑",
+    "不搬办公室，续租一年涨百分之五"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m18",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "试玩版已交审核，21号评审，风险是打回",
+    "合同基本谈妥，等法务确认独占条款",
+    "配乐三首两万四，20号出小样",
+    "办公室续租一年，下周二签"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m19",
+   "gold": 2,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "苗苗入园物品及绣名字",
+    "感谢介绍婚礼歌，承诺出席"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m20",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "Steam 审核通过，评审前跑流程",
+    "术语表整理好，今天发给周凛",
+    "缺软著证书，本周开始办，陆骁整理代码"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m21",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "苗苗入园哭了五分钟，下午搭积木",
+    "周二签续租合同，备执照和押金",
+    "易拉宝主标题字太小，让放大一倍"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m22",
+   "gold": 2,
+   "pred": 3,
+   "matched": 2,
+   "gists": [
+    "副歌鼓声调低",
+    "森林关歌曲本周开始写",
+    "小满婚礼歌需做伴奏"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m23",
+   "gold": 3,
+   "pred": 4,
+   "matched": 3,
+   "gists": [
+    "演示流程及存档准备",
+    "软著源代码整理完成",
+    "用户手册今天加急提交",
+    "梁晨设备十一月二号前到"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m24",
+   "gold": 2,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "明天签合同，押金当面转并开收据",
+    "十一月五至八日出差，订两间双床"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m25",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "销量不到五万份自动取消独占",
+    "术语表十二个地名读音待确认",
+    "苗苗不吃胡萝卜，明天跟孟老师说"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m26",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "开场动画加跳过按钮，24号前出新包",
+    "合同补充协议签完寄回，打首笔十五万",
+    "成都展展位背板右下角留发行 logo"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m27",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "签续租合同，月租一万二六，押金两万五",
+    "评审反馈不错，开场动画两天改完",
+    "软著材料齐，预计十一月十号下证"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m28",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "地名读音表已发，周四前确认",
+    "入职前需看美术规范及原画",
+    "下周三亲子运动会穿运动鞋"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m29",
+   "gold": 4,
+   "pred": 3,
+   "matched": 1,
+   "gists": [
+    "修bug打新包，替换主题曲进试玩版",
+    "软著申请日期需具体到日",
+    "中午一起点外卖"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m30",
+   "gold": 4,
+   "pred": 5,
+   "matched": 4,
+   "gists": [
+    "新品节出新包、确认素材及监控崩溃",
+    "十一月初订两间双床酒店",
+    "加购两个插座",
+    "寄回合同并催预付款",
+    "下周三参加亲子运动会"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m31",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "补充协议明天寄郑毅，发单号",
+    "答应做伴娘，11月1日6点到",
+    "成都酒店两间双床四晚三千零四十"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m32",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "新包上传Steam生效，沈棠下午测试",
+    "美术规范发给梁晨，熟悉原画",
+    "日文UI翻完，试玩版锁版，UI延至正式版",
+    "软著日期改9月30日重提，不影响加急"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m33",
+   "gold": 2,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "补充协议首付款流程及发票",
+    "市场部三人去成都展会轮班"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m34",
+   "gold": 5,
+   "pred": 5,
+   "matched": 5,
+   "gists": [
+    "试玩版新包生效，新品节掌机测试没崩",
+    "补充协议寄到，下周到账十五万预付款",
+    "主题曲定稿，林听雨写森林关，十一月五号交",
+    "软著加急，预计十一月十号下证",
+    "展会酒店等搞定，差易拉宝终稿"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m35",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "苗苗运动鞋已买，你的在鞋柜",
+    "伴娘服已寄，不合身找裁缝改",
+    "续租合同收据发票放前台"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m36",
+   "gold": 4,
+   "pred": 5,
+   "matched": 4,
+   "gists": [
+    "正式版请林听雨加片尾曲，预算一万内",
+    "梁晨画森林关场景，周五美术评审",
+    "续租后刷墙买落地灯",
+    "软著下证后扫描放共享盘",
+    "尝试每周三下午不开会"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m37",
+   "gold": 3,
+   "pred": 3,
+   "matched": 3,
+   "gists": [
+    "预热页上线，愿望单涨八百，截图发群",
+    "运动会改到周四，因周三下雨",
+    "询问伴娘服，婚礼彩排七点在酒店"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m38",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "伴娘服改腰围，婚礼前彩排",
+    "苗苗运动会改期，上午请假",
+    "正式版文本十一月定稿",
+    "新品节早上盯崩溃报告"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m39",
+   "gold": 4,
+   "pred": 4,
+   "matched": 4,
+   "gists": [
+    "试玩版老显卡崩溃，商店页写已知问题",
+    "易拉宝终稿已发印刷厂，11/3发成都",
+    "远帆首笔15万到账，发票已寄",
+    "梁晨工位安排在何一苇旁，周五办门禁"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "m40",
+   "gold": 2,
+   "pred": 2,
+   "matched": 2,
+   "gists": [
+    "剧情文本延期至12月10日交付",
+    "成都展日文宣传单排版完成"
+   ],
+   "valid": true,
+   "salvaged": false
+  },
+  {
+   "rep": 0,
+   "ref": "s01",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "n01",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s02",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s03",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": false,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "n02",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s04",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "m17",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": false,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "n03",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s05",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": false,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s06",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": false,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "n04",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": true,
+   "gists": []
+  },
+  {
+   "rep": 0,
+   "ref": "s07",
+   "gold": 1,
+   "pred": 0,
+   "prefiltered": false,
+   "gists": []
+  }
+ ]
+}

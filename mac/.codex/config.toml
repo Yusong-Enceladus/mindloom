@@ -1,0 +1,3 @@
+# Keep third-party tool telemetry disabled for every command Codex launches.
+[shell_environment_policy]
+set = { DO_NOT_TRACK = "1" }

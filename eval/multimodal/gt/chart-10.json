@@ -1,0 +1,74 @@
+{
+ "id": "chart-10",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-10.png",
+ "lang": "en",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "33e50d1d94941206a86b6f7e380d89592c65c276baae0e4333d3db5cfc5fc2fc",
+ "gt": {
+  "chart_type": "pie",
+  "title": "Sessions by platform",
+  "x_label": "",
+  "y_label": "",
+  "unit": "%",
+  "categories": [
+   "Web",
+   "iOS",
+   "Android",
+   "Mini-program",
+   "Other"
+  ],
+  "series": [
+   {
+    "name": "Share",
+    "values": [
+     42.6,
+     20.3,
+     20.0,
+     14.7,
+     2.4
+    ],
+    "labels": [
+     "42.6%",
+     "20.3%",
+     "20.0%",
+     "14.7%",
+     "2.4%"
+    ]
+   }
+  ],
+  "trend": {}
+ },
+ "text_lines": [
+  "Sessions by platform",
+  "Share Web: 42.6%",
+  "Share iOS: 20.3%",
+  "Share Android: 20.0%",
+  "Share Mini-program: 14.7%",
+  "Share Other: 2.4%"
+ ],
+ "qa": [
+  {
+   "q": "In 'Sessions by platform', what is the value for iOS (Share)?",
+   "a": "20.3%",
+   "match": "number"
+  },
+  {
+   "q": "Which category has the highest Share?",
+   "a": "Web",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "pie"
+ },
+ "variant": {
+  "chart": "pie",
+  "lang": "en"
+ }
+}

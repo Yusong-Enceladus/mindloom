@@ -1,0 +1,22 @@
+[
+ {
+  "id": "recall-001",
+  "question": "（其它 Agent 问）用户的咖啡馆开业现在进展到哪一步了？",
+  "expected_skill": "recall",
+  "ground_truth": "返回「星河咖啡馆开业筹备」事件的 status_line 与带出处的 status_facts",
+  "expected_behavior": [
+   "只读",
+   "返回事件标题、现在到哪一步和出处 item_id",
+   "不返回音频或声纹"
+  ]
+ },
+ {
+  "id": "recall-neg-001",
+  "question": "把这条新口述归到咖啡馆事件。",
+  "expected_skill": "event-assign",
+  "ground_truth": "写操作不属于 recall",
+  "expected_behavior": [
+   "不触发 recall"
+  ]
+ }
+]

@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-report",
+  "conclusion": "conditional",
+  "verified": false,
+  "releaseEligible": false,
+  "deliveryStatus": "incomplete",
+  "gatesSHA256": "e5dad9fc0147a4d9fdd7acebdbb38d836b6433be4c3181f955e1035bbfaa89e9",
+  "tasksSHA256": "3b764f32731b65a84d7c51237647903b10823ea70b6a0af727b6857ea1979064",
+  "gateCounts": {
+    "pass": 15,
+    "fail": 0,
+    "conditional": 6
+  },
+  "completedTaskCount": 67,
+  "pendingTaskCount": 6,
+  "gates": [
+    {
+      "id": "full-repository-check",
+      "evidencePath": "artifacts/evidence/environment/check-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "1.5",
+        "8.3"
+      ],
+      "blocker": "The complete build, test, privacy, and artifact pipeline must pass after the latest source change.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "a046c0eb2ecd689b1d48788d186442c2a98c811215ece1f151484757a033c5a4"
+    },
+    {
+      "id": "live-process-tap-boundary",
+      "evidencePath": "artifacts/evidence/SPIKE-CAP-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "4.1"
+      ],
+      "blocker": "The live Process Tap watermark matrix must pass selected/nonselected, helper, restart, silence, device, permission, and cleanup cases.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "e96c32ee876d1aeaee259fff86fa622df0e6e6f03ca328769c4738dc5acced0b"
+    },
+    {
+      "id": "audio-journal-decision",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "4.4",
+        "4.7"
+      ],
+      "blocker": "Conditional journal evidence must remain visible until live device and physical storage boundaries are resolved.",
+      "status": "conditional",
+      "observedValue": "conditional",
+      "evidenceSHA256": "e5c9378509b9b85dff3d539b4f7c87478156dae1557ff25f0690010e4efd5533"
+    },
+    {
+      "id": "two-hour-recording",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/long-recording.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "4.5"
+      ],
+      "blocker": "A complete two-hour report is required; synthetic device events do not replace the remaining physical device matrix.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "af27763ef46dd5e80f7b6bad4a18ba26a7d655c511b280b7c73c44a65a1d567a"
+    },
+    {
+      "id": "audio-decision-cross-check",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/audio-decision-validation.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "4.7"
+      ],
+      "blocker": "ADR-0003 and the technical design must match the digests and aggregate conclusion of all capture, timeline, journal, endurance, and worker evidence.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "0fc68e2e2ae0f4913f271f35130f70a9958c06b373312eac76f9eb7962602873"
+    },
+    {
+      "id": "ax-insertion-live-probe",
+      "evidencePath": "artifacts/evidence/SPIKE-INS-001/live-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "5.1"
+      ],
+      "blocker": "The unlocked-device Accessibility fixture must pass direct insertion, rejection, race, and clipboard fallback cases without a wrong-target write.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "5c570ac05bea07b52df99f8908cf42854de3fd1ffdef03df666a4ff86a6bc40e"
+    },
+    {
+      "id": "ax-insertion-compatibility",
+      "evidencePath": "artifacts/evidence/SPIKE-INS-001/compatibility-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "5.2"
+      ],
+      "blocker": "TextEdit, Chrome, Word, Outlook, rich-text, and Electron evidence passes; a controlled blank Terminal target still needs repeated success, latency, fallback, and side-effect evidence.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "f34e8cad88a2ad8f248ef4a3921282e28b9798af3e9e236a14917a788aba61e2"
+    },
+    {
+      "id": "xpc-real-model-boundary",
+      "evidencePath": "artifacts/evidence/SPIKE-XPC-001/comparison.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "5.4"
+      ],
+      "blocker": "The XPC decision remains conditional until real-model, 16 GB, and signed-release measurements pass.",
+      "status": "conditional",
+      "observedValue": "conditional",
+      "evidenceSHA256": "d5610d24f2d4646ec2335d8f54b22d2edab8a7545d04c67215bc57d72791eefe"
+    },
+    {
+      "id": "asr-release-device-matrix",
+      "evidencePath": "artifacts/evidence/SPIKE-ASR-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "6.4",
+        "6.5"
+      ],
+      "blocker": "Pinned real runtimes and model digests passed a recommended-memory smoke; the full shared release corpus still needs a 16 GB minimum-support device plus thermal and long-session gates.",
+      "status": "conditional",
+      "observedValue": null,
+      "evidenceSHA256": ""
+    },
+    {
+      "id": "speaker-release-device-matrix",
+      "evidencePath": "artifacts/evidence/SPIKE-SPK-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "6.7"
+      ],
+      "blocker": "The recommended-memory synthetic four-input diarization/identity smoke passed; the 16 GB, authorized real-human device-lab/private-consented, release-holdout, correction-UX, license, and packaging matrices remain pending.",
+      "status": "conditional",
+      "observedValue": null,
+      "evidenceSHA256": ""
+    },
+    {
+      "id": "candidate-default-selection",
+      "evidencePath": "config/inference-candidates.json",
+      "field": "selectionStatus",
+      "expectedValue": "release-default-selected-from-device-matrix",
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "6.11"
+      ],
+      "blocker": "No default inference candidate may be selected before both ASR and speaker real-device release matrices, license reviews, and packaging gates pass.",
+      "status": "conditional",
+      "observedValue": "alpha-default-selected-from-local-corpus",
+      "evidenceSHA256": "9c53e4265d8a429beb1ef970872f83f69689334a48e3038c381c7e4b652018cb"
+    },
+    {
+      "id": "inference-evidence-integrity",
+      "evidencePath": "artifacts/evidence/benchmark/inference-evidence-integrity.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "6.11"
+      ],
+      "blocker": "Candidate registry, fixture artifacts, model digests, and ASR/LLM/resource reports must cross-reference exactly.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "72fa50b4574ed89b704e4964ddf52ae59175395b8c413f8f38d639934202c34b"
+    },
+    {
+      "id": "llm-factual-hard-gate",
+      "evidencePath": "artifacts/evidence/SPIKE-LLM-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "6.9"
+      ],
+      "blocker": "Every dangerous factual category must remain at zero errors.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "19dc1ee23377dd81b3ed5dea3aa06569968b9fe0fa80ee6974a67294eb80f80f"
+    },
+    {
+      "id": "resource-priority-policy",
+      "evidencePath": "artifacts/evidence/SPIKE-RES-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "6.10"
+      ],
+      "blocker": "Capture and journal must survive all resource-pressure scenarios.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "8a0dcfb13cafb396eb0bef1a91fe78a0284c7ae53cbfa9380eb903348b6c36ef"
+    },
+    {
+      "id": "permission-minimization",
+      "evidencePath": "artifacts/evidence/permissions/permission-lint-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "7.1"
+      ],
+      "blocker": "Required usage descriptions and the minimal entitlement set must pass fail-closed linting.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "d972cf8c09669ec3fff6f6c1de2a928be671fcb4e9626e3e7d229a3afd6fa4db"
+    },
+    {
+      "id": "signed-notarized-release",
+      "evidencePath": "artifacts/evidence/release/release-smoke-summary.json",
+      "field": "releaseEligible",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": [
+        "7.2"
+      ],
+      "blocker": "Developer ID signing, notarization, stapling, and Gatekeeper require authorized release credentials.",
+      "status": "conditional",
+      "observedValue": false,
+      "evidenceSHA256": "695060dd5b294a7be323458944248da85c02b22e6af9840141f3c8a059bf5712"
+    },
+    {
+      "id": "release-package-supply-chain",
+      "evidencePath": "artifacts/evidence/supply-chain/release-package-validation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "7.3"
+      ],
+      "blocker": "Every packaged binary, model, resource, and digest must match the frozen release manifest.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "0e87b4e5e71ac75fa0b139795cd4087f37afea4e9c9f5e4f1115ca7a92c63928"
+    },
+    {
+      "id": "update-signature-and-rollback",
+      "evidencePath": "artifacts/evidence/updates/update-rollback-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "7.4"
+      ],
+      "blocker": "App/model update tamper, interruption, downgrade, and rollback scenarios must all pass.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "91b2a93616ebe4f628451c6ee83c6847256ec3866b1e258f6666de055c368be3"
+    },
+    {
+      "id": "privacy-scan",
+      "evidencePath": "artifacts/evidence/privacy/privacy-scan-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "2.3"
+      ],
+      "blocker": "Repository-visible files must remain free of user content, secrets, and signing material.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "4f35b1c6118757104aad0cc894ca64067b7a5a66f786e1296528bccac56e2d99"
+    },
+    {
+      "id": "traceability-integrity",
+      "evidencePath": "artifacts/evidence/traceability/validation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "8.1"
+      ],
+      "blocker": "PRD/threat/scenario/test/evidence references must resolve without missing evidence.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "d8a3ed514eb69855ef21e13ccae35bafa804441ca4647fad0ce9cbba54a23b8a"
+    },
+    {
+      "id": "product-consistency",
+      "evidencePath": "artifacts/evidence/traceability/consistency-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": [
+        "8.2"
+      ],
+      "blocker": "The five frozen MVP/V1 invariants must agree across requirements, design, ADRs, and code configuration.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "917d853744750962092d38a53e349b8765b791069ede4154553cd43ef8a8f09f"
+    }
+  ],
+  "pendingTasks": [
+    "Streaming, final ASR, alignment, diarization/identity, semantic retrieval, and local-text backends are selected per stage on one versioned realistic local corpus; existing alpha selections do not count as release defaults.",
+    "One installed identity continuously passes PRD 24.6, leaves no test windows or records behind, and remains fully usable with network denied after model preparation.",
+    "Execute the current `BestASRUITests` suite: the latest runner timed out enabling macOS automation mode before any test executed. A preceding twenty-two-journey run and affected reruns passed keyboard navigation, deferrable setup and real-practice validation, capture/processing/completion handoff, menu-bar controls, waveform playback/pause/seeking, source-linked inline correction, microphone/system level previews, person/event evidence review and undo, all six Settings categories, and retained dictionary drafts after a failed save. That historical result does not validate the newer chooser-parent, collapsed review queue, or read-first document assertions; their current native automation gate remains open alongside the separately recorded installed-App checks.",
+    "Complete the remaining live selected-App Process Tap conferencing matrix. The generic process boundary, normal Chrome/helper boundary, and Tencent Meeting source grouping/capture/exclusion boundary pass through the installed App. Controlled Tencent synthetic speech now also passes optional-microphone co-capture, final ASR, diarization/identity routing, and local organization. Tencent still needs a controlled live-meeting lifecycle/restart and participant-context run; Zoom is not installed and its live path remains untested.",
+    "Complete two-hour capture, thermal, memory, disk-pressure, sleep/wake, input-device/sample-rate change, ASR, XPC, and speaker evidence on the supported 16 GB minimum Apple Silicon device. The 48 GB installed-App selected-source capture/journal path passes for more than two hours with bounded manifest work and verified source blocks, and the generic Process Tap path passes a real default-output transition; neither substitutes for the 16 GB speech-ASR, XPC, input-device, or production-speaker gates.",
+    "Produce a Developer ID signed, notarized, stapled, Gatekeeper-valid drag-installable DMG when the required Apple release identity and notarization credentials are available."
+  ],
+  "unresolvedDependencies": [
+    "Complete the remaining live selected-App Process Tap conferencing matrix. The generic process boundary, normal Chrome/helper boundary, and Tencent Meeting source grouping/capture/exclusion boundary pass through the installed App. Controlled Tencent synthetic speech now also passes optional-microphone co-capture, final ASR, diarization/identity routing, and local organization. Tencent still needs a controlled live-meeting lifecycle/restart and participant-context run; Zoom is not installed and its live path remains untested.",
+    "Complete two-hour capture, thermal, memory, disk-pressure, sleep/wake, input-device/sample-rate change, ASR, XPC, and speaker evidence on the supported 16 GB minimum Apple Silicon device. The 48 GB installed-App selected-source capture/journal path passes for more than two hours with bounded manifest work and verified source blocks, and the generic Process Tap path passes a real default-output transition; neither substitutes for the 16 GB speech-ASR, XPC, input-device, or production-speaker gates.",
+    "Conditional journal evidence must remain visible until live device and physical storage boundaries are resolved.",
+    "Developer ID signing, notarization, stapling, and Gatekeeper require authorized release credentials.",
+    "Execute the current `BestASRUITests` suite: the latest runner timed out enabling macOS automation mode before any test executed. A preceding twenty-two-journey run and affected reruns passed keyboard navigation, deferrable setup and real-practice validation, capture/processing/completion handoff, menu-bar controls, waveform playback/pause/seeking, source-linked inline correction, microphone/system level previews, person/event evidence review and undo, all six Settings categories, and retained dictionary drafts after a failed save. That historical result does not validate the newer chooser-parent, collapsed review queue, or read-first document assertions; their current native automation gate remains open alongside the separately recorded installed-App checks.",
+    "No default inference candidate may be selected before both ASR and speaker real-device release matrices, license reviews, and packaging gates pass.",
+    "One installed identity continuously passes PRD 24.6, leaves no test windows or records behind, and remains fully usable with network denied after model preparation.",
+    "Pinned real runtimes and model digests passed a recommended-memory smoke; the full shared release corpus still needs a 16 GB minimum-support device plus thermal and long-session gates.",
+    "Produce a Developer ID signed, notarized, stapled, Gatekeeper-valid drag-installable DMG when the required Apple release identity and notarization credentials are available.",
+    "Streaming, final ASR, alignment, diarization/identity, semantic retrieval, and local-text backends are selected per stage on one versioned realistic local corpus; existing alpha selections do not count as release defaults.",
+    "The XPC decision remains conditional until real-model, 16 GB, and signed-release measurements pass.",
+    "The recommended-memory synthetic four-input diarization/identity smoke passed; the 16 GB, authorized real-human device-lab/private-consented, release-holdout, correction-UX, license, and packaging matrices remain pending."
+  ]
+}

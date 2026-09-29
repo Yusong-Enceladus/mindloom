@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 82,
+   "retried": 1,
+   "latency_median_s": 3.454,
+   "latency_p95_s": 4.141,
+   "latency_total_s": 286.1,
+   "prompt_tokens_mean": 5154.2,
+   "completion_tokens_mean": 184.5,
+   "prompt_tokens_total": 427798,
+   "completion_tokens_total": 15310,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 70,
+   "ok_first_attempt": 41,
+   "retried": 37,
+   "latency_median_s": 4.589,
+   "latency_p95_s": 9.655,
+   "latency_total_s": 426.7,
+   "prompt_tokens_mean": 6010.0,
+   "completion_tokens_mean": 358.8,
+   "prompt_tokens_total": 468781,
+   "completion_tokens_total": 27987,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[1] 的 date 202",
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[0] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」; [unsupported_completion] quote「周四下午我们开个线上会」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「周四下午我们开个线上会」里有「"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 8.766,
+   "latency_p95_s": 9.405,
+   "latency_total_s": 31.3,
+   "prompt_tokens_mean": 5490,
+   "completion_tokens_mean": 517,
+   "prompt_tokens_total": 21960,
+   "completion_tokens_total": 2068,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 6.819,
+   "latency_p95_s": 7.341,
+   "latency_total_s": 18.5,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 439,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1317,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 11,
+  "attach": 64,
+  "none": 5,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 11,
+  "attach": 64,
+  "none": 5,
+  "ask": 2,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 14,
+ "status_line_chars_mean": 13.4,
+ "title_chars_mean": 10.7,
+ "wall_s": 769.5,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

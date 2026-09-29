@@ -1,0 +1,171 @@
+{
+  "schemaVersion": 1,
+  "kind": "asr-candidate-registry",
+  "selectionStatus": "alpha-default-selected-from-local-corpus",
+  "candidates": [
+    {
+      "candidateID": "fluid-sensevoice",
+      "adapterKind": "fluid-sensevoice",
+      "runtimeID": "fluid-audio.sensevoice",
+      "upstreamRuntime": {
+        "name": "FluidAudio",
+        "exactVersion": "0.15.5",
+        "revision": "19600a485baa4998812e4654b70d2bab8f2c9949",
+      "source": "https://github.com/FluidInference/FluidAudio/tree/19600a485baa4998812e4654b70d2bab8f2c9949",
+        "license": "Apache-2.0"
+      },
+      "probeArtifact": {
+        "artifactID": "fluid-sensevoice-contract-fixture-v1",
+        "version": "1.0.0",
+        "relativePath": "Tests/Fixtures/CandidateAdapters/Artifacts/fluid-sensevoice.contract-fixture.json",
+        "sha256": "6036e62fb900bb40fbc0a691c4415a6d5c4d09f12c228572a861e38640affd7a",
+        "digestScope": "contract-fixture-only",
+        "modelSource": "https://huggingface.co/FluidInference/sensevoice-small-coreml/tree/0e0bf30bfc6836f182ccd1d89984df919c949e26",
+        "modelRevision": "0e0bf30bfc6836f182ccd1d89984df919c949e26",
+        "modelLicense": "LicenseRef-FunASR-Model-1.1",
+        "realModelArtifactStatus": "recommended-memory-smoke-complete-release-matrix-pending",
+        "realModelEvidence": {
+          "artifactID": "fluid-sensevoice-small-int8-0e0bf30b",
+          "treeSHA256": "df817fcc1009d0d909c2d7eea7dd6babdd4e3288f9b84973ce04fe66c27cf7be",
+          "fileCount": 10,
+          "totalSizeBytes": 239918735,
+          "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-recommended-memory-smoke.json",
+          "benchmarkResultSHA256": "062ed2300cfb8bfaaee80e48818a44d7e861aa021e93282b0e35b65c37ae5d2e",
+          "networkDenied": true,
+          "executionProvider": "coreml-cpu-and-neural-engine",
+          "supportingArtifacts": []
+        }
+      },
+      "capabilities": [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "minimumOS": {"major": 14, "minor": 2, "patch": 0},
+      "supportedArchitectures": ["arm64"],
+      "minimumUnifiedMemoryBytes": 17179869184,
+      "networkPolicy": "model-manager-verified-artifacts-only",
+      "alphaDefault": true,
+      "alphaEvidence": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-alpha-corpus.json",
+        "benchmarkResultSHA256": "cec3dc206ea432d62e31f6be16e4b23b55eb0ca8fdf8f0a0eda4b04916fd76f4",
+        "decisionPath": "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-alpha-decision.json",
+        "decisionSHA256": "fe00e8a3045fe2d902b546a8a13d785854ba0a2cb63dab339dbd658f27455fb1",
+        "corpusManifestPath": "Corpus/product-synthetic/alpha-asr-manifest.json",
+        "corpusManifestSHA256": "d99cccde9e9379a9e40ba8be26a36eee7d2cd580f02a2b5426850e1939db08b0",
+        "corpusManifestID": "product-synthetic-alpha-asr-v1",
+        "corpusVersion": "1.1.0",
+        "sampleCount": 16,
+        "networkDenied": true
+      },
+      "releaseEligible": false
+    },
+    {
+      "candidateID": "whisperkit",
+      "adapterKind": "whisperkit",
+      "runtimeID": "argmax.whisperkit",
+      "upstreamRuntime": {
+        "name": "Argmax OSS / WhisperKit",
+        "exactVersion": "1.0.0",
+        "revision": "25c62997041c134b03ca82731ce2f6fd2cae1eb9",
+        "source": "https://github.com/argmaxinc/argmax-oss-swift/releases/tag/v1.0.0",
+        "license": "MIT"
+      },
+      "probeArtifact": {
+        "artifactID": "whisperkit-tiny-contract-fixture-v1",
+        "version": "1.0.0",
+        "relativePath": "Tests/Fixtures/CandidateAdapters/Artifacts/whisperkit.contract-fixture.json",
+        "sha256": "153b9bf8c6d8d29dd2e0fd8bb9750bdbf5fe33de4383bc9f6ce8794fd28bf55f",
+        "digestScope": "contract-fixture-only",
+        "modelSource": "https://huggingface.co/argmaxinc/whisperkit-coreml/tree/7c9dbc26ff8919e0008ad2dab2c837f228cf76e1/openai_whisper-tiny",
+        "modelRevision": "7c9dbc26ff8919e0008ad2dab2c837f228cf76e1",
+        "modelLicense": "MIT",
+        "realModelArtifactStatus": "recommended-memory-smoke-complete-release-matrix-pending",
+        "realModelEvidence": {
+          "artifactID": "whisperkit-openai-whisper-tiny-7c9dbc26",
+          "treeSHA256": "46a223998014e9877cb3868a9c0fd19270dfd670d96a1a67d97ba45a3bf244a1",
+          "fileCount": 19,
+          "totalSizeBytes": 76628051,
+          "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/whisperkit-recommended-memory-smoke.json",
+          "benchmarkResultSHA256": "7d5b0f758b410bd2ee11f0223996a27e84ac5b5f3208c63c4258e7191800b31a",
+          "networkDenied": true,
+          "executionProvider": "coreml-cpu-and-neural-engine",
+          "supportingArtifacts": [
+            {
+              "artifactID": "openai-whisper-tiny-tokenizer",
+              "revision": "169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+              "treeSHA256": "d28cda34814079103fec1cf026a06c2127fd015ce2aac4efba865ca84145cca4",
+              "fileCount": 3,
+              "totalSizeBytes": 2765132
+            }
+          ]
+        }
+      },
+      "capabilities": [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "minimumOS": {"major": 14, "minor": 2, "patch": 0},
+      "supportedArchitectures": ["arm64"],
+      "minimumUnifiedMemoryBytes": 17179869184,
+      "networkPolicy": "model-manager-verified-artifacts-only",
+      "alphaDefault": false,
+      "releaseEligible": false
+    },
+    {
+      "candidateID": "sherpa-onnx",
+      "adapterKind": "sherpa-onnx",
+      "runtimeID": "k2-fsa.sherpa-onnx",
+      "upstreamRuntime": {
+        "name": "sherpa-onnx",
+        "exactVersion": "1.13.2",
+        "revision": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+        "source": "https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.2",
+        "license": "Apache-2.0"
+      },
+      "probeArtifact": {
+        "artifactID": "sherpa-zipformer-zh-en-contract-fixture-v1",
+        "version": "1.0.0",
+        "relativePath": "Tests/Fixtures/CandidateAdapters/Artifacts/sherpa-onnx.contract-fixture.json",
+        "sha256": "b11c3991a2a9ca3e483b2dd080b21c7218b7a1d85b143850023971e59bb85143",
+        "digestScope": "contract-fixture-only",
+        "modelSource": "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20.tar.bz2",
+        "modelRevision": "asr-models/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20",
+        "modelLicense": "LicenseRef-Community-Training-Data-Audit-Pending",
+        "realModelArtifactStatus": "recommended-memory-smoke-complete-release-matrix-pending",
+        "realModelEvidence": {
+          "artifactID": "sherpa-zipformer-bilingual-zh-en-2023-02-20",
+          "treeSHA256": "24e1e2cf660941096b792a617204442e929226ff485ff2ae91e36ae0ed75ccbc",
+          "fileCount": 15,
+          "totalSizeBytes": 556522064,
+          "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/sherpa-onnx-recommended-memory-smoke.json",
+          "benchmarkResultSHA256": "5f9bba206c7b6e48cb051d397f8942b0e54b7304618d1069ca797a94e07366fd",
+          "networkDenied": true,
+          "executionProvider": "onnxruntime-cpu",
+          "supportingArtifacts": []
+        }
+      },
+      "capabilities": [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "minimumOS": {"major": 14, "minor": 2, "patch": 0},
+      "supportedArchitectures": ["arm64"],
+      "minimumUnifiedMemoryBytes": 17179869184,
+      "networkPolicy": "model-manager-verified-artifacts-only",
+      "alphaDefault": false,
+      "releaseEligible": false
+    }
+  ]
+}

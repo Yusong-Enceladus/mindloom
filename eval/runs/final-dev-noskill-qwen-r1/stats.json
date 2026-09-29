@@ -1,0 +1,83 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 73,
+   "retried": 10,
+   "latency_median_s": 4.754,
+   "latency_p95_s": 9.461,
+   "latency_total_s": 413.5,
+   "prompt_tokens_mean": 3890.6,
+   "completion_tokens_mean": 219.2,
+   "prompt_tokens_total": 322921,
+   "completion_tokens_total": 18191,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 75,
+   "ok": 37,
+   "ok_first_attempt": 20,
+   "retried": 55,
+   "latency_median_s": 11.206,
+   "latency_p95_s": 15.518,
+   "latency_total_s": 769.2,
+   "prompt_tokens_mean": 3025.1,
+   "completion_tokens_mean": 537.5,
+   "prompt_tokens_total": 226879,
+   "completion_tokens_total": 40315,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[1] 的 date 202",
+    "[unsupported_completion] quote「谈判建议」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 10.306,
+   "latency_p95_s": 11.978,
+   "latency_total_s": 37.8,
+   "prompt_tokens_mean": 4979.2,
+   "completion_tokens_mean": 478.2,
+   "prompt_tokens_total": 19917,
+   "completion_tokens_total": 1913,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 9.935,
+   "latency_p95_s": 10.955,
+   "latency_total_s": 27.9,
+   "prompt_tokens_mean": 1847,
+   "completion_tokens_mean": 443.7,
+   "prompt_tokens_total": 5541,
+   "completion_tokens_total": 1331,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 65,
+  "none": 8
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 60,
+  "none": 8,
+  "ask_suppressed": 4,
+  "ask": 1
+ },
+ "final_live_events": 15,
+ "status_line_chars_mean": 14.3,
+ "title_chars_mean": 6.9,
+ "wall_s": 1255.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

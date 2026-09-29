@@ -1,0 +1,96 @@
+{
+ "id": "receipt-15",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-15.jpg",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "c379bdf02b20f47f04f2ae5da028ce6d38e0c23fc9c60306cfd0c3d5ab3c899d",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "穗禾里食品有限公司",
+  "date": "2026-10-09",
+  "date_text": "2026年10月9日",
+  "time": "",
+  "doc_no": "XS-20261009-203",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "咖啡豆 云南日晒 1kg",
+    "qty": 10,
+    "unit": "袋",
+    "unit_price": "118.00",
+    "amount": "1180.00"
+   },
+   {
+    "name": "燕麦奶 1L",
+    "qty": 40,
+    "unit": "盒",
+    "unit_price": "16.50",
+    "amount": "660.00"
+   },
+   {
+    "name": "杯盖 90mm（100只）",
+    "qty": 24,
+    "unit": "条",
+    "unit_price": "15.00",
+    "amount": "360.00"
+   }
+  ],
+  "subtotal": "2200.00",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "2200.00",
+  "payment_method": "月结",
+  "buyer": "云岭电器有限公司",
+  "total_in_words": "贰仟贰佰元整"
+ },
+ "text_lines": [
+  "销售单",
+  "穗禾里食品有限公司",
+  "客户：云岭电器有限公司 单号：XS-20261009-203",
+  "日期：2026年10月9日 结算方式：月结",
+  "咖啡豆 云南日晒 1kg 10 118.00 1180.00",
+  "燕麦奶 1L 40 16.50 660.00",
+  "杯盖 90mm（100只） 24 15.00 360.00",
+  "合计金额： ¥2,200.00",
+  "大写： 贰仟贰佰元整",
+  "备注：货物当面点清，如有质量问题请于 3 日内联系。",
+  "开单人：郑楠"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥2,200.00",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "穗禾里食品有限公司",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-10-09",
+   "match": "date"
+  },
+  {
+   "q": "咖啡豆 云南日晒 1kg的金额是多少？",
+   "a": "1,180.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "far": true
+ }
+}

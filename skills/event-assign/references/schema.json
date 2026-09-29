@@ -1,0 +1,38 @@
+{
+ "type": "object",
+ "properties": {
+  "item_object": {"type": "string", "minLength": 1, "maxLength": 24},
+  "item_is_matter": {"type": "boolean"},
+  "judged": {
+   "type": "array",
+   "maxItems": 2,
+   "items": {
+    "type": "object",
+    "properties": {
+     "event_id": {"type": "string", "pattern": "^E[0-9]+$"},
+     "match": {"type": "string", "enum": ["same_object", "unsure", "person_only", "topic_only", "different"]}
+    },
+    "required": ["event_id", "match"],
+    "additionalProperties": false
+   }
+  },
+  "decision": {"type": "string", "enum": ["attach", "new", "none", "ask"]},
+  "event_id": {"type": "string", "pattern": "^(E[0-9]+)?$"},
+  "evidence": {
+   "type": "array",
+   "minItems": 1,
+   "maxItems": 2,
+   "items": {
+    "type": "object",
+    "properties": {
+     "reason": {"type": "string", "minLength": 2, "maxLength": 40},
+     "item_ids": {"type": "array", "maxItems": 2, "items": {"type": "string", "pattern": "^I[0-9]+$"}}
+    },
+    "required": ["reason", "item_ids"],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": ["item_object", "item_is_matter", "judged", "decision", "event_id", "evidence"],
+ "additionalProperties": false
+}

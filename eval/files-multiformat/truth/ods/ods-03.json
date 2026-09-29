@@ -1,0 +1,64 @@
+{
+ "file_id": "ods-03",
+ "path": "corpus/ods/ods-03.ods",
+ "type": "ods",
+ "ext": "ods",
+ "mime": "application/vnd.oasis.opendocument.spreadsheet",
+ "filename": "远帆物流杯篮球联赛积分榜.ods",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[积分榜]\n远帆物流杯篮球联赛积分榜\n队名\t胜\t负\t积分\n青松队\t6\t4\t18\n海豚队\t5\t2\t15\n北极星队\t3\t2\t9\n银杏队\t2\t1\t6\n飞鹰队\t2\t3\t6\n合成数据\n[统计]\n指标\t数值\n总场次（胜）\t18\n最高积分\t18\n合成数据",
+ "key_lines": [
+  "青松队\t6\t4\t18",
+  "海豚队\t5\t2\t15",
+  "北极星队\t3\t2\t9",
+  "总场次（胜）\t18",
+  "最高积分\t18"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "第一名": "青松队",
+  "北极星队": 9
+ },
+ "numbers": [
+  {
+   "value": 18,
+   "label": "第一名积分"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分榜第一是哪个队？",
+   "a": "青松队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "北极星队积多少分？",
+   "a": 9,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "海豚队赢了几场？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "积分榜",
+   "统计"
+  ],
+  "formulas": 7,
+  "merged": 1
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 2487,
+ "sha256": "a1d2083c65c3ad5c82a6d6bc48b0d3f7ede1376483655e4f4837ae9006b2c16f",
+ "family": "league"
+}

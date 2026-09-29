@@ -1,0 +1,396 @@
+{
+ "cursor": 34,
+ "events": [
+  {
+   "event_id": "7bc894ac-9309-437d-9416-50939a3eef09",
+   "handle": "E1",
+   "title": "11月9日工作事项",
+   "title_user_edited": false,
+   "anchor": "工作事项",
+   "status_line": "过进度、要发票、开视频会",
+   "status_facts": [
+    {
+     "text": "南岸订单进度与验货安排",
+     "state": "in_progress",
+     "date": "2026-11-09",
+     "quote": "上午跟小唐过一下",
+     "item_ids": [
+      "a500e1b8-64df-5656-a321-35e6693cd6f3",
+      "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a"
+     ]
+    },
+    {
+     "text": "三季度退税缺发票",
+     "state": "planned",
+     "date": "2026-11-13",
+     "quote": "周五中午前给我",
+     "item_ids": [
+      "72408c39-4259-54d2-bae8-edbccb9f876b"
+     ]
+    },
+    {
+     "text": "与Wilson视频会",
+     "state": "planned",
+     "date": "2026-11-09",
+     "quote": "下午四点跟Wilson开视频会",
+     "item_ids": [
+      "a734ca8b-e5b6-5dda-ac97-8a9a587cf356"
+     ]
+    }
+   ],
+   "importance": 0.9,
+   "importance_reason": "今日需处理验货、退税发票及视频会议，事项多且含今日截止项",
+   "started_at": "2026-11-09T08:40:00+08:00",
+   "updated_at": "2026-11-09T16:00:39.530000+08:00",
+   "item_ids": [
+    "a500e1b8-64df-5656-a321-35e6693cd6f3",
+    "72408c39-4259-54d2-bae8-edbccb9f876b",
+    "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+    "a734ca8b-e5b6-5dda-ac97-8a9a587cf356"
+   ],
+   "person_ids": [
+    "96FB4614-43FE-5320-9B4E-CE71D829BD8A",
+    "8B910E15-7A9A-5E68-87F5-DBDEEFE89779",
+    "D6B7781F-0A78-54BF-8923-BCF796C478C9"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "c7d11095-719a-4f88-9699-af77099530ca"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "c7d11095-719a-4f88-9699-af77099530ca"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "2a3f645d-c66d-4b35-b7cc-564c30444f53"
+    }
+   }
+  },
+  {
+   "event_id": "7b398538-769c-41fc-84c1-29b823315b50",
+   "handle": "E2",
+   "title": "Peggy Mok追加订购燕麦白平盘",
+   "title_user_edited": false,
+   "anchor": "向Peggy Mok报价1800个8寸燕麦白平盘",
+   "status_line": "已接单，待2026-11-12前报价，预计2月到港",
+   "status_facts": [
+    {
+     "text": "承诺2026-11-12前发出FOB报价",
+     "state": "planned",
+     "date": "2026-11-12",
+     "quote": "我算好成本周四前发你",
+     "item_ids": [
+      "b955ce07-234a-560b-89e5-43ab21ca0f53"
+     ]
+    },
+    {
+     "text": "客户要求2026-11-13前报价",
+     "state": "planned",
+     "date": "2026-11-13",
+     "quote": "麻烦周五（13号）前给我报个价",
+     "item_ids": [
+      "b955ce07-234a-560b-89e5-43ab21ca0f53"
+     ]
+    },
+    {
+     "text": "预计2026-02-15到墨尔本",
+     "state": "planned",
+     "date": "2026-02-15",
+     "quote": "明年2月中要到墨尔本",
+     "item_ids": [
+      "b955ce07-234a-560b-89e5-43ab21ca0f53"
+     ]
+    }
+   ],
+   "importance": 0.7,
+   "importance_reason": "客户报价截止日临近（11/12-13），涉及商业承诺",
+   "started_at": "2026-11-09T13:20:00+08:00",
+   "updated_at": "2026-11-09T13:20:00+08:00",
+   "item_ids": [
+    "b955ce07-234a-560b-89e5-43ab21ca0f53"
+   ],
+   "person_ids": [
+    "chat-0a277864-fd14-523d-ac82-f35e209e5de8"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "d55cb290-9f1c-46f4-a9a5-8ad92d08b592"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "d55cb290-9f1c-46f4-a9a5-8ad92d08b592"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "2a3f645d-c66d-4b35-b7cc-564c30444f53"
+    }
+   }
+  },
+  {
+   "event_id": "345dcb01-2c30-4b24-a2bb-122d9b95d11c",
+   "handle": "E3",
+   "title": "春季目录马克杯样品",
+   "title_user_edited": false,
+   "anchor": "制作6个雾青哑光釉竹柄马克杯样品",
+   "status_line": "待打样：6个雾青哑光釉竹柄马克杯，11/20抵新加坡，21日拍摄",
+   "status_facts": [
+    {
+     "text": "制作6个雾青哑光釉竹柄马克杯样品",
+     "state": "planned",
+     "date": "2026-11-10",
+     "quote": "明天去厂里当面跟许厂长说",
+     "item_ids": [
+      "ed033aed-4ab8-592e-9a13-5ba2dd10048e"
+     ]
+    },
+    {
+     "text": "样品需20号前到新加坡",
+     "state": "planned",
+     "date": "2026-11-20",
+     "quote": "20号前要到新加坡",
+     "item_ids": [
+      "ed033aed-4ab8-592e-9a13-5ba2dd10048e"
+     ]
+    },
+    {
+     "text": "21号进行拍照",
+     "state": "planned",
+     "date": "2026-11-21",
+     "quote": "21号拍照",
+     "item_ids": [
+      "ed033aed-4ab8-592e-9a13-5ba2dd10048e"
+     ]
+    }
+   ],
+   "importance": 0.5,
+   "importance_reason": "样品制作与物流安排，时间相对宽裕",
+   "started_at": "2026-11-09T16:50:00+08:00",
+   "updated_at": "2026-11-09T16:50:00+08:00",
+   "item_ids": [
+    "ed033aed-4ab8-592e-9a13-5ba2dd10048e"
+   ],
+   "person_ids": [
+    "D6B7781F-0A78-54BF-8923-BCF796C478C9"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "887a7dfa-f9f6-40e0-8cd1-5b38091deeb8"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "887a7dfa-f9f6-40e0-8cd1-5b38091deeb8"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.2.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "2a3f645d-c66d-4b35-b7cc-564c30444f53"
+    }
+   }
+  }
+ ],
+ "questions": [
+  {
+   "question_id": "a03fbf4b-0a69-440c-beec-01567f9e9b14",
+   "kind": "same_event",
+   "a": "72408c39-4259-54d2-bae8-edbccb9f876b",
+   "b": "7bc894ac-9309-437d-9416-50939a3eef09",
+   "status": "open",
+   "prompt_zh": "这条「冯姐：芸，三季度出口退税我这两天在整理。8月发…」和「工作事项」是同一件事吗？",
+   "created_at": "2026-11-09T09:15:00+08:00",
+   "day_key": "2026-11-09",
+   "provisional": {
+    "action": "stay",
+    "event_id": "7bc894ac-9309-437d-9416-50939a3eef09"
+   },
+   "b_items_at_ask": [
+    "a500e1b8-64df-5656-a321-35e6693cd6f3"
+   ],
+   "answer": null
+  }
+ ],
+ "persons": [
+  {
+   "person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A",
+   "display_name": "我",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "8B910E15-7A9A-5E68-87F5-DBDEEFE89779",
+   "display_name": "小唐",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-0a277864-fd14-523d-ac82-f35e209e5de8",
+   "display_name": "Peggy Mok",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-1cadb621-78d2-57f9-9d77-1b153bf471f1",
+   "display_name": "Wilson",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": "D6B7781F-0A78-54BF-8923-BCF796C478C9"
+  },
+  {
+   "person_id": "D6B7781F-0A78-54BF-8923-BCF796C478C9",
+   "display_name": "Wilson",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  }
+ ],
+ "unfiled": [
+  {
+   "item_id": "25438cfa-edc4-57ae-ae89-6272f7181821",
+   "reason": "none",
+   "since": "2026-11-09T20:30:18+08:00"
+  },
+  {
+   "item_id": "e3558998-2358-5a9b-ab56-ad371183c28c",
+   "reason": "none",
+   "since": "2026-11-09T21:10:00+08:00"
+  }
+ ],
+ "store_id": "5109419c-a664-4fb1-bdca-8aa3ffaf295e",
+ "item_persons": [
+  {
+   "item_id": "a500e1b8-64df-5656-a321-35e6693cd6f3",
+   "person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A"
+  },
+  {
+   "item_id": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+   "person_id": "8B910E15-7A9A-5E68-87F5-DBDEEFE89779"
+  },
+  {
+   "item_id": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+   "person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A"
+  },
+  {
+   "item_id": "b955ce07-234a-560b-89e5-43ab21ca0f53",
+   "person_id": "chat-0a277864-fd14-523d-ac82-f35e209e5de8"
+  },
+  {
+   "item_id": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+   "person_id": "D6B7781F-0A78-54BF-8923-BCF796C478C9"
+  },
+  {
+   "item_id": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+   "person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A"
+  },
+  {
+   "item_id": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+   "person_id": "D6B7781F-0A78-54BF-8923-BCF796C478C9"
+  },
+  {
+   "item_id": "25438cfa-edc4-57ae-ae89-6272f7181821",
+   "person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A"
+  }
+ ],
+ "questions_asked_total": 1,
+ "assign_log": [
+  {
+   "item_id": "a500e1b8-64df-5656-a321-35e6693cd6f3",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "72408c39-4259-54d2-bae8-edbccb9f876b",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "b955ce07-234a-560b-89e5-43ab21ca0f53",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "25438cfa-edc4-57ae-ae89-6272f7181821",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  },
+  {
+   "item_id": "e3558998-2358-5a9b-ab56-ad371183c28c",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  }
+ ]
+}

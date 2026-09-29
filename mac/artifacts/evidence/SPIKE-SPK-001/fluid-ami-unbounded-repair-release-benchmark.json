@@ -1,0 +1,163 @@
+{
+  "benchmarkID" : "speaker-fluid-ami-release-holdout-v1",
+  "configHash" : "1e06599a8955684756b96a658905233c62f4d9c4a441486aa8f1daad7533d78b",
+  "corpus" : {
+    "manifestID" : "ami-public-speaker-release-holdout-v1",
+    "split" : "release-holdout",
+    "version" : "1.0.0"
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "failedSampleUUIDs" : [
+
+  ],
+  "hardware" : {
+    "architecture" : "arm64",
+    "osVersion" : "Version 26.6.2 (Build 25G83)",
+    "toolchainVersion" : "Apple Swift 6",
+    "unifiedMemoryBytes" : 51539607552
+  },
+  "implementationRevision" : "19600a485baa4998812e4654b70d2bab8f2c9949",
+  "kind" : "benchmark-result",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0.25113764270420524
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0.34083401893496745
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0.19881920105487022
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0.03018252564572018
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0.022135916003614843
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 109.201083
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 11719.842208
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.005461204184680713
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 714440704
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 0
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fluid-speaker-diarization-coreml-1ed7a662",
+    "sha256" : "664824fe8a2d387aad8ad7965191a90b9b290c5ea5470c3bd13a86a8cc8bf9ab"
+  },
+  "protocolVersion" : 1,
+  "runID" : "41D2C2E7-DB3B-5237-B34F-59F898F55AE4",
+  "schemaVersion" : 1,
+  "task" : "speaker"
+}

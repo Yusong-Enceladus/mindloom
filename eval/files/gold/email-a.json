@@ -1,0 +1,29 @@
+{
+ "id": "email-a",
+ "template": "email",
+ "split": "dev",
+ "filename": "9 月采购对账.eml",
+ "path": "data/email-a.eml",
+ "sha256": "2bcdf9bcc303976227fa403e5a2226c0e06eea28194ea1c56786c450c60bb93f",
+ "size": 303314,
+ "error": null,
+ "must_contain_image": [
+  "销售单",
+  "XS-20260804-899"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "email",
+ "must_contain": [
+  "主题：9 月采购对账",
+  "请在 10 月 8 日前确认金额",
+  "| 9月3日 | 1260 |"
+ ],
+ "summary_groups": [
+  [
+   "9月采购",
+   "9 月采"
+  ]
+ ],
+ "doc_kind": "letter"
+}

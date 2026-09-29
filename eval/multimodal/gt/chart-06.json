@@ -1,0 +1,103 @@
+{
+ "id": "chart-06",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-06.png",
+ "lang": "zh",
+ "hard": [
+  "similar_colors",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "e881e11beabb843c41b957840f631d823645c31d448cac34dc6478e41476e988",
+ "gt": {
+  "chart_type": "grouped_bar",
+  "title": "线上与线下订单额对比",
+  "x_label": "季度",
+  "y_label": "订单额（万元）",
+  "unit": "万元",
+  "categories": [
+   "Q1",
+   "Q2",
+   "Q3",
+   "Q4"
+  ],
+  "series": [
+   {
+    "name": "线上",
+    "values": [
+     23.4,
+     42.3,
+     60.1,
+     80.4
+    ],
+    "labels": [
+     "23.4",
+     "42.3",
+     "60.1",
+     "80.4"
+    ]
+   },
+   {
+    "name": "线下",
+    "values": [
+     80.4,
+     59.6,
+     36.4,
+     23.4
+    ],
+    "labels": [
+     "80.4",
+     "59.6",
+     "36.4",
+     "23.4"
+    ]
+   }
+  ],
+  "trend": {
+   "线上": "up",
+   "线下": "down"
+  }
+ },
+ "text_lines": [
+  "线上与线下订单额对比",
+  "线上 Q1: 23.4",
+  "线上 Q2: 42.3",
+  "线上 Q3: 60.1",
+  "线上 Q4: 80.4",
+  "线下 Q1: 80.4",
+  "线下 Q2: 59.6",
+  "线下 Q3: 36.4",
+  "线下 Q4: 23.4"
+ ],
+ "qa": [
+  {
+   "q": "线上与线下订单额对比中，Q3的线下是多少？",
+   "a": "36.4万元",
+   "match": "number"
+  },
+  {
+   "q": "线下最高的是哪一项？",
+   "a": "Q1",
+   "match": "exact"
+  },
+  {
+   "q": "线下的整体趋势？",
+   "a": "下降",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "grouped_bar"
+ },
+ "variant": {
+  "chart": "grouped_bar",
+  "patterns": [
+   "up",
+   "down"
+  ],
+  "similar_colors": true,
+  "seed_hint": "quarter"
+ }
+}

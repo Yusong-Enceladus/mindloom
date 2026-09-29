@@ -1,0 +1,88 @@
+{
+ "id": "chart-02",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-02.png",
+ "lang": "zh",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "f89d2fd9f50a11defe4a2cfb22893bee1f05e3c2a36b7f110bfd5fe0e74495a6",
+ "gt": {
+  "chart_type": "line",
+  "title": "下单接口平均延迟",
+  "x_label": "版本",
+  "y_label": "平均延迟（ms）",
+  "unit": "ms",
+  "categories": [
+   "v1.0",
+   "v1.1",
+   "v1.2",
+   "v1.3",
+   "v1.4",
+   "v1.5"
+  ],
+  "series": [
+   {
+    "name": "P50 延迟",
+    "values": [
+     386.0,
+     326.0,
+     279.0,
+     237.0,
+     169.0,
+     131.0
+    ],
+    "labels": [
+     "386",
+     "326",
+     "279",
+     "237",
+     "169",
+     "131"
+    ]
+   }
+  ],
+  "trend": {
+   "P50 延迟": "down"
+  }
+ },
+ "text_lines": [
+  "下单接口平均延迟",
+  "P50 延迟 v1.0: 386",
+  "P50 延迟 v1.1: 326",
+  "P50 延迟 v1.2: 279",
+  "P50 延迟 v1.3: 237",
+  "P50 延迟 v1.4: 169",
+  "P50 延迟 v1.5: 131"
+ ],
+ "qa": [
+  {
+   "q": "下单接口平均延迟中，v1.5的P50 延迟是多少？",
+   "a": "131ms",
+   "match": "number"
+  },
+  {
+   "q": "P50 延迟最高的是哪一项？",
+   "a": "v1.0",
+   "match": "exact"
+  },
+  {
+   "q": "P50 延迟的整体趋势？",
+   "a": "下降",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "line"
+ },
+ "variant": {
+  "chart": "line",
+  "topic": "latency",
+  "patterns": [
+   "down"
+  ]
+ }
+}

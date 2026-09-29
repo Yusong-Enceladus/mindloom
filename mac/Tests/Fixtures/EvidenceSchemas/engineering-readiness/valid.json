@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-report",
+  "conclusion": "conditional",
+  "verified": false,
+  "releaseEligible": false,
+  "deliveryStatus": "incomplete",
+  "gatesSHA256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "tasksSHA256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "gateCounts": {"pass": 0, "fail": 0, "conditional": 1},
+  "completedTaskCount": 1,
+  "pendingTaskCount": 1,
+  "gates": [
+    {
+      "id": "fixture-gate",
+      "evidencePath": "Tests/Fixtures/Readiness/evidence.json",
+      "field": "releaseEligible",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "Fixture blocker.",
+      "status": "conditional",
+      "observedValue": false,
+      "evidenceSHA256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "pendingTasks": ["fixture pending"],
+  "unresolvedDependencies": ["Fixture blocker.", "fixture pending"]
+}

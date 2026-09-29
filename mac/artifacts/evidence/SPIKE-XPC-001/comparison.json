@@ -1,0 +1,60 @@
+{
+  "conclusion" : "conditional",
+  "generatedAt" : "2026-08-30T03:49:29Z",
+  "kind" : "runtime-boundary-comparison",
+  "rollback" : "Keep the same InferenceService contract and switch the scheduler adapter to the in-process actor if Developer ID packaging or real-model latency fails its release gate.",
+  "runID" : "AB7D2FF1-3B0C-42B9-805F-AD7BE81F37DA",
+  "scenarios" : [
+    {
+      "metrics" : {
+        "inProcessP50Nanoseconds" : "25115459",
+        "workloadBytes" : "33554432",
+        "xpcProtocolOverheadNanoseconds" : "167459",
+        "xpcRoundTripNanoseconds" : "25400709",
+        "xpcWorkerP50Nanoseconds" : "25385250"
+      },
+      "scenarioID" : "same-model-load-workload",
+      "status" : "pass"
+    },
+    {
+      "metrics" : {
+        "hostResidentAfterWorkerRestartBytes" : "43859968",
+        "hostResidentBeforeWorkerExitBytes" : "43859968",
+        "inProcessPeakDeltaBytes" : "33587200",
+        "inProcessRetainedDeltaBytes" : "33587200",
+        "workerProcessExitObserved" : "true",
+        "xpcPeakDeltaBytes" : "33603584",
+        "xpcRetainedBeforeExitBytes" : "33603584"
+      },
+      "scenarioID" : "memory-reclamation-lifetime",
+      "status" : "pass"
+    },
+    {
+      "metrics" : {
+        "sameProcessCrashTerminatedHost" : "true",
+        "xpcCrashTerminatedHost" : "false",
+        "xpcWorkerRestarted" : "true"
+      },
+      "scenarioID" : "crash-domain-isolation",
+      "status" : "pass"
+    },
+    {
+      "metrics" : {
+        "inProcessCodeObjectCount" : "1",
+        "probeAppSignatureValid" : "true",
+        "xpcCodeObjectCount" : "2",
+        "xpcServiceEmbedded" : "true",
+        "xpcServiceSignatureValid" : "true"
+      },
+      "scenarioID" : "signing-and-bundle-complexity",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-XPC-001",
+  "unmetCriteria" : [
+    "The workload measures real allocation, IPC, process exit, and signatures but is not a selected ASR, speaker, or LLM model.",
+    "Developer ID signing, notarization, model file sharing, and 16 GB real-model memory pressure remain release gates."
+  ],
+  "workload" : "32-MiB touched synthetic model allocation, five repetitions"
+}

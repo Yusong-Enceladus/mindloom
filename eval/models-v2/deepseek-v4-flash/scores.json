@@ -1,0 +1,304 @@
+[
+ {
+  "run": "dev-skills-dsv4-r1",
+  "scenario": "dev-week-v1",
+  "model": "deepseek-v4-flash",
+  "items": 82,
+  "b3_f1": 0.784,
+  "link_f1": 0.809,
+  "card_fact_recall": 0.731,
+  "status_fact_recall": 0.365,
+  "asks_per_100": 3.66,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 1,
+  "unsupported_completion": 1,
+  "hard_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "relative_date_in_card": 1,
+  "stale_fact_rate": 0.1,
+  "absorbed_matters": "none",
+  "brief_ok": "61/79",
+  "home_ndcg5": 0.797,
+  "pred_gold_events": "15/9",
+  "wall_s": 1305.7,
+  "s_per_item": 15.92,
+  "llm_s_per_item": 15.46,
+  "completion_tok_s": 27.9,
+  "llm_calls": 169,
+  "llm_failed": 18,
+  "retried": {
+   "assign": 0,
+   "brief": 51,
+   "rank": 0,
+   "split": 1
+  },
+  "latency_median_s": {
+   "assign": 4.218,
+   "brief": 10.219,
+   "rank": 9.757,
+   "split": 2.795
+  },
+  "image_jobs": {
+   "image_detect": "3/3",
+   "image_read": "3/3"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "image-read": "40a4c917ce1dea3e",
+   "item-split": "116cc81338c06f19",
+   "recall": "53787149d58fb73a"
+  }
+ },
+ {
+  "run": "h2-skills-dsv4-r1",
+  "scenario": "holdout-week-v2",
+  "model": "deepseek-v4-flash",
+  "items": 46,
+  "b3_f1": 0.735,
+  "link_f1": 0.71,
+  "card_fact_recall": 0.609,
+  "status_fact_recall": 0.287,
+  "asks_per_100": 4.35,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 1,
+  "hard_decoy_leakage": 0.4166666666666667,
+  "noise_abstention": 0.5,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.0,
+  "absorbed_matters": "ev_peggy_quote",
+  "brief_ok": "24/50",
+  "home_ndcg5": 0.96,
+  "pred_gold_events": "9/7",
+  "wall_s": 1115.9,
+  "s_per_item": 24.26,
+  "llm_s_per_item": 23.06,
+  "completion_tok_s": 28.3,
+  "llm_calls": 123,
+  "llm_failed": 26,
+  "retried": {
+   "assign": 0,
+   "brief": 46,
+   "rank": 0,
+   "split": 0
+  },
+  "latency_median_s": {
+   "assign": 4.693,
+   "brief": 16.144,
+   "rank": 8.327,
+   "split": 2.309
+  },
+  "image_jobs": {
+   "image_detect": "4/4",
+   "image_read": "4/4"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "image-read": "40a4c917ce1dea3e",
+   "item-split": "116cc81338c06f19",
+   "recall": "53787149d58fb73a"
+  }
+ },
+ {
+  "run": "final-dev-skills-qwen-r1",
+  "scenario": "dev-week-v1",
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "items": 82,
+  "b3_f1": 0.763,
+  "link_f1": 0.798,
+  "card_fact_recall": 0.808,
+  "status_fact_recall": 0.385,
+  "asks_per_100": 3.66,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 1,
+  "unsupported_completion": 0,
+  "hard_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.0,
+  "absorbed_matters": "none",
+  "brief_ok": "67/78",
+  "home_ndcg5": 0.597,
+  "pred_gold_events": "14/9",
+  "wall_s": 1083.0,
+  "s_per_item": 13.21,
+  "llm_s_per_item": 12.8,
+  "completion_tok_s": 43.9,
+  "llm_calls": 165,
+  "llm_failed": 11,
+  "retried": {
+   "assign": 2,
+   "brief": 36,
+   "rank": 0
+  },
+  "latency_median_s": {
+   "assign": 4.587,
+   "brief": 7.37,
+   "rank": 13.456
+  },
+  "image_jobs": {
+   "screenshot_read": "3/3"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "recall": "53787149d58fb73a",
+   "screenshot-read": "f64ffa03fbcf5abe"
+  }
+ },
+ {
+  "run": "final-dev-skills-qwen-r2",
+  "scenario": "dev-week-v1",
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "items": 82,
+  "b3_f1": 0.733,
+  "link_f1": 0.74,
+  "card_fact_recall": 0.692,
+  "status_fact_recall": 0.346,
+  "asks_per_100": 4.88,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 1,
+  "unsupported_completion": 0,
+  "hard_decoy_leakage": 0.11904761904761904,
+  "noise_abstention": 1.0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.05,
+  "absorbed_matters": "none",
+  "brief_ok": "61/78",
+  "home_ndcg5": 0.705,
+  "pred_gold_events": "15/9",
+  "wall_s": 1118.3,
+  "s_per_item": 13.64,
+  "llm_s_per_item": 13.24,
+  "completion_tok_s": 44.7,
+  "llm_calls": 164,
+  "llm_failed": 18,
+  "retried": {
+   "assign": 3,
+   "brief": 44,
+   "rank": 0
+  },
+  "latency_median_s": {
+   "assign": 4.499,
+   "brief": 7.708,
+   "rank": 11.289
+  },
+  "image_jobs": {
+   "screenshot_read": "3/3"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "recall": "53787149d58fb73a",
+   "screenshot-read": "f64ffa03fbcf5abe"
+  }
+ },
+ {
+  "run": "final-h2-skills-qwen-r1",
+  "scenario": "holdout-week-v2",
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "items": 46,
+  "b3_f1": 0.782,
+  "link_f1": 0.686,
+  "card_fact_recall": 0.517,
+  "status_fact_recall": 0.184,
+  "asks_per_100": 6.52,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 1,
+  "hard_decoy_leakage": 0.25,
+  "noise_abstention": 0.75,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.0,
+  "absorbed_matters": "ev_q3_rebate",
+  "brief_ok": "27/43",
+  "home_ndcg5": 0.932,
+  "pred_gold_events": "6/7",
+  "wall_s": 729.3,
+  "s_per_item": 15.85,
+  "llm_s_per_item": 15.12,
+  "completion_tok_s": 44.9,
+  "llm_calls": 95,
+  "llm_failed": 16,
+  "retried": {
+   "assign": 1,
+   "brief": 33,
+   "rank": 0
+  },
+  "latency_median_s": {
+   "assign": 4.413,
+   "brief": 10.981,
+   "rank": 6.218
+  },
+  "image_jobs": {
+   "screenshot_read": "4/4"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "recall": "53787149d58fb73a",
+   "screenshot-read": "f64ffa03fbcf5abe"
+  }
+ },
+ {
+  "run": "final-h2-skills-qwen-r2",
+  "scenario": "holdout-week-v2",
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "items": 46,
+  "b3_f1": 0.782,
+  "link_f1": 0.686,
+  "card_fact_recall": 0.506,
+  "status_fact_recall": 0.138,
+  "asks_per_100": 8.7,
+  "ungrounded_dates": 0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 1,
+  "hard_decoy_leakage": 0.25,
+  "noise_abstention": 0.75,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.0,
+  "absorbed_matters": "ev_q3_rebate",
+  "brief_ok": "32/43",
+  "home_ndcg5": 0.914,
+  "pred_gold_events": "6/7",
+  "wall_s": 728.5,
+  "s_per_item": 15.84,
+  "llm_s_per_item": 15.07,
+  "completion_tok_s": 44.9,
+  "llm_calls": 95,
+  "llm_failed": 12,
+  "retried": {
+   "assign": 1,
+   "brief": 31,
+   "rank": 0
+  },
+  "latency_median_s": {
+   "assign": 4.64,
+   "brief": 10.678,
+   "rank": 6.033
+  },
+  "image_jobs": {
+   "screenshot_read": "4/4"
+  },
+  "prompt_hashes": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265",
+   "recall": "53787149d58fb73a",
+   "screenshot-read": "f64ffa03fbcf5abe"
+  }
+ }
+]

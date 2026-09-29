@@ -1,0 +1,94 @@
+{
+ "id": "board-18",
+ "type": "whiteboard_handwriting",
+ "split": "dev",
+ "image": "images/board-18.jpg",
+ "lang": "en",
+ "hard": [
+  "handwriting",
+  "similar_names",
+  "struck_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "ce6b87129e5e3ac4f2f7e0b761fa140b0b2eea37d8d5a7d31cb75724e86d91a0",
+ "gt": {
+  "surface": "blackboard",
+  "lines": [
+   {
+    "text": "Standup",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "Checkout p95 = 180 ms",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Chen Wei: fix retry bug",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Chen Wen: release notes",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "Ship payments",
+    "struck": true,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Payments moved to Aug 4",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "Standup",
+  "Checkout p95 = 180 ms",
+  "Chen Wei: fix retry bug",
+  "Chen Wen: release notes",
+  "Ship payments",
+  "Payments moved to Aug 4"
+ ],
+ "qa": [
+  {
+   "q": "What is checkout p95?",
+   "a": "180 ms",
+   "match": "number"
+  },
+  {
+   "q": "Who fixes the retry bug?",
+   "a": "Chen Wei",
+   "match": "exact"
+  },
+  {
+   "q": "When are payments moved to?",
+   "a": "Aug 4",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "surface": "blackboard",
+  "font": "hand_chalk",
+  "size": 64,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "en_standup",
+  "font": "hand_chalk",
+  "surface": "blackboard",
+  "similar": true
+ }
+}

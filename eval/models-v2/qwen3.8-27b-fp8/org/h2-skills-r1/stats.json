@@ -1,0 +1,121 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 52,
+   "ok_first_attempt": 51,
+   "retried": 1,
+   "latency_median_s": 11.456,
+   "latency_p95_s": 13.27,
+   "latency_total_s": 598.2,
+   "prompt_tokens_mean": 5667.9,
+   "completion_tokens_mean": 174.1,
+   "prompt_tokens_total": 294730,
+   "completion_tokens_total": 9051,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 49,
+   "ok": 34,
+   "ok_first_attempt": 13,
+   "retried": 36,
+   "latency_median_s": 35.103,
+   "latency_p95_s": 40.325,
+   "latency_total_s": 1508.7,
+   "prompt_tokens_mean": 8692.5,
+   "completion_tokens_mean": 579.7,
+   "prompt_tokens_total": 425932,
+   "completion_tokens_total": 28406,
+   "errors_sample": [
+    "[relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] 事实「医生告知11月11日上午可出院」标为 done，但日期 2026-11-11 晚于证据素材的时间 2026-11-09；把已发生的部分和计划的部分拆成两条",
+    "[ungrounded_date] status_facts[0]「计划11月14日或15日去宠物店买猫砂和冻干」里的「11月14日」不在它引用的素材里；素材只给了一个范围（11月14日–11月15日）；写「11月14日那周」或「11月15日前」，或者不写日期，不要挑其中某一天"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 3.155,
+   "latency_p95_s": 3.227,
+   "latency_total_s": 12.6,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 56,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 17.399,
+   "latency_p95_s": 19.679,
+   "latency_total_s": 71.0,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 345.2,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1381,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 18.416,
+   "latency_p95_s": 19.9,
+   "latency_total_s": 106.6,
+   "prompt_tokens_mean": 4047.3,
+   "completion_tokens_mean": 309.3,
+   "prompt_tokens_total": 24284,
+   "completion_tokens_total": 1856,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 15,
+   "ok_first_attempt": 15,
+   "retried": 0,
+   "latency_median_s": 5.804,
+   "latency_p95_s": 8.698,
+   "latency_total_s": 101.5,
+   "prompt_tokens_mean": 2344.9,
+   "completion_tokens_mean": 109.4,
+   "prompt_tokens_total": 35174,
+   "completion_tokens_total": 1641,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 6,
+  "attach": 42,
+  "none": 3,
+  "ask": 1
+ },
+ "assign_actions": {
+  "new": 6,
+  "attach": 42,
+  "none": 3,
+  "ask": 1
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 12.7,
+ "title_chars_mean": 11.3,
+ "wall_s": 2402.4,
+ "items_per_min": 1.15,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

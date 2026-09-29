@@ -1,0 +1,63 @@
+{
+ "file_id": "md-02",
+ "path": "corpus/md/md-02.md",
+ "type": "md",
+ "ext": "md",
+ "mime": "text/markdown",
+ "filename": "客服中心周报（7月9日—7月13日）.md",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "客服中心周报（7月9日—7月13日）\n填写人：顾婉清\n整体进度：92%\n本周完成\n- 完成需求评审\n- 处理工单 81 个\n- 更新项目排期\n风险\n- 供应商交期推迟一周\n下周计划\n- 上线 2.3 版本\n- 周五前同步进度\n（合成数据）\n合成数据",
+ "key_lines": [
+  "填写人：顾婉清",
+  "整体进度：92%",
+  "- 供应商交期推迟一周",
+  "- 上线 2.3 版本"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "填写人": "顾婉清",
+  "进度": "92%",
+  "风险": "供应商交期推迟一周",
+  "下周": "上线 2.3 版本"
+ },
+ "numbers": [
+  {
+   "value": 92,
+   "label": "进度%"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "整体进度是多少？",
+   "a": 92,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "本周最大的风险是什么？",
+   "a": "供应商交期推迟一周",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "下周的主要计划是什么？",
+   "a": "上线 2.3 版本",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "周报是谁写的？",
+   "a": "顾婉清",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 323,
+ "sha256": "f2398b0328f92fc91b8657174eabb2e9f9439d754fcd1d2544fe2adb7c2c6976",
+ "family": "weekly"
+}

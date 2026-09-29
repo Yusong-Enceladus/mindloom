@@ -1,0 +1,73 @@
+{
+ "scenario": "holdout-week-v1",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8003/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.2.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "081527e8b50b95bd",
+  "home-rank": "e91a92c4e7f388e6",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "",
+ "date": "2026-09-28T01:28:30+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8003/v1",
+  "--keep-db",
+  "--out",
+  "../out/holdout-skills-v5c-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "f60a1eb6-3131-4219-aea7-ca992bd6d999",
+  "E2": "46418bf4-b8bf-443e-afb1-55b32169d46a",
+  "E3": "51602d9d-af9f-48b0-bc60-0381a57082bb",
+  "E4": "e5c12ae7-af63-4c47-a796-56ca5c704280",
+  "E5": "cc4f0499-788e-44c4-9a47-82a85e9c998d",
+  "E6": "a3355310-aa04-4084-83bb-2b9d50286f01",
+  "E7": "46d60016-e617-4827-a695-db83b9aa247e",
+  "E8": "d1b72b27-eeae-4c7d-91f4-147706c3601e"
+ },
+ "bare_max_tokens": null
+}

@@ -1,0 +1,396 @@
+{
+ "scenario_id": "holdout-week-v1",
+ "split": "holdout",
+ "n_items": 32,
+ "summary": {
+  "bcubed_precision": 0.8155555555555556,
+  "bcubed_recall": 0.659411663216011,
+  "bcubed_f1": 0.7292187087138724,
+  "link_precision": 0.7666666666666667,
+  "link_recall": 0.696969696969697,
+  "link_f1": 0.7301587301587302,
+  "hard_decoy_leakage": 0.16666666666666666,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "noise_unfiled_rate": 1.0,
+  "noise_singleton_rate": 0.0,
+  "noise_in_real_event_rate": 0.0,
+  "false_unfiled": 0,
+  "unfiled_precision": 1.0,
+  "decoy_seed_ok": "1/2",
+  "absorbed_matters": "none",
+  "pred_event_count": 8,
+  "gold_event_count": 5,
+  "question_count": 3,
+  "asks_total": 3,
+  "asks_per_100_items": 9.38,
+  "max_asks_per_day": 2,
+  "ask_useful_rate": 0.6666666666666666,
+  "ask_true_yes_rate": 0.3333333333333333,
+  "asks_suppressed": 1,
+  "status_fact_recall": 0.75,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.1111111111111111,
+  "home_rank_ran": "2/2",
+  "home_ndcg5": 0.6125717768971264,
+  "home_ndcg5_recency": 0.470658040878787,
+  "home_top3_precision": 0.3333333333333333,
+  "home_g3_recall3": 0.5,
+  "home_gross_inversions": 1,
+  "home_clutter5": 0,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "person_link_accuracy": 0.18181818181818182,
+  "person_link_accuracy_cross_source": 0.25,
+  "checkpoints_scored": 2,
+  "checkpoints_total": 2
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.8155555555555556,
+    "recall": 0.659411663216011,
+    "f1": 0.7292187087138724
+   },
+   "link": {
+    "precision": 0.7666666666666667,
+    "recall": 0.696969696969697,
+    "f1": 0.7301587301587302,
+    "tp": 23,
+    "n_pred": 30,
+    "n_gold": 33
+   },
+   "decoy_leakage": {
+    "hard": 0.16666666666666666,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_studio": {
+      "difficulty": "hard",
+      "decoy_of": "ev_portfolio",
+      "pairs": 24,
+      "leakage": 0.16666666666666666,
+      "decoy_items": 4
+     },
+     "ev_tablet": {
+      "difficulty": "easy",
+      "decoy_of": "ev_app",
+      "pairs": 30,
+      "leakage": 0.0,
+      "decoy_items": 3
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 1,
+    "total": 2,
+    "per_decoy": {
+     "ev_studio": {
+      "seed": "60f08fc6-02d7-5333-a520-465d91854fed",
+      "ok": false
+     },
+     "ev_tablet": {
+      "seed": "dab12d8f-3047-5f86-a254-77b4c709e280",
+      "ok": true
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [],
+    "rate": 1.0
+   },
+   "noise_abstention": {
+    "noise_items": 2,
+    "abstained": 2,
+    "rate": 1.0,
+    "singleton_rate": 0.0,
+    "in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 8,
+   "pred_event_count_multi_item": 5,
+   "gold_event_count": 5,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "f60a1eb6-3131-4219-aea7-ca992bd6d999": "ev_app",
+   "a3355310-aa04-4084-83bb-2b9d50286f01": "ev_portfolio",
+   "51602d9d-af9f-48b0-bc60-0381a57082bb": "ev_studio",
+   "e5c12ae7-af63-4c47-a796-56ca5c704280": "ev_tablet",
+   "46418bf4-b8bf-443e-afb1-55b32169d46a": "ev_talk"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.18181818181818182,
+   "pairs": 22,
+   "accuracy_cross_source": 0.25,
+   "pairs_cross_source": 16,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 2.25,
+   "name_match": 0.3333333333333333,
+   "mapping": {
+    "b840cbf9-a250-52a6-bef6-d7e60b8cee44": "p_feng",
+    "ad5d9cb3-3b86-5b18-9051-c08cc80f7458": "p_he",
+    "68d3afee-1837-5dbe-8f86-0d46ddab1bc2": "p_owner",
+    "fafdf922-af3b-5dbe-93d1-750ff4f669b3": "p_shi"
+   }
+  },
+  "questions": {
+   "count": 3,
+   "asked_total": 3,
+   "by_kind": {
+    "same_event": 3
+   },
+   "per_100_items": 9.38,
+   "resolvable": 3,
+   "true_yes_rate": 0.3333333333333333,
+   "unresolvable_merged": 0,
+   "asks_total": 3,
+   "asks_per_100_items": 9.38,
+   "max_asks_per_day": 2,
+   "ask_useful_rate": 0.6666666666666666,
+   "asks_suppressed": 1
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-h3",
+   "label": "周三晚",
+   "n_items": 18,
+   "bcubed_f1": 0.8961038961038961,
+   "link_f1": 0.8823529411764706,
+   "pred_event_count": 3,
+   "gold_event_count": 4,
+   "expected": 7,
+   "recalled": 5,
+   "fact_recall": 0.7142857142857143,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 3,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.8678171500675901,
+    "ndcg5_recency": 0.7314208228253873,
+    "top3_precision": 0.6666666666666666,
+    "g3_recall3": 1.0,
+    "gross_inversions": 0,
+    "gross_pairs": 1,
+    "clutter5": 0,
+    "order": [
+     [
+      "f60a1eb6-3131-4219-aea7-ca992bd6d999",
+      "ev_app",
+      3,
+      0.95
+     ],
+     [
+      "46418bf4-b8bf-443e-afb1-55b32169d46a",
+      "ev_talk",
+      2,
+      0.65
+     ],
+     [
+      "51602d9d-af9f-48b0-bc60-0381a57082bb",
+      "ev_studio",
+      1,
+      0.45
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "f60a1eb6-3131-4219-aea7-ca992bd6d999",
+     "status_line": "首页评审通过，深色模式总价5万已定，约定10月12日交付，待发色板及补充协议。",
+     "recalled": [
+      "f_app_fee_2",
+      "f_app_due_2"
+     ],
+     "missing": []
+    },
+    "ev_portfolio": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_pf_launch"
+     ]
+    },
+    "ev_talk": {
+     "pred_event": "46418bf4-b8bf-443e-afb1-55b32169d46a",
+     "status_line": "方若已确认9月5日晚7:30讲《把设计评审开短一点》，时长40分钟并含演练。",
+     "recalled": [
+      "f_talk_date",
+      "f_talk_len_2"
+     ],
+     "missing": []
+    },
+    "ev_studio": {
+     "pred_event": "51602d9d-af9f-48b0-bc60-0381a57082bb",
+     "status_line": "租金分摊已定，9月1日搬入，宽带由贺一舟办理。",
+     "recalled": [
+      "f_studio_move"
+     ],
+     "missing": [
+      "f_studio_rent"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 32,
+   "bcubed_f1": 0.7292187087138724,
+   "link_f1": 0.7301587301587302,
+   "pred_event_count": 8,
+   "gold_event_count": 5,
+   "expected": 9,
+   "recalled": 7,
+   "fact_recall": 0.7777777777777778,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 6,
+   "stale": 1,
+   "stale_rate": 0.16666666666666666,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 8,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.3573264037266627,
+    "ndcg5_recency": 0.2098952589321866,
+    "top3_precision": 0.0,
+    "g3_recall3": 0.0,
+    "gross_inversions": 1,
+    "gross_pairs": 4,
+    "clutter5": 0,
+    "order": [
+     [
+      "cc4f0499-788e-44c4-9a47-82a85e9c998d",
+      "fragment",
+      0,
+      0.85
+     ],
+     [
+      "46d60016-e617-4827-a695-db83b9aa247e",
+      "fragment",
+      0,
+      0.75
+     ],
+     [
+      "d1b72b27-eeae-4c7d-91f4-147706c3601e",
+      "fragment",
+      0,
+      0.65
+     ],
+     [
+      "f60a1eb6-3131-4219-aea7-ca992bd6d999",
+      "ev_app",
+      3,
+      0.55
+     ],
+     [
+      "51602d9d-af9f-48b0-bc60-0381a57082bb",
+      "ev_studio",
+      2,
+      0.45
+     ],
+     [
+      "46418bf4-b8bf-443e-afb1-55b32169d46a",
+      "ev_talk",
+      2,
+      0.35
+     ],
+     [
+      "e5c12ae7-af63-4c47-a796-56ca5c704280",
+      "ev_tablet",
+      0,
+      0.2
+     ],
+     [
+      "a3355310-aa04-4084-83bb-2b9d50286f01",
+      "ev_portfolio",
+      2,
+      0.15
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "f60a1eb6-3131-4219-aea7-ca992bd6d999",
+     "status_line": "首页评审通过，深色模式总价5万已定，约定10月12日交付，待发色板及补充协议。",
+     "recalled": [
+      "f_app_due_2"
+     ],
+     "missing": [
+      "f_app_stage_2"
+     ],
+     "stale": [
+      "f_app_stage_1"
+     ]
+    },
+    "ev_portfolio": {
+     "pred_event": "a3355310-aa04-4084-83bb-2b9d50286f01",
+     "status_line": "CaseTimeline 组件和 3 个案例页已完成，待办移动端图片懒加载。",
+     "recalled": [
+      "f_pf_stage_2"
+     ],
+     "missing": [
+      "f_pf_launch"
+     ]
+    },
+    "ev_talk": {
+     "pred_event": "46418bf4-b8bf-443e-afb1-55b32169d46a",
+     "status_line": "方若已确认讲40分钟含演练，定于9月5日晚7:30进行，海报已发，报名60多人。",
+     "recalled": [
+      "f_talk_date",
+      "f_talk_len_2"
+     ],
+     "missing": []
+    },
+    "ev_studio": {
+     "pred_event": "51602d9d-af9f-48b0-bc60-0381a57082bb",
+     "status_line": "域名已续费，工作室定于9月1日搬入，押金14400元待支付。",
+     "recalled": [
+      "f_studio_move",
+      "f_studio_deposit"
+     ],
+     "missing": []
+    },
+    "ev_tablet": {
+     "pred_event": "e5c12ae7-af63-4c47-a796-56ca5c704280",
+     "status_line": "数位板已修好，8月23日寄回。",
+     "recalled": [
+      "f_tablet_fixed"
+     ],
+     "missing": []
+    }
+   }
+  }
+ ]
+}

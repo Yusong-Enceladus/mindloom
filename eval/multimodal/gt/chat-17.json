@@ -1,0 +1,93 @@
+{
+ "id": "chat-17",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-17.png",
+ "lang": "en",
+ "hard": [
+  "similar_names",
+  "dated_time"
+ ],
+ "synthetic": true,
+ "image_sha256": "ca51289f9fd281def0a5a3abc3160a6cd318dc1dd364119af9cb65a0e04424b7",
+ "gt": {
+  "chat_title": "Launch sync",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "Chen Wei",
+    "is_self": false,
+    "time": "Yesterday 9:24 AM",
+    "text": "Build 1.8.7 is up on staging, please test by Friday",
+    "kind": "text"
+   },
+   {
+    "sender": "Chen Wen",
+    "is_self": false,
+    "time": "",
+    "text": "Checkout still times out after 30 seconds",
+    "kind": "text"
+   },
+   {
+    "sender": "Me",
+    "is_self": true,
+    "time": "",
+    "text": "Let's ship ordering first and move payments to Sep 7",
+    "kind": "text"
+   },
+   {
+    "sender": "Chen Wei",
+    "is_self": false,
+    "time": "",
+    "text": "OK, I'll update the release notes",
+    "kind": "text"
+   },
+   {
+    "sender": "Tom Becker",
+    "is_self": false,
+    "time": "Yesterday 9:31 AM",
+    "text": "I can pair on the timeout tomorrow morning",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "Launch sync",
+  "Chen Wei：Build 1.8.7 is up on staging, please test by Friday",
+  "Chen Wen：Checkout still times out after 30 seconds",
+  "Me：Let's ship ordering first and move payments to Sep 7",
+  "Chen Wei：OK, I'll update the release notes",
+  "Tom Becker：I can pair on the timeout tomorrow morning"
+ ],
+ "qa": [
+  {
+   "q": "Which build is on staging?",
+   "a": "1.8.7",
+   "match": "exact"
+  },
+  {
+   "q": "After how many seconds does checkout time out?",
+   "a": "30 seconds",
+   "match": "number"
+  },
+  {
+   "q": "When do payments move to?",
+   "a": "Sep 7",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "helv",
+   "helv_bold"
+  ]
+ },
+ "variant": {
+  "conv": "en_launch",
+  "theme": "light",
+  "similar": true,
+  "similar_pair": 0,
+  "time_style": "yesterday"
+ }
+}

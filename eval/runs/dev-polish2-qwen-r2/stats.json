@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 81,
+   "retried": 1,
+   "latency_median_s": 3.46,
+   "latency_p95_s": 4.292,
+   "latency_total_s": 282.6,
+   "prompt_tokens_mean": 5222.1,
+   "completion_tokens_mean": 184.9,
+   "prompt_tokens_total": 428215,
+   "completion_tokens_total": 15158,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 65,
+   "ok_first_attempt": 38,
+   "retried": 40,
+   "latency_median_s": 5.003,
+   "latency_p95_s": 9.93,
+   "latency_total_s": 450.4,
+   "prompt_tokens_mean": 6257.0,
+   "completion_tokens_mean": 383.5,
+   "prompt_tokens_total": 488044,
+   "completion_tokens_total": 29910,
+   "errors_sample": [
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[0] 用了相对时间「今天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「我也推荐B」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 8.722,
+   "latency_p95_s": 10.658,
+   "latency_total_s": 34.0,
+   "prompt_tokens_mean": 6101.8,
+   "completion_tokens_mean": 620.2,
+   "prompt_tokens_total": 24407,
+   "completion_tokens_total": 2481,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 6.454,
+   "latency_p95_s": 6.454,
+   "latency_total_s": 17.1,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 438.3,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1315,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 11,
+  "attach": 63,
+  "ask": 4,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 11,
+  "attach": 61,
+  "ask": 2,
+  "none": 4,
+  "ask_suppressed": 4
+ },
+ "final_live_events": 17,
+ "status_line_chars_mean": 14,
+ "title_chars_mean": 9.4,
+ "wall_s": 791.2,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

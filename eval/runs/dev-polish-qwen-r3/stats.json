@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 81,
+   "retried": 1,
+   "latency_median_s": 3.241,
+   "latency_p95_s": 3.981,
+   "latency_total_s": 265.5,
+   "prompt_tokens_mean": 5262.6,
+   "completion_tokens_mean": 183.4,
+   "prompt_tokens_total": 431532,
+   "completion_tokens_total": 15041,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 61,
+   "ok_first_attempt": 39,
+   "retried": 39,
+   "latency_median_s": 4.91,
+   "latency_p95_s": 9.527,
+   "latency_total_s": 427.3,
+   "prompt_tokens_mean": 5475.5,
+   "completion_tokens_mean": 392.4,
+   "prompt_tokens_total": 427086,
+   "completion_tokens_total": 30605,
+   "errors_sample": [
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「我也推荐B」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 8.825,
+   "latency_p95_s": 11.537,
+   "latency_total_s": 33.8,
+   "prompt_tokens_mean": 6020.2,
+   "completion_tokens_mean": 589.2,
+   "prompt_tokens_total": 24081,
+   "completion_tokens_total": 2357,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 6.055,
+   "latency_p95_s": 6.945,
+   "latency_total_s": 17.1,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 435,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1305,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 65,
+  "none": 4,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 61,
+  "none": 4,
+  "ask": 4,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 17,
+ "status_line_chars_mean": 13.1,
+ "title_chars_mean": 9.8,
+ "wall_s": 751.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,73 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 81,
+   "ok": 81,
+   "ok_first_attempt": 81,
+   "retried": 0,
+   "latency_median_s": 6.015,
+   "latency_p95_s": 8.138,
+   "latency_total_s": 498.2,
+   "prompt_tokens_mean": 3601.1,
+   "completion_tokens_mean": 422.3,
+   "prompt_tokens_total": 291693,
+   "completion_tokens_total": 34207,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 81,
+   "retried": 0,
+   "latency_median_s": 4.25,
+   "latency_p95_s": 6.456,
+   "latency_total_s": 387.1,
+   "prompt_tokens_mean": 1014.6,
+   "completion_tokens_mean": 355.8,
+   "prompt_tokens_total": 83200,
+   "completion_tokens_total": 29174,
+   "errors_sample": [
+    "not valid JSON: Expecting ',' delimiter: line 10 column 6 (char 237)"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 16.48,
+   "latency_p95_s": 19.168,
+   "latency_total_s": 63.4,
+   "prompt_tokens_mean": 3241.5,
+   "completion_tokens_mean": 1212,
+   "prompt_tokens_total": 12966,
+   "completion_tokens_total": 4848,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 5.92,
+   "latency_p95_s": 6.821,
+   "latency_total_s": 16.8,
+   "prompt_tokens_mean": 1317,
+   "completion_tokens_mean": 450,
+   "prompt_tokens_total": 3951,
+   "completion_tokens_total": 1350,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 16,
+  "attach": 65,
+  "ask": 1
+ },
+ "final_live_events": 17,
+ "status_line_chars_mean": 32.6,
+ "title_chars_mean": 11.9,
+ "wall_s": 969.9,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

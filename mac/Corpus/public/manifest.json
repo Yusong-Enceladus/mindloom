@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "public-smoke",
+  "version": "1.0.0",
+  "tier": "public",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "10000000-0000-4000-8000-000000000001",
+      "consentClass": "public",
+      "assetReference": "fixture://public/content-free-smoke-001",
+      "contentDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "languages": [
+        "zh-CN"
+      ],
+      "tags": [
+        "metadata-only",
+        "smoke"
+      ]
+    }
+  ]
+}

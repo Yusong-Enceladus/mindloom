@@ -1,0 +1,78 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 81,
+   "ok": 43,
+   "ok_first_attempt": 43,
+   "retried": 0,
+   "latency_median_s": 5.622,
+   "latency_p95_s": 6.568,
+   "latency_total_s": 444.7,
+   "prompt_tokens_mean": 3120.7,
+   "completion_tokens_mean": 368.5,
+   "prompt_tokens_total": 252778,
+   "completion_tokens_total": 29847,
+   "errors_sample": [
+    "not valid JSON: Expecting ',' delimiter: line 19 column 6 (char 536)",
+    "not valid JSON: Expecting ',' delimiter: line 17 column 6 (char 546)",
+    "not valid JSON: Expecting ',' delimiter: line 19 column 6 (char 570)"
+   ]
+  },
+  "brief": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 82,
+   "retried": 0,
+   "latency_median_s": 3.121,
+   "latency_p95_s": 5.485,
+   "latency_total_s": 268.0,
+   "prompt_tokens_mean": 549.5,
+   "completion_tokens_mean": 236.3,
+   "prompt_tokens_total": 45056,
+   "completion_tokens_total": 19377,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 34.093,
+   "latency_p95_s": 34.494,
+   "latency_total_s": 117.5,
+   "prompt_tokens_mean": 6361,
+   "completion_tokens_mean": 2121.8,
+   "prompt_tokens_total": 25444,
+   "completion_tokens_total": 8487,
+   "errors_sample": [
+    "not valid JSON: Expecting ',' delimiter: line 157 column 4 (char 4063)",
+    "not valid JSON: Expecting ',' delimiter: line 152 column 4 (char 4032)"
+   ]
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 5.854,
+   "latency_p95_s": 6.668,
+   "latency_total_s": 16.6,
+   "prompt_tokens_mean": 1317,
+   "completion_tokens_mean": 449.7,
+   "prompt_tokens_total": 3951,
+   "completion_tokens_total": 1349,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 8,
+  "fallback": 38,
+  "attach": 36
+ },
+ "final_live_events": 46,
+ "status_line_chars_mean": 26.9,
+ "title_chars_mean": 11.7,
+ "wall_s": 853.2,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

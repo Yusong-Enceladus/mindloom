@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "product-consistency-contract",
+  "invariants": [
+    {
+      "id": "planted-mvp-core-conflict",
+      "description": "A planted MVP-only core assertion must fail closed.",
+      "sources": [
+        {
+          "path": "Tests/Fixtures/Consistency/planted-conflict.md",
+          "requiredLiterals": ["MVP 口述优先"],
+          "forbiddenLiterals": [
+            "MVP 可以使用独立的口述人物类型，后续再迁移到 V1 核心。"
+          ]
+        }
+      ]
+    }
+  ]
+}

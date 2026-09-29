@@ -1,0 +1,136 @@
+{
+ "id": "chart-16",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-16.png",
+ "lang": "en",
+ "hard": [
+  "small_text",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "7df37f857430c7fb9c422310c69db84b019b77a9c60f7aeb40b0b1ca5ac2df3c",
+ "gt": {
+  "chart_type": "dashboard",
+  "title": "Store dashboard · September",
+  "kpis": [
+   {
+    "label": "Revenue",
+    "value": "$68.9K",
+    "delta": "-2.6%"
+   },
+   {
+    "label": "Orders",
+    "value": "3,372",
+    "delta": "-10.4%"
+   },
+   {
+    "label": "Avg. order",
+    "value": "$20.43",
+    "delta": "-0.6%"
+   },
+   {
+    "label": "Refund rate",
+    "value": "2.3%",
+    "delta": "+0.4pt"
+   }
+  ],
+  "series": [
+   {
+    "name": "Daily orders, last 10 days",
+    "categories": [
+     "9/12",
+     "9/13",
+     "9/14",
+     "9/15",
+     "9/16",
+     "9/17",
+     "9/18",
+     "9/19",
+     "9/20",
+     "9/21"
+    ],
+    "values": [
+     387.0,
+     351.0,
+     336.0,
+     301.0,
+     278.0,
+     247.0,
+     226.0,
+     199.0,
+     167.0,
+     140.0
+    ],
+    "labels": [
+     "387",
+     "351",
+     "336",
+     "301",
+     "278",
+     "247",
+     "226",
+     "199",
+     "167",
+     "140"
+    ],
+    "unit": "orders"
+   }
+  ],
+  "trend": {
+   "Daily orders, last 10 days": "down"
+  }
+ },
+ "text_lines": [
+  "Store dashboard · September",
+  "Revenue $68.9K -2.6%",
+  "Orders 3,372 -10.4%",
+  "Avg. order $20.43 -0.6%",
+  "Refund rate 2.3% +0.4pt",
+  "Daily orders, last 10 days",
+  "9/12: 387",
+  "9/13: 351",
+  "9/14: 336",
+  "9/15: 301",
+  "9/16: 278",
+  "9/17: 247",
+  "9/18: 226",
+  "9/19: 199",
+  "9/20: 167",
+  "9/21: 140"
+ ],
+ "qa": [
+  {
+   "q": "What is the revenue?",
+   "a": "$68.9K",
+   "match": "exact"
+  },
+  {
+   "q": "How many orders?",
+   "a": "3,372",
+   "match": "number"
+  },
+  {
+   "q": "Which day had the most orders?",
+   "a": "9/12",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of daily orders?",
+   "a": "downward",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "dark": false
+ },
+ "variant": {
+  "chart": "dashboard",
+  "lang": "en",
+  "patterns": [
+   "down"
+  ],
+  "small": true
+ }
+}

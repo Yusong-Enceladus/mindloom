@@ -1,0 +1,39 @@
+{
+ "segments": [
+  {
+   "label": "muse-glimmer-vllm",
+   "backend": "openai",
+   "model": "muse-glimmer",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 7,
+   "start": {
+    "time": 1790665582.0826776,
+    "gpu_apps": [
+     "351545, VLLM::EngineCore, 57947 MiB"
+    ],
+    "gpu_util": "0 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          67           4           0          50          54\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"muse-glimmer\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"muse-glimmer\"} 0.0"
+    ]
+   },
+   "wall_s": 142.34,
+   "end": {
+    "time": 1790665724.4915612,
+    "gpu_apps": [
+     "351545, VLLM::EngineCore, 59055 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          68           3           0          51          53\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"muse-glimmer\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"muse-glimmer\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

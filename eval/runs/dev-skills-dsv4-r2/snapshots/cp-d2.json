@@ -1,0 +1,712 @@
+{
+ "cursor": 76,
+ "events": [
+  {
+   "event_id": "1a039736-93be-4644-b60d-e05333ff7458",
+   "title": "家用磨豆机退货",
+   "title_user_edited": false,
+   "status_line": "退货申请已通过，需在7天内寄回商品，退款459元。",
+   "status_facts": [
+    {
+     "text": "退货申请已通过，需在7天内寄回商品",
+     "item_ids": [
+      "D19DB50C-9562-54C2-A67A-D7AEBA00DA22"
+     ]
+    },
+    {
+     "text": "退款金额为459元",
+     "item_ids": [
+      "D19DB50C-9562-54C2-A67A-D7AEBA00DA22"
+     ]
+    },
+    {
+     "text": "磨豆机研磨不均匀，粗细差很多",
+     "item_ids": [
+      "0713A85C-7205-51E8-8FAD-5B73A4CE043F"
+     ]
+    }
+   ],
+   "importance": 0.85,
+   "importance_reason": "7天内需寄回商品退款",
+   "started_at": "2026-09-15T20:15:00+08:00",
+   "updated_at": "2026-09-15T20:40:00+08:00",
+   "item_ids": [
+    "0713A85C-7205-51E8-8FAD-5B73A4CE043F",
+    "D19DB50C-9562-54C2-A67A-D7AEBA00DA22"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "b55e41b4-a193-477a-b440-8ba6ea2634f7"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "b55e41b4-a193-477a-b440-8ba6ea2634f7"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "64c07573-0794-4c6c-8fc1-cd92284991b0",
+   "title": "秋季新品桂花拿铁筹备",
+   "title_user_edited": false,
+   "status_line": "桂花拿铁已试做，第二杯比例最佳，定价32元，计划10月1日上架。",
+   "status_facts": [
+    {
+     "text": "桂花拿铁试做三杯，第二杯比例最佳",
+     "item_ids": [
+      "DAE2BBB2-8818-58CC-909E-DDAF80C29133"
+     ]
+    },
+    {
+     "text": "定价32元，计划10月1日上架",
+     "item_ids": [
+      "8F8C3206-308D-50B3-8860-AC5BBD9CC54C"
+     ]
+    },
+    {
+     "text": "林小满已买到栗子泥，明天试做栗子蛋糕",
+     "item_ids": [
+      "AC6E551C-4B43-53B6-8727-2963F885D2B4"
+     ]
+    }
+   ],
+   "importance": 0.65,
+   "importance_reason": "10月1日上架，正在筹备中",
+   "started_at": "2026-09-14T14:10:00+08:00",
+   "updated_at": "2026-09-15T17:30:00+08:00",
+   "item_ids": [
+    "8F8C3206-308D-50B3-8860-AC5BBD9CC54C",
+    "DAE2BBB2-8818-58CC-909E-DDAF80C29133",
+    "AC6E551C-4B43-53B6-8727-2963F885D2B4"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "f8686093-980a-47ee-b828-afdf1a3b3202"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "f8686093-980a-47ee-b828-afdf1a3b3202"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "c1312089-28f1-4ba6-8e96-31baff5b5726",
+   "title": "门头设计委托苏苏",
+   "title_user_edited": false,
+   "status_line": "已选定B版暖木色门头，苏苏20号前出终稿，9月24号安装。",
+   "status_facts": [
+    {
+     "text": "选定B版暖木色加手写字门头方案",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+      "9650A5DA-3C04-5823-A248-FD770A607DD7"
+     ]
+    },
+    {
+     "text": "苏苏20号前出终稿，9月24号安装",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525"
+     ]
+    },
+    {
+     "text": "门头加海报设计费共6000元，两周年海报免费",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525"
+     ]
+    },
+    {
+     "text": "招牌尺寸等周师傅明天量好再发苏苏",
+     "item_ids": [
+      "9650A5DA-3C04-5823-A248-FD770A607DD7"
+     ]
+    }
+   ],
+   "importance": 0.75,
+   "importance_reason": "20号前出终稿，24号安装",
+   "started_at": "2026-09-14T16:05:00+08:00",
+   "updated_at": "2026-09-15T16:10:07.590000+08:00",
+   "item_ids": [
+    "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+    "25DB9250-44FA-561E-826E-775D91B6FF64",
+    "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+    "9650A5DA-3C04-5823-A248-FD770A607DD7"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+    "75F7185C-AF77-5E23-B6CF-8D63F15750DC"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "9af2248f-1961-436d-8c6b-044bdb125f57"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "9af2248f-1961-436d-8c6b-044bdb125f57"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "5f9d63cc-fc83-421b-a0b6-2d90833067d1",
+   "title": "咖啡豆样品申请",
+   "title_user_edited": false,
+   "status_line": "样品已寄出，周四下午四点线上会讨论杯测。",
+   "status_facts": [
+    {
+     "text": "高经理已寄出耶加雪菲和巴西拼配样品，明天到。",
+     "item_ids": [
+      "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C"
+     ]
+    },
+    {
+     "text": "巴西拼配报价每公斤138元，量大可谈。",
+     "item_ids": [
+      "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C"
+     ]
+    },
+    {
+     "text": "周四下午四点与高经理开线上会，小满参加。",
+     "item_ids": [
+      "BE4CD906-9394-5F68-9A04-381DA55EE9B0"
+     ]
+    }
+   ],
+   "importance": 0.7,
+   "importance_reason": "周四下午线上会讨论杯测",
+   "started_at": "2026-09-15T11:00:00+08:00",
+   "updated_at": "2026-09-15T13:40:08.740000+08:00",
+   "item_ids": [
+    "F0060594-CFDF-5008-A831-9F086FD0EF18",
+    "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C",
+    "BE4CD906-9394-5F68-9A04-381DA55EE9B0"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "fb0521eb-b5b7-4a8f-95f3-07d4a4afb042"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "fb0521eb-b5b7-4a8f-95f3-07d4a4afb042"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "6331b710-eb55-4c8f-aaf6-8d97ab33eed1",
+   "title": "咖啡店集点卡小程序开发",
+   "title_user_edited": false,
+   "status_line": "已完成数据表设计，等待项目启动。",
+   "status_facts": [
+    {
+     "text": "需求：顾客每买一杯盖一个章，满10杯送1杯，店员扫码核销，用云开发。",
+     "item_ids": [
+      "67FB3505-0713-5515-8E07-884EABB252BF"
+     ]
+    },
+    {
+     "text": "数据表设计：会员、盖章记录、兑换记录，手机号做唯一标识。",
+     "item_ids": [
+      "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC"
+     ]
+    }
+   ],
+   "importance": 0.4,
+   "importance_reason": "等待启动，暂无紧迫节点",
+   "started_at": "2026-09-14T21:05:00+08:00",
+   "updated_at": "2026-09-15T10:30:08.280000+08:00",
+   "item_ids": [
+    "67FB3505-0713-5515-8E07-884EABB252BF",
+    "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "8a57cbc7-0a76-43a4-b748-0a9ad8ae5328"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "8a57cbc7-0a76-43a4-b748-0a9ad8ae5328"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "2aa96c5e-9a95-40e4-a213-25c8b2e6b03d",
+   "title": "吧台拆除与设备搬运",
+   "title_user_edited": false,
+   "status_line": "吧台已拆完，设备搬至仓库，排水管需更换，明天现场沟通。",
+   "status_facts": [
+    {
+     "text": "吧台拆除完成，垃圾中午清走。",
+     "item_ids": [
+      "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+     ]
+    },
+    {
+     "text": "咖啡机和磨豆机已搬到仓库并盖好防尘布。",
+     "item_ids": [
+      "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+     ]
+    },
+    {
+     "text": "装修报价3.8万，工期12天，9月26日完工，定金下午转。",
+     "item_ids": [
+      "1A41A674-D9F4-5AFA-A64B-F018356C9D5A",
+      "6F342268-726C-5B7B-AACF-316A24576D3B"
+     ]
+    },
+    {
+     "text": "吧台下面排水管需更换，周工明天现场沟通。",
+     "item_ids": [
+      "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+     ]
+    },
+    {
+     "text": "旧吧台台面保留，计划以后做长桌。",
+     "item_ids": [
+      "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93"
+     ]
+    }
+   ],
+   "importance": 0.7,
+   "importance_reason": "明天现场沟通排水管问题",
+   "started_at": "2026-09-14T08:52:00+08:00",
+   "updated_at": "2026-09-15T09:50:00+08:00",
+   "item_ids": [
+    "057423EA-F56E-573B-BA3A-F555BCD22091",
+    "1A41A674-D9F4-5AFA-A64B-F018356C9D5A",
+    "6F342268-726C-5B7B-AACF-316A24576D3B",
+    "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+    "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+    "chat-edff8c8c-b523-518a-bffa-feb200882bac",
+    "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "7ab05dba-3306-4adf-8157-0becbee839b4"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "7ab05dba-3306-4adf-8157-0becbee839b4"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "51bb9897-3389-4641-abe4-17aee1360dd4",
+   "title": "卫生间天花板漏水处理",
+   "title_user_edited": false,
+   "status_line": "周师傅周六上午上门检查，预估重做防水层需两三千元。",
+   "status_facts": [
+    {
+     "text": "妈妈家卫生间天花板滴水，楼下已渗水",
+     "item_ids": [
+      "7883B63B-FA24-52BE-BD83-889FB9DA895C"
+     ]
+    },
+    {
+     "text": "已联系装修师傅周建国，他周六上午上门检查",
+     "item_ids": [
+      "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+      "9432549F-C1CE-5A6F-BE44-9409C34C8DF6"
+     ]
+    },
+    {
+     "text": "周师傅预估重做防水层需两三千元",
+     "item_ids": [
+      "9432549F-C1CE-5A6F-BE44-9409C34C8DF6"
+     ]
+    }
+   ],
+   "importance": 0.6,
+   "importance_reason": "周六上午师傅上门检查",
+   "started_at": "2026-09-14T21:40:00+08:00",
+   "updated_at": "2026-09-15T09:10:00+08:00",
+   "item_ids": [
+    "7883B63B-FA24-52BE-BD83-889FB9DA895C",
+    "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+    "9432549F-C1CE-5A6F-BE44-9409C34C8DF6"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "6c9b2bfe-f06d-4631-a494-2afc281ceb28"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "6c9b2bfe-f06d-4631-a494-2afc281ceb28"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "c082bf60-9aa1-46b0-80ba-ddf60511ef12",
+   "title": "天气太热去游泳",
+   "title_user_edited": false,
+   "status_line": "今天天气太热，计划晚上去游泳。",
+   "status_facts": [
+    {
+     "text": "今天气温32度，感觉太热",
+     "item_ids": [
+      "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7"
+     ]
+    },
+    {
+     "text": "计划晚上去游泳",
+     "item_ids": [
+      "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7"
+     ]
+    }
+   ],
+   "importance": 0.2,
+   "importance_reason": "一次性休闲计划，无后续",
+   "started_at": "2026-09-14T18:20:00+08:00",
+   "updated_at": "2026-09-14T18:20:06.210000+08:00",
+   "item_ids": [
+    "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "ee896e83-2767-488a-8db8-9ee829a9a832"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "ee896e83-2767-488a-8db8-9ee829a9a832"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  },
+  {
+   "event_id": "50992583-bfa9-49dd-ad16-0424f1954712",
+   "title": "店铺租约续签沟通",
+   "title_user_edited": false,
+   "status_line": "陈总同意续签但月租涨至1.3万，我正考虑谈判策略。",
+   "status_facts": [
+    {
+     "text": "陈总同意续签，但月租从1.1万涨至1.3万。",
+     "item_ids": [
+      "54142737-31A1-5091-82F6-916E95102C16"
+     ]
+    },
+    {
+     "text": "我向Claude请求了三个谈判理由。",
+     "item_ids": [
+      "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546"
+     ]
+    },
+    {
+     "text": "Claude建议用稳定租户、签三年租期换涨幅10%、自费翻新门面作为谈判点。",
+     "item_ids": [
+      "D229196F-8C59-5804-9C38-BBEDA39249E7"
+     ]
+    }
+   ],
+   "importance": 0.55,
+   "importance_reason": "续签谈判中，需尽快决策",
+   "started_at": "2026-09-14T10:15:00+08:00",
+   "updated_at": "2026-09-14T11:35:00+08:00",
+   "item_ids": [
+    "20D75520-2216-583C-899F-A0019C0361F8",
+    "54142737-31A1-5091-82F6-916E95102C16",
+    "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546",
+    "D229196F-8C59-5804-9C38-BBEDA39249E7"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "820c3f8b-8c88-4389-9650-2d9ef87eead4"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "820c3f8b-8c88-4389-9650-2d9ef87eead4"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "deepseek-v4-flash",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "a651f695-bde4-4bec-bb36-9baf17bd09cf"
+    }
+   }
+  }
+ ],
+ "questions": [],
+ "persons": [
+  {
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+   "display_name": "我",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-edff8c8c-b523-518a-bffa-feb200882bac",
+   "display_name": "周工",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c",
+   "display_name": "满满",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": null
+  },
+  {
+   "person_id": "75F7185C-AF77-5E23-B6CF-8D63F15750DC",
+   "display_name": null,
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  }
+ ],
+ "item_persons": [
+  {
+   "item_id": "057423EA-F56E-573B-BA3A-F555BCD22091",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "6F342268-726C-5B7B-AACF-316A24576D3B",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "20D75520-2216-583C-899F-A0019C0361F8",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "8F8C3206-308D-50B3-8860-AC5BBD9CC54C",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "67FB3505-0713-5515-8E07-884EABB252BF",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "5896A3FB-C6E0-5797-B478-DB8FA4341585",
+   "person_id": "chat-edff8c8c-b523-518a-bffa-feb200882bac"
+  },
+  {
+   "item_id": "5896A3FB-C6E0-5797-B478-DB8FA4341585",
+   "person_id": "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c"
+  },
+  {
+   "item_id": "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "F0060594-CFDF-5008-A831-9F086FD0EF18",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BE4CD906-9394-5F68-9A04-381DA55EE9B0",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+   "person_id": "75F7185C-AF77-5E23-B6CF-8D63F15750DC"
+  },
+  {
+   "item_id": "9650A5DA-3C04-5823-A248-FD770A607DD7",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "0713A85C-7205-51E8-8FAD-5B73A4CE043F",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  }
+ ],
+ "questions_asked_total": 0
+}

@@ -1,0 +1,506 @@
+{
+ "items_total": 128,
+ "items_scored": 104,
+ "items_first_mention": 16,
+ "items_noise": 8,
+ "mean_pool_size": 14.15,
+ "fused": {
+  "recall@1": 0.3942,
+  "recall@3": 0.6827,
+  "recall@5": 0.7596,
+  "mrr": 0.572,
+  "hits@5": 79
+ },
+ "similarity_only": {
+  "recall@1": 0.5192,
+  "recall@3": 0.7788,
+  "recall@5": 0.8654,
+  "mrr": 0.6706,
+  "hits@5": 90
+ },
+ "random": {
+  "recall@1": 0.1027,
+  "recall@3": 0.2968,
+  "recall@5": 0.4522
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 42,
+   "hit@1": 14,
+   "hit@3": 25,
+   "hit@5": 28
+  },
+  "dictation": {
+   "n": 44,
+   "hit@1": 19,
+   "hit@3": 33,
+   "hit@5": 36
+  },
+  "meeting_offline": {
+   "n": 6,
+   "hit@1": 4,
+   "hit@3": 6,
+   "hit@5": 6
+  },
+  "meeting_online": {
+   "n": 4,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "image": {
+   "n": 5,
+   "hit@1": 2,
+   "hit@3": 4,
+   "hit@5": 5
+  },
+  "document": {
+   "n": 3,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 2
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d2-08",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_sign",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_reno",
+    "ev_peggy_claim",
+    "ev_momflat",
+    "ev_beans"
+   ]
+  },
+  {
+   "ref": "h2-d2-08",
+   "kind": "text",
+   "gold": [
+    "ev_dad_knee"
+   ],
+   "top5": [
+    "ev_menu",
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_reno",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d2-12",
+   "kind": "text",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_dad_knee",
+    "ev_sign",
+    "ev_peggy_claim",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "h2-d2-09",
+   "kind": "text",
+   "gold": [
+    "ev_wuqing_samples"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_menu",
+    "ev_beans",
+    "ev_momflat",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "h2-d3-03",
+   "kind": "dictation",
+   "gold": [
+    "ev_peggy_claim"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "h2-d3-05",
+   "kind": "text",
+   "gold": [
+    "ev_q3_rebate"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_lease",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_nanan_po2611"
+   ]
+  },
+  {
+   "ref": "h2-d3-06",
+   "kind": "text",
+   "gold": [
+    "ev_peggy_quote"
+   ],
+   "top5": [
+    "ev_peggy_claim",
+    "ev_reno",
+    "ev_lease",
+    "ev_q3_rebate",
+    "ev_dad_knee"
+   ]
+  },
+  {
+   "ref": "d3-10",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_anniv",
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_nanan_po2611"
+   ]
+  },
+  {
+   "ref": "h2-d3-07",
+   "kind": "text",
+   "gold": [
+    "ev_nanan_po2611"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_menu",
+    "ev_lease",
+    "ev_sign"
+   ]
+  },
+  {
+   "ref": "d4-04",
+   "kind": "document",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_spring_fair",
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d4-08",
+   "kind": "text",
+   "gold": [
+    "ev_sign",
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_peggy_quote",
+    "ev_reno",
+    "ev_lease",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d4-09",
+   "kind": "dictation",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_peggy_quote",
+    "ev_reno",
+    "ev_nanan_po2611"
+   ]
+  },
+  {
+   "ref": "d4-10",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_nanan_po2611",
+    "ev_sign",
+    "ev_lease",
+    "ev_dad_knee"
+   ]
+  },
+  {
+   "ref": "d4-11",
+   "kind": "dictation",
+   "gold": [
+    "ev_beans"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_anniv",
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d4-12",
+   "kind": "text",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_menu",
+    "ev_beans",
+    "ev_reno",
+    "ev_lease",
+    "ev_dad_knee"
+   ]
+  },
+  {
+   "ref": "d5-08",
+   "kind": "dictation",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_anniv",
+    "ev_lease",
+    "ev_peggy_claim",
+    "ev_nanan_po2611"
+   ]
+  },
+  {
+   "ref": "h2-d5-06",
+   "kind": "text",
+   "gold": [
+    "ev_q3_rebate"
+   ],
+   "top5": [
+    "ev_peggy_quote",
+    "ev_nanan_po2611",
+    "ev_reno",
+    "ev_anniv",
+    "ev_beans"
+   ]
+  },
+  {
+   "ref": "d5-11",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_anniv",
+    "ev_beans",
+    "ev_sign",
+    "ev_peggy_quote"
+   ]
+  },
+  {
+   "ref": "d5-12",
+   "kind": "text",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_beans",
+    "ev_reno",
+    "ev_peggy_quote",
+    "ev_nanan_po2611",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d6-02",
+   "kind": "dictation",
+   "gold": [
+    "ev_sign"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_momflat",
+    "ev_anniv",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "h2-d6-02",
+   "kind": "dictation",
+   "gold": [
+    "ev_wuqing_samples"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_dad_knee",
+    "ev_peggy_quote",
+    "ev_reno",
+    "ev_sign"
+   ]
+  },
+  {
+   "ref": "h2-d6-04",
+   "kind": "text",
+   "gold": [
+    "ev_nanan_po2611"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_peggy_claim",
+    "ev_member",
+    "ev_lease",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d6-09",
+   "kind": "dictation",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_nanan_po2611",
+    "ev_sign",
+    "ev_momflat",
+    "ev_dad_knee"
+   ]
+  },
+  {
+   "ref": "d7-02",
+   "kind": "text",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_momflat",
+    "ev_reno",
+    "ev_dad_knee",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_nanan_po2611",
+    "ev_wuqing_samples",
+    "ev_momflat",
+    "ev_member"
+   ]
+  }
+ ],
+ "label": "lexical-hash",
+ "scenario": "dev-week-v1+holdout-week-v2",
+ "split": "stress",
+ "embedder": "hash",
+ "embed_model": "hash-bigram-256",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "embed_dim": 256,
+ "embed_calls": 128,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 0.06,
+  "p95": 0.21,
+  "max": 0.27,
+  "mean": 0.08
+ },
+ "embed_chars": {
+  "p50": 48,
+  "max": 392
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 0,
+  "misses": 7
+ },
+ "screenshot_readings": [
+  {
+   "ref": "h2-d1-04",
+   "text_chars": 142,
+   "summary_chars": 62,
+   "messages": 4
+  },
+  {
+   "ref": "h2-d1-06",
+   "text_chars": 148,
+   "summary_chars": 52,
+   "messages": 4
+  },
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 51,
+   "messages": 5
+  },
+  {
+   "ref": "h2-d3-02",
+   "text_chars": 125,
+   "summary_chars": 44,
+   "messages": 4
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 100,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 69,
+   "messages": 6
+  },
+  {
+   "ref": "h2-d5-04",
+   "text_chars": 146,
+   "summary_chars": 48,
+   "messages": 5
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 97.1,
+ "date": "2026-09-29T01:20:25+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "merged-2wk/scenario.json",
+  "--embedder",
+  "hash",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--reading-cache",
+  "readings/merged-2wk",
+  "--label",
+  "lexical-hash",
+  "--out",
+  "out/merged-hash"
+ ]
+}

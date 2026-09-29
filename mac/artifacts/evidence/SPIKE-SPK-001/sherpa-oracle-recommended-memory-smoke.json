@@ -1,0 +1,145 @@
+{
+  "benchmarkID" : "speaker-sherpa-oracle-recommended-memory-smoke",
+  "configHash" : "da42d9966911ef7c0817bb82285fd679a5a2d2c5a9ee6447cc91406a5b6e2041",
+  "corpus" : {
+    "manifestID" : "product-synthetic-speaker-smoke",
+    "split" : "smoke",
+    "version" : "1.0.0"
+  },
+  "environmentRef" : "artifacts/evidence/environment/preflight-summary.json",
+  "failedSampleUUIDs" : [
+
+  ],
+  "hardware" : {
+    "architecture" : "arm64",
+    "osVersion" : "Version 26.5.2 (Build 25F84)",
+    "toolchainVersion" : "Xcode 26.6; Swift 6.3.3",
+    "unifiedMemoryBytes" : 51539607552
+  },
+  "implementationRevision" : "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+  "kind" : "benchmark-result",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0.22047449152321674
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0.2815500302901428
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 3
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 4750
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 6920
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.22524320695599492
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 273186816
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 0
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "sherpa-speaker-model-set@v1.13.2",
+    "sha256" : "785c40512db184221c560db6b2b628eb4e5622f5ec11a220c0cf453e67f152c9"
+  },
+  "protocolVersion" : 1,
+  "runID" : "31000000-0000-4000-8000-000000000003",
+  "schemaVersion" : 1,
+  "task" : "speaker"
+}

@@ -1,0 +1,29 @@
+{
+ "id": "email-c",
+ "template": "email",
+ "split": "test",
+ "filename": "样品费用确认.eml",
+ "path": "data/email-c.eml",
+ "sha256": "c815f00267497a1c28635ae27efb6a587e524314ac809f4c2c27e326dae994da",
+ "size": 317908,
+ "error": null,
+ "must_contain_image": [
+  "禾木生鲜超市",
+  "青川市白石区桂香路172号"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "email",
+ "must_contain": [
+  "主题：样品费用确认",
+  "麻烦 10 月 20 日前回复",
+  "| 9月3日 | 1260 |"
+ ],
+ "summary_groups": [
+  [
+   "样品费用",
+   "样品费用"
+  ]
+ ],
+ "doc_kind": "letter"
+}

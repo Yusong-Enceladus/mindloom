@@ -1,0 +1,581 @@
+{
+ "$schema": "../../schema/scenario.schema.json",
+ "scenario_id": "files-multiformat-v1-dev",
+ "version": 1,
+ "split": "dev",
+ "synthetic": true,
+ "locale": "zh-CN",
+ "title": "清屿大学视觉智能实验室 · 多格式文件周（合成）（dev）",
+ "description": "scenario.json 的 dev 子集（按事件切分）。可用于调试。",
+ "owner_person_id": "p_owner",
+ "people": [
+  {
+   "person_id": "p_owner",
+   "display_name": "沈知遥",
+   "is_owner": true,
+   "role": "视觉智能实验室负责人、副教授（本人）",
+   "aliases": [
+    "我",
+    "沈老师",
+    "知遥",
+    "Zhiyao",
+    "Zhiyao Shen",
+    "Prof. Shen"
+   ],
+   "voice": {
+    "mac_person_id": "44DD951D-4421-5F7F-91E2-7F598BC20493",
+    "user_label": "我"
+   }
+  },
+  {
+   "person_id": "p_he",
+   "display_name": "贺一鸣",
+   "role": "博士三年级，LoomNet 论文一作",
+   "aliases": [
+    "一鸣",
+    "Yiming"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_gu",
+   "display_name": "顾青",
+   "role": "实验室秘书（采购、报销）",
+   "aliases": [
+    "顾老师",
+    "青姐"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_park",
+   "display_name": "Elena Park",
+   "role": "Northbridge University 教授，来访讲者",
+   "aliases": [
+    "Elena",
+    "Prof. Park",
+    "Park 教授"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_zhou",
+   "display_name": "周蔓",
+   "role": "数芽标注 客户经理",
+   "aliases": [
+    "周经理",
+    "蔓蔓"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_song",
+   "display_name": "宋雨桐",
+   "role": "学院科研办，讲座接待",
+   "aliases": [
+    "雨桐",
+    "宋老师"
+   ],
+   "voice": null
+  }
+ ],
+ "events": [
+  {
+   "event_id": "ev_talk",
+   "kind": "main",
+   "title": "Elena Park 教授来访讲座",
+   "summary": "10/16 15:00 A101 讲座；10/15 晚到（航班延误到 22:40）；酒店确认号 QYH-88213。"
+  },
+  {
+   "event_id": "ev_annot",
+   "kind": "main",
+   "title": "数芽标注外包（KitchenQA 视频问答）",
+   "summary": "2 万条 × 1.8 元 = 3.6 万，4 批；第 1 批合格率 96.2% 验收通过付 9000 元；第 2 批 10/22 交。"
+  }
+ ],
+ "items": [
+  {
+   "item_id": "E6C57E59-2127-502D-8626-AF1F817BA211",
+   "ref": "eml-02",
+   "t": "2026-10-12T08:15:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_park",
+    "p_owner",
+    "p_song"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:eml",
+    "split:dev"
+   ],
+   "filename": "Visit_to_Qingyu_travel_details.eml",
+   "file": "../corpus/eml/eml-02.eml",
+   "mime_type": "message/rfc822",
+   "file_truth": "../truth/eml/eml-02.json",
+   "file_text": "From: Elena Park <elena.park@example.org>\nTo: Zhiyao Shen <shenzy@example.org>\nCc: 宋雨桐 <songyt@example.org>\nDate: Mon, 12 Oct 2026 08:15:00 +0800\nSubject: Visit to Qingyu — travel details and talk abstract\nDear Zhiyao,\nThank you again for the invitation. Here are my travel details:\n- Arrival: flight ZY 5718, departing Singapore at 13:25 on Thursday, October 15, arriving at Qingyu Airport at 19:10 local time.\n- Departure: Saturday, October 17, flight ZY 5723 at 11:40.\nMy talk title is \"Memory Structures for Embodied Agents\". I would prefer a 60-minute talk plus 30 minutes of Q&A. The abstract and a short bio are attached.\nDietary note: I am vegetarian.\nBest regards,\nElena\n-- \nElena Park, Professor of Computer Science, Northbridge University\n(synthetic data · 合成数据)\n[attachment] talk_abstract.txt\nMemory Structures for Embodied Agents\nElena Park, Northbridge University\nAbstract: Embodied agents must remember what they saw, what they know and how to act. This talk compares three memory types (episodic, semantic and procedural) across 4 benchmark suites and argues that agents need all three, with explicit rules for forgetting.\n(synthetic data)\n[attachment] bio_ElenaPark.docx\nSYNTHETIC DATA · 合成数据 · 仅供评测使用\nShort Bio — Elena Park\nElena Park is a Professor of Computer Science at Northbridge University, where she leads the Embodied Memory Group (12 members).\nShe received her PhD in 2014 and has published more than 60 papers on robot learning and memory.\nSYNTHETIC DATA · 合成数据"
+  },
+  {
+   "item_id": "3F76B458-6492-5CB0-8118-9D2251BF5CF3",
+   "ref": "json-02",
+   "t": "2026-10-12T13:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou",
+    "p_he"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:json",
+    "split:dev"
+   ],
+   "filename": "标注规范_v2.json",
+   "file": "../corpus/json/json-02.json",
+   "mime_type": "application/json",
+   "file_truth": "../truth/json/json-02.json",
+   "file_text": "{\n  \"schema_version\": \"2.0\",\n  \"project\": \"KitchenQA 视频问答标注\",\n  \"vendor\": \"数芽标注\",\n  \"contact\": \"周蔓\",\n  \"total_clips\": 20000,\n  \"clip_length_sec\": {\n    \"min\": 60,\n    \"max\": 600\n  },\n  \"question_types\": [\n    {\n      \"id\": \"temporal\",\n      \"name\": \"时序\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"causal\",\n      \"name\": \"因果\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"counting\",\n      \"name\": \"计数\",\n      \"min_per_clip\": 1\n    }\n  ],\n  \"answer_format\": {\n    \"type\": \"multiple_choice\",\n    \"options\": 4,\n    \"distractor_rule\": \"干扰项须来自同一视频\"\n  },\n  \"qc\": {\n    \"sample_rate\": 0.1,\n    \"pass_threshold\": 0.95,\n    \"double_annotation\": true\n  },\n  \"batches\": 4,\n  \"note\": \"合成数据\"\n}"
+  },
+  {
+   "item_id": "7E9EF71D-BB93-5AF1-ABC6-D72985B440FC",
+   "ref": "webarchive-01",
+   "t": "2026-10-12T17:00:00+08:00",
+   "kind": "document",
+   "source_app": "Safari",
+   "persons": [
+    "p_park",
+    "p_song"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:webarchive",
+    "split:dev"
+   ],
+   "filename": "清屿会堂酒店 - 预订确认.webarchive",
+   "file": "../corpus/webarchive/webarchive-01.webarchive",
+   "mime_type": "application/x-webarchive",
+   "file_truth": "../truth/webarchive/webarchive-01.json",
+   "file_text": "清屿会堂酒店在线预订\n预订确认 · 清屿会堂酒店\n您的预订已确认，确认邮件已发送至 songyt@example.org。\n确认号：QYH-88213\n入住人：Elena Park\n入住：2026年10月15日（周四）14:00后\n离店：2026年10月17日（周六）12:00前\n房型：高级大床房（无烟）\n晚数：2晚\n房价：680元/晚（含早）\n总价：1,360元\n预订人：宋雨桐（清屿大学计算机学院）\n如需延迟入住（22:00以后），请提前致电前台 +86-10-5550-0199。\n合成数据\n清屿会堂酒店在线预订\n合成数据"
+  },
+  {
+   "item_id": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "ref": "pdf-02",
+   "t": "2026-10-12T18:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou",
+    "p_owner"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:pdf",
+    "split:dev"
+   ],
+   "filename": "数据标注服务合同_数芽.pdf",
+   "file": "../corpus/pdf/pdf-02.pdf",
+   "mime_type": "application/pdf",
+   "file_truth": "../truth/pdf/pdf-02.json",
+   "file_text": "合同编号 SY-2026-0918\n数据标注服务合同\n合同编号：SY-2026-0918\n委托方：清屿大学视觉智能实验室\n服务方：杭州数芽标注科技有限公司\n签订日期：2026年10月12日\n第一条 服务内容\n服务方为委托方完成 KitchenQA 视频问答数据集的标注，共 20,000 条视频片段，每条至少 3 个问答对。\n第二条 价格\n项目 | 数量（条） | 单价（元/条） | 金额（元）\n视频问答标注 | 20,000 | 1.8 | 36,000\n合同总价 36,000 元（含税）。\n第三条 交付与验收\n分 4 批交付，每批 5,000 条；委托方抽检 10%，合格率不低于 95% 视为该批验收通过，否则服务方须在 5 个工作日内返工。\n批次 | 交付日期\n第1批 | 2026年10月14日\n第2批 | 2026年10月22日\n第3批 | 2026年10月30日\n第4批 | 2026年11月6日\n第四条 付款\n每批验收通过后 7 个工作日内支付该批费用 9,000 元。\n合成数据"
+  },
+  {
+   "item_id": "363CA2BF-38AF-5F67-96DE-D77A64A88993",
+   "ref": "ics-02",
+   "t": "2026-10-13T09:00:00+08:00",
+   "kind": "document",
+   "source_app": "日历",
+   "persons": [
+    "p_park",
+    "p_song",
+    "p_owner"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:ics",
+    "split:dev"
+   ],
+   "filename": "Talk_ElenaPark.ics",
+   "file": "../corpus/ics/ics-02.ics",
+   "mime_type": "text/calendar",
+   "file_truth": "../truth/ics/ics-02.json",
+   "file_text": "CALENDAR: 学院讲座\n[event 1]\nSUMMARY: 学术讲座：Memory Structures for Embodied Agents（Elena Park）\nSTART: 2026-10-16，15:00 (Asia/Shanghai)\nEND: 2026-10-16，16:30 (Asia/Shanghai)\nLOCATION: 计算机楼 A101 报告厅\nDESCRIPTION: 主讲：Elena Park 教授（Northbridge University）\n主持：沈知遥\n讲座60分钟，问答30分钟。\n合成数据\nORGANIZER: 宋雨桐 <songyt@example.org>\nALARM: -PT1H\n[event 2]\nSUMMARY: 欢迎晚宴（素食）\nSTART: 2026-10-16，18:00 (Asia/Shanghai)\nEND: 2026-10-16，20:00 (Asia/Shanghai)\nLOCATION: 清屿会堂 二楼 竹厅\nDESCRIPTION: 参加：Elena Park、沈知遥、宋雨桐 等 6 人\nORGANIZER: 宋雨桐 <songyt@example.org>"
+  },
+  {
+   "item_id": "ABE8C318-824F-57CA-8723-A1E9BF723B95",
+   "ref": "jpg-02",
+   "t": "2026-10-13T12:10:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [],
+   "events": [],
+   "tags": [
+    "file",
+    "file_type:jpg",
+    "noise",
+    "split:dev"
+   ],
+   "filename": "食堂本周菜单.jpg",
+   "file": "../corpus/jpg/jpg-02.jpg",
+   "mime_type": "image/jpeg",
+   "file_truth": "../truth/jpg/jpg-02.json",
+   "file_text": "第二食堂 本周特色菜（10月12日—10月18日）\n营业时间 11:00–13:30，17:00–19:00\n日期 | 午餐特色 | 价格\n周一 | 番茄牛腩饭 | 16元\n周二 | 酸菜鱼 | 18元\n周三 | 宫保鸡丁 | 14元\n周四 | 清蒸鲈鱼 | 22元\n周五 | 素食自助 | 12元\n合成数据"
+  },
+  {
+   "item_id": "1EEB4A86-DD8F-5C8E-BD21-9939F7815F41",
+   "ref": "xlsx-02",
+   "t": "2026-10-13T13:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou",
+    "p_gu"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:xlsx",
+    "split:dev"
+   ],
+   "filename": "数芽报价与结算.xlsx",
+   "file": "../corpus/xlsx/xlsx-02.xlsx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "file_truth": "../truth/xlsx/xlsx-02.json",
+   "file_text": "[报价]\nKitchenQA 标注报价（数芽标注）\n计价\n服务项 | 数量(条) | 单价(元) | 金额(元) | 备注\n视频问答标注 | 20000 | 1.8 | 36000 | 每条≥3个问答对\n加急费 | 0 | 0.3 | 0 | 未启用\n合计 |  |  | 36000 | 含税\n合成数据\n[结算]\n批次 | 交付条数 | 抽检合格率 | 应付(元) | 状态\n第1批 | 5000 | 0.962 | 9000 | 已验收\n第2批 | 5000 |  | 9000 | 进行中\n第3批 | 5000 |  | 9000 | 未开始\n第4批 | 5000 |  | 9000 | \n合计 | 20000 |  | 36000 | \n合成数据\n[联系人]\n角色 | 姓名 | 联系方式\n客户经理 | 周蔓 | zhouman@example.com\n实验室财务 | 顾青 | guqing@example.org\n合成数据"
+  },
+  {
+   "item_id": "A9B3913B-C6AD-5AA2-B383-203B03EF235F",
+   "ref": "svg-01",
+   "t": "2026-10-13T14:00:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_park",
+    "p_owner"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:svg",
+    "split:dev"
+   ],
+   "filename": "讲座海报_ElenaPark.svg",
+   "file": "../corpus/svg/svg-01.svg",
+   "mime_type": "image/svg+xml",
+   "file_truth": "../truth/svg/svg-01.json",
+   "file_text": "清屿大学计算机学院 学术讲座\nMemory Structures for Embodied Agents\n主讲人：Elena Park 教授 · Northbridge University\n时间：2026年10月16日（周五）15:00–16:30\n地点：计算机楼 A101 报告厅\n主持人：沈知遥 副教授\n欢迎全校师生参加\n合成数据"
+  },
+  {
+   "item_id": "9AC7A089-EACF-5032-9C94-DC94FCBECF61",
+   "ref": "gif-01",
+   "t": "2026-10-14T10:00:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:gif",
+    "split:dev"
+   ],
+   "filename": "讲座预告.gif",
+   "file": "../corpus/gif/gif-01.gif",
+   "mime_type": "image/gif",
+   "file_truth": "../truth/gif/gif-01.json",
+   "file_text": "本周五 学术讲座\nMemory Structures for Embodied Agents\n合成数据\n10月16日 15:00\n计算机楼 A101 报告厅\n合成数据\n主讲：Elena Park 教授\n现场前50名赠送讲义（Lecture Notes）\n合成数据"
+  },
+  {
+   "item_id": "E93C5657-030D-5A29-9467-BF859BEEDCA3",
+   "ref": "epub-01",
+   "t": "2026-10-14T13:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:epub",
+    "split:dev"
+   ],
+   "filename": "Lecture_Notes_Memory_Structures.epub",
+   "file": "../corpus/epub/epub-01.epub",
+   "mime_type": "application/epub+zip",
+   "file_truth": "../truth/epub/epub-01.json",
+   "file_text": "Lecture Notes: Memory Structures for Embodied Agents\n1. Three Kinds of Memory\nEpisodic memory stores what happened and when. Semantic memory stores what is true regardless of when it was learned. Procedural memory stores how to act.\nMemory type | Typical store | Example\nepisodic | event log | the cup was on the left shelf at 10:02\nsemantic | knowledge graph | cups are kept in the kitchen\nprocedural | policy | open the drawer before reaching in\n2. Benchmarks\nWe compare agents on 4 benchmark suites: HomeTidy, ShelfQA, DoorNav and ToolUse-12 (all fictional, invented for these notes).\nSuite | Episodes | Best success rate\nHomeTidy | 1,200 | 64.5%\nShelfQA | 800 | 71.2%\nDoorNav | 2,000 | 88.0%\nToolUse-12 | 600 | 42.7%\n3. Open Problems\n- When should an agent forget?\n- How to merge episodic traces into semantic facts\n- Evaluating memory without leaking test episodes\nSynthetic lecture notes for evaluation only.\n合成数据"
+  },
+  {
+   "item_id": "45352726-5308-5D80-BE2D-603EDB7D7BB8",
+   "ref": "png-02",
+   "t": "2026-10-14T16:10:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_song",
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:png",
+    "split:dev"
+   ],
+   "filename": "报告厅预约成功截图.png",
+   "file": "../corpus/png/png-02.png",
+   "mime_type": "image/png",
+   "file_truth": "../truth/png/png-02.json",
+   "file_text": "学院场地预约系统\n预约成功\n您的场地预约已通过审核。\n预约号 RB-20261016-032\n场地 计算机楼 A101 报告厅（容纳 180 人）\n使用时间 2026-10-16，14:30–17:00\n用途 学术讲座（Elena Park）\n申请人 宋雨桐\n设备 投影、无线麦克风×2、同传耳机\n已通过\n合成数据"
+  },
+  {
+   "item_id": "75ECB7DB-80C5-5948-9A71-4B429D9C5EFE",
+   "ref": "csv-02",
+   "t": "2026-10-14T17:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:csv",
+    "split:dev"
+   ],
+   "filename": "第1批质检报告.csv",
+   "file": "../corpus/csv/csv-02.csv",
+   "mime_type": "text/csv",
+   "file_truth": "../truth/csv/csv-02.json",
+   "file_text": "# 数芽标注 KitchenQA 第1批质检报告 2026-10-14（合成数据）\n标注员ID,交付条数,抽检条数,合格条数,合格率\nA01,1200,120,117,97.5%\nA02,1000,100,95,95.0%\nA03,1300,130,126,96.9%\nA04,1500,150,143,95.3%\n合计,5000,500,481,96.2%"
+  },
+  {
+   "item_id": "63E9BAD2-A68C-5488-867D-D1C3E1800D3A",
+   "ref": "docx-02",
+   "t": "2026-10-15T10:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_owner",
+    "p_zhou",
+    "p_he"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:docx",
+    "split:dev"
+   ],
+   "filename": "KitchenQA_第1批验收报告.docx",
+   "file": "../corpus/docx/docx-02.docx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+   "file_truth": "../truth/docx/docx-02.json",
+   "file_text": "KitchenQA 标注 第1批验收报告\n合同编号：SY-2026-0918\n批次：第1批（5,000条）\n验收日期：2026年10月15日\n验收人：贺一鸣、沈知遥\n抽检结果\n抽检 500 条，合格 481 条，合格率 96.2%，高于合同约定的 95%。\n主要问题\n- 计数类问题有 11 条答案错误（多数为遮挡导致漏数）\n- 8 条干扰项与正确答案语义重复\n结论\n第1批验收通过，同意支付第1批费用 9,000 元。第2批请于10月22日前交付，并对计数类问题增加复核。\n合成数据"
+  },
+  {
+   "item_id": "0C768B45-0F7F-5F89-BC5F-1520728A4A42",
+   "ref": "chat_zhou_batch",
+   "t": "2026-10-15T11:30:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou",
+    "p_gu"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:dev"
+   ],
+   "text": "周蔓：沈老师好～第1批验收报告收到啦，9000元的请款单我今天发给顾老师。第2批22号前交，计数题我们加一道复核。"
+  },
+  {
+   "item_id": "66A76B04-62BE-51C1-9D81-E3970BB04D34",
+   "ref": "chat_park_delay",
+   "t": "2026-10-15T16:40:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:dev"
+   ],
+   "text": "Elena Park: Zhiyao, quick update: ZY 5718 is delayed. New arrival time is 22:40 instead of 19:10. Could you let the driver and the hotel know? Sorry for the late night!"
+  },
+  {
+   "item_id": "0D6D013D-ABE5-5A7B-B161-7EC68198D5DF",
+   "ref": "webp-01",
+   "t": "2026-10-16T15:20:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:webp",
+    "split:dev"
+   ],
+   "filename": "标注平台进度截图.webp",
+   "file": "../corpus/webp/webp-01.webp",
+   "mime_type": "image/webp",
+   "file_truth": "../truth/webp/webp-01.json",
+   "file_text": "数芽标注平台 · 项目看板\nKitchenQA 视频问答标注\n项目进度总览（截至 2026-10-16，15:00）\n进行中\n批次 | 进度 | 状态 | 截止\n第1批 | 5,000/5,000 | 已验收 | 10-14\n第2批 | 1,240/5,000 | 标注中 | 10-22\n第3批 | 0/5,000 | 未开始 | 10-30\n第4批 | 0/5,000 | 未开始 | 11-06\n合成数据"
+  }
+ ],
+ "facts": [
+  {
+   "fact_id": "f_talk_time",
+   "event_id": "ev_talk",
+   "text": "讲座10月16日15:00在A101",
+   "keys": [
+    "10月16日",
+    "A101"
+   ],
+   "valid_from": "363CA2BF-38AF-5F67-96DE-D77A64A88993",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-16"
+  },
+  {
+   "fact_id": "f_talk_arr_1",
+   "event_id": "ev_talk",
+   "text": "10月15日19:10到达",
+   "keys": [
+    "19:10"
+   ],
+   "valid_from": "E6C57E59-2127-502D-8626-AF1F817BA211",
+   "superseded_by": "f_talk_arr_2",
+   "state": "planned",
+   "date": "2026-10-15"
+  },
+  {
+   "fact_id": "f_talk_arr_2",
+   "event_id": "ev_talk",
+   "text": "航班延误，22:40到达",
+   "keys": [
+    "22:40"
+   ],
+   "valid_from": "66A76B04-62BE-51C1-9D81-E3970BB04D34",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-15"
+  },
+  {
+   "fact_id": "f_talk_hotel",
+   "event_id": "ev_talk",
+   "text": "酒店确认号QYH-88213",
+   "keys": [
+    "QYH-88213"
+   ],
+   "valid_from": "7E9EF71D-BB93-5AF1-ABC6-D72985B440FC",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_ann_price",
+   "event_id": "ev_annot",
+   "text": "2万条×1.8元共3.6万",
+   "keys": [
+    "36000"
+   ],
+   "valid_from": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_ann_b1",
+   "event_id": "ev_annot",
+   "text": "第1批合格率96.2%验收通过",
+   "keys": [
+    "96.2"
+   ],
+   "valid_from": "63E9BAD2-A68C-5488-867D-D1C3E1800D3A",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_ann_b2",
+   "event_id": "ev_annot",
+   "text": "第2批10月22日前交",
+   "keys": [
+    "10月22日"
+   ],
+   "valid_from": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-22"
+  }
+ ],
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-mid",
+   "after_item_id": "75ECB7DB-80C5-5948-9A71-4B429D9C5EFE",
+   "label": "10月14日晚",
+   "expected": {
+    "ev_talk": [
+     "f_talk_time",
+     "f_talk_arr_1"
+    ],
+    "ev_annot": [
+     "f_ann_price"
+    ]
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "after_item_id": "0D6D013D-ABE5-5A7B-B161-7EC68198D5DF",
+   "label": "10月16日晚（最终）",
+   "expected": {
+    "ev_talk": [
+     "f_talk_time",
+     "f_talk_arr_2"
+    ],
+    "ev_annot": [
+     "f_ann_b1",
+     "f_ann_b2"
+    ]
+   }
+  }
+ ]
+}

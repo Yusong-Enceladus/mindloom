@@ -1,0 +1,81 @@
+{
+ "file_id": "jpg-01",
+ "path": "corpus/jpg/jpg-01.jpg",
+ "type": "jpg",
+ "ext": "jpg",
+ "mime": "image/jpeg",
+ "filename": "到货签收单.jpg",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "6B1CA0AE-5F61-5476-9FA9-4B36FEED4A04",
+  "ref": "gpu_jpg",
+  "events": [
+   "ev_gpu"
+  ]
+ },
+ "text_layer": "none",
+ "text": "恒算科技 货物签收单\n第1批 / 共2批\n签收单号 QS-1016-0093\n客户 清屿大学计算机学院\n货物 HS-G8820 GPU 服务器\n数量 1 台\n序列号 HSG8820-A7731\n送达时间 2026-10-16 10:48\n签收人 陶然\n外观检查 完好\n合成数据",
+ "key_lines": [
+  "第1批 / 共2批",
+  "数量 1 台",
+  "序列号 HSG8820-A7731",
+  "送达时间 2026-10-16 10:48",
+  "签收人 陶然"
+ ],
+ "picture_only_lines": [
+  "第1批 / 共2批",
+  "数量 1 台",
+  "序列号 HSG8820-A7731",
+  "送达时间 2026-10-16 10:48",
+  "签收人 陶然"
+ ],
+ "key_fields": {
+  "签收人": "陶然",
+  "序列号": "HSG8820-A7731",
+  "送达时间": "2026-10-16 10:48",
+  "数量": 1
+ },
+ "numbers": [
+  {
+   "value": 1,
+   "label": "数量"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "签收人是谁？",
+   "a": "陶然",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "序列号是多少？",
+   "a": "HSG8820-A7731",
+   "match": "exact"
+  },
+  {
+   "id": "q3",
+   "q": "几点送达的？",
+   "a": "10:48",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "这次送了几台？",
+   "a": 1,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   1062,
+   726
+  ]
+ },
+ "notes": "手机拍的纸质签收单：倾斜、阴影、暖色光。",
+ "bytes": 48472,
+ "sha256": "d76df280b4489ad088334ca279f1c9a38396c79682b9c64e9420857972a82d29"
+}

@@ -1,0 +1,98 @@
+{
+ "file_id": "mp4-01",
+ "path": "corpus/mp4/mp4-01.mp4",
+ "type": "mp4",
+ "ext": "mp4",
+ "mime": "video/mp4",
+ "filename": "LoomNet进展_1016.mp4",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "7674CF59-16C1-551D-8ED9-9F90DDD70F19",
+  "ref": "paper_mp4",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "none",
+ "text": "摘要已提交\nICVL 2027 Paper ID #4127\n提交时间：10月15日 10:42\n合成数据\n主结果\n78.4%\n比 baseline 高 3.1 个点\nrun42 · memory_slots 64\n合成数据\n下一步\n全文截止 10月23日（AoE）\n补充材料 10月30日\n新服务器到货后跑长视频扩展实验\n合成数据",
+ "key_lines": [
+  "ICVL 2027 Paper ID #4127",
+  "提交时间：10月15日 10:42",
+  "78.4%",
+  "全文截止 10月23日（AoE）"
+ ],
+ "picture_only_lines": [
+  "ICVL 2027 Paper ID #4127",
+  "提交时间：10月15日 10:42",
+  "78.4%",
+  "全文截止 10月23日（AoE）"
+ ],
+ "key_fields": {
+  "paper_id": "4127",
+  "abstract_submitted": "2026-10-15 10:42",
+  "full_deadline": "2026-10-23"
+ },
+ "numbers": [
+  {
+   "value": 4127,
+   "label": "Paper ID"
+  },
+  {
+   "value": 78.4,
+   "label": "主结果"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Paper ID 是多少？",
+   "a": 4127,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "摘要是几点提交的？",
+   "a": "10:42",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "全文截止是哪天？",
+   "a": "10月23日",
+   "match": "contains",
+   "accept": [
+    "10/23",
+    "2026-10-23"
+   ]
+  }
+ ],
+ "structure": {
+  "slides": 3,
+  "seconds": [
+   3,
+   3,
+   3
+  ],
+  "duration_s": 9,
+  "audio": "none",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "摘要已提交"
+   },
+   {
+    "start_s": 3,
+    "title": "主结果"
+   },
+   {
+    "start_s": 6,
+    "title": "下一步"
+   }
+  ]
+ },
+ "notes": "无音轨；3 张幻灯片各 3 秒。",
+ "bytes": 35058,
+ "sha256": "e45d23b971b9d62cf58e98d9fdf16112aea68bfe9916eefb2f5908f0a5c7f4a7"
+}

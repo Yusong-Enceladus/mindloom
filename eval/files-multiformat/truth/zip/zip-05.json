@@ -1,0 +1,64 @@
+{
+ "file_id": "zip-05",
+ "path": "corpus/zip/zip-05.zip",
+ "type": "zip",
+ "ext": "zip",
+ "mime": "application/zip",
+ "filename": "English pack.zip",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[member] status.md\n# Project Status Update: Customer Portal v2\n- **Owner**: Ethan Novak\n- **Overall status**: Green\n- **Budget**: USD 228,000\n- **Budget spent**: 30%\n## Milestones\n| Milestone | State |\n|---|---|\n| Design sign-off | done |\n| Pilot at 2 sites | in progress |\n| Full rollout | planned |\n## Top risk\nVendor delivery slipped by 10 days\n## Next report\nNext update due on 2026-04-16. Synthetic report for evaluation only.\n> SYNTHETIC DATA · 合成数据\n[member] po.csv\nItem,Qty,Unit price (USD),Amount (USD)\n27-inch monitor,2,239.00,478.00\nUSB-C docking station,4,129.00,516.00\nLabel printer,7,89.50,626.50\n[member] survey.json\n{\n  \"survey\": \"Cafeteria feedback\",\n  \"org\": \"Harbor & Pine Consulting\",\n  \"responses\": 156,\n  \"period\": {\n    \"from\": \"2026-09-01\",\n    \"to\": \"2026-09-30\"\n  },\n  \"results_pct\": {\n    \"very satisfied\": 22,\n    \"satisfied\": 42,\n    \"neutral\": 17,\n    \"unsatisfied\": 19\n  },\n  \"top_request\": \"longer opening hours\",\n  \"note\": \"synthetic data\"\n}",
+ "key_lines": [
+  "# Project Status Update: Customer Portal v2",
+  "- **Overall status**: Green",
+  "| Pilot at 2 sites | in progress |",
+  "27-inch monitor,2,239.00,478.00",
+  "\"responses\": 156,"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "files": 3,
+  "status": "Green",
+  "responses": 156
+ },
+ "numbers": [
+  {
+   "value": 156,
+   "label": "responses"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall project status in status.md?",
+   "a": "Green",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "How many survey responses are there?",
+   "a": 156,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "How many units of '27-inch monitor' are in po.csv?",
+   "a": 2,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "members": [
+   "status.md",
+   "po.csv",
+   "survey.json"
+  ],
+  "nested_zips": []
+ },
+ "bytes": 969,
+ "sha256": "2803b8a3ab8876b4aff2dfd55c1bd94d4ed72684ff21b22253ebbb9aa06ea651",
+ "family": "english_pack"
+}

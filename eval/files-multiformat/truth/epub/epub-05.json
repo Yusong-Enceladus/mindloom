@@ -1,0 +1,61 @@
+{
+ "file_id": "epub-05",
+ "path": "corpus/epub/epub-05.epub",
+ "type": "epub",
+ "ext": "epub",
+ "mime": "application/epub+zip",
+ "filename": "家庭节水指南.epub",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "家庭节水指南\n一、我们用了多少水\n三口之家每天平均用水约 180 升，其中冲厕约占 30%。\n二、五个小办法\n- 淋浴时间控制在 5 分钟内\n- 洗菜水用来浇花\n- 更换节水龙头\n- 检查马桶是否漏水\n- 满载再开洗衣机\n三、效果\n办法\t每月可省（升）\n缩短淋浴\t450\n节水龙头\t300\n满载洗衣\t200\n坚持一个月，用水量可下降约 25%。本书为合成数据。\n合成数据",
+ "key_lines": [
+  "三口之家每天平均用水约 180 升，其中冲厕约占 30%。",
+  "节水龙头\t300",
+  "坚持一个月，用水量可下降约 25%。本书为合成数据。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "日均用水": 180,
+  "下降比例": "25%",
+  "淋浴时长": "5分钟"
+ },
+ "numbers": [
+  {
+   "value": 180,
+   "label": "升/天"
+  },
+  {
+   "value": 25,
+   "label": "%"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "三口之家每天用水约多少升？",
+   "a": 180,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "坚持一个月用水量下降约多少？",
+   "a": 25,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "节水龙头每月可省多少升？",
+   "a": 300,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "chapters": 3
+ },
+ "bytes": 3133,
+ "sha256": "c79140528672e235149fd4eae22acc9ae2a8266b792e6de94fad52b7265d6b99",
+ "family": "water_book"
+}

@@ -1,0 +1,71 @@
+{
+ "file_id": "txt-04",
+ "path": "corpus/txt/txt-04.txt",
+ "type": "txt",
+ "ext": "txt",
+ "mime": "text/plain",
+ "filename": "蜂蜜烤鸡翅（8人份）.txt",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "蜂蜜烤鸡翅（8人份）\n材料\t用量（克）\n主料\t100\n鸡蛋\t150\n砂糖\t70\n黄油\t60\n步骤\n- 材料室温回软后混合均匀\n- 烤箱预热至 200℃\n- 入炉烘烤 25 分钟，中途转盘一次\n- 出炉冷却 20 分钟后切块\n小贴士：糖可减少两成。（合成数据）\n合成数据",
+ "key_lines": [
+  "蜂蜜烤鸡翅（8人份）",
+  "砂糖\t70",
+  "- 烤箱预热至 200℃",
+  "- 入炉烘烤 25 分钟，中途转盘一次"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "份数": 8,
+  "温度": "200℃",
+  "时长": "25分钟",
+  "砂糖": 70
+ },
+ "numbers": [
+  {
+   "value": 200,
+   "label": "温度"
+  },
+  {
+   "value": 25,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 200,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 25,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 70,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 8,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8-sig",
+  "newline": "LF"
+ },
+ "notes": "UTF-8 带 BOM。",
+ "bytes": 310,
+ "sha256": "f6dfd7e64091a8e0404f77d672c4019625d075aaa6e0dba8b3446806d03b6619",
+ "family": "recipe"
+}

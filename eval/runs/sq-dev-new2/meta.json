@@ -1,0 +1,98 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.2.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.1"
+  },
+  {
+   "name": "event-merge",
+   "version": "1.0.0"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "f356f926ae46dd31",
+  "event-brief": "0f0367b4e62a5265",
+  "event-merge": "b0e1215aa418283e",
+  "file-read": "5810c0096d0a5445",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "75bba8fb61ada5cc",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "",
+ "date": "2026-09-29T15:25:58+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--out",
+  "eval/runs/sq-dev-new2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "cf7e5adc-fab3-4a26-bdbf-30653075c9bf",
+  "E2": "1814582b-bbbf-4603-8a4f-8f7f12e14b6d",
+  "E3": "dcb81c87-c328-49f3-a8f2-d7927c0c5638",
+  "E4": "af4cac64-7bff-4e92-9605-d9272d63c90c",
+  "E5": "48ddaaeb-ee40-4e14-8307-333f34978e82",
+  "E6": "65a882f2-48f2-486d-a881-e1f8bcdd5a3b",
+  "E7": "35e51ca6-63b8-4576-96d2-33c5099cd12d",
+  "E8": "6b5c792e-e6f9-41f4-ba96-33e9fcc760b5",
+  "E9": "2d05f4ba-5d0e-465a-8c2d-01d27fa331d9",
+  "E10": "6ffc44a4-1a53-43c8-9581-3fbc3d0aae05",
+  "E11": "52d09325-2f20-4b28-9674-5c2b1f4a57d1",
+  "E12": "27d12e7e-110f-470f-b5a9-49c12583583f",
+  "E13": "a571a13a-25d8-4f0f-9164-e85783f140db"
+ },
+ "bare_max_tokens": null
+}

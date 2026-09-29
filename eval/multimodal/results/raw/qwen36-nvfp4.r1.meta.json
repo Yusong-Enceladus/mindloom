@@ -1,0 +1,43 @@
+{
+ "segments": [
+  {
+   "label": "qwen36-nvfp4-vllm",
+   "backend": "openai",
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "url": "http://127.0.0.1:8000",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 98,
+   "start": {
+    "time": 1790616204.0986924,
+    "gpu_apps": [
+     "1762040, VLLM::EngineCore, 53251 MiB",
+     "2429262, VLLM::EngineCore, 7302 MiB",
+     "2011648, VLLM::EngineCore, 6044 MiB"
+    ],
+    "gpu_util": "84 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          85           2           0          35          36\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 4.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 14.0"
+    ]
+   },
+   "wall_s": 1418.23,
+   "end": {
+    "time": 1790617622.4232223,
+    "gpu_apps": [
+     "1762040, VLLM::EngineCore, 53251 MiB",
+     "2429262, VLLM::EngineCore, 7302 MiB",
+     "2011648, VLLM::EngineCore, 6044 MiB"
+    ],
+    "gpu_util": "75 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          86           1           0          35          34\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 3.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 6.0"
+    ]
+   }
+  }
+ ]
+}

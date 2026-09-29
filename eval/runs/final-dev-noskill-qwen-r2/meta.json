@@ -1,0 +1,82 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "without-skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "eb4c1634018ce0f5",
+  "event-brief": "1a65045b1cf0040e",
+  "home-rank": "22d28d3e84a08265",
+  "recall": "d8fbb1754cec1f6a",
+  "screenshot-read": "6ed5ddfc9ecd5297"
+ },
+ "git": "13c3ae1",
+ "date": "2026-09-28T15:51:33+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "without-skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/final-dev-noskill-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "98be0c79-a19c-47b8-9c0e-a95b5e8dc721",
+  "E2": "50f91233-a9af-4d10-add8-60849c605a26",
+  "E3": "1fe597d3-8b44-4f3a-b313-b8965e56c305",
+  "E4": "d3b81113-3dce-449f-a546-93d470af3908",
+  "E5": "6ff7f1ad-70b0-4bd2-986c-9cacd2e3dd35",
+  "E6": "74eec03b-3f68-41bb-b0eb-120af73ee376",
+  "E7": "85dcc4d3-2e77-428f-8933-40463b33ba53",
+  "E8": "213a8d17-4224-479a-8c70-95c71137ea49",
+  "E9": "0728b3e7-bf53-4f9f-b728-09e42735b308",
+  "E10": "9cdfedbc-6299-4427-b59c-d78c68c86d90",
+  "E11": "534b00bc-b6d6-4c0c-b183-94f32264e328",
+  "E12": "ece9048e-9ab5-4700-974a-28036dca1871",
+  "E13": "0c76ac5e-62a4-4a87-917e-cd22f8d40bbb",
+  "E14": "0d59b6f5-f04a-4300-9b00-e8c64911d850",
+  "E15": "2157eec2-5cdf-4d23-911f-395a14c2087f",
+  "E16": "52192613-0990-4547-88e8-ca10174374e2",
+  "E17": "5fb4af8c-1714-4503-8f27-7e7bea779f63"
+ },
+ "bare_max_tokens": null
+}

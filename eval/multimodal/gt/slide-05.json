@@ -1,0 +1,100 @@
+{
+ "id": "slide-05",
+ "type": "slide",
+ "split": "dev",
+ "image": "images/slide-05.png",
+ "lang": "zh",
+ "hard": [
+  "dense",
+  "similar_names",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "d8f0431665a7ce8b9d62e544f1da800df85b9bd99f8bbdd9e2c6fea647569206",
+ "gt": {
+  "title": "新人技术培训安排",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "时间：10月10日 14:00，时长 1.5 小时"
+   },
+   {
+    "level": 0,
+    "text": "地点：B-302"
+   },
+   {
+    "level": 0,
+    "text": "讲师：李明（前端）、李鸣（测试）"
+   },
+   {
+    "level": 1,
+    "text": "李明：小程序发布流程"
+   },
+   {
+    "level": 1,
+    "text": "李鸣：回归测试清单"
+   },
+   {
+    "level": 0,
+    "text": "参加人员：研发部全员，请提前 10 分钟到场"
+   },
+   {
+    "level": 1,
+    "text": "详细数据见项目看板，本页为摘要"
+   },
+   {
+    "level": 1,
+    "text": "数据截至上周五 18:00"
+   }
+  ],
+  "kpis": [],
+  "footer": "穗禾里食品有限公司 · 内部资料",
+  "page": "14 / 27"
+ },
+ "text_lines": [
+  "新人技术培训安排",
+  "时间：10月10日 14:00，时长 1.5 小时",
+  "地点：B-302",
+  "讲师：李明（前端）、李鸣（测试）",
+  "李明：小程序发布流程",
+  "李鸣：回归测试清单",
+  "参加人员：研发部全员，请提前 10 分钟到场",
+  "详细数据见项目看板，本页为摘要",
+  "数据截至上周五 18:00",
+  "穗禾里食品有限公司 · 内部资料",
+  "14 / 27"
+ ],
+ "qa": [
+  {
+   "q": "培训在哪里？",
+   "a": "B-302",
+   "match": "exact"
+  },
+  {
+   "q": "谁讲回归测试清单？",
+   "a": "李鸣",
+   "match": "exact"
+  },
+  {
+   "q": "培训多长时间？",
+   "a": "1.5 小时",
+   "match": "number"
+  },
+  {
+   "q": "这页幻灯片的标题是什么？",
+   "a": "新人技术培训安排",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "minimal",
+  "dense": true
+ },
+ "variant": {
+  "content": "training",
+  "theme": "minimal",
+  "similar": true,
+  "dense": true
+ }
+}

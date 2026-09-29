@@ -1,0 +1,79 @@
+{
+ "file_id": "tiff-03",
+ "path": "corpus/tiff/tiff-03.tiff",
+ "type": "tiff",
+ "ext": "tiff",
+ "mime": "image/tiff",
+ "filename": "实验记录：材料拉伸测试.tiff",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "实验记录：材料拉伸测试\n实验编号：EXP-2026596\n日期：2026年7月24日\n操作人：曾欣怡\n温度：25℃\n反应/测试时间：45 分钟\n样品\t抗拉强度（MPa）\nS01\t33.9\nS02\t82.2\nS03\t93.2\nS04\t68.3\nS05\t43.7\n平均值 64.26MPa，最高为样品 S03（93.2MPa）。\n结论：数据重复性良好，下次增加对照组。本记录为合成数据。\n合成数据",
+ "key_lines": [
+  "操作人：曾欣怡",
+  "温度：25℃",
+  "S02\t82.2",
+  "S03\t93.2",
+  "平均值 64.26MPa，最高为样品 S03（93.2MPa）。"
+ ],
+ "picture_only_lines": [
+  "操作人：曾欣怡",
+  "温度：25℃",
+  "S02\t82.2",
+  "S03\t93.2",
+  "平均值 64.26MPa，最高为样品 S03（93.2MPa）。"
+ ],
+ "key_fields": {
+  "实验编号": "EXP-2026596",
+  "操作人": "曾欣怡",
+  "温度": "25℃",
+  "平均值": 64.26,
+  "最高样品": "S03"
+ },
+ "numbers": [
+  {
+   "value": 64.26,
+   "label": "平均值"
+  },
+  {
+   "value": 25,
+   "label": "温度"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "实验温度是多少摄氏度？",
+   "a": 25,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "样品 S02 的抗拉强度是多少？",
+   "a": 82.2,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "哪个样品最高？",
+   "a": "S03",
+   "match": "exact"
+  },
+  {
+   "id": "q4",
+   "q": "操作人是谁？",
+   "a": "曾欣怡",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "pages": 1,
+  "mode": "grayscale"
+ },
+ "notes": "灰度扫描，倾斜与噪点。",
+ "bytes": 38503,
+ "sha256": "f37a7f5bb1be284d78a3ca9de142e541aa7ffb6d4a9cede436ea765c46cf169f",
+ "family": "labrecord_scan"
+}

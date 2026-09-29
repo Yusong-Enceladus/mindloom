@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 2,
+  "kind": "engineering-readiness-report",
+  "conclusion": "pass",
+  "verified": true,
+  "releaseEligible": true,
+  "deliveryStatus": "ready",
+  "gatesSHA256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "tasksSHA256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "gateCounts": {"pass": 1, "fail": 0, "conditional": 0},
+  "completedTaskCount": 1,
+  "pendingTaskCount": 0,
+  "gates": [
+    {
+      "id": "fixture-gate",
+      "evidencePath": "Tests/Fixtures/Readiness/evidence.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["fixture"],
+      "blocker": "Fixture blocker.",
+      "status": "pass",
+      "observedValue": "pass",
+      "evidenceSHA256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"
+    }
+  ],
+  "pendingTasks": [],
+  "unresolvedDependencies": []
+}

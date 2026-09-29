@@ -1,0 +1,79 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "13c3ae1",
+ "date": "2026-09-28T15:48:57+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/final-dev-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "001e4238-fbb8-4560-8a02-30bd13348413",
+  "E2": "570e8f72-eebe-45e3-8432-709042bc2ce8",
+  "E3": "d0fb52d9-5926-44f2-8285-f067a4999317",
+  "E4": "3ed743c4-29e2-42c2-8975-2fd1a6e71632",
+  "E5": "b5adfd4c-65e8-4b23-b062-d1f6fe98b6f3",
+  "E6": "2c2b07b9-a2d5-4b54-ad0f-023feffc23b0",
+  "E7": "de3079c5-53e1-49f5-bd52-f79b8799671d",
+  "E8": "c3c2fd62-cd9d-4511-8e09-0b4ef682a47f",
+  "E9": "18579c7d-dc90-4ed1-84f0-c52717e918b9",
+  "E10": "1929ea39-6202-4c9b-b6d6-f15f9c6d360b",
+  "E11": "ab5d34ab-8c81-495a-ada2-71bbb6eb90ca",
+  "E12": "3bba2457-9323-4434-bf74-8421c5dae74f",
+  "E13": "e07cf5fc-6999-412f-8855-403a0c1f2029",
+  "E14": "9536d79a-1ec2-4f94-b903-6558bf4f0f2c"
+ },
+ "bare_max_tokens": null
+}

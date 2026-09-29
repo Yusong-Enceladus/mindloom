@@ -1,0 +1,92 @@
+{
+ "id": "slide-14",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-14.jpg",
+ "lang": "zh",
+ "hard": [
+  "photo",
+  "perspective",
+  "glare",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "0f96ef52abd2c21eaaac8fecc9844194970f571beb42e39612b071724a99b2bf",
+ "gt": {
+  "title": "Q4 预算申请",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "总预算：48 万元"
+   },
+   {
+    "level": 1,
+    "text": "人力：26.4 万元"
+   },
+   {
+    "level": 1,
+    "text": "设备与服务器：12.0 万元"
+   },
+   {
+    "level": 1,
+    "text": "市场推广：9.6 万元"
+   },
+   {
+    "level": 0,
+    "text": "审批节点：部门负责人 → 财务 → 总经理"
+   },
+   {
+    "level": 0,
+    "text": "预算周期：2026 年 10 月至 12 月"
+   }
+  ],
+  "kpis": [
+   {
+    "label": "总预算",
+    "value": "48万"
+   }
+  ],
+  "footer": "穗禾里食品有限公司 · 内部资料",
+  "page": "21 / 26"
+ },
+ "text_lines": [
+  "Q4 预算申请",
+  "总预算：48 万元",
+  "人力：26.4 万元",
+  "设备与服务器：12.0 万元",
+  "市场推广：9.6 万元",
+  "审批节点：部门负责人 → 财务 → 总经理",
+  "预算周期：2026 年 10 月至 12 月",
+  "总预算 48万",
+  "穗禾里食品有限公司 · 内部资料",
+  "21 / 26"
+ ],
+ "qa": [
+  {
+   "q": "总预算多少？",
+   "a": "48 万元",
+   "match": "number"
+  },
+  {
+   "q": "市场推广预算多少？",
+   "a": "9.6 万元",
+   "match": "number"
+  },
+  {
+   "q": "这页幻灯片的标题是什么？",
+   "a": "Q4 预算申请",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "corporate",
+  "dense": false,
+  "photo": "projected"
+ },
+ "variant": {
+  "content": "budget",
+  "theme": "corporate",
+  "photo": true
+ }
+}

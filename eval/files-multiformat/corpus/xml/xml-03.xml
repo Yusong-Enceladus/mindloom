@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 合成数据 -->
+<Invoice xmlns="urn:example:invoice:2" number="No.46946956" date="2026-10-19">
+  <Seller>山海户外用品有限公司</Seller>
+  <Buyer>启明仪器有限公司</Buyer>
+  <Lines>
+    <Line no="1"><Item>A4 复印纸（箱）</Item><Qty>8</Qty><UnitPrice currency="CNY">128</UnitPrice><Amount currency="CNY">1024</Amount></Line>
+    <Line no="2"><Item>文件柜（四门）</Item><Qty>2</Qty><UnitPrice currency="CNY">760</UnitPrice><Amount currency="CNY">1520</Amount></Line>
+    <Line no="3"><Item>移动硬盘 2TB</Item><Qty>7</Qty><UnitPrice currency="CNY">520</UnitPrice><Amount currency="CNY">3640</Amount></Line>
+    <Line no="4"><Item>投影仪</Item><Qty>3</Qty><UnitPrice currency="CNY">3280</UnitPrice><Amount currency="CNY">9840</Amount></Line>
+  </Lines>
+  <Subtotal>16024</Subtotal>
+  <Tax rate="0.13">2083.12</Tax>
+  <Total currency="CNY">18107.12</Total>
+</Invoice>

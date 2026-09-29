@@ -1,0 +1,24 @@
+FLEURS evaluation-data notice
+
+Corpus: FLEURS (Few-shot Learning Evaluation of Universal Representations of Speech)
+Pinned dataset revision: 70bb2e84b976b7e960aa89f1c648e09c59f894dd
+Source: https://huggingface.co/datasets/google/fleurs
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URI: https://creativecommons.org/licenses/by/4.0/
+
+FLEURS was created by Google Research and its contributors. bestASR uses a
+deterministically selected subset of the public Mandarin Chinese and US English
+development splits for local ASR tuning and candidate comparison. Downloaded
+audio and transcript references are not bundled with bestASR and are not stored
+in this Git repository. The selected payload and content-bearing diagnostics
+remain on local external storage.
+
+Suggested corpus citation:
+
+- Alexis Conneau et al., “FLEURS: Few-shot Learning Evaluation of Universal
+  Representations of Speech,” 2022, arXiv:2205.12446.
+
+bestASR does not attempt to identify any corpus speaker. Evaluation copies only
+the selected WAV signals into an isolated local tuning root and records that
+selection in a content-free manifest. No endorsement by Google or the corpus
+contributors is implied.

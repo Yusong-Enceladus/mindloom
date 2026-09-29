@@ -1,0 +1,57 @@
+{
+ "file_id": "json-04",
+ "path": "corpus/json/json-04.json",
+ "type": "json",
+ "ext": "json",
+ "mime": "application/json",
+ "filename": "C区耗材库存表（11月盘点）.json",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "{\n  \"status\": \"ok\",\n  \"generated_at\": \"2026-10-01T09:00:00+08:00\",\n  \"warehouse\": \"C区耗材库存表（11月盘点）\",\n  \"data\": [\n    {\n      \"name\": \"离心管 1.5mL\",\n      \"unit\": \"袋\",\n      \"stock\": 6,\n      \"safety_stock\": 5,\n      \"reorder\": false\n    },\n    {\n      \"name\": \"移液枪头 200μL\",\n      \"unit\": \"包\",\n      \"stock\": 1,\n      \"safety_stock\": 5,\n      \"reorder\": true\n    },\n    {\n      \"name\": \"称量纸\",\n      \"unit\": \"包\",\n      \"stock\": 20,\n      \"safety_stock\": 15,\n      \"reorder\": false\n    },\n    {\n      \"name\": \"滤纸\",\n      \"unit\": \"包\",\n      \"stock\": 21,\n      \"safety_stock\": 15,\n      \"reorder\": false\n    },\n    {\n      \"name\": \"标签纸\",\n      \"unit\": \"卷\",\n      \"stock\": 19,\n      \"safety_stock\": 5,\n      \"reorder\": false\n    },\n    {\n      \"name\": \"护目镜\",\n      \"unit\": \"副\",\n      \"stock\": 8,\n      \"safety_stock\": 15,\n      \"reorder\": true\n    }\n  ],\n  \"note\": \"合成数据\"\n}",
+ "key_lines": [
+  "\"safety_stock\": 5,",
+  "\"name\": \"移液枪头 200μL\",",
+  "\"stock\": 21,"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "需补货": [
+   "移液枪头 200μL",
+   "护目镜"
+  ],
+  "滤纸": 21
+ },
+ "numbers": [
+  {
+   "value": 21,
+   "label": "滤纸"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "滤纸的库存是多少？",
+   "a": 21,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "哪些需要补货？",
+   "a": "移液枪头 200μL",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "离心管 1.5mL的安全库存是多少？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 944,
+ "sha256": "401fc0b59fa7898709afe7413f38f2f4a7a9c7ba586e911345f3021cb0a27feb",
+ "family": "inventory"
+}

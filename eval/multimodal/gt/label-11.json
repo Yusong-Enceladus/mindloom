@@ -1,0 +1,113 @@
+{
+ "id": "label-11",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-11.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "similar_names",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "cc1d2718ab1cdad8cf9fd8774f3da68e4587ede018c2fa18c3d03a4ec28b94a0",
+ "gt": {
+  "label_kind": "repair_form",
+  "fields": [
+   {
+    "key": "reporter",
+    "label": "报修人",
+    "value": "刘佳"
+   },
+   {
+    "key": "room",
+    "label": "房号",
+    "value": "9-1803"
+   },
+   {
+    "key": "phone",
+    "label": "联系电话",
+    "value": "155-42**-1093"
+   },
+   {
+    "key": "issue",
+    "label": "故障描述",
+    "value": "厨房水龙头漏水"
+   },
+   {
+    "key": "visit_time",
+    "label": "期望上门时间",
+    "value": "8月8日 上午9点至11点"
+   },
+   {
+    "key": "emergency_contact",
+    "label": "紧急联系人",
+    "value": "刘嘉"
+   }
+  ],
+  "lines": [
+   "物业报修单",
+   "编号：BX080895",
+   "报修人",
+   "刘佳",
+   "房号",
+   "9-1803",
+   "联系电话",
+   "155-42**-1093",
+   "故障描述",
+   "厨房水龙头漏水",
+   "期望上门时间",
+   "8月8日 上午9点至11点",
+   "紧急联系人",
+   "刘嘉",
+   "说明：本单一式两联，维修完成后请住户签字确认。"
+  ]
+ },
+ "text_lines": [
+  "物业报修单",
+  "编号：BX080895",
+  "报修人",
+  "刘佳",
+  "房号",
+  "9-1803",
+  "联系电话",
+  "155-42**-1093",
+  "故障描述",
+  "厨房水龙头漏水",
+  "期望上门时间",
+  "8月8日 上午9点至11点",
+  "紧急联系人",
+  "刘嘉",
+  "说明：本单一式两联，维修完成后请住户签字确认。"
+ ],
+ "qa": [
+  {
+   "q": "报修人是谁？",
+   "a": "刘佳",
+   "match": "exact"
+  },
+  {
+   "q": "房号是多少？",
+   "a": "9-1803",
+   "match": "exact"
+  },
+  {
+   "q": "什么故障？",
+   "a": "厨房水龙头漏水",
+   "match": "exact"
+  },
+  {
+   "q": "紧急联系人是谁？",
+   "a": "刘嘉",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "repair_form",
+  "background": "desk_grey"
+ },
+ "variant": {
+  "kind": "repair_form",
+  "similar": true
+ }
+}

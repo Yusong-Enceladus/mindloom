@@ -1,0 +1,97 @@
+{
+ "id": "receipt-17",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-17.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "a9683df0a6c908868c0fc885aceade241f8e63a585aa2c0d19a236664f0129d5",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "青禾便利店",
+  "date": "2026-08-24",
+  "date_text": "2026-08-24 19:31",
+  "time": "19:31",
+  "doc_no": "202608249343",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "香蕉",
+    "qty": 2.423,
+    "unit": "kg",
+    "unit_price": "7.98",
+    "amount": "19.34"
+   },
+   {
+    "name": "原味酸奶",
+    "qty": 1,
+    "unit": "杯",
+    "unit_price": "4.50",
+    "amount": "4.50"
+   },
+   {
+    "name": "鸡蛋 30枚",
+    "qty": 1,
+    "unit": "盒",
+    "unit_price": "15.80",
+    "amount": "15.80"
+   }
+  ],
+  "subtotal": "39.64",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "39.64",
+  "payment_method": "现金"
+ },
+ "text_lines": [
+  "青禾便利店",
+  "江枫市桂香区桂香路84号",
+  "电话：0000-6804",
+  "单号：202608249343 收银员：18",
+  "日期：2026-08-24 19:31",
+  "香蕉 2.423kg 7.98 19.34",
+  "原味酸奶 1 4.50 4.50",
+  "鸡蛋 30枚 1 15.80 15.80",
+  "合计件数：3",
+  "小计 39.64",
+  "实付 ¥39.64",
+  "支付方式：现金",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥39.64",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "青禾便利店",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-08-24",
+   "match": "date"
+  },
+  {
+   "q": "香蕉的金额是多少？",
+   "a": "19.34元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "blur": 1.3
+ }
+}

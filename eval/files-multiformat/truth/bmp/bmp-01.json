@@ -1,0 +1,77 @@
+{
+ "file_id": "bmp-01",
+ "path": "corpus/bmp/bmp-01.bmp",
+ "type": "bmp",
+ "ext": "bmp",
+ "mime": "image/bmp",
+ "filename": "缺陷检测样例_划痕.bmp",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "0A0FC0C5-8918-5373-BB6F-4D5EBC8AE5D3",
+  "ref": "col_bmp",
+  "events": [
+   "ev_collab"
+  ]
+ },
+ "text_layer": "none",
+ "text": "澄川测试集 v3 · 样例 #0417 · 模型 v1.2\n划痕 0.94\n凹坑 0.81\n合成数据",
+ "key_lines": [
+  "澄川测试集 v3 · 样例 #0417 · 模型 v1.2",
+  "划痕 0.94",
+  "凹坑 0.81"
+ ],
+ "picture_only_lines": [
+  "澄川测试集 v3 · 样例 #0417 · 模型 v1.2",
+  "划痕 0.94",
+  "凹坑 0.81"
+ ],
+ "key_fields": {
+  "样例编号": "#0417",
+  "划痕置信度": 0.94,
+  "凹坑置信度": 0.81
+ },
+ "numbers": [
+  {
+   "value": 0.94,
+   "label": "划痕"
+  },
+  {
+   "value": 0.81,
+   "label": "凹坑"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "划痕的置信度是多少？",
+   "a": 0.94,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "这是第几号样例？",
+   "a": "0417",
+   "match": "contains",
+   "accept": [
+    "#0417"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "检测到几类缺陷？",
+   "a": 2,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "size": [
+   640,
+   400
+  ]
+ },
+ "bytes": 257078,
+ "sha256": "cfa55ef2a5cee0e8e90dc80b991806e6e1ecd69be7f5c41b279354f975781455"
+}

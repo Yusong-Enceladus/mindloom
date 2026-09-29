@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 80,
+   "retried": 2,
+   "latency_median_s": 5.479,
+   "latency_p95_s": 7.579,
+   "latency_total_s": 462.2,
+   "prompt_tokens_mean": 5253.3,
+   "completion_tokens_mean": 186.1,
+   "prompt_tokens_total": 430771,
+   "completion_tokens_total": 15262,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 70,
+   "ok_first_attempt": 51,
+   "retried": 27,
+   "latency_median_s": 6.852,
+   "latency_p95_s": 14.826,
+   "latency_total_s": 659.8,
+   "prompt_tokens_mean": 4532.3,
+   "completion_tokens_mean": 352.7,
+   "prompt_tokens_total": 353523,
+   "completion_tokens_total": 27511,
+   "errors_sample": [
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「样品已顺丰发出，预计9月16日到」标为 done，但日期 2026-09-16 晚于证据素材的时间 2026-09-15；把已发生的部分和计划的部分拆成两条",
+    "[unsupported_completion] 事实「已设计会员、盖章、兑换数据表」标为 done，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「总价4.2万，定金30%已付」标为 info，却写成已完成；计划写成「定于/计划…」"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 12.778,
+   "latency_p95_s": 14.54,
+   "latency_total_s": 51.2,
+   "prompt_tokens_mean": 5700.8,
+   "completion_tokens_mean": 513.8,
+   "prompt_tokens_total": 22803,
+   "completion_tokens_total": 2055,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 9.977,
+   "latency_p95_s": 10.927,
+   "latency_total_s": 28.0,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 443.3,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1330,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 8,
+  "attach": 66,
+  "none": 4,
+  "ask": 4
+ },
+ "assign_actions": {
+  "new": 8,
+  "attach": 65,
+  "none": 4,
+  "ask": 3,
+  "ask_suppressed": 2
+ },
+ "final_live_events": 13,
+ "status_line_chars_mean": 31.5,
+ "title_chars_mean": 10,
+ "wall_s": 1207.8,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

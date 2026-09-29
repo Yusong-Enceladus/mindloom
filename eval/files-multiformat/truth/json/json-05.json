@@ -1,0 +1,75 @@
+{
+ "file_id": "json-05",
+ "path": "corpus/json/json-05.json",
+ "type": "json",
+ "ext": "json",
+ "mime": "application/json",
+ "filename": "Cafeteria feedback survey.json",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "{\n  \"survey\": \"Cafeteria feedback\",\n  \"org\": \"Cedar Grove School\",\n  \"responses\": 138,\n  \"period\": {\n    \"from\": \"2026-09-01\",\n    \"to\": \"2026-09-30\"\n  },\n  \"results_pct\": {\n    \"very satisfied\": 30,\n    \"satisfied\": 41,\n    \"neutral\": 13,\n    \"unsatisfied\": 16\n  },\n  \"top_request\": \"more vegetarian options\",\n  \"note\": \"synthetic data\"\n}",
+ "key_lines": [
+  "\"responses\": 138,",
+  "\"to\": \"2026-09-30\"",
+  "\"very satisfied\": 30,",
+  "\"satisfied\": 41,",
+  "\"neutral\": 13,",
+  "\"unsatisfied\": 16",
+  "\"top_request\": \"more vegetarian options\","
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "responses": 138,
+  "top_answer": "satisfied",
+  "top_request": "more vegetarian options"
+ },
+ "numbers": [
+  {
+   "value": 138,
+   "label": "responses"
+  },
+  {
+   "value": 30,
+   "label": "very satisfied"
+  },
+  {
+   "value": 41,
+   "label": "satisfied"
+  },
+  {
+   "value": 13,
+   "label": "neutral"
+  },
+  {
+   "value": 16,
+   "label": "unsatisfied"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "How many responses were collected?",
+   "a": 138,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "What share answered 'satisfied' (%)?",
+   "a": 41,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What was the most frequent request?",
+   "a": "more vegetarian options",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 340,
+ "sha256": "405908d326b70d438bd10bce24dce2a0b3958081c4bb2fcd9294e4f5959664ba",
+ "family": "survey_en"
+}

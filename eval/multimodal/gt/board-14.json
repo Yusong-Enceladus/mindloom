@@ -1,0 +1,97 @@
+{
+ "id": "board-14",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-14.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "f94ae40e316009cb2525be091cdb560d5bafd7e6c67180d96044ed8861733a21",
+ "gt": {
+  "surface": "blackboard",
+  "lines": [
+   {
+    "text": "周会 10/11",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "1. 点单上线 → 10/18",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "2. 支付走方案B，费率0.38%",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "3. 预算6.2万（已确认）",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "4. 找罗佳宁要样品×5",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "5. 林欣：发票周五前开",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "周会 10/11",
+  "1. 点单上线 → 10/18",
+  "2. 支付走方案B，费率0.38%",
+  "3. 预算6.2万（已确认）",
+  "4. 找罗佳宁要样品×5",
+  "5. 林欣：发票周五前开"
+ ],
+ "qa": [
+  {
+   "q": "支付走哪个方案？",
+   "a": "方案B",
+   "match": "exact"
+  },
+  {
+   "q": "预算是多少？",
+   "a": "6.2万",
+   "match": "number"
+  },
+  {
+   "q": "找谁要样品？",
+   "a": "罗佳宁",
+   "match": "exact"
+  },
+  {
+   "q": "要几件样品？",
+   "a": "5",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "blackboard",
+  "font": "hand_note",
+  "size": 64,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "weekly",
+  "font": "hand_note",
+  "surface": "blackboard"
+ }
+}

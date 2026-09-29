@@ -1,0 +1,97 @@
+{
+ "id": "chat-00",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-00.png",
+ "lang": "zh",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "654e7c2be86052fa668495a7bb6401a8a057d5c9409cebb891c3f6f47de90cb2",
+ "gt": {
+  "chat_title": "小店进货群",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "郑楠",
+    "is_self": false,
+    "time": "21:28",
+    "text": "云南那家豆子报价发你了，每公斤126元，起订20公斤",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "上次不是120吗？涨了？",
+    "kind": "text"
+   },
+   {
+    "sender": "郑楠",
+    "is_self": false,
+    "time": "",
+    "text": "说是新产季，水洗的涨了6元",
+    "kind": "text"
+   },
+   {
+    "sender": "罗佳宁",
+    "is_self": false,
+    "time": "22:10",
+    "text": "我问了另一家，日晒的123元/公斤，含运费",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "22:33",
+    "text": "那两家各要5公斤试试，周一前定下来",
+    "kind": "text"
+   },
+   {
+    "sender": "郑楠",
+    "is_self": false,
+    "time": "",
+    "text": "好，我跟他说周一发货",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "小店进货群",
+  "郑楠：云南那家豆子报价发你了，每公斤126元，起订20公斤",
+  "我：上次不是120吗？涨了？",
+  "郑楠：说是新产季，水洗的涨了6元",
+  "罗佳宁：我问了另一家，日晒的123元/公斤，含运费",
+  "我：那两家各要5公斤试试，周一前定下来",
+  "郑楠：好，我跟他说周一发货"
+ ],
+ "qa": [
+  {
+   "q": "云南那家水洗豆子现在每公斤多少钱？",
+   "a": "126元",
+   "match": "number"
+  },
+  {
+   "q": "罗佳宁问到的日晒豆子多少钱一公斤？",
+   "a": "123元",
+   "match": "number"
+  },
+  {
+   "q": "我决定每家先要多少公斤？",
+   "a": "5公斤",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "beans",
+  "theme": "light"
+ }
+}

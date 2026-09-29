@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 99,
+  "kind": "ax-live-insertion-probe",
+  "spikeID": "SPIKE-INS-001",
+  "runID": "00000000-0000-0000-0000-000000000001",
+  "generatedAt": "2026-07-23T00:00:00Z",
+  "conclusion": "pass",
+  "liveAccessibilityEvaluated": true,
+  "externalApplicationMatrixEvaluated": false,
+  "targetClass": "synthetic-appkit-fixture",
+  "permissionMode": "authorized-live-control+injected-denial",
+  "scenarios": [
+    {
+      "scenarioID": "live-selection-replace",
+      "status": "pass",
+      "insertionMethod": "accessibility-selection",
+      "observedFailureCategory": "none",
+      "wrongTargetWriteCount": 0,
+      "durationMilliseconds": 1
+    }
+  ],
+  "unmetReleaseCriteria": []
+}

@@ -1,0 +1,65 @@
+{
+ "file_id": "json-03",
+ "path": "corpus/json/json-03.json",
+ "type": "json",
+ "ext": "json",
+ "mime": "application/json",
+ "filename": "出差行程单（陆书瑶）.json",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "{\n  \"traveler\": \"陆书瑶\",\n  \"from\": \"西安\",\n  \"to\": \"杭州\",\n  \"segments\": [\n    {\n      \"no\": \"MU9925\",\n      \"date\": \"2026-06-08\",\n      \"dep\": \"07:25\",\n      \"arr\": \"11:52\"\n    },\n    {\n      \"no\": \"MU7057\",\n      \"date\": \"2026-06-11\",\n      \"dep\": \"19:30\"\n    }\n  ],\n  \"hotel\": {\n    \"name\": \"杭州云栖酒店\",\n    \"nights\": 3,\n    \"confirmation\": \"HT693106\",\n    \"rate_cny\": 420,\n    \"total_cny\": 1260\n  },\n  \"note\": \"合成数据\"\n}",
+ "key_lines": [
+  "\"no\": \"MU9925\",",
+  "\"arr\": \"11:52\"",
+  "\"confirmation\": \"HT693106\",",
+  "\"total_cny\": 1260"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "出差人": "陆书瑶",
+  "去程": "MU9925",
+  "到达时间": "11:52",
+  "酒店确认号": "HT693106",
+  "晚数": 3,
+  "住宿合计": 1260
+ },
+ "numbers": [
+  {
+   "value": 1260,
+   "label": "住宿合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "去程车次/航班号是什么？",
+   "a": "MU9925",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "几点到达目的地？",
+   "a": "11:52",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "酒店确认号？",
+   "a": "HT693106",
+   "match": "exact"
+  },
+  {
+   "id": "q4",
+   "q": "住宿合计多少元？",
+   "a": 1260,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 448,
+ "sha256": "904f3c47ae48436d39156b41a01b11b7ca578968b410cd2cd9233b58a117ce03",
+ "family": "itinerary"
+}

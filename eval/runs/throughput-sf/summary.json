@@ -1,0 +1,46 @@
+{
+ "stream": {
+  "items": 40,
+  "seed": 7,
+  "kinds": {
+   "dictation": 26,
+   "text": 10,
+   "meeting_online": 4
+  }
+ },
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "runs": [
+  {
+   "workers": 1,
+   "pipeline_lag": null,
+   "items": 40,
+   "wall_s": 262.2,
+   "items_per_min": 9.15,
+   "model_calls": {
+    "assign": 45,
+    "brief": 45,
+    "rank": 5,
+    "split": 4
+   },
+   "events": 12,
+   "split_items": 4
+  },
+  {
+   "workers": 4,
+   "pipeline_lag": 2,
+   "items": 40,
+   "wall_s": 186.3,
+   "items_per_min": 12.88,
+   "model_calls": {
+    "assign": 45,
+    "brief": 45,
+    "rank": 5,
+    "split": 4
+   },
+   "events": 12,
+   "split_items": 4
+  }
+ ],
+ "date": "2026-09-29T04:37:08+08:00"
+}

@@ -1,0 +1,31 @@
+{
+ "id": "invoice-a",
+ "template": "invoice",
+ "split": "dev",
+ "filename": "发票.pdf",
+ "path": "data/invoice-a.pdf",
+ "sha256": "ca1ab15629a7e3ef4f958c45a74be87203f2d7cf6539d3f482254d1a9f11fbd8",
+ "size": 26403,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "merchant": "晨星文具有限公司",
+  "doc_no": "04412233",
+  "date": "2026年09月18日"
+ },
+ "det_fields": {},
+ "type": "pdf",
+ "must_contain": [
+  "发票号码：04412233",
+  "晨星文具有限公司"
+ ],
+ "summary_groups": [
+  [
+   "发票"
+  ],
+  [
+   "晨星文具"
+  ]
+ ],
+ "doc_kind": "receipt_invoice"
+}

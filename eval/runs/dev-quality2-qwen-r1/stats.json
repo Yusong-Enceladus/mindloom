@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 79,
+   "retried": 3,
+   "latency_median_s": 4.557,
+   "latency_p95_s": 5.675,
+   "latency_total_s": 372.0,
+   "prompt_tokens_mean": 5328.1,
+   "completion_tokens_mean": 186.9,
+   "prompt_tokens_total": 436904,
+   "completion_tokens_total": 15322,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 57,
+   "ok_first_attempt": 45,
+   "retried": 33,
+   "latency_median_s": 5.753,
+   "latency_p95_s": 13.322,
+   "latency_total_s": 577.5,
+   "prompt_tokens_mean": 4825.5,
+   "completion_tokens_mean": 385.7,
+   "prompt_tokens_total": 376388,
+   "completion_tokens_total": 30083,
+   "errors_sample": [
+    "[unsupported_completion] quote「帮我想三个谈判理由」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] status_line 写了\"已…\"但没有被引用素材明确说已完成；改写为\"定于/计划…\"，或补一条 state=done 且带原话 quote 的事实",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「样品已顺丰发出，预计9月16日到」标为 done，但日期 2026-09-16 晚于证据素材的时间 2026-09-15；把已发生的部分和计划的部分拆成两条"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 11.837,
+   "latency_p95_s": 12.434,
+   "latency_total_s": 46.3,
+   "prompt_tokens_mean": 6288,
+   "completion_tokens_mean": 596.8,
+   "prompt_tokens_total": 25152,
+   "completion_tokens_total": 2387,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 9.648,
+   "latency_p95_s": 9.668,
+   "latency_total_s": 24.3,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 441.7,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1325,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 11,
+  "attach": 64,
+  "none": 4,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 11,
+  "attach": 62,
+  "none": 4,
+  "ask": 2,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 16,
+ "status_line_chars_mean": 28,
+ "title_chars_mean": 9.2,
+ "wall_s": 1027.1,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

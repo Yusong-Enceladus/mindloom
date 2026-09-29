@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 32,
+   "ok": 32,
+   "ok_first_attempt": 32,
+   "retried": 0,
+   "latency_median_s": 4.152,
+   "latency_p95_s": 5.808,
+   "latency_total_s": 136.0,
+   "prompt_tokens_mean": 4145.6,
+   "completion_tokens_mean": 162.2,
+   "prompt_tokens_total": 132659,
+   "completion_tokens_total": 5189,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 30,
+   "ok": 24,
+   "ok_first_attempt": 13,
+   "retried": 17,
+   "latency_median_s": 7.702,
+   "latency_p95_s": 15.774,
+   "latency_total_s": 261.8,
+   "prompt_tokens_mean": 5222.5,
+   "completion_tokens_mean": 405.9,
+   "prompt_tokens_total": 156676,
+   "completion_tokens_total": 12176,
+   "errors_sample": [
+    "[format] status_line must be exactly one sentence",
+    "[unsupported_completion] quote「我就讲《把设计评审开短一点》」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「方若已同意9月5日（周六）晚7:30讲《把设计评审开短一点》」标为 done，但日期 2026-09-05 晚于证据素材的时间 2026-08-18；把已发生的部分和计划的部分拆",
+    "[unsupported_completion] status_line 写了\"已…\"但没有被引用素材明确说已完成；改写为\"定于/计划…\"，或补一条 state=done 且带原话 quote 的事实"
+   ]
+  },
+  "rank": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 4.363,
+   "latency_p95_s": 9.168,
+   "latency_total_s": 13.5,
+   "prompt_tokens_mean": 3423,
+   "completion_tokens_mean": 277,
+   "prompt_tokens_total": 6846,
+   "completion_tokens_total": 554,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 6.942,
+   "latency_p95_s": 6.942,
+   "latency_total_s": 6.9,
+   "prompt_tokens_mean": 2400,
+   "completion_tokens_mean": 340,
+   "prompt_tokens_total": 2400,
+   "completion_tokens_total": 340,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 5,
+  "attach": 23,
+  "none": 2,
+  "ask": 2
+ },
+ "assign_actions": {
+  "new": 5,
+  "attach": 22,
+  "none": 2,
+  "ask": 2,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 8,
+ "status_line_chars_mean": 31.6,
+ "title_chars_mean": 9.6,
+ "wall_s": 420.3,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,26 @@
+{
+ "id": "archive-a",
+ "template": "archive",
+ "split": "dev",
+ "filename": "开业资料.zip",
+ "path": "data/archive-a.zip",
+ "sha256": "b920d82769b268084084a35b7aeb91d925571c20be46d24b5de61180e8cb084a",
+ "size": 228363,
+ "error": null,
+ "must_contain_image": [
+  "客厅瓷砖"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "archive",
+ "must_contain": [
+  "开业前一周完成试营业",
+  "| 椅子 | 16 |"
+ ],
+ "summary_groups": [
+  [
+   "开业"
+  ]
+ ],
+ "doc_kind": "other"
+}

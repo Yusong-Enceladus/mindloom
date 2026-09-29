@@ -1,0 +1,122 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 83,
+   "retried": 0,
+   "latency_median_s": 4.218,
+   "latency_p95_s": 5.389,
+   "latency_total_s": 353.6,
+   "prompt_tokens_mean": 4539.9,
+   "completion_tokens_mean": 91.8,
+   "prompt_tokens_total": 376811,
+   "completion_tokens_total": 7618,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 61,
+   "ok_first_attempt": 28,
+   "retried": 51,
+   "latency_median_s": 10.219,
+   "latency_p95_s": 17.667,
+   "latency_total_s": 860.5,
+   "prompt_tokens_mean": 6349.4,
+   "completion_tokens_mean": 333.3,
+   "prompt_tokens_total": 501599,
+   "completion_tokens_total": 26331,
+   "errors_sample": [
+    "[relative_date] status_line 用了相对时间「今天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_line 用了相对时间「今天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.916,
+   "latency_p95_s": 2.54,
+   "latency_total_s": 5.6,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 12.7,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 38,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 3.731,
+   "latency_p95_s": 20.512,
+   "latency_total_s": 27.1,
+   "prompt_tokens_mean": 6195.3,
+   "completion_tokens_mean": 512,
+   "prompt_tokens_total": 18586,
+   "completion_tokens_total": 1536,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 9.757,
+   "latency_p95_s": 13.197,
+   "latency_total_s": 42.0,
+   "prompt_tokens_mean": 4504.5,
+   "completion_tokens_mean": 291.2,
+   "prompt_tokens_total": 18018,
+   "completion_tokens_total": 1165,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 2.795,
+   "latency_p95_s": 6.321,
+   "latency_total_s": 11.3,
+   "prompt_tokens_mean": 3058,
+   "completion_tokens_mean": 93.7,
+   "prompt_tokens_total": 9174,
+   "completion_tokens_total": 281,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 13,
+  "attach": 64,
+  "none": 4,
+  "ask": 2
+ },
+ "assign_actions": {
+  "new": 13,
+  "attach": 64,
+  "none": 4,
+  "ask_suppressed": 1,
+  "ask": 1
+ },
+ "final_live_events": 15,
+ "status_line_chars_mean": 12,
+ "title_chars_mean": 8.6,
+ "wall_s": 1305.7,
+ "items_per_min": 3.77,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

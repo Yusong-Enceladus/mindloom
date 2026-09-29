@@ -1,0 +1,24 @@
+{
+ "id": "inventory-c",
+ "template": "inventory",
+ "split": "test",
+ "filename": "库存盘点.csv",
+ "path": "data/inventory-c.csv",
+ "sha256": "bd5fb0219f3bfb72fcff80c038fbabe54edfeb6a7307692df091f73752030d1f",
+ "size": 60,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "| 咖啡豆 云南日晒 | 24 | D-01 |"
+ ],
+ "summary_groups": [
+  [
+   "库存",
+   "盘点"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

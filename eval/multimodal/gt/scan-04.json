@@ -1,0 +1,104 @@
+{
+ "id": "scan-04",
+ "type": "scanned_document",
+ "split": "test",
+ "image": "images/scan-04.jpg",
+ "lang": "en",
+ "hard": [],
+ "synthetic": true,
+ "image_sha256": "d5725d69624d3c3d007abca97fb4bb7c49bc149df2fb6eadd8360aad74c5263a",
+ "gt": {
+  "title": "MEMORANDUM",
+  "fields": [
+   {
+    "key": "To",
+    "value": "All staff, Operations"
+   },
+   {
+    "key": "From",
+    "value": "Mia Chen"
+   },
+   {
+    "key": "Date",
+    "value": "September 22, 2026"
+   },
+   {
+    "key": "Subject",
+    "value": "Office move to Floor 12"
+   }
+  ],
+  "blocks": [
+   {
+    "type": "paragraph",
+    "text": "The operations team will move to Suite 7C on Floor 12 on Aug 27, 2026. Please pack your desk into no more than 5 boxes and label each box with your name and new desk number."
+   },
+   {
+    "type": "paragraph",
+    "text": "Movers arrive at 8:30 AM. Network and phones will be offline from 6:00 PM the day before until noon on moving day. Tom Becker coordinates the move; send questions to the facilities queue."
+   },
+   {
+    "type": "paragraph",
+    "text": "The approved moving budget is $22,400. Receipts for personal items are not reimbursed."
+   },
+   {
+    "type": "list_item",
+    "text": "1. Pack by 4:00 PM the day before the move."
+   },
+   {
+    "type": "list_item",
+    "text": "2. Keep laptops with you; do not pack them."
+   },
+   {
+    "type": "list_item",
+    "text": "3. Unpack by Friday so the old floor can be handed back."
+   }
+  ],
+  "full_text": "MEMORANDUM\nTo: All staff, Operations\nFrom: Mia Chen\nDate: September 22, 2026\nSubject: Office move to Floor 12\nThe operations team will move to Suite 7C on Floor 12 on Aug 27, 2026. Please pack your desk into no more than 5 boxes and label each box with your name and new desk number.\nMovers arrive at 8:30 AM. Network and phones will be offline from 6:00 PM the day before until noon on moving day. Tom Becker coordinates the move; send questions to the facilities queue.\nThe approved moving budget is $22,400. Receipts for personal items are not reimbursed.\n1. Pack by 4:00 PM the day before the move.\n2. Keep laptops with you; do not pack them.\n3. Unpack by Friday so the old floor can be handed back.\nPage 1 of 1"
+ },
+ "text_lines": [
+  "MEMORANDUM",
+  "To: All staff, Operations",
+  "From: Mia Chen",
+  "Date: September 22, 2026",
+  "Subject: Office move to Floor 12",
+  "The operations team will move to Suite 7C on Floor 12 on Aug 27, 2026. Please pack your desk into no more than 5 boxes and label each box with your name and new desk number.",
+  "Movers arrive at 8:30 AM. Network and phones will be offline from 6:00 PM the day before until noon on moving day. Tom Becker coordinates the move; send questions to the facilities queue.",
+  "The approved moving budget is $22,400. Receipts for personal items are not reimbursed.",
+  "1. Pack by 4:00 PM the day before the move.",
+  "2. Keep laptops with you; do not pack them.",
+  "3. Unpack by Friday so the old floor can be handed back.",
+  "Page 1 of 1"
+ ],
+ "qa": [
+  {
+   "q": "When is the move?",
+   "a": "Aug 27, 2026",
+   "match": "exact"
+  },
+  {
+   "q": "Who coordinates the move?",
+   "a": "Tom Becker",
+   "match": "exact"
+  },
+  {
+   "q": "How many boxes at most?",
+   "a": "5",
+   "match": "number"
+  },
+  {
+   "q": "What is the moving budget?",
+   "a": "$22,400",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "rotate_deg": 0.99,
+  "blur": 0.6,
+  "dpi": 150,
+  "body_pt": 11.0,
+  "engine": "reportlab+pdfium"
+ },
+ "variant": {
+  "content": "en_memo"
+ }
+}

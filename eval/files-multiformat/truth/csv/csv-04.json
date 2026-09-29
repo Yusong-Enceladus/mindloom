@@ -1,0 +1,60 @@
+{
+ "file_id": "csv-04",
+ "path": "corpus/csv/csv-04.csv",
+ "type": "csv",
+ "ext": "csv",
+ "mime": "text/csv",
+ "filename": "白鹭环保杯篮球联赛积分榜.csv",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "# 白鹭环保杯篮球联赛积分榜（合成数据）\n队名;胜;负;积分\n海豚队;7;6;21\n青松队;5;1;15\n银杏队;4;5;12\n火焰队;2;3;6\n闪电队;1;5;3",
+ "key_lines": [
+  "海豚队;7;6;21",
+  "青松队;5;1;15",
+  "银杏队;4;5;12",
+  "闪电队;1;5;3"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "第一名": "海豚队",
+  "银杏队": 12
+ },
+ "numbers": [
+  {
+   "value": 21,
+   "label": "第一名积分"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分榜第一是哪个队？",
+   "a": "海豚队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "银杏队积多少分？",
+   "a": 12,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "青松队赢了几场？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8",
+  "delimiter": "semicolon",
+  "rows": 5
+ },
+ "notes": "分号分隔",
+ "bytes": 169,
+ "sha256": "3f2bbf83e45d4fd3ccbe79c33187e96e762ddb0d352188a4d7993d4bafece997",
+ "family": "league"
+}

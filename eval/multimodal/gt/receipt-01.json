@@ -1,0 +1,98 @@
+{
+ "id": "receipt-01",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-01.jpg",
+ "lang": "zh",
+ "hard": [
+  "similar_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "fc1ee9644f4acaf66c1a2a4e4902a06a227c4421ee0b443754ddaa4a1271d5a7",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "南巷咖啡",
+  "date": "2026-09-26",
+  "date_text": "2026-09-26 17:34",
+  "time": "17:34",
+  "doc_no": "202609265269",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "拿铁（中杯）",
+    "qty": 1,
+    "unit": "杯",
+    "unit_price": "25.00",
+    "amount": "25.00"
+   },
+   {
+    "name": "拿铁（大杯）",
+    "qty": 2,
+    "unit": "杯",
+    "unit_price": "28.00",
+    "amount": "56.00"
+   },
+   {
+    "name": "美式（中杯）",
+    "qty": 3,
+    "unit": "杯",
+    "unit_price": "20.00",
+    "amount": "60.00"
+   }
+  ],
+  "subtotal": "141.00",
+  "discount": "5.00",
+  "tax": "0.00",
+  "total": "136.00",
+  "payment_method": "银行卡"
+ },
+ "text_lines": [
+  "南巷咖啡",
+  "青川市桂香区梧桐大道25号",
+  "电话：0000-5724",
+  "单号：202609265269 收银员：02",
+  "日期：2026-09-26 17:34",
+  "拿铁（中杯） 1 25.00 25.00",
+  "拿铁（大杯） 2 28.00 56.00",
+  "美式（中杯） 3 20.00 60.00",
+  "合计件数：3",
+  "小计 141.00",
+  "优惠 -5.00",
+  "实付 ¥136.00",
+  "支付方式：银行卡",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥136.00",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "南巷咖啡",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-09-26",
+   "match": "date"
+  },
+  {
+   "q": "美式（中杯）的金额是多少？",
+   "a": "60.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "similar": true
+ }
+}

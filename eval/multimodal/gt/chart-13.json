@@ -1,0 +1,76 @@
+{
+ "id": "chart-13",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-13.jpg",
+ "lang": "en",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "27332fe91a963d59c607744294bd4d537646d276742cbf58909a48011531d82b",
+ "gt": {
+  "chart_type": "hbar",
+  "title": "Warehouse stock by category",
+  "x_label": "Units in stock",
+  "y_label": "",
+  "unit": "units",
+  "categories": [
+   "Beans",
+   "Milk",
+   "Cups",
+   "Syrups",
+   "Snacks"
+  ],
+  "series": [
+   {
+    "name": "Stock",
+    "values": [
+     1609.0,
+     462.0,
+     2172.0,
+     989.0,
+     1055.0
+    ],
+    "labels": [
+     "1,609",
+     "462",
+     "2,172",
+     "989",
+     "1,055"
+    ]
+   }
+  ],
+  "trend": {}
+ },
+ "text_lines": [
+  "Warehouse stock by category",
+  "Stock Beans: 1,609",
+  "Stock Milk: 462",
+  "Stock Cups: 2,172",
+  "Stock Syrups: 989",
+  "Stock Snacks: 1,055"
+ ],
+ "qa": [
+  {
+   "q": "In 'Warehouse stock by category', what is the value for Beans (Stock)?",
+   "a": "1,609",
+   "match": "number"
+  },
+  {
+   "q": "Which category has the highest Stock?",
+   "a": "Cups",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "hbar",
+  "jpeg": 60
+ },
+ "variant": {
+  "chart": "hbar",
+  "lang": "en",
+  "jpeg": 60
+ }
+}

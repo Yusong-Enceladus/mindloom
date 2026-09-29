@@ -1,0 +1,163 @@
+{
+  "benchmarkID" : "asr-public-fluid-parakeet-fleurs-english-v1",
+  "configHash" : "f1fb9f64733c398dc9f8e9a40d81c155eb266faafa21ac7120fe95b29d3c26ba",
+  "corpus" : {
+    "manifestID" : "fleurs-public-asr-tuning-v1",
+    "split" : "tuning",
+    "version" : "1.0.0"
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "failedSampleUUIDs" : [
+
+  ],
+  "hardware" : {
+    "architecture" : "arm64",
+    "osVersion" : "Version 26.6.2 (Build 25G83)",
+    "toolchainVersion" : "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101) Target: arm64-apple-macosx26.0",
+    "unifiedMemoryBytes" : 51539607552
+  },
+  "implementationRevision" : "19600a485baa4998812e4654b70d2bab8f2c9949",
+  "kind" : "benchmark-result",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0.09725974527209572
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0.0780399274047187
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0.07913669064748201
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 143.110208
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 190.1605
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.01748256394387775
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 684720128
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 1
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fluid-parakeet-unified-en-int8-4252711f",
+    "sha256" : "78c6a306a7207f7a771a5468c1151c0a459d049702cbcc47d28fdc817392e2e4"
+  },
+  "protocolVersion" : 1,
+  "runID" : "1C46FB1F-49BF-4980-8C43-400F8404DC0C",
+  "schemaVersion" : 1,
+  "task" : "asr"
+}

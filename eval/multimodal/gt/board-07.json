@@ -1,0 +1,100 @@
+{
+ "id": "board-07",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-07.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "glare",
+  "small_text",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "2fa2d6f45ede3d5e90806745052a7c92a05b45b0f6722892f06163a5098d4526",
+ "gt": {
+  "surface": "whiteboard",
+  "lines": [
+   {
+    "text": "周会 10/8",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "1. 点单上线 → 10/15",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "2. 支付走方案B，费率0.38%",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "3. 预算4.5万（已确认）",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "4. 找曹静怡要样品×3",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "5. 林欣：发票周五前开",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "周会 10/8",
+  "1. 点单上线 → 10/15",
+  "2. 支付走方案B，费率0.38%",
+  "3. 预算4.5万（已确认）",
+  "4. 找曹静怡要样品×3",
+  "5. 林欣：发票周五前开"
+ ],
+ "qa": [
+  {
+   "q": "支付走哪个方案？",
+   "a": "方案B",
+   "match": "exact"
+  },
+  {
+   "q": "预算是多少？",
+   "a": "4.5万",
+   "match": "number"
+  },
+  {
+   "q": "找谁要样品？",
+   "a": "曹静怡",
+   "match": "exact"
+  },
+  {
+   "q": "要几件样品？",
+   "a": "3",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "whiteboard",
+  "font": "kai",
+  "size": 64,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "weekly",
+  "font": "kai",
+  "surface": "whiteboard",
+  "far": true
+ }
+}

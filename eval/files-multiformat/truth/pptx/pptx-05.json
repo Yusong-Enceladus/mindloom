@@ -1,0 +1,80 @@
+{
+ "file_id": "pptx-05",
+ "path": "corpus/pptx/pptx-05.pptx",
+ "type": "pptx",
+ "ext": "pptx",
+ "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+ "filename": "实验室安全培训.pptx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "实验室安全培训\n合成数据 · 仅供评测\n合成数据\n为什么重要\n去年共发生 5 起可避免的事故\n大部分源于流程不清\n合成数据\n三条规则\n离开工位锁屏\n密码至少 12 位\n每周五 17:00 前完成备份\n合成数据\n考核\n培训后在线测验，80 分及格\n不及格者一周内补考\n合成数据",
+ "key_lines": [
+  "去年共发生 5 起可避免的事故",
+  "密码至少 12 位",
+  "每周五 17:00 前完成备份",
+  "培训后在线测验，80 分及格"
+ ],
+ "picture_only_lines": [
+  "密码至少 12 位",
+  "每周五 17:00 前完成备份",
+  "培训后在线测验，80 分及格"
+ ],
+ "key_fields": {
+  "事故数": 5,
+  "密码位数": 12,
+  "及格线": 80,
+  "备份时间": "每周五17:00前"
+ },
+ "numbers": [
+  {
+   "value": 5,
+   "label": "事故"
+  },
+  {
+   "value": 12,
+   "label": "密码位数"
+  },
+  {
+   "value": 80,
+   "label": "及格线"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "密码至少几位？",
+   "a": 12,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "测验多少分及格？",
+   "a": 80,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "每周什么时候前完成备份？",
+   "a": "每周五 17:00",
+   "match": "contains",
+   "accept": [
+    "周五17:00",
+    "17:00"
+   ]
+  }
+ ],
+ "structure": {
+  "slides": 4,
+  "picture_only_slides": [
+   3,
+   4
+  ],
+  "notes_slides": []
+ },
+ "bytes": 84141,
+ "sha256": "1dbb3bcb78ac0c028043c5c408fb662615722eb1c2d12c30cbbb67a160adbfdb",
+ "family": "training"
+}

@@ -1,0 +1,78 @@
+{
+ "id": "label-08",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-08.jpg",
+ "lang": "en",
+ "hard": [
+  "low_contrast",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "7941b5d9d7ab8615bdbbfa35d31d372edda986b4d14d028de2954e2f933e381f",
+ "gt": {
+  "label_kind": "room_sign",
+  "fields": [
+   {
+    "key": "room",
+    "label": "",
+    "value": "4B"
+   },
+   {
+    "key": "capacity",
+    "label": "Capacity",
+    "value": "12"
+   },
+   {
+    "key": "equipment",
+    "label": "",
+    "value": "Display · Video call · Whiteboard"
+   },
+   {
+    "key": "contact_ext",
+    "label": "ext.",
+    "value": "8651"
+   }
+  ],
+  "lines": [
+   "MEETING ROOM",
+   "4B",
+   "Capacity 12",
+   "Display · Video call · Whiteboard",
+   "Book via Facilities, ext. 8651"
+  ]
+ },
+ "text_lines": [
+  "MEETING ROOM",
+  "4B",
+  "Capacity 12",
+  "Display · Video call · Whiteboard",
+  "Book via Facilities, ext. 8651"
+ ],
+ "qa": [
+  {
+   "q": "Which room is this?",
+   "a": "4B",
+   "match": "exact"
+  },
+  {
+   "q": "What is the capacity?",
+   "a": "12",
+   "match": "number"
+  },
+  {
+   "q": "Which extension books it?",
+   "a": "8651",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "room_sign",
+  "background": "wall"
+ },
+ "variant": {
+  "kind": "room_sign",
+  "lang": "en",
+  "faint": true
+ }
+}

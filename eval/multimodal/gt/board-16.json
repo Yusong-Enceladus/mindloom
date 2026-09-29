@@ -1,0 +1,95 @@
+{
+ "id": "board-16",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-16.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "glare",
+  "small_text",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "4b4459e1e97f97b350c15845904bd5b24f54b930223c6b12825eff9ae0a338a7",
+ "gt": {
+  "surface": "whiteboard",
+  "lines": [
+   {
+    "text": "秋游方案",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "人数：6户，约18人",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "车程3小时，60座大巴",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "联系人：高远",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "备选：周婷负责订餐",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "雨天顺延一周",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "秋游方案",
+  "人数：6户，约18人",
+  "车程3小时，60座大巴",
+  "联系人：高远",
+  "备选：周婷负责订餐",
+  "雨天顺延一周"
+ ],
+ "qa": [
+  {
+   "q": "联系人是谁？",
+   "a": "高远",
+   "match": "exact"
+  },
+  {
+   "q": "谁负责订餐？",
+   "a": "周婷",
+   "match": "exact"
+  },
+  {
+   "q": "车程多久？",
+   "a": "3小时",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "whiteboard",
+  "font": "hand_pen",
+  "size": 64,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "plan",
+  "font": "hand_pen",
+  "surface": "whiteboard",
+  "far": true
+ }
+}

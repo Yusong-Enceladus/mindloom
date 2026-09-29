@@ -1,0 +1,39 @@
+{
+ "segments": [
+  {
+   "label": "minicpm-v-4.6-vllm",
+   "backend": "openai",
+   "model": "minicpm-v-4.6",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 7,
+   "start": {
+    "time": 1790670477.5975952,
+    "gpu_apps": [
+     "522755, VLLM::EngineCore, 29424 MiB"
+    ],
+    "gpu_util": "0 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          41           5           0          75          80\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"minicpm-v-4.6\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"minicpm-v-4.6\"} 0.0"
+    ]
+   },
+   "wall_s": 53.18,
+   "end": {
+    "time": 1790670530.8330054,
+    "gpu_apps": [
+     "522755, VLLM::EngineCore, 29900 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          41           5           0          76          80\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"minicpm-v-4.6\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"minicpm-v-4.6\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

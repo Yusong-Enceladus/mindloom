@@ -1,0 +1,64 @@
+{
+  "commands" : [
+    [
+      "script/run_inference_queue_probe.sh"
+    ]
+  ],
+  "conclusion" : "pass",
+  "criteria" : {
+    "fail" : [
+      "Queue growth is unbounded, source audio depends on the worker, a lease cannot resume, or duplicate transcript commits appear."
+    ],
+    "pass" : [
+      "Queue capacity is fixed, overflow enters degraded-live, and every source chunk plus catch-up job remains durable.",
+      "An expired worker lease is reclaimed after reconnect while capture continues.",
+      "Duplicate worker responses collapse to one idempotent transcript commit and the durable backlog drains exactly once."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json"
+      ],
+      "scenarioID" : "slow-inference-fills-bounded-queue",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json"
+      ],
+      "scenarioID" : "queue-full-preserves-source-and-schedules-catch-up",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json"
+      ],
+      "scenarioID" : "worker-crash-does-not-stop-capture-and-lease-resumes",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json"
+      ],
+      "scenarioID" : "duplicate-worker-response-is-idempotent",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-WRK-001/matrix.json"
+      ],
+      "scenarioID" : "reconnect-drains-durable-backlog-without-duplicate-transcript",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can capture keep committing while a bounded live-inference queue degrades and durable leased jobs recover from worker crash without duplicate transcript commits?",
+  "runID" : "5D4D314A-2E67-4D97-82F0-2006706759B2",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-WRK-001",
+  "unmetCriteria" : [
+
+  ]
+}

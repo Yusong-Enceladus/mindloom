@@ -1,0 +1,79 @@
+{
+ "file_id": "ics-02",
+ "path": "corpus/ics/ics-02.ics",
+ "type": "ics",
+ "ext": "ics",
+ "mime": "text/calendar",
+ "filename": "Talk_ElenaPark.ics",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "363CA2BF-38AF-5F67-96DE-D77A64A88993",
+  "ref": "talk_ics",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "full",
+ "text": "CALENDAR: 学院讲座\n[event 1]\nSUMMARY: 学术讲座：Memory Structures for Embodied Agents（Elena Park）\nSTART: 2026-10-16 15:00 (Asia/Shanghai)\nEND: 2026-10-16 16:30 (Asia/Shanghai)\nLOCATION: 计算机楼 A101 报告厅\nDESCRIPTION: 主讲：Elena Park 教授（Northbridge University）\n主持：沈知遥\n讲座60分钟，问答30分钟。\n合成数据\nORGANIZER: 宋雨桐 <songyt@example.org>\nALARM: -PT1H\n[event 2]\nSUMMARY: 欢迎晚宴（素食）\nSTART: 2026-10-16 18:00 (Asia/Shanghai)\nEND: 2026-10-16 20:00 (Asia/Shanghai)\nLOCATION: 清屿会堂 二楼 竹厅\nDESCRIPTION: 参加：Elena Park、沈知遥、宋雨桐 等 6 人\nORGANIZER: 宋雨桐 <songyt@example.org>",
+ "key_lines": [
+  "START: 2026-10-16 15:00 (Asia/Shanghai)",
+  "LOCATION: 计算机楼 A101 报告厅",
+  "主持：沈知遥",
+  "LOCATION: 清屿会堂 二楼 竹厅",
+  "DESCRIPTION: 参加：Elena Park、沈知遥、宋雨桐 等 6 人"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "讲座时间": "2026-10-16 15:00-16:30",
+  "地点": "计算机楼 A101 报告厅",
+  "晚宴": "18:00 清屿会堂 二楼 竹厅",
+  "主持": "沈知遥"
+ },
+ "numbers": [
+  {
+   "value": 6,
+   "label": "晚宴人数"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "讲座在哪个报告厅？",
+   "a": "A101",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "讲座几点开始？",
+   "a": "15:00",
+   "match": "contains",
+   "accept": [
+    "下午3点",
+    "下午三点"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "晚宴在哪？",
+   "a": "竹厅",
+   "match": "contains",
+   "accept": [
+    "清屿会堂 二楼 竹厅"
+   ]
+  },
+  {
+   "id": "q4",
+   "q": "主持人是谁？",
+   "a": "沈知遥",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "events": 2,
+  "calname": "学院讲座"
+ },
+ "bytes": 1238,
+ "sha256": "6be0d1e3dc1fee1e4b1ed8749912d8262f0cdb2770488a06b781cb8963aa2414"
+}

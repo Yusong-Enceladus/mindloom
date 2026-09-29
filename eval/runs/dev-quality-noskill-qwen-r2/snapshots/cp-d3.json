@@ -1,0 +1,1254 @@
+{
+ "cursor": 145,
+ "events": [
+  {
+   "event_id": "f3d3b498-32bb-404f-b5bb-f96e2593c327",
+   "handle": "E3",
+   "title": "店铺租约续签",
+   "title_user_edited": false,
+   "anchor": "店铺租约续签",
+   "status_line": "租约月底到期，房东提议涨租至1.3万，我方反提1.2万/三年",
+   "status_facts": [
+    {
+     "text": "租约月底到期，房东提议涨租至1.3万",
+     "state": "info",
+     "date": "2026-09-14",
+     "quote": "明年起月租1.3万",
+     "item_ids": [
+      "54142737-31A1-5091-82F6-916E95102C16"
+     ]
+    },
+    {
+     "text": "我方反提1.2万/三年，房东待回复",
+     "state": "planned",
+     "date": "2026-09-16",
+     "quote": "明天回你",
+     "item_ids": [
+      "EA893F92-3A73-5FD6-A6C0-30B7C936720A",
+      "035B9451-305D-5956-9D6E-38FAA9F9B48C"
+     ]
+    }
+   ],
+   "importance": 0.95,
+   "importance_reason": "租约月底到期，需尽快确认租金",
+   "started_at": "2026-09-14T10:15:00+08:00",
+   "updated_at": "2026-09-16T12:00:00+08:00",
+   "item_ids": [
+    "20D75520-2216-583C-899F-A0019C0361F8",
+    "54142737-31A1-5091-82F6-916E95102C16",
+    "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546",
+    "D229196F-8C59-5804-9C38-BBEDA39249E7",
+    "EA893F92-3A73-5FD6-A6C0-30B7C936720A",
+    "035B9451-305D-5956-9D6E-38FAA9F9B48C"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "f0d70cfd-20b7-42c5-a9ff-02b70735ce35"
+    },
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "f0d70cfd-20b7-42c5-a9ff-02b70735ce35"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "fe896d72-9b39-458d-ae74-3ef6be6a5980",
+   "handle": "E2",
+   "title": "装修报价",
+   "title_user_edited": false,
+   "anchor": "装修报价",
+   "status_line": "报价增至4.2万，完工延至9月30日，周师傅9月19日修漏水",
+   "status_facts": [
+    {
+     "text": "报价3.8万，工期12天，9月26号完工",
+     "state": "planned",
+     "date": "2026-09-14",
+     "quote": "报价按昨天量的尺寸做好了",
+     "item_ids": [
+      "1A41A674-D9F4-5AFA-A64B-F018356C9D5A"
+     ]
+    },
+    {
+     "text": "总价4.2万，完工延至9月30号",
+     "state": "planned",
+     "date": "2026-09-16",
+     "quote": "排水要多三四天",
+     "item_ids": [
+      "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD"
+     ]
+    },
+    {
+     "text": "吧台高度改1.05米",
+     "state": "planned",
+     "date": "2026-09-16",
+     "quote": "木作还没开始",
+     "item_ids": [
+      "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD"
+     ]
+    }
+   ],
+   "importance": 0.9,
+   "importance_reason": "装修报价增加，工期延至月底",
+   "started_at": "2026-09-14T09:30:00+08:00",
+   "updated_at": "2026-09-16T09:31:20.360000+08:00",
+   "item_ids": [
+    "1A41A674-D9F4-5AFA-A64B-F018356C9D5A",
+    "6F342268-726C-5B7B-AACF-316A24576D3B",
+    "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+    "802F2B75-A0A3-51C6-B1C2-D02AE668E6AE",
+    "FAFB3A58-6D9A-55A2-B74C-C79558BA8F7B"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "05b275a6-b2c2-49c3-ab8f-50a2852ba0ca"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "05b275a6-b2c2-49c3-ab8f-50a2852ba0ca"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "db7d5f0e-2487-4c49-ab3e-132fc4340930",
+   "handle": "E7",
+   "title": "卫生间天花板滴水维修",
+   "title_user_edited": false,
+   "anchor": "卫生间天花板滴水维修",
+   "status_line": "楼下漏水，周师傅9月19日（周六）上午上门查看",
+   "status_facts": [
+    {
+     "text": "楼下漏水，周师傅9月19日（周六）上午上门查看",
+     "state": "planned",
+     "date": "2026-09-19",
+     "quote": "行，周六上午我过去看看",
+     "item_ids": [
+      "9432549F-C1CE-5A6F-BE44-9409C34C8DF6"
+     ]
+    },
+    {
+     "text": "预计费用两三千",
+     "state": "info",
+     "date": "",
+     "quote": "要重做的话两三千",
+     "item_ids": [
+      "9432549F-C1CE-5A6F-BE44-9409C34C8DF6"
+     ]
+    },
+    {
+     "text": "妈妈9月19日（周六）上午在家",
+     "state": "info",
+     "date": "2026-09-19",
+     "quote": "我那天上午都在家",
+     "item_ids": [
+      "2B79547A-32F9-5729-AF68-D3394733EFA2"
+     ]
+    }
+   ],
+   "importance": 0.85,
+   "importance_reason": "楼下漏水，周六需上门维修",
+   "started_at": "2026-09-14T21:40:00+08:00",
+   "updated_at": "2026-09-16T19:30:00+08:00",
+   "item_ids": [
+    "7883B63B-FA24-52BE-BD83-889FB9DA895C",
+    "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+    "9432549F-C1CE-5A6F-BE44-9409C34C8DF6",
+    "2B79547A-32F9-5729-AF68-D3394733EFA2"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "68687269-c3b6-4eb4-8084-905a6f3d9add"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "68687269-c3b6-4eb4-8084-905a6f3d9add"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "dfe9d2c3-1b54-4e01-a05e-6ec7b48dc224",
+   "handle": "E5",
+   "title": "门头设计方案",
+   "title_user_edited": false,
+   "anchor": "门头设计方案",
+   "status_line": "门头定B版，9.20出终稿，9.27两周年海报待做",
+   "status_facts": [
+    {
+     "text": "门头定B版（暖木色+手写字）",
+     "state": "done",
+     "date": "2026-09-15",
+     "quote": "就定方案B",
+     "item_ids": [
+      "9650A5DA-3C04-5823-A248-FD770A607DD7"
+     ]
+    },
+    {
+     "text": "9月20日前出门头终稿",
+     "state": "planned",
+     "date": "2026-09-20",
+     "quote": "20号前出终稿",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525"
+     ]
+    },
+    {
+     "text": "9月24日安装门头",
+     "state": "planned",
+     "date": "2026-09-24",
+     "quote": "9月24号可以装",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525"
+     ]
+    },
+    {
+     "text": "9月17日给两周年海报初稿",
+     "state": "planned",
+     "date": "2026-09-17",
+     "quote": "周四给你初稿",
+     "item_ids": [
+      "BC2D5FFF-E2EF-5879-9051-564674E2B525"
+     ]
+    }
+   ],
+   "importance": 0.8,
+   "importance_reason": "门头终稿9.20出，安装9.24",
+   "started_at": "2026-09-14T16:05:00+08:00",
+   "updated_at": "2026-09-16T08:45:07.360000+08:00",
+   "item_ids": [
+    "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+    "25DB9250-44FA-561E-826E-775D91B6FF64",
+    "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+    "9650A5DA-3C04-5823-A248-FD770A607DD7",
+    "89E39353-1EFF-5367-A4E8-98A32D43424D"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+    "75F7185C-AF77-5E23-B6CF-8D63F15750DC"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "ca8e016a-896f-41a7-98ee-9de99d3f8f4d"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "ca8e016a-896f-41a7-98ee-9de99d3f8f4d"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "7e17e305-c345-4420-b862-ada085e55bc6",
+   "handle": "E9",
+   "title": "两周年市集筹备",
+   "title_user_edited": false,
+   "anchor": "两周年市集筹备",
+   "status_line": "栗子泥已备，拟邀8个摊位，9月16日试蛋糕",
+   "status_facts": [
+    {
+     "text": "栗子泥已备，拟邀8个摊位",
+     "state": "done",
+     "date": "2026-09-15",
+     "quote": "栗子泥买到了",
+     "item_ids": [
+      "AC6E551C-4B43-53B6-8727-2963F885D2B4"
+     ]
+    },
+    {
+     "text": "试做栗子蛋糕，需减糖",
+     "state": "planned",
+     "date": "2026-09-17",
+     "quote": "明天再试一次",
+     "item_ids": [
+      "EE29E435-3B13-5AAD-BFFD-115B619283A6"
+     ]
+    },
+    {
+     "text": "市集定于9月27日（周日）在后院举办",
+     "state": "planned",
+     "date": "2026-09-27",
+     "quote": "市集就定9月27号",
+     "item_ids": [
+      "A913FD0F-9A03-5B19-82E2-8D7058DB41F5"
+     ]
+    }
+   ],
+   "importance": 0.75,
+   "importance_reason": "两周年市集9.27举办，需筹备",
+   "started_at": "2026-09-15T17:30:00+08:00",
+   "updated_at": "2026-09-16T17:45:08.740000+08:00",
+   "item_ids": [
+    "AC6E551C-4B43-53B6-8727-2963F885D2B4",
+    "EE29E435-3B13-5AAD-BFFD-115B619283A6",
+    "A913FD0F-9A03-5B19-82E2-8D7058DB41F5"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "624143b2-4e57-4bb1-8ca7-8d057169fd83"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "624143b2-4e57-4bb1-8ca7-8d057169fd83"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "1c911cb8-4ca6-4ada-824b-ec8f5851067e",
+   "handle": "E8",
+   "title": "更换咖啡豆供应商",
+   "title_user_edited": false,
+   "anchor": "更换咖啡豆供应商",
+   "status_line": "样品已寄，待9月17日（周四）开会",
+   "status_facts": [
+    {
+     "text": "待收样品",
+     "state": "planned",
+     "date": "2026-09-16",
+     "quote": "明天到",
+     "item_ids": [
+      "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C"
+     ]
+    },
+    {
+     "text": "待开线上会",
+     "state": "planned",
+     "date": "2026-09-17",
+     "quote": "周四下午我们开个线上会",
+     "item_ids": [
+      "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C"
+     ]
+    }
+   ],
+   "importance": 0.7,
+   "importance_reason": "9.17需开会讨论咖啡豆供应商",
+   "started_at": "2026-09-15T11:00:00+08:00",
+   "updated_at": "2026-09-15T13:40:08.740000+08:00",
+   "item_ids": [
+    "F0060594-CFDF-5008-A831-9F086FD0EF18",
+    "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C",
+    "BE4CD906-9394-5F68-9A04-381DA55EE9B0"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "30996948-d5f1-47c9-a81c-0d963118be3d"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "30996948-d5f1-47c9-a81c-0d963118be3d"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "2cfc5aa6-58b1-4bc4-ab7c-77e41415f496",
+   "handle": "E6",
+   "title": "咖啡店集点卡小程序",
+   "title_user_edited": false,
+   "anchor": "咖啡店集点卡小程序",
+   "status_line": "需求与数据表已完成，核销接口已开发并测试通过，待开发店员端扫码页面",
+   "status_facts": [
+    {
+     "text": "核销接口开发完成",
+     "state": "done",
+     "date": "2026-09-16",
+     "quote": "任务完成",
+     "item_ids": [
+      "F80DAC7E-762F-50E0-B53E-FF9DE06515E5",
+      "15E0A5C8-730A-5D9A-B16D-3A37C654E17E"
+     ]
+    },
+    {
+     "text": "待开发店员端扫码页面",
+     "state": "planned",
+     "date": "",
+     "quote": "待办：店员端扫码页面",
+     "item_ids": [
+      "15E0A5C8-730A-5D9A-B16D-3A37C654E17E"
+     ]
+    }
+   ],
+   "importance": 0.6,
+   "importance_reason": "小程序待开发店员端扫码页面",
+   "started_at": "2026-09-14T21:05:00+08:00",
+   "updated_at": "2026-09-16T16:30:00+08:00",
+   "item_ids": [
+    "67FB3505-0713-5515-8E07-884EABB252BF",
+    "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC",
+    "F80DAC7E-762F-50E0-B53E-FF9DE06515E5",
+    "15E0A5C8-730A-5D9A-B16D-3A37C654E17E"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "8c22a902-2a25-413c-9ba1-634d6371e753"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "8c22a902-2a25-413c-9ba1-634d6371e753"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "b1f992f3-e4a1-4706-a4a0-5803cdf56425",
+   "handle": "E10",
+   "title": "门头安装",
+   "title_user_edited": false,
+   "anchor": "门头安装",
+   "status_line": "门头安装推迟至29号",
+   "status_facts": [
+    {
+     "text": "门头安装推迟至29号",
+     "state": "planned",
+     "date": "2026-09-29",
+     "quote": "最早29号才能装",
+     "item_ids": [
+      "231A396E-C32F-516E-90D5-0E7946E82892"
+     ]
+    }
+   ],
+   "importance": 0.5,
+   "importance_reason": "门头安装推迟至9.29",
+   "started_at": "2026-09-16T10:40:00+08:00",
+   "updated_at": "2026-09-16T10:40:08.280000+08:00",
+   "item_ids": [
+    "231A396E-C32F-516E-90D5-0E7946E82892"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "32642ada-34ae-4535-9a64-e9d6dc4bd8d6"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "32642ada-34ae-4535-9a64-e9d6dc4bd8d6"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "115a36ec-81b1-4b8f-9bc3-20b5589644eb",
+   "handle": "E1",
+   "title": "拆吧台",
+   "title_user_edited": false,
+   "anchor": "拆吧台",
+   "status_line": "吧台已拆完，设备待搬，待换排水管",
+   "status_facts": [
+    {
+     "text": "设备搬入仓库",
+     "state": "planned",
+     "date": "2026-09-14",
+     "quote": "两点前搬完",
+     "item_ids": [
+      "057423EA-F56E-573B-BA3A-F555BCD22091"
+     ]
+    },
+    {
+     "text": "吧台拆除完成",
+     "state": "done",
+     "date": "2026-09-15",
+     "quote": "吧台已经拆完了",
+     "item_ids": [
+      "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+     ]
+    },
+    {
+     "text": "需更换旧排水管",
+     "state": "planned",
+     "date": "2026-09-16",
+     "quote": "明天细说",
+     "item_ids": [
+      "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+     ]
+    }
+   ],
+   "importance": 0.4,
+   "importance_reason": "吧台已拆，待换排水管",
+   "started_at": "2026-09-14T08:52:00+08:00",
+   "updated_at": "2026-09-15T09:50:00+08:00",
+   "item_ids": [
+    "057423EA-F56E-573B-BA3A-F555BCD22091",
+    "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+    "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+    "chat-edff8c8c-b523-518a-bffa-feb200882bac",
+    "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "0425c635-d9c3-460c-93c6-7b57704cd21a"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "0425c635-d9c3-460c-93c6-7b57704cd21a"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  },
+  {
+   "event_id": "e550c807-9338-47ac-87d6-79ec4125d45a",
+   "handle": "E4",
+   "title": "秋季新品桂花拿铁",
+   "title_user_edited": false,
+   "anchor": "秋季新品桂花拿铁",
+   "status_line": "桂花拿铁已试做，10月1日上架，栗子蛋糕待试做。",
+   "status_facts": [
+    {
+     "text": "10月1日上新品，先试做",
+     "state": "planned",
+     "date": "2026-10-01",
+     "quote": "10月1号上桂花拿铁",
+     "item_ids": [
+      "8F8C3206-308D-50B3-8860-AC5BBD9CC54C"
+     ]
+    },
+    {
+     "text": "桂花拿铁已试做，比例确定",
+     "state": "done",
+     "date": "2026-09-14",
+     "quote": "桂花拿铁做了三杯",
+     "item_ids": [
+      "DAE2BBB2-8818-58CC-909E-DDAF80C29133"
+     ]
+    },
+    {
+     "text": "栗子蛋糕需买原料后试做",
+     "state": "planned",
+     "date": "2026-09-15",
+     "quote": "明天试栗子蛋糕",
+     "item_ids": [
+      "DAE2BBB2-8818-58CC-909E-DDAF80C29133"
+     ]
+    }
+   ],
+   "importance": 0.3,
+   "importance_reason": "新品10.1上架，目前状态正常",
+   "started_at": "2026-09-14T14:10:00+08:00",
+   "updated_at": "2026-09-14T15:30:00+08:00",
+   "item_ids": [
+    "8F8C3206-308D-50B3-8860-AC5BBD9CC54C",
+    "DAE2BBB2-8818-58CC-909E-DDAF80C29133"
+   ],
+   "person_ids": [
+    "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "2af29bc8-df50-4d33-8f1e-4300b6f5938d"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "2bbf1ccdc213c05f",
+     "run_id": "2af29bc8-df50-4d33-8f1e-4300b6f5938d"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.1.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "22d28d3e84a08265",
+     "run_id": "04803321-2697-43d2-9079-8fde5161778e"
+    }
+   }
+  }
+ ],
+ "questions": [
+  {
+   "question_id": "1bc27fae-7420-47ea-8db0-6eaffddac560",
+   "kind": "same_event",
+   "a": "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+   "b": "115a36ec-81b1-4b8f-9bc3-20b5589644eb",
+   "status": "open",
+   "prompt_zh": "这条「周师傅，拆下来的旧吧台台面别扔，我想留着以后做…」和「拆吧台」是同一件事吗？",
+   "created_at": "2026-09-15T09:50:00+08:00",
+   "day_key": "2026-09-14",
+   "provisional": {
+    "action": "stay",
+    "event_id": "115a36ec-81b1-4b8f-9bc3-20b5589644eb"
+   },
+   "b_items_at_ask": [
+    "057423EA-F56E-573B-BA3A-F555BCD22091",
+    "5896A3FB-C6E0-5797-B478-DB8FA4341585"
+   ],
+   "answer": null
+  },
+  {
+   "question_id": "b3cbb6a0-0b58-4ed4-b234-99f6a3316713",
+   "kind": "same_event",
+   "a": "AC6E551C-4B43-53B6-8727-2963F885D2B4",
+   "b": "dfe9d2c3-1b54-4e01-a05e-6ec7b48dc224",
+   "status": "open",
+   "prompt_zh": "这条「林小满：念姐，栗子泥买到了，明天试蛋糕。另外两…」和「门头设计方案」是同一件事吗？",
+   "created_at": "2026-09-15T17:30:00+08:00",
+   "day_key": "2026-09-15",
+   "provisional": {
+    "action": "new",
+    "event_id": "7e17e305-c345-4420-b862-ada085e55bc6"
+   },
+   "b_items_at_ask": [
+    "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+    "25DB9250-44FA-561E-826E-775D91B6FF64",
+    "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+    "9650A5DA-3C04-5823-A248-FD770A607DD7"
+   ],
+   "answer": null
+  },
+  {
+   "question_id": "1ac0562c-6459-4d94-aff5-abb3d9b792a4",
+   "kind": "same_person",
+   "a": "chat-edff8c8c-b523-518a-bffa-feb200882bac",
+   "b": "802F2B75-A0A3-51C6-B1C2-D02AE668E6AE",
+   "status": "open",
+   "prompt_zh": "聊天里的「周工」和声音里的「周师傅」是同一个人吗？",
+   "created_at": "2026-09-16T09:31:20+08:00",
+   "day_key": null,
+   "provisional": null,
+   "b_items_at_ask": null,
+   "answer": null
+  },
+  {
+   "question_id": "f24e469e-26b1-44d0-beb2-b883787d31b7",
+   "kind": "same_person",
+   "a": "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c",
+   "b": "FAFB3A58-6D9A-55A2-B74C-C79558BA8F7B",
+   "status": "open",
+   "prompt_zh": "聊天里的「满满」和声音里的「小满」是同一个人吗？",
+   "created_at": "2026-09-16T09:31:20+08:00",
+   "day_key": null,
+   "provisional": null,
+   "b_items_at_ask": null,
+   "answer": null
+  }
+ ],
+ "persons": [
+  {
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0",
+   "display_name": "我",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-edff8c8c-b523-518a-bffa-feb200882bac",
+   "display_name": "周工",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": null
+  },
+  {
+   "person_id": "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c",
+   "display_name": "满满",
+   "aliases": [],
+   "origin": "chat",
+   "merged_into": null
+  },
+  {
+   "person_id": "75F7185C-AF77-5E23-B6CF-8D63F15750DC",
+   "display_name": null,
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "802F2B75-A0A3-51C6-B1C2-D02AE668E6AE",
+   "display_name": "周师傅",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "FAFB3A58-6D9A-55A2-B74C-C79558BA8F7B",
+   "display_name": "小满",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  }
+ ],
+ "unfiled": [
+  {
+   "item_id": "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7",
+   "reason": "none",
+   "since": "2026-09-14T18:20:06+08:00"
+  },
+  {
+   "item_id": "0713A85C-7205-51E8-8FAD-5B73A4CE043F",
+   "reason": "none",
+   "since": "2026-09-15T20:15:08+08:00"
+  },
+  {
+   "item_id": "D19DB50C-9562-54C2-A67A-D7AEBA00DA22",
+   "reason": "none",
+   "since": "2026-09-15T20:40:00+08:00"
+  },
+  {
+   "item_id": "982CB3F4-DCBE-51EF-A54A-A1B06A2439F2",
+   "reason": "none",
+   "since": "2026-09-16T21:10:00+08:00"
+  }
+ ],
+ "store_id": "205c516e-c11a-4844-89dd-fb06a5551237",
+ "item_persons": [
+  {
+   "item_id": "057423EA-F56E-573B-BA3A-F555BCD22091",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "6F342268-726C-5B7B-AACF-316A24576D3B",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "20D75520-2216-583C-899F-A0019C0361F8",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "8F8C3206-308D-50B3-8860-AC5BBD9CC54C",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "67FB3505-0713-5515-8E07-884EABB252BF",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "5896A3FB-C6E0-5797-B478-DB8FA4341585",
+   "person_id": "chat-edff8c8c-b523-518a-bffa-feb200882bac"
+  },
+  {
+   "item_id": "5896A3FB-C6E0-5797-B478-DB8FA4341585",
+   "person_id": "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c"
+  },
+  {
+   "item_id": "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "F0060594-CFDF-5008-A831-9F086FD0EF18",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BE4CD906-9394-5F68-9A04-381DA55EE9B0",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+   "person_id": "75F7185C-AF77-5E23-B6CF-8D63F15750DC"
+  },
+  {
+   "item_id": "9650A5DA-3C04-5823-A248-FD770A607DD7",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "0713A85C-7205-51E8-8FAD-5B73A4CE043F",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "89E39353-1EFF-5367-A4E8-98A32D43424D",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD",
+   "person_id": "802F2B75-A0A3-51C6-B1C2-D02AE668E6AE"
+  },
+  {
+   "item_id": "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD",
+   "person_id": "FAFB3A58-6D9A-55A2-B74C-C79558BA8F7B"
+  },
+  {
+   "item_id": "231A396E-C32F-516E-90D5-0E7946E82892",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "EA893F92-3A73-5FD6-A6C0-30B7C936720A",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "F80DAC7E-762F-50E0-B53E-FF9DE06515E5",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  },
+  {
+   "item_id": "A913FD0F-9A03-5B19-82E2-8D7058DB41F5",
+   "person_id": "79606BC9-0821-5AB3-85DC-24B2F287F5C0"
+  }
+ ],
+ "questions_asked_total": 4,
+ "assign_log": [
+  {
+   "item_id": "057423EA-F56E-573B-BA3A-F555BCD22091",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "1A41A674-D9F4-5AFA-A64B-F018356C9D5A",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "6F342268-726C-5B7B-AACF-316A24576D3B",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "20D75520-2216-583C-899F-A0019C0361F8",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "54142737-31A1-5091-82F6-916E95102C16",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "2F16DDB9-01C2-5F9A-B42B-2AA564CA5546",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "D229196F-8C59-5804-9C38-BBEDA39249E7",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "4FBCC1B4-96B6-5B2F-ABB1-89E56FE3DA93",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "8F8C3206-308D-50B3-8860-AC5BBD9CC54C",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "DAE2BBB2-8818-58CC-909E-DDAF80C29133",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "F046B1D3-FCB7-574A-AC46-EB3B782FD184",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "25DB9250-44FA-561E-826E-775D91B6FF64",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "4CDCF1D9-6B87-500C-ADEB-9B91AFABD4A7",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  },
+  {
+   "item_id": "67FB3505-0713-5515-8E07-884EABB252BF",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "7883B63B-FA24-52BE-BD83-889FB9DA895C",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "E2E5A774-3333-5ADB-B8EE-2FDAC2D9160D",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "9432549F-C1CE-5A6F-BE44-9409C34C8DF6",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "5896A3FB-C6E0-5797-B478-DB8FA4341585",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "81D4071F-ADB0-595B-9F4B-BDEAED5CA2AC",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "F0060594-CFDF-5008-A831-9F086FD0EF18",
+   "action": "new",
+   "provisional": "",
+   "status": "applied",
+   "reason": "new"
+  },
+  {
+   "item_id": "4E7F246F-E4C4-5F19-AFC7-60A38F0F6A9C",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "BE4CD906-9394-5F68-9A04-381DA55EE9B0",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "BC2D5FFF-E2EF-5879-9051-564674E2B525",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "9650A5DA-3C04-5823-A248-FD770A607DD7",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "AC6E551C-4B43-53B6-8727-2963F885D2B4",
+   "action": "ask",
+   "provisional": "new",
+   "status": "applied",
+   "reason": "question b3cbb6a0-0b58-4ed4-b234-99f6a3316713"
+  },
+  {
+   "item_id": "0713A85C-7205-51E8-8FAD-5B73A4CE043F",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  },
+  {
+   "item_id": "D19DB50C-9562-54C2-A67A-D7AEBA00DA22",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  },
+  {
+   "item_id": "89E39353-1EFF-5367-A4E8-98A32D43424D",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "91BFCBEC-B5AF-5AF0-AE04-A2071E2475CD",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "231A396E-C32F-516E-90D5-0E7946E82892",
+   "action": "ask",
+   "provisional": "new",
+   "status": "applied",
+   "reason": "ask_budget -> new"
+  },
+  {
+   "item_id": "EA893F92-3A73-5FD6-A6C0-30B7C936720A",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "035B9451-305D-5956-9D6E-38FAA9F9B48C",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "EE29E435-3B13-5AAD-BFFD-115B619283A6",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": "merge ask_budget"
+  },
+  {
+   "item_id": "F80DAC7E-762F-50E0-B53E-FF9DE06515E5",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "15E0A5C8-730A-5D9A-B16D-3A37C654E17E",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "A913FD0F-9A03-5B19-82E2-8D7058DB41F5",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "2B79547A-32F9-5729-AF68-D3394733EFA2",
+   "action": "attach",
+   "provisional": "",
+   "status": "applied",
+   "reason": ""
+  },
+  {
+   "item_id": "982CB3F4-DCBE-51EF-A54A-A1B06A2439F2",
+   "action": "none",
+   "provisional": "",
+   "status": "applied",
+   "reason": "none: left unfiled"
+  }
+ ]
+}

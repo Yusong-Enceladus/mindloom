@@ -1,0 +1,94 @@
+{
+ "id": "board-01",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-01.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "struck_items",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "2a1427b6c1e63b33fe3204799109f6c48793bc1719ad248313fd2576f7a50a37",
+ "gt": {
+  "surface": "notebook",
+  "lines": [
+   {
+    "text": "待办",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "豆子报价 142元/公斤",
+    "struck": true,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "改为 136元/公斤，订10公斤",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "10月7日前付定金",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "磨豆机保养",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "周六盘点库存",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "待办",
+  "豆子报价 142元/公斤",
+  "改为 136元/公斤，订10公斤",
+  "10月7日前付定金",
+  "磨豆机保养",
+  "周六盘点库存"
+ ],
+ "qa": [
+  {
+   "q": "现在的豆子价格是多少？",
+   "a": "136元/公斤",
+   "match": "number"
+  },
+  {
+   "q": "订多少公斤？",
+   "a": "10公斤",
+   "match": "number"
+  },
+  {
+   "q": "哪条被划掉了？",
+   "a": "豆子报价 142元/公斤",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "surface": "notebook",
+  "font": "hand_note",
+  "size": 56,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "todo",
+  "font": "hand_note",
+  "surface": "notebook",
+  "size": 56
+ }
+}

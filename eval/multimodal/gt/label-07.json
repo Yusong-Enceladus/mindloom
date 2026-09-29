@@ -1,0 +1,75 @@
+{
+ "id": "label-07",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-07.jpg",
+ "lang": "zh",
+ "hard": [
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "f99ac64fb4a57c6961734b0b959f51d6ebd2fa58bbd6bba88eca8ae4452c8b4d",
+ "gt": {
+  "label_kind": "room_sign",
+  "fields": [
+   {
+    "key": "room",
+    "label": "会议室",
+    "value": "C-208"
+   },
+   {
+    "key": "capacity",
+    "label": "容纳",
+    "value": "20 人"
+   },
+   {
+    "key": "equipment",
+    "label": "设备",
+    "value": "投屏 · 电话会议 · 白板"
+   },
+   {
+    "key": "contact_ext",
+    "label": "分机",
+    "value": "8551"
+   }
+  ],
+  "lines": [
+   "会议室",
+   "C-208",
+   "容纳 20 人",
+   "设备：投屏 · 电话会议 · 白板",
+   "预约请联系行政部 分机 8551"
+  ]
+ },
+ "text_lines": [
+  "会议室",
+  "C-208",
+  "容纳 20 人",
+  "设备：投屏 · 电话会议 · 白板",
+  "预约请联系行政部 分机 8551"
+ ],
+ "qa": [
+  {
+   "q": "会议室编号是什么？",
+   "a": "C-208",
+   "match": "exact"
+  },
+  {
+   "q": "能容纳几人？",
+   "a": "20 人",
+   "match": "number"
+  },
+  {
+   "q": "预约分机号是多少？",
+   "a": "8551",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "room_sign",
+  "background": "wall"
+ },
+ "variant": {
+  "kind": "room_sign"
+ }
+}

@@ -1,0 +1,81 @@
+{
+ "file_id": "zip-04",
+ "path": "corpus/zip/zip-04.zip",
+ "type": "zip",
+ "ext": "zip",
+ "mime": "application/zip",
+ "filename": "照片.zip",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "[member] IMG_2031.jpg\n[member] IMG_2032.jpg\n[member] Screenshot_订单.png\nPP 离心管 15mL\n山海户外用品有限公司 出品\n货号 SKU-30150\n批号 L260846\n有效期至 2027-09\n数量 50 只/盒\n合成数据\n停车场改造通知\n各位同事：\n中心图书馆将于2026年9月12日 13:30起封闭施工，预计2026年9月20日恢复，请车辆改停东侧临时停车区。\n特此通知。（合成数据）\n联系人 蒋思远\n电话 +86-10-5550-0162\n发布单位 启明仪器有限公司 行政部\n发布日期 2026年9月9日\n合成数据\n订单详情\n订单已发货\n预计 2 天内送达（合成数据）\n订单号 2026894321\n收货城市 杭州\n已发货\n商品\t单价（元）\n双肩包\t259\n降噪耳机\t699\n护眼台灯\t239\n实付\t1197\n合成数据",
+ "key_lines": [
+  "批号 L260846",
+  "数量 50 只/盒",
+  "中心图书馆将于2026年9月12日 13:30起封闭施工，预计2026年9月20日恢复，请车辆改停东侧临时停车区。",
+  "实付\t1197"
+ ],
+ "picture_only_lines": [
+  "批号 L260846",
+  "数量 50 只/盒",
+  "中心图书馆将于2026年9月12日 13:30起封闭施工，预计2026年9月20日恢复，请车辆改停东侧临时停车区。",
+  "实付\t1197"
+ ],
+ "key_fields": {
+  "图片数": 3,
+  "IMG_2031.货号": "SKU-30150",
+  "IMG_2031.批号": "L260846",
+  "IMG_2031.有效期": "2027-09",
+  "IMG_2031.数量": 50
+ },
+ "numbers": [
+  {
+   "value": 50,
+   "label": "数量"
+  },
+  {
+   "value": 1197,
+   "label": "实付"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "批号是多少？",
+   "a": "L260846",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "涉及哪个地点？",
+   "a": "中心图书馆",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "实付多少元？",
+   "a": 1197,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "压缩包里有几张图片？",
+   "a": 3,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "members": [
+   "IMG_2031.jpg",
+   "IMG_2032.jpg",
+   "Screenshot_订单.png"
+  ],
+  "nested_zips": []
+ },
+ "bytes": 134684,
+ "sha256": "2b9135b2d6f0f7cbf7f379641d920fe9eb07019aa48e18cc7a2067da51f03e2d",
+ "family": "photos"
+}

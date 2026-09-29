@@ -1,0 +1,77 @@
+{
+ "file_id": "heic-05",
+ "path": "corpus/heic/heic-05.heic",
+ "type": "heic",
+ "ext": "heic",
+ "mime": "image/heic",
+ "filename": "IMG_1558.heic",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "南瓜芝士蛋糕（8人份）\n【步骤】\n• 材料室温回软后混合均匀\n• 烤箱预热至 170℃\n• 入炉烘烤 55 分钟，中途转盘一次\n• 出炉冷却 20 分钟后切块\n小贴士：糖可减少两成。（合成数据）\n材料\t用量（克）\n主料\t200\n鸡蛋\t150\n砂糖\t70\n黄油\t60\n合成数据",
+ "key_lines": [
+  "南瓜芝士蛋糕（8人份）",
+  "• 烤箱预热至 170℃",
+  "• 入炉烘烤 55 分钟，中途转盘一次",
+  "砂糖\t70"
+ ],
+ "picture_only_lines": [
+  "南瓜芝士蛋糕（8人份）",
+  "• 烤箱预热至 170℃",
+  "• 入炉烘烤 55 分钟，中途转盘一次",
+  "砂糖\t70"
+ ],
+ "key_fields": {
+  "份数": 8,
+  "温度": "170℃",
+  "时长": "55分钟",
+  "砂糖": 70
+ },
+ "numbers": [
+  {
+   "value": 170,
+   "label": "温度"
+  },
+  {
+   "value": 55,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 170,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 55,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 70,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 8,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   1062,
+   927
+  ]
+ },
+ "bytes": 45414,
+ "sha256": "6e43456659c6f96a3ad281477112fcd0b3f7cb9cff26ce890b688d4f7b69703e",
+ "family": "recipe_photo"
+}

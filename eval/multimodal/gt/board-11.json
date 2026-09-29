@@ -1,0 +1,95 @@
+{
+ "id": "board-11",
+ "type": "whiteboard_handwriting",
+ "split": "dev",
+ "image": "images/board-11.jpg",
+ "lang": "en",
+ "hard": [
+  "handwriting",
+  "similar_names",
+  "struck_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "a5958d7b3c7731e525290c477fea8e782d9ababab79466ec67b7947dad68ce45",
+ "gt": {
+  "surface": "notebook",
+  "lines": [
+   {
+    "text": "Standup",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "Checkout p95 = 320 ms",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Chen Wei: fix retry bug",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Chen Wen: release notes",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "Ship payments",
+    "struck": true,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Payments moved to Sep 10",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "Standup",
+  "Checkout p95 = 320 ms",
+  "Chen Wei: fix retry bug",
+  "Chen Wen: release notes",
+  "Ship payments",
+  "Payments moved to Sep 10"
+ ],
+ "qa": [
+  {
+   "q": "What is checkout p95?",
+   "a": "320 ms",
+   "match": "number"
+  },
+  {
+   "q": "Who fixes the retry bug?",
+   "a": "Chen Wei",
+   "match": "exact"
+  },
+  {
+   "q": "When are payments moved to?",
+   "a": "Sep 10",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "surface": "notebook",
+  "font": "hand_bradley",
+  "size": 52,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "en_standup",
+  "font": "hand_bradley",
+  "surface": "notebook",
+  "similar": true,
+  "size": 52
+ }
+}

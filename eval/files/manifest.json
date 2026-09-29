@@ -1,0 +1,615 @@
+{
+ "version": "files-v1",
+ "description": "Synthetic files for file-read (all content invented).",
+ "rules": "dev = variant a of each template; test = variants b and c. Tune on dev only.",
+ "generator": {
+  "libreoffice": "LibreOffice 24.2.7.2 420(Build:2)",
+  "python": "3.12.3"
+ },
+ "counts": {
+  "dev": 20,
+  "test": 40
+ },
+ "items": [
+  {
+   "id": "notice-a",
+   "template": "notice",
+   "split": "dev",
+   "filename": "停水通知.docx",
+   "path": "data/notice-a.docx",
+   "type": "document",
+   "sha256": "346d32f39026dfa13d9c0d1430436be5943ba6cde7ec687fe0226a274a1460d5",
+   "size": 234886
+  },
+  {
+   "id": "notice-b",
+   "template": "notice",
+   "split": "test",
+   "filename": "停水通知.docx",
+   "path": "data/notice-b.docx",
+   "type": "document",
+   "sha256": "a96105e4bce653c717cad396b5008ea0a866e5dff4b4134630f0ac400496dc06",
+   "size": 277840
+  },
+  {
+   "id": "notice-c",
+   "template": "notice",
+   "split": "test",
+   "filename": "停水通知.docx",
+   "path": "data/notice-c.docx",
+   "type": "document",
+   "sha256": "c7a74f5aec146eedace5a92a35b07a518576999e211fa7a82af2203571b778d0",
+   "size": 261999
+  },
+  {
+   "id": "minutes-a",
+   "template": "minutes",
+   "split": "dev",
+   "filename": "会议纪要.doc",
+   "path": "data/minutes-a.doc",
+   "type": "document",
+   "sha256": "97dcbd1edbbba99b2132a7b052b74777df28b241480cb9c6ba1c430ec9ccae8f",
+   "size": 10240
+  },
+  {
+   "id": "minutes-b",
+   "template": "minutes",
+   "split": "test",
+   "filename": "会议纪要.doc",
+   "path": "data/minutes-b.doc",
+   "type": "document",
+   "sha256": "5da89ddecf48c2a97f8115c6fc749e0410978842e50dfb735df22d7841d25d02",
+   "size": 10240
+  },
+  {
+   "id": "minutes-c",
+   "template": "minutes",
+   "split": "test",
+   "filename": "会议纪要.doc",
+   "path": "data/minutes-c.doc",
+   "type": "document",
+   "sha256": "d31abbcfcd0aa0363c91e4427ca8f03ef37ecb3ce8eeecfea0b2059fb5e4e5dc",
+   "size": 10240
+  },
+  {
+   "id": "contract-a",
+   "template": "contract",
+   "split": "dev",
+   "filename": "租赁合同.odt",
+   "path": "data/contract-a.odt",
+   "type": "document",
+   "sha256": "07168cca2988559283c2c0433d1ee9bcea9a245a8174f7e74ce13406b63b7cd7",
+   "size": 11992
+  },
+  {
+   "id": "contract-b",
+   "template": "contract",
+   "split": "test",
+   "filename": "租赁合同.odt",
+   "path": "data/contract-b.odt",
+   "type": "document",
+   "sha256": "5e48352711a53eaf834dbf05cda6216c651915eb4daabddaf8dbecb275993a84",
+   "size": 12067
+  },
+  {
+   "id": "contract-c",
+   "template": "contract",
+   "split": "test",
+   "filename": "租赁合同.odt",
+   "path": "data/contract-c.odt",
+   "type": "document",
+   "sha256": "a8fa93e1dc6fec7fc34579c7b97a4aabbeaaffc701edabe901c1e2b2507fc070",
+   "size": 12016
+  },
+  {
+   "id": "invoice-a",
+   "template": "invoice",
+   "split": "dev",
+   "filename": "发票.pdf",
+   "path": "data/invoice-a.pdf",
+   "type": "pdf",
+   "sha256": "ca1ab15629a7e3ef4f958c45a74be87203f2d7cf6539d3f482254d1a9f11fbd8",
+   "size": 26403
+  },
+  {
+   "id": "invoice-b",
+   "template": "invoice",
+   "split": "test",
+   "filename": "发票.pdf",
+   "path": "data/invoice-b.pdf",
+   "type": "pdf",
+   "sha256": "451aedc826837bd2cc75d272fb990df8282b38a89bcb07938c7535d01b227640",
+   "size": 27097
+  },
+  {
+   "id": "invoice-c",
+   "template": "invoice",
+   "split": "test",
+   "filename": "发票.pdf",
+   "path": "data/invoice-c.pdf",
+   "type": "pdf",
+   "sha256": "2d7ad3e4fc78cc1de44f262599d2506b19f178d446bcc3b42c67a45d59f9851c",
+   "size": 26715
+  },
+  {
+   "id": "booking-a",
+   "template": "booking",
+   "split": "dev",
+   "filename": "预订确认.rtf",
+   "path": "data/booking-a.rtf",
+   "type": "document",
+   "sha256": "a74df18659f08f99f266925f8e860dcf9d6c19371ee0d803bf16cc58d24e5495",
+   "size": 3782
+  },
+  {
+   "id": "booking-b",
+   "template": "booking",
+   "split": "test",
+   "filename": "预订确认.rtf",
+   "path": "data/booking-b.rtf",
+   "type": "document",
+   "sha256": "8ebde7729e321985495597cf6a1883f1805b7c4377931be23d22bfcac258f381",
+   "size": 3760
+  },
+  {
+   "id": "booking-c",
+   "template": "booking",
+   "split": "test",
+   "filename": "预订确认.rtf",
+   "path": "data/booking-c.rtf",
+   "type": "document",
+   "sha256": "17760500df2bad2e9f279874d295b3b829c9ed26568268da4e21af1bbc62400d",
+   "size": 3802
+  },
+  {
+   "id": "scan-a",
+   "template": "scan",
+   "split": "dev",
+   "filename": "扫描件.pdf",
+   "path": "data/scan-a.pdf",
+   "type": "scanned_pdf",
+   "sha256": "7d71834603b49d4aaeb1f01b3185d5102cd7ec22329185b57e2db6b79927e4f5",
+   "size": 482401
+  },
+  {
+   "id": "scan-b",
+   "template": "scan",
+   "split": "test",
+   "filename": "扫描件.pdf",
+   "path": "data/scan-b.pdf",
+   "type": "scanned_pdf",
+   "sha256": "7a98c042ceda14b72bf26eab836dcb242855e0b4dc9361aaf3bff0b34c265b68",
+   "size": 490355
+  },
+  {
+   "id": "scan-c",
+   "template": "scan",
+   "split": "test",
+   "filename": "扫描件.pdf",
+   "path": "data/scan-c.pdf",
+   "type": "scanned_pdf",
+   "sha256": "43877e56da8ab083516ce5d33d0bf41814de806ef8796cbad9b4a72d256d0b75",
+   "size": 485691
+  },
+  {
+   "id": "expense-a",
+   "template": "expense",
+   "split": "dev",
+   "filename": "报销明细.xlsx",
+   "path": "data/expense-a.xlsx",
+   "type": "spreadsheet",
+   "sha256": "af7b76fccfdf0302b707b67b698a406d2e3e118e733b37be3def2ca3a6898368",
+   "size": 5567
+  },
+  {
+   "id": "expense-b",
+   "template": "expense",
+   "split": "test",
+   "filename": "报销明细.xlsx",
+   "path": "data/expense-b.xlsx",
+   "type": "spreadsheet",
+   "sha256": "89082acfc0f281bac0f04defcb91f040b1d2142202f09b4b2f4d42e88b6b5670",
+   "size": 5559
+  },
+  {
+   "id": "expense-c",
+   "template": "expense",
+   "split": "test",
+   "filename": "报销明细.xlsx",
+   "path": "data/expense-c.xlsx",
+   "type": "spreadsheet",
+   "sha256": "4e5da11620f3619905f21720996aafa212dd7ceb574f55130d7fbe66a44e564f",
+   "size": 5561
+  },
+  {
+   "id": "budget-a",
+   "template": "budget",
+   "split": "dev",
+   "filename": "预算.xls",
+   "path": "data/budget-a.xls",
+   "type": "spreadsheet",
+   "sha256": "5e6d7532536d5e2c926918175875c34d13117b66f32397bd1669907c3ba1fc53",
+   "size": 5632
+  },
+  {
+   "id": "budget-b",
+   "template": "budget",
+   "split": "test",
+   "filename": "预算.xls",
+   "path": "data/budget-b.xls",
+   "type": "spreadsheet",
+   "sha256": "cc1ffa09dc6c8ab4208299c748333156f2e6a442bda51ca6b11c6dc20d650393",
+   "size": 5632
+  },
+  {
+   "id": "budget-c",
+   "template": "budget",
+   "split": "test",
+   "filename": "预算.xls",
+   "path": "data/budget-c.xls",
+   "type": "spreadsheet",
+   "sha256": "eaef95278ecab324400f1887f80fc07d011c2ef21abb96adcf1c97cee0014d91",
+   "size": 5632
+  },
+  {
+   "id": "inventory-a",
+   "template": "inventory",
+   "split": "dev",
+   "filename": "库存盘点.csv",
+   "path": "data/inventory-a.csv",
+   "type": "spreadsheet",
+   "sha256": "94fc0c564d3e158bc553b0189d9e404adf85cf30ed4139dd195079e26d3e527d",
+   "size": 53
+  },
+  {
+   "id": "inventory-b",
+   "template": "inventory",
+   "split": "test",
+   "filename": "库存盘点.csv",
+   "path": "data/inventory-b.csv",
+   "type": "spreadsheet",
+   "sha256": "696f7352776598b69416f605cb0c9de543409db0af5b2d29e1e3fb58d048e5fd",
+   "size": 52
+  },
+  {
+   "id": "inventory-c",
+   "template": "inventory",
+   "split": "test",
+   "filename": "库存盘点.csv",
+   "path": "data/inventory-c.csv",
+   "type": "spreadsheet",
+   "sha256": "bd5fb0219f3bfb72fcff80c038fbabe54edfeb6a7307692df091f73752030d1f",
+   "size": 60
+  },
+  {
+   "id": "roadmap-a",
+   "template": "roadmap",
+   "split": "dev",
+   "filename": "路线图.pptx",
+   "path": "data/roadmap-a.pptx",
+   "type": "slides",
+   "sha256": "f6aa75a5cdd8c837be763a8b89638816a2fb6c1ecc96e9e50503736d24b1f4d7",
+   "size": 23206
+  },
+  {
+   "id": "roadmap-b",
+   "template": "roadmap",
+   "split": "test",
+   "filename": "路线图.pptx",
+   "path": "data/roadmap-b.pptx",
+   "type": "slides",
+   "sha256": "97fb36192c182403a461c26bd636e4668ae98f98211463088f22ca09635cc6f3",
+   "size": 28289
+  },
+  {
+   "id": "roadmap-c",
+   "template": "roadmap",
+   "split": "test",
+   "filename": "路线图.pptx",
+   "path": "data/roadmap-c.pptx",
+   "type": "slides",
+   "sha256": "ed2798b43c89baae7b21282ab10d766f20f3acefd0c7f93a8306731e31b49b22",
+   "size": 34608
+  },
+  {
+   "id": "training-a",
+   "template": "training",
+   "split": "dev",
+   "filename": "培训.ppt",
+   "path": "data/training-a.ppt",
+   "type": "slides",
+   "sha256": "e2b5de36e86c98861ab793d82eb8702e6ba0ea3d487eb93f7d62ba8de089a559",
+   "size": 15360
+  },
+  {
+   "id": "training-b",
+   "template": "training",
+   "split": "test",
+   "filename": "培训.ppt",
+   "path": "data/training-b.ppt",
+   "type": "slides",
+   "sha256": "f9dffe08ccba633f7f308d7348fc9b1db0e852406a21fb36d1855ee0bd9ed29a",
+   "size": 15360
+  },
+  {
+   "id": "training-c",
+   "template": "training",
+   "split": "test",
+   "filename": "培训.ppt",
+   "path": "data/training-c.ppt",
+   "type": "slides",
+   "sha256": "4e35a02736fd21a31f041949c92c9b8c3d02bce40a37171690ec9aa679350258",
+   "size": 15360
+  },
+  {
+   "id": "email-a",
+   "template": "email",
+   "split": "dev",
+   "filename": "9 月采购对账.eml",
+   "path": "data/email-a.eml",
+   "type": "email",
+   "sha256": "2bcdf9bcc303976227fa403e5a2226c0e06eea28194ea1c56786c450c60bb93f",
+   "size": 303314
+  },
+  {
+   "id": "email-b",
+   "template": "email",
+   "split": "test",
+   "filename": "门店耗材报销.eml",
+   "path": "data/email-b.eml",
+   "type": "email",
+   "sha256": "2342061eceb99c92c868361964de8245d6d929e26f1433e250b3af30dfefa0d6",
+   "size": 344926
+  },
+  {
+   "id": "email-c",
+   "template": "email",
+   "split": "test",
+   "filename": "样品费用确认.eml",
+   "path": "data/email-c.eml",
+   "type": "email",
+   "sha256": "c815f00267497a1c28635ae27efb6a587e524314ac809f4c2c27e326dae994da",
+   "size": 317908
+  },
+  {
+   "id": "invite-a",
+   "template": "invite",
+   "split": "dev",
+   "filename": "invite.ics",
+   "path": "data/invite-a.ics",
+   "type": "calendar",
+   "sha256": "099bec06378e16dc88a6f06874c47f5f5a192b177285f3a1dbdec24ca41945d1",
+   "size": 388
+  },
+  {
+   "id": "invite-b",
+   "template": "invite",
+   "split": "test",
+   "filename": "invite.ics",
+   "path": "data/invite-b.ics",
+   "type": "calendar",
+   "sha256": "960a45e19ee6ebd0165fc2967d0619f1996860dab2c0ee3d072c3418fb09c1a8",
+   "size": 392
+  },
+  {
+   "id": "invite-c",
+   "template": "invite",
+   "split": "test",
+   "filename": "invite.ics",
+   "path": "data/invite-c.ics",
+   "type": "calendar",
+   "sha256": "d415f53bdd607b266c98b712f7bef7e6938ee79daa372bfea01c05dea1d765f0",
+   "size": 387
+  },
+  {
+   "id": "contact-a",
+   "template": "contact",
+   "split": "dev",
+   "filename": "张三.vcf",
+   "path": "data/contact-a.vcf",
+   "type": "contact",
+   "sha256": "725cdac02fc3a223a7c9a95cf8dbdddfcce78c87382503498b387fa7878ea27f",
+   "size": 115
+  },
+  {
+   "id": "contact-b",
+   "template": "contact",
+   "split": "test",
+   "filename": "李鸣.vcf",
+   "path": "data/contact-b.vcf",
+   "type": "contact",
+   "sha256": "0607044c428c1aeb4d48b9cf13d7efe50eeb266ed0ffbbd81ce82bde9b1e89e2",
+   "size": 115
+  },
+  {
+   "id": "contact-c",
+   "template": "contact",
+   "split": "test",
+   "filename": "Chen Wei.vcf",
+   "path": "data/contact-c.vcf",
+   "type": "contact",
+   "sha256": "7cd8ecca451c004b07cc99ecaadc566a73989d14b9c75061992f098d2bc75598",
+   "size": 118
+  },
+  {
+   "id": "article-a",
+   "template": "article",
+   "split": "dev",
+   "filename": "收藏.webarchive",
+   "path": "data/article-a.webarchive",
+   "type": "web",
+   "sha256": "2b8800e766d46572f09832bf19d5459c1da49801511ae1804415a1e4909f549f",
+   "size": 475
+  },
+  {
+   "id": "article-b",
+   "template": "article",
+   "split": "test",
+   "filename": "收藏.webarchive",
+   "path": "data/article-b.webarchive",
+   "type": "web",
+   "sha256": "75f799832c4af5dc84013002fb46278c8f9fc27246ad49d341066e05814124f3",
+   "size": 470
+  },
+  {
+   "id": "article-c",
+   "template": "article",
+   "split": "test",
+   "filename": "收藏.webarchive",
+   "path": "data/article-c.webarchive",
+   "type": "web",
+   "sha256": "c727d03ca186b5e81ab7f22131cdcbf31bf0cce4fe94e50e3412c629074ed6d6",
+   "size": 461
+  },
+  {
+   "id": "archive-a",
+   "template": "archive",
+   "split": "dev",
+   "filename": "开业资料.zip",
+   "path": "data/archive-a.zip",
+   "type": "archive",
+   "sha256": "b920d82769b268084084a35b7aeb91d925571c20be46d24b5de61180e8cb084a",
+   "size": 228363
+  },
+  {
+   "id": "archive-b",
+   "template": "archive",
+   "split": "test",
+   "filename": "展会资料.zip",
+   "path": "data/archive-b.zip",
+   "type": "archive",
+   "sha256": "4f2bde1cef19a4d297ffb43ef6c356f9f61588ed4999ebf9f96df94ac528fe61",
+   "size": 238911
+  },
+  {
+   "id": "archive-c",
+   "template": "archive",
+   "split": "test",
+   "filename": "搬家资料.zip",
+   "path": "data/archive-c.zip",
+   "type": "archive",
+   "sha256": "08cf5693a400e215f8aac764f13a12d74d16fef3287e992839f54affc2721260",
+   "size": 257700
+  },
+  {
+   "id": "notes-a",
+   "template": "notes",
+   "split": "dev",
+   "filename": "笔记.md",
+   "path": "data/notes-a.md",
+   "type": "text",
+   "sha256": "9932c82d452aa45a8b6eaf73d72b7137854ef688c353708a94ae5268e2e2c2a5",
+   "size": 79
+  },
+  {
+   "id": "notes-b",
+   "template": "notes",
+   "split": "test",
+   "filename": "笔记.md",
+   "path": "data/notes-b.md",
+   "type": "text",
+   "sha256": "3d4f992f0759210e713772d47356e01da164c5c29317960dbb23135fa25bdefa",
+   "size": 61
+  },
+  {
+   "id": "notes-c",
+   "template": "notes",
+   "split": "test",
+   "filename": "笔记.md",
+   "path": "data/notes-c.md",
+   "type": "text",
+   "sha256": "22047f4840db7b6c2026c109bcb4250e57441822658909095e37b76d3015e522",
+   "size": 68
+  },
+  {
+   "id": "ebook-a",
+   "template": "ebook",
+   "split": "dev",
+   "filename": "咖啡简史.epub",
+   "path": "data/ebook-a.epub",
+   "type": "ebook",
+   "sha256": "547d3c324d8aca49a68af28fe8de4bc1987926bc8c5e9dbc4ed6c488a6b81528",
+   "size": 1207
+  },
+  {
+   "id": "ebook-b",
+   "template": "ebook",
+   "split": "test",
+   "filename": "园艺入门.epub",
+   "path": "data/ebook-b.epub",
+   "type": "ebook",
+   "sha256": "c05ba66505f1d7b2cac5bdc39e310cacbfbbab4155edc3c8f27d3b076dc30810",
+   "size": 1205
+  },
+  {
+   "id": "ebook-c",
+   "template": "ebook",
+   "split": "test",
+   "filename": "城市散步.epub",
+   "path": "data/ebook-c.epub",
+   "type": "ebook",
+   "sha256": "cfe3335e65dfbb71608a616b03626d3a6c8e50ac13a6e618ed1a863f10534d30",
+   "size": 1212
+  },
+  {
+   "id": "keynote-a",
+   "template": "keynote",
+   "split": "dev",
+   "filename": "汇报.key",
+   "path": "data/keynote-a.key",
+   "type": "slides",
+   "sha256": "d4240acc022f4b6a8bf59917264d6335ac55865d5c143c5a549bf6f47b2da249",
+   "size": 12375
+  },
+  {
+   "id": "keynote-b",
+   "template": "keynote",
+   "split": "test",
+   "filename": "汇报.key",
+   "path": "data/keynote-b.key",
+   "type": "slides",
+   "sha256": "25a0bb61ddd634c7372fafd5cc584df85ec81eafd365732442a5d4cd1fd78a65",
+   "size": 75390
+  },
+  {
+   "id": "keynote-c",
+   "template": "keynote",
+   "split": "test",
+   "filename": "汇报.key",
+   "path": "data/keynote-c.key",
+   "type": "slides",
+   "sha256": "08d042b74264e86b865fdf2d8a79efd2fee4c33808bb8729f553a1921e1bfe09",
+   "size": 83019
+  },
+  {
+   "id": "locked-a",
+   "template": "locked",
+   "split": "dev",
+   "filename": "工资单.pdf",
+   "path": "data/locked-a.pdf",
+   "type": "pdf",
+   "sha256": "520595ed1367f3bf41f0a5c238da8ce7acb989161ec9c1c8f0f575880c5d2ce3",
+   "size": 1080
+  },
+  {
+   "id": "locked-b",
+   "template": "locked",
+   "split": "test",
+   "filename": "体检报告.pdf",
+   "path": "data/locked-b.pdf",
+   "type": "pdf",
+   "sha256": "520595ed1367f3bf41f0a5c238da8ce7acb989161ec9c1c8f0f575880c5d2ce3",
+   "size": 1080
+  },
+  {
+   "id": "locked-c",
+   "template": "locked",
+   "split": "test",
+   "filename": "合同扫描.pdf",
+   "path": "data/locked-c.pdf",
+   "type": "pdf",
+   "sha256": "520595ed1367f3bf41f0a5c238da8ce7acb989161ec9c1c8f0f575880c5d2ce3",
+   "size": 1080
+  }
+ ]
+}

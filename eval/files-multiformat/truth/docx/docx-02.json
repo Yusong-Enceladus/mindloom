@@ -1,0 +1,78 @@
+{
+ "file_id": "docx-02",
+ "path": "corpus/docx/docx-02.docx",
+ "type": "docx",
+ "ext": "docx",
+ "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+ "filename": "KitchenQA_第1批验收报告.docx",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "63E9BAD2-A68C-5488-867D-D1C3E1800D3A",
+  "ref": "ann_docx",
+  "events": [
+   "ev_annot"
+  ]
+ },
+ "text_layer": "full",
+ "text": "KitchenQA 标注 第1批验收报告\n合同编号：SY-2026-0918\n批次：第1批（5,000条）\n验收日期：2026年10月15日\n验收人：贺一鸣、沈知遥\n抽检结果\n抽检 500 条，合格 481 条，合格率 96.2%，高于合同约定的 95%。\n主要问题\n- 计数类问题有 11 条答案错误（多数为遮挡导致漏数）\n- 8 条干扰项与正确答案语义重复\n结论\n第1批验收通过，同意支付第1批费用 9,000 元。第2批请于10月22日前交付，并对计数类问题增加复核。\n合成数据",
+ "key_lines": [
+  "抽检 500 条，合格 481 条，合格率 96.2%，高于合同约定的 95%。",
+  "- 计数类问题有 11 条答案错误（多数为遮挡导致漏数）",
+  "第1批验收通过，同意支付第1批费用 9,000 元。第2批请于10月22日前交付，并对计数类问题增加复核。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "结论": "通过",
+  "计数错误": 11,
+  "支付": 9000,
+  "第2批": "2026-10-22"
+ },
+ "numbers": [
+  {
+   "value": 96.2,
+   "label": "合格率"
+  },
+  {
+   "value": 11,
+   "label": "计数错误"
+  },
+  {
+   "value": 9000,
+   "label": "支付"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第1批验收结论？",
+   "a": "通过",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "计数类错了几条？",
+   "a": 11,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "同意支付多少元？",
+   "a": 9000,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "第2批什么时候前交？",
+   "a": "10月22日",
+   "match": "contains",
+   "accept": [
+    "2026-10-22"
+   ]
+  }
+ ],
+ "structure": {},
+ "bytes": 38351,
+ "sha256": "57c9819a0f6056a8bb37f3e79164ab98bea35c5ec8d7794e6d5aaee1296a3707"
+}

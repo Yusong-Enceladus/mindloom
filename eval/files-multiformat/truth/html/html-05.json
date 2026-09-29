@@ -1,0 +1,54 @@
+{
+ "file_id": "html-05",
+ "path": "corpus/html/html-05.html",
+ "type": "html",
+ "ext": "html",
+ "mime": "text/html",
+ "filename": "云杉建筑杯足球联赛积分榜.html",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "内部页面\n云杉建筑杯足球联赛积分榜\n队名\t胜\t负\t积分\n闪电队\t8\t4\t24\n北极星队\t8\t6\t24\n海豚队\t5\t6\t15\n银杏队\t1\t0\t3\n飞鹰队\t1\t5\t3\n胜一场积3分，负不得分。（合成数据）\n合成数据",
+ "key_lines": [
+  "闪电队\t8\t4\t24",
+  "北极星队\t8\t6\t24",
+  "海豚队\t5\t6\t15"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "第一名": "闪电队",
+  "海豚队": 15
+ },
+ "numbers": [
+  {
+   "value": 24,
+   "label": "第一名积分"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分榜第一是哪个队？",
+   "a": "闪电队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "海豚队积多少分？",
+   "a": 15,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "北极星队赢了几场？",
+   "a": 8,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 1374,
+ "sha256": "e5c73b08138ec8fdeee5fdcbc4792f0690a5a555a595cbfb6876ed094fa81796",
+ "family": "league"
+}

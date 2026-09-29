@@ -1,0 +1,110 @@
+{
+  "generatedAt" : "2026-07-23T16:41:34Z",
+  "kind" : "security-storage-matrix",
+  "runID" : "9E4613EF-79E6-49E9-8ACD-0F231843836E",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "cipherVersion" : "4.16.0 community",
+        "databaseBytes" : "1060864",
+        "journalMode" : "wal",
+        "plaintextHeaderVisible" : "false",
+        "plaintextMarkerVisible" : "false"
+      },
+      "scenarioID" : "sqlcipher-encryption-at-rest",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "correctKey" : "pass",
+        "wrongKeyRejected" : "true"
+      },
+      "scenarioID" : "sqlcipher-correct-and-wrong-key",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "backupBytes" : "1060864",
+        "byteMarkerVisible" : "false",
+        "roundTrip" : "pass"
+      },
+      "scenarioID" : "sqlcipher-online-backup-roundtrip",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedVersion" : "2",
+        "interruptedVersion" : "1",
+        "preMigrationBackupVersion" : "1"
+      },
+      "scenarioID" : "sqlcipher-migration-rollback",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "corruptedByteOffset" : "4193",
+        "integrityRejected" : "true"
+      },
+      "scenarioID" : "sqlcipher-corruption-detection",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "childExitCode" : "91",
+        "committedDataReadable" : "true",
+        "uncommittedDataPresent" : "false"
+      },
+      "scenarioID" : "sqlcipher-crash-recovery",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "encryptedBytes" : "349811",
+        "keychainRoundTrip" : "pass",
+        "plaintextMarkerVisible" : "false",
+        "restoredBytes" : "262144"
+      },
+      "scenarioID" : "cryptokit-keychain-envelope-roundtrip",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "tamperRejected" : "true",
+        "wrongKeyRejected" : "true"
+      },
+      "scenarioID" : "cryptokit-wrong-key-and-tamper",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "backupRoundTrip" : "pass",
+        "faultBeforeCommitRejected" : "true",
+        "stagingFilesRemaining" : "0"
+      },
+      "scenarioID" : "cryptokit-backup-and-atomic-recovery",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "encryptedDataPreserved" : "true",
+        "keyMissingReported" : "true",
+        "silentReset" : "false"
+      },
+      "scenarioID" : "keychain-loss-is-explicit",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-SEC-001",
+  "sqlCipherPackageVersion" : "4.16.0 (runtime 4.16.0 community)"
+}

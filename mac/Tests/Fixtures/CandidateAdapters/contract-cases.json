@@ -1,0 +1,287 @@
+{
+  "schemaVersion": 1,
+  "kind": "candidate-adapter-contract-fixtures",
+  "suiteID": "asr-contract-micro-v1",
+  "cases": [
+    {
+      "caseID": "mandarin-final",
+      "requirementIDs": ["ASR-001"],
+      "jobID": "64000000-0000-4000-8000-000000000101",
+      "sourceID": "64000000-0000-4000-8000-000000000201",
+      "trackID": "64000000-0000-4000-8000-000000000301",
+      "assetReference": "fixture://candidate-adapters/mandarin-final",
+      "contentDigest": "1111111111111111111111111111111111111111111111111111111111111111",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000401",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000501",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "你好世界",
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "caseID": "english-final",
+      "requirementIDs": ["ASR-002"],
+      "jobID": "64000000-0000-4000-8000-000000000102",
+      "sourceID": "64000000-0000-4000-8000-000000000202",
+      "trackID": "64000000-0000-4000-8000-000000000302",
+      "assetReference": "fixture://candidate-adapters/english-final",
+      "contentDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000402",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000502",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "hello world",
+          "confidence": 0.99
+        }
+      ]
+    },
+    {
+      "caseID": "code-switch-final",
+      "requirementIDs": ["ASR-003"],
+      "jobID": "64000000-0000-4000-8000-000000000103",
+      "sourceID": "64000000-0000-4000-8000-000000000203",
+      "trackID": "64000000-0000-4000-8000-000000000303",
+      "assetReference": "fixture://candidate-adapters/code-switch-final",
+      "contentDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000403",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000503",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "今天 deploy v2",
+          "confidence": 0.98
+        }
+      ]
+    },
+    {
+      "caseID": "technical-terms-final",
+      "requirementIDs": ["ASR-004"],
+      "jobID": "64000000-0000-4000-8000-000000000104",
+      "sourceID": "64000000-0000-4000-8000-000000000204",
+      "trackID": "64000000-0000-4000-8000-000000000304",
+      "assetReference": "fixture://candidate-adapters/technical-terms-final",
+      "contentDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": ["bestASR", "Swift", "XPC"],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000404",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000504",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "bestASR Swift XPC",
+          "confidence": 0.98
+        }
+      ]
+    },
+    {
+      "caseID": "dangerous-tokens-final",
+      "requirementIDs": ["ASR-005"],
+      "jobID": "64000000-0000-4000-8000-000000000105",
+      "sourceID": "64000000-0000-4000-8000-000000000205",
+      "trackID": "64000000-0000-4000-8000-000000000305",
+      "assetReference": "fixture://candidate-adapters/dangerous-tokens-final",
+      "contentDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000405",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000505",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "2026-07-23 50%",
+          "confidence": 0.97
+        }
+      ]
+    },
+    {
+      "caseID": "self-correction-final",
+      "requirementIDs": ["ASR-006"],
+      "jobID": "64000000-0000-4000-8000-000000000106",
+      "sourceID": "64000000-0000-4000-8000-000000000206",
+      "trackID": "64000000-0000-4000-8000-000000000306",
+      "assetReference": "fixture://candidate-adapters/self-correction-final",
+      "contentDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 3000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000406",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000506",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 3000000000,
+          "text": "下午三点，不，下午四点",
+          "confidence": 0.96
+        }
+      ]
+    },
+    {
+      "caseID": "dictionary-context-final",
+      "requirementIDs": ["ASR-007"],
+      "jobID": "64000000-0000-4000-8000-000000000107",
+      "sourceID": "64000000-0000-4000-8000-000000000207",
+      "trackID": "64000000-0000-4000-8000-000000000307",
+      "assetReference": "fixture://candidate-adapters/dictionary-context-final",
+      "contentDigest": "7777777777777777777777777777777777777777777777777777777777777777",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": ["Enceladus"],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000407",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000507",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "Enceladus",
+          "confidence": 0.98
+        }
+      ]
+    },
+    {
+      "caseID": "timestamped-segments-final",
+      "requirementIDs": ["ASR-008"],
+      "jobID": "64000000-0000-4000-8000-000000000108",
+      "sourceID": "64000000-0000-4000-8000-000000000208",
+      "trackID": "64000000-0000-4000-8000-000000000308",
+      "assetReference": "fixture://candidate-adapters/timestamped-segments-final",
+      "contentDigest": "8888888888888888888888888888888888888888888888888888888888888888",
+      "monotonicStartNanoseconds": 1000000000,
+      "monotonicEndNanoseconds": 4000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000408",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000508",
+          "monotonicStartNanoseconds": 1000000000,
+          "monotonicEndNanoseconds": 2500000000,
+          "text": "第一段",
+          "confidence": 0.97
+        },
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000608",
+          "monotonicStartNanoseconds": 2500000000,
+          "monotonicEndNanoseconds": 4000000000,
+          "text": "second segment",
+          "confidence": 0.97
+        }
+      ]
+    },
+    {
+      "caseID": "bounded-long-session-streaming",
+      "requirementIDs": ["ASR-009"],
+      "jobID": "64000000-0000-4000-8000-000000000109",
+      "sourceID": "64000000-0000-4000-8000-000000000209",
+      "trackID": "64000000-0000-4000-8000-000000000309",
+      "assetReference": "fixture://candidate-adapters/bounded-long-session-streaming",
+      "contentDigest": "9999999999999999999999999999999999999999999999999999999999999999",
+      "monotonicStartNanoseconds": 9000000000,
+      "monotonicEndNanoseconds": 11000000000,
+      "mode": "streaming",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [
+        {"text": "p01", "monotonicEndNanoseconds": 1000000000},
+        {"text": "p02", "monotonicEndNanoseconds": 2000000000},
+        {"text": "p03", "monotonicEndNanoseconds": 3000000000},
+        {"text": "p04", "monotonicEndNanoseconds": 4000000000},
+        {"text": "p05", "monotonicEndNanoseconds": 5000000000},
+        {"text": "p06", "monotonicEndNanoseconds": 6000000000},
+        {"text": "p07", "monotonicEndNanoseconds": 7000000000},
+        {"text": "p08", "monotonicEndNanoseconds": 8000000000},
+        {"text": "p09", "monotonicEndNanoseconds": 8100000000},
+        {"text": "p10", "monotonicEndNanoseconds": 8200000000},
+        {"text": "p11", "monotonicEndNanoseconds": 8300000000},
+        {"text": "p12", "monotonicEndNanoseconds": 8400000000}
+      ],
+      "supersedesRevisionID": null,
+      "revisionID": "64000000-0000-4000-8000-000000000409",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000509",
+          "monotonicStartNanoseconds": 9000000000,
+          "monotonicEndNanoseconds": 11000000000,
+          "text": "bounded context",
+          "confidence": 0.95
+        }
+      ]
+    },
+    {
+      "caseID": "revision-replaces-draft",
+      "requirementIDs": ["ASR-010"],
+      "jobID": "64000000-0000-4000-8000-000000000110",
+      "sourceID": "64000000-0000-4000-8000-000000000210",
+      "trackID": "64000000-0000-4000-8000-000000000310",
+      "assetReference": "fixture://candidate-adapters/revision-replaces-draft",
+      "contentDigest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "monotonicStartNanoseconds": 0,
+      "monotonicEndNanoseconds": 2000000000,
+      "mode": "final",
+      "languageHints": ["zh-CN", "en-US"],
+      "dictionaryTerms": [],
+      "priorStableSegments": [],
+      "supersedesRevisionID": "64000000-0000-4000-8000-000000000410",
+      "revisionID": "64000000-0000-4000-8000-000000000510",
+      "expectedSegments": [
+        {
+          "segmentID": "64000000-0000-4000-8000-000000000610",
+          "monotonicStartNanoseconds": 0,
+          "monotonicEndNanoseconds": 2000000000,
+          "text": "最终稿",
+          "confidence": 0.99
+        }
+      ]
+    }
+  ]
+}

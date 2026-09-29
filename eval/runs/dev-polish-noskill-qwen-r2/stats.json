@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 72,
+   "retried": 10,
+   "latency_median_s": 3.441,
+   "latency_p95_s": 5.868,
+   "latency_total_s": 293.8,
+   "prompt_tokens_mean": 3788.9,
+   "completion_tokens_mean": 229.9,
+   "prompt_tokens_total": 310687,
+   "completion_tokens_total": 18852,
+   "errors_sample": [
+    "decision=none contradicts judged/item_is_matter (expected attach): 有候选 match=same_object 时 decision 必须是 attach，event_id 填排在最前面的 same_object 候选"
+   ]
+  },
+  "brief": {
+   "calls": 73,
+   "ok": 42,
+   "ok_first_attempt": 21,
+   "retried": 52,
+   "latency_median_s": 7.196,
+   "latency_p95_s": 10.063,
+   "latency_total_s": 504.2,
+   "prompt_tokens_mean": 2909.0,
+   "completion_tokens_mean": 526.8,
+   "prompt_tokens_total": 212359,
+   "completion_tokens_total": 38460,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [relative_date] status_facts[2] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 3,
+   "retried": 1,
+   "latency_median_s": 7.333,
+   "latency_p95_s": 26.247,
+   "latency_total_s": 46.2,
+   "prompt_tokens_mean": 6622.8,
+   "completion_tokens_mean": 1098.2,
+   "prompt_tokens_total": 26491,
+   "completion_tokens_total": 4393,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 6.659,
+   "latency_p95_s": 7.017,
+   "latency_total_s": 18.6,
+   "prompt_tokens_mean": 1847,
+   "completion_tokens_mean": 442.3,
+   "prompt_tokens_total": 5541,
+   "completion_tokens_total": 1327,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 64,
+  "none": 9
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 58,
+  "none": 8,
+  "ask_suppressed": 7
+ },
+ "final_live_events": 15,
+ "status_line_chars_mean": 16.9,
+ "title_chars_mean": 6.6,
+ "wall_s": 869.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

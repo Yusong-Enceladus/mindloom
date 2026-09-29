@@ -1,0 +1,69 @@
+{
+ "file_id": "rtf-05",
+ "path": "corpus/rtf/rtf-05.rtf",
+ "type": "rtf",
+ "ext": "rtf",
+ "mime": "application/rtf",
+ "filename": "Purchase Order PO-2026464.rtf",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Purchase Order PO-2026464\nBuyer: Brightline Labs\nVendor: Quarry Street Studio\nOrder date: April 18, 2026\nDeliver by: April 25, 2026\nContact: Maya Chen\nItem\tQty\tUnit price (USD)\tAmount (USD)\nWireless headset\t5\t74.90\t374.50\nPortable projector\t4\t420.00\t1,680.00\nUSB-C docking station\t6\t129.00\t774.00\nSubtotal: USD 2,828.50\nShipping: USD 0.00\nTotal: USD 2,828.50\nPayment terms: net 30. Synthetic document for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Purchase Order PO-2026464",
+  "Vendor: Quarry Street Studio",
+  "Wireless headset\t5\t74.90\t374.50",
+  "Subtotal: USD 2,828.50",
+  "Total: USD 2,828.50"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "po_number": "PO-2026464",
+  "vendor": "Quarry Street Studio",
+  "total_usd": 2828.5,
+  "deliver_by": "2026-04-25"
+ },
+ "numbers": [
+  {
+   "value": 2828.5,
+   "label": "subtotal"
+  },
+  {
+   "value": 2828.5,
+   "label": "total"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the PO number?",
+   "a": "PO-2026464",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "What is the order total in USD?",
+   "a": 2828.5,
+   "match": "number",
+   "tol": 0.01
+  },
+  {
+   "id": "q3",
+   "q": "How many units of 'Wireless headset' are ordered?",
+   "a": 5,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "Who is the vendor?",
+   "a": "Quarry Street Studio",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 7886,
+ "sha256": "2484fad007b5713fa07c6acdf6290e9da452472dc2bf1a01af7ee9b4c6ee600d",
+ "family": "po_en"
+}

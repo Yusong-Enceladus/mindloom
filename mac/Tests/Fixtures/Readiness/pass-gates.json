@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-gates",
+  "gates": [
+    {
+      "id": "fixture-pass",
+      "evidencePath": "Tests/Fixtures/Readiness/evidence.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["fixture"],
+      "blocker": "The planted pass field must match."
+    }
+  ]
+}

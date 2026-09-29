@@ -1,0 +1,338 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/benchmark-run.schema.json",
+  "title": "bestASR benchmark run input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "benchmarkID",
+    "runID",
+    "task",
+    "protocolVersion",
+    "implementationRevision",
+    "modelArtifact",
+    "configuration",
+    "corpus",
+    "environmentRef",
+    "hardware",
+    "samples"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "benchmark-run"
+    },
+    "benchmarkID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "runID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "task": {
+      "type": "string",
+      "enum": [
+        "asr",
+        "speaker",
+        "llm",
+        "resource"
+      ]
+    },
+    "protocolVersion": {
+      "const": 1
+    },
+    "implementationRevision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "modelArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifactID",
+        "sha256"
+      ],
+      "properties": {
+        "artifactID": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "minProperties": 1
+    },
+    "corpus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestID",
+        "version",
+        "split"
+      ],
+      "properties": {
+        "manifestID": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "split": {
+          "type": "string",
+          "enum": [
+            "smoke",
+            "tuning",
+            "release-holdout"
+          ]
+        }
+      }
+    },
+    "environmentRef": {
+      "type": "string",
+      "pattern": "^(artifacts/evidence/|fixture://)[A-Za-z0-9._/-]+$"
+    },
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "osVersion",
+        "architecture",
+        "unifiedMemoryBytes",
+        "toolchainVersion"
+      ],
+      "properties": {
+        "osVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "architecture": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unifiedMemoryBytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "toolchainVersion": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "samples": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sampleUUID",
+          "identityAssignments",
+          "audioDurationNanoseconds",
+          "inferenceDurationNanoseconds",
+          "latencyNanoseconds",
+          "peakResidentBytes",
+          "backlogHighWatermark"
+        ],
+        "properties": {
+          "sampleUUID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "transcript": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reference",
+              "hypothesis",
+              "referenceDangerousTokens",
+              "hypothesisDangerousTokens"
+            ],
+            "properties": {
+              "reference": {
+                "type": "string"
+              },
+              "hypothesis": {
+                "type": "string"
+              },
+              "referenceDangerousTokens": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "category",
+                    "value"
+                  ],
+                  "properties": {
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "number",
+                        "date",
+                        "negation",
+                        "person",
+                        "action-owner"
+                      ]
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "hypothesisDangerousTokens": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "category",
+                    "value"
+                  ],
+                  "properties": {
+                    "category": {
+                      "type": "string",
+                      "enum": [
+                        "number",
+                        "date",
+                        "negation",
+                        "person",
+                        "action-owner"
+                      ]
+                    },
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "diarization": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "reference",
+              "hypothesis"
+            ],
+            "properties": {
+              "reference": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "speakerID",
+                    "startNanoseconds",
+                    "endNanoseconds"
+                  ],
+                  "properties": {
+                    "speakerID": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "startNanoseconds": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "endNanoseconds": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              },
+              "hypothesis": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "speakerID",
+                    "startNanoseconds",
+                    "endNanoseconds"
+                  ],
+                  "properties": {
+                    "speakerID": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "startNanoseconds": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "endNanoseconds": {
+                      "type": "integer",
+                      "minimum": 1
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "identityAssignments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "occurrenceID",
+                "expectedPersonID",
+                "predictedPersonID",
+                "evidenceSufficient"
+              ],
+              "properties": {
+                "occurrenceID": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "expectedPersonID": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "predictedPersonID": {},
+                "evidenceSufficient": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "audioDurationNanoseconds": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "inferenceDurationNanoseconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "latencyNanoseconds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "peakResidentBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "backlogHighWatermark": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "failureCategory": {}
+        }
+      }
+    }
+  }
+}

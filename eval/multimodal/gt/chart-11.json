@@ -1,0 +1,77 @@
+{
+ "id": "chart-11",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-11.png",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "low_contrast",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "4ee04c231bc5d433d7a77c9e6af4aa0756d2ad0a2e0d0acc91e5a7ba93ecff6c",
+ "gt": {
+  "chart_type": "pie",
+  "title": "9月各品类销售占比",
+  "x_label": "",
+  "y_label": "",
+  "unit": "%",
+  "categories": [
+   "拿铁",
+   "美式",
+   "手冲",
+   "甜点",
+   "其他"
+  ],
+  "series": [
+   {
+    "name": "占比",
+    "values": [
+     39.3,
+     20.4,
+     19.8,
+     18.5,
+     2.0
+    ],
+    "labels": [
+     "39.3%",
+     "20.4%",
+     "19.8%",
+     "18.5%",
+     "2.0%"
+    ]
+   }
+  ],
+  "trend": {}
+ },
+ "text_lines": [
+  "9月各品类销售占比",
+  "占比 拿铁: 39.3%",
+  "占比 美式: 20.4%",
+  "占比 手冲: 19.8%",
+  "占比 甜点: 18.5%",
+  "占比 其他: 2.0%"
+ ],
+ "qa": [
+  {
+   "q": "9月各品类销售占比中，美式的占比是多少？",
+   "a": "20.4%",
+   "match": "number"
+  },
+  {
+   "q": "占比最高的是哪一项？",
+   "a": "拿铁",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "pie"
+ },
+ "variant": {
+  "chart": "pie",
+  "low_contrast": true,
+  "small": true
+ }
+}

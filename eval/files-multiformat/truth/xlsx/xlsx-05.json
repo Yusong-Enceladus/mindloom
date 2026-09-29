@@ -1,0 +1,66 @@
+{
+ "file_id": "xlsx-05",
+ "path": "corpus/xlsx/xlsx-05.xlsx",
+ "type": "xlsx",
+ "ext": "xlsx",
+ "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "filename": "B区耗材库存表（10月盘点）.xlsx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[库存]\nB区耗材库存表（10月盘点）\n名称\t单位\t库存\t安全库存\t需补货\n称量纸\t包\t9\t5\t否\n滤纸\t包\t4\t5\t是\n口罩\t盒\t39\t10\t否\n75%酒精\t瓶\t28\t10\t否\n离心管 1.5mL\t袋\t19\t5\t否\n一次性手套\t盒\t16\t5\t否\n合成数据\n[汇总]\n指标\t数值\n品类数\t6\n需补货数\t1\n合成数据",
+ "key_lines": [
+  "称量纸\t包\t9\t5\t否",
+  "滤纸\t包\t4\t5\t是",
+  "75%酒精\t瓶\t28\t10\t否",
+  "离心管 1.5mL\t袋\t19\t5\t否",
+  "一次性手套\t盒\t16\t5\t否"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "需补货": [
+   "滤纸"
+  ],
+  "75%酒精": 28
+ },
+ "numbers": [
+  {
+   "value": 28,
+   "label": "75%酒精"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "75%酒精的库存是多少？",
+   "a": 28,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "哪些需要补货？",
+   "a": "滤纸",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "称量纸的安全库存是多少？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "库存",
+   "汇总"
+  ],
+  "formulas": 8,
+  "merged": 1
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 6823,
+ "sha256": "48169879921cdf2143eb51ec08d62fab7d598261aa9a7b02459222396f40899d",
+ "family": "inventory"
+}

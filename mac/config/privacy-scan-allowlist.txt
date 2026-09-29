@@ -1,0 +1,7 @@
+# relative-path|rule|reason
+script/privacy_scan.sh|content-signature-definition|Defines fail-closed signatures without containing a real secret.
+Tests/Shell/privacy_scan_tests.sh|synthetic-planted-fixture|Generates an unmistakably synthetic sentinel only inside a temporary test root.
+.build/SwiftPM/checkouts/GRDB.swift/Documentation/DemoApps/GRDBDemo/GRDBDemo/Database/Models/Player.swift|third-party-source-false-positive|Exact-pinned GRDB demo source uses a Models directory name; it is Swift source, not a downloaded model or user data.
+.build/SourcePackages/checkouts/GRDB.swift/Documentation/DemoApps/GRDBDemo/GRDBDemo/Database/Models/Player.swift|third-party-source-false-positive|Exact-pinned GRDB demo source uses a Models directory name; it is Swift source, not a downloaded model or user data.
+.build/SecurityProbeSwiftPM/checkouts/GRDB.swift/Documentation/DemoApps/GRDBDemo/GRDBDemo/Database/Models/Player.swift|third-party-source-false-positive|Exact-pinned GRDB demo source uses a Models directory name; it is Swift source, not a downloaded model or user data.
+Packages/BestASRCore/.build/checkouts/GRDB.swift/Documentation/DemoApps/GRDBDemo/GRDBDemo/Database/Models/Player.swift|third-party-source-false-positive|Exact-pinned GRDB demo source uses a Models directory name; it is Swift source, not a downloaded model or user data.

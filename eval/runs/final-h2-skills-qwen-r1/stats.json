@@ -1,0 +1,81 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 46,
+   "ok": 46,
+   "ok_first_attempt": 45,
+   "retried": 1,
+   "latency_median_s": 4.413,
+   "latency_p95_s": 5.672,
+   "latency_total_s": 207.6,
+   "prompt_tokens_mean": 5753.1,
+   "completion_tokens_mean": 177,
+   "prompt_tokens_total": 264644,
+   "completion_tokens_total": 8142,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 43,
+   "ok": 27,
+   "ok_first_attempt": 10,
+   "retried": 33,
+   "latency_median_s": 10.981,
+   "latency_p95_s": 14.466,
+   "latency_total_s": 450.4,
+   "prompt_tokens_mean": 8861.8,
+   "completion_tokens_mean": 498.1,
+   "prompt_tokens_total": 381056,
+   "completion_tokens_total": 21420,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[3] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[2]「11日答复Wilson加单」里的「11日」不在它引用的素材里；素材里没有这个日期；只写素材写了或 dates 换算出的日期，没有就不写日期",
+    "[relative_date] status_facts[0] 用了相对时间「周末」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「周末」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 6.218,
+   "latency_p95_s": 6.863,
+   "latency_total_s": 37.3,
+   "prompt_tokens_mean": 3654.7,
+   "completion_tokens_mean": 280,
+   "prompt_tokens_total": 21928,
+   "completion_tokens_total": 1680,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.933,
+   "latency_p95_s": 8.952,
+   "latency_total_s": 30.7,
+   "prompt_tokens_mean": 2485,
+   "completion_tokens_mean": 404,
+   "prompt_tokens_total": 9940,
+   "completion_tokens_total": 1616,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 6,
+  "attach": 37,
+  "none": 3
+ },
+ "assign_actions": {
+  "new": 6,
+  "attach": 37,
+  "none": 3
+ },
+ "final_live_events": 6,
+ "status_line_chars_mean": 17,
+ "title_chars_mean": 12.3,
+ "wall_s": 729.3,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

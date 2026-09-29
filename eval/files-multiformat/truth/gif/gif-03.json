@@ -1,0 +1,77 @@
+{
+ "file_id": "gif-03",
+ "path": "corpus/gif/gif-03.gif",
+ "type": "gif",
+ "ext": "gif",
+ "mime": "image/gif",
+ "filename": "系统迁移进度.gif",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "系统迁移进度\n25%\n第1周\n合成数据\n系统迁移进度\n48%\n第2周\n合成数据\n系统迁移进度\n74%\n第3周\n合成数据",
+ "key_lines": [
+  "系统迁移进度",
+  "25%",
+  "48%",
+  "74%"
+ ],
+ "picture_only_lines": [
+  "系统迁移进度",
+  "25%",
+  "48%",
+  "74%"
+ ],
+ "key_fields": {
+  "第1周": "25%",
+  "第3周": "74%"
+ },
+ "numbers": [
+  {
+   "value": 25,
+   "label": "第1周"
+  },
+  {
+   "value": 48,
+   "label": "第2周"
+  },
+  {
+   "value": 74,
+   "label": "第3周"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第3周进度是多少？",
+   "a": 74,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "第1周进度是多少？",
+   "a": 25,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "这是什么项目？",
+   "a": "系统迁移",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "frames": 3,
+  "frame_ms": 1500,
+  "frame_titles": [
+   "系统迁移进度",
+   "系统迁移进度",
+   "系统迁移进度"
+  ]
+ },
+ "notes": "3 帧进度动图；只看首帧会答错第 3 周。",
+ "bytes": 42505,
+ "sha256": "2421d4a0c3f214219717b463c79ad98a11ce4ef11f4d44578fb2f4d9c2de16be",
+ "family": "progress"
+}

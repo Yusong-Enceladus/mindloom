@@ -1,0 +1,335 @@
+name: BestASR
+
+options:
+  bundleIdPrefix: com.bestasr
+  createIntermediateGroups: true
+  defaultConfig: Debug
+  deploymentTarget:
+    macOS: "14.2"
+  minimumXcodeGenVersion: 2.45.3
+  xcodeVersion: "27.0"
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    ARCHS: arm64
+    BESTASR_GIT_REVISION: uncommitted
+    CLANG_ENABLE_MODULES: YES
+    CODE_SIGN_IDENTITY: "-"
+    CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
+    CURRENT_PROJECT_VERSION: 2
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_HARDENED_RUNTIME: YES
+    MACOSX_DEPLOYMENT_TARGET: "14.2"
+    MARKETING_VERSION: 0.1.0
+    ONLY_ACTIVE_ARCH: YES
+    SWIFT_STRICT_CONCURRENCY: complete
+    SWIFT_VERSION: "6.0"
+
+packages:
+  BestASRCore:
+    path: Packages/BestASRCore
+
+targets:
+  BestASR:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: App
+      - path: config/inference-candidates.json
+        buildPhase: resources
+      - path: config/model-artifacts.json
+        buildPhase: resources
+      - path: Legal
+        buildPhase: resources
+      - path: THIRD-PARTY-NOTICES.md
+        buildPhase: resources
+    dependencies:
+      - package: BestASRCore
+        product: BestASRCore
+      - package: BestASRCore
+        product: BestASRDictation
+      - package: BestASRCore
+        product: BestASRDomain
+      - package: BestASRCore
+        product: BestASRPersistence
+      - package: BestASRCore
+        product: BestASRAudioJournal
+      - package: BestASRCore
+        product: BestASRMacAudio
+      - package: BestASRCore
+        product: BestASRProcessTapProbe
+      - package: BestASRCore
+        product: BestASRDelivery
+      - package: BestASRCore
+        product: BestASRInference
+      - package: BestASRCore
+        product: BestASRMacPermissions
+      - package: BestASRCore
+        product: BestASRMacUI
+      - package: BestASRCore
+        product: BestASRCandidateAdapters
+      - package: BestASRCore
+        product: BestASRFluidRuntime
+      - package: BestASRCore
+        product: BestASRQwenRuntime
+      - package: BestASRCore
+        product: BestASRModelManager
+      - package: BestASRCore
+        product: BestASRPortableArchiveProbe
+      - package: BestASRCore
+        product: BestASRMLXRuntime
+      - package: BestASRCore
+        product: BestASRProcessing
+      - package: BestASRCore
+        product: BestASRRecognition
+      - package: BestASRCore
+        product: BestASRSpeakerRouting
+      - package: BestASRCore
+        product: BestASRRemoteOrganizer
+      - package: BestASRCore
+        product: BestASRIntake
+      - package: BestASRCore
+        product: BestASRMemory
+      - package: BestASRCore
+        product: BestASRMemoryUI
+      - target: InferenceWorker
+        embed: true
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: App/BestASR.entitlements
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: App/Info.plist
+        PRODUCT_NAME: bestASR
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.debug
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app
+
+  InferenceWorker:
+    type: xpc-service
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: InferenceWorker
+    dependencies:
+      - package: BestASRCore
+        product: BestASRInferenceXPCProtocol
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: InferenceWorker/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.inference-worker
+        PRODUCT_NAME: InferenceWorker
+        SKIP_INSTALL: YES
+
+  InferenceXPCProbe:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Spikes/SPIKE-XPC-001/ProbeApp
+    dependencies:
+      - package: BestASRCore
+        product: BestASRInferenceXPCProtocol
+      - package: BestASRCore
+        product: BestASRAudioJournalProbe
+      - target: InferenceWorker
+        embed: true
+    settings:
+      base:
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: bestASR XPC Probe
+        INFOPLIST_KEY_LSUIElement: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.spike.inference-xpc-probe
+        PRODUCT_NAME: InferenceXPCProbe
+
+  BenchCLI:
+    type: tool
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Tools/BenchCLI
+    dependencies:
+      - package: BestASRCore
+        product: BestASRCore
+      - package: BestASRCore
+        product: BestASRBenchmark
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.bench-cli
+        PRODUCT_NAME: BenchCLI
+
+  ProcessTapProbe:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Spikes/SPIKE-CAP-001/ProcessTapProbeApp
+    dependencies:
+      - package: BestASRCore
+        product: BestASRProcessTapProbe
+    settings:
+      base:
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Spikes/SPIKE-CAP-001/ProcessTapProbeApp/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.spike.process-tap-probe
+        PRODUCT_NAME: ProcessTapProbe
+
+  ProcessTapTCCDenialProbe:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Spikes/SPIKE-CAP-001/ProcessTapTCCDenialProbeApp
+    dependencies:
+      - package: BestASRCore
+        product: BestASRProcessTapProbe
+      - target: SelectedWatermarkPlayer
+    settings:
+      base:
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Spikes/SPIKE-CAP-001/ProcessTapTCCDenialProbeApp/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.spike.process-tap-tcc-denial-probe.v2
+        PRODUCT_NAME: ProcessTapTCCDenialProbeV2
+
+  SelectedWatermarkPlayer:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Spikes/SPIKE-CAP-001/WatermarkPlayer
+    settings:
+      base:
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: bestASR Selected Watermark Player
+        INFOPLIST_KEY_LSUIElement: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.spike.selected-watermark-player
+        PRODUCT_NAME: SelectedWatermarkPlayer
+
+  NonselectedWatermarkPlayer:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Spikes/SPIKE-CAP-001/WatermarkPlayer
+    settings:
+      base:
+        ENABLE_APP_SANDBOX: NO
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: bestASR Nonselected Watermark Player
+        INFOPLIST_KEY_LSUIElement: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.spike.nonselected-watermark-player
+        PRODUCT_NAME: NonselectedWatermarkPlayer
+
+  WorkspaceSmokeTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Tests/WorkspaceSmokeTests
+    dependencies:
+      - package: BestASRCore
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.workspace-smoke-tests
+
+  BestASRAppTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: Tests/BestASRAppTests
+    dependencies:
+      - target: BestASR
+    settings:
+      base:
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app-tests
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/bestASR.app/Contents/MacOS/bestASR"
+
+  BestASRUITests:
+    type: bundle.ui-testing
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: UITests/BestASRUITests
+    dependencies:
+      - target: BestASR
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.ui-tests
+        TEST_TARGET_NAME: BestASR
+
+schemes:
+  BestASR:
+    build:
+      targets:
+        BestASR: all
+        InferenceWorker: all
+        BenchCLI: all
+        ProcessTapProbe: all
+        ProcessTapTCCDenialProbe: all
+        InferenceXPCProbe: all
+        SelectedWatermarkPlayer: all
+        NonselectedWatermarkPlayer: all
+        WorkspaceSmokeTests: [test]
+        BestASRAppTests: [test]
+        BestASRUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - name: WorkspaceSmokeTests
+          parallelizable: true
+        - name: BestASRAppTests
+          parallelizable: false
+        - name: BestASRUITests
+          parallelizable: false
+
+  BenchCLI:
+    build:
+      targets:
+        BenchCLI: all
+    run:
+      config: Debug
+
+  ProcessTapProbe:
+    build:
+      targets:
+        ProcessTapProbe: all
+        SelectedWatermarkPlayer: all
+        NonselectedWatermarkPlayer: all
+    run:
+      config: Debug
+
+  ProcessTapTCCDenialProbe:
+    build:
+      targets:
+        ProcessTapTCCDenialProbe: all
+        SelectedWatermarkPlayer: all
+    run:
+      config: Debug
+
+  InferenceXPCProbe:
+    build:
+      targets:
+        InferenceXPCProbe: all
+        InferenceWorker: all
+    run:
+      config: Debug

@@ -1,0 +1,86 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 48,
+   "ok": 47,
+   "ok_first_attempt": 37,
+   "retried": 11,
+   "latency_median_s": 4.921,
+   "latency_p95_s": 10.577,
+   "latency_total_s": 280.4,
+   "prompt_tokens_mean": 4704.0,
+   "completion_tokens_mean": 253.5,
+   "prompt_tokens_total": 225794,
+   "completion_tokens_total": 12166,
+   "errors_sample": [
+    "not valid JSON: Expecting value: line 10 column 20 (char 178)"
+   ]
+  },
+  "brief": {
+   "calls": 42,
+   "ok": 13,
+   "ok_first_attempt": 8,
+   "retried": 34,
+   "latency_median_s": 12.98,
+   "latency_p95_s": 16.367,
+   "latency_total_s": 495.0,
+   "prompt_tokens_mean": 3554.8,
+   "completion_tokens_mean": 617.8,
+   "prompt_tokens_total": 149302,
+   "completion_tokens_total": 25946,
+   "errors_sample": [
+    "[unsupported_completion] quote「想再订8寸燕麦白平盘，1800个」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「想再订8寸燕麦白平盘，1800个」只说做了决定，不能证明「Peggy提出追加订购1800个8寸燕麦白平盘」已办完（下单）；写成「已决定/已同意…」，或摘录明确说已经办完",
+    "[unsupported_completion] quote「总数到3200」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [relative_date] status_facts[2] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」",
+    "[relative_date] status_facts[1] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 6.348,
+   "latency_p95_s": 9.134,
+   "latency_total_s": 40.1,
+   "prompt_tokens_mean": 3660.8,
+   "completion_tokens_mean": 346.2,
+   "prompt_tokens_total": 21965,
+   "completion_tokens_total": 2077,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.771,
+   "latency_p95_s": 8.241,
+   "latency_total_s": 29.9,
+   "prompt_tokens_mean": 1694,
+   "completion_tokens_mean": 399.2,
+   "prompt_tokens_total": 6776,
+   "completion_tokens_total": 1597,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "fallback": 1,
+  "attach": 35,
+  "new": 6,
+  "none": 6
+ },
+ "assign_actions": {
+  "fallback": 1,
+  "attach": 33,
+  "new": 6,
+  "none": 6,
+  "ask_suppressed": 2
+ },
+ "final_live_events": 9,
+ "status_line_chars_mean": 16.2,
+ "title_chars_mean": 11,
+ "wall_s": 848.9,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

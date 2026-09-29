@@ -1,0 +1,255 @@
+{
+  "generatedAt" : "2026-08-30T03:48:58Z",
+  "kind" : "audio-journal-recovery-matrix",
+  "maximumUncommittedLossBytes" : 6092,
+  "maximumUncommittedLossNanoseconds" : 190375000,
+  "randomSeedCount" : 12,
+  "runID" : "6F52FDB3-1D0C-41F8-8264-41A7DF866AD9",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "finalState" : "finalized",
+        "inferenceRangeCount" : "2"
+      },
+      "scenarioID" : "normal-two-track-finalize",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "durableRangeCount" : "1",
+        "orphanRangePublished" : "false"
+      },
+      "scenarioID" : "inference-range-publishes-after-durable-manifest",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "gapCount" : "1",
+        "issueCount" : "1",
+        "markedComplete" : "false",
+        "readableCommittedChunkCount" : "1"
+      },
+      "scenarioID" : "truncated-committed-chunk-is-a-gap",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "gapCount" : "1",
+        "issueCount" : "1",
+        "markedComplete" : "false",
+        "readableCommittedChunkCount" : "1"
+      },
+      "scenarioID" : "digest-corruption-is-quarantined",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "gapCount" : "1",
+        "issueCount" : "1",
+        "markedComplete" : "false",
+        "readableCommittedChunkCount" : "2"
+      },
+      "scenarioID" : "duplicate-sequence-is-not-published-twice",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "gapCount" : "1",
+        "issueCount" : "1",
+        "markedComplete" : "false",
+        "readableCommittedChunkCount" : "1"
+      },
+      "scenarioID" : "missing-committed-chunk-is-a-gap",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterStagingSync",
+        "markedComplete" : "false",
+        "seed" : "7",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "6092",
+        "uncommittedLossNanoseconds" : "190375000"
+      },
+      "scenarioID" : "sigkill-seed-007",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterChunkRename",
+        "markedComplete" : "false",
+        "seed" : "8",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "4289",
+        "uncommittedLossNanoseconds" : "134000000"
+      },
+      "scenarioID" : "sigkill-seed-008",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "3",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterManifestCommit",
+        "markedComplete" : "false",
+        "seed" : "9",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "0",
+        "uncommittedLossNanoseconds" : "0"
+      },
+      "scenarioID" : "sigkill-seed-009",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterPartialStagingWrite",
+        "markedComplete" : "false",
+        "seed" : "10",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "2389",
+        "uncommittedLossNanoseconds" : "74625000"
+      },
+      "scenarioID" : "sigkill-seed-010",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterStagingSync",
+        "markedComplete" : "false",
+        "seed" : "19",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "4936",
+        "uncommittedLossNanoseconds" : "154250000"
+      },
+      "scenarioID" : "sigkill-seed-019",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterChunkRename",
+        "markedComplete" : "false",
+        "seed" : "20",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "3133",
+        "uncommittedLossNanoseconds" : "97875000"
+      },
+      "scenarioID" : "sigkill-seed-020",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "3",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterManifestCommit",
+        "markedComplete" : "false",
+        "seed" : "21",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "0",
+        "uncommittedLossNanoseconds" : "0"
+      },
+      "scenarioID" : "sigkill-seed-021",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterPartialStagingWrite",
+        "markedComplete" : "false",
+        "seed" : "22",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "1811",
+        "uncommittedLossNanoseconds" : "56562500"
+      },
+      "scenarioID" : "sigkill-seed-022",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterStagingSync",
+        "markedComplete" : "false",
+        "seed" : "31",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "3780",
+        "uncommittedLossNanoseconds" : "118125000"
+      },
+      "scenarioID" : "sigkill-seed-031",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterChunkRename",
+        "markedComplete" : "false",
+        "seed" : "32",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "6073",
+        "uncommittedLossNanoseconds" : "189750000"
+      },
+      "scenarioID" : "sigkill-seed-032",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "3",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterManifestCommit",
+        "markedComplete" : "false",
+        "seed" : "33",
+        "trackID" : "microphone",
+        "uncommittedLossBytes" : "0",
+        "uncommittedLossNanoseconds" : "0"
+      },
+      "scenarioID" : "sigkill-seed-033",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "2",
+        "committedChunksReadable" : "true",
+        "faultPoint" : "afterPartialStagingWrite",
+        "markedComplete" : "false",
+        "seed" : "34",
+        "trackID" : "system",
+        "uncommittedLossBytes" : "1233",
+        "uncommittedLossNanoseconds" : "38500000"
+      },
+      "scenarioID" : "sigkill-seed-034",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-JRN-001"
+}

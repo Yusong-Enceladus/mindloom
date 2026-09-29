@@ -1,0 +1,77 @@
+{
+ "file_id": "heic-01",
+ "path": "corpus/heic/heic-01.heic",
+ "type": "heic",
+ "ext": "heic",
+ "mime": "image/heic",
+ "filename": "机器铭牌.heic",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "269BDC1A-35D6-51AD-AD43-B5C813FF7C43",
+  "ref": "gpu_heic",
+  "events": [
+   "ev_gpu"
+  ]
+ },
+ "text_layer": "none",
+ "text": "HS-G8820\nGPU Server · 8×H20 96GB\n型号 Model HS-G8820\nS/N HSG8820-A7731\n额定电源 4×3000W 200-240V~\n生产日期 2026-09\n制造商 恒算科技有限公司\n合成数据",
+ "key_lines": [
+  "S/N HSG8820-A7731",
+  "额定电源 4×3000W 200-240V~",
+  "生产日期 2026-09"
+ ],
+ "picture_only_lines": [
+  "S/N HSG8820-A7731",
+  "额定电源 4×3000W 200-240V~",
+  "生产日期 2026-09"
+ ],
+ "key_fields": {
+  "型号": "HS-G8820",
+  "S/N": "HSG8820-A7731",
+  "电源": "4×3000W",
+  "生产日期": "2026-09"
+ },
+ "numbers": [
+  {
+   "value": 3000,
+   "label": "电源功率 W"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "铭牌上的序列号是多少？",
+   "a": "HSG8820-A7731",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "额定电源是多少瓦？",
+   "a": "3000W",
+   "match": "contains",
+   "accept": [
+    "4×3000W",
+    "3000 W"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "生产日期是？",
+   "a": "2026-09",
+   "match": "contains",
+   "accept": [
+    "2026年9月"
+   ]
+  }
+ ],
+ "structure": {
+  "size": [
+   967,
+   578
+  ]
+ },
+ "bytes": 33202,
+ "sha256": "8c1a412d962be3c421aefa5d57d18a0f2dd91ea4d5e8f9fde72ed966e18ab2aa"
+}

@@ -1,0 +1,60 @@
+{
+ "file_id": "vcf-02",
+ "path": "corpus/vcf/vcf-02.vcf",
+ "type": "vcf",
+ "ext": "vcf",
+ "mime": "text/vcard",
+ "filename": "联系人.vcf",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[contact 1]\nN: 高 欣怡\nFN: 高欣怡\nORG: 知行图书有限公司\nTITLE: 销售代表\nTEL: +86-10-5550-0111\nEMAIL: qinghe.user0@example.com\nNOTE: 合成数据\n[contact 2]\nN: 孟 浩然\nFN: 孟浩然\nORG: 白鹭环保科技有限公司\nTITLE: 销售代表\nTEL: +86-10-5550-0155\nEMAIL: yuanfan.user1@example.com\nNOTE: 合成数据\n[contact 3]\nN: 于 俊杰\nFN: 于俊杰\nORG: 山海户外用品有限公司\nTITLE: 销售代表\nTEL: +86-10-5550-0152\nEMAIL: xingqiao.user2@example.com\nNOTE: 合成数据",
+ "key_lines": [
+  "TEL: +86-10-5550-0111",
+  "ORG: 白鹭环保科技有限公司"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "高欣怡": "+86-10-5550-0111",
+  "孟浩然": "+86-10-5550-0155",
+  "于俊杰": "+86-10-5550-0152"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "高欣怡的电话？",
+   "a": "5550-0111",
+   "match": "contains",
+   "accept": [
+    "+86-10-5550-0111"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "孟浩然在哪家公司？",
+   "a": "白鹭环保科技有限公司",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "一共几个联系人？",
+   "a": 3,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "cards": 3,
+  "versions": [
+   "3.0",
+   "3.0",
+   "3.0"
+  ]
+ },
+ "bytes": 660,
+ "sha256": "181aba409391e3ef79d8c52ba35ea37d0da6754efcab8a9442968e93fcb46e1d",
+ "family": "contacts_zh"
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "kind": "traceability",
+  "manifestID": "foundation-traceability-v1",
+  "entries": [
+    {
+      "requirementIDs": [
+        "REL-001"
+      ],
+      "threatIDs": [
+        "TM-03"
+      ],
+      "scenarioIDs": [
+        "Crash recovery is evaluated"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASREvidenceTests/EvidenceSchemaTests.swift"
+      ],
+      "evidence": [
+        "fixture://Tests/Fixtures/Traceability/valid.json"
+      ]
+    }
+  ]
+}

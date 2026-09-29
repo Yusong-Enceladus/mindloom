@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "adversarial-smoke",
+  "version": "1.0.0",
+  "tier": "adversarial",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "50000000-0000-4000-8000-000000000001",
+      "consentClass": "adversarial",
+      "assetReference": "fixture://adversarial/dangerous-token-metadata-001",
+      "contentDigest": "5555555555555555555555555555555555555555555555555555555555555555",
+      "languages": [
+        "zh-CN",
+        "en-US"
+      ],
+      "tags": [
+        "dangerous-token",
+        "metadata-only"
+      ]
+    }
+  ]
+}

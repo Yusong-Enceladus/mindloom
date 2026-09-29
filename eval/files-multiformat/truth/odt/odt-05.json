@@ -1,0 +1,69 @@
+{
+ "file_id": "odt-05",
+ "path": "corpus/odt/odt-05.odt",
+ "type": "odt",
+ "ext": "odt",
+ "mime": "application/vnd.oasis.opendocument.text",
+ "filename": "Project Status Update_ Solar Monitoring Pilot.odt",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Project Status Update: Solar Monitoring Pilot\nOwner: Omar Haddad\nOverall status: Amber\nBudget: USD 48,000\nBudget spent: 52%\nMilestones\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tin progress\nFull rollout\tplanned\nTop risk\nTwo key testers unavailable in week 3\nNext report\nNext update due on 2026-11-15. Synthetic report for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Owner: Omar Haddad",
+  "Overall status: Amber",
+  "Budget: USD 48,000",
+  "Budget spent: 52%",
+  "Two key testers unavailable in week 3"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "owner": "Omar Haddad",
+  "status": "Amber",
+  "budget_usd": 48000,
+  "spent_pct": 52,
+  "top_risk": "Two key testers unavailable in week 3"
+ },
+ "numbers": [
+  {
+   "value": 48000,
+   "label": "budget"
+  },
+  {
+   "value": 52,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Amber",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 52,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Two key testers unavailable in week 3",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Omar Haddad",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 2465,
+ "sha256": "3c29caafe7b8d0d9697196b80859715763b233d0dabdc417e1b93c5b4fdfa884",
+ "family": "status_en"
+}

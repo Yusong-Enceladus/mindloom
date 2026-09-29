@@ -1,0 +1,104 @@
+{
+ "id": "slide-12",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-12.jpg",
+ "lang": "zh",
+ "hard": [
+  "small_text"
+ ],
+ "synthetic": true,
+ "image_sha256": "bcf69b49faba24ac0a68206c847f41ce8db856ddf5909e44acae8adea610b9f3",
+ "gt": {
+  "title": "秋季新品上线计划",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "上线日期：8月11日（周二）"
+   },
+   {
+    "level": 0,
+    "text": "首批门店：12 家"
+   },
+   {
+    "level": 0,
+    "text": "定价：中杯 ¥22，大杯 ¥26"
+   },
+   {
+    "level": 0,
+    "text": "物料：海报 40 张、菜单贴 24 份"
+   },
+   {
+    "level": 1,
+    "text": "上线前 3 天完成门店培训"
+   },
+   {
+    "level": 0,
+    "text": "负责人：运营部 周婷"
+   }
+  ],
+  "kpis": [
+   {
+    "label": "首批门店",
+    "value": "12家"
+   },
+   {
+    "label": "中杯",
+    "value": "¥22"
+   },
+   {
+    "label": "大杯",
+    "value": "¥26"
+   }
+  ],
+  "footer": "云岭电器有限公司 · 内部资料",
+  "page": "15 / 24"
+ },
+ "text_lines": [
+  "秋季新品上线计划",
+  "上线日期：8月11日（周二）",
+  "首批门店：12 家",
+  "定价：中杯 ¥22，大杯 ¥26",
+  "物料：海报 40 张、菜单贴 24 份",
+  "上线前 3 天完成门店培训",
+  "负责人：运营部 周婷",
+  "首批门店 12家",
+  "中杯 ¥22",
+  "大杯 ¥26",
+  "云岭电器有限公司 · 内部资料",
+  "15 / 24"
+ ],
+ "qa": [
+  {
+   "q": "上线日期是哪天？",
+   "a": "8月11日",
+   "match": "exact"
+  },
+  {
+   "q": "首批几家门店？",
+   "a": "12 家",
+   "match": "number"
+  },
+  {
+   "q": "大杯定价多少？",
+   "a": "¥26",
+   "match": "number"
+  },
+  {
+   "q": "这页幻灯片的标题是什么？",
+   "a": "秋季新品上线计划",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "corporate",
+  "dense": false,
+  "downscale": "800x450"
+ },
+ "variant": {
+  "content": "launch",
+  "theme": "corporate",
+  "small": true
+ }
+}

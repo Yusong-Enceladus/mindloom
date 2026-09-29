@@ -1,0 +1,73 @@
+{
+ "file_id": "odp-01",
+ "path": "corpus/odp/odp-01.odp",
+ "type": "odp",
+ "ext": "odp",
+ "mime": "application/vnd.oasis.opendocument.presentation",
+ "filename": "开题答辩PPT_林晓棠.odp",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "C0E5B7C4-2B64-5142-95D1-2245D739E010",
+  "ref": "def_odp",
+  "events": [
+   "ev_defense"
+  ]
+ },
+ "text_layer": "partial",
+ "text": "基于多模态记忆的课堂视频摘要方法研究\n林晓棠 · 指导教师：沈知遥\n合成数据\n研究问题\n课堂视频平均时长 72 分钟，重点分散\n现有摘要方法忽略板书与 PPT 文字\n目标：生成带时间戳的 5 分钟摘要\n合成数据\n技术路线\n三路输入：语音转写 / 板书 OCR / 画面关键帧\n记忆模块保留跨段主题\n评测：ROUGE-L 与人工打分\n合成数据\n时间安排\n2026.11–12 数据标注（120 节）\n2027.01–03 实验\n2027.04–06 论文\n合成数据\n初步结果\n方法\tROUGE-L\n抽取式基线\t0.312\n本文初版\t0.357\n合成数据",
+ "key_lines": [
+  "课堂视频平均时长 72 分钟，重点分散",
+  "目标：生成带时间戳的 5 分钟摘要",
+  "本文初版\t0.357"
+ ],
+ "picture_only_lines": [
+  "本文初版\t0.357"
+ ],
+ "key_fields": {
+  "平均时长": "72分钟",
+  "摘要长度": "5分钟",
+  "初版ROUGE-L": 0.357
+ },
+ "numbers": [
+  {
+   "value": 72,
+   "label": "平均时长"
+  },
+  {
+   "value": 0.357,
+   "label": "ROUGE-L"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "课堂视频平均多长？",
+   "a": 72,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "目标摘要多长（分钟）？",
+   "a": 5,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "本文初版的 ROUGE-L 是多少？",
+   "a": 0.357,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "slides": 5,
+  "picture_only_slides": [
+   4
+  ],
+  "notes_slides": []
+ },
+ "notes": "第 4 页为整页图片，ROUGE-L 只在图里。",
+ "bytes": 32851,
+ "sha256": "e422e5ee05b2e323d19e47adf399002055f78d5c4cbe2f4214719570bee2f142"
+}

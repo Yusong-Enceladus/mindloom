@@ -1,0 +1,468 @@
+{
+ "summary": {
+  "model": "qwen3.6-35b-a3b-nvfp4 (bare prompt)",
+  "backend": "openai",
+  "url": "http://127.0.0.1:8000/v1",
+  "images": 8,
+  "ok": 8,
+  "ok_first_attempt": 8,
+  "kind_chat": 8,
+  "msg_count_match": 8,
+  "gold_messages": 38,
+  "sender_acc": 1.0,
+  "is_self_acc": 1.0,
+  "time_acc": 1.0,
+  "text_exact_acc": 1.0,
+  "text_sim_mean": 1.0,
+  "latency_median_s": 3.8,
+  "latency_max_s": 4.81,
+  "completion_tokens_mean": 429,
+  "prompt_tokens_mean": 1257.5
+ },
+ "rows": [
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d2-03",
+   "repeat": 0,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 4.22,
+   "prompt_tokens": 1419,
+   "completion_tokens": 474,
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 5,
+   "text_exact": 5,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "在“栗壳翻新群”中，周工和满满汇报吧台拆除进度，用户询问排水管情况，周工确认需更换并约定明日现场沟通。",
+    "text": "栗壳翻新群(4)\n合成数据\n08:58\n周工\n许老板，吧台已经拆完了，垃圾中午清走。\n09:05\n满满\n咖啡机和磨豆机都搬到仓库了，盖好了防尘布。\n09:20\n周工\n拆除完成，今天下午水电师傅进场。\n09:31\n辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？\n09:40\n周工\n看了，得换，明天现场跟你细说。",
+    "messages": [
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "08:58",
+      "text": "许老板，吧台已经拆完了，垃圾中午清走。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:05",
+      "text": "咖啡机和磨豆机都搬到仓库了，盖好了防尘布。"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:20",
+      "text": "拆除完成，今天下午水电师傅进场。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:31",
+      "text": "辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:40",
+      "text": "看了，得换，明天现场跟你细说。"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d2-03",
+   "repeat": 1,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 4.33,
+   "prompt_tokens": 1419,
+   "completion_tokens": 488,
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 5,
+   "text_exact": 5,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "在名为“栗壳翻新群”的微信群聊中，周工和满满向许老板汇报吧台拆除进度、垃圾清运及设备搬运情况，许老板询问排水管状况，周工确认需更换并约定次日现场沟通。",
+    "text": "栗壳翻新群(4)\n合成数据\n08:58\n周工\n许老板，吧台已经拆完了，垃圾中午清走。\n09:05\n满满\n咖啡机和磨豆机都搬到仓库了，盖好了防尘布。\n09:20\n周工\n拆除完成，今天下午水电师傅进场。\n09:31\n辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？\n09:40\n周工\n看了，得换，明天现场跟你细说。",
+    "messages": [
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "08:58",
+      "text": "许老板，吧台已经拆完了，垃圾中午清走。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:05",
+      "text": "咖啡机和磨豆机都搬到仓库了，盖好了防尘布。"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:20",
+      "text": "拆除完成，今天下午水电师傅进场。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:31",
+      "text": "辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:40",
+      "text": "看了，得换，明天现场跟你细说。"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d4-03",
+   "repeat": 0,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 3.0,
+   "prompt_tokens": 1045,
+   "completion_tokens": 334,
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 4,
+   "text_exact": 4,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与陈总的聊天记录，确认了后院使用的时间限制以及合同已打印好，约定25号见面。",
+    "text": "陈总\n合成数据\n08:52\n陈总\n后院可以用，下午六点前收摊，别堵消防通道。\n好的，一定注意，谢谢陈总！\n08:57\n陈总\n合同我让中介打印好了，25号见。\n25号见～",
+    "messages": [
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:52",
+      "text": "后院可以用，下午六点前收摊，别堵消防通道。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "",
+      "text": "好的，一定注意，谢谢陈总！"
+     },
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:57",
+      "text": "合同我让中介打印好了，25号见。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "",
+      "text": "25号见～"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d4-03",
+   "repeat": 1,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 3.07,
+   "prompt_tokens": 1045,
+   "completion_tokens": 334,
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 4,
+   "text_exact": 4,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与陈总的聊天记录，确认了后院使用的时间限制以及合同已打印好，约定25号见面。",
+    "text": "陈总\n合成数据\n08:52\n陈总\n后院可以用，下午六点前收摊，别堵消防通道。\n好的，一定注意，谢谢陈总！\n08:57\n陈总\n合同我让中介打印好了，25号见。\n25号见～",
+    "messages": [
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:52",
+      "text": "后院可以用，下午六点前收摊，别堵消防通道。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "",
+      "text": "好的，一定注意，谢谢陈总！"
+     },
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:57",
+      "text": "合同我让中介打印好了，25号见。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "",
+      "text": "25号见～"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d5-03",
+   "repeat": 0,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 4.81,
+   "prompt_tokens": 1487,
+   "completion_tokens": 528,
+   "gold_messages": 6,
+   "pred_messages": 6,
+   "kind": "chat",
+   "sender_ok": 6,
+   "is_self_ok": 6,
+   "time_ok": 6,
+   "text_exact": 6,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "两周年市集摊主群内，管理员“满满”通知了市集的时间、地点及摊位安排，摊主们确认收到并咨询了桌椅等细节。",
+    "text": "两周年市集摊主群(14)\n合成数据\n09:41\n满满\n各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。\n木木陶艺\n收到！我想要靠门口的位置。\n满满\n摊位一共12个，今天中午前把名单和需要的电源发我。\n09:47\n青柠花艺\n请问需要自带桌子吗？\n满满\n桌子我们提供，每个摊位一张长桌。\n09:52\n每个摊位再送两张咖啡券，欢迎大家～\n我",
+    "messages": [
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。"
+     },
+     {
+      "sender": "木木陶艺",
+      "is_self": false,
+      "time": "",
+      "text": "收到！我想要靠门口的位置。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "",
+      "text": "摊位一共12个，今天中午前把名单和需要的电源发我。"
+     },
+     {
+      "sender": "青柠花艺",
+      "is_self": false,
+      "time": "09:47",
+      "text": "请问需要自带桌子吗？"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "",
+      "text": "桌子我们提供，每个摊位一张长桌。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:52",
+      "text": "每个摊位再送两张咖啡券，欢迎大家～"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d5-03",
+   "repeat": 1,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 4.62,
+   "prompt_tokens": 1487,
+   "completion_tokens": 538,
+   "gold_messages": 6,
+   "pred_messages": 6,
+   "kind": "chat",
+   "sender_ok": 6,
+   "is_self_ok": 6,
+   "time_ok": 6,
+   "text_exact": 6,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "微信群聊“两周年市集摊主群”中，群主“满满”通知了市集活动的时间、地点及摊位安排，并确认提供桌子，最后“我”补充了赠送咖啡券的福利。",
+    "text": "两周年市集摊主群(14)\n合成数据\n09:41\n满满\n各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。\n木木陶艺\n收到！我想要靠门口的位置。\n满满\n摊位一共12个，今天中午前把名单和需要的电源发我。\n09:47\n青柠花艺\n请问需要自带桌子吗？\n满满\n桌子我们提供，每个摊位一张长桌。\n09:52\n我\n每个摊位再送两张咖啡券，欢迎大家～",
+    "messages": [
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。"
+     },
+     {
+      "sender": "木木陶艺",
+      "is_self": false,
+      "time": "",
+      "text": "收到！我想要靠门口的位置。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "",
+      "text": "摊位一共12个，今天中午前把名单和需要的电源发我。"
+     },
+     {
+      "sender": "青柠花艺",
+      "is_self": false,
+      "time": "09:47",
+      "text": "请问需要自带桌子吗？"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "",
+      "text": "桌子我们提供，每个摊位一张长桌。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:52",
+      "text": "每个摊位再送两张咖啡券，欢迎大家～"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "holdout-week-v1",
+   "ref": "h4-02",
+   "repeat": 0,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 3.39,
+   "prompt_tokens": 1079,
+   "completion_tokens": 371,
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 4,
+   "text_exact": 4,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "用户与老贺沟通租房合同及搬家事宜，确认了押金转账和9月1日上午搬家的安排。",
+    "text": "老贺\n合成数据\n11:02\n老贺\n房东把合同发来了，你看下第3条。\n11:10\n押一付三，14400，我这边7200已经转你了。\n我\n老贺\n收到，9月1号上午搬，我借了辆面包车。\n11:15\n好的！\n我",
+    "messages": [
+     {
+      "sender": "老贺",
+      "is_self": false,
+      "time": "11:02",
+      "text": "房东把合同发来了，你看下第3条。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "11:10",
+      "text": "押一付三，14400，我这边7200已经转你了。"
+     },
+     {
+      "sender": "老贺",
+      "is_self": false,
+      "time": "",
+      "text": "收到，9月1号上午搬，我借了辆面包车。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "11:15",
+      "text": "好的！"
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "holdout-week-v1",
+   "ref": "h4-02",
+   "repeat": 1,
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 3.36,
+   "prompt_tokens": 1079,
+   "completion_tokens": 365,
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 4,
+   "text_exact": 4,
+   "text_sim_mean": 1.0,
+   "errors": [],
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "用户与老贺讨论租房合同、押金转账及9月1日搬家事宜。",
+    "text": "老贺\n合成数据\n11:02\n老贺\n房东把合同发来了，你看下第3条。\n11:10\n押一付三，14400，我这边7200已经转你了。\n我\n老贺\n收到，9月1号上午搬，我借了辆面包车。\n11:15\n好的！\n我",
+    "messages": [
+     {
+      "sender": "老贺",
+      "is_self": false,
+      "time": "11:02",
+      "text": "房东把合同发来了，你看下第3条。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "11:10",
+      "text": "押一付三，14400，我这边7200已经转你了。"
+     },
+     {
+      "sender": "老贺",
+      "is_self": false,
+      "time": "",
+      "text": "收到，9月1号上午搬，我借了辆面包车。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "11:15",
+      "text": "好的！"
+     }
+    ]
+   }
+  }
+ ]
+}

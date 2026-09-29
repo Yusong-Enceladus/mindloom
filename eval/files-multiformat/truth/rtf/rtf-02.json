@@ -1,0 +1,68 @@
+{
+ "file_id": "rtf-02",
+ "path": "corpus/rtf/rtf-02.rtf",
+ "type": "rtf",
+ "ext": "rtf",
+ "mime": "application/rtf",
+ "filename": "房屋租赁合同（摘要）.rtf",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "房屋租赁合同（摘要）\n出租方：文嘉怡\n承租方：刘天佑\n房屋地址：昆明市临江路81号3栋1122室\n租期：1年，自2026年4月1日起\n月租金：8,800元\n押金：17,600元\n付款日：每月10日前\n水电燃气费由承租方承担；提前退租需提前30日书面通知。\n（合成数据，非真实合同）\n合成数据",
+ "key_lines": [
+  "承租方：刘天佑",
+  "月租金：8,800元",
+  "押金：17,600元",
+  "付款日：每月10日前"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "月租金": 8800,
+  "押金": 17600,
+  "付款日": "每月10日",
+  "租期": "1年",
+  "地址": "昆明市临江路81号3栋1122室"
+ },
+ "numbers": [
+  {
+   "value": 8800,
+   "label": "月租"
+  },
+  {
+   "value": 17600,
+   "label": "押金"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "月租金多少元？",
+   "a": 8800,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "押金多少元？",
+   "a": 17600,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "每月几号前付租？",
+   "a": 10,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "承租方是谁？",
+   "a": "刘天佑",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 2925,
+ "sha256": "ce7b9a18b41ee836c38eac7b92b573433e7da6e16307e7c178d1075fd51154c6",
+ "family": "lease"
+}

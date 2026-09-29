@@ -1,0 +1,27 @@
+{
+ "id": "expense-b",
+ "template": "expense",
+ "split": "test",
+ "filename": "报销明细.xlsx",
+ "path": "data/expense-b.xlsx",
+ "sha256": "89082acfc0f281bac0f04defcb91f040b1d2142202f09b4b2f4d42e88b6b5670",
+ "size": 5559,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "## 工作表：10月报销",
+  "| 钱七 | 快递 |"
+ ],
+ "summary_groups": [
+  [
+   "报销"
+  ],
+  [
+   "10月"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

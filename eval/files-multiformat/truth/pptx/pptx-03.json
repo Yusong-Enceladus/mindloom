@@ -1,0 +1,77 @@
+{
+ "file_id": "pptx-03",
+ "path": "corpus/pptx/pptx-03.pptx",
+ "type": "pptx",
+ "ext": "pptx",
+ "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+ "filename": "Project Status Update_ Website Redesign.pptx",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "Project Status Update: Website Redesign\nSynthetic data · evaluation only\n合成数据\nProject Status Update: Website Redesign\nOwner: Lucas Meyer\nOverall status: Red\nBudget: USD 271,000\nBudget spent: 39%\n合成数据\nTop risk\nIntegration API rate limits\n合成数据\nNext report\nNext update due on 2026-04-10. Synthetic report for evaluation only.\n合成数据\nMilestones\n合成数据\nTable\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tdone\nFull rollout\tplanned\n合成数据",
+ "key_lines": [
+  "Project Status Update: Website Redesign",
+  "Owner: Lucas Meyer",
+  "Overall status: Red",
+  "Budget: USD 271,000",
+  "Budget spent: 39%",
+  "Integration API rate limits"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "owner": "Lucas Meyer",
+  "status": "Red",
+  "budget_usd": 271000,
+  "spent_pct": 39,
+  "top_risk": "Integration API rate limits"
+ },
+ "numbers": [
+  {
+   "value": 271000,
+   "label": "budget"
+  },
+  {
+   "value": 39,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Red",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 39,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Integration API rate limits",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Lucas Meyer",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "slides": 6,
+  "picture_only_slides": [
+   3,
+   4
+  ],
+  "notes_slides": []
+ },
+ "bytes": 62568,
+ "sha256": "c1608bfd80b07e35614b3c705c210d8d5a5afee20be56e29ba3cad331157b9b1",
+ "family": "status_en"
+}

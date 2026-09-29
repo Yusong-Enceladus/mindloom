@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-gates",
+  "gates": [
+    {
+      "id": "fixture-conditional",
+      "evidencePath": "Tests/Fixtures/Readiness/evidence.json",
+      "field": "releaseEligible",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "The planted conditional field must remain unresolved."
+    }
+  ]
+}

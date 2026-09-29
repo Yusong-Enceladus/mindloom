@@ -1,0 +1,35 @@
+{
+  "containsPrivateContent": false,
+  "fractionWithin160Milliseconds": 0.988562091503268,
+  "groups": {
+    "chinese": 6,
+    "english": 6,
+    "mixed": 2
+  },
+  "kind": "forced-alignment-translation-controls",
+  "limitations": [
+    "This checks a known one-second audio translation, not absolute phonetic-boundary truth.",
+    "Text is taken from the existing Qwen ASR run; ASR accuracy is not rescored here.",
+    "Six public Chinese, six public English and two synthetic mixed-language clips are a bounded tuning check only.",
+    "Zero-duration quantized words must be coalesced before producing playable transcript segments."
+  ],
+  "maximumTranslationDeviationMilliseconds": 439.9999999999995,
+  "meanTranslationDeviationMilliseconds": 43.52941176470578,
+  "medianTranslationDeviationMilliseconds": 40.000000000000036,
+  "modelArtifactID": "qwen3-forced-aligner-0.6b-8bit-0e1a68e9",
+  "modelRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+  "modelTreeSHA256": "8826e6c77a767e8370966e821357f96167fec399b67c829ae1c5efb9185d374e",
+  "networkDenied": true,
+  "outOfRangeWords": 1,
+  "p95TranslationDeviationMilliseconds": 40.000000000000924,
+  "prefixSilenceSeconds": 1,
+  "releaseHoldout": false,
+  "runtimeRevision": "cae704f53bc32a3d0b606823828fbc5bedaaf388",
+  "samples": 14,
+  "schemaVersion": 1,
+  "selectionEligible": false,
+  "sourceCorpusManifestID": "fleurs-public-asr-tuning-v1",
+  "sourceCorpusVersion": "1.0.0",
+  "wordComparisons": 306,
+  "zeroDurationWords": 10
+}

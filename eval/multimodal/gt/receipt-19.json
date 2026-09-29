@@ -1,0 +1,99 @@
+{
+ "id": "receipt-19",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-19.jpg",
+ "lang": "en",
+ "hard": [
+  "glare",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "4cc81268e173c7f65b737cabb6bce019d4002e6210bcc556aba242f76112a1c9",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "Bluewren Hardware",
+  "date": "2026-08-17",
+  "date_text": "08/17/2026 8:01 AM",
+  "time": "08:01",
+  "doc_no": "3444",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Wood screws #8 x 1-1/4in",
+    "qty": 2,
+    "unit": "box",
+    "unit_price": "6.49",
+    "amount": "12.98"
+   },
+   {
+    "name": "Extension cord 10 ft",
+    "qty": 3,
+    "unit": "ea",
+    "unit_price": "14.99",
+    "amount": "44.97"
+   },
+   {
+    "name": "Painter's tape 2in",
+    "qty": 1,
+    "unit": "roll",
+    "unit_price": "7.99",
+    "amount": "7.99"
+   }
+  ],
+  "subtotal": "65.94",
+  "discount": "0.00",
+  "tax": "4.95",
+  "total": "70.89",
+  "payment_method": "Cash",
+  "tax_rate": 7.5
+ },
+ "text_lines": [
+  "Bluewren Hardware",
+  "306 Orchard Road, Lakeside",
+  "Tel (555) 017-9549",
+  "Order #3444 Cashier 18",
+  "08/17/2026 8:01 AM",
+  "Wood screws #8 x 1-1/4in 2 6.49 12.98",
+  "Extension cord 10 ft 3 14.99 44.97",
+  "Painter's tape 2in 1 7.99 7.99",
+  "Subtotal 65.94",
+  "Tax 7.5% 4.95",
+  "Total $70.89",
+  "Paid: Cash",
+  "Thank you!",
+  "Returns within 14 days with receipt"
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$70.89",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Bluewren Hardware",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-08-17",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$4.95",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "lang": "en",
+  "glare": true
+ }
+}

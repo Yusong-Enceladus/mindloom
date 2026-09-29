@@ -1,0 +1,27 @@
+{
+ "id": "contact-b",
+ "template": "contact",
+ "split": "test",
+ "filename": "李鸣.vcf",
+ "path": "data/contact-b.vcf",
+ "sha256": "0607044c428c1aeb4d48b9cf13d7efe50eeb266ed0ffbbd81ce82bde9b1e89e2",
+ "size": 115,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {
+  "name": "李鸣",
+  "phone": "138-0000-5678"
+ },
+ "type": "contact",
+ "must_contain": [
+  "姓名：李鸣",
+  "电话：138-0000-5678"
+ ],
+ "summary_groups": [
+  [
+   "李鸣"
+  ]
+ ],
+ "doc_kind": "other"
+}

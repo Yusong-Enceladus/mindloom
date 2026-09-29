@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/diagnostic-bundle.schema.json",
+  "title": "bestASR privacy-safe diagnostic bundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "bundleID",
+    "createdAt",
+    "appVersion",
+    "osVersion",
+    "models",
+    "events",
+    "redactedFields"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "diagnostic-bundle"
+    },
+    "bundleID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "appVersion": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "osVersion": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]{1,128}$"
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "artifactID",
+          "version"
+        ],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "enum": [
+              "asr",
+              "diarization",
+              "localText",
+              "speakerEmbedding"
+            ]
+          },
+          "artifactID": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,128}$"
+          },
+          "version": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,128}$"
+          }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "correlationID",
+          "recordedAt",
+          "category",
+          "state",
+          "durationMilliseconds",
+          "retryCount",
+          "metrics"
+        ],
+        "properties": {
+          "correlationID": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "capture",
+              "inference",
+              "migration",
+              "modelArtifact",
+              "none",
+              "permissions",
+              "persistence",
+              "resource",
+              "unknown"
+            ]
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "cancelled",
+              "degraded",
+              "failed",
+              "recovered",
+              "retrying",
+              "succeeded"
+            ]
+          },
+          "durationMilliseconds": {
+            "type": "number",
+            "minimum": 0
+          },
+          "retryCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "name",
+                "value"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "enum": [
+                    "backlogCount",
+                    "droppedFrameCount",
+                    "gapDurationMilliseconds",
+                    "peakRSSBytes",
+                    "realtimeFactor"
+                  ]
+                },
+                "value": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "redactedFields": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": [
+          "audioPath",
+          "participantName",
+          "speakerEmbedding",
+          "transcriptText",
+          "windowTitle"
+        ]
+      }
+    }
+  }
+}

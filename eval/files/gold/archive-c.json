@@ -1,0 +1,26 @@
+{
+ "id": "archive-c",
+ "template": "archive",
+ "split": "test",
+ "filename": "搬家资料.zip",
+ "path": "data/archive-c.zip",
+ "sha256": "08cf5693a400e215f8aac764f13a12d74d16fef3287e992839f54affc2721260",
+ "size": 257700,
+ "error": null,
+ "must_contain_image": [
+  "待办"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "archive",
+ "must_contain": [
+  "搬家公司预约 11 月 8 日上午",
+  "| 椅子 | 16 |"
+ ],
+ "summary_groups": [
+  [
+   "搬家"
+  ]
+ ],
+ "doc_kind": "other"
+}

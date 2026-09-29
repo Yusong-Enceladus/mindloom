@@ -1,0 +1,91 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "file-read": "5810c0096d0a5445",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "",
+ "date": "2026-09-29T15:11:59+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--out",
+  "eval/runs/sq-dev-base"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "a150a3fa-c2fd-4d1e-9b65-be8994a2ae62",
+  "E2": "73ba303f-9e44-4bb7-9bfd-73ae0a12b2a3",
+  "E3": "f04aa9b2-e6e4-49bd-9372-930f73ebeed5",
+  "E4": "5d3902ff-8015-43c7-8f86-f025f8955462",
+  "E5": "2639c0e1-874e-4113-bf0d-77a9bb661698",
+  "E6": "ffa2a2fa-0541-415d-bc8a-ff55aee57a38",
+  "E7": "b6c8a849-1c42-4e89-b0db-1b7fbbd86030",
+  "E8": "fe90d839-a2f9-4387-86c5-7879e8475a63",
+  "E9": "0201fa6d-4c4d-4dd1-be9f-965bb1c277fd",
+  "E10": "4017f84a-1d90-4262-af43-88d10217e2b0",
+  "E11": "78eb19f3-b7fc-4e52-9c03-95d5c8b0d4b0"
+ },
+ "bare_max_tokens": null
+}

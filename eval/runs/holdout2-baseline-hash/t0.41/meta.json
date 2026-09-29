@@ -1,0 +1,67 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "baseline",
+ "threshold": 0.41,
+ "llm_url": null,
+ "model": null,
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "hash-bigram-256",
+ "embed_url": null,
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.2.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": null,
+ "git": "8ee22d7",
+ "date": "2026-09-28T02:10:30+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "baseline",
+  "--embed",
+  "hash",
+  "--threshold",
+  "0.41",
+  "--out",
+  "../out/h2-baseline-hash"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+  "E2": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+  "E3": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+  "E4": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+  "E5": "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+  "E6": "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+  "E7": "9e42dbbb-f46c-4848-b06e-9de18f317b57",
+  "E8": "3368c5f0-7013-4e82-9009-8c22c9f3b32d",
+  "E9": "65f05945-b8a8-423b-9ff7-2aefcef99915"
+ },
+ "bare_max_tokens": null
+}

@@ -1,0 +1,452 @@
+{
+ "summary": {
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "backend": "openai",
+  "url": "http://127.0.0.1:8000/v1",
+  "images": 8,
+  "ok": 8,
+  "ok_first_attempt": 7,
+  "kind_chat": 8,
+  "msg_count_match": 8,
+  "gold_messages": 34,
+  "sender_acc": 0.9118,
+  "is_self_acc": 1.0,
+  "time_acc": 0.5294,
+  "text_exact_acc": 0.9412,
+  "text_sim_mean": 0.9983,
+  "latency_median_s": 8.0,
+  "latency_max_s": 15.67,
+  "completion_tokens_mean": 456.2,
+  "prompt_tokens_mean": 1960.9
+ },
+ "rows": [
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d1-04",
+   "repeat": 0,
+   "run": "final-h2-noskill-r1",
+   "ok": true,
+   "attempts": 2,
+   "latency_s": 15.67,
+   "prompt_tokens": 3812,
+   "completion_tokens": 820,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "Peggy Mok 因上次盘子销售良好，向 Yun 追加订购 1800 个 8 寸燕麦白平盘，要求 FOB 报价，需在 13 号前提供，明年 2 月中旬送达。",
+    "text": "Peggy Mok: Hi Yun, 上次那批盘子卖得挺好，想再订8寸燕麦白平盘，1800个。麻烦周五（13号）前给我报个价，FOB，明年2月中要到墨尔本。 我: 收到，我算好成本周四前发你。 Peggy Mok: 好的，谢谢！",
+    "messages": [
+     {
+      "sender": "Peggy Mok",
+      "is_self": false,
+      "time": "13:02",
+      "text": "Hi Yun, 上次那批盘子卖得挺好，想再订8寸燕麦白平盘，1800个。"
+     },
+     {
+      "sender": "Peggy Mok",
+      "is_self": false,
+      "time": "13:02",
+      "text": "麻烦周五（13号）前给我报个价，FOB，明年2月中要到墨尔本。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "13:10",
+      "text": "收到，我算好成本周四前发你。"
+     },
+     {
+      "sender": "Peggy Mok",
+      "is_self": false,
+      "time": "13:10",
+      "text": "好的，谢谢！"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 1,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 3,
+   "text_sim_mean": 0.9926
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d1-06",
+   "repeat": 0,
+   "run": "final-h2-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.22,
+   "prompt_tokens": 1677,
+   "completion_tokens": 408,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "Wilson要求制作6个雾青哑光釉竹柄马克杯样品用于春季目录拍摄，需20号前到新加坡，21号拍照。",
+    "text": "Wilson 南岸 16:41 Wilson 刚才忘了说，我们春季目录要拍一款新马克杯。 Wilson 能不能请许厂长做6个样品？雾青哑光釉，350ml，竹柄。 Wilson 20号前要到新加坡，21号拍照。 16:50 我 我明天去厂里当面跟许厂长说，看釉色要不要先打试片。",
+    "messages": [
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "刚才忘了说，我们春季目录要拍一款新马克杯。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "能不能请许厂长做6个样品？雾青哑光釉，350ml，竹柄。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "20号前要到新加坡，21号拍照。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "16:50",
+      "text": "我明天去厂里当面跟许厂长说，看釉色要不要先打试片。"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d3-02",
+   "repeat": 0,
+   "run": "final-h2-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 8.61,
+   "prompt_tokens": 1677,
+   "completion_tokens": 371,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "程家一家人群聊中，母亲告知抽血指标偏高需观察，哥哥通知明天上午出院，我表示会去并带厚外套给父亲。",
+    "text": "程家一家人 10:21 妈 抽血结果出来了，指标还有一点高，医生说再观察一天。 哥 改到明天（周四）上午出院了，我九点到医院。 10:30 我 好，我明天也过去，孟老师说出院那天会来讲康复的事。 妈 那你带件厚外套给你爸。",
+    "messages": [
+     {
+      "sender": "妈",
+      "is_self": false,
+      "time": "10:21",
+      "text": "抽血结果出来了，指标还有一点高，医生说再观察一天。"
+     },
+     {
+      "sender": "哥",
+      "is_self": false,
+      "time": "10:21",
+      "text": "改到明天（周四）上午出院了，我九点到医院。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "10:30",
+      "text": "好，我明天也过去，孟老师说出院那天会来讲康复的事。"
+     },
+     {
+      "sender": "妈",
+      "is_self": false,
+      "time": "10:30",
+      "text": "那你带件厚外套给你爸。"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d5-04",
+   "repeat": 0,
+   "run": "final-h2-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 9.62,
+   "prompt_tokens": 1745,
+   "completion_tokens": 454,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与Wilson沟通验货通过、尾款支付安排、船期调整及杯子样品寄送事宜。",
+    "text": "Wilson 南岸 14:52 我: Wilson，验货通过了，贺工晚上把报告发你。 14:58 Wilson: Great，辛苦！尾款70%我周一16号安排付。 我: 好的。船期改到23号开，21号上午装柜。 15:03 Wilson: OK。杯子样品明天能寄出吗？拍照是21号。 我: 明早出窑，中午前寄。",
+    "messages": [
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "14:52",
+      "text": "Wilson，验货通过了，贺工晚上把报告发你。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "14:58",
+      "text": "Great，辛苦！尾款70%我周一16号安排付。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "14:58",
+      "text": "好的。船期改到23号开，21号上午装柜。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "15:03",
+      "text": "OK。杯子样品明天能寄出吗？拍照是21号。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "15:03",
+      "text": "明早出窑，中午前寄。"
+     }
+    ]
+   },
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 3,
+   "text_exact": 5,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d1-04",
+   "repeat": 1,
+   "run": "final-h2-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.33,
+   "prompt_tokens": 1677,
+   "completion_tokens": 371,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "Peggy Mok 向 Yun 追加订购 1800 个 8 寸燕麦白平盘，要求 FOB 报价，明年 2 月中旬到墨尔本。",
+    "text": "Peggy Mok: Hi Yun, 上次那批盘子卖得挺好，想再订8寸燕麦白平盘，1800个。麻烦周五（13号）前给我报个价，FOB，明年2月中要到墨尔本。",
+    "messages": [
+     {
+      "sender": "Peggy",
+      "is_self": false,
+      "time": "13:02",
+      "text": "Hi Yun, 上次那批盘子卖得挺好，想再订8寸燕麦白平盘，1800个。"
+     },
+     {
+      "sender": "Peggy",
+      "is_self": false,
+      "time": "13:02",
+      "text": "麻烦周五（13号）前给我报个价，FOB，明年2月中要到墨尔本。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "13:10",
+      "text": "收到，我算好成本周四前发你。"
+     },
+     {
+      "sender": "Peggy",
+      "is_self": false,
+      "time": "13:10",
+      "text": "好的，谢谢！"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 3,
+   "text_sim_mean": 0.9926
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d1-06",
+   "repeat": 1,
+   "run": "final-h2-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 8.24,
+   "prompt_tokens": 1677,
+   "completion_tokens": 413,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "Wilson要求制作6个雾青哑光釉350ml竹柄马克杯样品，用于春季目录拍摄，需20号前到新加坡，21号拍照。",
+    "text": "Wilson 南岸 16:41 Wilson 刚才忘了说，我们春季目录要拍一款新马克杯。 Wilson 能不能请许厂长做6个样品？雾青哑光釉，350ml，竹柄。 Wilson 20号前要到新加坡，21号拍照。 16:50 我 我明天去厂里当面跟许厂长说，看釉色要不要先打试片。",
+    "messages": [
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "刚才忘了说，我们春季目录要拍一款新马克杯。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "能不能请许厂长做6个样品？雾青哑光釉，350ml，竹柄。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "16:41",
+      "text": "20号前要到新加坡，21号拍照。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "16:50",
+      "text": "我明天去厂里当面跟许厂长说，看釉色要不要先打试片。"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d3-02",
+   "repeat": 1,
+   "run": "final-h2-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.77,
+   "prompt_tokens": 1677,
+   "completion_tokens": 370,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "程家一家人群聊中，母亲告知抽血指标偏高需观察，哥哥通知明天上午出院，你计划前往并带厚外套给父亲。",
+    "text": "程家一家人 10:21 妈 抽血结果出来了，指标还有一点高，医生说再观察一天。 哥 改到明天（周四）上午出院了，我九点到医院。 10:30 我 好，我明天也过去，孟老师说出院那天会来讲康复的事。 妈 那你带件厚外套给你爸。",
+    "messages": [
+     {
+      "sender": "妈",
+      "is_self": false,
+      "time": "10:21",
+      "text": "抽血结果出来了，指标还有一点高，医生说再观察一天。"
+     },
+     {
+      "sender": "哥",
+      "is_self": false,
+      "time": "10:21",
+      "text": "改到明天（周四）上午出院了，我九点到医院。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "10:30",
+      "text": "好，我明天也过去，孟老师说出院那天会来讲康复的事。"
+     },
+     {
+      "sender": "妈",
+      "is_self": false,
+      "time": "10:30",
+      "text": "那你带件厚外套给你爸。"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "holdout-week-v2",
+   "ref": "d5-04",
+   "repeat": 1,
+   "run": "final-h2-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 6.53,
+   "prompt_tokens": 1745,
+   "completion_tokens": 443,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与Wilson沟通验货通过、尾款支付安排、船期调整及杯子样品寄送事宜。",
+    "text": "Wilson 南岸 14:52 Wilson，验货通过了，贺工晚上把报告发你。 14:58 Wilson Great，辛苦！尾款70%我周一16号安排付。 好的。船期改到23号开，21号上午装柜。 15:03 Wilson OK。杯子样品明天能寄出吗？拍照是21号。 明早出窑，中午前寄。",
+    "messages": [
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "14:52",
+      "text": "Wilson，验货通过了，贺工晚上把报告发你。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "14:58",
+      "text": "Great，辛苦！尾款70%我周一16号安排付。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "14:58",
+      "text": "好的。船期改到23号开，21号上午装柜。"
+     },
+     {
+      "sender": "Wilson",
+      "is_self": false,
+      "time": "15:03",
+      "text": "OK。杯子样品明天能寄出吗？拍照是21号。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "15:03",
+      "text": "明早出窑，中午前寄。"
+     }
+    ]
+   },
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 3,
+   "text_exact": 5,
+   "text_sim_mean": 1.0
+  }
+ ]
+}

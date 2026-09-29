@@ -1,0 +1,76 @@
+{
+ "file_id": "pdf_scanned-04",
+ "path": "corpus/pdf_scanned/pdf_scanned-04.pdf",
+ "type": "pdf_scanned",
+ "ext": "pdf",
+ "mime": "application/pdf",
+ "filename": "房屋租赁合同（摘要）.pdf",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "房屋租赁合同（摘要）\n出租方：周浩然\n承租方：毛书瑶\n房屋地址：武汉市青石路221号12栋1149室\n租期：2年，自2026年10月1日起\n月租金：5,300元\n押金：10,600元\n付款日：每月5日前\n水电燃气费由承租方承担；提前退租需提前30日书面通知。\n（合成数据，非真实合同）\n合成数据",
+ "key_lines": [
+  "承租方：毛书瑶",
+  "月租金：5,300元",
+  "押金：10,600元",
+  "付款日：每月5日前"
+ ],
+ "picture_only_lines": [
+  "承租方：毛书瑶",
+  "月租金：5,300元",
+  "押金：10,600元",
+  "付款日：每月5日前"
+ ],
+ "key_fields": {
+  "月租金": 5300,
+  "押金": 10600,
+  "付款日": "每月5日",
+  "租期": "2年",
+  "地址": "武汉市青石路221号12栋1149室"
+ },
+ "numbers": [
+  {
+   "value": 5300,
+   "label": "月租"
+  },
+  {
+   "value": 10600,
+   "label": "押金"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "月租金多少元？",
+   "a": 5300,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "押金多少元？",
+   "a": 10600,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "每月几号前付租？",
+   "a": 5,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "承租方是谁？",
+   "a": "毛书瑶",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "pages": 1,
+  "text_layer": false
+ },
+ "bytes": 39509,
+ "sha256": "cf11036daae268f6af4f31ffa8a0ee4a5bb23d93306e11e24aa80f7d5808b01b",
+ "family": "lease"
+}

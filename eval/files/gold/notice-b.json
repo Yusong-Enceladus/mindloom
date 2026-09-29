@@ -1,0 +1,31 @@
+{
+ "id": "notice-b",
+ "template": "notice",
+ "split": "test",
+ "filename": "停水通知.docx",
+ "path": "data/notice-b.docx",
+ "sha256": "a96105e4bce653c717cad396b5008ea0a866e5dff4b4134630f0ac400496dc06",
+ "size": 277840,
+ "error": null,
+ "must_contain_image": [
+  "商用咖啡机",
+  "E64466088"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "7 栋全楼停水",
+  "9:00-16:30"
+ ],
+ "summary_groups": [
+  [
+   "停水"
+  ],
+  [
+   "11月3日",
+   "11 月 3 日"
+  ]
+ ],
+ "doc_kind": "notice"
+}

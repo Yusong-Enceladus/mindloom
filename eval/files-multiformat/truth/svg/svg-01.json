@@ -1,0 +1,59 @@
+{
+ "file_id": "svg-01",
+ "path": "corpus/svg/svg-01.svg",
+ "type": "svg",
+ "ext": "svg",
+ "mime": "image/svg+xml",
+ "filename": "讲座海报_ElenaPark.svg",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "A9B3913B-C6AD-5AA2-B383-203B03EF235F",
+  "ref": "talk_svg",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "full",
+ "text": "清屿大学计算机学院 学术讲座\nMemory Structures for Embodied Agents\n主讲人：Elena Park 教授 · Northbridge University\n时间：2026年10月16日（周五）15:00–16:30\n地点：计算机楼 A101 报告厅\n主持人：沈知遥 副教授\n欢迎全校师生参加\n合成数据",
+ "key_lines": [
+  "主讲人：Elena Park 教授 · Northbridge University",
+  "时间：2026年10月16日（周五）15:00–16:30",
+  "地点：计算机楼 A101 报告厅"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "时间": "2026-10-16 15:00-16:30",
+  "地点": "计算机楼 A101 报告厅",
+  "主讲人单位": "Northbridge University"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "讲座哪天几点？",
+   "a": "10月16日",
+   "match": "contains",
+   "accept": [
+    "2026年10月16日",
+    "10/16"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "讲座地点？",
+   "a": "A101",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "主讲人来自哪所大学？",
+   "a": "Northbridge University",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 2157,
+ "sha256": "a970781ae05d96d11ca067031c5b829fbceaa6b2b4ae13809554237625b6cc96"
+}

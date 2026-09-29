@@ -1,0 +1,95 @@
+{
+ "id": "board-04",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-04.jpg",
+ "lang": "en",
+ "hard": [
+  "handwriting",
+  "glare",
+  "low_contrast",
+  "struck_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "26b00d1d7ee584e9c0fb7349cc26595604e1b5d83e23b207a3d48a4d8cea3322",
+ "gt": {
+  "surface": "whiteboard",
+  "lines": [
+   {
+    "text": "Standup",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "Checkout p95 = 240 ms",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Ella Moore: fix retry bug",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Julia Park: release notes",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "Ship payments",
+    "struck": true,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Payments moved to Sep 6",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "Standup",
+  "Checkout p95 = 240 ms",
+  "Ella Moore: fix retry bug",
+  "Julia Park: release notes",
+  "Ship payments",
+  "Payments moved to Sep 6"
+ ],
+ "qa": [
+  {
+   "q": "What is checkout p95?",
+   "a": "240 ms",
+   "match": "number"
+  },
+  {
+   "q": "Who fixes the retry bug?",
+   "a": "Ella Moore",
+   "match": "exact"
+  },
+  {
+   "q": "When are payments moved to?",
+   "a": "Sep 6",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "surface": "whiteboard",
+  "font": "hand_marker",
+  "size": 64,
+  "messy": 1.0,
+  "faint": true
+ },
+ "variant": {
+  "content": "en_standup",
+  "font": "hand_marker",
+  "surface": "whiteboard",
+  "faint": true
+ }
+}

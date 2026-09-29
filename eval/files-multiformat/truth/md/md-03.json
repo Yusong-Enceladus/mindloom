@@ -1,0 +1,67 @@
+{
+ "file_id": "md-03",
+ "path": "corpus/md/md-03.md",
+ "type": "md",
+ "ext": "md",
+ "mime": "text/markdown",
+ "filename": "全麦核桃面包（6人份）.md",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "全麦核桃面包（6人份）\n材料\t用量（克）\n主料\t200\n鸡蛋\t150\n砂糖\t80\n黄油\t60\n步骤\n- 材料室温回软后混合均匀\n- 烤箱预热至 190℃\n- 入炉烘烤 35 分钟，中途转盘一次\n- 出炉冷却 20 分钟后切块\n小贴士：糖可减少两成。（合成数据）\n合成数据",
+ "key_lines": [
+  "全麦核桃面包（6人份）",
+  "砂糖\t80",
+  "- 烤箱预热至 190℃",
+  "- 入炉烘烤 35 分钟，中途转盘一次"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "份数": 6,
+  "温度": "190℃",
+  "时长": "35分钟",
+  "砂糖": 80
+ },
+ "numbers": [
+  {
+   "value": 190,
+   "label": "温度"
+  },
+  {
+   "value": 35,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 190,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 35,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 80,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 6,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 362,
+ "sha256": "c2c76ac06b7b9e0950f6952a5cd5732ae2b191024b183ac7a78b578060b3b962",
+ "family": "recipe"
+}

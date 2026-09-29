@@ -1,0 +1,163 @@
+{
+  "benchmarkID" : "speaker-fluid-ami-release-holdout-v1",
+  "configHash" : "d6270c20324d23a432dadb77bf2838f611c8db2b9247c061ce03562315d6c6d7",
+  "corpus" : {
+    "manifestID" : "ami-public-speaker-release-holdout-v1",
+    "split" : "release-holdout",
+    "version" : "1.0.0"
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "failedSampleUUIDs" : [
+
+  ],
+  "hardware" : {
+    "architecture" : "arm64",
+    "osVersion" : "Version 26.6.2 (Build 25G83)",
+    "toolchainVersion" : "Apple Swift version 6.3.3 (swiftlang-6.3.3.1.3 clang-2100.1.1.101) Target: arm64-apple-macosx26.0",
+    "unifiedMemoryBytes" : 51539607552
+  },
+  "implementationRevision" : "19600a485baa4998812e4654b70d2bab8f2c9949",
+  "kind" : "benchmark-result",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0.24931150688786233
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0.3178010870387543
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0.19872398224325868
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0.029918830641742774
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0.02066869400286085
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 99.722
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 12543.714333
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.005573070610518605
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 711704576
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 0
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fluid-speaker-diarization-coreml-1ed7a662",
+    "sha256" : "664824fe8a2d387aad8ad7965191a90b9b290c5ea5470c3bd13a86a8cc8bf9ab"
+  },
+  "protocolVersion" : 1,
+  "runID" : "E682D4DD-B108-54F5-B59B-1E1D0804D66E",
+  "schemaVersion" : 1,
+  "task" : "speaker"
+}

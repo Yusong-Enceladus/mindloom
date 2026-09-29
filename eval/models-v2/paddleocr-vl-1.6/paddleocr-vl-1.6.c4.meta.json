@@ -1,0 +1,41 @@
+{
+ "segments": [
+  {
+   "label": "paddleocr-vl-1.6-vllm",
+   "backend": "openai",
+   "model": "paddleocr-vl-1.6",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 4,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 28,
+   "start": {
+    "time": 1790669562.6459656,
+    "gpu_apps": [
+     "2193609, /home/YOU/hack/vllm-venv/bin/python, 1803 MiB",
+     "2599613, VLLM::EngineCore, 35755 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          49          67           0           5          72\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"paddleocr-vl-1.6\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"paddleocr-vl-1.6\"} 0.0"
+    ]
+   },
+   "wall_s": 141.69,
+   "end": {
+    "time": 1790669704.3979812,
+    "gpu_apps": [
+     "2193609, /home/YOU/hack/vllm-venv/bin/python, 1803 MiB",
+     "2599613, VLLM::EngineCore, 35755 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          49          67           0           5          72\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"paddleocr-vl-1.6\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"paddleocr-vl-1.6\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

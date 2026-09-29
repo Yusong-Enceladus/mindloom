@@ -1,0 +1,73 @@
+{
+ "file_id": "gif-01",
+ "path": "corpus/gif/gif-01.gif",
+ "type": "gif",
+ "ext": "gif",
+ "mime": "image/gif",
+ "filename": "讲座预告.gif",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "9AC7A089-EACF-5032-9C94-DC94FCBECF61",
+  "ref": "talk_gif",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "none",
+ "text": "本周五 学术讲座\nMemory Structures for Embodied Agents\n合成数据\n10月16日 15:00\n计算机楼 A101 报告厅\n合成数据\n主讲：Elena Park 教授\n现场前50名赠送讲义（Lecture Notes）\n合成数据",
+ "key_lines": [
+  "10月16日 15:00",
+  "计算机楼 A101 报告厅",
+  "现场前50名赠送讲义（Lecture Notes）"
+ ],
+ "picture_only_lines": [
+  "10月16日 15:00",
+  "计算机楼 A101 报告厅",
+  "现场前50名赠送讲义（Lecture Notes）"
+ ],
+ "key_fields": {
+  "赠送名额": 50,
+  "时间": "2026-10-16 15:00",
+  "地点": "A101"
+ },
+ "numbers": [
+  {
+   "value": 50,
+   "label": "前50名"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "前多少名赠送讲义？",
+   "a": 50,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "讲座几点？",
+   "a": "15:00",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "在哪个报告厅？",
+   "a": "A101",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "frames": 3,
+  "frame_ms": 1500,
+  "frame_titles": [
+   "本周五 学术讲座",
+   "10月16日 15:00",
+   "主讲：Elena Park 教授"
+  ]
+ },
+ "notes": "动图 3 帧，每帧文字不同；只看第一帧会漏掉时间和赠品。",
+ "bytes": 41623,
+ "sha256": "889510d2a59c039b7278b3b1d12c41211a9d2db08820e50515dc69f88d5157a8"
+}

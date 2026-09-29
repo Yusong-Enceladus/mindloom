@@ -1,0 +1,64 @@
+{
+ "file_id": "png-04",
+ "path": "corpus/png/png-04.png",
+ "type": "png",
+ "ext": "png",
+ "mime": "image/png",
+ "filename": "截屏2026-10-06 11.32.49.png",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "活动报名系统\n报名成功\n周末读书会 · 2026年4月19日\n报名人 宋浩然\n报名编号 BM200538\n集合时间 2026年4月19日 08:30\n集合地点 体育馆北侧\n费用 50元\n报名成功\n合成数据",
+ "key_lines": [
+  "报名编号 BM200538",
+  "集合时间 2026年4月19日 08:30",
+  "费用 50元"
+ ],
+ "picture_only_lines": [
+  "报名编号 BM200538",
+  "集合时间 2026年4月19日 08:30",
+  "费用 50元"
+ ],
+ "key_fields": {
+  "报名人": "宋浩然",
+  "报名编号": "BM200538",
+  "费用": 50
+ },
+ "numbers": [
+  {
+   "value": 50,
+   "label": "费用"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "报名编号是多少？",
+   "a": "BM200538",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "几点集合？",
+   "a": "08:30",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "费用多少元？",
+   "a": 50,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   1280,
+   592
+  ]
+ },
+ "bytes": 55804,
+ "sha256": "6c42d1bb7f715bad64add3eaee00d9bbb50da6c5a8f02bd34bf3e93d3223dd36",
+ "family": "signup_window"
+}

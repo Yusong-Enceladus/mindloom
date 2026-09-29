@@ -1,0 +1,62 @@
+{
+ "file_id": "csv-05",
+ "path": "corpus/csv/csv-05.csv",
+ "type": "csv",
+ "ext": "csv",
+ "mime": "text/csv",
+ "filename": "C区耗材库存表（4月盘点）.csv",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "# C区耗材库存表（4月盘点）（合成数据）\n名称\t单位\t库存\t安全库存\t需补货\n标签纸\t卷\t36\t15\t否\n75%酒精\t瓶\t1\t15\t是\n称量纸\t包\t21\t5\t否\n口罩\t盒\t33\t10\t否\n护目镜\t副\t25\t15\t否\n离心管 1.5mL\t袋\t28\t5\t否",
+ "key_lines": [
+  "标签纸\t卷\t36\t15\t否",
+  "75%酒精\t瓶\t1\t15\t是",
+  "口罩\t盒\t33\t10\t否",
+  "护目镜\t副\t25\t15\t否"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "需补货": [
+   "75%酒精"
+  ],
+  "口罩": 33
+ },
+ "numbers": [
+  {
+   "value": 33,
+   "label": "口罩"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "口罩的库存是多少？",
+   "a": 33,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "哪些需要补货？",
+   "a": "75%酒精",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "标签纸的安全库存是多少？",
+   "a": 15,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8",
+  "delimiter": "tab",
+  "rows": 6
+ },
+ "notes": "制表符分隔",
+ "bytes": 252,
+ "sha256": "fd7b82d66507b02c66dfe1c390b29f068ab1dea5614d6e57594b0b35700a5a24",
+ "family": "inventory"
+}

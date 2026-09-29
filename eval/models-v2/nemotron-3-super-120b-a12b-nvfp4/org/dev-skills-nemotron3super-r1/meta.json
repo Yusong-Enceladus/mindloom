@@ -1,0 +1,90 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8120/v1",
+ "model": "nemotron-3-super-120b-a12b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-29T15:01:40+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8120/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "/home/YOU/hack/claude-models/nemotron3-super/out/dev-skills-nemotron3super-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "29e21029-b40c-4cd2-be91-052cc6dac251",
+  "E2": "75d9570f-1e9f-45b0-941a-b340964f90d5",
+  "E3": "c4e975ab-0e17-414b-bb9c-f8a5e1eb956f",
+  "E4": "0b10a992-3a00-40ab-a67b-9b42fbbc10d8",
+  "E5": "20544c30-fb0e-4b12-a7ea-c916ddc07acf",
+  "E6": "e88ca32b-adff-483d-97c2-47cf935951f4",
+  "E7": "e48ed7b5-6f1e-43bb-aff9-06f2620bea2c",
+  "E8": "261e7266-cb71-48d7-a9ec-81b329c98714",
+  "E9": "55ee188d-89d1-4f37-af99-2d2b642ce38d",
+  "E10": "b5cac7fd-5686-4dc5-8224-040e6d557464",
+  "E11": "83699f50-b6b9-461d-837e-6251a95d591a",
+  "E12": "c9988952-6ddd-446a-b2da-4c69a5b5bb9a"
+ },
+ "bare_max_tokens": null
+}

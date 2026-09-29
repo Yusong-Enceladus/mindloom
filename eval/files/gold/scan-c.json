@@ -1,0 +1,34 @@
+{
+ "id": "scan-c",
+ "template": "scan",
+ "split": "test",
+ "filename": "扫描件.pdf",
+ "path": "data/scan-c.pdf",
+ "sha256": "43877e56da8ab083516ce5d33d0bf41814de806ef8796cbad9b4a72d256d0b75",
+ "size": 485691,
+ "error": null,
+ "must_contain_image": [
+  "MEMORANDUM",
+  "2026.",
+  "Travel Reimbursement Policy (excerpt)",
+  "$0.70/mile"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "scanned_pdf",
+ "must_contain": [],
+ "summary_groups": [
+  [
+   "memo",
+   "备忘",
+   "通知",
+   "全体"
+  ],
+  [
+   "报销",
+   "差旅",
+   "reimbursement"
+  ]
+ ],
+ "doc_kind": ""
+}

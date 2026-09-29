@@ -1,0 +1,91 @@
+{
+ "file_id": "pdf-01",
+ "path": "corpus/pdf/pdf-01.pdf",
+ "type": "pdf",
+ "ext": "pdf",
+ "mime": "application/pdf",
+ "filename": "LoomNet_draft_v5.pdf",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "C7A3AC8B-BE8D-5950-AEE0-143C1F1E2328",
+  "ref": "paper_pdf",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "full",
+ "text": "LoomNet: Weaving Memory for Long-Video Question Answering\nAnonymous ICVL 2027 submission · Paper ID 4127 · Draft v5\nAbstract\nLong videos overwhelm fixed-length context windows. We present LoomNet, a video question answering model that weaves a small set of memory slots through the whole video. LoomNet reaches 78.4% average accuracy on LongVid-QA, 3.1 points above the strongest baseline (75.3%), with 298M parameters.\n1 Introduction\nQuestions about long videos often depend on events that happened tens of minutes earlier. Existing models either subsample frames or truncate the context. LoomNet instead keeps 64 memory slots that are read and rewritten at every segment.\nOur contributions are threefold: (i) a slot memory that is written once per segment and read by every question token, (ii) a curriculum that grows the video length from 2 to 60 minutes, and (iii) a careful ablation of memory size on LongVid-QA.\n2 Related Work\nLong-video models fall into three families. Sampling methods keep a fixed number of frames and lose rare events. Streaming methods compress past frames into a recurrent state, which drifts over long horizons. Retrieval methods store every clip and fetch a few at question time, which is accurate but slow.\nMemory-augmented transformers have been explored for text and for short clips. LoomNet differs in that its slots are rewritten at every segment and are shared across all questions about the same video.\n3 Method\nA video is cut into 10-second segments. Each segment is encoded by a frozen image encoder followed by a 4-layer temporal transformer. The memory holds 64 slots of width 1024; a gated cross-attention writes the segment into the slots, and a second cross-attention lets question tokens read them.\nTraining minimises the answer cross-entropy plus a small slot-diversity penalty (weight 0.01). We train for 18k steps with batch size 256, a cosine schedule, 2k warm-up steps and learning rate 3e-4.\nAt inference the memory is updated online, so answering a question about minute 55 costs the same as answering one about minute 5. Peak memory stays at 44 GB for 60-minute videos.\n4 Experiments\nLongVid-QA contains short (under 10 minutes) and long (10 to 60 minutes) videos with multiple-choice questions. We report accuracy on the official test split.\nTable 1: Main results on LongVid-QA (accuracy, %).\nMethod\tShort\tLong\tAvg\nBaseline-TR\t79.8\t70.8\t75.3\nLoomNet w/o memory\t78.6\t69.6\t74.1\nLoomNet (ours)\t82.6\t74.2\t78.4\nTraining used 16 GPUs for 22 hours (352 GPU-hours) with a cosine schedule and learning rate 3e-4.\nRemoving the memory costs 4.3 points on average, and most of the loss is on long videos (74.2 to 69.6).\n5 Conclusion\nA small, rewritable slot memory is enough to answer questions about hour-long videos at constant cost. Future work will test LoomNet on egocentric recordings.\nSynthetic document for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Anonymous ICVL 2027 submission · Paper ID 4127 · Draft v5",
+  "Long videos overwhelm fixed-length context windows. We present LoomNet, a video question answering model that weaves a small set of memory slots through the whole video. LoomNet reaches 78.4% average accuracy on LongVid-QA, 3.1 points above the strongest baseline (75.3%), with 298M parameters.",
+  "Our contributions are threefold: (i) a slot memory that is written once per segment and read by every question token, (ii) a curriculum that grows the video length from 2 to 60 minutes, and (iii) a careful ablation of memory size on LongVid-QA.",
+  "LongVid-QA contains short (under 10 minutes) and long (10 to 60 minutes) videos with multiple-choice questions. We report accuracy on the official test split.",
+  "Table 1: Main results on LongVid-QA (accuracy, %).",
+  "LoomNet w/o memory\t78.6\t69.6\t74.1",
+  "LoomNet (ours)\t82.6\t74.2\t78.4",
+  "Training used 16 GPUs for 22 hours (352 GPU-hours) with a cosine schedule and learning rate 3e-4."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "paper_id": "4127",
+  "avg_accuracy": 78.4,
+  "params": "298M",
+  "dataset": "LongVid-QA"
+ },
+ "numbers": [
+  {
+   "value": 4127,
+   "label": "Paper ID"
+  },
+  {
+   "value": 78.4,
+   "label": "avg"
+  },
+  {
+   "value": 298,
+   "label": "params (M)"
+  },
+  {
+   "value": 352,
+   "label": "GPU-hours"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the paper ID?",
+   "a": 4127,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "What average accuracy does LoomNet reach?",
+   "a": 78.4,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "How many parameters does LoomNet have (millions)?",
+   "a": 298,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "On which dataset is it evaluated?",
+   "a": "LongVid-QA",
+   "match": "contains"
+  },
+  {
+   "id": "q5",
+   "q": "In Table 1, what is the average accuracy of LoomNet w/o memory?",
+   "a": 74.1,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "notes": "两页；Table 1 在第 2 页。",
+ "bytes": 73572,
+ "sha256": "62091996df4d8da441e59eed7b2145cab1658ebdeded9982924fbbb4322b696b"
+}

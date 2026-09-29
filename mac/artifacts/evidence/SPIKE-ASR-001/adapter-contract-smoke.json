@@ -1,0 +1,344 @@
+{
+  "candidates" : [
+    {
+      "adapterKind" : "fluid-sensevoice",
+      "artifactID" : "fluid-sensevoice-contract-fixture-v1",
+      "artifactSHA256" : "6036e62fb900bb40fbc0a691c4415a6d5c4d09f12c228572a861e38640affd7a",
+      "candidateID" : "fluid-sensevoice",
+      "capabilities" : [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "digestScope" : "contract-fixture-only",
+      "executionMode" : "contract-fixture-runtime",
+      "modelLicense" : "LicenseRef-FunASR-Model-1.1",
+      "modelRevision" : "0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "modelSource" : "https://huggingface.co/FluidInference/sensevoice-small-coreml/tree/0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "networkPolicy" : "model-manager-verified-artifacts-only",
+      "realModelArtifactID" : "fluid-sensevoice-small-int8-0e0bf30b",
+      "realModelArtifactStatus" : "recommended-memory-smoke-complete-release-matrix-pending",
+      "realModelTreeSHA256" : "df817fcc1009d0d909c2d7eea7dd6babdd4e3288f9b84973ce04fe66c27cf7be",
+      "recommendedMemoryBenchmarkResult" : "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-recommended-memory-smoke.json",
+      "releaseEligible" : false,
+      "runtimeLicense" : "Apache-2.0",
+      "scenarios" : [
+        {
+          "requirementIDs" : [
+            "ASR-001"
+          ],
+          "scenarioID" : "mandarin-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-002"
+          ],
+          "scenarioID" : "english-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-003"
+          ],
+          "scenarioID" : "code-switch-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-004"
+          ],
+          "scenarioID" : "technical-terms-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-005"
+          ],
+          "scenarioID" : "dangerous-tokens-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-006"
+          ],
+          "scenarioID" : "self-correction-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-007"
+          ],
+          "scenarioID" : "dictionary-context-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-008"
+          ],
+          "scenarioID" : "timestamped-segments-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-009"
+          ],
+          "scenarioID" : "bounded-long-session-streaming",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-010"
+          ],
+          "scenarioID" : "revision-replaces-draft",
+          "status" : "pass"
+        }
+      ],
+      "upstreamRuntime" : {
+        "exactVersion" : "0.15.5",
+        "license" : "Apache-2.0",
+        "name" : "FluidAudio",
+        "revision" : "19600a485baa4998812e4654b70d2bab8f2c9949",
+        "source" : "https://github.com/FluidInference/FluidAudio/tree/19600a485baa4998812e4654b70d2bab8f2c9949"
+      }
+    },
+    {
+      "adapterKind" : "whisperkit",
+      "artifactID" : "whisperkit-tiny-contract-fixture-v1",
+      "artifactSHA256" : "153b9bf8c6d8d29dd2e0fd8bb9750bdbf5fe33de4383bc9f6ce8794fd28bf55f",
+      "candidateID" : "whisperkit",
+      "capabilities" : [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "digestScope" : "contract-fixture-only",
+      "executionMode" : "contract-fixture-runtime",
+      "modelLicense" : "MIT",
+      "modelRevision" : "7c9dbc26ff8919e0008ad2dab2c837f228cf76e1",
+      "modelSource" : "https://huggingface.co/argmaxinc/whisperkit-coreml/tree/7c9dbc26ff8919e0008ad2dab2c837f228cf76e1/openai_whisper-tiny",
+      "networkPolicy" : "model-manager-verified-artifacts-only",
+      "realModelArtifactID" : "whisperkit-openai-whisper-tiny-7c9dbc26",
+      "realModelArtifactStatus" : "recommended-memory-smoke-complete-release-matrix-pending",
+      "realModelTreeSHA256" : "46a223998014e9877cb3868a9c0fd19270dfd670d96a1a67d97ba45a3bf244a1",
+      "recommendedMemoryBenchmarkResult" : "artifacts/evidence/SPIKE-ASR-001/whisperkit-recommended-memory-smoke.json",
+      "releaseEligible" : false,
+      "runtimeLicense" : "MIT",
+      "scenarios" : [
+        {
+          "requirementIDs" : [
+            "ASR-001"
+          ],
+          "scenarioID" : "mandarin-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-002"
+          ],
+          "scenarioID" : "english-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-003"
+          ],
+          "scenarioID" : "code-switch-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-004"
+          ],
+          "scenarioID" : "technical-terms-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-005"
+          ],
+          "scenarioID" : "dangerous-tokens-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-006"
+          ],
+          "scenarioID" : "self-correction-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-007"
+          ],
+          "scenarioID" : "dictionary-context-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-008"
+          ],
+          "scenarioID" : "timestamped-segments-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-009"
+          ],
+          "scenarioID" : "bounded-long-session-streaming",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-010"
+          ],
+          "scenarioID" : "revision-replaces-draft",
+          "status" : "pass"
+        }
+      ],
+      "upstreamRuntime" : {
+        "exactVersion" : "1.0.0",
+        "license" : "MIT",
+        "name" : "Argmax OSS / WhisperKit",
+        "revision" : "25c62997041c134b03ca82731ce2f6fd2cae1eb9",
+        "source" : "https://github.com/argmaxinc/argmax-oss-swift/releases/tag/v1.0.0"
+      }
+    },
+    {
+      "adapterKind" : "sherpa-onnx",
+      "artifactID" : "sherpa-zipformer-zh-en-contract-fixture-v1",
+      "artifactSHA256" : "b11c3991a2a9ca3e483b2dd080b21c7218b7a1d85b143850023971e59bb85143",
+      "candidateID" : "sherpa-onnx",
+      "capabilities" : [
+        "asr.batch",
+        "asr.context-terms",
+        "asr.multilingual",
+        "asr.revisioned",
+        "asr.streaming",
+        "asr.timestamps"
+      ],
+      "digestScope" : "contract-fixture-only",
+      "executionMode" : "contract-fixture-runtime",
+      "modelLicense" : "LicenseRef-Community-Training-Data-Audit-Pending",
+      "modelRevision" : "asr-models/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20",
+      "modelSource" : "https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20.tar.bz2",
+      "networkPolicy" : "model-manager-verified-artifacts-only",
+      "realModelArtifactID" : "sherpa-zipformer-bilingual-zh-en-2023-02-20",
+      "realModelArtifactStatus" : "recommended-memory-smoke-complete-release-matrix-pending",
+      "realModelTreeSHA256" : "24e1e2cf660941096b792a617204442e929226ff485ff2ae91e36ae0ed75ccbc",
+      "recommendedMemoryBenchmarkResult" : "artifacts/evidence/SPIKE-ASR-001/sherpa-onnx-recommended-memory-smoke.json",
+      "releaseEligible" : false,
+      "runtimeLicense" : "Apache-2.0",
+      "scenarios" : [
+        {
+          "requirementIDs" : [
+            "ASR-001"
+          ],
+          "scenarioID" : "mandarin-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-002"
+          ],
+          "scenarioID" : "english-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-003"
+          ],
+          "scenarioID" : "code-switch-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-004"
+          ],
+          "scenarioID" : "technical-terms-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-005"
+          ],
+          "scenarioID" : "dangerous-tokens-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-006"
+          ],
+          "scenarioID" : "self-correction-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-007"
+          ],
+          "scenarioID" : "dictionary-context-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-008"
+          ],
+          "scenarioID" : "timestamped-segments-final",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-009"
+          ],
+          "scenarioID" : "bounded-long-session-streaming",
+          "status" : "pass"
+        },
+        {
+          "requirementIDs" : [
+            "ASR-010"
+          ],
+          "scenarioID" : "revision-replaces-draft",
+          "status" : "pass"
+        }
+      ],
+      "upstreamRuntime" : {
+        "exactVersion" : "1.13.2",
+        "license" : "Apache-2.0",
+        "name" : "sherpa-onnx",
+        "revision" : "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+        "source" : "https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.2"
+      }
+    }
+  ],
+  "conclusion" : "pass",
+  "fixtureSuiteSHA256" : "429f3f820f35b17d70c6dfe23cd09af5673f6dfdd94078aa1a8a1a112eede525",
+  "kind" : "candidate-adapter-contract-smoke",
+  "manifestSHA256" : "9c53e4265d8a429beb1ef970872f83f69689334a48e3038c381c7e4b652018cb",
+  "protocolVersion" : 1,
+  "requirementsCovered" : [
+    "ASR-001",
+    "ASR-002",
+    "ASR-003",
+    "ASR-004",
+    "ASR-005",
+    "ASR-006",
+    "ASR-007",
+    "ASR-008",
+    "ASR-009",
+    "ASR-010"
+  ],
+  "runID" : "64000000-0000-4000-8000-000000000001",
+  "schemaVersion" : 1,
+  "selectionDecision" : "no-default-candidate-selected",
+  "unmetReleaseCriteria" : [
+    "the contract probe is separate from the recorded real-runtime recommended-memory smoke",
+    "the versioned release corpus matrix has not run on the 16 GB minimum device",
+    "release-holdout quality, thermal, long-session, and speaker gates remain pending"
+  ]
+}

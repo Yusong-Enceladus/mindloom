@@ -1,0 +1,177 @@
+{
+  "artifactID" : "qwen3-4b-mlx-4bit-52a5ab34",
+  "changedSampleCount" : 12,
+  "factualFailureCount" : 4,
+  "generationConfiguration" : {
+    "maximumKVCacheTokens" : 4096,
+    "maximumOutputTokens" : 384,
+    "prefillStepSize" : 512,
+    "temperature" : 0,
+    "thinkingEnabled" : false
+  },
+  "generationFailureCount" : 0,
+  "hardGateEligible" : false,
+  "kind" : "local-text-real-model-gate-summary",
+  "minimumStylePassCount" : 8,
+  "p50LatencyMilliseconds" : 696.048209,
+  "p95LatencyMilliseconds" : 950.866542,
+  "peakResidentBytes" : 2306654208,
+  "runtimeRevision" : "1c05248bb0899e2a7a4962b84d319cf12f4e12aa",
+  "sampleCount" : 12,
+  "samples" : [
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 950.866542,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000001",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : false,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 822.856334,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000002",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+        "actionOwner",
+        "unsupportedFact"
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 690.921292,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000003",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : false,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 631.220125,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000004",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+        "unsupportedFact"
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 696.048209,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000005",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 768.222583,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000006",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : false,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : false,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 805.985209,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000007",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+        "money",
+        "numberDateTimeAmount",
+        "unsupportedFact"
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 591.84975,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000008",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : false,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 631.686875,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000009",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+        "actionOwner",
+        "commitment",
+        "unsupportedFact"
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 699.402791,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000010",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 543.737125,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000011",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 833.3375,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000012",
+      "styleGatePassed" : false,
+      "terminalPunctuationPresent" : false,
+      "violatedCategories" : [
+
+      ]
+    }
+  ],
+  "schemaVersion" : 1,
+  "sourceRevision" : "52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+  "stylePassCount" : 6,
+  "suiteID" : "alpha-polish-real-model-v1",
+  "treeSHA256" : "47ba881fd337a48e7fc683f0d4bb5edde2a4cb80cbda408a644f73d7a59f8594"
+}

@@ -1,0 +1,77 @@
+{
+ "file_id": "ics-01",
+ "path": "corpus/ics/ics-01.ics",
+ "type": "ics",
+ "ext": "ics",
+ "mime": "text/calendar",
+ "filename": "开题答辩邀请.ics",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "7192D546-D6BF-575F-BDB0-F05FE75F3B9B",
+  "ref": "def_ics",
+  "events": [
+   "ev_defense"
+  ]
+ },
+ "text_layer": "full",
+ "text": "CALENDAR: 开题答辩\n[event 1]\nSUMMARY: 林晓棠 硕士开题答辩\nSTART: 2026-10-14 14:00 (Asia/Shanghai)\nEND: 2026-10-14 16:00 (Asia/Shanghai)\nLOCATION: 计算机楼 B312\nDESCRIPTION: 题目：基于多模态记忆的课堂视频摘要方法研究\n答辩委员会：许卫东（主席）、方敏、沈知遥\n汇报20分钟，提问15分钟。（合成数据）\nORGANIZER: 林晓棠 <lin.xt@example.org>\nATTENDEE: 许卫东 <xuwd@example.org>\nATTENDEE: 方敏 <fangmin@example.org>\nATTENDEE: 沈知遥 <shenzy@example.org>\nALARM: -PT30M",
+ "key_lines": [
+  "START: 2026-10-14 14:00 (Asia/Shanghai)",
+  "LOCATION: 计算机楼 B312",
+  "DESCRIPTION: 题目：基于多模态记忆的课堂视频摘要方法研究",
+  "答辩委员会：许卫东（主席）、方敏、沈知遥",
+  "汇报20分钟，提问15分钟。（合成数据）",
+  "ATTENDEE: 许卫东 <xuwd@example.org>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "地点": "计算机楼 B312",
+  "开始": "2026-10-14 14:00",
+  "主席": "许卫东"
+ },
+ "numbers": [
+  {
+   "value": 20,
+   "label": "汇报分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "答辩在哪里？",
+   "a": "B312",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "几点开始？",
+   "a": "14:00",
+   "match": "contains",
+   "accept": [
+    "下午2点",
+    "下午两点",
+    "14点"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "答辩委员会主席是谁？",
+   "a": "许卫东",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "论文题目是什么？",
+   "a": "基于多模态记忆的课堂视频摘要方法研究",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "events": 1,
+  "calname": "开题答辩"
+ },
+ "bytes": 1167,
+ "sha256": "21ec5d6d87686e722df343e967089adb64965646d4635825255a764a94927377"
+}

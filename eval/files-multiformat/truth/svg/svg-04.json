@@ -1,0 +1,51 @@
+{
+ "file_id": "svg-04",
+ "path": "corpus/svg/svg-04.svg",
+ "type": "svg",
+ "ext": "svg",
+ "mime": "image/svg+xml",
+ "filename": "禾木家居有限公司 组织架构.svg",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "禾木家居有限公司 组织架构\n总经理\n尹心怡\n研发部经理\n乔博文\n市场部经理\n任楠\n财务主管\n贺欣怡\n合成数据",
+ "key_lines": [
+  "尹心怡",
+  "任楠"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "总经理": "尹心怡",
+  "研发部经理": "乔博文",
+  "市场部经理": "任楠",
+  "财务主管": "贺欣怡"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "总经理是谁？",
+   "a": "尹心怡",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "市场部经理是谁？",
+   "a": "任楠",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "图里有几个岗位？",
+   "a": 4,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {},
+ "bytes": 2840,
+ "sha256": "b608e380565c4a8d3bbff9ab583f736e38d65148fdf68134a4a5e08acfe5e07d",
+ "family": "org_chart"
+}

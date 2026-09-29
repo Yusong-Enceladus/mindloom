@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "kind": "audio-decision-validation",
+  "status": "pass",
+  "failureCategory": "",
+  "decisionConclusion": "conditional",
+  "dependentCommitmentAllowed": false,
+  "evidence": [
+    {
+      "path": "artifacts/evidence/SPIKE-CAP-001/summary.json",
+      "sha256": "539998837b27ad06c35bcb7111cd1ccb532fdc7936e4d721987ae04c7b02aa25",
+      "conclusion": "pass"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-CAP-001/matrix.json",
+      "sha256": "32ef95e09648d22ef0c986cbce0b5c620aa7802e7d366e611a2d9bb1da22f20b",
+      "conclusion": "matrix"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-CAP-001/tcc-denial.json",
+      "sha256": "6b466eef3dddc54b99b583973c0df269e1104a443e589c8ade1d40f5c438bbd1",
+      "conclusion": "pass"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-TIM-001/summary.json",
+      "sha256": "2aa0f0d85044f4af314d6b407f891b19bfd2a415f554966cdd376ce65d3cb9c8",
+      "conclusion": "conditional"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-TIM-001/matrix.json",
+      "sha256": "a18a916d63632dee391673e7cb64488243e4678acddcca0f6ede83bf512df022",
+      "conclusion": "matrix"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-JRN-001/summary.json",
+      "sha256": "3e4c4852bbaaa8b849d2ce38f584f646a7038888f9fac3b3d598b1542f546ac4",
+      "conclusion": "conditional"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-JRN-001/matrix.json",
+      "sha256": "191bbd7f60f7c3ce4585e992b79ad921c4ba1eb460c1bc877d33682372cf99b8",
+      "conclusion": "matrix"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-JRN-001/long-recording.json",
+      "sha256": "945b47c77f1f52f6998f128737a10504e060e0fe801cd1e3ef01ba91e11c9e32",
+      "conclusion": "pass"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-WRK-001/summary.json",
+      "sha256": "86827bd60db6d36cdb1d7114b631d823d9ecb86b3dd3e81b945028ef20ea3e57",
+      "conclusion": "pass"
+    },
+    {
+      "path": "artifacts/evidence/SPIKE-WRK-001/matrix.json",
+      "sha256": "bc5ac9929909817ee23c7b7a12e7e870a18fb586a727a7d136cfec658882465b",
+      "conclusion": "matrix"
+    }
+  ]
+}

@@ -1,0 +1,85 @@
+{
+ "id": "slide-19",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-19.jpg",
+ "lang": "en",
+ "hard": [
+  "photo",
+  "perspective",
+  "glare"
+ ],
+ "synthetic": true,
+ "image_sha256": "b649b2acb864826c1a2482821508035fabb21d8bedfaba7ac31bc6e793936423",
+ "gt": {
+  "title": "New Hire Onboarding Plan",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Week 1: accounts, laptop setup, security training (2 h)"
+   },
+   {
+    "level": 0,
+    "text": "Week 2: shadow Ella Moore on support tickets"
+   },
+   {
+    "level": 0,
+    "text": "Week 3: first bug fix, reviewed by Diego Ramos"
+   },
+   {
+    "level": 0,
+    "text": "Week 4: present a 10-minute demo"
+   },
+   {
+    "level": 1,
+    "text": "Buddy check-ins every Tuesday at 4 PM"
+   }
+  ],
+  "kpis": [],
+  "footer": "Northwind Labs Ltd. · Internal",
+  "page": "2 / 28"
+ },
+ "text_lines": [
+  "New Hire Onboarding Plan",
+  "Week 1: accounts, laptop setup, security training (2 h)",
+  "Week 2: shadow Ella Moore on support tickets",
+  "Week 3: first bug fix, reviewed by Diego Ramos",
+  "Week 4: present a 10-minute demo",
+  "Buddy check-ins every Tuesday at 4 PM",
+  "Northwind Labs Ltd. · Internal",
+  "2 / 28"
+ ],
+ "qa": [
+  {
+   "q": "Who reviews the first bug fix?",
+   "a": "Diego Ramos",
+   "match": "exact"
+  },
+  {
+   "q": "Whom does the new hire shadow in week 2?",
+   "a": "Ella Moore",
+   "match": "exact"
+  },
+  {
+   "q": "How long is the security training?",
+   "a": "2 h",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "New Hire Onboarding Plan",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "corporate",
+  "dense": false,
+  "photo": "projected"
+ },
+ "variant": {
+  "content": "en_onboard",
+  "theme": "corporate",
+  "photo": true
+ }
+}

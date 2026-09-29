@@ -1,0 +1,58 @@
+{
+ "file_id": "ods-04",
+ "path": "corpus/ods/ods-04.ods",
+ "type": "ods",
+ "ext": "ods",
+ "mime": "application/vnd.oasis.opendocument.spreadsheet",
+ "filename": "知行图书有限公司 场地使用安排.ods",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[安排]\n知行图书有限公司 场地使用安排\n日期\t时间\t内容\t负责人\t地点\n3月10日\t08:30–12:00\t接待\t高泽宇\t305\n3月11日\t13:30–17:30\t讲解\t钟诗琪\t实训室\n3月12日\t08:30–12:00\t接待\t何静怡\t201\n3月13日\t18:00–21:00\t登记\t宋婉清\t会议室A\n3月14日\t08:30–12:00\t培训\t陆思远\t305\n合成数据\n[统计]\n负责人\t次数\n高泽宇\t1\n钟诗琪\t1\n何静怡\t1\n宋婉清\t1\n陆思远\t1\n合成数据",
+ "key_lines": [
+  "3月10日\t08:30–12:00\t接待\t高泽宇\t305",
+  "3月12日\t08:30–12:00\t接待\t何静怡\t201",
+  "3月14日\t08:30–12:00\t培训\t陆思远\t305",
+  "何静怡\t1"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "条目数": 5,
+  "3月12日": "何静怡 08:30–12:00 201"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "3月12日由谁负责？",
+   "a": "何静怡",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "3月12日在哪里？",
+   "a": "201",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "3月14日是什么时间段？",
+   "a": "08:30–12:00",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "安排",
+   "统计"
+  ],
+  "formulas": 5,
+  "merged": 1
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 2571,
+ "sha256": "cbd94a1d74db2ecd1f477ffc1d6bb050e645f729869ce55b511701fd1cda9287",
+ "family": "schedule"
+}

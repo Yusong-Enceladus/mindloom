@@ -1,0 +1,27 @@
+{
+ "id": "contact-a",
+ "template": "contact",
+ "split": "dev",
+ "filename": "张三.vcf",
+ "path": "data/contact-a.vcf",
+ "sha256": "725cdac02fc3a223a7c9a95cf8dbdddfcce78c87382503498b387fa7878ea27f",
+ "size": 115,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {
+  "name": "张三",
+  "phone": "139-0000-1234"
+ },
+ "type": "contact",
+ "must_contain": [
+  "姓名：张三",
+  "电话：139-0000-1234"
+ ],
+ "summary_groups": [
+  [
+   "张三"
+  ]
+ ],
+ "doc_kind": "other"
+}

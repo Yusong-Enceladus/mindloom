@@ -1,0 +1,85 @@
+{
+  "commands" : [
+    [
+      "script/run_resource_policy_probe.sh"
+    ]
+  ],
+  "conclusion" : "pass",
+  "criteria" : {
+    "fail" : [
+      "any pressure condition stops source journaling, runs lower-priority work ahead of capture, grows backlog beyond capacity, or fails to recover"
+    ],
+    "pass" : [
+      "capture and journal always run before live ASR, final ASR, speaker, and local text work",
+      "memory, thermal, and backlog injections produce observable bounded degradation without source loss",
+      "normal resource state resumes deferred work and every committed chunk remains recoverable"
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/workspace-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "nominal-priority-order",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "memory-warning-sheds-heavy-work",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "memory-critical-preserves-capture-journal",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "thermal-serious-throttles-by-priority",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "thermal-critical-defers-all-inference",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "backlog-cap-enters-observable-degraded-live",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "combined-pressure-remains-bounded",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-RES-001/matrix.json"
+      ],
+      "scenarioID" : "normal-snapshot-recovers-deferred-work",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Does capture and journal remain durable while memory, thermal, and backlog pressure degrade lower-priority inference and then recover observably?",
+  "runID" : "6A000000-0000-4000-8000-000000000001",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-RES-001",
+  "unmetCriteria" : [
+
+  ]
+}

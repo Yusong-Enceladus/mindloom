@@ -1,0 +1,69 @@
+{
+  "generatedAt" : "2026-08-30T03:49:18Z",
+  "kind" : "xpc-inference-protocol-matrix",
+  "runID" : "AB7D2FF1-3B0C-42B9-805F-AD7BE81F37DA",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "clientProtocolVersion" : "1",
+        "status" : "ready",
+        "workerProtocolVersion" : "1"
+      },
+      "scenarioID" : "versioned-health-check",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "errorCategory" : "incompatibleProtocol",
+        "workerStayedAlive" : "true"
+      },
+      "scenarioID" : "incompatible-protocol-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "cancelAcknowledged" : "true",
+        "resultDigestPublished" : "false",
+        "terminalStatus" : "cancelled"
+      },
+      "scenarioID" : "cancellation-is-versioned-and-terminal",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "connectionInvalidated" : "true",
+        "elapsedNanoseconds" : "60042417",
+        "lateResultCommitted" : "false"
+      },
+      "scenarioID" : "request-timeout-invalidates-connection",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "captureCommittedChunkCount" : "3",
+        "crashObserved" : "true",
+        "replayStatus" : "succeeded",
+        "restartHealth" : "ready"
+      },
+      "scenarioID" : "worker-crash-restart-and-job-replay",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "duplicateTranscriptCommitCount" : "0",
+        "responseCount" : "2",
+        "uniqueCommitCount" : "1"
+      },
+      "scenarioID" : "duplicate-response-collapses-by-idempotency-key",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-XPC-001"
+}

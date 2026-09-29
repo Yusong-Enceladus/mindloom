@@ -1,0 +1,115 @@
+{
+  "benchmarkID" : "hand-calculated-golden-v1",
+  "configHash" : "1e8d54953ab76dfba5b2f30247d77255b05caab8c1ce01ef9a0bbe81aeb1fb0d",
+  "corpus" : {
+    "manifestID" : "golden-fixture",
+    "split" : "smoke",
+    "version" : "1.0.0"
+  },
+  "environmentRef" : "fixture://environment/arm64-offline",
+  "failedSampleUUIDs" : [
+
+  ],
+  "hardware" : {
+    "architecture" : "arm64",
+    "osVersion" : "14.2",
+    "toolchainVersion" : "Swift 6 fixture",
+    "unifiedMemoryBytes" : 17179869184
+  },
+  "implementationRevision" : "fixture-revision",
+  "kind" : "benchmark-result",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0.09090909090909091
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0.3333333333333333
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0.3333333333333333
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0.25
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0.4166666666666667
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 1
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 100
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 100
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.25
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 1000
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 3
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fixture-model-v1",
+    "sha256" : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "protocolVersion" : 1,
+  "runID" : "70000000-0000-4000-8000-000000000001",
+  "schemaVersion" : 1,
+  "task" : "asr"
+}

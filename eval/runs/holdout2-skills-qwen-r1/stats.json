@@ -1,0 +1,83 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 46,
+   "ok": 46,
+   "ok_first_attempt": 45,
+   "retried": 1,
+   "latency_median_s": 4.605,
+   "latency_p95_s": 6.909,
+   "latency_total_s": 225.6,
+   "prompt_tokens_mean": 5968.0,
+   "completion_tokens_mean": 183.2,
+   "prompt_tokens_total": 274530,
+   "completion_tokens_total": 8427,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 43,
+   "ok": 28,
+   "ok_first_attempt": 13,
+   "retried": 30,
+   "latency_median_s": 11.226,
+   "latency_p95_s": 15.498,
+   "latency_total_s": 451.0,
+   "prompt_tokens_mean": 6278.6,
+   "completion_tokens_mean": 499.8,
+   "prompt_tokens_total": 269978,
+   "completion_tokens_total": 21490,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[format] status_line must be exactly one sentence",
+    "[format] status_line must be exactly one sentence"
+   ]
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 7.992,
+   "latency_p95_s": 9.872,
+   "latency_total_s": 49.0,
+   "prompt_tokens_mean": 4509,
+   "completion_tokens_mean": 375.8,
+   "prompt_tokens_total": 27054,
+   "completion_tokens_total": 2255,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.732,
+   "latency_p95_s": 8.411,
+   "latency_total_s": 29.9,
+   "prompt_tokens_mean": 2485,
+   "completion_tokens_mean": 398.5,
+   "prompt_tokens_total": 9940,
+   "completion_tokens_total": 1594,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 7,
+  "attach": 35,
+  "none": 3,
+  "ask": 1
+ },
+ "assign_actions": {
+  "new": 7,
+  "attach": 35,
+  "none": 3,
+  "ask": 1
+ },
+ "final_live_events": 8,
+ "status_line_chars_mean": 33.5,
+ "title_chars_mean": 15.8,
+ "wall_s": 759.3,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

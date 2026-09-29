@@ -1,0 +1,235 @@
+{
+  "corpusManifestID" : "fleurs-public-asr-tuning-v1",
+  "corpusVersion" : "1.0.0",
+  "evaluationProfile" : "english",
+  "failedSampleUUIDs" : [
+
+  ],
+  "gates" : [
+    {
+      "id" : "coverage",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "failed-samples",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "wer",
+      "maximum" : 0.25,
+      "observed" : 0.0780399274047187,
+      "status" : "pass"
+    },
+    {
+      "id" : "dangerous-token-errors",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "latency-p95",
+      "maximum" : 3000,
+      "observed" : 190.1605,
+      "status" : "pass"
+    },
+    {
+      "id" : "realtime-factor",
+      "maximum" : 0.75,
+      "observed" : 0.01748256394387775,
+      "status" : "pass"
+    },
+    {
+      "id" : "peak-rss",
+      "maximum" : 1610612736,
+      "observed" : 684720128,
+      "status" : "pass"
+    },
+    {
+      "id" : "network-denied",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    }
+  ],
+  "kind" : "alpha-asr-evaluation-decision",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0.09725974527209572
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0.0780399274047187
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0.07913669064748201
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 143.110208
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 190.1605
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.01748256394387775
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 684720128
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 1
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fluid-parakeet-unified-en-int8-4252711f",
+    "sha256" : "78c6a306a7207f7a771a5468c1151c0a459d049702cbcc47d28fdc817392e2e4"
+  },
+  "networkDeniedByParentSandbox" : true,
+  "observedTags" : [
+    "adversarial",
+    "asr",
+    "baseline",
+    "dictionary",
+    "english",
+    "female",
+    "fleurs",
+    "local-only",
+    "long",
+    "male",
+    "medium",
+    "names-terms",
+    "noise",
+    "numbers-dates-negation",
+    "pace",
+    "pause",
+    "public-licensed",
+    "punctuation",
+    "read-speech",
+    "real-human",
+    "self-correction",
+    "short",
+    "silence",
+    "slow",
+    "tuning"
+  ],
+  "requiredTags" : [
+    "english",
+    "numbers-dates-negation",
+    "real-human",
+    "silence"
+  ],
+  "sampleCount" : 32,
+  "schemaVersion" : 1,
+  "selectionEligible" : true,
+  "status" : "pass"
+}

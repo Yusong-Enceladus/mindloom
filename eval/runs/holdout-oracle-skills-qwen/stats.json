@@ -1,0 +1,42 @@
+{
+ "per_job": {
+  "brief": {
+   "calls": 32,
+   "ok": 32,
+   "ok_first_attempt": 32,
+   "retried": 0,
+   "latency_median_s": 3.441,
+   "latency_p95_s": 4.675,
+   "latency_total_s": 111.3,
+   "prompt_tokens_mean": 2071.5,
+   "completion_tokens_mean": 286.7,
+   "prompt_tokens_total": 66289,
+   "completion_tokens_total": 9174,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 4.485,
+   "latency_p95_s": 4.485,
+   "latency_total_s": 4.5,
+   "prompt_tokens_mean": 2400,
+   "completion_tokens_mean": 345,
+   "prompt_tokens_total": 2400,
+   "completion_tokens_total": 345,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 7,
+  "attach": 25
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 24.4,
+ "title_chars_mean": 10.7,
+ "wall_s": 117.4,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

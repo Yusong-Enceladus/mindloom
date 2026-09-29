@@ -1,0 +1,103 @@
+{
+ "id": "chat-05",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-05.png",
+ "lang": "zh",
+ "hard": [
+  "non_text_bubbles",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "472ae2d2252893fab638c3d507697ac906539799ec34490a0135811c3af40b4c",
+ "gt": {
+  "chat_title": "售后客服小禾",
+  "is_group": false,
+  "messages": [
+   {
+    "sender": "售后客服小禾",
+    "is_self": false,
+    "time": "09:35",
+    "text": "您好，退货单 TH8330477070 已受理",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "大概几天能退款？",
+    "kind": "text"
+   },
+   {
+    "sender": "售后客服小禾",
+    "is_self": false,
+    "time": "",
+    "text": "仓库签收后5个工作日内退款129元到原支付账户",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "好的，快递已经寄出了",
+    "kind": "text"
+   },
+   {
+    "sender": "售后客服小禾",
+    "is_self": false,
+    "time": "09:40",
+    "text": "[文件 退货须知.pdf]",
+    "kind": "file",
+    "file_name": "退货须知.pdf",
+    "sender_shown": false
+   },
+   {
+    "sender": "售后客服小禾",
+    "is_self": false,
+    "time": "",
+    "text": "请按须知在包裹内附上退货单号",
+    "kind": "text",
+    "sender_shown": false
+   }
+  ]
+ },
+ "text_lines": [
+  "售后客服小禾",
+  "售后客服小禾：您好，退货单 TH8330477070 已受理",
+  "我：大概几天能退款？",
+  "售后客服小禾：仓库签收后5个工作日内退款129元到原支付账户",
+  "我：好的，快递已经寄出了",
+  "售后客服小禾：[文件 退货须知.pdf]",
+  "售后客服小禾：请按须知在包裹内附上退货单号"
+ ],
+ "qa": [
+  {
+   "q": "退货单号是多少？",
+   "a": "TH8330477070",
+   "match": "exact"
+  },
+  {
+   "q": "退款金额是多少？",
+   "a": "129元",
+   "match": "number"
+  },
+  {
+   "q": "签收后几个工作日内退款？",
+   "a": "5个工作日",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "mint",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "refund",
+  "theme": "mint"
+ }
+}

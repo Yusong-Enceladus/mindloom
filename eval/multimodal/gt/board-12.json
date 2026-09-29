@@ -1,0 +1,90 @@
+{
+ "id": "board-12",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-12.jpg",
+ "lang": "en",
+ "hard": [
+  "handwriting",
+  "struck_items",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "9c46bc8c949c47c7436d27ff459ca58edd9a5d1f44d504c0da8133f7ce0a4aa5",
+ "gt": {
+  "surface": "notebook",
+  "lines": [
+   {
+    "text": "Groceries",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "Coffee beans 3 lb",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Oat milk x4",
+    "struck": false,
+    "checked": true,
+    "is_title": false
+   },
+   {
+    "text": "Honey 16 oz",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Paper cups (100)",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "Lemons",
+    "struck": true,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "Groceries",
+  "Coffee beans 3 lb",
+  "Oat milk x4",
+  "Honey 16 oz",
+  "Paper cups (100)",
+  "Lemons"
+ ],
+ "qa": [
+  {
+   "q": "How many pounds of coffee beans?",
+   "a": "3 lb",
+   "match": "number"
+  },
+  {
+   "q": "How much honey?",
+   "a": "16 oz",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "notebook",
+  "font": "hand_noteworthy",
+  "size": 56,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "en_shopping",
+  "font": "hand_noteworthy",
+  "surface": "notebook",
+  "shadow": true,
+  "size": 56
+ }
+}

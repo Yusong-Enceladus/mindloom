@@ -1,0 +1,107 @@
+{
+ "id": "receipt-18",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-18.jpg",
+ "lang": "en",
+ "hard": [
+  "shadow",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "5e00d30a26c99b7e36899e06bddbb56f55ac830a1b50034cb26a56c2563bd273",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "Tallpine Logistics LLC",
+  "date": "2026-10-18",
+  "date_text": "Oct 18, 2026",
+  "time": "",
+  "doc_no": "INV-2026-9889",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Wood screws #8 x 1-1/4in",
+    "qty": 10,
+    "unit": "box",
+    "unit_price": "6.49",
+    "amount": "64.90"
+   },
+   {
+    "name": "Copper wire",
+    "qty": 1.99,
+    "unit": "ft",
+    "unit_price": "0.45",
+    "amount": "0.90"
+   },
+   {
+    "name": "Painter's tape 2in",
+    "qty": 12,
+    "unit": "roll",
+    "unit_price": "7.99",
+    "amount": "95.88"
+   },
+   {
+    "name": "Extension cord 10 ft",
+    "qty": 36,
+    "unit": "ea",
+    "unit_price": "14.99",
+    "amount": "539.64"
+   }
+  ],
+  "subtotal": "701.32",
+  "discount": "0.00",
+  "tax": "57.86",
+  "total": "759.18",
+  "payment_method": "Bank transfer",
+  "buyer": "Fernhollow Foods Inc.",
+  "tax_rate": 8.25,
+  "due_date": "2026-11-17"
+ },
+ "text_lines": [
+  "INVOICE",
+  "Tallpine Logistics LLC",
+  "Bill to: Fernhollow Foods Inc. Invoice no.: INV-2026-9889",
+  "Date: Oct 18, 2026 Due: Nov 17, 2026",
+  "Wood screws #8 x 1-1/4in 10 6.49 64.90",
+  "Copper wire 1.99ft 0.45 0.90",
+  "Painter's tape 2in 12 7.99 95.88",
+  "Extension cord 10 ft 36 14.99 539.64",
+  "Subtotal $701.32",
+  "Tax (8.25%) $57.86",
+  "Total due $759.18",
+  "Payment terms: net 30 days by bank transfer. Please quote the invoice number."
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$759.18",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Tallpine Logistics LLC",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-10-18",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$57.86",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "lang": "en",
+  "shadow": true
+ }
+}

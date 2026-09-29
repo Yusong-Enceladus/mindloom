@@ -1,0 +1,121 @@
+{
+ "id": "label-02",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-02.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "e0f745a96b2f4ef0b76bd8b5e841ae05d9490913e2418659fd8e1ed2628ab777",
+ "gt": {
+  "label_kind": "nameplate",
+  "fields": [
+   {
+    "key": "product",
+    "label": "",
+    "value": "商用咖啡机"
+   },
+   {
+    "key": "model",
+    "label": "型号",
+    "value": "EC-2G-10"
+   },
+   {
+    "key": "voltage",
+    "label": "额定电压",
+    "value": "220V~"
+   },
+   {
+    "key": "frequency",
+    "label": "额定频率",
+    "value": "50Hz"
+   },
+   {
+    "key": "power",
+    "label": "额定功率",
+    "value": "3000W"
+   },
+   {
+    "key": "capacity",
+    "label": "额定容量",
+    "value": "10L"
+   },
+   {
+    "key": "ip_rating",
+    "label": "防水等级",
+    "value": "IPX1"
+   },
+   {
+    "key": "serial_no",
+    "label": "出厂编号",
+    "value": "E64466088"
+   },
+   {
+    "key": "manufacture_date",
+    "label": "生产日期",
+    "value": "2026年4月"
+   },
+   {
+    "key": "manufacturer",
+    "label": "",
+    "value": "青槐厨房设备有限公司"
+   }
+  ],
+  "lines": [
+   "商用咖啡机",
+   "型号：EC-2G-10",
+   "额定电压：220V~",
+   "额定频率：50Hz",
+   "额定功率：3000W",
+   "额定容量：10L",
+   "防水等级：IPX1",
+   "出厂编号：E64466088",
+   "生产日期：2026年4月",
+   "青槐厨房设备有限公司"
+  ]
+ },
+ "text_lines": [
+  "商用咖啡机",
+  "型号：EC-2G-10",
+  "额定电压：220V~",
+  "额定频率：50Hz",
+  "额定功率：3000W",
+  "额定容量：10L",
+  "防水等级：IPX1",
+  "出厂编号：E64466088",
+  "生产日期：2026年4月",
+  "青槐厨房设备有限公司"
+ ],
+ "qa": [
+  {
+   "q": "额定功率是多少？",
+   "a": "3000W",
+   "match": "number"
+  },
+  {
+   "q": "型号是什么？",
+   "a": "EC-2G-10",
+   "match": "exact"
+  },
+  {
+   "q": "出厂编号是多少？",
+   "a": "E64466088",
+   "match": "exact"
+  },
+  {
+   "q": "额定容量是多少？",
+   "a": "10L",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "nameplate",
+  "background": "desk_grey"
+ },
+ "variant": {
+  "kind": "nameplate"
+ }
+}

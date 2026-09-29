@@ -1,0 +1,90 @@
+{
+ "file_id": "xlsx-04",
+ "path": "corpus/xlsx/xlsx-04.xlsx",
+ "type": "xlsx",
+ "ext": "xlsx",
+ "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "filename": "启明仪器有限公司 销售单.xlsx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[明细]\n启明仪器有限公司 销售单\n计价\n序号\t品名\t数量\t单价（元）\t金额（元）\n1\t白板（120×90）\t6\t240\t1440\n2\t投影仪\t6\t3280\t19680\n3\t人体工学椅\t6\t890\t5340\n4\t文件柜（四门）\t3\t760\t2280\n\t小计\t\t\t28740\n\t税额 13%\t\t\t3736.2\n\t合计\t\t\t32476.2\n合成数据\n[单据信息]\n项目\t内容\n单据编号\tNo.32859627\n客户\t远帆物流有限公司\n日期\t2026年6月2日\n合计（元）\t32476.2\n合成数据",
+ "key_lines": [
+  "1\t白板（120×90）\t6\t240\t1440",
+  "2\t投影仪\t6\t3280\t19680",
+  "3\t人体工学椅\t6\t890\t5340",
+  "小计\t\t\t28740",
+  "税额 13%\t\t\t3736.2",
+  "合计\t\t\t32476.2",
+  "单据编号\tNo.32859627",
+  "客户\t远帆物流有限公司",
+  "日期\t2026年6月2日",
+  "合计（元）\t32476.2"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "单据编号": "No.32859627",
+  "客户": "远帆物流有限公司",
+  "小计": 28740,
+  "税率": "13%",
+  "合计": 32476.2
+ },
+ "numbers": [
+  {
+   "value": 28740,
+   "label": "小计"
+  },
+  {
+   "value": 3736.2,
+   "label": "税额"
+  },
+  {
+   "value": 32476.2,
+   "label": "合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "合计金额是多少元？",
+   "a": 32476.2,
+   "match": "number",
+   "tol": 0.01
+  },
+  {
+   "id": "q2",
+   "q": "单据编号是多少？",
+   "a": "No.32859627",
+   "match": "exact",
+   "accept": [
+    "32859627"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "白板（120×90）买了多少？",
+   "a": 6,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "开给哪个客户？",
+   "a": "远帆物流有限公司",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "明细",
+   "单据信息"
+  ],
+  "formulas": 8,
+  "merged": 2
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 7043,
+ "sha256": "d19247ea24558c31a4c3bf92e0f10a9e096fd3c203b9328226e26c3c7b573c36",
+ "family": "invoice"
+}

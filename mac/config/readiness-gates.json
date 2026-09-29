@@ -1,0 +1,195 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-gates",
+  "gates": [
+    {
+      "id": "full-repository-check",
+      "evidencePath": "artifacts/evidence/environment/check-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["1.5", "8.3"],
+      "blocker": "The complete build, test, privacy, and artifact pipeline must pass after the latest source change."
+    },
+    {
+      "id": "live-process-tap-boundary",
+      "evidencePath": "artifacts/evidence/SPIKE-CAP-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["4.1"],
+      "blocker": "The live Process Tap watermark matrix must pass selected/nonselected, helper, restart, silence, device, permission, and cleanup cases."
+    },
+    {
+      "id": "audio-journal-decision",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["4.4", "4.7"],
+      "blocker": "Conditional journal evidence must remain visible until live device and physical storage boundaries are resolved."
+    },
+    {
+      "id": "two-hour-recording",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/long-recording.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["4.5"],
+      "blocker": "A complete two-hour report is required; synthetic device events do not replace the remaining physical device matrix."
+    },
+    {
+      "id": "audio-decision-cross-check",
+      "evidencePath": "artifacts/evidence/SPIKE-JRN-001/audio-decision-validation.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["4.7"],
+      "blocker": "ADR-0003 and the technical design must match the digests and aggregate conclusion of all capture, timeline, journal, endurance, and worker evidence."
+    },
+    {
+      "id": "ax-insertion-live-probe",
+      "evidencePath": "artifacts/evidence/SPIKE-INS-001/live-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["5.1"],
+      "blocker": "The unlocked-device Accessibility fixture must pass direct insertion, rejection, race, and clipboard fallback cases without a wrong-target write."
+    },
+    {
+      "id": "ax-insertion-compatibility",
+      "evidencePath": "artifacts/evidence/SPIKE-INS-001/compatibility-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["5.2"],
+      "blocker": "TextEdit, Chrome, Word, Outlook, rich-text, and Electron evidence passes; a controlled blank Terminal target still needs repeated success, latency, fallback, and side-effect evidence."
+    },
+    {
+      "id": "xpc-real-model-boundary",
+      "evidencePath": "artifacts/evidence/SPIKE-XPC-001/comparison.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["5.4"],
+      "blocker": "The XPC decision remains conditional until real-model, 16 GB, and signed-release measurements pass."
+    },
+    {
+      "id": "asr-release-device-matrix",
+      "evidencePath": "artifacts/evidence/SPIKE-ASR-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["6.4", "6.5"],
+      "blocker": "Pinned real runtimes and model digests passed a recommended-memory smoke; the full shared release corpus still needs a 16 GB minimum-support device plus thermal and long-session gates."
+    },
+    {
+      "id": "speaker-release-device-matrix",
+      "evidencePath": "artifacts/evidence/SPIKE-SPK-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "conditional",
+      "taskRefs": ["6.7"],
+      "blocker": "The recommended-memory synthetic four-input diarization/identity smoke passed; the 16 GB, authorized real-human device-lab/private-consented, release-holdout, correction-UX, license, and packaging matrices remain pending."
+    },
+    {
+      "id": "candidate-default-selection",
+      "evidencePath": "config/inference-candidates.json",
+      "field": "selectionStatus",
+      "expectedValue": "release-default-selected-from-device-matrix",
+      "unmetStatus": "conditional",
+      "taskRefs": ["6.11"],
+      "blocker": "No default inference candidate may be selected before both ASR and speaker real-device release matrices, license reviews, and packaging gates pass."
+    },
+    {
+      "id": "inference-evidence-integrity",
+      "evidencePath": "artifacts/evidence/benchmark/inference-evidence-integrity.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["6.11"],
+      "blocker": "Candidate registry, fixture artifacts, model digests, and ASR/LLM/resource reports must cross-reference exactly."
+    },
+    {
+      "id": "llm-factual-hard-gate",
+      "evidencePath": "artifacts/evidence/SPIKE-LLM-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["6.9"],
+      "blocker": "Every dangerous factual category must remain at zero errors."
+    },
+    {
+      "id": "resource-priority-policy",
+      "evidencePath": "artifacts/evidence/SPIKE-RES-001/summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["6.10"],
+      "blocker": "Capture and journal must survive all resource-pressure scenarios."
+    },
+    {
+      "id": "permission-minimization",
+      "evidencePath": "artifacts/evidence/permissions/permission-lint-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["7.1"],
+      "blocker": "Required usage descriptions and the minimal entitlement set must pass fail-closed linting."
+    },
+    {
+      "id": "signed-notarized-release",
+      "evidencePath": "artifacts/evidence/release/release-smoke-summary.json",
+      "field": "releaseEligible",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["7.2"],
+      "blocker": "Developer ID signing, notarization, stapling, and Gatekeeper require authorized release credentials."
+    },
+    {
+      "id": "release-package-supply-chain",
+      "evidencePath": "artifacts/evidence/supply-chain/release-package-validation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["7.3"],
+      "blocker": "Every packaged binary, model, resource, and digest must match the frozen release manifest."
+    },
+    {
+      "id": "update-signature-and-rollback",
+      "evidencePath": "artifacts/evidence/updates/update-rollback-summary.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["7.4"],
+      "blocker": "App/model update tamper, interruption, downgrade, and rollback scenarios must all pass."
+    },
+    {
+      "id": "privacy-scan",
+      "evidencePath": "artifacts/evidence/privacy/privacy-scan-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["2.3"],
+      "blocker": "Repository-visible files must remain free of user content, secrets, and signing material."
+    },
+    {
+      "id": "traceability-integrity",
+      "evidencePath": "artifacts/evidence/traceability/validation-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["8.1"],
+      "blocker": "PRD/threat/scenario/test/evidence references must resolve without missing evidence."
+    },
+    {
+      "id": "product-consistency",
+      "evidencePath": "artifacts/evidence/traceability/consistency-summary.json",
+      "field": "status",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["8.2"],
+      "blocker": "The five frozen MVP/V1 invariants must agree across requirements, design, ADRs, and code configuration."
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "device-lab-smoke",
+  "version": "1.0.0",
+  "tier": "device-lab",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "30000000-0000-4000-8000-000000000001",
+      "consentClass": "device-lab",
+      "assetReference": "fixture://device-lab/watermark-descriptor-001",
+      "contentDigest": "3333333333333333333333333333333333333333333333333333333333333333",
+      "languages": [
+        "zh-CN"
+      ],
+      "tags": [
+        "metadata-only",
+        "process-boundary",
+        "watermark"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+ "id": "receipt-03",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-03.jpg",
+ "lang": "zh",
+ "hard": [
+  "glare",
+  "small_text",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "b3f2fc5749fc529bc6528b3a93801ba5cad7bdc939ae120129d520787fbdfbd9",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "青禾便利店",
+  "date": "2026-08-04",
+  "date_text": "2026-08-04 14:57",
+  "time": "14:57",
+  "doc_no": "202608041340",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "原味酸奶",
+    "qty": 4,
+    "unit": "杯",
+    "unit_price": "4.50",
+    "amount": "18.00"
+   },
+   {
+    "name": "纯牛奶 250mL×12",
+    "qty": 3,
+    "unit": "箱",
+    "unit_price": "59.90",
+    "amount": "179.70"
+   },
+   {
+    "name": "香蕉",
+    "qty": 2.224,
+    "unit": "kg",
+    "unit_price": "7.98",
+    "amount": "17.75"
+   }
+  ],
+  "subtotal": "215.45",
+  "discount": "5.00",
+  "tax": "0.00",
+  "total": "210.45",
+  "payment_method": "会员卡"
+ },
+ "text_lines": [
+  "青禾便利店",
+  "溪桥市桂香区杉木路105号",
+  "电话：0000-2676",
+  "单号：202608041340 收银员：12",
+  "日期：2026-08-04 14:57",
+  "原味酸奶 4 4.50 18.00",
+  "纯牛奶 250mL×12 3 59.90 179.70",
+  "香蕉 2.224kg 7.98 17.75",
+  "合计件数：3",
+  "小计 215.45",
+  "优惠 -5.00",
+  "实付 ¥210.45",
+  "支付方式：会员卡",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥210.45",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "青禾便利店",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-08-04",
+   "match": "date"
+  },
+  {
+   "q": "纯牛奶 250mL×12的金额是多少？",
+   "a": "179.70元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "far": true,
+  "glare": true
+ }
+}

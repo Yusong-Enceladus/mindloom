@@ -1,0 +1,55 @@
+{
+ "file_id": "xml-05",
+ "path": "corpus/xml/xml-05.xml",
+ "type": "xml",
+ "ext": "xml",
+ "mime": "application/xml",
+ "filename": "River Clean-up Day registrations.xml",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<registrations event=\"River Clean-up Day\" date=\"2026-11-04\" note=\"synthetic data\">\n  <attendees count=\"4\">\n    <attendee id=\"R100\"><name>Lucas Meyer</name><ticket>student</ticket><fee currency=\"USD\">0</fee></attendee>\n    <attendee id=\"R101\"><name>Omar Haddad</name><ticket>standard</ticket><fee currency=\"USD\">15</fee></attendee>\n    <attendee id=\"R102\"><name>Priya Raman</name><ticket>standard</ticket><fee currency=\"USD\">15</fee></attendee>\n    <attendee id=\"R103\"><name>Hana Sato</name><ticket>standard</ticket><fee currency=\"USD\">10</fee></attendee>\n  </attendees>\n  <total_fees currency=\"USD\">40</total_fees>\n</registrations>",
+ "key_lines": [
+  "<attendee id=\"R102\"><name>Priya Raman</name><ticket>standard</ticket><fee currency=\"USD\">15</fee></attendee>",
+  "<total_fees currency=\"USD\">40</total_fees>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "event": "River Clean-up Day",
+  "attendees": 4,
+  "total_fees": 40
+ },
+ "numbers": [
+  {
+   "value": 40,
+   "label": "total fees"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "How many attendees are registered?",
+   "a": 4,
+   "match": "number",
+   "derived": true
+  },
+  {
+   "id": "q2",
+   "q": "What are the total fees in USD?",
+   "a": 40,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the attendee ID of Priya Raman?",
+   "a": "R102",
+   "match": "exact"
+  }
+ ],
+ "structure": {},
+ "bytes": 671,
+ "sha256": "3815ea73651bfee04af7ae0b409ce682bcb4f81806d73bc4faa50d4d1dc75de6",
+ "family": "registration_en"
+}

@@ -1,0 +1,1647 @@
+{
+ "$schema": "../../schema/scenario.schema.json",
+ "scenario_id": "files-multiformat-v1",
+ "version": 1,
+ "split": "holdout",
+ "synthetic": true,
+ "locale": "zh-CN",
+ "title": "清屿大学视觉智能实验室 · 多格式文件周（合成）",
+ "description": "一周的实验室素材：43 个文件（33 种格式，每种至少 1 个）+ 7 条聊天粘贴，分属 6 件事和 3 条噪声。文件条目用 file 指向 ../corpus 里的原文件（file_truth 是金标准，不发送）。按事件切分：ev_talk、ev_annot 与食堂菜单为 dev（scenario.dev.json），其余为 test（scenario.test.json）；整份 scenario.json 含 test 素材，按 holdout 对待，不可据此调提示词。全部为合成数据。",
+ "owner_person_id": "p_owner",
+ "people": [
+  {
+   "person_id": "p_owner",
+   "display_name": "沈知遥",
+   "is_owner": true,
+   "role": "视觉智能实验室负责人、副教授（本人）",
+   "aliases": [
+    "我",
+    "沈老师",
+    "知遥",
+    "Zhiyao",
+    "Zhiyao Shen",
+    "Prof. Shen"
+   ],
+   "voice": {
+    "mac_person_id": "44DD951D-4421-5F7F-91E2-7F598BC20493",
+    "user_label": "我"
+   }
+  },
+  {
+   "person_id": "p_he",
+   "display_name": "贺一鸣",
+   "role": "博士三年级，LoomNet 论文一作",
+   "aliases": [
+    "一鸣",
+    "Yiming"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_lin",
+   "display_name": "林晓棠",
+   "role": "硕士二年级",
+   "aliases": [
+    "晓棠",
+    "小林"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_gu",
+   "display_name": "顾青",
+   "role": "实验室秘书（采购、报销）",
+   "aliases": [
+    "顾老师",
+    "青姐"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_tao",
+   "display_name": "陶然",
+   "role": "博士后，管理 GPU 集群",
+   "aliases": [
+    "陶博"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_ma",
+   "display_name": "马骏",
+   "role": "澄川科技 项目经理",
+   "aliases": [
+    "马经理",
+    "马总"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_park",
+   "display_name": "Elena Park",
+   "role": "Northbridge University 教授，来访讲者",
+   "aliases": [
+    "Elena",
+    "Prof. Park",
+    "Park 教授"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_zhou",
+   "display_name": "周蔓",
+   "role": "数芽标注 客户经理",
+   "aliases": [
+    "周经理",
+    "蔓蔓"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_xu",
+   "display_name": "许卫东",
+   "role": "教授，开题答辩委员会主席",
+   "aliases": [
+    "许老师"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_fang",
+   "display_name": "方敏",
+   "role": "副教授，开题答辩委员",
+   "aliases": [
+    "方老师"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_qian",
+   "display_name": "钱立",
+   "role": "恒算科技 销售经理",
+   "aliases": [
+    "钱经理"
+   ],
+   "voice": null
+  },
+  {
+   "person_id": "p_song",
+   "display_name": "宋雨桐",
+   "role": "学院科研办，讲座接待",
+   "aliases": [
+    "雨桐",
+    "宋老师"
+   ],
+   "voice": null
+  }
+ ],
+ "events": [
+  {
+   "event_id": "ev_paper",
+   "kind": "main",
+   "title": "LoomNet 论文投稿 ICVL 2027",
+   "summary": "贺一鸣一作的 LoomNet 投 ICVL 2027：摘要 10/16、全文 10/23 截止，run42 平均准确率 78.4。"
+  },
+  {
+   "event_id": "ev_gpu",
+   "kind": "main",
+   "title": "8 卡 GPU 服务器采购（2 台）",
+   "summary": "向恒算科技采购 2 台 HS-G8820，总价 119.6 万，合同 HS-2026-1017，第一台 10/16 到货，第二台 10/23。"
+  },
+  {
+   "event_id": "ev_defense",
+   "kind": "main",
+   "title": "林晓棠硕士开题答辩",
+   "summary": "原定 10/14 14:00 B312，因许卫东有课改到 10/15 14:00；结论通过，修改稿 10/25 前交。"
+  },
+  {
+   "event_id": "ev_collab",
+   "kind": "main",
+   "title": "澄川科技横向项目（产线缺陷检测）",
+   "summary": "合同 36 万分三期；v1.2 mAP 0.873；10/20 在苏州工厂中期验收，之后付第二期 18 万。"
+  },
+  {
+   "event_id": "ev_talk",
+   "kind": "main",
+   "title": "Elena Park 教授来访讲座",
+   "summary": "10/16 15:00 A101 讲座；10/15 晚到（航班延误到 22:40）；酒店确认号 QYH-88213。"
+  },
+  {
+   "event_id": "ev_annot",
+   "kind": "main",
+   "title": "数芽标注外包（KitchenQA 视频问答）",
+   "summary": "2 万条 × 1.8 元 = 3.6 万，4 批；第 1 批合格率 96.2% 验收通过付 9000 元；第 2 批 10/22 交。"
+  }
+ ],
+ "items": [
+  {
+   "item_id": "E6C57E59-2127-502D-8626-AF1F817BA211",
+   "ref": "eml-02",
+   "t": "2026-10-12T08:15:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_park",
+    "p_owner",
+    "p_song"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:eml",
+    "split:dev"
+   ],
+   "filename": "Visit_to_Qingyu_travel_details.eml",
+   "file": "../corpus/eml/eml-02.eml",
+   "mime_type": "message/rfc822",
+   "file_truth": "../truth/eml/eml-02.json",
+   "file_text": "From: Elena Park <elena.park@example.org>\nTo: Zhiyao Shen <shenzy@example.org>\nCc: 宋雨桐 <songyt@example.org>\nDate: Mon, 12 Oct 2026 08:15:00 +0800\nSubject: Visit to Qingyu — travel details and talk abstract\nDear Zhiyao,\nThank you again for the invitation. Here are my travel details:\n- Arrival: flight ZY 5718, departing Singapore at 13:25 on Thursday, October 15, arriving at Qingyu Airport at 19:10 local time.\n- Departure: Saturday, October 17, flight ZY 5723 at 11:40.\nMy talk title is \"Memory Structures for Embodied Agents\". I would prefer a 60-minute talk plus 30 minutes of Q&A. The abstract and a short bio are attached.\nDietary note: I am vegetarian.\nBest regards,\nElena\n-- \nElena Park, Professor of Computer Science, Northbridge University\n(synthetic data · 合成数据)\n[attachment] talk_abstract.txt\nMemory Structures for Embodied Agents\nElena Park, Northbridge University\nAbstract: Embodied agents must remember what they saw, what they know and how to act. This talk compares three memory types (episodic, semantic and procedural) across 4 benchmark suites and argues that agents need all three, with explicit rules for forgetting.\n(synthetic data)\n[attachment] bio_ElenaPark.docx\nSYNTHETIC DATA · 合成数据 · 仅供评测使用\nShort Bio — Elena Park\nElena Park is a Professor of Computer Science at Northbridge University, where she leads the Embodied Memory Group (12 members).\nShe received her PhD in 2014 and has published more than 60 papers on robot learning and memory.\nSYNTHETIC DATA · 合成数据"
+  },
+  {
+   "item_id": "6B08B81D-8F74-5BEC-BFF7-0B77FABB9EF8",
+   "ref": "md-01",
+   "t": "2026-10-12T09:20:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_he",
+    "p_tao",
+    "p_owner"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:md",
+    "split:test"
+   ],
+   "filename": "LoomNet投稿TODO.md",
+   "file": "../corpus/md/md-01.md",
+   "mime_type": "text/markdown",
+   "file_truth": "../truth/md/md-01.json",
+   "file_text": "project: LoomNet\nupdated: 2026-10-12\nowner: 贺一鸣\nLoomNet 投稿 TODO（ICVL 2027）\n关键日期\n摘要截止：2026年10月16日 23:59 AoE\n全文截止：2026年10月23日 23:59 AoE\n补充材料截止：2026年10月30日\n页数限制：正文 8 页（不含参考文献）\n任务\n- [ ] 贺一鸣：补完 memory_slots 消融（32/64/128），10月14日前\n- [ ] 陶然：预留 16 张卡跑最终实验（10月13日—10月20日）\n- [ ] 沈知遥：改写引言和相关工作，10月18日前\n- [x] 贺一鸣：LongVid-QA 主实验 run37（平均 76.9）\n备注\n目标：在 LongVid-QA 上超过 baseline（75.3）至少 2 个点；本次投稿算力预算 2,000 GPU·时。\n合成数据"
+  },
+  {
+   "item_id": "1E9DA35F-B96A-55A1-B6A5-FB188F573DD1",
+   "ref": "docx-01",
+   "t": "2026-10-12T10:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_qian",
+    "p_owner"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:docx",
+    "split:test"
+   ],
+   "filename": "恒算科技_GPU服务器报价单.docx",
+   "file": "../corpus/docx/docx-01.docx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+   "file_truth": "../truth/docx/docx-01.json",
+   "file_text": "恒算科技有限公司 · 报价编号 HQ-20261012-07\nGPU 服务器报价单\n报价编号：HQ-20261012-07\n客户：清屿大学计算机学院 视觉智能实验室（沈知遥老师）\n报价日期：2026年10月12日\n联系人：钱立 销售经理 · qianli@example.com\n一、报价明细\n序号 | 名称/配置 | 数量 | 单价（元） | 金额（元）\n1 | HS-G8820 服务器（8×H20 96GB，2×64核CPU，1TB内存） | 2 | 598,000 | 1,196,000\n2 | 上门安装调试 | 1 | 0 | 0\n | 合计 |  |  | 1,196,000\n合计人民币壹佰壹拾玖万陆仟元整（¥1,196,000），含13%增值税。\n二、商务条款\n- 质保：整机三年原厂保修，7×24小时响应\n- 交货期：合同签订后分两批交付，第一台约10月16日，第二台约10月23日\n- 付款方式：合同签订后预付30%，到货验收后付60%，质保金10%一年后支付\n- 报价有效期：至2026年10月31日\n恒算科技有限公司 销售部\n合成数据"
+  },
+  {
+   "item_id": "7192D546-D6BF-575F-BDB0-F05FE75F3B9B",
+   "ref": "ics-01",
+   "t": "2026-10-12T11:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_lin",
+    "p_xu",
+    "p_fang",
+    "p_owner"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:ics",
+    "split:test"
+   ],
+   "filename": "开题答辩邀请.ics",
+   "file": "../corpus/ics/ics-01.ics",
+   "mime_type": "text/calendar",
+   "file_truth": "../truth/ics/ics-01.json",
+   "file_text": "CALENDAR: 开题答辩\n[event 1]\nSUMMARY: 林晓棠 硕士开题答辩\nSTART: 2026-10-14，14:00 (Asia/Shanghai)\nEND: 2026-10-14，16:00 (Asia/Shanghai)\nLOCATION: 计算机楼 B312\nDESCRIPTION: 题目：基于多模态记忆的课堂视频摘要方法研究\n答辩委员会：许卫东（主席）、方敏、沈知遥\n汇报20分钟，提问15分钟。（合成数据）\nORGANIZER: 林晓棠 <lin.xt@example.org>\nATTENDEE: 许卫东 <xuwd@example.org>\nATTENDEE: 方敏 <fangmin@example.org>\nATTENDEE: 沈知遥 <shenzy@example.org>\nALARM: -PT30M"
+  },
+  {
+   "item_id": "3F76B458-6492-5CB0-8118-9D2251BF5CF3",
+   "ref": "json-02",
+   "t": "2026-10-12T13:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou",
+    "p_he"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:json",
+    "split:dev"
+   ],
+   "filename": "标注规范_v2.json",
+   "file": "../corpus/json/json-02.json",
+   "mime_type": "application/json",
+   "file_truth": "../truth/json/json-02.json",
+   "file_text": "{\n  \"schema_version\": \"2.0\",\n  \"project\": \"KitchenQA 视频问答标注\",\n  \"vendor\": \"数芽标注\",\n  \"contact\": \"周蔓\",\n  \"total_clips\": 20000,\n  \"clip_length_sec\": {\n    \"min\": 60,\n    \"max\": 600\n  },\n  \"question_types\": [\n    {\n      \"id\": \"temporal\",\n      \"name\": \"时序\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"causal\",\n      \"name\": \"因果\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"counting\",\n      \"name\": \"计数\",\n      \"min_per_clip\": 1\n    }\n  ],\n  \"answer_format\": {\n    \"type\": \"multiple_choice\",\n    \"options\": 4,\n    \"distractor_rule\": \"干扰项须来自同一视频\"\n  },\n  \"qc\": {\n    \"sample_rate\": 0.1,\n    \"pass_threshold\": 0.95,\n    \"double_annotation\": true\n  },\n  \"batches\": 4,\n  \"note\": \"合成数据\"\n}"
+  },
+  {
+   "item_id": "4EC1F279-5D1D-5E29-A843-B689D57C2D65",
+   "ref": "xlsx-01",
+   "t": "2026-10-12T14:05:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:xlsx",
+    "split:test"
+   ],
+   "filename": "LoomNet消融实验_v3.xlsx",
+   "file": "../corpus/xlsx/xlsx-01.xlsx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "file_truth": "../truth/xlsx/xlsx-01.json",
+   "file_text": "[主结果]\nLongVid-QA 主结果（run37）\n准确率 (%)\n方法 | 短视频 | 长视频 | 平均 | 参数量(M)\nBaseline-TR | 79.8 | 70.8 | 75.3 | 312\nLoomNet (run37) | 81.2 | 72.6 | 76.9 | 298\nLoomNet w/o memory | 78.6 | 69.6 | 74.1 | 285\n合成数据\n[消融]\nmemory_slots | 准确率(%) | 显存(GB) | 相对 baseline\n32 | 75.9 | 38 | 0.6\n64 | 76.9 | 44 | 1.6\n128 | 76.5 | 57 | 1.2\n合成数据\n[算力统计]\nGPU·时统计（预算 2,000）\n阶段 | 实验 | 卡数 | 小时 | GPU·时\n调试 | run35 预实验 | 8 | 36 | 288\n | run36 调参 | 8 | 42 | 336\n正式 | run37 主实验 | 16 | 48 | 768\n | 消融 32/64/128 | 8 | 22 | 176\n合计 |  |  |  | 1568\n剩余预算 |  |  |  | 432\n合成数据"
+  },
+  {
+   "item_id": "BFDC4F7E-41B0-5A7D-9EA9-763329F1690D",
+   "ref": "rtf-01",
+   "t": "2026-10-12T15:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_ma",
+    "p_owner"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:rtf",
+    "split:test"
+   ],
+   "filename": "合作备忘录_澄川科技.rtf",
+   "file": "../corpus/rtf/rtf-01.rtf",
+   "mime_type": "application/rtf",
+   "file_truth": "../truth/rtf/rtf-01.json",
+   "file_text": "澄川科技—清屿大学视觉智能实验室 合作备忘录\n项目名称：产线表面缺陷检测模型研发\n甲方：澄川科技（苏州）有限公司\n乙方：清屿大学视觉智能实验室\n项目负责人：甲方 马骏；乙方 沈知遥\n合同金额：360,000元\n项目周期：2026年8月1日至2027年1月31日\n一、交付内容\n- 缺陷检测模型（划痕、凹坑、污渍三类），测试集 mAP 不低于 0.85\n- 部署包与技术文档\n- 2次现场培训\n二、付款安排\n按里程碑分三期支付：签约后支付30%（108,000元），中期验收通过后支付50%（180,000元），结题验收后支付20%（72,000元）。\n三、保密\n双方对项目数据与模型负有保密义务，期限三年。\n合成数据"
+  },
+  {
+   "item_id": "013EA030-FA9C-5EA7-B1A3-9471EB8848B2",
+   "ref": "ods-01",
+   "t": "2026-10-12T16:20:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_gu",
+    "p_owner"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:ods",
+    "split:test"
+   ],
+   "filename": "GPU服务器三家比价.ods",
+   "file": "../corpus/ods/ods-01.ods",
+   "mime_type": "application/vnd.oasis.opendocument.spreadsheet",
+   "file_truth": "../truth/ods/ods-01.json",
+   "file_text": "[比价]\n8卡 GPU 服务器比价（2台）\n价格（元） | 服务\n供应商 | 单台报价 | 2台合计 | 保修（年） | 交货（工作日）\n恒算科技 | 598000 | 1196000 | 3 | 15\n云岭数据 | 624000 | 1248000 | 3 | 20\n北辰信息 | 586000 | 1172000 | 1 | 10\n最低价 | 586000 | 1172000 |  | \n合成数据\n[评分]\n供应商 | 价格分(40) | 服务分(40) | 交货分(20) | 总分\n恒算科技 | 38 | 38 | 16 | 92\n云岭数据 | 36 | 36 | 12 | 84\n北辰信息 | 40 | 20 | 18 | 78\n合成数据\n[结论]\n项目 | 内容\n推荐供应商 | 恒算科技\n理由 | 总分最高（92），三年保修\n经办 | 顾青\n最高分 | 92\n合成数据"
+  },
+  {
+   "item_id": "7E9EF71D-BB93-5AF1-ABC6-D72985B440FC",
+   "ref": "webarchive-01",
+   "t": "2026-10-12T17:00:00+08:00",
+   "kind": "document",
+   "source_app": "Safari",
+   "persons": [
+    "p_park",
+    "p_song"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:webarchive",
+    "split:dev"
+   ],
+   "filename": "清屿会堂酒店 - 预订确认.webarchive",
+   "file": "../corpus/webarchive/webarchive-01.webarchive",
+   "mime_type": "application/x-webarchive",
+   "file_truth": "../truth/webarchive/webarchive-01.json",
+   "file_text": "清屿会堂酒店在线预订\n预订确认 · 清屿会堂酒店\n您的预订已确认，确认邮件已发送至 songyt@example.org。\n确认号：QYH-88213\n入住人：Elena Park\n入住：2026年10月15日（周四）14:00后\n离店：2026年10月17日（周六）12:00前\n房型：高级大床房（无烟）\n晚数：2晚\n房价：680元/晚（含早）\n总价：1,360元\n预订人：宋雨桐（清屿大学计算机学院）\n如需延迟入住（22:00以后），请提前致电前台 +86-10-5550-0199。\n合成数据\n清屿会堂酒店在线预订\n合成数据"
+  },
+  {
+   "item_id": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "ref": "pdf-02",
+   "t": "2026-10-12T18:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou",
+    "p_owner"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:pdf",
+    "split:dev"
+   ],
+   "filename": "数据标注服务合同_数芽.pdf",
+   "file": "../corpus/pdf/pdf-02.pdf",
+   "mime_type": "application/pdf",
+   "file_truth": "../truth/pdf/pdf-02.json",
+   "file_text": "合同编号 SY-2026-0918\n数据标注服务合同\n合同编号：SY-2026-0918\n委托方：清屿大学视觉智能实验室\n服务方：杭州数芽标注科技有限公司\n签订日期：2026年10月12日\n第一条 服务内容\n服务方为委托方完成 KitchenQA 视频问答数据集的标注，共 20,000 条视频片段，每条至少 3 个问答对。\n第二条 价格\n项目 | 数量（条） | 单价（元/条） | 金额（元）\n视频问答标注 | 20,000 | 1.8 | 36,000\n合同总价 36,000 元（含税）。\n第三条 交付与验收\n分 4 批交付，每批 5,000 条；委托方抽检 10%，合格率不低于 95% 视为该批验收通过，否则服务方须在 5 个工作日内返工。\n批次 | 交付日期\n第1批 | 2026年10月14日\n第2批 | 2026年10月22日\n第3批 | 2026年10月30日\n第4批 | 2026年11月6日\n第四条 付款\n每批验收通过后 7 个工作日内支付该批费用 9,000 元。\n合成数据"
+  },
+  {
+   "item_id": "9BE23948-96B7-5829-8E55-0C6DCCEA242E",
+   "ref": "doc-01",
+   "t": "2026-10-12T20:30:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_lin",
+    "p_owner"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:doc",
+    "split:test"
+   ],
+   "filename": "开题报告_林晓棠_v2.doc",
+   "file": "../corpus/doc/doc-01.doc",
+   "mime_type": "application/msword",
+   "file_truth": "../truth/doc/doc-01.json",
+   "file_text": "硕士学位论文开题报告\n论文题目：基于多模态记忆的课堂视频摘要方法研究\n学生：林晓棠（2025级硕士）\n导师：沈知遥 副教授\n专业：计算机科学与技术\n一、研究背景\n高校课堂录像时长普遍在45至90分钟之间，学生复习时难以快速定位重点。现有视频摘要方法多面向新闻与体育，忽略了板书和幻灯片上的文字。\n二、研究内容\n- 构建融合语音转写、板书识别与关键帧的多模态课堂表示\n- 设计跨片段的主题记忆模块\n- 建立课堂摘要评测数据集与评价指标\n三、技术路线\n以记忆增强的视频编码器为基础，每10分钟切分一个片段，片段间通过记忆模块传递主题信息，最终生成带时间戳的5分钟摘要。\n四、进度安排\n阶段 | 时间 | 内容\n开题 | 2026年10月 | 完成开题答辩\n数据 | 2026年11月—12月 | 采集并标注 120 节课堂视频\n实验 | 2027年1月—3月 | 完成主实验与消融\n论文 | 2027年4月—6月 | 撰写论文并准备答辩\n五、预期成果\n发表 1 篇 CCF-B 类以上会议论文，公开课堂摘要数据集 ClassSum-120。\n合成数据"
+  },
+  {
+   "item_id": "363CA2BF-38AF-5F67-96DE-D77A64A88993",
+   "ref": "ics-02",
+   "t": "2026-10-13T09:00:00+08:00",
+   "kind": "document",
+   "source_app": "日历",
+   "persons": [
+    "p_park",
+    "p_song",
+    "p_owner"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:ics",
+    "split:dev"
+   ],
+   "filename": "Talk_ElenaPark.ics",
+   "file": "../corpus/ics/ics-02.ics",
+   "mime_type": "text/calendar",
+   "file_truth": "../truth/ics/ics-02.json",
+   "file_text": "CALENDAR: 学院讲座\n[event 1]\nSUMMARY: 学术讲座：Memory Structures for Embodied Agents（Elena Park）\nSTART: 2026-10-16，15:00 (Asia/Shanghai)\nEND: 2026-10-16，16:30 (Asia/Shanghai)\nLOCATION: 计算机楼 A101 报告厅\nDESCRIPTION: 主讲：Elena Park 教授（Northbridge University）\n主持：沈知遥\n讲座60分钟，问答30分钟。\n合成数据\nORGANIZER: 宋雨桐 <songyt@example.org>\nALARM: -PT1H\n[event 2]\nSUMMARY: 欢迎晚宴（素食）\nSTART: 2026-10-16，18:00 (Asia/Shanghai)\nEND: 2026-10-16，20:00 (Asia/Shanghai)\nLOCATION: 清屿会堂 二楼 竹厅\nDESCRIPTION: 参加：Elena Park、沈知遥、宋雨桐 等 6 人\nORGANIZER: 宋雨桐 <songyt@example.org>"
+  },
+  {
+   "item_id": "FFDA192E-7C8E-55C1-BF20-2633EBC41103",
+   "ref": "odt-01",
+   "t": "2026-10-13T09:40:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_owner",
+    "p_gu"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:odt",
+    "split:test"
+   ],
+   "filename": "设备采购申请表_视觉智能实验室.odt",
+   "file": "../corpus/odt/odt-01.odt",
+   "mime_type": "application/vnd.oasis.opendocument.text",
+   "file_truth": "../truth/odt/odt-01.json",
+   "file_text": "清屿大学 大型仪器设备采购申请表\n申请单位：计算机学院 视觉智能实验室\n申请人：沈知遥\n经办人：顾青\n申请日期：2026年10月13日\n经费卡号：KY-2026-0371\n设备名称：8卡 GPU 服务器（HS-G8820）\n数量：2台\n预算金额：1,196,000元\n采购方式：三家比价后定点采购（附比价表）\n用途说明\n用于长视频理解与多模态记忆方向的模型训练，支撑实验室论文投稿与横向项目实验。现有集群 16 卡长期满载。\n审批意见\n（待学院审批）\n合成数据"
+  },
+  {
+   "item_id": "E06C89A1-9C88-568E-989F-DADFC4E621B5",
+   "ref": "pptx-01",
+   "t": "2026-10-13T10:00:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_he",
+    "p_owner",
+    "p_tao"
+   ],
+   "events": [
+    "ev_paper",
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:pptx",
+    "multi_label",
+    "split:test"
+   ],
+   "filename": "组会汇报_1013_贺一鸣.pptx",
+   "file": "../corpus/pptx/pptx-01.pptx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+   "file_truth": "../truth/pptx/pptx-01.json",
+   "file_text": "LoomNet 进展汇报\n贺一鸣 · 组会 2026-10-13\n合成数据\n本周进展\nrun37 主实验完成：LongVid-QA 平均 76.9%\nmemory_slots 消融：64 最优（76.9%），128 显存 57GB\nrun42 已启动：学习率 3e-4，预计 10月14日出结果\n合成数据\nrun42 用 cosine 学习率，warmup 2k 步\n算力安排\n陶然预留 16 卡：10月13日—10月20日\n新服务器第一台预计 10月16日到货，用于补充材料实验\n已用 1,568 GPU·时，剩余 432\n合成数据\n主结果对比\n方法 | 平均准确率(%)\nBaseline-TR | 75.3\nLoomNet run37 | 76.9\nLoomNet w/o memory | 74.1\n合成数据\n风险与求助\n长视频评测脚本偶发 OOM（batch 256 时）\n需要沈老师 10月18日前改完引言\n摘要提交截止 10月16日\n合成数据"
+  },
+  {
+   "item_id": "0C4EE03D-9F4A-5495-8B53-510C7B59FDC0",
+   "ref": "csv-01",
+   "t": "2026-10-13T11:20:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_ma"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:csv",
+    "split:test"
+   ],
+   "filename": "澄川项目_里程碑与付款.csv",
+   "file": "../corpus/csv/csv-01.csv",
+   "mime_type": "text/csv",
+   "file_truth": "../truth/csv/csv-01.json",
+   "file_text": "# 澄川项目_里程碑与付款.csv（合成数据）\n期次,里程碑,计划日期,比例,金额（元）,状态\n1,签约,2026-08-01,30%,108000,已到账\n2,中期验收（模型 v1.2）,2026-10-20,50%,180000,待验收\n3,结题验收,2027-01-31,20%,72000,未开始\n合计,,,100%,360000,"
+  },
+  {
+   "item_id": "ABE8C318-824F-57CA-8723-A1E9BF723B95",
+   "ref": "jpg-02",
+   "t": "2026-10-13T12:10:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [],
+   "events": [],
+   "tags": [
+    "file",
+    "file_type:jpg",
+    "noise",
+    "split:dev"
+   ],
+   "filename": "食堂本周菜单.jpg",
+   "file": "../corpus/jpg/jpg-02.jpg",
+   "mime_type": "image/jpeg",
+   "file_truth": "../truth/jpg/jpg-02.json",
+   "file_text": "第二食堂 本周特色菜（10月12日—10月18日）\n营业时间 11:00–13:30，17:00–19:00\n日期 | 午餐特色 | 价格\n周一 | 番茄牛腩饭 | 16元\n周二 | 酸菜鱼 | 18元\n周三 | 宫保鸡丁 | 14元\n周四 | 清蒸鲈鱼 | 22元\n周五 | 素食自助 | 12元\n合成数据"
+  },
+  {
+   "item_id": "1EEB4A86-DD8F-5C8E-BD21-9939F7815F41",
+   "ref": "xlsx-02",
+   "t": "2026-10-13T13:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou",
+    "p_gu"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:xlsx",
+    "split:dev"
+   ],
+   "filename": "数芽报价与结算.xlsx",
+   "file": "../corpus/xlsx/xlsx-02.xlsx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+   "file_truth": "../truth/xlsx/xlsx-02.json",
+   "file_text": "[报价]\nKitchenQA 标注报价（数芽标注）\n计价\n服务项 | 数量(条) | 单价(元) | 金额(元) | 备注\n视频问答标注 | 20000 | 1.8 | 36000 | 每条≥3个问答对\n加急费 | 0 | 0.3 | 0 | 未启用\n合计 |  |  | 36000 | 含税\n合成数据\n[结算]\n批次 | 交付条数 | 抽检合格率 | 应付(元) | 状态\n第1批 | 5000 | 0.962 | 9000 | 已验收\n第2批 | 5000 |  | 9000 | 进行中\n第3批 | 5000 |  | 9000 | 未开始\n第4批 | 5000 |  | 9000 | \n合计 | 20000 |  | 36000 | \n合成数据\n[联系人]\n角色 | 姓名 | 联系方式\n客户经理 | 周蔓 | zhouman@example.com\n实验室财务 | 顾青 | guqing@example.org\n合成数据"
+  },
+  {
+   "item_id": "A9B3913B-C6AD-5AA2-B383-203B03EF235F",
+   "ref": "svg-01",
+   "t": "2026-10-13T14:00:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_park",
+    "p_owner"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:svg",
+    "split:dev"
+   ],
+   "filename": "讲座海报_ElenaPark.svg",
+   "file": "../corpus/svg/svg-01.svg",
+   "mime_type": "image/svg+xml",
+   "file_truth": "../truth/svg/svg-01.json",
+   "file_text": "清屿大学计算机学院 学术讲座\nMemory Structures for Embodied Agents\n主讲人：Elena Park 教授 · Northbridge University\n时间：2026年10月16日（周五）15:00–16:30\n地点：计算机楼 A101 报告厅\n主持人：沈知遥 副教授\n欢迎全校师生参加\n合成数据"
+  },
+  {
+   "item_id": "C0E5B7C4-2B64-5142-95D1-2245D739E010",
+   "ref": "odp-01",
+   "t": "2026-10-13T15:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_lin",
+    "p_owner"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:odp",
+    "split:test"
+   ],
+   "filename": "开题答辩PPT_林晓棠.odp",
+   "file": "../corpus/odp/odp-01.odp",
+   "mime_type": "application/vnd.oasis.opendocument.presentation",
+   "file_truth": "../truth/odp/odp-01.json",
+   "file_text": "基于多模态记忆的课堂视频摘要方法研究\n林晓棠 · 指导教师：沈知遥\n合成数据\n研究问题\n课堂视频平均时长 72 分钟，重点分散\n现有摘要方法忽略板书与 PPT 文字\n目标：生成带时间戳的 5 分钟摘要\n合成数据\n技术路线\n三路输入：语音转写 / 板书 OCR / 画面关键帧\n记忆模块保留跨段主题\n评测：ROUGE-L 与人工打分\n合成数据\n时间安排\n2026.11–12 数据标注（120 节）\n2027.01–03 实验\n2027.04–06 论文\n合成数据\n初步结果\n方法 | ROUGE-L\n抽取式基线 | 0.312\n本文初版 | 0.357\n合成数据"
+  },
+  {
+   "item_id": "D29E5FEB-CC90-5F6C-B581-AD8E2ECBDC2D",
+   "ref": "vcf-01",
+   "t": "2026-10-13T15:30:00+08:00",
+   "kind": "document",
+   "source_app": "通讯录",
+   "persons": [
+    "p_xu",
+    "p_fang",
+    "p_lin"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:vcf",
+    "split:test"
+   ],
+   "filename": "答辩委员会联系人.vcf",
+   "file": "../corpus/vcf/vcf-01.vcf",
+   "mime_type": "text/vcard",
+   "file_truth": "../truth/vcf/vcf-01.json",
+   "file_text": "[contact 1]\nN: 许 卫东\nFN: 许卫东\nORG: 清屿大学计算机学院\nTITLE: 教授（开题答辩委员会主席）\nTEL: +86-10-5550-0101\nEMAIL: xuwd@example.org\nNOTE: 周三下午有课（合成数据）\n[contact 2]\nN: 方 敏\nFN: 方敏\nORG: 清屿大学计算机学院\nTITLE: 副教授\nTEL: +86-10-5550-0102\nEMAIL: fangmin@example.org\nNOTE: 合成数据\n[contact 3]\nN: 林 晓棠\nFN: 林晓棠\nORG: 清屿大学计算机学院 视觉智能实验室\nTITLE: 硕士研究生\nTEL: +86-10-5550-0103\nEMAIL: lin.xt@example.org\nNOTE: 合成数据"
+  },
+  {
+   "item_id": "7E3473A9-223D-5463-B8AE-EDF0763A10C7",
+   "ref": "png-01",
+   "t": "2026-10-13T16:40:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:png",
+    "split:test"
+   ],
+   "filename": "loss曲线_run42.png",
+   "file": "../corpus/png/png-01.png",
+   "mime_type": "image/png",
+   "file_truth": "../truth/png/png-01.json",
+   "file_text": "run42 训练/验证 loss（LoomNet）\n2k  6k  10k  14k  18k\ntrain: 2k 1.84, 6k 1.02, 10k 0.71, 14k 0.52, 18k 0.44\nval: 2k 1.91, 6k 1.1, 10k 0.76, 14k 0.55, 18k 0.412\nbest val @ 18k: 0.412\nlr 3e-4 · cosine\nloss\n合成数据"
+  },
+  {
+   "item_id": "74075DA6-8EBC-5AEA-8235-A0BF38772897",
+   "ref": "chat_lin_move",
+   "t": "2026-10-13T18:20:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_lin",
+    "p_xu",
+    "p_fang"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:test"
+   ],
+   "text": "林晓棠：沈老师，许老师周三下午有课，答辩改到10月15日（周四）下午两点，地点还是B312，我已经跟方老师确认了。"
+  },
+  {
+   "item_id": "B72E010B-036C-5ACC-9256-CF4A7F6F0934",
+   "ref": "pdf-03",
+   "t": "2026-10-14T08:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [],
+   "events": [],
+   "tags": [
+    "file",
+    "file_type:pdf",
+    "noise",
+    "split:test"
+   ],
+   "filename": "健身中心团课时间表.pdf",
+   "file": "../corpus/pdf/pdf-03.pdf",
+   "mime_type": "application/pdf",
+   "file_truth": "../truth/pdf/pdf-03.json",
+   "file_text": "校健身中心 10月团课时间表\n课程 | 时间 | 教练 | 教室\n瑜伽 | 周一 19:00 | 严老师 | 操房1\n动感单车 | 周二 18:30 | 韩教练 | 单车房\n普拉提 | 周四 19:30 | 严老师 | 操房2\n搏击操 | 周六 10:00 | 韩教练 | 操房1\n每节课限 20 人，需提前一天在小程序预约。\n合成数据"
+  },
+  {
+   "item_id": "30106E8C-A024-5EA9-B3C5-8EF61FF71EDA",
+   "ref": "mbox-01",
+   "t": "2026-10-14T09:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_ma",
+    "p_owner",
+    "p_he"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:mbox",
+    "split:test"
+   ],
+   "filename": "澄川项目往来邮件.mbox",
+   "file": "../corpus/mbox/mbox-01.mbox",
+   "mime_type": "application/mbox",
+   "file_truth": "../truth/mbox/mbox-01.json",
+   "file_text": "[message 1]\nFrom: 马骏 <majun@example.com>\nTo: 沈知遥 <shenzy@example.org>\nDate: Mon, 12 Oct 2026 18:05:00 +0800\nSubject: 中期验收时间\n沈老师好，我们这边希望10月20日（周二）在苏州工厂做中期验收，现场跑一遍v1.2模型。您看时间方便吗？需要的话我们安排车。\n马骏\n澄川科技（合成数据）\n[message 2]\nFrom: 沈知遥 <shenzy@example.org>\nTo: 马骏 <majun@example.com>\nCc: 贺一鸣 <heym@example.org>\nDate: Tue, 13 Oct 2026 09:12:00 +0800\nSubject: Re: 中期验收时间\n马经理好，10月20日可以。我和贺一鸣上午9点到，带部署包和测试报告。请准备一台带GPU的工控机。\n沈知遥\n[message 3]\nFrom: 马骏 <majun@example.com>\nTo: 沈知遥 <shenzy@example.org>\nDate: Tue, 13 Oct 2026 17:40:00 +0800\nSubject: Re: Re: 中期验收时间\n好的，10月20日上午9:30在苏州工厂3号楼会议室，我们这边质量部的赵工参加。工控机已备好（RTX 4000 Ada）。第二期款在验收签字后走流程。\n马骏"
+  },
+  {
+   "item_id": "9AC7A089-EACF-5032-9C94-DC94FCBECF61",
+   "ref": "gif-01",
+   "t": "2026-10-14T10:00:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:gif",
+    "split:dev"
+   ],
+   "filename": "讲座预告.gif",
+   "file": "../corpus/gif/gif-01.gif",
+   "mime_type": "image/gif",
+   "file_truth": "../truth/gif/gif-01.json",
+   "file_text": "本周五 学术讲座\nMemory Structures for Embodied Agents\n合成数据\n10月16日 15:00\n计算机楼 A101 报告厅\n合成数据\n主讲：Elena Park 教授\n现场前50名赠送讲义（Lecture Notes）\n合成数据"
+  },
+  {
+   "item_id": "E93C5657-030D-5A29-9467-BF859BEEDCA3",
+   "ref": "epub-01",
+   "t": "2026-10-14T13:30:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:epub",
+    "split:dev"
+   ],
+   "filename": "Lecture_Notes_Memory_Structures.epub",
+   "file": "../corpus/epub/epub-01.epub",
+   "mime_type": "application/epub+zip",
+   "file_truth": "../truth/epub/epub-01.json",
+   "file_text": "Lecture Notes: Memory Structures for Embodied Agents\n1. Three Kinds of Memory\nEpisodic memory stores what happened and when. Semantic memory stores what is true regardless of when it was learned. Procedural memory stores how to act.\nMemory type | Typical store | Example\nepisodic | event log | the cup was on the left shelf at 10:02\nsemantic | knowledge graph | cups are kept in the kitchen\nprocedural | policy | open the drawer before reaching in\n2. Benchmarks\nWe compare agents on 4 benchmark suites: HomeTidy, ShelfQA, DoorNav and ToolUse-12 (all fictional, invented for these notes).\nSuite | Episodes | Best success rate\nHomeTidy | 1,200 | 64.5%\nShelfQA | 800 | 71.2%\nDoorNav | 2,000 | 88.0%\nToolUse-12 | 600 | 42.7%\n3. Open Problems\n- When should an agent forget?\n- How to merge episodic traces into semantic facts\n- Evaluating memory without leaking test episodes\nSynthetic lecture notes for evaluation only.\n合成数据"
+  },
+  {
+   "item_id": "82BD3713-9F31-548D-A799-4C420E1869A5",
+   "ref": "pdf_scanned-01",
+   "t": "2026-10-14T15:00:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_qian",
+    "p_owner"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:pdf_scanned",
+    "split:test"
+   ],
+   "filename": "采购合同_盖章扫描件.pdf",
+   "file": "../corpus/pdf_scanned/pdf_scanned-01.pdf",
+   "mime_type": "application/pdf",
+   "file_truth": "../truth/pdf_scanned/pdf_scanned-01.json",
+   "file_text": "设备采购合同\n合同编号：HS-2026-1017\n甲方（买方）：清屿大学\n乙方（卖方）：恒算科技有限公司\n签订日期：2026年10月14日\n第一条 标的\n名称 | 型号 | 数量 | 单价（元） | 总价（元）\nGPU服务器 | HS-G8820 | 2 | 598,000 | 1,196,000\n第二条 交付\n乙方分两批交付：第一台于2026年10月16日前送达甲方计算机楼机房，第二台于2026年10月23日前送达。\n第三条 付款\n合同签订后7日内甲方预付30%（358,800元）；每台到货验收合格后支付该台价款的60%；剩余10%作为质保金，验收满一年后支付。\n第四条 质保\n整机质保三年，自验收合格之日起计算。质保期内乙方提供7×24小时电话支持，硬件故障4小时内响应、48小时内到场。\n第五条 验收\n每台设备到货后，甲方在5个工作日内完成开箱检查与72小时满载测试；测试通过即视为该台验收合格，双方签署验收单。\n第六条 违约责任\n乙方逾期交货的，每逾期一日按合同总价的0.05%（即598元）向甲方支付违约金，累计不超过合同总价的5%。甲方逾期付款的，每逾期一日按应付未付金额的0.05%支付违约金。\n第七条 争议解决\n因本合同发生的争议，双方应友好协商；协商不成的，提交甲方所在地人民法院诉讼解决。\n第八条 其他\n本合同一式四份，甲方执三份，乙方执一份，自双方签字盖章之日起生效。附件：技术配置清单、报价单HQ-20261012-07。\n乙方：恒算科技有限公司（盖章）\n合成数据"
+  },
+  {
+   "item_id": "45352726-5308-5D80-BE2D-603EDB7D7BB8",
+   "ref": "png-02",
+   "t": "2026-10-14T16:10:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_song",
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "file",
+    "file_type:png",
+    "split:dev"
+   ],
+   "filename": "报告厅预约成功截图.png",
+   "file": "../corpus/png/png-02.png",
+   "mime_type": "image/png",
+   "file_truth": "../truth/png/png-02.json",
+   "file_text": "学院场地预约系统\n预约成功\n您的场地预约已通过审核。\n预约号 RB-20261016-032\n场地 计算机楼 A101 报告厅（容纳 180 人）\n使用时间 2026-10-16，14:30–17:00\n用途 学术讲座（Elena Park）\n申请人 宋雨桐\n设备 投影、无线麦克风×2、同传耳机\n已通过\n合成数据"
+  },
+  {
+   "item_id": "84285412-8ABD-5AC7-B2D2-B339E0FB1D5F",
+   "ref": "xml-01",
+   "t": "2026-10-14T16:45:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:xml",
+    "split:test"
+   ],
+   "filename": "交付清单_v1.2.xml",
+   "file": "../corpus/xml/xml-01.xml",
+   "mime_type": "application/xml",
+   "file_truth": "../truth/xml/xml-01.json",
+   "file_text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- 合成数据 · synthetic data -->\n<delivery xmlns=\"urn:example:delivery:1\" project=\"CC-DEFECT-2026\" version=\"1.2\" date=\"2026-10-14\">\n  <client>澄川科技（苏州）有限公司</client>\n  <supplier>清屿大学视觉智能实验室</supplier>\n  <artifacts>\n    <artifact name=\"defect_det_v1.2.onnx\" type=\"model\" size_mb=\"87.4\" sha256=\"3f1c9a0d7e5b2c4a8f6e1d0b9c7a5e3f2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a\"/>\n    <artifact name=\"deploy_guide.pdf\" type=\"doc\" pages=\"14\"/>\n    <artifact name=\"test_report_v1.2.pdf\" type=\"doc\" pages=\"9\"/>\n  </artifacts>\n  <metrics dataset=\"澄川测试集 v3\" images=\"2400\">\n    <metric name=\"mAP@0.5\" value=\"0.873\"/>\n    <metric name=\"recall_scratch\" value=\"0.91\"/>\n    <metric name=\"latency_ms\" value=\"23\"/>\n  </metrics>\n  <classes>\n    <class id=\"1\">划痕</class>\n    <class id=\"2\">凹坑</class>\n    <class id=\"3\">污渍</class>\n  </classes>\n  <acceptance date=\"2026-10-20\" place=\"苏州工厂\"/>\n</delivery>"
+  },
+  {
+   "item_id": "75ECB7DB-80C5-5948-9A71-4B429D9C5EFE",
+   "ref": "csv-02",
+   "t": "2026-10-14T17:00:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_zhou"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:csv",
+    "split:dev"
+   ],
+   "filename": "第1批质检报告.csv",
+   "file": "../corpus/csv/csv-02.csv",
+   "mime_type": "text/csv",
+   "file_truth": "../truth/csv/csv-02.json",
+   "file_text": "# 数芽标注 KitchenQA 第1批质检报告 2026-10-14（合成数据）\n标注员ID,交付条数,抽检条数,合格条数,合格率\nA01,1200,120,117,97.5%\nA02,1000,100,95,95.0%\nA03,1300,130,126,96.9%\nA04,1500,150,143,95.3%\n合计,5000,500,481,96.2%"
+  },
+  {
+   "item_id": "7ACB4815-C7E1-5D1D-B3E7-1BFE54184658",
+   "ref": "mov-01",
+   "t": "2026-10-14T20:00:00+08:00",
+   "kind": "imported_media",
+   "source_app": "Finder",
+   "persons": [
+    "p_lin"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:mov",
+    "split:test"
+   ],
+   "filename": "答辩预演录屏.mov",
+   "file": "../corpus/mov/mov-01.mov",
+   "mime_type": "video/quicktime",
+   "file_truth": "../truth/mov/mov-01.json",
+   "file_text": "开题预演（第2版）\n汇报时长：19分30秒（限20分钟）\n林晓棠 · 视觉智能实验室\n合成数据\n研究问题\n课堂视频平均时长 72 分钟\n目标：带时间戳的 5 分钟摘要\n合成数据\n修改记录\n根据预演意见：删去相关工作 2 页\n补充 ClassSum-120 标注规范\n答辩时间：10月15日 14:00（已改期）\n合成数据"
+  },
+  {
+   "item_id": "933CD372-1459-584B-8856-1AC6C2C3EDD2",
+   "ref": "json-01",
+   "t": "2026-10-14T21:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:json",
+    "split:test"
+   ],
+   "filename": "run42_result.json",
+   "file": "../corpus/json/json-01.json",
+   "mime_type": "application/json",
+   "file_truth": "../truth/json/json-01.json",
+   "file_text": "{\n  \"run_id\": \"run42\",\n  \"model\": \"LoomNet\",\n  \"dataset\": \"LongVid-QA\",\n  \"config\": {\n    \"lr\": 0.0003,\n    \"batch_size\": 256,\n    \"memory_slots\": 64,\n    \"schedule\": \"cosine\",\n    \"warmup_steps\": 2000,\n    \"seed\": 42,\n    \"gpus\": 16\n  },\n  \"results\": {\n    \"test\": {\n      \"short\": 82.6,\n      \"long\": 74.2,\n      \"avg\": 78.4\n    },\n    \"baseline_avg\": 75.3,\n    \"delta\": 3.1\n  },\n  \"gpu_hours\": 352,\n  \"finished_at\": \"2026-10-14T20:37:00+08:00\",\n  \"note\": \"合成数据\"\n}"
+  },
+  {
+   "item_id": "B7D0D9ED-D53D-5382-B731-C216DBBFDDF0",
+   "ref": "chat_he_run42",
+   "t": "2026-10-14T21:10:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:test"
+   ],
+   "text": "贺一鸣：沈老师，run42 在 test 上平均 78.4，比 baseline 75.3 高 3.1 个点，结果 json 发群里了。摘要我周四（10月15日）上午提交可以吗？"
+  },
+  {
+   "item_id": "6A8BABC5-17F5-5D23-A55E-FC17349D95A4",
+   "ref": "chat_parcel",
+   "t": "2026-10-15T09:00:00+08:00",
+   "kind": "text",
+   "source_app": "短信",
+   "persons": [],
+   "events": [],
+   "tags": [
+    "chat_paste",
+    "noise",
+    "split:test"
+   ],
+   "text": "【快递】您的包裹已由计算机楼驿站代收，取件码 6-2-3107，请于3日内领取。"
+  },
+  {
+   "item_id": "63E9BAD2-A68C-5488-867D-D1C3E1800D3A",
+   "ref": "docx-02",
+   "t": "2026-10-15T10:00:00+08:00",
+   "kind": "document",
+   "source_app": "微信",
+   "persons": [
+    "p_owner",
+    "p_zhou",
+    "p_he"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:docx",
+    "split:dev"
+   ],
+   "filename": "KitchenQA_第1批验收报告.docx",
+   "file": "../corpus/docx/docx-02.docx",
+   "mime_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+   "file_truth": "../truth/docx/docx-02.json",
+   "file_text": "KitchenQA 标注 第1批验收报告\n合同编号：SY-2026-0918\n批次：第1批（5,000条）\n验收日期：2026年10月15日\n验收人：贺一鸣、沈知遥\n抽检结果\n抽检 500 条，合格 481 条，合格率 96.2%，高于合同约定的 95%。\n主要问题\n- 计数类问题有 11 条答案错误（多数为遮挡导致漏数）\n- 8 条干扰项与正确答案语义重复\n结论\n第1批验收通过，同意支付第1批费用 9,000 元。第2批请于10月22日前交付，并对计数类问题增加复核。\n合成数据"
+  },
+  {
+   "item_id": "0C768B45-0F7F-5F89-BC5F-1520728A4A42",
+   "ref": "chat_zhou_batch",
+   "t": "2026-10-15T11:30:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou",
+    "p_gu"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:dev"
+   ],
+   "text": "周蔓：沈老师好～第1批验收报告收到啦，9000元的请款单我今天发给顾老师。第2批22号前交，计数题我们加一道复核。"
+  },
+  {
+   "item_id": "66A76B04-62BE-51C1-9D81-E3970BB04D34",
+   "ref": "chat_park_delay",
+   "t": "2026-10-15T16:40:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_park"
+   ],
+   "events": [
+    "ev_talk"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:dev"
+   ],
+   "text": "Elena Park: Zhiyao, quick update: ZY 5718 is delayed. New arrival time is 22:40 instead of 19:10. Could you let the driver and the hotel know? Sorry for the late night!"
+  },
+  {
+   "item_id": "A55C6EE8-494C-5706-A083-6880D941B925",
+   "ref": "eml-01",
+   "t": "2026-10-15T17:20:00+08:00",
+   "kind": "document",
+   "source_app": "邮件",
+   "persons": [
+    "p_qian",
+    "p_owner",
+    "p_gu"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:eml",
+    "split:test"
+   ],
+   "filename": "Re_第一台服务器发货及发票.eml",
+   "file": "../corpus/eml/eml-01.eml",
+   "mime_type": "message/rfc822",
+   "file_truth": "../truth/eml/eml-01.json",
+   "file_text": "From: 钱立 <qianli@example.com>\nTo: 沈知遥 <shenzy@example.org>\nCc: 顾青 <guqing@example.org>\nDate: Thu, 15 Oct 2026 17:20:00 +0800\nSubject: Re: 第一台服务器发货及发票\n沈老师您好：\n第一台 HS-G8820 已于今天下午从苏州仓发出，物流单号 SF-HS-7730215，预计明天（10月16日）上午11点前送到计算机楼B1机房，请安排老师签收。\n第一台的增值税专用发票已开具，发票号码 04417726，金额 598,000.00 元（含税），电子版见附件。第二台按合同10月23日前送达。\n恒算科技 钱立\n（合成数据）\n> 在 2026年10月15日 09:05，沈知遥 写道：\n> 钱经理，第一台什么时候能到？发票请抄送顾青老师。\n[attachment] 发票_04417726.pdf\n合成数据\n1\n增值税专用发票（电子）\n发票号码：04417726\n开票日期：2026年10月15日\n购买方：清屿大学\n销售方：恒算科技有限公司\n货物名称\n规格型号\n数量\n金额（元）\n税率\n税额（元）\nGPU服务器\nHS-G8820\n1\n529,203.54\n13%\n68,796.46\n价税合计（小写）：¥598,000.00\n价税合计（大写）：伍拾玖万捌仟元整"
+  },
+  {
+   "item_id": "FF4F47CE-1A2B-5393-B02F-96ED91301CAF",
+   "ref": "tiff-01",
+   "t": "2026-10-15T17:30:00+08:00",
+   "kind": "image",
+   "source_app": "扫描仪",
+   "persons": [
+    "p_lin",
+    "p_xu",
+    "p_fang",
+    "p_owner"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:tiff",
+    "split:test"
+   ],
+   "filename": "开题答辩记录表_签字.tiff",
+   "file": "../corpus/tiff/tiff-01.tiff",
+   "mime_type": "image/tiff",
+   "file_truth": "../truth/tiff/tiff-01.json",
+   "file_text": "研究生开题答辩记录表\n学生：林晓棠\n答辩日期：2026年10月15日\n地点：计算机楼B312\n委员会：许卫东（主席）、方敏、沈知遥\n答辩结论\n表决结果：3票同意，0票反对。结论：通过。\n修改意见\n- 1. 明确 ClassSum-120 的标注一致性指标（Kappa ≥ 0.75）\n- 2. 增加与商用会议摘要工具的对比\n- 3. 缩减技术路线中的多任务部分\n主席签字：许卫东    2026年10月15日\n合成数据\n附：委员个人意见\n方敏：数据集规模合理，建议提前准备标注手册，并记录每节课的学科与时长分布。\n沈知遥：同意通过，修改稿请于10月25日前提交导师。\n合成数据"
+  },
+  {
+   "item_id": "A5172A4A-FEF5-5081-A312-3A347F055108",
+   "ref": "txt-01",
+   "t": "2026-10-15T19:00:00+08:00",
+   "kind": "document",
+   "source_app": "备忘录",
+   "persons": [
+    "p_lin",
+    "p_owner",
+    "p_xu",
+    "p_fang"
+   ],
+   "events": [
+    "ev_defense"
+   ],
+   "tags": [
+    "file",
+    "file_type:txt",
+    "split:test"
+   ],
+   "filename": "答辩意见整理.txt",
+   "file": "../corpus/txt/txt-01.txt",
+   "mime_type": "text/plain",
+   "file_truth": "../truth/txt/txt-01.json",
+   "file_text": "开题答辩意见整理（林晓棠）\n2026-10-15 晚\n结论：通过（3票同意）。\n需要修改：\n1. 标注一致性：ClassSum-120 双人标注，Kappa 不低于 0.75；\n2. 增加对比：至少 2 个商用会议摘要工具；\n3. 技术路线：去掉多任务部分，集中在记忆模块。\n时间：修改稿 10月25日前发给沈老师，11月1日开始标注。\n—— 合成数据"
+  },
+  {
+   "item_id": "C7A3AC8B-BE8D-5950-AEE0-143C1F1E2328",
+   "ref": "pdf-01",
+   "t": "2026-10-15T20:30:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_he",
+    "p_owner"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:pdf",
+    "split:test"
+   ],
+   "filename": "LoomNet_draft_v5.pdf",
+   "file": "../corpus/pdf/pdf-01.pdf",
+   "mime_type": "application/pdf",
+   "file_truth": "../truth/pdf/pdf-01.json",
+   "file_text": "LoomNet: Weaving Memory for Long-Video Question Answering\nAnonymous ICVL 2027 submission · Paper ID 4127 · Draft v5\nAbstract\nLong videos overwhelm fixed-length context windows. We present LoomNet, a video question answering model that weaves a small set of memory slots through the whole video. LoomNet reaches 78.4% average accuracy on LongVid-QA, 3.1 points above the strongest baseline (75.3%), with 298M parameters.\n1 Introduction\nQuestions about long videos often depend on events that happened tens of minutes earlier. Existing models either subsample frames or truncate the context. LoomNet instead keeps 64 memory slots that are read and rewritten at every segment.\nOur contributions are threefold: (i) a slot memory that is written once per segment and read by every question token, (ii) a curriculum that grows the video length from 2 to 60 minutes, and (iii) a careful ablation of memory size on LongVid-QA.\n2 Related Work\nLong-video models fall into three families. Sampling methods keep a fixed number of frames and lose rare events. Streaming methods compress past frames into a recurrent state, which drifts over long horizons. Retrieval methods store every clip and fetch a few at question time, which is accurate but slow.\nMemory-augmented transformers have been explored for text and for short clips. LoomNet differs in that its slots are rewritten at every segment and are shared across all questions about the same video.\n3 Method\nA video is cut into 10-second segments. Each segment is encoded by a frozen image encoder followed by a 4-layer temporal transformer. The memory holds 64 slots of width 1024; a gated cross-attention writes the segment into the slots, and a second cross-attention lets question tokens read them.\nTraining minimises the answer cross-entropy plus a small slot-diversity penalty (weight 0.01). We train for 18k steps with batch size 256, a cosine schedule, 2k warm-up steps and learning rate 3e-4.\nAt inference the memory is updated online, so answering a question about minute 55 costs the same as answering one about minute 5. Peak memory stays at 44 GB for 60-minute videos.\n4 Experiments\nLongVid-QA contains short (under 10 minutes) and long (10 to 60 minutes) videos with multiple-choice questions. We report accuracy on the official test split.\nTable 1: Main results on LongVid-QA (accuracy, %).\nMethod | Short | Long | Avg\nBaseline-TR | 79.8 | 70.8 | 75.3\nLoomNet w/o memory | 78.6 | 69.6 | 74.1\nLoomNet (ours) | 82.6 | 74.2 | 78.4\nTraining used 16 GPUs for 22 hours (352 GPU-hours) with a cosine schedule and learning rate 3e-4.\nRemoving the memory costs 4.3 points on average, and most of the loss is on long videos (74.2 to 69.6).\n5 Conclusion\nA small, rewritable slot memory is enough to answer questions about hour-long videos at constant cost. Future work will test LoomNet on egocentric recordings.\nSynthetic document for evaluation only.\nSYNTHETIC DATA · 合成数据"
+  },
+  {
+   "item_id": "9F8284E5-EBC8-5AE3-A39B-A735A7859292",
+   "ref": "zip-01",
+   "t": "2026-10-15T22:00:00+08:00",
+   "kind": "document",
+   "source_app": "Finder",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:zip",
+    "split:test"
+   ],
+   "filename": "中期交付物_v1.2.zip",
+   "file": "../corpus/zip/zip-01.zip",
+   "mime_type": "application/zip",
+   "file_truth": "../truth/zip/zip-01.json",
+   "file_text": "[member] README.txt\n澄川缺陷检测项目 中期交付物 v1.2\n包含：\n- metrics.csv  各类别 AP\n- 部署说明.md  环境与运行命令\n- 样例结果.zip  样例图片与检测结果\n中期验收：2026年10月20日，苏州工厂。\n合成数据\n[member] metrics.csv\n类别,AP@0.5,样本数\n划痕,0.902,820\n凹坑,0.861,790\n污渍,0.856,790\n平均,0.873,2400\n[member] 部署说明.md\n# 部署说明（v1.2）\n- 系统：Ubuntu 22.04\n- CUDA：12.4\n- 推理：单张 23 ms（RTX 4000 Ada）\n```bash\n./run_infer.sh --model defect_det_v1.2.onnx --input ./images\n```\n> 合成数据\n[member] 样例结果.zip\n[member] sample_0417.png\n[member] sample_0417.json\n{\n  \"image\": \"sample_0417.png\",\n  \"model\": \"v1.2\",\n  \"detections\": [\n    {\n      \"label\": \"划痕\",\n      \"score\": 0.94,\n      \"box\": [\n        112,\n        80,\n        342,\n        128\n      ]\n    },\n    {\n      \"label\": \"凹坑\",\n      \"score\": 0.81,\n      \"box\": [\n        410,\n        230,\n        470,\n        290\n      ]\n    }\n  ],\n  \"note\": \"合成数据\"\n}\n澄川测试集 v3 · 样例 #0417 · 模型 v1.2\n划痕 0.94\n凹坑 0.81\n合成数据"
+  },
+  {
+   "item_id": "0926F5D9-DF6A-52B1-B1CF-653068B4CB24",
+   "ref": "html-01",
+   "t": "2026-10-16T09:30:00+08:00",
+   "kind": "document",
+   "source_app": "浏览器",
+   "persons": [
+    "p_he",
+    "p_ma",
+    "p_tao"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:html",
+    "split:test"
+   ],
+   "filename": "澄川项目周报_第11周.html",
+   "file": "../corpus/html/html-01.html",
+   "mime_type": "text/html",
+   "file_truth": "../truth/html/html-01.json",
+   "file_text": "项目协作空间\n澄川缺陷检测项目 周报（第11周，10月12日—10月16日）\n整体进度：85%\n本周负责人：贺一鸣\n本周完成\n- v1.2 模型在澄川测试集 v3 上 mAP 0.873（目标 0.85）\n- 部署包打包完成（中期交付物_v1.2.zip）\n- 与马骏确认中期验收：10月20日 9:30，苏州工厂\n风险\n- 污渍类 AP 0.856，接近下限，需补充 300 张样本\n下周计划\n- 10月20日 中期验收\n- 验收后申请第二期款 180,000 元\n本周工时\n成员 | 工时（小时）\n贺一鸣 | 22\n陶然 | 8\n合成数据"
+  },
+  {
+   "item_id": "0A0FC0C5-8918-5373-BB6F-4D5EBC8AE5D3",
+   "ref": "bmp-01",
+   "t": "2026-10-16T10:10:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "file",
+    "file_type:bmp",
+    "split:test"
+   ],
+   "filename": "缺陷检测样例_划痕.bmp",
+   "file": "../corpus/bmp/bmp-01.bmp",
+   "mime_type": "image/bmp",
+   "file_truth": "../truth/bmp/bmp-01.json",
+   "file_text": "澄川测试集 v3 · 样例 #0417 · 模型 v1.2\n划痕 0.94\n凹坑 0.81\n合成数据"
+  },
+  {
+   "item_id": "6B1CA0AE-5F61-5476-9FA9-4B36FEED4A04",
+   "ref": "jpg-01",
+   "t": "2026-10-16T11:05:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_tao"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:jpg",
+    "split:test"
+   ],
+   "filename": "到货签收单.jpg",
+   "file": "../corpus/jpg/jpg-01.jpg",
+   "mime_type": "image/jpeg",
+   "file_truth": "../truth/jpg/jpg-01.json",
+   "file_text": "恒算科技 货物签收单\n第1批 / 共2批\n签收单号 QS-1016-0093\n客户 清屿大学计算机学院\n货物 HS-G8820 GPU 服务器\n数量 1 台\n序列号 HSG8820-A7731\n送达时间 2026-10-16，10:48\n签收人 陶然\n外观检查 完好\n合成数据"
+  },
+  {
+   "item_id": "269BDC1A-35D6-51AD-AD43-B5C813FF7C43",
+   "ref": "heic-01",
+   "t": "2026-10-16T11:10:00+08:00",
+   "kind": "image",
+   "source_app": "照片",
+   "persons": [],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "file",
+    "file_type:heic",
+    "split:test"
+   ],
+   "filename": "机器铭牌.heic",
+   "file": "../corpus/heic/heic-01.heic",
+   "mime_type": "image/heic",
+   "file_truth": "../truth/heic/heic-01.json",
+   "file_text": "HS-G8820\nGPU Server · 8×H20 96GB\n型号 Model HS-G8820\nS/N HSG8820-A7731\n额定电源 4×3000W 200-240V~\n生产日期 2026-09\n制造商 恒算科技有限公司\n合成数据"
+  },
+  {
+   "item_id": "F645D836-EEE0-5489-B514-5178E90BADF2",
+   "ref": "chat_gu_invoice",
+   "t": "2026-10-16T14:30:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_gu"
+   ],
+   "events": [
+    "ev_gpu"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:test"
+   ],
+   "text": "顾青：沈老师，第一台服务器的发票收到了，598000元，我下周一（10月19日）去财务报销；第二台23号到。"
+  },
+  {
+   "item_id": "0D6D013D-ABE5-5A7B-B161-7EC68198D5DF",
+   "ref": "webp-01",
+   "t": "2026-10-16T15:20:00+08:00",
+   "kind": "image",
+   "source_app": "微信",
+   "persons": [
+    "p_zhou"
+   ],
+   "events": [
+    "ev_annot"
+   ],
+   "tags": [
+    "file",
+    "file_type:webp",
+    "split:dev"
+   ],
+   "filename": "标注平台进度截图.webp",
+   "file": "../corpus/webp/webp-01.webp",
+   "mime_type": "image/webp",
+   "file_truth": "../truth/webp/webp-01.json",
+   "file_text": "数芽标注平台 · 项目看板\nKitchenQA 视频问答标注\n项目进度总览（截至 2026-10-16，15:00）\n进行中\n批次 | 进度 | 状态 | 截止\n第1批 | 5,000/5,000 | 已验收 | 10-14\n第2批 | 1,240/5,000 | 标注中 | 10-22\n第3批 | 0/5,000 | 未开始 | 10-30\n第4批 | 0/5,000 | 未开始 | 11-06\n合成数据"
+  },
+  {
+   "item_id": "82EAD27A-B596-59DF-B958-DD13017311B4",
+   "ref": "chat_ma_pay",
+   "t": "2026-10-16T16:00:00+08:00",
+   "kind": "text",
+   "source_app": "微信",
+   "persons": [
+    "p_ma"
+   ],
+   "events": [
+    "ev_collab"
+   ],
+   "tags": [
+    "chat_paste",
+    "split:test"
+   ],
+   "text": "马骏：沈老师，20号验收我们质量部赵工和我都在，第二期18万等验收签字后走流程，大概月底到账。"
+  },
+  {
+   "item_id": "7674CF59-16C1-551D-8ED9-9F90DDD70F19",
+   "ref": "mp4-01",
+   "t": "2026-10-16T18:00:00+08:00",
+   "kind": "imported_media",
+   "source_app": "微信",
+   "persons": [
+    "p_he"
+   ],
+   "events": [
+    "ev_paper"
+   ],
+   "tags": [
+    "file",
+    "file_type:mp4",
+    "split:test"
+   ],
+   "filename": "LoomNet进展_1016.mp4",
+   "file": "../corpus/mp4/mp4-01.mp4",
+   "mime_type": "video/mp4",
+   "file_truth": "../truth/mp4/mp4-01.json",
+   "file_text": "摘要已提交\nICVL 2027 Paper ID #4127\n提交时间：10月15日 10:42\n合成数据\n主结果\n78.4%\n比 baseline 高 3.1 个点\nrun42 · memory_slots 64\n合成数据\n下一步\n全文截止 10月23日（AoE）\n补充材料 10月30日\n新服务器到货后跑长视频扩展实验\n合成数据"
+  }
+ ],
+ "facts": [
+  {
+   "fact_id": "f_paper_ddl",
+   "event_id": "ev_paper",
+   "text": "全文截止10月23日",
+   "keys": [
+    "10月23日"
+   ],
+   "valid_from": "6B08B81D-8F74-5BEC-BFF7-0B77FABB9EF8",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-23"
+  },
+  {
+   "fact_id": "f_paper_res_1",
+   "event_id": "ev_paper",
+   "text": "run37 平均准确率76.9",
+   "keys": [
+    "76.9"
+   ],
+   "valid_from": "4EC1F279-5D1D-5E29-A843-B689D57C2D65",
+   "superseded_by": "f_paper_res_2",
+   "state": "info"
+  },
+  {
+   "fact_id": "f_paper_res_2",
+   "event_id": "ev_paper",
+   "text": "run42 平均准确率78.4，比baseline高3.1",
+   "keys": [
+    "78.4"
+   ],
+   "valid_from": "B7D0D9ED-D53D-5382-B731-C216DBBFDDF0",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_paper_abs",
+   "event_id": "ev_paper",
+   "text": "摘要已提交（Paper ID 4127）",
+   "keys": [
+    "4127"
+   ],
+   "valid_from": "C7A3AC8B-BE8D-5950-AEE0-143C1F1E2328",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_gpu_vendor",
+   "event_id": "ev_gpu",
+   "text": "选定恒算科技，2台共119.6万",
+   "keys": [
+    "恒算",
+    "1196000"
+   ],
+   "valid_from": "013EA030-FA9C-5EA7-B1A3-9471EB8848B2",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_gpu_contract",
+   "event_id": "ev_gpu",
+   "text": "合同HS-2026-1017已签",
+   "keys": [
+    "HS-2026-1017"
+   ],
+   "valid_from": "82BD3713-9F31-548D-A799-4C420E1869A5",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_gpu_arrive1",
+   "event_id": "ev_gpu",
+   "text": "第一台10月16日到货签收",
+   "keys": [
+    "10月16日"
+   ],
+   "valid_from": "6B1CA0AE-5F61-5476-9FA9-4B36FEED4A04",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_gpu_second",
+   "event_id": "ev_gpu",
+   "text": "第二台10月23日到",
+   "keys": [
+    "10月23日"
+   ],
+   "valid_from": "82BD3713-9F31-548D-A799-4C420E1869A5",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-23"
+  },
+  {
+   "fact_id": "f_def_date_1",
+   "event_id": "ev_defense",
+   "text": "答辩10月14日14:00在B312",
+   "keys": [
+    "10月14日"
+   ],
+   "valid_from": "7192D546-D6BF-575F-BDB0-F05FE75F3B9B",
+   "superseded_by": "f_def_date_2",
+   "state": "planned",
+   "date": "2026-10-14"
+  },
+  {
+   "fact_id": "f_def_date_2",
+   "event_id": "ev_defense",
+   "text": "答辩改到10月15日14:00",
+   "keys": [
+    "10月15日"
+   ],
+   "valid_from": "74075DA6-8EBC-5AEA-8235-A0BF38772897",
+   "superseded_by": "f_def_pass",
+   "state": "planned",
+   "date": "2026-10-15"
+  },
+  {
+   "fact_id": "f_def_pass",
+   "event_id": "ev_defense",
+   "text": "开题答辩通过",
+   "keys": [
+    "通过"
+   ],
+   "valid_from": "FF4F47CE-1A2B-5393-B02F-96ED91301CAF",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_def_revise",
+   "event_id": "ev_defense",
+   "text": "修改稿10月25日前交",
+   "keys": [
+    "10月25日"
+   ],
+   "valid_from": "A5172A4A-FEF5-5081-A312-3A347F055108",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-25"
+  },
+  {
+   "fact_id": "f_col_accept",
+   "event_id": "ev_collab",
+   "text": "中期验收10月20日在苏州工厂",
+   "keys": [
+    "10月20日"
+   ],
+   "valid_from": "0C4EE03D-9F4A-5495-8B53-510C7B59FDC0",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-20"
+  },
+  {
+   "fact_id": "f_col_pay2",
+   "event_id": "ev_collab",
+   "text": "验收后付第二期18万",
+   "keys": [
+    "180000"
+   ],
+   "valid_from": "0C4EE03D-9F4A-5495-8B53-510C7B59FDC0",
+   "superseded_by": null,
+   "state": "planned"
+  },
+  {
+   "fact_id": "f_col_map",
+   "event_id": "ev_collab",
+   "text": "v1.2 mAP 0.873",
+   "keys": [
+    "0.873"
+   ],
+   "valid_from": "84285412-8ABD-5AC7-B2D2-B339E0FB1D5F",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_talk_time",
+   "event_id": "ev_talk",
+   "text": "讲座10月16日15:00在A101",
+   "keys": [
+    "10月16日",
+    "A101"
+   ],
+   "valid_from": "363CA2BF-38AF-5F67-96DE-D77A64A88993",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-16"
+  },
+  {
+   "fact_id": "f_talk_arr_1",
+   "event_id": "ev_talk",
+   "text": "10月15日19:10到达",
+   "keys": [
+    "19:10"
+   ],
+   "valid_from": "E6C57E59-2127-502D-8626-AF1F817BA211",
+   "superseded_by": "f_talk_arr_2",
+   "state": "planned",
+   "date": "2026-10-15"
+  },
+  {
+   "fact_id": "f_talk_arr_2",
+   "event_id": "ev_talk",
+   "text": "航班延误，22:40到达",
+   "keys": [
+    "22:40"
+   ],
+   "valid_from": "66A76B04-62BE-51C1-9D81-E3970BB04D34",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-15"
+  },
+  {
+   "fact_id": "f_talk_hotel",
+   "event_id": "ev_talk",
+   "text": "酒店确认号QYH-88213",
+   "keys": [
+    "QYH-88213"
+   ],
+   "valid_from": "7E9EF71D-BB93-5AF1-ABC6-D72985B440FC",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_ann_price",
+   "event_id": "ev_annot",
+   "text": "2万条×1.8元共3.6万",
+   "keys": [
+    "36000"
+   ],
+   "valid_from": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "superseded_by": null,
+   "state": "info"
+  },
+  {
+   "fact_id": "f_ann_b1",
+   "event_id": "ev_annot",
+   "text": "第1批合格率96.2%验收通过",
+   "keys": [
+    "96.2"
+   ],
+   "valid_from": "63E9BAD2-A68C-5488-867D-D1C3E1800D3A",
+   "superseded_by": null,
+   "state": "done"
+  },
+  {
+   "fact_id": "f_ann_b2",
+   "event_id": "ev_annot",
+   "text": "第2批10月22日前交",
+   "keys": [
+    "10月22日"
+   ],
+   "valid_from": "4F547792-7C9A-5FDA-8B5D-6C6C59358B6B",
+   "superseded_by": null,
+   "state": "planned",
+   "date": "2026-10-22"
+  }
+ ],
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-mid",
+   "after_item_id": "B7D0D9ED-D53D-5382-B731-C216DBBFDDF0",
+   "label": "10月14日晚",
+   "expected": {
+    "ev_paper": [
+     "f_paper_ddl",
+     "f_paper_res_2"
+    ],
+    "ev_gpu": [
+     "f_gpu_vendor",
+     "f_gpu_contract"
+    ],
+    "ev_defense": [
+     "f_def_date_2"
+    ],
+    "ev_collab": [
+     "f_col_accept",
+     "f_col_map"
+    ],
+    "ev_talk": [
+     "f_talk_time",
+     "f_talk_arr_1"
+    ],
+    "ev_annot": [
+     "f_ann_price"
+    ]
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "after_item_id": "7674CF59-16C1-551D-8ED9-9F90DDD70F19",
+   "label": "10月16日晚（最终）",
+   "expected": {
+    "ev_paper": [
+     "f_paper_ddl",
+     "f_paper_res_2",
+     "f_paper_abs"
+    ],
+    "ev_gpu": [
+     "f_gpu_arrive1",
+     "f_gpu_second"
+    ],
+    "ev_defense": [
+     "f_def_pass",
+     "f_def_revise"
+    ],
+    "ev_collab": [
+     "f_col_accept",
+     "f_col_pay2"
+    ],
+    "ev_talk": [
+     "f_talk_time",
+     "f_talk_arr_2"
+    ],
+    "ev_annot": [
+     "f_ann_b1",
+     "f_ann_b2"
+    ]
+   }
+  }
+ ]
+}

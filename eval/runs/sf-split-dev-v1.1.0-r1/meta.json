@@ -1,0 +1,110 @@
+{
+ "scenario": "split-dev",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "item-split": "8a546d04ce1a40aa",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "b3c4678",
+ "date": "2026-09-29T02:10:52+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/split-dev/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--owner-aliases",
+  "scenario",
+  "--keep-db",
+  "--out",
+  "../out/sd-final-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我",
+  "沈棠",
+  "棠姐",
+  "沈制作"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "bec13166-cd97-4041-8241-2611e626a6a9",
+  "E2": "35c99a6f-0bc2-4987-a1a0-bfac80e7e17f",
+  "E3": "494c6d1a-c060-44d8-b96d-6dcc203271b5",
+  "E4": "9219506d-2381-4923-b495-dcac4e0f34be",
+  "E5": "3cc521a0-ba5f-466b-ad4d-253e19893819",
+  "E6": "fa4abdc2-3631-4b62-8b36-1f955f7ebc3a",
+  "E7": "0e2d5c73-8db6-46e0-81f5-3afd8cdd50ef",
+  "E8": "143b610d-2d24-41de-b5ae-7687dc03edb0",
+  "E9": "b651f103-4822-4526-a9ed-bf06dc3043d1",
+  "E10": "c6af3b74-23b3-4507-a5ba-422e6b973e03",
+  "E11": "76565dce-f927-4925-8062-f1d0b17b9bfb",
+  "E12": "68d175ae-998d-4870-aefd-8439a07700ce",
+  "E13": "52ecdcf0-4eae-4d8d-b44a-9d8f43361c6a",
+  "E14": "efc412c0-8057-4d9e-ae3f-d7dee8f1901a",
+  "E15": "112f74ef-a700-4da7-80b1-4df5f8d6b872",
+  "E16": "b6ed6b9e-1ad6-47c6-964c-885833a5b2ff",
+  "E17": "5e61e4fc-b250-45a2-8d41-cf5784c810f9",
+  "E18": "4ad5b67b-3426-4759-bb64-eae008728aab",
+  "E19": "0894c061-eeb5-4421-a696-f8d933ccbe85",
+  "E20": "57387281-6597-463c-8418-38ae54b651fd",
+  "E21": "b67a31cb-51a8-44de-bc45-2561948915e7",
+  "E22": "e8430ceb-4a06-4bed-8265-dbfb7af2c2e5",
+  "E23": "ece3efa6-a3d5-4479-a090-5d0790ff4b90",
+  "E24": "81ad9131-c51a-423e-86d1-400a85b22eca",
+  "E25": "fbfbd2b8-69c4-4611-82d7-9e8c33c0d996",
+  "E26": "e9b710d3-8e60-4da9-a613-6f59b5a15318",
+  "E27": "bb22cc6a-066d-4442-ac86-6c2246bac92c",
+  "E28": "429aca53-4585-4896-a660-dec0c80d369f",
+  "E29": "f84ccb6f-08b7-4a5f-842a-03c294d3a851"
+ },
+ "bare_max_tokens": null
+}

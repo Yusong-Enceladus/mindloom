@@ -1,0 +1,97 @@
+{
+ "file_id": "xlsx-01",
+ "path": "corpus/xlsx/xlsx-01.xlsx",
+ "type": "xlsx",
+ "ext": "xlsx",
+ "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "filename": "LoomNet消融实验_v3.xlsx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "4EC1F279-5D1D-5E29-A843-B689D57C2D65",
+  "ref": "paper_xlsx",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "full",
+ "text": "[主结果]\nLongVid-QA 主结果（run37）\n准确率 (%)\n方法\t短视频\t长视频\t平均\t参数量(M)\nBaseline-TR\t79.8\t70.8\t75.3\t312\nLoomNet (run37)\t81.2\t72.6\t76.9\t298\nLoomNet w/o memory\t78.6\t69.6\t74.1\t285\n合成数据\n[消融]\nmemory_slots\t准确率(%)\t显存(GB)\t相对 baseline\n32\t75.9\t38\t0.6\n64\t76.9\t44\t1.6\n128\t76.5\t57\t1.2\n合成数据\n[算力统计]\nGPU·时统计（预算 2,000）\n阶段\t实验\t卡数\t小时\tGPU·时\n调试\trun35 预实验\t8\t36\t288\n\trun36 调参\t8\t42\t336\n正式\trun37 主实验\t16\t48\t768\n\t消融 32/64/128\t8\t22\t176\n合计\t\t\t\t1568\n剩余预算\t\t\t\t432\n合成数据",
+ "key_lines": [
+  "Baseline-TR\t79.8\t70.8\t75.3\t312",
+  "LoomNet (run37)\t81.2\t72.6\t76.9\t298",
+  "LoomNet w/o memory\t78.6\t69.6\t74.1\t285",
+  "64\t76.9\t44\t1.6",
+  "消融 32/64/128\t8\t22\t176",
+  "合计\t\t\t\t1568",
+  "剩余预算\t\t\t\t432"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "baseline_avg": 75.3,
+  "run37_avg": 76.9,
+  "best_memory_slots": 64,
+  "gpu_hours_used": 1568,
+  "gpu_hours_left": 432
+ },
+ "numbers": [
+  {
+   "value": 75.3,
+   "label": "Baseline-TR 平均"
+  },
+  {
+   "value": 76.9,
+   "label": "run37 平均"
+  },
+  {
+   "value": 74.1,
+   "label": "w/o memory 平均"
+  },
+  {
+   "value": 1568,
+   "label": "已用 GPU·时"
+  },
+  {
+   "value": 432,
+   "label": "剩余预算"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "run37 的平均准确率是多少？",
+   "a": 76.9,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "消融里 memory_slots 取多少最好？",
+   "a": 64,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "已经用了多少 GPU·时？",
+   "a": 1568,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "剩余预算还有多少 GPU·时？",
+   "a": 432,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "主结果",
+   "消融",
+   "算力统计"
+  ],
+  "formulas": 12,
+  "merged": 5
+ },
+ "notes": "3 个工作表；主结果有合并的“准确率 (%)”分组表头；平均、相对 baseline（跨表引用）、GPU·时 均为带缓存值的公式；算力统计的“阶段”列纵向合并。",
+ "bytes": 7914,
+ "sha256": "a41fb211c3f2bb6ec61c8a297dd69dbdc08cf601d9e7bfa83ccc71efb95ded9c"
+}

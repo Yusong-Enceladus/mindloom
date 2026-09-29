@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "kind": "permission-lint-summary",
+  "status": "pass",
+  "failedCheck": "",
+  "manifest": "config/permissions.json",
+  "project": "project.yml",
+  "infoPlist": "App/Info.plist",
+  "entitlements": "App/BestASR.entitlements",
+  "checkedPermissionCount": 3,
+  "checkedUsageDescriptionCount": 2,
+  "requirementsCovered": [
+    "PRD-18.1",
+    "PRD-18.2",
+    "SYS-001..012",
+    "DICT-006..008"
+  ]
+}

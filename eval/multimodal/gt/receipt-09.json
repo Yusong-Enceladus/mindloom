@@ -1,0 +1,108 @@
+{
+ "id": "receipt-09",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-09.jpg",
+ "lang": "en",
+ "hard": [
+  "small_text",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "35075b422768ad3c619b85ff0b43e1056a28dd8fcd21c53ede15f8d9122a4da6",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "Maple & Pine Grocery",
+  "date": "2026-10-14",
+  "date_text": "10/14/2026 4:58 PM",
+  "time": "16:58",
+  "doc_no": "8468",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Eggs, dozen",
+    "qty": 2,
+    "unit": "ea",
+    "unit_price": "4.29",
+    "amount": "8.58"
+   },
+   {
+    "name": "Oat milk 64 oz",
+    "qty": 1,
+    "unit": "ea",
+    "unit_price": "4.99",
+    "amount": "4.99"
+   },
+   {
+    "name": "Bananas",
+    "qty": 1.2,
+    "unit": "lb",
+    "unit_price": "0.69",
+    "amount": "0.83"
+   },
+   {
+    "name": "Apples",
+    "qty": 0.6,
+    "unit": "lb",
+    "unit_price": "1.89",
+    "amount": "1.13"
+   }
+  ],
+  "subtotal": "15.53",
+  "discount": "0.00",
+  "tax": "1.28",
+  "total": "16.81",
+  "payment_method": "Cash",
+  "tax_rate": 8.25
+ },
+ "text_lines": [
+  "Maple & Pine Grocery",
+  "120 Orchard Road, Millbrook",
+  "Tel (555) 017-2066",
+  "Order #8468 Cashier 04",
+  "10/14/2026 4:58 PM",
+  "Eggs, dozen 2 4.29 8.58",
+  "Oat milk 64 oz 1 4.99 4.99",
+  "Bananas 1.20lb 0.69 0.83",
+  "Apples 0.60lb 1.89 1.13",
+  "Subtotal 15.53",
+  "Tax 8.25% 1.28",
+  "Total $16.81",
+  "Paid: Cash",
+  "Thank you!",
+  "Returns within 14 days with receipt"
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$16.81",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Maple & Pine Grocery",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-10-14",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$1.28",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "lang": "en",
+  "far": true
+ }
+}

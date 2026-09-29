@@ -1,0 +1,221 @@
+{
+ "scenario_id": "holdout-week-v1",
+ "split": "holdout",
+ "n_items": 32,
+ "summary": {
+  "bcubed_precision": 0.9375,
+  "bcubed_recall": 0.8838837129054521,
+  "bcubed_f1": 0.9099027019704947,
+  "link_precision": 0.9375,
+  "link_recall": 0.9090909090909091,
+  "link_f1": 0.923076923076923,
+  "hard_decoy_leakage": 0.0,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 0.0,
+  "pred_event_count": 7,
+  "gold_event_count": 5,
+  "question_count": 0,
+  "status_fact_recall": 0.5625,
+  "stale_fact_rate": 0.0,
+  "person_link_accuracy": 0.18181818181818182,
+  "person_link_accuracy_cross_source": 0.25,
+  "checkpoints_scored": 2,
+  "checkpoints_total": 2
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.9375,
+    "recall": 0.8838837129054521,
+    "f1": 0.9099027019704947
+   },
+   "link": {
+    "precision": 0.9375,
+    "recall": 0.9090909090909091,
+    "f1": 0.923076923076923,
+    "tp": 30,
+    "n_pred": 32,
+    "n_gold": 33
+   },
+   "decoy_leakage": {
+    "hard": 0.0,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_studio": {
+      "difficulty": "hard",
+      "decoy_of": "ev_portfolio",
+      "pairs": 24,
+      "leakage": 0.0,
+      "decoy_items": 4
+     },
+     "ev_tablet": {
+      "difficulty": "easy",
+      "decoy_of": "ev_app",
+      "pairs": 30,
+      "leakage": 0.0,
+      "decoy_items": 3
+     }
+    }
+   },
+   "noise_abstention": {
+    "noise_items": 2,
+    "abstained": 0,
+    "rate": 0.0
+   },
+   "pred_event_count": 7,
+   "pred_event_count_multi_item": 5,
+   "gold_event_count": 5,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "39a7040d-0924-4b00-81fc-dba833eb02a9": "ev_app",
+   "55c2b67c-9d52-47ff-8977-7ef98128dd3c": "ev_portfolio",
+   "f735e314-23f4-4adc-8ca6-e542dc28dd52": "ev_studio",
+   "b5b08f13-0926-4e4f-beeb-5b85dd022d83": "ev_tablet",
+   "2f705c07-0d13-4752-a3e3-9e8a0e069060": "ev_talk"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.18181818181818182,
+   "pairs": 22,
+   "accuracy_cross_source": 0.25,
+   "pairs_cross_source": 16,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 2.25,
+   "name_match": 0.3333333333333333,
+   "mapping": {
+    "b840cbf9-a250-52a6-bef6-d7e60b8cee44": "p_feng",
+    "ad5d9cb3-3b86-5b18-9051-c08cc80f7458": "p_he",
+    "68d3afee-1837-5dbe-8f86-0d46ddab1bc2": "p_owner",
+    "fafdf922-af3b-5dbe-93d1-750ff4f669b3": "p_shi"
+   }
+  },
+  "questions": {
+   "count": 0,
+   "asked_total": 0,
+   "by_kind": {},
+   "per_100_items": 0.0,
+   "resolvable": 0,
+   "true_yes_rate": null
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-h3",
+   "label": "周三晚",
+   "n_items": 18,
+   "bcubed_f1": 0.9714285714285714,
+   "link_f1": 0.9714285714285714,
+   "pred_event_count": 5,
+   "gold_event_count": 4,
+   "expected": 7,
+   "recalled": 6,
+   "fact_recall": 0.8571428571428571,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "status_details": {
+    "ev_app": {
+     "pred_event": "39a7040d-0924-4b00-81fc-dba833eb02a9",
+     "status_line": "深色模式报价5万及10月12日交付已获确认，合同补充协议待法务发出。",
+     "recalled": [
+      "f_app_fee_2",
+      "f_app_due_2"
+     ],
+     "missing": []
+    },
+    "ev_portfolio": {
+     "pred_event": "55c2b67c-9d52-47ff-8977-7ef98128dd3c",
+     "status_line": "首页配色已改并合入，待下周完成案例页，计划28号上线。",
+     "recalled": [
+      "f_pf_launch"
+     ],
+     "missing": []
+    },
+    "ev_talk": {
+     "pred_event": "2f705c07-0d13-4752-a3e3-9e8a0e069060",
+     "status_line": "方若同意将分享时长从30分钟延长至40分钟，并计划增加现场演练环节。",
+     "recalled": [
+      "f_talk_len_2"
+     ],
+     "missing": [
+      "f_talk_date"
+     ]
+    },
+    "ev_studio": {
+     "pred_event": "f735e314-23f4-4adc-8ca6-e542dc28dd52",
+     "status_line": "老贺同意各付1800元，约定9月1日搬入，由他负责办理宽带。",
+     "recalled": [
+      "f_studio_rent",
+      "f_studio_move"
+     ],
+     "missing": []
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 32,
+   "bcubed_f1": 0.9099027019704947,
+   "link_f1": 0.923076923076923,
+   "pred_event_count": 7,
+   "gold_event_count": 5,
+   "expected": 9,
+   "recalled": 3,
+   "fact_recall": 0.3333333333333333,
+   "stale_applicable": 6,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "status_details": {
+    "ev_app": {
+     "pred_event": "39a7040d-0924-4b00-81fc-dba833eb02a9",
+     "status_line": "深色模式报价5万及10月12日交付已获确认，合同补充协议待法务发出。",
+     "recalled": [
+      "f_app_due_2"
+     ],
+     "missing": [
+      "f_app_stage_2"
+     ]
+    },
+    "ev_portfolio": {
+     "pred_event": "55c2b67c-9d52-47ff-8977-7ef98128dd3c",
+     "status_line": "案例页组件已生成待优化移动端，9月1日搬入工作室。",
+     "recalled": [],
+     "missing": [
+      "f_pf_launch",
+      "f_pf_stage_2"
+     ]
+    },
+    "ev_talk": {
+     "pred_event": "2f705c07-0d13-4752-a3e3-9e8a0e069060",
+     "status_line": "方若确认40分钟分享并加演练，周三发PPT初稿并确认投影转接头。",
+     "recalled": [
+      "f_talk_len_2"
+     ],
+     "missing": [
+      "f_talk_date"
+     ]
+    },
+    "ev_studio": {
+     "pred_event": "f735e314-23f4-4adc-8ca6-e542dc28dd52",
+     "status_line": "押金及首期租金已付，9月1日搬家，老贺办宽带，我在选椅子。",
+     "recalled": [
+      "f_studio_move"
+     ],
+     "missing": [
+      "f_studio_deposit"
+     ]
+    },
+    "ev_tablet": {
+     "pred_event": "b5b08f13-0926-4e4f-beeb-5b85dd022d83",
+     "status_line": "售后已确认维修完成并寄回，等待收货。",
+     "recalled": [],
+     "missing": [
+      "f_tablet_fixed"
+     ]
+    }
+   }
+  }
+ ]
+}

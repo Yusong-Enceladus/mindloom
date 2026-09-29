@@ -1,0 +1,69 @@
+{
+ "file_id": "html-04",
+ "path": "corpus/html/html-04.html",
+ "type": "html",
+ "ext": "html",
+ "mime": "text/html",
+ "filename": "Project Status Update_ Customer Portal v2.html",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "内部页面\nProject Status Update: Customer Portal v2\nOwner: Sofia Alvarez\nOverall status: Green\nBudget: USD 239,000\nBudget spent: 66%\nMilestones\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tin progress\nFull rollout\tplanned\nTop risk\nVendor delivery slipped by 10 days\nNext report\nNext update due on 2026-11-02. Synthetic report for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Owner: Sofia Alvarez",
+  "Overall status: Green",
+  "Budget: USD 239,000",
+  "Budget spent: 66%",
+  "Vendor delivery slipped by 10 days"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "owner": "Sofia Alvarez",
+  "status": "Green",
+  "budget_usd": 239000,
+  "spent_pct": 66,
+  "top_risk": "Vendor delivery slipped by 10 days"
+ },
+ "numbers": [
+  {
+   "value": 239000,
+   "label": "budget"
+  },
+  {
+   "value": 66,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Green",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 66,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Vendor delivery slipped by 10 days",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Sofia Alvarez",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 1500,
+ "sha256": "b6e7027c02d2113c39160bb34f5bac7dec4d352b07ed6ad683e5759d31f0f024",
+ "family": "status_en"
+}

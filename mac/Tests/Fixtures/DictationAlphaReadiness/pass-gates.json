@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictation-alpha-readiness-gates",
+  "alphaGates": [
+    {
+      "id": "alpha-pass",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "alphaPass",
+      "expectedValue": true,
+      "unmetStatus": "fail",
+      "taskRefs": ["fixture"],
+      "blocker": "Alpha fixture must pass."
+    }
+  ],
+  "wholeProductGaps": [
+    {
+      "id": "process-tap-gap",
+      "scope": "both",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "processTapReady",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "Process Tap remains pending."
+    },
+    {
+      "id": "second-output-gap",
+      "scope": "both",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "secondOutputReady",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "Second output remains pending."
+    },
+    {
+      "id": "multi-speaker-gap",
+      "scope": "both",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "multiSpeakerReady",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "Multi-speaker remains pending."
+    }
+  ]
+}

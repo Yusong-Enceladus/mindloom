@@ -1,0 +1,86 @@
+{
+ "id": "label-06",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-06.jpg",
+ "lang": "en",
+ "hard": [
+  "two_prices",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "530219c837fc644201bbade362e44fcda368f8bc7a7c1b4e1f01376c40832845",
+ "gt": {
+  "label_kind": "price_tag",
+  "fields": [
+   {
+    "key": "product",
+    "label": "",
+    "value": "Oat milk"
+   },
+   {
+    "key": "spec",
+    "label": "Size",
+    "value": "64 fl oz"
+   },
+   {
+    "key": "unit_price",
+    "label": "Unit price",
+    "value": "21.9¢ per fl oz"
+   },
+   {
+    "key": "original_price",
+    "label": "Reg.",
+    "value": "$14.99"
+   },
+   {
+    "key": "price",
+    "label": "",
+    "value": "$13.99"
+   }
+  ],
+  "lines": [
+   "SALE",
+   "Oat milk",
+   "Size: 64 fl oz",
+   "Unit price: 21.9¢ per fl oz",
+   "Reg. $14.99",
+   "$13.99"
+  ]
+ },
+ "text_lines": [
+  "SALE",
+  "Oat milk",
+  "Size: 64 fl oz",
+  "Unit price: 21.9¢ per fl oz",
+  "Reg. $14.99",
+  "$13.99"
+ ],
+ "qa": [
+  {
+   "q": "What is the current price?",
+   "a": "$13.99",
+   "match": "number"
+  },
+  {
+   "q": "What size is it?",
+   "a": "64 fl oz",
+   "match": "exact"
+  },
+  {
+   "q": "What was the regular price?",
+   "a": "$14.99",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "price_tag",
+  "background": "desk_white"
+ },
+ "variant": {
+  "kind": "price_tag",
+  "lang": "en",
+  "promo": true
+ }
+}

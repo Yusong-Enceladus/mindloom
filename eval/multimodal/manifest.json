@@ -1,0 +1,2476 @@
+{
+ "version": "mm-v1",
+ "description": "Synthetic multimodal eval set: 7 information-bearing image types with ground truth. All people, shops, companies, addresses and numbers are invented; every image carries a small '合成数据' mark that is not part of the ground truth.",
+ "rules": {
+  "dev": "may be used for prompt / pipeline work",
+  "test": "report only; never tune on it"
+ },
+ "generator": {
+  "script": "eval/multimodal/generate.py",
+  "python": "3.12.13",
+  "pillow": "12.3.0",
+  "numpy": "2.5.3",
+  "matplotlib": "3.11.2",
+  "reportlab": "5.0.1",
+  "pypdfium2": "5.13.0",
+  "fonttools": "4.66.0",
+  "platform": "macOS-27.0"
+ },
+ "fonts": {
+  "hand_bradley": "Bradley Hand Bold (Bradley Hand Bold.ttf#0)",
+  "hand_chalk": "Chalkduster Regular (Chalkduster.ttf#0)",
+  "hand_marker": "Marker Felt Thin (MarkerFelt.ttc#0)",
+  "hand_note": "Hannotate SC Regular (Hannotate.ttc#0)",
+  "hand_noteworthy": "Noteworthy Light (Noteworthy.ttc#0)",
+  "hand_pen": "HanziPen SC Regular (Hanzipen.ttc#0)",
+  "hand_wawa": "Wawati SC Regular (WawaSC-Regular.otf#0)",
+  "hand_xing": "Xingkai SC Light (Xingkai.ttc#2)",
+  "hei": "Hiragino Sans GB W3 (Hiragino Sans GB.ttc#0)",
+  "hei_bold": "Hiragino Sans GB W6 (Hiragino Sans GB.ttc#2)",
+  "heiti": "Heiti SC Light (STHeiti Light.ttc#1)",
+  "heiti_med": "Heiti SC Medium (STHeiti Medium.ttc#1)",
+  "helv": "Helvetica Regular (Helvetica.ttc#0)",
+  "helv_bold": "Helvetica Bold (Helvetica.ttc#1)",
+  "kai": "Kaiti SC Regular (Kaiti.ttc#0)",
+  "mono": "Menlo Regular (Menlo.ttc#0)",
+  "mono_bold": "Menlo Bold (Menlo.ttc#1)",
+  "song": "Songti SC Regular (Songti.ttc#6)",
+  "song_bold": "Songti SC Bold (Songti.ttc#1)",
+  "times": "Times Regular (Times.ttc#0)"
+ },
+ "counts": {
+  "total": 140,
+  "dev": 42,
+  "test": 98,
+  "by_type": {
+   "chat_screenshot": {
+    "dev": 6,
+    "test": 14
+   },
+   "chart_dashboard": {
+    "dev": 6,
+    "test": 14
+   },
+   "slide": {
+    "dev": 6,
+    "test": 14
+   },
+   "whiteboard_handwriting": {
+    "dev": 6,
+    "test": 14
+   },
+   "receipt_invoice": {
+    "dev": 6,
+    "test": 14
+   },
+   "scanned_document": {
+    "dev": 6,
+    "test": 14
+   },
+   "form_label_sign": {
+    "dev": 6,
+    "test": 14
+   }
+  },
+  "by_lang": {
+   "zh": {
+    "dev": 28,
+    "test": 66
+   },
+   "en": {
+    "dev": 13,
+    "test": 31
+   },
+   "mixed": {
+    "dev": 1,
+    "test": 1
+   }
+  },
+  "by_hard_tag": {
+   "blur": {
+    "dev": 1,
+    "test": 2
+   },
+   "cursive": {
+    "dev": 1,
+    "test": 2
+   },
+   "dated_time": {
+    "dev": 2,
+    "test": 6
+   },
+   "dense": {
+    "dev": 1,
+    "test": 2
+   },
+   "glare": {
+    "dev": 6,
+    "test": 12
+   },
+   "handwriting": {
+    "dev": 7,
+    "test": 16
+   },
+   "low_contrast": {
+    "dev": 7,
+    "test": 15
+   },
+   "many_points": {
+    "dev": 1,
+    "test": 1
+   },
+   "non_text_bubbles": {
+    "dev": 2,
+    "test": 4
+   },
+   "perspective": {
+    "dev": 20,
+    "test": 45
+   },
+   "photo": {
+    "dev": 2,
+    "test": 3
+   },
+   "rotation": {
+    "dev": 2,
+    "test": 2
+   },
+   "shadow": {
+    "dev": 1,
+    "test": 3
+   },
+   "similar_colors": {
+    "dev": 1,
+    "test": 1
+   },
+   "similar_items": {
+    "dev": 2,
+    "test": 3
+   },
+   "similar_names": {
+    "dev": 6,
+    "test": 14
+   },
+   "small_text": {
+    "dev": 7,
+    "test": 16
+   },
+   "struck_items": {
+    "dev": 3,
+    "test": 6
+   },
+   "table": {
+    "dev": 4,
+    "test": 10
+   },
+   "two_prices": {
+    "dev": 1,
+    "test": 2
+   },
+   "units": {
+    "dev": 32,
+    "test": 67
+   }
+  }
+ },
+ "items": [
+  {
+   "id": "chat-00",
+   "type": "chat_screenshot",
+   "image": "images/chat-00.png",
+   "gt": "gt/chat-00.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "beans",
+   "width": 1080,
+   "height": 1336,
+   "sha256": "654e7c2be86052fa668495a7bb6401a8a057d5c9409cebb891c3f6f47de90cb2",
+   "split": "test"
+  },
+  {
+   "id": "chat-01",
+   "type": "chat_screenshot",
+   "image": "images/chat-01.png",
+   "gt": "gt/chat-01.json",
+   "lang": "zh",
+   "hard": [
+    "dated_time",
+    "units"
+   ],
+   "topic": "launch",
+   "width": 1080,
+   "height": 1290,
+   "sha256": "d7994cce395bddd001a02282cc57e02b0500fb39bb4d2147e7a7acf14421bcb0",
+   "split": "test"
+  },
+  {
+   "id": "chat-02",
+   "type": "chat_screenshot",
+   "image": "images/chat-02.png",
+   "gt": "gt/chat-02.json",
+   "lang": "zh",
+   "hard": [
+    "non_text_bubbles",
+    "units"
+   ],
+   "topic": "dinner",
+   "width": 1080,
+   "height": 1286,
+   "sha256": "6f1595234bb1de8af3a482ce7a3918057f5b7d20dd28ad85d6d5d1b0a3351909",
+   "split": "test"
+  },
+  {
+   "id": "chat-03",
+   "type": "chat_screenshot",
+   "image": "images/chat-03.png",
+   "gt": "gt/chat-03.json",
+   "lang": "zh",
+   "hard": [
+    "non_text_bubbles",
+    "units"
+   ],
+   "topic": "tiles",
+   "width": 1080,
+   "height": 1346,
+   "sha256": "97b0927334be6a5023714242b6db10cee086ad77e7edc38e00a305d74af954ca",
+   "split": "test"
+  },
+  {
+   "id": "chat-04",
+   "type": "chat_screenshot",
+   "image": "images/chat-04.png",
+   "gt": "gt/chat-04.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast"
+   ],
+   "topic": "school",
+   "width": 1080,
+   "height": 1306,
+   "sha256": "e32e6703d431b8f885f2c43385047ec6e2512bb60094c75aa19de2e5b69afa01",
+   "split": "test"
+  },
+  {
+   "id": "chat-05",
+   "type": "chat_screenshot",
+   "image": "images/chat-05.png",
+   "gt": "gt/chat-05.json",
+   "lang": "zh",
+   "hard": [
+    "non_text_bubbles",
+    "units"
+   ],
+   "topic": "refund",
+   "width": 1080,
+   "height": 1232,
+   "sha256": "472ae2d2252893fab638c3d507697ac906539799ec34490a0135811c3af40b4c",
+   "split": "test"
+  },
+  {
+   "id": "chat-06",
+   "type": "chat_screenshot",
+   "image": "images/chat-06.jpg",
+   "gt": "gt/chat-06.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "non_text_bubbles",
+    "units"
+   ],
+   "topic": "run",
+   "width": 594,
+   "height": 723,
+   "sha256": "2812bb951f54eb172b884341beb6ea432681af6beff7f981be185a07ccc8f39a",
+   "split": "dev"
+  },
+  {
+   "id": "chat-07",
+   "type": "chat_screenshot",
+   "image": "images/chat-07.png",
+   "gt": "gt/chat-07.json",
+   "lang": "zh",
+   "hard": [
+    "dated_time",
+    "units"
+   ],
+   "topic": "trip",
+   "width": 1080,
+   "height": 1110,
+   "sha256": "98baaf3c4d558614decc124fc3ea8b56315c9708caea30019091b234f313f5b5",
+   "split": "test"
+  },
+  {
+   "id": "chat-08",
+   "type": "chat_screenshot",
+   "image": "images/chat-08.png",
+   "gt": "gt/chat-08.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units"
+   ],
+   "topic": "rent",
+   "width": 1080,
+   "height": 980,
+   "sha256": "cf3b92d95e71245742e74a6126c0f3fb65d5e9eefe4043d8d8df444251914186",
+   "split": "dev"
+  },
+  {
+   "id": "chat-09",
+   "type": "chat_screenshot",
+   "image": "images/chat-09.png",
+   "gt": "gt/chat-09.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "units"
+   ],
+   "topic": "samples",
+   "width": 1080,
+   "height": 1232,
+   "sha256": "d77a1b7d021944dfa419c5d90d2bdd49a8c90451aa9fba20b3959fbfeb3e534f",
+   "split": "test"
+  },
+  {
+   "id": "chat-10",
+   "type": "chat_screenshot",
+   "image": "images/chat-10.png",
+   "gt": "gt/chat-10.json",
+   "lang": "en",
+   "hard": [],
+   "topic": "en_launch",
+   "width": 1080,
+   "height": 1202,
+   "sha256": "478d119cbe6b2edaa563d2ada66ded5918dcc4fcb7a61e4d486f7bc6a51ec390",
+   "split": "test"
+  },
+  {
+   "id": "chat-11",
+   "type": "chat_screenshot",
+   "image": "images/chat-11.png",
+   "gt": "gt/chat-11.json",
+   "lang": "en",
+   "hard": [
+    "dated_time",
+    "non_text_bubbles"
+   ],
+   "topic": "en_move",
+   "width": 1080,
+   "height": 1208,
+   "sha256": "5843f002c1002448a38c4505cfd22e7514b1681b4cfc2ee2cd42d25dcdfbc0be",
+   "split": "dev"
+  },
+  {
+   "id": "chat-12",
+   "type": "chat_screenshot",
+   "image": "images/chat-12.png",
+   "gt": "gt/chat-12.json",
+   "lang": "mixed",
+   "hard": [
+    "units"
+   ],
+   "topic": "mixed_review",
+   "width": 1080,
+   "height": 1052,
+   "sha256": "2710414423cc4d93462b3cf6c2e87e11f8ccc3c8c394fc61a40e3cf05544731e",
+   "split": "dev"
+  },
+  {
+   "id": "chat-13",
+   "type": "chat_screenshot",
+   "image": "images/chat-13.jpg",
+   "gt": "gt/chat-13.json",
+   "lang": "mixed",
+   "hard": [
+    "small_text",
+    "non_text_bubbles"
+   ],
+   "topic": "mixed_vendor",
+   "width": 648,
+   "height": 717,
+   "sha256": "48364a1365cd5669369f6f64698626135379c7dd62e659b79cb667a704308722",
+   "split": "test"
+  },
+  {
+   "id": "chat-14",
+   "type": "chat_screenshot",
+   "image": "images/chat-14.png",
+   "gt": "gt/chat-14.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "dated_time",
+    "units"
+   ],
+   "topic": "beans",
+   "width": 1080,
+   "height": 1336,
+   "sha256": "16e9f7b5c783ad490cc7db6b149cad321099978e37f59cf4a3b5f5225bfb6ee3",
+   "split": "test"
+  },
+  {
+   "id": "chat-15",
+   "type": "chat_screenshot",
+   "image": "images/chat-15.jpg",
+   "gt": "gt/chat-15.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "low_contrast",
+    "similar_names",
+    "units"
+   ],
+   "topic": "launch",
+   "width": 648,
+   "height": 740,
+   "sha256": "a9771b5b4c0ecb55949cc69876ab0ce6452a577ea3999effb85128f5ffc6cebb",
+   "split": "dev"
+  },
+  {
+   "id": "chat-16",
+   "type": "chat_screenshot",
+   "image": "images/chat-16.png",
+   "gt": "gt/chat-16.json",
+   "lang": "zh",
+   "hard": [
+    "dated_time"
+   ],
+   "topic": "school",
+   "width": 1080,
+   "height": 1222,
+   "sha256": "2406c802e54fa6717993bdf8b16d8fbe469baeb315cbe03180bce4472a8f7f78",
+   "split": "test"
+  },
+  {
+   "id": "chat-17",
+   "type": "chat_screenshot",
+   "image": "images/chat-17.png",
+   "gt": "gt/chat-17.json",
+   "lang": "en",
+   "hard": [
+    "similar_names",
+    "dated_time"
+   ],
+   "topic": "en_launch",
+   "width": 1080,
+   "height": 1202,
+   "sha256": "ca51289f9fd281def0a5a3abc3160a6cd318dc1dd364119af9cb65a0e04424b7",
+   "split": "test"
+  },
+  {
+   "id": "chat-18",
+   "type": "chat_screenshot",
+   "image": "images/chat-18.png",
+   "gt": "gt/chat-18.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "dated_time",
+    "units"
+   ],
+   "topic": "samples",
+   "width": 1080,
+   "height": 1120,
+   "sha256": "fa7b91c5772805c3cb4987a57c6b9da6f0590ddbcebae60e030da2be2eaabf55",
+   "split": "dev"
+  },
+  {
+   "id": "chat-19",
+   "type": "chat_screenshot",
+   "image": "images/chat-19.jpg",
+   "gt": "gt/chat-19.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "dated_time",
+    "units"
+   ],
+   "topic": "trip",
+   "width": 540,
+   "height": 583,
+   "sha256": "70286affe218a421da72f568bb8df10b4ed06efec1b21f09ca02e01fb59e4972",
+   "split": "test"
+  },
+  {
+   "id": "chart-00",
+   "type": "chart_dashboard",
+   "image": "images/chart-00.png",
+   "gt": "gt/chart-00.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "e132593668978c19296578274f35fe8e3e41f7ae09a2c21a441d96cf332b0045",
+   "split": "test"
+  },
+  {
+   "id": "chart-01",
+   "type": "chart_dashboard",
+   "image": "images/chart-01.png",
+   "gt": "gt/chart-01.json",
+   "lang": "zh",
+   "hard": [
+    "many_points",
+    "units"
+   ],
+   "topic": "bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "9e71f2bb276c1eef2cc222071de21609782586a1bd85871900ae80baec31c6f8",
+   "split": "test"
+  },
+  {
+   "id": "chart-02",
+   "type": "chart_dashboard",
+   "image": "images/chart-02.png",
+   "gt": "gt/chart-02.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "line",
+   "width": 1100,
+   "height": 660,
+   "sha256": "f89d2fd9f50a11defe4a2cfb22893bee1f05e3c2a36b7f110bfd5fe0e74495a6",
+   "split": "test"
+  },
+  {
+   "id": "chart-03",
+   "type": "chart_dashboard",
+   "image": "images/chart-03.png",
+   "gt": "gt/chart-03.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "units"
+   ],
+   "topic": "line",
+   "width": 720,
+   "height": 432,
+   "sha256": "cf08b50518664645367a77b6f9a16c305a2ebf7aaafbbf5f8244f77e2c8741be",
+   "split": "dev"
+  },
+  {
+   "id": "chart-04",
+   "type": "chart_dashboard",
+   "image": "images/chart-04.png",
+   "gt": "gt/chart-04.json",
+   "lang": "en",
+   "hard": [
+    "units"
+   ],
+   "topic": "line",
+   "width": 1100,
+   "height": 660,
+   "sha256": "290e04f8d7156ab53b518e41810c3e7d1829b78c1df75d784c976c6116f40b85",
+   "split": "test"
+  },
+  {
+   "id": "chart-05",
+   "type": "chart_dashboard",
+   "image": "images/chart-05.png",
+   "gt": "gt/chart-05.json",
+   "lang": "en",
+   "hard": [
+    "many_points",
+    "low_contrast",
+    "units"
+   ],
+   "topic": "bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "6f0ebf6b300b00e6780d2468dd9191281589ff360aae63f726622abe089e4771",
+   "split": "dev"
+  },
+  {
+   "id": "chart-06",
+   "type": "chart_dashboard",
+   "image": "images/chart-06.png",
+   "gt": "gt/chart-06.json",
+   "lang": "zh",
+   "hard": [
+    "similar_colors",
+    "units"
+   ],
+   "topic": "grouped_bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "e881e11beabb843c41b957840f631d823645c31d448cac34dc6478e41476e988",
+   "split": "test"
+  },
+  {
+   "id": "chart-07",
+   "type": "chart_dashboard",
+   "image": "images/chart-07.png",
+   "gt": "gt/chart-07.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "grouped_bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "b5703cee24a0127ebde7b06cc8d51a207b7956644f325db12ab250e0c53be46c",
+   "split": "test"
+  },
+  {
+   "id": "chart-08",
+   "type": "chart_dashboard",
+   "image": "images/chart-08.png",
+   "gt": "gt/chart-08.json",
+   "lang": "en",
+   "hard": [
+    "similar_colors",
+    "small_text",
+    "units"
+   ],
+   "topic": "grouped_bar",
+   "width": 720,
+   "height": 432,
+   "sha256": "cf8843a1b61d9cc429b9df0072cc4e24c8ccfa7bff683455d17ba04ac134f111",
+   "split": "dev"
+  },
+  {
+   "id": "chart-09",
+   "type": "chart_dashboard",
+   "image": "images/chart-09.png",
+   "gt": "gt/chart-09.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "pie",
+   "width": 1100,
+   "height": 660,
+   "sha256": "08cb34d66f99e79f9d3e009c2e290aa3f74d030a3f027535b3f444ed9d905c3c",
+   "split": "test"
+  },
+  {
+   "id": "chart-10",
+   "type": "chart_dashboard",
+   "image": "images/chart-10.png",
+   "gt": "gt/chart-10.json",
+   "lang": "en",
+   "hard": [
+    "units"
+   ],
+   "topic": "pie",
+   "width": 1100,
+   "height": 660,
+   "sha256": "33e50d1d94941206a86b6f7e380d89592c65c276baae0e4333d3db5cfc5fc2fc",
+   "split": "test"
+  },
+  {
+   "id": "chart-11",
+   "type": "chart_dashboard",
+   "image": "images/chart-11.png",
+   "gt": "gt/chart-11.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "low_contrast",
+    "units"
+   ],
+   "topic": "pie",
+   "width": 720,
+   "height": 432,
+   "sha256": "4ee04c231bc5d433d7a77c9e6af4aa0756d2ad0a2e0d0acc91e5a7ba93ecff6c",
+   "split": "dev"
+  },
+  {
+   "id": "chart-12",
+   "type": "chart_dashboard",
+   "image": "images/chart-12.png",
+   "gt": "gt/chart-12.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "hbar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "3c3d7eeb5a59bd36ffe47fab35bf46e97fb5cf296c25dc150079954df3ea2e72",
+   "split": "test"
+  },
+  {
+   "id": "chart-13",
+   "type": "chart_dashboard",
+   "image": "images/chart-13.jpg",
+   "gt": "gt/chart-13.json",
+   "lang": "en",
+   "hard": [
+    "units"
+   ],
+   "topic": "hbar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "27332fe91a963d59c607744294bd4d537646d276742cbf58909a48011531d82b",
+   "split": "test"
+  },
+  {
+   "id": "chart-14",
+   "type": "chart_dashboard",
+   "image": "images/chart-14.png",
+   "gt": "gt/chart-14.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "dashboard",
+   "width": 1200,
+   "height": 700,
+   "sha256": "3b86067ecc7ddf44e141393921a5cc1bfbb2a55a0a61ef791ee99febf37bbfec",
+   "split": "test"
+  },
+  {
+   "id": "chart-15",
+   "type": "chart_dashboard",
+   "image": "images/chart-15.png",
+   "gt": "gt/chart-15.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "dashboard",
+   "width": 1200,
+   "height": 700,
+   "sha256": "671d0d1e6caad566ba067aa92236a8a260bcf209f46ae6c202ab8faf6ac6b489",
+   "split": "test"
+  },
+  {
+   "id": "chart-16",
+   "type": "chart_dashboard",
+   "image": "images/chart-16.png",
+   "gt": "gt/chart-16.json",
+   "lang": "en",
+   "hard": [
+    "small_text",
+    "units"
+   ],
+   "topic": "dashboard",
+   "width": 864,
+   "height": 504,
+   "sha256": "7df37f857430c7fb9c422310c69db84b019b77a9c60f7aeb40b0b1ca5ac2df3c",
+   "split": "dev"
+  },
+  {
+   "id": "chart-17",
+   "type": "chart_dashboard",
+   "image": "images/chart-17.png",
+   "gt": "gt/chart-17.json",
+   "lang": "en",
+   "hard": [
+    "low_contrast",
+    "units"
+   ],
+   "topic": "dashboard",
+   "width": 1200,
+   "height": 700,
+   "sha256": "bb85001fcbbacec693bbd81694e7a739255d94eaef14d4958784b909efc49b31",
+   "split": "dev"
+  },
+  {
+   "id": "chart-18",
+   "type": "chart_dashboard",
+   "image": "images/chart-18.png",
+   "gt": "gt/chart-18.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "line",
+   "width": 1100,
+   "height": 660,
+   "sha256": "2c3fec2bbad81cc8554f74e34d8d9972bbba47db59caab0442e2b67eb8de9665",
+   "split": "test"
+  },
+  {
+   "id": "chart-19",
+   "type": "chart_dashboard",
+   "image": "images/chart-19.jpg",
+   "gt": "gt/chart-19.json",
+   "lang": "en",
+   "hard": [
+    "units"
+   ],
+   "topic": "bar",
+   "width": 1100,
+   "height": 660,
+   "sha256": "3fa3de52a3e889d8c08a1f22fe9dbe3bf578513fc89f0b83946245ca6d690a8b",
+   "split": "test"
+  },
+  {
+   "id": "slide-00",
+   "type": "slide",
+   "image": "images/slide-00.png",
+   "gt": "gt/slide-00.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "weekly",
+   "width": 1600,
+   "height": 900,
+   "sha256": "e3b203765c532a41c00e6793827f4194684b2c2ea8282b4db426624d497b3783",
+   "split": "test"
+  },
+  {
+   "id": "slide-01",
+   "type": "slide",
+   "image": "images/slide-01.png",
+   "gt": "gt/slide-01.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "review",
+   "width": 1600,
+   "height": 900,
+   "sha256": "24a5014ca039ae4f1171e421fbdd31bdeacf2d050b8e654a11b85305fc779d17",
+   "split": "test"
+  },
+  {
+   "id": "slide-02",
+   "type": "slide",
+   "image": "images/slide-02.png",
+   "gt": "gt/slide-02.json",
+   "lang": "zh",
+   "hard": [],
+   "topic": "launch",
+   "width": 1600,
+   "height": 900,
+   "sha256": "318fea2e6a7cdbc375a95d22b78466fed5331baaeff9c60d0dcf15015b8162d0",
+   "split": "test"
+  },
+  {
+   "id": "slide-03",
+   "type": "slide",
+   "image": "images/slide-03.png",
+   "gt": "gt/slide-03.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "research",
+   "width": 1600,
+   "height": 900,
+   "sha256": "ef341d8c68e7d03b06aa9e3926a1ce9eb518dd1dcc37e8f6b22f5c497fac2832",
+   "split": "test"
+  },
+  {
+   "id": "slide-04",
+   "type": "slide",
+   "image": "images/slide-04.jpg",
+   "gt": "gt/slide-04.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "low_contrast",
+    "units"
+   ],
+   "topic": "budget",
+   "width": 800,
+   "height": 450,
+   "sha256": "49278a63107f6be79f548780c712c8869e67f550700032e1ce36871cc7aa75d0",
+   "split": "dev"
+  },
+  {
+   "id": "slide-05",
+   "type": "slide",
+   "image": "images/slide-05.png",
+   "gt": "gt/slide-05.json",
+   "lang": "zh",
+   "hard": [
+    "dense",
+    "similar_names",
+    "units"
+   ],
+   "topic": "training",
+   "width": 1600,
+   "height": 900,
+   "sha256": "d8f0431665a7ce8b9d62e544f1da800df85b9bd99f8bbdd9e2c6fea647569206",
+   "split": "dev"
+  },
+  {
+   "id": "slide-06",
+   "type": "slide",
+   "image": "images/slide-06.jpg",
+   "gt": "gt/slide-06.json",
+   "lang": "zh",
+   "hard": [
+    "photo",
+    "perspective",
+    "glare",
+    "units"
+   ],
+   "topic": "agenda",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "1e4fb10c95c606981d8c6ca4102c4432c2d6462c451580ce98655d3353d0c66f",
+   "split": "test"
+  },
+  {
+   "id": "slide-07",
+   "type": "slide",
+   "image": "images/slide-07.png",
+   "gt": "gt/slide-07.json",
+   "lang": "en",
+   "hard": [
+    "units"
+   ],
+   "topic": "en_review",
+   "width": 1600,
+   "height": 900,
+   "sha256": "ff151730c7e6b227b7b0b02f979adbb43201557f168896330fbdd880468d9961",
+   "split": "test"
+  },
+  {
+   "id": "slide-08",
+   "type": "slide",
+   "image": "images/slide-08.jpg",
+   "gt": "gt/slide-08.json",
+   "lang": "en",
+   "hard": [
+    "photo",
+    "perspective",
+    "glare",
+    "units"
+   ],
+   "topic": "en_launch",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "3b99c809d972a68756e9a4d550a7ea616c17b5c48fff5a2f3a3ae29ced75a5ed",
+   "split": "dev"
+  },
+  {
+   "id": "slide-09",
+   "type": "slide",
+   "image": "images/slide-09.png",
+   "gt": "gt/slide-09.json",
+   "lang": "en",
+   "hard": [
+    "similar_names"
+   ],
+   "topic": "en_onboard",
+   "width": 1600,
+   "height": 900,
+   "sha256": "486e3e0865c2d71895b2da2dfc2ee112b6cb92a81b731ae5e0ba985367073ebc",
+   "split": "dev"
+  },
+  {
+   "id": "slide-10",
+   "type": "slide",
+   "image": "images/slide-10.png",
+   "gt": "gt/slide-10.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units"
+   ],
+   "topic": "weekly",
+   "width": 1600,
+   "height": 900,
+   "sha256": "1d9052b4f0cbec9e6a2eea3db9395a7e97d768385bd3f276788d3fe49a7f3e65",
+   "split": "dev"
+  },
+  {
+   "id": "slide-11",
+   "type": "slide",
+   "image": "images/slide-11.jpg",
+   "gt": "gt/slide-11.json",
+   "lang": "zh",
+   "hard": [
+    "photo",
+    "perspective",
+    "glare",
+    "units"
+   ],
+   "topic": "review",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "30fb43de763745396c8f080f8bbea30736fd64d4ae04c0f796298e8819d1b395",
+   "split": "dev"
+  },
+  {
+   "id": "slide-12",
+   "type": "slide",
+   "image": "images/slide-12.jpg",
+   "gt": "gt/slide-12.json",
+   "lang": "zh",
+   "hard": [
+    "small_text"
+   ],
+   "topic": "launch",
+   "width": 800,
+   "height": 450,
+   "sha256": "bcf69b49faba24ac0a68206c847f41ce8db856ddf5909e44acae8adea610b9f3",
+   "split": "test"
+  },
+  {
+   "id": "slide-13",
+   "type": "slide",
+   "image": "images/slide-13.png",
+   "gt": "gt/slide-13.json",
+   "lang": "zh",
+   "hard": [
+    "dense",
+    "units"
+   ],
+   "topic": "research",
+   "width": 1600,
+   "height": 900,
+   "sha256": "f61a192610a80d8d9abd4f078c3164d278fac68b64f2ce35524f07c0c99980b1",
+   "split": "test"
+  },
+  {
+   "id": "slide-14",
+   "type": "slide",
+   "image": "images/slide-14.jpg",
+   "gt": "gt/slide-14.json",
+   "lang": "zh",
+   "hard": [
+    "photo",
+    "perspective",
+    "glare",
+    "units"
+   ],
+   "topic": "budget",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "0f96ef52abd2c21eaaac8fecc9844194970f571beb42e39612b071724a99b2bf",
+   "split": "test"
+  },
+  {
+   "id": "slide-15",
+   "type": "slide",
+   "image": "images/slide-15.png",
+   "gt": "gt/slide-15.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "training",
+   "width": 1600,
+   "height": 900,
+   "sha256": "ef9429885b3e06b084adfc2ec21597ef33b63c15967b517ab69fde3e4096785d",
+   "split": "test"
+  },
+  {
+   "id": "slide-16",
+   "type": "slide",
+   "image": "images/slide-16.png",
+   "gt": "gt/slide-16.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units"
+   ],
+   "topic": "agenda",
+   "width": 1600,
+   "height": 900,
+   "sha256": "e97f56af6bf1730a6e7424f2a95b283759f575dca98bd559930dae1285d14ad5",
+   "split": "test"
+  },
+  {
+   "id": "slide-17",
+   "type": "slide",
+   "image": "images/slide-17.jpg",
+   "gt": "gt/slide-17.json",
+   "lang": "en",
+   "hard": [
+    "small_text",
+    "units"
+   ],
+   "topic": "en_review",
+   "width": 800,
+   "height": 450,
+   "sha256": "6b83635d79aaedbdfbd99b19b26bd1775c7d9d11cadf61784382a3e5ba33b22c",
+   "split": "test"
+  },
+  {
+   "id": "slide-18",
+   "type": "slide",
+   "image": "images/slide-18.png",
+   "gt": "gt/slide-18.json",
+   "lang": "en",
+   "hard": [
+    "dense",
+    "units"
+   ],
+   "topic": "en_launch",
+   "width": 1600,
+   "height": 900,
+   "sha256": "436a1fc0fde9f2eb4050476eeefc16978b5589448b25ca08dac91b80e476b76e",
+   "split": "test"
+  },
+  {
+   "id": "slide-19",
+   "type": "slide",
+   "image": "images/slide-19.jpg",
+   "gt": "gt/slide-19.json",
+   "lang": "en",
+   "hard": [
+    "photo",
+    "perspective",
+    "glare"
+   ],
+   "topic": "en_onboard",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "b649b2acb864826c1a2482821508035fabb21d8bedfaba7ac31bc6e793936423",
+   "split": "test"
+  },
+  {
+   "id": "board-00",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-00.jpg",
+   "gt": "gt/board-00.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "similar_names",
+    "units",
+    "perspective"
+   ],
+   "topic": "weekly",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "8a10040944915b3763900da93e5825d2de7adceaeee86ef9d88be5114d8038b0",
+   "split": "test"
+  },
+  {
+   "id": "board-01",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-01.jpg",
+   "gt": "gt/board-01.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "todo",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "2a1427b6c1e63b33fe3204799109f6c48793bc1719ad248313fd2576f7a50a37",
+   "split": "test"
+  },
+  {
+   "id": "board-02",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-02.jpg",
+   "gt": "gt/board-02.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "cursive",
+    "units",
+    "perspective"
+   ],
+   "topic": "plan",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "78103276e50fbb03bea1c42a43f464af6cedd7b70215ee9daa1c684d3ee2327d",
+   "split": "test"
+  },
+  {
+   "id": "board-03",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-03.jpg",
+   "gt": "gt/board-03.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "units",
+    "perspective"
+   ],
+   "topic": "formula",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "1685da5b417b05e0414287635e0402bf6aaed1492c501d6376e054a743416a8c",
+   "split": "dev"
+  },
+  {
+   "id": "board-04",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-04.jpg",
+   "gt": "gt/board-04.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "glare",
+    "low_contrast",
+    "struck_items",
+    "perspective"
+   ],
+   "topic": "en_standup",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "26b00d1d7ee584e9c0fb7349cc26595604e1b5d83e23b207a3d48a4d8cea3322",
+   "split": "test"
+  },
+  {
+   "id": "board-05",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-05.jpg",
+   "gt": "gt/board-05.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "en_shopping",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "570a1da0bbe362a9708edafb30a184a15d681fc03f7ce28e1cb355688f5fc658",
+   "split": "dev"
+  },
+  {
+   "id": "board-06",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-06.jpg",
+   "gt": "gt/board-06.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "perspective"
+   ],
+   "topic": "sticky",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "ffc3ecd00d8a17a3b05045c050dc12eb7a4b8953a6397e3370bc8bcc62c37eeb",
+   "split": "test"
+  },
+  {
+   "id": "board-07",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-07.jpg",
+   "gt": "gt/board-07.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "small_text",
+    "units",
+    "perspective"
+   ],
+   "topic": "weekly",
+   "width": 1100,
+   "height": 825,
+   "sha256": "2fa2d6f45ede3d5e90806745052a7c92a05b45b0f6722892f06163a5098d4526",
+   "split": "test"
+  },
+  {
+   "id": "board-08",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-08.jpg",
+   "gt": "gt/board-08.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "low_contrast",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "todo",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "3a989a31a991186b3829033235a109f27f1ad06a2822273d7a3c9d79b504ecea",
+   "split": "test"
+  },
+  {
+   "id": "board-09",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-09.jpg",
+   "gt": "gt/board-09.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "similar_names",
+    "units",
+    "perspective"
+   ],
+   "topic": "plan",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "ef4863a25d24afc82784c5a4ad3550f30f14d9f4c45f3711bd14d34ab3125b04",
+   "split": "test"
+  },
+  {
+   "id": "board-10",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-10.jpg",
+   "gt": "gt/board-10.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "cursive",
+    "units",
+    "perspective"
+   ],
+   "topic": "formula",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "4ae53a9eee7a6814f21b61d200bc1265924356f4ab65190e9f69e319548b00a5",
+   "split": "dev"
+  },
+  {
+   "id": "board-11",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-11.jpg",
+   "gt": "gt/board-11.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "similar_names",
+    "struck_items",
+    "perspective"
+   ],
+   "topic": "en_standup",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "a5958d7b3c7731e525290c477fea8e782d9ababab79466ec67b7947dad68ce45",
+   "split": "dev"
+  },
+  {
+   "id": "board-12",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-12.jpg",
+   "gt": "gt/board-12.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "en_shopping",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "9c46bc8c949c47c7436d27ff459ca58edd9a5d1f44d504c0da8133f7ce0a4aa5",
+   "split": "test"
+  },
+  {
+   "id": "board-13",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-13.jpg",
+   "gt": "gt/board-13.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "similar_names",
+    "perspective"
+   ],
+   "topic": "sticky",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "82818b98933d4d05fadb21549e0f096f9a20c38e2d32d852f90f5b7dc2147649",
+   "split": "test"
+  },
+  {
+   "id": "board-14",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-14.jpg",
+   "gt": "gt/board-14.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "units",
+    "perspective"
+   ],
+   "topic": "weekly",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "f94ae40e316009cb2525be091cdb560d5bafd7e6c67180d96044ed8861733a21",
+   "split": "test"
+  },
+  {
+   "id": "board-15",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-15.jpg",
+   "gt": "gt/board-15.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "low_contrast",
+    "cursive",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "todo",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "69fd5279e027d1136a7f6119a1e70195901af3780480a35688940591c0e89f01",
+   "split": "test"
+  },
+  {
+   "id": "board-16",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-16.jpg",
+   "gt": "gt/board-16.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "glare",
+    "small_text",
+    "units",
+    "perspective"
+   ],
+   "topic": "plan",
+   "width": 1100,
+   "height": 825,
+   "sha256": "4b4459e1e97f97b350c15845904bd5b24f54b930223c6b12825eff9ae0a338a7",
+   "split": "test"
+  },
+  {
+   "id": "board-17",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-17.jpg",
+   "gt": "gt/board-17.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "units",
+    "perspective"
+   ],
+   "topic": "formula",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "e614ca4ba878ee173b52dbbec52d1a8be84ce804c9a99244cbce0710685e15df",
+   "split": "dev"
+  },
+  {
+   "id": "board-18",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-18.jpg",
+   "gt": "gt/board-18.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "similar_names",
+    "struck_items",
+    "perspective"
+   ],
+   "topic": "en_standup",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "ce6b87129e5e3ac4f2f7e0b761fa140b0b2eea37d8d5a7d31cb75724e86d91a0",
+   "split": "dev"
+  },
+  {
+   "id": "board-19",
+   "type": "whiteboard_handwriting",
+   "image": "images/board-19.jpg",
+   "gt": "gt/board-19.json",
+   "lang": "en",
+   "hard": [
+    "handwriting",
+    "glare",
+    "small_text",
+    "struck_items",
+    "units",
+    "perspective"
+   ],
+   "topic": "en_shopping",
+   "width": 1100,
+   "height": 825,
+   "sha256": "d169f3512cc87abd73b50a0b67b381b9cfaba02e13ad0b2f2c8e67c892594ae5",
+   "split": "test"
+  },
+  {
+   "id": "receipt-00",
+   "type": "receipt_invoice",
+   "image": "images/receipt-00.jpg",
+   "gt": "gt/receipt-00.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "09526b0033cefe33d046d25eec5bbaf3a62e70481b593ff18bd0cc4e9ab4868d",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-01",
+   "type": "receipt_invoice",
+   "image": "images/receipt-01.jpg",
+   "gt": "gt/receipt-01.json",
+   "lang": "zh",
+   "hard": [
+    "similar_items",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "fc1ee9644f4acaf66c1a2a4e4902a06a227c4421ee0b443754ddaa4a1271d5a7",
+   "split": "test"
+  },
+  {
+   "id": "receipt-02",
+   "type": "receipt_invoice",
+   "image": "images/receipt-02.jpg",
+   "gt": "gt/receipt-02.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "1bc0e0ef9f5e0fe7b97b8c8d34163fd7c602ab492c9112fb8ab0c2a35932317c",
+   "split": "test"
+  },
+  {
+   "id": "receipt-03",
+   "type": "receipt_invoice",
+   "image": "images/receipt-03.jpg",
+   "gt": "gt/receipt-03.json",
+   "lang": "zh",
+   "hard": [
+    "glare",
+    "small_text",
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 750,
+   "height": 1000,
+   "sha256": "b3f2fc5749fc529bc6528b3a93801ba5cad7bdc939ae120129d520787fbdfbd9",
+   "split": "test"
+  },
+  {
+   "id": "receipt-04",
+   "type": "receipt_invoice",
+   "image": "images/receipt-04.jpg",
+   "gt": "gt/receipt-04.json",
+   "lang": "zh",
+   "hard": [
+    "shadow",
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "2afb7cf51f1ac612f1dc4680bb7803a28858de169dbad42d251baa89b458bb98",
+   "split": "test"
+  },
+  {
+   "id": "receipt-05",
+   "type": "receipt_invoice",
+   "image": "images/receipt-05.jpg",
+   "gt": "gt/receipt-05.json",
+   "lang": "en",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "f0add090eb991463c25313860b0cf2cdf6f2ff4ef0217f5f1f6f5b03bc8f3f27",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-06",
+   "type": "receipt_invoice",
+   "image": "images/receipt-06.jpg",
+   "gt": "gt/receipt-06.json",
+   "lang": "en",
+   "hard": [
+    "low_contrast",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "d64f2b5de094aa88ce677b784cfce46ae8e1a756c1bb62b06ad09683205acc29",
+   "split": "test"
+  },
+  {
+   "id": "receipt-07",
+   "type": "receipt_invoice",
+   "image": "images/receipt-07.jpg",
+   "gt": "gt/receipt-07.json",
+   "lang": "en",
+   "hard": [
+    "similar_items",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "e4d3e079f2fb16cc2080705c9ca1a5d090ea8512333cfc1553364d8b5da269c6",
+   "split": "test"
+  },
+  {
+   "id": "receipt-08",
+   "type": "receipt_invoice",
+   "image": "images/receipt-08.jpg",
+   "gt": "gt/receipt-08.json",
+   "lang": "zh",
+   "hard": [
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "b6907db2a5d27afc46b8b08e77478e453c636a074eec4ee497dba333f3b690c9",
+   "split": "test"
+  },
+  {
+   "id": "receipt-09",
+   "type": "receipt_invoice",
+   "image": "images/receipt-09.jpg",
+   "gt": "gt/receipt-09.json",
+   "lang": "en",
+   "hard": [
+    "small_text",
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 750,
+   "height": 1000,
+   "sha256": "35075b422768ad3c619b85ff0b43e1056a28dd8fcd21c53ede15f8d9122a4da6",
+   "split": "test"
+  },
+  {
+   "id": "receipt-10",
+   "type": "receipt_invoice",
+   "image": "images/receipt-10.jpg",
+   "gt": "gt/receipt-10.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "ba071a85ebb4ad3afd75fd5d8c115d416d5ccf06aff26180938e725c22a4e769",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-11",
+   "type": "receipt_invoice",
+   "image": "images/receipt-11.jpg",
+   "gt": "gt/receipt-11.json",
+   "lang": "zh",
+   "hard": [
+    "shadow",
+    "similar_items",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "792037e9c0eb39f659aa7e09c75550032aba8210da272456ffba9b315d96df76",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-12",
+   "type": "receipt_invoice",
+   "image": "images/receipt-12.jpg",
+   "gt": "gt/receipt-12.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "5f617864b8c853ea8877b6dd73f8a4e4ccb0fa73ac7e8a25b5de8dad609eb8df",
+   "split": "test"
+  },
+  {
+   "id": "receipt-13",
+   "type": "receipt_invoice",
+   "image": "images/receipt-13.jpg",
+   "gt": "gt/receipt-13.json",
+   "lang": "en",
+   "hard": [
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "29531568861349b541d2939fd6e2800c6c22a9eb38df0a6513ab2102d1d4b138",
+   "split": "test"
+  },
+  {
+   "id": "receipt-14",
+   "type": "receipt_invoice",
+   "image": "images/receipt-14.jpg",
+   "gt": "gt/receipt-14.json",
+   "lang": "en",
+   "hard": [
+    "glare",
+    "similar_items",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "74e0318acf47d4d429c748ab84d073d41d8d20a6683310780fd7b7af1f1018ed",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-15",
+   "type": "receipt_invoice",
+   "image": "images/receipt-15.jpg",
+   "gt": "gt/receipt-15.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 750,
+   "height": 1000,
+   "sha256": "c379bdf02b20f47f04f2ae5da028ce6d38e0c23fc9c60306cfd0c3d5ab3c899d",
+   "split": "test"
+  },
+  {
+   "id": "receipt-16",
+   "type": "receipt_invoice",
+   "image": "images/receipt-16.jpg",
+   "gt": "gt/receipt-16.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "similar_items",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "247ba2937561a852ce1a928db5ab596b48e693871b15f20cdf38d55defc0e07b",
+   "split": "test"
+  },
+  {
+   "id": "receipt-17",
+   "type": "receipt_invoice",
+   "image": "images/receipt-17.jpg",
+   "gt": "gt/receipt-17.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "a9683df0a6c908868c0fc885aceade241f8e63a585aa2c0d19a236664f0129d5",
+   "split": "dev"
+  },
+  {
+   "id": "receipt-18",
+   "type": "receipt_invoice",
+   "image": "images/receipt-18.jpg",
+   "gt": "gt/receipt-18.json",
+   "lang": "en",
+   "hard": [
+    "shadow",
+    "units",
+    "perspective"
+   ],
+   "topic": "invoice",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "5e00d30a26c99b7e36899e06bddbb56f55ac830a1b50034cb26a56c2563bd273",
+   "split": "test"
+  },
+  {
+   "id": "receipt-19",
+   "type": "receipt_invoice",
+   "image": "images/receipt-19.jpg",
+   "gt": "gt/receipt-19.json",
+   "lang": "en",
+   "hard": [
+    "glare",
+    "perspective"
+   ],
+   "topic": "receipt",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "4cc81268e173c7f65b737cabb6bce019d4002e6210bcc556aba242f76112a1c9",
+   "split": "test"
+  },
+  {
+   "id": "scan-00",
+   "type": "scanned_document",
+   "image": "images/scan-00.jpg",
+   "gt": "gt/scan-00.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "table",
+    "units"
+   ],
+   "topic": "minutes",
+   "width": 1261,
+   "height": 1768,
+   "sha256": "2a15b5dda6f0679ffb64bbc5f1b883325d61022f6ddd90d29540cc5e9a3bd5ff",
+   "split": "test"
+  },
+  {
+   "id": "scan-01",
+   "type": "scanned_document",
+   "image": "images/scan-01.jpg",
+   "gt": "gt/scan-01.json",
+   "lang": "zh",
+   "hard": [
+    "table"
+   ],
+   "topic": "notice",
+   "width": 1259,
+   "height": 1766,
+   "sha256": "ce5250f7f0e3f11d2e058e22611d48cd6d3d047bca2ce6c6d4fc24ca634abe8e",
+   "split": "dev"
+  },
+  {
+   "id": "scan-02",
+   "type": "scanned_document",
+   "image": "images/scan-02.jpg",
+   "gt": "gt/scan-02.json",
+   "lang": "zh",
+   "hard": [
+    "units"
+   ],
+   "topic": "lease",
+   "width": 1263,
+   "height": 1770,
+   "sha256": "d70abd2893d69f2cee27a55086f45aea1ee61630e6bd5ada3123281cd46f802f",
+   "split": "dev"
+  },
+  {
+   "id": "scan-03",
+   "type": "scanned_document",
+   "image": "images/scan-03.jpg",
+   "gt": "gt/scan-03.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "table",
+    "units"
+   ],
+   "topic": "plan",
+   "width": 1259,
+   "height": 1766,
+   "sha256": "e3cc20bd1ea65012cf2dc66ccac4242947c7988f69d0cd0e2f9ccd70a3c55302",
+   "split": "test"
+  },
+  {
+   "id": "scan-04",
+   "type": "scanned_document",
+   "image": "images/scan-04.jpg",
+   "gt": "gt/scan-04.json",
+   "lang": "en",
+   "hard": [],
+   "topic": "en_memo",
+   "width": 1273,
+   "height": 1776,
+   "sha256": "d5725d69624d3c3d007abca97fb4bb7c49bc149df2fb6eadd8360aad74c5263a",
+   "split": "test"
+  },
+  {
+   "id": "scan-05",
+   "type": "scanned_document",
+   "image": "images/scan-05.jpg",
+   "gt": "gt/scan-05.json",
+   "lang": "en",
+   "hard": [
+    "table",
+    "units"
+   ],
+   "topic": "en_policy",
+   "width": 1271,
+   "height": 1776,
+   "sha256": "43294fb3fe485d14a81db0f2c30dcb804eb5be8b7ed12582a7fc283e8df4847e",
+   "split": "test"
+  },
+  {
+   "id": "scan-06",
+   "type": "scanned_document",
+   "image": "images/scan-06.jpg",
+   "gt": "gt/scan-06.json",
+   "lang": "en",
+   "hard": [
+    "similar_names",
+    "table",
+    "units"
+   ],
+   "topic": "en_minutes",
+   "width": 1271,
+   "height": 1776,
+   "sha256": "2cfd17a412b77571c649d1f319a34c141e55f79a872592fce6b0889ed0ffaf3d",
+   "split": "test"
+  },
+  {
+   "id": "scan-07",
+   "type": "scanned_document",
+   "image": "images/scan-07.jpg",
+   "gt": "gt/scan-07.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "table",
+    "units"
+   ],
+   "topic": "minutes",
+   "width": 1267,
+   "height": 1772,
+   "sha256": "afc7dbc4b805d1cfdad01a79d34c0866b728f4d5842d85fb609989f1c715d3d5",
+   "split": "test"
+  },
+  {
+   "id": "scan-08",
+   "type": "scanned_document",
+   "image": "images/scan-08.jpg",
+   "gt": "gt/scan-08.json",
+   "lang": "zh",
+   "hard": [
+    "rotation",
+    "table"
+   ],
+   "topic": "notice",
+   "width": 1337,
+   "height": 1822,
+   "sha256": "387b715695a736249fedebea3968a55a213ce2c832ab4b0d98d78f9ac1d6790b",
+   "split": "test"
+  },
+  {
+   "id": "scan-09",
+   "type": "scanned_document",
+   "image": "images/scan-09.jpg",
+   "gt": "gt/scan-09.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "units"
+   ],
+   "topic": "lease",
+   "width": 1023,
+   "height": 1426,
+   "sha256": "31de21d03d2e20bb3aa24ecccb82b8353f816e12c9253612463a7f25c33887a9",
+   "split": "test"
+  },
+  {
+   "id": "scan-10",
+   "type": "scanned_document",
+   "image": "images/scan-10.jpg",
+   "gt": "gt/scan-10.json",
+   "lang": "zh",
+   "hard": [
+    "blur",
+    "table",
+    "units"
+   ],
+   "topic": "plan",
+   "width": 1269,
+   "height": 1774,
+   "sha256": "5ba1da685dffc4cb4aeda11289c576c6d9e8270a055c01ecbfd776b8e6ecfe7c",
+   "split": "dev"
+  },
+  {
+   "id": "scan-11",
+   "type": "scanned_document",
+   "image": "images/scan-11.jpg",
+   "gt": "gt/scan-11.json",
+   "lang": "en",
+   "hard": [
+    "low_contrast",
+    "similar_names"
+   ],
+   "topic": "en_memo",
+   "width": 1269,
+   "height": 1774,
+   "sha256": "9937f4e1d01ac5862c1ef458b5b312fce36e8a0508d69a38dc2edd9157e65fd0",
+   "split": "test"
+  },
+  {
+   "id": "scan-12",
+   "type": "scanned_document",
+   "image": "images/scan-12.jpg",
+   "gt": "gt/scan-12.json",
+   "lang": "en",
+   "hard": [
+    "small_text",
+    "table",
+    "units"
+   ],
+   "topic": "en_policy",
+   "width": 997,
+   "height": 1408,
+   "sha256": "de77b735fb0e6a05534f7d873bf1a8fba249c8560ffdf5b56a5805db9706b5c4",
+   "split": "test"
+  },
+  {
+   "id": "scan-13",
+   "type": "scanned_document",
+   "image": "images/scan-13.jpg",
+   "gt": "gt/scan-13.json",
+   "lang": "en",
+   "hard": [
+    "rotation",
+    "table",
+    "units"
+   ],
+   "topic": "en_minutes",
+   "width": 1327,
+   "height": 1814,
+   "sha256": "243df3b53a9be70c79232a6cac09d64c0eb5cfeeb37ff476cec895e833c3ddef",
+   "split": "dev"
+  },
+  {
+   "id": "scan-14",
+   "type": "scanned_document",
+   "image": "images/scan-14.jpg",
+   "gt": "gt/scan-14.json",
+   "lang": "zh",
+   "hard": [
+    "small_text",
+    "similar_names",
+    "table",
+    "units"
+   ],
+   "topic": "minutes",
+   "width": 997,
+   "height": 1408,
+   "sha256": "b8bea50904191d22031ab15aec8d0a7e1ba4558c88b04847c572fa700312a64a",
+   "split": "test"
+  },
+  {
+   "id": "scan-15",
+   "type": "scanned_document",
+   "image": "images/scan-15.jpg",
+   "gt": "gt/scan-15.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "similar_names",
+    "table"
+   ],
+   "topic": "notice",
+   "width": 1247,
+   "height": 1758,
+   "sha256": "caab1ee0a05b1a890ddfbb7a032592833b1e117956fd49197dbce78317668956",
+   "split": "test"
+  },
+  {
+   "id": "scan-16",
+   "type": "scanned_document",
+   "image": "images/scan-16.jpg",
+   "gt": "gt/scan-16.json",
+   "lang": "zh",
+   "hard": [
+    "rotation",
+    "units"
+   ],
+   "topic": "lease",
+   "width": 1321,
+   "height": 1810,
+   "sha256": "316a29e69d5ea3d1a51f029ccd616b672e459f4e89c754af43fabba5ad2a6f84",
+   "split": "dev"
+  },
+  {
+   "id": "scan-17",
+   "type": "scanned_document",
+   "image": "images/scan-17.jpg",
+   "gt": "gt/scan-17.json",
+   "lang": "zh",
+   "hard": [
+    "table",
+    "units"
+   ],
+   "topic": "plan",
+   "width": 1249,
+   "height": 1760,
+   "sha256": "10641d34b880ebf512fcce6369f06f0b31cabe22d2eb57d1d50cc2b6bbdab054",
+   "split": "dev"
+  },
+  {
+   "id": "scan-18",
+   "type": "scanned_document",
+   "image": "images/scan-18.jpg",
+   "gt": "gt/scan-18.json",
+   "lang": "en",
+   "hard": [
+    "rotation"
+   ],
+   "topic": "en_memo",
+   "width": 1333,
+   "height": 1818,
+   "sha256": "eab95bfd8d6c8debfcf2bceb98dd93e217b8ce2c06501e38c756920b038c0dc9",
+   "split": "test"
+  },
+  {
+   "id": "scan-19",
+   "type": "scanned_document",
+   "image": "images/scan-19.jpg",
+   "gt": "gt/scan-19.json",
+   "lang": "en",
+   "hard": [
+    "low_contrast",
+    "blur",
+    "table",
+    "units"
+   ],
+   "topic": "en_policy",
+   "width": 1261,
+   "height": 1768,
+   "sha256": "1bcdc9dcbb64cd72cfe783d35e02b03d25997080f7fe091062a61a3fd1f535a9",
+   "split": "test"
+  },
+  {
+   "id": "label-00",
+   "type": "form_label_sign",
+   "image": "images/label-00.jpg",
+   "gt": "gt/label-00.json",
+   "lang": "zh",
+   "hard": [
+    "similar_names",
+    "perspective"
+   ],
+   "topic": "shipping_label",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "3d064b4a4828163ecb83f22b945d7303b303dcd640c5392f2367cb4bd9f53134",
+   "split": "test"
+  },
+  {
+   "id": "label-01",
+   "type": "form_label_sign",
+   "image": "images/label-01.jpg",
+   "gt": "gt/label-01.json",
+   "lang": "en",
+   "hard": [
+    "perspective"
+   ],
+   "topic": "shipping_label",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "a9208294258cb437a83f428d49647f2977ff5a4a59ef5e38e2f31fef14702e3a",
+   "split": "test"
+  },
+  {
+   "id": "label-02",
+   "type": "form_label_sign",
+   "image": "images/label-02.jpg",
+   "gt": "gt/label-02.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "nameplate",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "e0f745a96b2f4ef0b76bd8b5e841ae05d9490913e2418659fd8e1ed2628ab777",
+   "split": "test"
+  },
+  {
+   "id": "label-03",
+   "type": "form_label_sign",
+   "image": "images/label-03.jpg",
+   "gt": "gt/label-03.json",
+   "lang": "zh",
+   "hard": [
+    "low_contrast",
+    "units",
+    "glare",
+    "perspective"
+   ],
+   "topic": "nameplate",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "f6fed8c94a185bdfd41966b2a9a5d854af99beda30d57e3329e1993e88221648",
+   "split": "test"
+  },
+  {
+   "id": "label-04",
+   "type": "form_label_sign",
+   "image": "images/label-04.jpg",
+   "gt": "gt/label-04.json",
+   "lang": "zh",
+   "hard": [
+    "two_prices",
+    "units",
+    "perspective"
+   ],
+   "topic": "price_tag",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "7e8707c228823350bcb96200df2bdfe6372350706eaa260f4a29755e5aad9dca",
+   "split": "dev"
+  },
+  {
+   "id": "label-05",
+   "type": "form_label_sign",
+   "image": "images/label-05.jpg",
+   "gt": "gt/label-05.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "price_tag",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "2cd696d2742087af65521b743a7ebaa3e25ddf6f83aba3643923d646b14ea72a",
+   "split": "test"
+  },
+  {
+   "id": "label-06",
+   "type": "form_label_sign",
+   "image": "images/label-06.jpg",
+   "gt": "gt/label-06.json",
+   "lang": "en",
+   "hard": [
+    "two_prices",
+    "units",
+    "perspective"
+   ],
+   "topic": "price_tag",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "530219c837fc644201bbade362e44fcda368f8bc7a7c1b4e1f01376c40832845",
+   "split": "test"
+  },
+  {
+   "id": "label-07",
+   "type": "form_label_sign",
+   "image": "images/label-07.jpg",
+   "gt": "gt/label-07.json",
+   "lang": "zh",
+   "hard": [
+    "perspective"
+   ],
+   "topic": "room_sign",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "f99ac64fb4a57c6961734b0b959f51d6ebd2fa58bbd6bba88eca8ae4452c8b4d",
+   "split": "dev"
+  },
+  {
+   "id": "label-08",
+   "type": "form_label_sign",
+   "image": "images/label-08.jpg",
+   "gt": "gt/label-08.json",
+   "lang": "en",
+   "hard": [
+    "low_contrast",
+    "perspective"
+   ],
+   "topic": "room_sign",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "7941b5d9d7ab8615bdbbfa35d31d372edda986b4d14d028de2954e2f933e381f",
+   "split": "test"
+  },
+  {
+   "id": "label-09",
+   "type": "form_label_sign",
+   "image": "images/label-09.jpg",
+   "gt": "gt/label-09.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "hours_sign",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "cef92f7bc078eb84e13820cd66fab7b4a8ec5f6a85a8e2f4d2365775ecb73368",
+   "split": "dev"
+  },
+  {
+   "id": "label-10",
+   "type": "form_label_sign",
+   "image": "images/label-10.jpg",
+   "gt": "gt/label-10.json",
+   "lang": "en",
+   "hard": [
+    "units",
+    "perspective"
+   ],
+   "topic": "hours_sign",
+   "width": 1200,
+   "height": 1600,
+   "sha256": "15caa3b4f17d72ba607f9fe8b387b4fb56b9f225fedc3f04461914968119442f",
+   "split": "test"
+  },
+  {
+   "id": "label-11",
+   "type": "form_label_sign",
+   "image": "images/label-11.jpg",
+   "gt": "gt/label-11.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "similar_names",
+    "perspective"
+   ],
+   "topic": "repair_form",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "cc1d2718ab1cdad8cf9fd8774f3da68e4587ede018c2fa18c3d03a4ec28b94a0",
+   "split": "test"
+  },
+  {
+   "id": "label-12",
+   "type": "form_label_sign",
+   "image": "images/label-12.jpg",
+   "gt": "gt/label-12.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "perspective"
+   ],
+   "topic": "repair_form",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "c2e21d595e300e4994800fc5383b5029c3c0e34271df2fff09b3c3ccfbe9ef28",
+   "split": "dev"
+  },
+  {
+   "id": "label-13",
+   "type": "form_label_sign",
+   "image": "images/label-13.jpg",
+   "gt": "gt/label-13.json",
+   "lang": "zh",
+   "hard": [
+    "perspective",
+    "units"
+   ],
+   "topic": "bin_label",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "f411c9b26d2c359681c3195850421637d7f6940bd9514c19b83747088972ccf0",
+   "split": "dev"
+  },
+  {
+   "id": "label-14",
+   "type": "form_label_sign",
+   "image": "images/label-14.jpg",
+   "gt": "gt/label-14.json",
+   "lang": "en",
+   "hard": [
+    "small_text",
+    "perspective"
+   ],
+   "topic": "bin_label",
+   "width": 1000,
+   "height": 750,
+   "sha256": "810178aef16cd96710a6c80b21e3caa2ddd09bdb2d29c6ef8185a435c250204d",
+   "split": "test"
+  },
+  {
+   "id": "label-15",
+   "type": "form_label_sign",
+   "image": "images/label-15.jpg",
+   "gt": "gt/label-15.json",
+   "lang": "zh",
+   "hard": [
+    "shadow",
+    "small_text",
+    "perspective"
+   ],
+   "topic": "shipping_label",
+   "width": 750,
+   "height": 1000,
+   "sha256": "b5f3323d1fcc999ba035a9789053749b5d0915c6fa80f6b6d0531e46f3369584",
+   "split": "test"
+  },
+  {
+   "id": "label-16",
+   "type": "form_label_sign",
+   "image": "images/label-16.jpg",
+   "gt": "gt/label-16.json",
+   "lang": "zh",
+   "hard": [
+    "units",
+    "blur",
+    "perspective"
+   ],
+   "topic": "nameplate",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "54453685a300740eb304928a49f4d6fd55fdad2147ae18a6352f38a9a66c06c0",
+   "split": "test"
+  },
+  {
+   "id": "label-17",
+   "type": "form_label_sign",
+   "image": "images/label-17.jpg",
+   "gt": "gt/label-17.json",
+   "lang": "zh",
+   "hard": [
+    "two_prices",
+    "units",
+    "small_text",
+    "perspective"
+   ],
+   "topic": "price_tag",
+   "width": 1000,
+   "height": 750,
+   "sha256": "a7663eb86123baeb6de4d308d95c3e2d17408c5008f090bb03977dd4b42856d3",
+   "split": "test"
+  },
+  {
+   "id": "label-18",
+   "type": "form_label_sign",
+   "image": "images/label-18.jpg",
+   "gt": "gt/label-18.json",
+   "lang": "zh",
+   "hard": [
+    "handwriting",
+    "perspective"
+   ],
+   "topic": "repair_form",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "baf89a9f842509807fe72b3c5c07239128db76977fad586906fde1a7060cb4ff",
+   "split": "test"
+  },
+  {
+   "id": "label-19",
+   "type": "form_label_sign",
+   "image": "images/label-19.jpg",
+   "gt": "gt/label-19.json",
+   "lang": "zh",
+   "hard": [
+    "glare",
+    "perspective"
+   ],
+   "topic": "room_sign",
+   "width": 1600,
+   "height": 1200,
+   "sha256": "f065706eb77c81194f6c688561adfc6ad4868285a6bbda214c7f319e26ec2555",
+   "split": "dev"
+  }
+ ]
+}

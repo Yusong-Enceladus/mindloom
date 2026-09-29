@@ -1,0 +1,79 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "b55ff41",
+ "date": "2026-09-28T14:56:54+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/p2-dev-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "670e2e87-3e7a-4aeb-b754-055908fd6d77",
+  "E2": "626eb9b7-6538-4371-9617-8fed4d8ad2a7",
+  "E3": "76dc1d3b-a673-4abd-8812-495d640d7f08",
+  "E4": "654dd389-7bb7-4217-8208-584b7f786438",
+  "E5": "8a23713b-0916-45ab-882b-d3a5052b4452",
+  "E6": "7dacdd16-f9e9-48c5-bdfc-9114932cb52d",
+  "E7": "08fadd5d-5721-4f5f-bee3-776fd059b254",
+  "E8": "17f17d04-5407-4386-aa82-dac6da05c982",
+  "E9": "630e9249-b7bf-457f-aca6-e7ac051619f7",
+  "E10": "114d4098-0f97-49f3-a546-0df9aab1e5b9",
+  "E11": "e058361d-2170-47fe-81a5-41f97e19ad6f",
+  "E12": "bb97e74d-1819-4a79-ad4d-7f7c38300aba",
+  "E13": "8726a602-7295-4ba9-b137-2190bb388395",
+  "E14": "f23c800a-51a8-4d06-b01f-a0c11de865b8"
+ },
+ "bare_max_tokens": null
+}

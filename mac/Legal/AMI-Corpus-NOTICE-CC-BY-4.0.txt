@@ -1,0 +1,25 @@
+AMI Meeting Corpus evaluation-data notice
+
+Corpus: AMI Meeting Corpus
+Pinned annotation release: ami_public_manual_1.6.2
+Source: https://groups.inf.ed.ac.uk/ami/
+Download index: https://groups.inf.ed.ac.uk/ami/download/
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URI: https://creativecommons.org/licenses/by/4.0/
+
+The corpus was created by the AMI Project and its contributors. bestASR uses a
+SHA-256-pinned subset of public meeting audio and manual segment annotations for
+local, reproducible speaker diarization and cross-session identity evaluation.
+The downloaded audio and annotations are not bundled with bestASR and are not
+stored in this Git repository. Prepared audio and derived speaker profiles remain
+on local external storage.
+
+Suggested corpus citation:
+
+- Jean Carletta et al., “The AMI Meeting Corpus: A Pre-announcement,”
+  Machine Learning for Multimodal Interaction, 2005.
+
+bestASR does not modify the source corpus. Evaluation preparation decodes the
+selected WAV signals to local Float32 PCM clips and records that transformation
+in the local run manifest. No endorsement by the AMI Project, its institutions,
+or its contributors is implied.

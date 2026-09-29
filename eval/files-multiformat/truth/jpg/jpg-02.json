@@ -1,0 +1,68 @@
+{
+ "file_id": "jpg-02",
+ "path": "corpus/jpg/jpg-02.jpg",
+ "type": "jpg",
+ "ext": "jpg",
+ "mime": "image/jpeg",
+ "filename": "食堂本周菜单.jpg",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "ABE8C318-824F-57CA-8723-A1E9BF723B95",
+  "ref": "noise_menu",
+  "events": []
+ },
+ "text_layer": "none",
+ "text": "第二食堂 本周特色菜（10月12日—10月18日）\n营业时间 11:00–13:30，17:00–19:00\n日期\t午餐特色\t价格\n周一\t番茄牛腩饭\t16元\n周二\t酸菜鱼\t18元\n周三\t宫保鸡丁\t14元\n周四\t清蒸鲈鱼\t22元\n周五\t素食自助\t12元\n合成数据",
+ "key_lines": [
+  "第二食堂 本周特色菜（10月12日—10月18日）",
+  "营业时间 11:00–13:30，17:00–19:00",
+  "周四\t清蒸鲈鱼\t22元",
+  "周五\t素食自助\t12元"
+ ],
+ "picture_only_lines": [
+  "第二食堂 本周特色菜（10月12日—10月18日）",
+  "营业时间 11:00–13:30，17:00–19:00",
+  "周四\t清蒸鲈鱼\t22元",
+  "周五\t素食自助\t12元"
+ ],
+ "key_fields": {
+  "周四": "清蒸鲈鱼",
+  "素食自助": "12元"
+ },
+ "numbers": [
+  {
+   "value": 12,
+   "label": "素食自助价"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "周四的特色菜是什么？",
+   "a": "清蒸鲈鱼",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "素食自助多少钱？",
+   "a": 12,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "午餐几点结束？",
+   "a": "13:30",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "size": [
+   1062,
+   769
+  ]
+ },
+ "bytes": 56201,
+ "sha256": "3bb09b1d45199afbbe39074dcc5508bbc3c6ce237f1e29cfa0127f2cc468e4bb"
+}

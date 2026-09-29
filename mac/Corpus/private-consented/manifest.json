@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "private-consented-smoke",
+  "version": "1.0.0",
+  "tier": "private-consented",
+  "releaseHoldout": false,
+  "containsPrivateContent": true,
+  "samples": [
+    {
+      "sampleUUID": "40000000-0000-4000-8000-000000000001",
+      "consentClass": "consented-private",
+      "assetReference": "local-corpus://private-consented/40000000-0000-4000-8000-000000000001",
+      "contentDigest": "4444444444444444444444444444444444444444444444444444444444444444",
+      "languages": [
+        "zh-CN"
+      ],
+      "tags": [
+        "opaque-reference-only"
+      ]
+    }
+  ]
+}

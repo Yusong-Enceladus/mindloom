@@ -1,0 +1,24 @@
+{
+ "model": "nemotron3-embed-8b",
+ "url": "http://127.0.0.1:8140",
+ "scenarios": {
+  "dev-week-v1": {
+   "queries": 78,
+   "items": 78,
+   "recall@5": 0.7949,
+   "mrr": 0.9872,
+   "ndcg@10": 0.7473,
+   "embed_seconds": 1.38,
+   "dim": 4096
+  },
+  "holdout-week-v2": {
+   "queries": 42,
+   "items": 42,
+   "recall@5": 0.8345,
+   "mrr": 0.978,
+   "ndcg@10": 0.8087,
+   "embed_seconds": 1.05,
+   "dim": 4096
+  }
+ }
+}

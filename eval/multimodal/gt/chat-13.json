@@ -1,0 +1,93 @@
+{
+ "id": "chat-13",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-13.jpg",
+ "lang": "mixed",
+ "hard": [
+  "small_text",
+  "non_text_bubbles"
+ ],
+ "synthetic": true,
+ "image_sha256": "48364a1365cd5669369f6f64698626135379c7dd62e659b79cb667a704308722",
+ "gt": {
+  "chat_title": "包材供应商对接",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "吴昊",
+    "is_self": false,
+    "time": "13:59",
+    "text": "MOQ 是 200 pcs，单价 ¥3.8/pc",
+    "kind": "text"
+   },
+   {
+    "sender": "唐宁",
+    "is_self": false,
+    "time": "",
+    "text": "lead time 大概 10 天，含 QC",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "14:08",
+    "text": "先下 200 pcs，PO 我明天发",
+    "kind": "text"
+   },
+   {
+    "sender": "吴昊",
+    "is_self": false,
+    "time": "",
+    "text": "OK，收到 PO 就排产",
+    "kind": "text"
+   },
+   {
+    "sender": "唐宁",
+    "is_self": false,
+    "time": "",
+    "text": "[文件 PI_200pcs.pdf]",
+    "kind": "file",
+    "file_name": "PI_200pcs.pdf"
+   }
+  ]
+ },
+ "text_lines": [
+  "包材供应商对接",
+  "吴昊：MOQ 是 200 pcs，单价 ¥3.8/pc",
+  "唐宁：lead time 大概 10 天，含 QC",
+  "我：先下 200 pcs，PO 我明天发",
+  "吴昊：OK，收到 PO 就排产",
+  "唐宁：[文件 PI_200pcs.pdf]"
+ ],
+ "qa": [
+  {
+   "q": "最小起订量是多少？",
+   "a": "200 pcs",
+   "match": "number"
+  },
+  {
+   "q": "单价多少？",
+   "a": "¥3.8/pc",
+   "match": "number"
+  },
+  {
+   "q": "交期多少天？",
+   "a": "10 天",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "hei",
+   "hei_bold"
+  ],
+  "downscale": 0.6
+ },
+ "variant": {
+  "conv": "mixed_vendor",
+  "theme": "light",
+  "small": 0.6
+ }
+}

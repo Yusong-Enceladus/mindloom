@@ -1,0 +1,27 @@
+{
+ "type": "object",
+ "properties": {
+  "matters": {
+   "type": "array",
+   "maxItems": 8,
+   "items": {"type": "string", "minLength": 1, "maxLength": 24}
+  },
+  "segments": {
+   "type": "array",
+   "maxItems": 12,
+   "items": {
+    "type": "object",
+    "properties": {
+     "from": {"type": "string", "pattern": "^U[0-9]+$"},
+     "to": {"type": "string", "pattern": "^U[0-9]+$"},
+     "matter": {"type": "integer", "minimum": 0, "maximum": 8},
+     "gist": {"type": "string", "minLength": 1, "maxLength": 30}
+    },
+    "required": ["from", "to", "matter", "gist"],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": ["matters", "segments"],
+ "additionalProperties": false
+}

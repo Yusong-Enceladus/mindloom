@@ -1,0 +1,73 @@
+{
+  "conclusion" : "pass",
+  "externalApplicationMatrixEvaluated" : false,
+  "generatedAt" : "2026-07-24T03:16:47Z",
+  "kind" : "ax-live-insertion-probe",
+  "liveAccessibilityEvaluated" : true,
+  "permissionMode" : "authorized-live-control+injected-denial",
+  "runID" : "33054B25-F8F0-4046-BF5E-241EC05F5267",
+  "scenarios" : [
+    {
+      "durationMilliseconds" : 163.70475,
+      "insertionMethod" : "accessibility-selection",
+      "observedFailureCategory" : "none",
+      "scenarioID" : "live-selection-replace",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 411.002292,
+      "insertionMethod" : "clipboard-paste",
+      "observedFailureCategory" : "none",
+      "scenarioID" : "live-clipboard-fallback-restores-owned-pasteboard",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 58.862834,
+      "insertionMethod" : "none",
+      "observedFailureCategory" : "targetNotEditable",
+      "scenarioID" : "live-noneditable-rejected",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 59.458916,
+      "insertionMethod" : "none",
+      "observedFailureCategory" : "secureTarget",
+      "scenarioID" : "live-secure-field-rejected",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 123.555625,
+      "insertionMethod" : "none",
+      "observedFailureCategory" : "permissionDenied",
+      "scenarioID" : "live-permission-denial-fails-before-write",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 173.02225,
+      "insertionMethod" : "none",
+      "observedFailureCategory" : "focusChanged",
+      "scenarioID" : "live-focus-race-fails-closed",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "durationMilliseconds" : 158.894083,
+      "insertionMethod" : "none",
+      "observedFailureCategory" : "selectionChanged",
+      "scenarioID" : "live-selection-race-fails-closed",
+      "status" : "pass",
+      "wrongTargetWriteCount" : 0
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-INS-001",
+  "targetClass" : "synthetic-appkit-fixture",
+  "unmetReleaseCriteria" : [
+    "Apple editor, browser, Office, chat, Terminal, rich-text, and Electron compatibility remains a separate versioned device matrix."
+  ]
+}

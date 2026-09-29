@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/spike-summary.schema.json",
+  "title": "bestASR spike summary",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "spikeID",
+    "runID",
+    "question",
+    "environmentRef",
+    "criteria",
+    "commands",
+    "matrix",
+    "conclusion",
+    "unmetCriteria"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "spike-summary"
+    },
+    "spikeID": {
+      "type": "string",
+      "pattern": "^SPIKE-[A-Z0-9-]+$"
+    },
+    "runID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 1
+    },
+    "environmentRef": {
+      "type": "string",
+      "pattern": "^(artifacts/evidence/|fixture://)[A-Za-z0-9._/-]+$"
+    },
+    "criteria": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pass",
+        "fail"
+      ],
+      "properties": {
+        "pass": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "fail": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "matrix": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scenarioID",
+          "status",
+          "evidenceRefs"
+        ],
+        "properties": {
+          "scenarioID": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "conditional"
+            ]
+          },
+          "evidenceRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^(artifacts/evidence/|fixture://)[A-Za-z0-9._/-]+$"
+            }
+          }
+        }
+      }
+    },
+    "conclusion": {
+      "type": "string",
+      "enum": [
+        "pass",
+        "fail",
+        "conditional"
+      ]
+    },
+    "unmetCriteria": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

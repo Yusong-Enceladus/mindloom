@@ -1,0 +1,95 @@
+{
+ "file_id": "eml-02",
+ "path": "corpus/eml/eml-02.eml",
+ "type": "eml",
+ "ext": "eml",
+ "mime": "message/rfc822",
+ "filename": "Visit_to_Qingyu_travel_details.eml",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "E6C57E59-2127-502D-8626-AF1F817BA211",
+  "ref": "talk_eml",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "full",
+ "text": "From: Elena Park <elena.park@example.org>\nTo: Zhiyao Shen <shenzy@example.org>\nCc: 宋雨桐 <songyt@example.org>\nDate: Mon, 12 Oct 2026 08:15:00 +0800\nSubject: Visit to Qingyu — travel details and talk abstract\nDear Zhiyao,\nThank you again for the invitation. Here are my travel details:\n- Arrival: flight ZY 5718, departing Singapore at 13:25 on Thursday, October 15, arriving at Qingyu Airport at 19:10 local time.\n- Departure: Saturday, October 17, flight ZY 5723 at 11:40.\nMy talk title is \"Memory Structures for Embodied Agents\". I would prefer a 60-minute talk plus 30 minutes of Q&A. The abstract and a short bio are attached.\nDietary note: I am vegetarian.\nBest regards,\nElena\n-- \nElena Park, Professor of Computer Science, Northbridge University\n(synthetic data · 合成数据)\n[attachment] talk_abstract.txt\nMemory Structures for Embodied Agents\nElena Park, Northbridge University\nAbstract: Embodied agents must remember what they saw, what they know and how to act. This talk compares three memory types (episodic, semantic and procedural) across 4 benchmark suites and argues that agents need all three, with explicit rules for forgetting.\n(synthetic data)\n[attachment] bio_ElenaPark.docx\nSYNTHETIC DATA · 合成数据 · 仅供评测使用\nShort Bio — Elena Park\nElena Park is a Professor of Computer Science at Northbridge University, where she leads the Embodied Memory Group (12 members).\nShe received her PhD in 2014 and has published more than 60 papers on robot learning and memory.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Date: Mon, 12 Oct 2026 08:15:00 +0800",
+  "- Arrival: flight ZY 5718, departing Singapore at 13:25 on Thursday, October 15, arriving at Qingyu Airport at 19:10 local time.",
+  "My talk title is \"Memory Structures for Embodied Agents\". I would prefer a 60-minute talk plus 30 minutes of Q&A. The abstract and a short bio are attached.",
+  "Dietary note: I am vegetarian.",
+  "Elena Park is a Professor of Computer Science at Northbridge University, where she leads the Embodied Memory Group (12 members).",
+  "She received her PhD in 2014 and has published more than 60 papers on robot learning and memory."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "arrival_flight": "ZY 5718",
+  "arrival_time": "2026-10-15 19:10",
+  "departure": "2026-10-17 ZY 5723 11:40",
+  "talk_title": "Memory Structures for Embodied Agents",
+  "talk_minutes": 60,
+  "diet": "vegetarian"
+ },
+ "numbers": [
+  {
+   "value": 60,
+   "label": "talk minutes"
+  },
+  {
+   "value": 30,
+   "label": "Q&A minutes"
+  },
+  {
+   "value": 12,
+   "label": "group size"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "When does Elena arrive (local time)?",
+   "a": "19:10",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What is the arrival flight number?",
+   "a": "ZY 5718",
+   "match": "exact",
+   "accept": [
+    "ZY5718"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "How long should the talk be (minutes)?",
+   "a": 60,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "Any dietary requirement?",
+   "a": "vegetarian",
+   "match": "contains",
+   "accept": [
+    "素食"
+   ]
+  }
+ ],
+ "structure": {
+  "attachments": [
+   "talk_abstract.txt",
+   "bio_ElenaPark.docx"
+  ],
+  "parts": [
+   "text/plain"
+  ]
+ },
+ "notes": "multipart/alternative（纯文本 + HTML）加两个附件：txt 摘要与 docx 简介。",
+ "bytes": 55218,
+ "sha256": "7d9570195a42517e926c09680c340ed057c8f30e6b314d911b5c38b19e994562"
+}

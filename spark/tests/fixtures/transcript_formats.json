@@ -1,0 +1,306 @@
+{
+ "about": "Shared transcript-format cases (contract A). Invented names only. The Mac parser (MemoryTranscriptText; a copy of this file is in the Mac repo at Tests/Fixtures/RemoteOrganizer/) and the Spark parser (organizer/transcripts.py) must both yield exactly these turns: speaker, t, text, and start/end as Unicode-scalar offsets into text (CRLF counts 2). format null = not a transcript; vtt and srt are one format (subtitles) on the Mac.",
+ "cases": [
+  {
+   "name": "tencent_basic",
+   "format": "tencent",
+   "text": "韩青禾(00:00:03):\n大家好，今天先对一下温室二期的进度。\n\n杜远舟 Yuanzhou DU(00:01:15):\n滴灌管下周三到货，安装要两天。\n\n韩青禾(00:02:40):\n好，那验收放到下周五。\n",
+   "turns": [
+    {
+     "speaker": "韩青禾",
+     "t": "00:00:03",
+     "text": "大家好，今天先对一下温室二期的进度。",
+     "start": 0,
+     "end": 33
+    },
+    {
+     "speaker": "杜远舟 Yuanzhou DU",
+     "t": "00:01:15",
+     "text": "滴灌管下周三到货，安装要两天。",
+     "start": 35,
+     "end": 77
+    },
+    {
+     "speaker": "韩青禾",
+     "t": "00:02:40",
+     "text": "好，那验收放到下周五。",
+     "start": 79,
+     "end": 105
+    }
+   ]
+  },
+  {
+   "name": "tencent_fullwidth_inline",
+   "format": "tencent",
+   "text": "苗一帆（01:05）：样品已经寄出。\n\n说话人2（01:30）：\n收到，我明天看。",
+   "turns": [
+    {
+     "speaker": "苗一帆",
+     "t": "00:01:05",
+     "text": "样品已经寄出。",
+     "start": 0,
+     "end": 18
+    },
+    {
+     "speaker": "说话人2",
+     "t": "00:01:30",
+     "text": "收到，我明天看。",
+     "start": 20,
+     "end": 41
+    }
+   ]
+  },
+  {
+   "name": "feishu_basic",
+   "format": "feishu",
+   "text": "barbara LIN 00:00:05\n先过一遍预算。\n\n石砚秋 00:03:12\n预算上限是四万二，\n第二期再追加。\n",
+   "turns": [
+    {
+     "speaker": "barbara LIN",
+     "t": "00:00:05",
+     "text": "先过一遍预算。",
+     "start": 0,
+     "end": 28
+    },
+    {
+     "speaker": "石砚秋",
+     "t": "00:03:12",
+     "text": "预算上限是四万二，\n第二期再追加。",
+     "start": 30,
+     "end": 60
+    }
+   ]
+  },
+  {
+   "name": "zoom_basic",
+   "format": "zoom",
+   "text": "[00:00:02] Oliver Tan: Morning all.\n[00:00:09] 葛晴川: 我先说一下场地的事。\n[00:01:20] Oliver Tan: 场地订到十月八号。\n",
+   "turns": [
+    {
+     "speaker": "Oliver Tan",
+     "t": "00:00:02",
+     "text": "Morning all.",
+     "start": 0,
+     "end": 35
+    },
+    {
+     "speaker": "葛晴川",
+     "t": "00:00:09",
+     "text": "我先说一下场地的事。",
+     "start": 36,
+     "end": 62
+    },
+    {
+     "speaker": "Oliver Tan",
+     "t": "00:01:20",
+     "text": "场地订到十月八号。",
+     "start": 63,
+     "end": 95
+    }
+   ]
+  },
+  {
+   "name": "vtt_voice",
+   "format": "vtt",
+   "text": "WEBVTT\n\n1\n00:00:01.000 --> 00:00:04.000\n<v 蓝知夏>先确认展位尺寸。\n\n2\n00:00:05.500 --> 00:00:08.000\n<v Peter Qiu>三米乘三米。\n",
+   "turns": [
+    {
+     "speaker": "蓝知夏",
+     "t": "00:00:01",
+     "text": "先确认展位尺寸。",
+     "start": 8,
+     "end": 55
+    },
+    {
+     "speaker": "Peter Qiu",
+     "t": "00:00:05",
+     "text": "三米乘三米。",
+     "start": 57,
+     "end": 108
+    }
+   ]
+  },
+  {
+   "name": "srt_prefix",
+   "format": "srt",
+   "text": "1\n00:00:01,000 --> 00:00:03,000\n白露生: 报价单发你了。\n\n2\n00:00:04,000 --> 00:00:06,000\n贺川: 我看一下。\n",
+   "turns": [
+    {
+     "speaker": "白露生",
+     "t": "00:00:01",
+     "text": "报价单发你了。",
+     "start": 0,
+     "end": 44
+    },
+    {
+     "speaker": "贺川",
+     "t": "00:00:04",
+     "text": "我看一下。",
+     "start": 46,
+     "end": 87
+    }
+   ]
+  },
+  {
+   "name": "chat_byline_not_transcript",
+   "format": null,
+   "text": "周老板 10:05\n明天送货\n\n我 10:07\n好的",
+   "turns": []
+  },
+  {
+   "name": "prose_not_transcript",
+   "format": null,
+   "text": "今天去看了三个仓库，第二个最合适，租金每月八千。",
+   "turns": []
+  },
+  {
+   "name": "tencent_title_block_crlf_emoji",
+   "text": "虚构周会纪要\r\n2026年9月21日\r\n\r\n  苗青禾 Miao QINGHE(00:00:03):\r\n大家好 👋🏽\r\n\r\n欧阳帆(0:01:15)：\r\n样品周三到，我去仓库取。  \r\n  顺便把色温表带上。\r\n",
+   "format": "tencent",
+   "turns": [
+    {
+     "speaker": "苗青禾 Miao QINGHE",
+     "t": "00:00:03",
+     "text": "大家好 👋🏽",
+     "start": 24,
+     "end": 58
+    },
+    {
+     "speaker": "欧阳帆",
+     "t": "00:01:15",
+     "text": "样品周三到，我去仓库取。\n顺便把色温表带上。",
+     "start": 62,
+     "end": 104
+    }
+   ]
+  },
+  {
+   "name": "feishu_generic_speakers",
+   "text": "说话人 1 00:00:02\n先对一下展位的尺寸。\n\n石磊 00:00:40\n三米乘三米，靠近入口。\n\n说话人 1 00:01:05\n那海报做两张就够了。",
+   "format": "feishu",
+   "turns": [
+    {
+     "speaker": "说话人 1",
+     "t": "00:00:02",
+     "text": "先对一下展位的尺寸。",
+     "start": 0,
+     "end": 25
+    },
+    {
+     "speaker": "石磊",
+     "t": "00:00:40",
+     "text": "三米乘三米，靠近入口。",
+     "start": 27,
+     "end": 50
+    },
+    {
+     "speaker": "说话人 1",
+     "t": "00:01:05",
+     "text": "那海报做两张就够了。",
+     "start": 52,
+     "end": 77
+    }
+   ]
+  },
+  {
+   "name": "zoom_continuation_and_blank",
+   "text": "[00:00:05] Dana Ruiz: Can we move the review to Friday?\n[00:00:09] 韩小溪: 可以，周五下午。\n还要带上预算表。\n\n这一行不属于任何发言\n[00:00:20] Dana Ruiz: Great, thanks.",
+   "format": "zoom",
+   "turns": [
+    {
+     "speaker": "Dana Ruiz",
+     "t": "00:00:05",
+     "text": "Can we move the review to Friday?",
+     "start": 0,
+     "end": 55
+    },
+    {
+     "speaker": "韩小溪",
+     "t": "00:00:09",
+     "text": "可以，周五下午。\n还要带上预算表。",
+     "start": 56,
+     "end": 89
+    },
+    {
+     "speaker": "Dana Ruiz",
+     "t": "00:00:20",
+     "text": "Great, thanks.",
+     "start": 102,
+     "end": 138
+    }
+   ]
+  },
+  {
+   "name": "srt_same_speaker_cues_merge",
+   "text": "1\n00:00:01,000 --> 00:00:02,000\n顾一鸣: 先说场地。\n\n2\n00:00:02,500 --> 00:00:04,000\n顾一鸣: 再说人员。\n\n3\n00:00:04,500 --> 00:00:06,000\n林青: 好的。\n",
+   "format": "srt",
+   "turns": [
+    {
+     "speaker": "顾一鸣",
+     "t": "00:00:01",
+     "text": "先说场地。\n再说人员。",
+     "start": 0,
+     "end": 86
+    },
+    {
+     "speaker": "林青",
+     "t": "00:00:04",
+     "text": "好的。",
+     "start": 88,
+     "end": 127
+    }
+   ]
+  },
+  {
+   "name": "vtt_no_speaker_cues_skipped",
+   "text": "WEBVTT\n\nNOTE 虚构\n\n00:00:01.000 --> 00:00:02.000\n没有说话人的字幕\n\n00:00:03.000 --> 00:00:04.000 align:start\n<v.loud 顾一鸣>样机周二到。</v>\n\n00:00:05.000 --> 00:00:06.000\n林青：我来签收。\n",
+   "format": "vtt",
+   "turns": [
+    {
+     "speaker": "顾一鸣",
+     "t": "00:00:03",
+     "text": "样机周二到。",
+     "start": 57,
+     "end": 121
+    },
+    {
+     "speaker": "林青",
+     "t": "00:00:05",
+     "text": "我来签收。",
+     "start": 123,
+     "end": 161
+    }
+   ]
+  },
+  {
+   "name": "feishu_minutes_without_seconds_not_transcript",
+   "text": "会议开始 10:00\n先讨论预算\n结束 11:30\n散会",
+   "format": null,
+   "turns": []
+  },
+  {
+   "name": "bracket_times_in_sentences_not_transcript",
+   "text": "记得带上报告，明天(09:00):\n好的\n另外，后天(10:00):\n行",
+   "format": null,
+   "turns": []
+  },
+  {
+   "name": "bracket_time_without_colon_is_not_inline",
+   "text": "会议(10:00)在三楼\n带电脑\n午饭(12:00)在食堂\n随便",
+   "format": null,
+   "turns": []
+  },
+  {
+   "name": "single_header_not_transcript",
+   "text": "苗青禾(00:00:03):\n只有一段。",
+   "format": null,
+   "turns": []
+  },
+  {
+   "name": "pasted_chat_not_transcript",
+   "text": "王姐：房租涨 200\n我：能商量吗？",
+   "format": null,
+   "turns": []
+  }
+ ]
+}

@@ -1,0 +1,72 @@
+{
+ "file_id": "txt-05",
+ "path": "corpus/txt/txt-05.txt",
+ "type": "txt",
+ "ext": "txt",
+ "mime": "text/plain",
+ "filename": "Project Status Update_ Solar Monitoring Pilot.txt",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Project Status Update: Solar Monitoring Pilot\nOwner: Priya Raman\nOverall status: Green\nBudget: USD 227,000\nBudget spent: 51%\nMilestones\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tdone\nFull rollout\tplanned\nTop risk\nIntegration API rate limits\nNext report\nNext update due on 2026-07-04. Synthetic report for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Owner: Priya Raman",
+  "Overall status: Green",
+  "Budget: USD 227,000",
+  "Budget spent: 51%",
+  "Integration API rate limits"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "owner": "Priya Raman",
+  "status": "Green",
+  "budget_usd": 227000,
+  "spent_pct": 51,
+  "top_risk": "Integration API rate limits"
+ },
+ "numbers": [
+  {
+   "value": 227000,
+   "label": "budget"
+  },
+  {
+   "value": 51,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Green",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 51,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Integration API rate limits",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Priya Raman",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8",
+  "newline": "LF"
+ },
+ "bytes": 365,
+ "sha256": "6bb3894688da1c923c5c182ca9a75d568aeafceff13d8c9b4f300bb4cc9f31fd",
+ "family": "status_en"
+}

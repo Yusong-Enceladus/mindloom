@@ -1,0 +1,134 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 52,
+   "ok_first_attempt": 51,
+   "retried": 1,
+   "latency_median_s": 7.595,
+   "latency_p95_s": 22.836,
+   "latency_total_s": 567.3,
+   "prompt_tokens_mean": 6310.1,
+   "completion_tokens_mean": 189.4,
+   "prompt_tokens_total": 328126,
+   "completion_tokens_total": 9850,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 50,
+   "ok": 8,
+   "ok_first_attempt": 8,
+   "retried": 0,
+   "latency_median_s": 10.1,
+   "latency_p95_s": 28.336,
+   "latency_total_s": 688.2,
+   "prompt_tokens_mean": 4838.6,
+   "completion_tokens_mean": 281.1,
+   "prompt_tokens_total": 241928,
+   "completion_tokens_total": 14056,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[0] 的 date 202",
+    "[relative_date] status_facts[0] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[0] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」; [relative_date] status_line 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 2.174,
+   "latency_p95_s": 2.285,
+   "latency_total_s": 8.1,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 13.5,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 54,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 13.634,
+   "latency_p95_s": 16.503,
+   "latency_total_s": 48.7,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 333.5,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1334,
+   "errors_sample": []
+  },
+  "merge": {
+   "calls": 8,
+   "ok": 8,
+   "ok_first_attempt": 7,
+   "retried": 1,
+   "latency_median_s": 7.155,
+   "latency_p95_s": 8.775,
+   "latency_total_s": 49.6,
+   "prompt_tokens_mean": 3504.5,
+   "completion_tokens_mean": 192.6,
+   "prompt_tokens_total": 28036,
+   "completion_tokens_total": 1541,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 10.094,
+   "latency_p95_s": 15.421,
+   "latency_total_s": 66.9,
+   "prompt_tokens_mean": 3407.3,
+   "completion_tokens_mean": 280,
+   "prompt_tokens_total": 20444,
+   "completion_tokens_total": 1680,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 15,
+   "ok_first_attempt": 15,
+   "retried": 0,
+   "latency_median_s": 3.464,
+   "latency_p95_s": 7.787,
+   "latency_total_s": 73.5,
+   "prompt_tokens_mean": 2648.9,
+   "completion_tokens_mean": 108.3,
+   "prompt_tokens_total": 39734,
+   "completion_tokens_total": 1624,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 6,
+  "attach": 43,
+  "none": 3
+ },
+ "assign_actions": {
+  "new": 6,
+  "attach": 42,
+  "none": 3,
+  "ask": 1
+ },
+ "final_live_events": 6,
+ "status_line_chars_mean": 14.2,
+ "title_chars_mean": 11.8,
+ "wall_s": 1506.8,
+ "items_per_min": 1.83,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

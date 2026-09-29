@@ -1,0 +1,160 @@
+{
+ "id": "board-13",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-13.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "similar_names",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "82818b98933d4d05fadb21549e0f096f9a20c38e2d32d852f90f5b7dc2147649",
+ "gt": {
+  "surface": "sticky_notes",
+  "notes": [
+   {
+    "lines": [
+     {
+      "text": "交房租",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     },
+     {
+      "text": "8/22",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     }
+    ]
+   },
+   {
+    "lines": [
+     {
+      "text": "报销1280元",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     },
+     {
+      "text": "找财务",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     }
+    ]
+   },
+   {
+    "lines": [
+     {
+      "text": "刘佳 周三面试",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     }
+    ]
+   },
+   {
+    "lines": [
+     {
+      "text": "刘嘉 借的书",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     },
+     {
+      "text": "月底还",
+      "struck": false,
+      "checked": false,
+      "is_title": false
+     }
+    ]
+   }
+  ],
+  "lines": [
+   {
+    "text": "交房租",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "8/22",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "报销1280元",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "找财务",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "刘佳 周三面试",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "刘嘉 借的书",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "月底还",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "交房租",
+  "8/22",
+  "报销1280元",
+  "找财务",
+  "刘佳 周三面试",
+  "刘嘉 借的书",
+  "月底还"
+ ],
+ "qa": [
+  {
+   "q": "报销多少钱？",
+   "a": "1280元",
+   "match": "number"
+  },
+  {
+   "q": "谁周三面试？",
+   "a": "刘佳",
+   "match": "exact"
+  },
+  {
+   "q": "房租哪天交？",
+   "a": "8/22",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "surface": "sticky_notes",
+  "font": "hand_pen",
+  "size": 52,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "sticky",
+  "font": "hand_pen",
+  "similar": true,
+  "size": 52
+ }
+}

@@ -1,0 +1,72 @@
+{
+ "file_id": "html-01",
+ "path": "corpus/html/html-01.html",
+ "type": "html",
+ "ext": "html",
+ "mime": "text/html",
+ "filename": "澄川项目周报_第11周.html",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "0926F5D9-DF6A-52B1-B1CF-653068B4CB24",
+  "ref": "col_html",
+  "events": [
+   "ev_collab"
+  ]
+ },
+ "text_layer": "full",
+ "text": "项目协作空间\n澄川缺陷检测项目 周报（第11周，10月12日—10月16日）\n整体进度：85%\n本周负责人：贺一鸣\n本周完成\n- v1.2 模型在澄川测试集 v3 上 mAP 0.873（目标 0.85）\n- 部署包打包完成（中期交付物_v1.2.zip）\n- 与马骏确认中期验收：10月20日 9:30，苏州工厂\n风险\n- 污渍类 AP 0.856，接近下限，需补充 300 张样本\n下周计划\n- 10月20日 中期验收\n- 验收后申请第二期款 180,000 元\n本周工时\n成员\t工时（小时）\n贺一鸣\t22\n陶然\t8\n合成数据",
+ "key_lines": [
+  "整体进度：85%",
+  "- 污渍类 AP 0.856，接近下限，需补充 300 张样本",
+  "贺一鸣\t22"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "整体进度": "85%",
+  "补充样本": 300,
+  "污渍AP": 0.856
+ },
+ "numbers": [
+  {
+   "value": 85,
+   "label": "进度%"
+  },
+  {
+   "value": 300,
+   "label": "补充样本"
+  },
+  {
+   "value": 0.856,
+   "label": "污渍 AP"
+  },
+  {
+   "value": 22,
+   "label": "贺一鸣工时"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "整体进度是多少？",
+   "a": 85,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "污渍类需要补充多少张样本？",
+   "a": 300,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "污渍类 AP 是多少？",
+   "a": 0.856,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 1714,
+ "sha256": "c067cd20057f94d511d40ab1c575a3f050e6ff5e5a5cf68d4a1b93a295ad790c"
+}

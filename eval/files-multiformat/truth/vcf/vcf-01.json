@@ -1,0 +1,65 @@
+{
+ "file_id": "vcf-01",
+ "path": "corpus/vcf/vcf-01.vcf",
+ "type": "vcf",
+ "ext": "vcf",
+ "mime": "text/vcard",
+ "filename": "答辩委员会联系人.vcf",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "D29E5FEB-CC90-5F6C-B581-AD8E2ECBDC2D",
+  "ref": "def_vcf",
+  "events": [
+   "ev_defense"
+  ]
+ },
+ "text_layer": "full",
+ "text": "[contact 1]\nN: 许 卫东\nFN: 许卫东\nORG: 清屿大学计算机学院\nTITLE: 教授（开题答辩委员会主席）\nTEL: +86-10-5550-0101\nEMAIL: xuwd@example.org\nNOTE: 周三下午有课（合成数据）\n[contact 2]\nN: 方 敏\nFN: 方敏\nORG: 清屿大学计算机学院\nTITLE: 副教授\nTEL: +86-10-5550-0102\nEMAIL: fangmin@example.org\nNOTE: 合成数据\n[contact 3]\nN: 林 晓棠\nFN: 林晓棠\nORG: 清屿大学计算机学院 视觉智能实验室\nTITLE: 硕士研究生\nTEL: +86-10-5550-0103\nEMAIL: lin.xt@example.org\nNOTE: 合成数据",
+ "key_lines": [
+  "TEL: +86-10-5550-0101",
+  "NOTE: 周三下午有课（合成数据）",
+  "TITLE: 副教授"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "许卫东电话": "+86-10-5550-0101",
+  "方敏职称": "副教授",
+  "许卫东备注": "周三下午有课"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "许卫东的电话是多少？",
+   "a": "5550-0101",
+   "match": "contains",
+   "accept": [
+    "+86-10-5550-0101"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "方敏是什么职称？",
+   "a": "副教授",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "许卫东的备注写了什么？",
+   "a": "周三下午有课",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "cards": 3,
+  "versions": [
+   "3.0",
+   "3.0",
+   "3.0"
+  ]
+ },
+ "bytes": 702,
+ "sha256": "b05809629e2930b5dd34465c30081ec0ef6fc3a789e48ce825f75345ab7e7174"
+}

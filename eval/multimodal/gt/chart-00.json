@@ -1,0 +1,88 @@
+{
+ "id": "chart-00",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-00.png",
+ "lang": "zh",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "e132593668978c19296578274f35fe8e3e41f7ae09a2c21a441d96cf332b0045",
+ "gt": {
+  "chart_type": "bar",
+  "title": "2026年下半年 门店月销售额",
+  "x_label": "月份",
+  "y_label": "销售额（万元）",
+  "unit": "万元",
+  "categories": [
+   "7月",
+   "8月",
+   "9月",
+   "10月",
+   "11月",
+   "12月"
+  ],
+  "series": [
+   {
+    "name": "销售额",
+    "values": [
+     24.3,
+     38.4,
+     45.8,
+     55.8,
+     44.4,
+     36.5
+    ],
+    "labels": [
+     "24.3",
+     "38.4",
+     "45.8",
+     "55.8",
+     "44.4",
+     "36.5"
+    ]
+   }
+  ],
+  "trend": {
+   "销售额": "rise_then_fall"
+  }
+ },
+ "text_lines": [
+  "2026年下半年 门店月销售额",
+  "销售额 7月: 24.3",
+  "销售额 8月: 38.4",
+  "销售额 9月: 45.8",
+  "销售额 10月: 55.8",
+  "销售额 11月: 44.4",
+  "销售额 12月: 36.5"
+ ],
+ "qa": [
+  {
+   "q": "2026年下半年 门店月销售额中，7月的销售额是多少？",
+   "a": "24.3万元",
+   "match": "number"
+  },
+  {
+   "q": "销售额最高的是哪一项？",
+   "a": "10月",
+   "match": "exact"
+  },
+  {
+   "q": "销售额的整体趋势？",
+   "a": "先升后降",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "bar"
+ },
+ "variant": {
+  "chart": "bar",
+  "topic": "sales",
+  "patterns": [
+   "rise_then_fall"
+  ]
+ }
+}

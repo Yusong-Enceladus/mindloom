@@ -1,0 +1,41 @@
+{
+ "segments": [
+  {
+   "label": "qwen36-nvfp4-vllm-2a86",
+   "backend": "openai",
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "url": "http://127.0.0.1:30102",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 98,
+   "start": {
+    "time": 1790627852.7359626,
+    "gpu_apps": [
+     "930802, /home/YOU/hack/tts/venv/bin/python, 26809 MiB",
+     "3440427, VLLM::EngineCore, 51124 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          93           4           0          26          28\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 0.0"
+    ]
+   },
+   "wall_s": 315.97,
+   "end": {
+    "time": 1790628168.7557204,
+    "gpu_apps": [
+     "930802, /home/YOU/hack/tts/venv/bin/python, 26809 MiB",
+     "3440427, VLLM::EngineCore, 51124 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          93           4           0          26          28\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"qwen3.6-35b-a3b-nvfp4\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,94 @@
+{
+ "id": "chat-19",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-19.jpg",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "dated_time",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "70286affe218a421da72f568bb8df10b4ed06efec1b21f09ca02e01fb59e4972",
+ "gt": {
+  "chat_title": "国庆出行",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "下午9:36",
+    "text": "高铁票抢到了，8月18日 07:12 出发，二等座268元",
+    "kind": "text"
+   },
+   {
+    "sender": "谢雨桐",
+    "is_self": false,
+    "time": "",
+    "text": "酒店我订了两间，3晚，一共1580元",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "那每人526.67元，我转你",
+    "kind": "text"
+   },
+   {
+    "sender": "谢雨桐",
+    "is_self": false,
+    "time": "下午9:41",
+    "text": "好的",
+    "kind": "text"
+   },
+   {
+    "sender": "许诺",
+    "is_self": false,
+    "time": "",
+    "text": "我那天得先去趟公司，晚一班到",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "国庆出行",
+  "冯晨：高铁票抢到了，8月18日 07:12 出发，二等座268元",
+  "谢雨桐：酒店我订了两间，3晚，一共1580元",
+  "我：那每人526.67元，我转你",
+  "谢雨桐：好的",
+  "许诺：我那天得先去趟公司，晚一班到"
+ ],
+ "qa": [
+  {
+   "q": "高铁几点出发？",
+   "a": "07:12",
+   "match": "exact"
+  },
+  {
+   "q": "酒店一共多少钱？",
+   "a": "1580元",
+   "match": "number"
+  },
+  {
+   "q": "酒店每人分摊多少？",
+   "a": "526.67元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ],
+  "downscale": 0.5
+ },
+ "variant": {
+  "conv": "trip",
+  "theme": "light",
+  "time_style": "ampm",
+  "small": 0.5
+ }
+}

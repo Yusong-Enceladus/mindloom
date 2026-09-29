@@ -1,0 +1,80 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "without-skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8003/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.2.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "eb4c1634018ce0f5",
+  "event-brief": "2bbf1ccdc213c05f",
+  "home-rank": "22d28d3e84a08265",
+  "recall": "d8fbb1754cec1f6a",
+  "screenshot-read": "6ed5ddfc9ecd5297"
+ },
+ "git": "",
+ "date": "2026-09-28T01:19:37+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "without-skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8003/v1",
+  "--keep-db",
+  "--out",
+  "../out/dev-noskill-v5-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "050fc581-eba1-4242-b049-d7f756799890",
+  "E2": "ccdb7e9f-4d17-4f8c-9fdd-4f99d16cdc4d",
+  "E3": "1585583a-c2d4-4165-b7c4-06a971203219",
+  "E4": "66f7602e-819a-40c0-bd41-7b11068f168c",
+  "E5": "437a5145-3bf8-4888-b6d6-fba17933f2c5",
+  "E6": "68575d4a-a0eb-4680-a030-71c9ac1e1cb6",
+  "E7": "3e1b5db0-1afb-4d7c-8e1c-83b27f4b06e4",
+  "E8": "ae972dd7-9afd-4a71-848e-ac0baf09c12f",
+  "E9": "c46425cf-5665-4104-a7d9-3aae5a3b2941",
+  "E10": "3507ee02-1bee-479d-9991-7e9c3e9b0693",
+  "E11": "7d2cba84-e87c-4eed-9e76-65e19d77e5f5",
+  "E12": "0fa5e1b1-37a0-42e6-9a4b-5122c10755dc",
+  "E13": "84207310-0017-4375-9f82-21cebb867207",
+  "E14": "1289f036-4f9e-4e97-9c30-be081fb50275",
+  "E15": "6c0e3f94-3c0e-4fc4-90ab-8b24023b8a08"
+ },
+ "bare_max_tokens": null
+}

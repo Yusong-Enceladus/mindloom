@@ -1,0 +1,72 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "baseline",
+ "threshold": 0.41,
+ "llm_url": null,
+ "model": null,
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "hash-bigram-256",
+ "embed_url": null,
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.0.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.1.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.1.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": null,
+ "git": "05acaf7",
+ "date": "2026-09-28T00:14:19+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "baseline",
+  "--embed",
+  "hash",
+  "--threshold",
+  "0.20,0.21,0.22,0.23,0.24,0.25,0.26,0.27,0.28,0.29,0.30,0.31,0.32,0.33,0.34,0.35,0.36,0.37,0.38,0.39,0.40,0.41,0.42,0.43,0.44,0.45",
+  "--out",
+  "../out/dev-baseline-v4-hash-low"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+  "E2": "688d1485-3483-4d39-bfb3-0ef4e3834461",
+  "E3": "e00ba702-e91d-406e-b855-7e39be89acc7",
+  "E4": "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+  "E5": "6b56391c-5c67-4756-96e2-7d593e444dab",
+  "E6": "e64ea5bd-29aa-4c74-84c1-6d0dfa08983d",
+  "E7": "eca17523-a35a-4fb0-9b34-379f03845369",
+  "E8": "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+  "E9": "8a338684-31f0-40e3-a750-e68b557de5b8",
+  "E10": "e481b33b-349e-4dd5-8e18-877f12dcf410",
+  "E11": "96965bf8-3dc4-4a89-9105-3677d0d43c75",
+  "E12": "a97aa180-4224-4e7d-a34d-9f25093aca47",
+  "E13": "43d7497f-6ac0-419c-99bc-1b9e159fe9f5",
+  "E14": "fefe0bb8-235e-4ef7-a294-35bc62b76f59"
+ },
+ "bare_max_tokens": null
+}

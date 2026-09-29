@@ -1,0 +1,31 @@
+{
+ "id": "booking-b",
+ "template": "booking",
+ "split": "test",
+ "filename": "预订确认.rtf",
+ "path": "data/booking-b.rtf",
+ "sha256": "8ebde7729e321985495597cf6a1883f1805b7c4377931be23d22bfcac258f381",
+ "size": 3760,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "booking_no": "HB90457",
+  "place": "白石山居"
+ },
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "预订号：HB90457",
+  "2026-11-05"
+ ],
+ "summary_groups": [
+  [
+   "白石山居"
+  ],
+  [
+   "预订",
+   "入住"
+  ]
+ ],
+ "doc_kind": "booking_ticket"
+}

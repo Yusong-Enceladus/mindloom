@@ -1,0 +1,100 @@
+{
+ "file_id": "mov-03",
+ "path": "corpus/mov/mov-03.mov",
+ "type": "mov",
+ "ext": "mov",
+ "mime": "video/quicktime",
+ "filename": "全麦核桃面包（8人份）.mov",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "全麦核桃面包（8人份）\n合成数据 · 仅供评测\n合成数据\n数据表\n材料\t用量（克）\n主料\t250\n鸡蛋\t100\n砂糖\t50\n黄油\t30\n合成数据\n步骤\n材料室温回软后混合均匀\n烤箱预热至 190℃\n入炉烘烤 35 分钟，中途转盘一次\n出炉冷却 20 分钟后切块\n合成数据\n步骤（续）\n小贴士：糖可减少两成。（合成数据）\n合成数据",
+ "key_lines": [
+  "全麦核桃面包（8人份）",
+  "砂糖\t50",
+  "烤箱预热至 190℃",
+  "入炉烘烤 35 分钟，中途转盘一次"
+ ],
+ "picture_only_lines": [
+  "全麦核桃面包（8人份）",
+  "砂糖\t50",
+  "烤箱预热至 190℃",
+  "入炉烘烤 35 分钟，中途转盘一次"
+ ],
+ "key_fields": {
+  "份数": 8,
+  "温度": "190℃",
+  "时长": "35分钟",
+  "砂糖": 50
+ },
+ "numbers": [
+  {
+   "value": 190,
+   "label": "温度"
+  },
+  {
+   "value": 35,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 190,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 35,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 50,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 8,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "slides": 4,
+  "seconds": [
+   2.5,
+   2.5,
+   2.5,
+   2.5
+  ],
+  "duration_s": 10.0,
+  "audio": "none",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "全麦核桃面包（8人份）"
+   },
+   {
+    "start_s": 2.5,
+    "title": "数据表"
+   },
+   {
+    "start_s": 5.0,
+    "title": "步骤"
+   },
+   {
+    "start_s": 7.5,
+    "title": "步骤（续）"
+   }
+  ]
+ },
+ "bytes": 40856,
+ "sha256": "356f2459014b33b8c140542ee0d83a07c4bf48322eb7c19461c24b51cb49d081",
+ "family": "recipe"
+}

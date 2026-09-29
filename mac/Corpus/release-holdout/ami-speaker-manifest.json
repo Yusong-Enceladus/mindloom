@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "ami-public-speaker-release-holdout-v1",
+  "version": "1.0.0",
+  "tier": "release-holdout",
+  "releaseHoldout": true,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000001",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Mix-Headset.wav",
+      "contentDigest": "47dc9bd2e3b1d174842091ae9e1fe765218f0c87658b17d6469c404e03ec2ac5",
+      "languages": ["en-US"],
+      "tags": ["ami", "known-person", "meeting", "real-human", "release-holdout", "speaker", "system-audio"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000002",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Array1-01.wav",
+      "contentDigest": "dc11abf7f87d1ca14a4d08f31d2356ec06541a19bae63700d6e64951d69c0cb7",
+      "languages": ["en-US"],
+      "tags": ["ami", "far-field", "known-person", "meeting", "real-human", "release-holdout", "room-microphone", "speaker"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000003",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Headset-0.wav",
+      "contentDigest": "4df81bbdf7a3398a8813ea2ddd251e4d7040a909a25870c5ddef59eedb080c66",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "known-person", "meeting", "near-field", "real-human", "release-holdout", "speaker"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000004",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Headset-1.wav",
+      "contentDigest": "5a0f57e67aabddf175e609696233f154f7a3bf88dab9872e25789df81e0c539b",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "known-person", "meeting", "near-field", "real-human", "release-holdout", "speaker"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000005",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Headset-2.wav",
+      "contentDigest": "a00984e6465343765ab4ada33bfecd004cf9ebd5abcebe792e39eb1efde1fdbd",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "known-person", "meeting", "near-field", "real-human", "release-holdout", "speaker"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000006",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2004c.Headset-3.wav",
+      "contentDigest": "5e3b33053c70a9e7deac6200a9656c6d52d15005925716979a5a26f143b5f84f",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "known-person", "meeting", "near-field", "real-human", "release-holdout", "speaker"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000007",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Mix-Headset.wav",
+      "contentDigest": "ac33e7b18ae72931e65dc279af4b129370ad62ca6ed64299b9e35f356e3f8ed8",
+      "languages": ["en-US"],
+      "tags": ["ami", "meeting", "real-human", "release-holdout", "speaker", "system-audio", "unknown-person"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000008",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Array1-01.wav",
+      "contentDigest": "59a785d1a0e5df2e878a6c4b05fd539f06b243b2ff345465387a65cd300b7279",
+      "languages": ["en-US"],
+      "tags": ["ami", "far-field", "meeting", "real-human", "release-holdout", "room-microphone", "speaker", "unknown-person"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000009",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Headset-0.wav",
+      "contentDigest": "ffe5eb825fcc0a9113173d828c1ce66e256e49c6e933987927c6353043ef4112",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "meeting", "near-field", "real-human", "release-holdout", "speaker", "unknown-person"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000010",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Headset-1.wav",
+      "contentDigest": "f552d00c6d55f389ef50b4dabbdb4fa6fe2e4bca04cc4b2459598c3614f10c1c",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "meeting", "near-field", "real-human", "release-holdout", "speaker", "unknown-person"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000011",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Headset-2.wav",
+      "contentDigest": "60c4d417f6893ec8ddff22494076b9182a012069349800249445e9331948c203",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "meeting", "near-field", "real-human", "release-holdout", "speaker", "unknown-person"]
+    },
+    {
+      "sampleUUID": "72000000-0000-4000-8000-000000000012",
+      "consentClass": "public",
+      "assetReference": "external-corpus://ami-1.6.2/ES2005a.Headset-3.wav",
+      "contentDigest": "f707254ba4e3229725d05b0bfbb5c2689796d606c9360c8121d181fdc4878ffd",
+      "languages": ["en-US"],
+      "tags": ["ami", "dictation", "meeting", "near-field", "real-human", "release-holdout", "speaker", "unknown-person"]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+ "id": "chart-04",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-04.png",
+ "lang": "en",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "290e04f8d7156ab53b518e41810c3e7d1829b78c1df75d784c976c6116f40b85",
+ "gt": {
+  "chart_type": "line",
+  "title": "Checkout conversion rate, 2026",
+  "x_label": "Month",
+  "y_label": "Conversion (%)",
+  "unit": "%",
+  "categories": [
+   "Apr",
+   "May",
+   "Jun",
+   "Jul",
+   "Aug",
+   "Sep"
+  ],
+  "series": [
+   {
+    "name": "Conversion",
+    "values": [
+     3.47,
+     2.7,
+     2.22,
+     3.02,
+     3.83,
+     4.32
+    ],
+    "labels": [
+     "3.47",
+     "2.70",
+     "2.22",
+     "3.02",
+     "3.83",
+     "4.32"
+    ]
+   }
+  ],
+  "trend": {
+   "Conversion": "fall_then_rise"
+  }
+ },
+ "text_lines": [
+  "Checkout conversion rate, 2026",
+  "Conversion Apr: 3.47",
+  "Conversion May: 2.70",
+  "Conversion Jun: 2.22",
+  "Conversion Jul: 3.02",
+  "Conversion Aug: 3.83",
+  "Conversion Sep: 4.32"
+ ],
+ "qa": [
+  {
+   "q": "In 'Checkout conversion rate, 2026', what is the value for Sep (Conversion)?",
+   "a": "4.32%",
+   "match": "number"
+  },
+  {
+   "q": "Which month has the highest Conversion?",
+   "a": "Sep",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of Conversion?",
+   "a": "falls then rises",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "line"
+ },
+ "variant": {
+  "chart": "line",
+  "lang": "en",
+  "topic": "conv",
+  "patterns": [
+   "fall_then_rise"
+  ]
+ }
+}

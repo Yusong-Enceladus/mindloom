@@ -1,0 +1,137 @@
+{
+ "id": "chart-17",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-17.png",
+ "lang": "en",
+ "hard": [
+  "low_contrast",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "bb85001fcbbacec693bbd81694e7a739255d94eaef14d4958784b909efc49b31",
+ "gt": {
+  "chart_type": "dashboard",
+  "title": "App daily metrics",
+  "kpis": [
+   {
+    "label": "Revenue",
+    "value": "$101.0K",
+    "delta": "+12.9%"
+   },
+   {
+    "label": "Orders",
+    "value": "3,081",
+    "delta": "+3.2%"
+   },
+   {
+    "label": "Avg. order",
+    "value": "$32.78",
+    "delta": "-2.1%"
+   },
+   {
+    "label": "Refund rate",
+    "value": "4.1%",
+    "delta": "+0.2pt"
+   }
+  ],
+  "series": [
+   {
+    "name": "Daily orders, last 10 days",
+    "categories": [
+     "9/12",
+     "9/13",
+     "9/14",
+     "9/15",
+     "9/16",
+     "9/17",
+     "9/18",
+     "9/19",
+     "9/20",
+     "9/21"
+    ],
+    "values": [
+     140.0,
+     187.0,
+     236.0,
+     286.0,
+     313.0,
+     336.0,
+     387.0,
+     338.0,
+     300.0,
+     250.0
+    ],
+    "labels": [
+     "140",
+     "187",
+     "236",
+     "286",
+     "313",
+     "336",
+     "387",
+     "338",
+     "300",
+     "250"
+    ],
+    "unit": "orders"
+   }
+  ],
+  "trend": {
+   "Daily orders, last 10 days": "rise_then_fall"
+  }
+ },
+ "text_lines": [
+  "App daily metrics",
+  "Revenue $101.0K +12.9%",
+  "Orders 3,081 +3.2%",
+  "Avg. order $32.78 -2.1%",
+  "Refund rate 4.1% +0.2pt",
+  "Daily orders, last 10 days",
+  "9/12: 140",
+  "9/13: 187",
+  "9/14: 236",
+  "9/15: 286",
+  "9/16: 313",
+  "9/17: 336",
+  "9/18: 387",
+  "9/19: 338",
+  "9/20: 300",
+  "9/21: 250"
+ ],
+ "qa": [
+  {
+   "q": "What is the revenue?",
+   "a": "$101.0K",
+   "match": "exact"
+  },
+  {
+   "q": "How many orders?",
+   "a": "3,081",
+   "match": "number"
+  },
+  {
+   "q": "Which day had the most orders?",
+   "a": "9/18",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of daily orders?",
+   "a": "rises then falls",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "dark": true
+ },
+ "variant": {
+  "chart": "dashboard",
+  "lang": "en",
+  "dark": true,
+  "low_contrast": true,
+  "patterns": [
+   "rise_then_fall"
+  ]
+ }
+}

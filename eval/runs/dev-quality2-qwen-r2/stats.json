@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 81,
+   "retried": 1,
+   "latency_median_s": 4.52,
+   "latency_p95_s": 5.906,
+   "latency_total_s": 372.8,
+   "prompt_tokens_mean": 5206.5,
+   "completion_tokens_mean": 185,
+   "prompt_tokens_total": 426933,
+   "completion_tokens_total": 15170,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 65,
+   "ok_first_attempt": 49,
+   "retried": 29,
+   "latency_median_s": 5.693,
+   "latency_p95_s": 12.859,
+   "latency_total_s": 539.7,
+   "prompt_tokens_mean": 4618,
+   "completion_tokens_mean": 353.4,
+   "prompt_tokens_total": 360204,
+   "completion_tokens_total": 27563,
+   "errors_sample": [
+    "[unsupported_completion] status_line 写了\"已…\"但没有被引用素材明确说已完成；改写为\"定于/计划…\"，或补一条 state=done 且带原话 quote 的事实",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「样品已顺丰发出，预计9月16日到」标为 done，但日期 2026-09-16 晚于证据素材的时间 2026-09-15；把已发生的部分和计划的部分拆成两条",
+    "[format] status_line must be exactly one sentence; [unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 12.296,
+   "latency_p95_s": 13.979,
+   "latency_total_s": 48.1,
+   "prompt_tokens_mean": 6328.2,
+   "completion_tokens_mean": 597.5,
+   "prompt_tokens_total": 25313,
+   "completion_tokens_total": 2390,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 8.913,
+   "latency_p95_s": 9.186,
+   "latency_total_s": 23.4,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 438.7,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1316,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 11,
+  "attach": 63,
+  "none": 4,
+  "ask": 4
+ },
+ "assign_actions": {
+  "new": 11,
+  "attach": 61,
+  "none": 4,
+  "ask": 3,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 17,
+ "status_line_chars_mean": 28.9,
+ "title_chars_mean": 9.8,
+ "wall_s": 990.8,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

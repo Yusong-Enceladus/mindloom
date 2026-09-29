@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "kind": "speaker-routing-fixtures",
+  "sharedPersonID": "66000000-0000-4000-8000-000000000001",
+  "scenarios": [
+    {
+      "scenarioID": "paired-dictation-known-person",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "standard",
+      "matchDispositions": ["shared-automatic"],
+      "expectedAutomatic": 1,
+      "expectedCandidate": 0,
+      "expectedUnknown": 0
+    },
+    {
+      "scenarioID": "paired-room-known-person",
+      "inputMode": "roomMicrophone",
+      "trackRole": "roomMicrophone",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "standard",
+      "matchDispositions": ["shared-automatic"],
+      "expectedAutomatic": 1,
+      "expectedCandidate": 0,
+      "expectedUnknown": 0
+    },
+    {
+      "scenarioID": "paired-system-known-person",
+      "inputMode": "systemAudio",
+      "trackRole": "systemRemote",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "standard",
+      "matchDispositions": ["shared-automatic"],
+      "expectedAutomatic": 1,
+      "expectedCandidate": 0,
+      "expectedUnknown": 0
+    },
+    {
+      "scenarioID": "paired-import-known-person",
+      "inputMode": "importedMedia",
+      "trackRole": "importedSource",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "standard",
+      "matchDispositions": ["shared-automatic"],
+      "expectedAutomatic": 1,
+      "expectedCandidate": 0,
+      "expectedUnknown": 0
+    },
+    {
+      "scenarioID": "dictation-two-person-rapid-alternation",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 2,
+      "turnCount": 6,
+      "pattern": "rapid",
+      "matchDispositions": ["automatic", "candidate"],
+      "expectedAutomatic": 3,
+      "expectedCandidate": 3,
+      "expectedUnknown": 0
+    },
+    {
+      "scenarioID": "dictation-three-person",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 3,
+      "turnCount": 3,
+      "pattern": "standard",
+      "matchDispositions": ["automatic", "candidate", "none"],
+      "expectedAutomatic": 1,
+      "expectedCandidate": 1,
+      "expectedUnknown": 1
+    },
+    {
+      "scenarioID": "dictation-short-turn-insufficient",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "short",
+      "matchDispositions": ["automatic"],
+      "expectedAutomatic": 0,
+      "expectedCandidate": 0,
+      "expectedUnknown": 1
+    },
+    {
+      "scenarioID": "dictation-overlap-insufficient",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "overlap",
+      "matchDispositions": ["automatic"],
+      "expectedAutomatic": 0,
+      "expectedCandidate": 0,
+      "expectedUnknown": 1
+    },
+    {
+      "scenarioID": "dictation-background-insufficient",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "background",
+      "matchDispositions": ["automatic"],
+      "expectedAutomatic": 0,
+      "expectedCandidate": 0,
+      "expectedUnknown": 1
+    },
+    {
+      "scenarioID": "dictation-low-quality-insufficient",
+      "inputMode": "dictation",
+      "trackRole": "microphoneLocal",
+      "speakerCount": 1,
+      "turnCount": 1,
+      "pattern": "low-quality",
+      "matchDispositions": ["automatic"],
+      "expectedAutomatic": 0,
+      "expectedCandidate": 0,
+      "expectedUnknown": 1
+    }
+  ]
+}

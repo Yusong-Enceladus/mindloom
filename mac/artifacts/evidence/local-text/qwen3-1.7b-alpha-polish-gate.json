@@ -1,0 +1,192 @@
+{
+  "artifactID" : "qwen3-1.7b-mlx-4bit-21457c6f",
+  "changedSampleCount" : 12,
+  "deterministicMismatchCount" : 0,
+  "factualFailureCount" : 0,
+  "generationConfiguration" : {
+    "maximumKVCacheTokens" : 4096,
+    "maximumOutputTokens" : 384,
+    "prefillStepSize" : 512,
+    "temperature" : 0,
+    "thinkingEnabled" : false
+  },
+  "generationCountPerSample" : 2,
+  "generationFailureCount" : 0,
+  "generationInvocationCount" : 24,
+  "hardGateEligible" : true,
+  "kind" : "local-text-real-model-gate-summary",
+  "maximumModelLoadMilliseconds" : 10000,
+  "maximumP95LatencyMilliseconds" : 2000,
+  "maximumPeakResidentBytes" : 3221225472,
+  "minimumStylePassCount" : 8,
+  "modelLoadMilliseconds" : 405.489,
+  "p50LatencyMilliseconds" : 328.111666,
+  "p95LatencyMilliseconds" : 417.227583,
+  "peakResidentBytes" : 1083047936,
+  "resourceGatePassed" : true,
+  "runtimeRevision" : "1c05248bb0899e2a7a4962b84d319cf12f4e12aa",
+  "sampleCount" : 12,
+  "samples" : [
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 444.905583,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000001",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 360.127708,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000002",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 316.562666,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000003",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 303.377,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000004",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 332.227542,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000005",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 358.191792,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000006",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 378.201708,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000007",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 296.537458,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000008",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 302.970417,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000009",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 334.572375,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000010",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 264.996209,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000011",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    },
+    {
+      "changed" : true,
+      "deterministicOutputMatched" : true,
+      "factualGatePassed" : true,
+      "forbiddenSubstringsRemoved" : true,
+      "latencyMilliseconds" : 396.990542,
+      "sampleUUID" : "10000000-0000-4000-8000-000000000012",
+      "styleGatePassed" : true,
+      "terminalPunctuationPresent" : true,
+      "violatedCategories" : [
+
+      ]
+    }
+  ],
+  "schemaVersion" : 2,
+  "sourceRevision" : "21457c6f51ed54a7c16e988c0844db973815c137",
+  "stylePassCount" : 12,
+  "suiteID" : "alpha-polish-real-model-v1",
+  "treeSHA256" : "09570edbadcacc0bb3abc5c58d688f92978cd62601cf98e11cf38356fd5bd7be"
+}

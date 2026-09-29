@@ -1,0 +1,62 @@
+{
+ "file_id": "zip-03",
+ "path": "corpus/zip/zip-03.zip",
+ "type": "zip",
+ "ext": "zip",
+ "mime": "application/zip",
+ "filename": "项目资料.zip",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[member] docs/会议纪要.docx\n合成数据 · 仅供评测使用\n开放日活动协调会会议纪要\n时间：2026年8月6日 15:30\n地点：一号会议室\n主持人：毛若曦\n参会人员：韩嘉怡、黎若曦、范可馨、谢宇航、赵诗琪\n记录人：赵诗琪\n一、会议决定\n活动定于2026年8月14日举行，预计参与人数 110 人。\n总预算不超过 17,500 元。\n对外宣传统一由主持人审核后发布。\n二、分工与时限\n负责人\t事项\t完成时间\n黎若曦\t确定场地并签订协议\t2026年8月8日\n谢宇航\t制作宣传物料（预算 17,500 元以内）\t2026年8月9日\n韩嘉怡\t汇总报名名单\t2026年8月11日\n下次会议时间另行通知。（合成数据）\n合成数据\n[member] data/预算.xlsx\n[预算]\n年度客户答谢会预算与实际支出\t\t\t\n\t金额（元）\t\t\n类别\t预算（元）\t实际（元）\t差额（元）\n物料\t14500\t15000\t500\n餐饮\t16500\t16800\t300\n奖品\t6500\t6100\t-400\n人员\t13000\t13100\t100\n场地\t6000\t6000\t0\n合计\t56500\t57000\t500\n合成数据\t\t\t\n[说明]\n项目\t内容\n活动\t年度客户答谢会\n最大类别\t餐饮\n执行率\t1.0088\n合成数据\t\n[member] README.md\n# 项目资料\n- docs/ 会议纪要\n- data/ 预算表\n> 合成数据",
+ "key_lines": [
+  "地点：一号会议室",
+  "合计\t56500\t57000\t500"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "文件数": 3,
+  "会议地点": "一号会议室",
+  "总预算": 56500
+ },
+ "numbers": [
+  {
+   "value": 56500,
+   "label": "总预算"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "会议纪要里的会议地点？",
+   "a": "一号会议室",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "预算表的总预算多少元？",
+   "a": 56500,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "压缩包里有几个文件？",
+   "a": 3,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "members": [
+   "docs/会议纪要.docx",
+   "data/预算.xlsx",
+   "README.md"
+  ],
+  "nested_zips": []
+ },
+ "bytes": 42449,
+ "sha256": "8601f2e4dbd49c284a2c736a745980b540dbd64a10b7219946d1374fd790b0a7",
+ "family": "project_docs"
+}

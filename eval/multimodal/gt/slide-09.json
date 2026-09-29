@@ -1,0 +1,82 @@
+{
+ "id": "slide-09",
+ "type": "slide",
+ "split": "dev",
+ "image": "images/slide-09.png",
+ "lang": "en",
+ "hard": [
+  "similar_names"
+ ],
+ "synthetic": true,
+ "image_sha256": "486e3e0865c2d71895b2da2dfc2ee112b6cb92a81b731ae5e0ba985367073ebc",
+ "gt": {
+  "title": "New Hire Onboarding Plan",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Week 1: accounts, laptop setup, security training (2 h)"
+   },
+   {
+    "level": 0,
+    "text": "Week 2: shadow Anna Li on support tickets"
+   },
+   {
+    "level": 0,
+    "text": "Week 3: first bug fix, reviewed by Anna Lu"
+   },
+   {
+    "level": 0,
+    "text": "Week 4: present a 10-minute demo"
+   },
+   {
+    "level": 1,
+    "text": "Buddy check-ins every Tuesday at 4 PM"
+   }
+  ],
+  "kpis": [],
+  "footer": "Bluecove Design Studio · Internal",
+  "page": "2 / 29"
+ },
+ "text_lines": [
+  "New Hire Onboarding Plan",
+  "Week 1: accounts, laptop setup, security training (2 h)",
+  "Week 2: shadow Anna Li on support tickets",
+  "Week 3: first bug fix, reviewed by Anna Lu",
+  "Week 4: present a 10-minute demo",
+  "Buddy check-ins every Tuesday at 4 PM",
+  "Bluecove Design Studio · Internal",
+  "2 / 29"
+ ],
+ "qa": [
+  {
+   "q": "Who reviews the first bug fix?",
+   "a": "Anna Lu",
+   "match": "exact"
+  },
+  {
+   "q": "Whom does the new hire shadow in week 2?",
+   "a": "Anna Li",
+   "match": "exact"
+  },
+  {
+   "q": "How long is the security training?",
+   "a": "2 h",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "New Hire Onboarding Plan",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "minimal",
+  "dense": false
+ },
+ "variant": {
+  "content": "en_onboard",
+  "theme": "minimal",
+  "similar": true
+ }
+}

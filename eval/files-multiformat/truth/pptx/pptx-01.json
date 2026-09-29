@@ -1,0 +1,104 @@
+{
+ "file_id": "pptx-01",
+ "path": "corpus/pptx/pptx-01.pptx",
+ "type": "pptx",
+ "ext": "pptx",
+ "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+ "filename": "组会汇报_1013_贺一鸣.pptx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "E06C89A1-9C88-568E-989F-DADFC4E621B5",
+  "ref": "paper_pptx",
+  "events": [
+   "ev_paper",
+   "ev_gpu"
+  ]
+ },
+ "text_layer": "partial",
+ "text": "LoomNet 进展汇报\n贺一鸣 · 组会 2026-10-13\n合成数据\n本周进展\nrun37 主实验完成：LongVid-QA 平均 76.9%\nmemory_slots 消融：64 最优（76.9%），128 显存 57GB\nrun42 已启动：学习率 3e-4，预计 10月14日出结果\n合成数据\nrun42 用 cosine 学习率，warmup 2k 步\n算力安排\n陶然预留 16 卡：10月13日—10月20日\n新服务器第一台预计 10月16日到货，用于补充材料实验\n已用 1,568 GPU·时，剩余 432\n合成数据\n主结果对比\n方法\t平均准确率(%)\nBaseline-TR\t75.3\nLoomNet run37\t76.9\nLoomNet w/o memory\t74.1\n合成数据\n风险与求助\n长视频评测脚本偶发 OOM（batch 256 时）\n需要沈老师 10月18日前改完引言\n摘要提交截止 10月16日\n合成数据",
+ "key_lines": [
+  "run37 主实验完成：LongVid-QA 平均 76.9%",
+  "memory_slots 消融：64 最优（76.9%），128 显存 57GB",
+  "run42 已启动：学习率 3e-4，预计 10月14日出结果",
+  "新服务器第一台预计 10月16日到货，用于补充材料实验",
+  "已用 1,568 GPU·时，剩余 432",
+  "LoomNet run37\t76.9",
+  "LoomNet w/o memory\t74.1",
+  "长视频评测脚本偶发 OOM（batch 256 时）",
+  "摘要提交截止 10月16日"
+ ],
+ "picture_only_lines": [
+  "LoomNet run37\t76.9",
+  "LoomNet w/o memory\t74.1",
+  "长视频评测脚本偶发 OOM（batch 256 时）",
+  "摘要提交截止 10月16日"
+ ],
+ "key_fields": {
+  "run42_lr": "3e-4",
+  "new_server_eta": "2026-10-16",
+  "reserved_gpus": 16
+ },
+ "numbers": [
+  {
+   "value": 76.9,
+   "label": "run37 平均"
+  },
+  {
+   "value": 1568,
+   "label": "已用 GPU·时"
+  },
+  {
+   "value": 432,
+   "label": "剩余"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "run42 的学习率是多少？",
+   "a": "3e-4",
+   "match": "exact",
+   "accept": [
+    "0.0003",
+    "3×10^-4"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "新服务器第一台预计哪天到货？",
+   "a": "10月16日",
+   "match": "contains",
+   "accept": [
+    "10/16",
+    "2026-10-16"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "风险页里 OOM 出现在多大的 batch？",
+   "a": 256,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "主结果对比图里 w/o memory 的平均准确率是多少？",
+   "a": 74.1,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "slides": 5,
+  "picture_only_slides": [
+   3,
+   5
+  ],
+  "notes_slides": [
+   2
+  ]
+ },
+ "notes": "第 3、5 页是整页图片（无文本框），答案只在图里；第 2 页有演讲者备注。",
+ "bytes": 111672,
+ "sha256": "112b4e3f4f774ba05ab1bed4bebe03fbeea409c4b74b065f5fa46c42bcbeccb1"
+}

@@ -1,0 +1,68 @@
+{
+ "file_id": "md-05",
+ "path": "corpus/md/md-05.md",
+ "type": "md",
+ "ext": "md",
+ "mime": "text/markdown",
+ "filename": "实验记录：催化剂转化率筛选.md",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "实验记录：催化剂转化率筛选\n实验编号：EXP-2026734\n日期：2026年5月25日\n操作人：余浩然\n温度：22℃\n反应/测试时间：60 分钟\n样品\t转化率（%）\nS01\t31.3\nS02\t91.2\nS03\t72.3\nS04\t62.2\nS05\t21.3\nS06\t32.4\n平均值 51.78%，最高为样品 S02（91.2%）。\n结论：数据重复性良好，下次增加对照组。本记录为合成数据。\n合成数据",
+ "key_lines": [
+  "操作人：余浩然",
+  "温度：22℃",
+  "S02\t91.2",
+  "平均值 51.78%，最高为样品 S02（91.2%）。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "实验编号": "EXP-2026734",
+  "操作人": "余浩然",
+  "温度": "22℃",
+  "平均值": 51.78,
+  "最高样品": "S02"
+ },
+ "numbers": [
+  {
+   "value": 51.78,
+   "label": "平均值"
+  },
+  {
+   "value": 22,
+   "label": "温度"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "实验温度是多少摄氏度？",
+   "a": 22,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "样品 S02 的转化率是多少？",
+   "a": 91.2,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "哪个样品最高？",
+   "a": "S02",
+   "match": "exact"
+  },
+  {
+   "id": "q4",
+   "q": "操作人是谁？",
+   "a": "余浩然",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 482,
+ "sha256": "00e4968e7d5c810e609305b50167103e7e234935307f64ede6b9cda8602108d4",
+ "family": "labrecord"
+}

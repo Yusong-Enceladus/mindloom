@@ -1,0 +1,39 @@
+{
+ "segments": [
+  {
+   "label": "gemma4-31b-qat-vllm",
+   "backend": "openai",
+   "model": "gemma4-31b-qat",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 98,
+   "start": {
+    "time": 1790668225.7121935,
+    "gpu_apps": [
+     "442831, VLLM::EngineCore, 59756 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          68           5           0          49          53\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"gemma4-31b-qat\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"gemma4-31b-qat\"} 0.0"
+    ]
+   },
+   "wall_s": 65.2,
+   "end": {
+    "time": 1790668290.984215,
+    "gpu_apps": [
+     "442831, VLLM::EngineCore, 59822 MiB"
+    ],
+    "gpu_util": "92 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          68           2           0          51          52\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"gemma4-31b-qat\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"gemma4-31b-qat\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

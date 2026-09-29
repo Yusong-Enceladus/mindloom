@@ -1,0 +1,94 @@
+{
+ "id": "board-02",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-02.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "cursive",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "78103276e50fbb03bea1c42a43f464af6cedd7b70215ee9daa1c684d3ee2327d",
+ "gt": {
+  "surface": "notebook",
+  "lines": [
+   {
+    "text": "秋游方案",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "人数：8户，约24人",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "车程3小时，60座大巴",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "联系人：郑楠",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "备选：韩梅负责订餐",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "雨天顺延一周",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "秋游方案",
+  "人数：8户，约24人",
+  "车程3小时，60座大巴",
+  "联系人：郑楠",
+  "备选：韩梅负责订餐",
+  "雨天顺延一周"
+ ],
+ "qa": [
+  {
+   "q": "联系人是谁？",
+   "a": "郑楠",
+   "match": "exact"
+  },
+  {
+   "q": "谁负责订餐？",
+   "a": "韩梅",
+   "match": "exact"
+  },
+  {
+   "q": "车程多久？",
+   "a": "3小时",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "notebook",
+  "font": "hand_xing",
+  "size": 60,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "plan",
+  "font": "hand_xing",
+  "surface": "notebook",
+  "size": 60
+ }
+}

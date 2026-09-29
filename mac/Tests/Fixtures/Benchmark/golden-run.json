@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "kind": "benchmark-run",
+  "benchmarkID": "hand-calculated-golden-v1",
+  "runID": "70000000-0000-4000-8000-000000000001",
+  "task": "asr",
+  "protocolVersion": 1,
+  "implementationRevision": "fixture-revision",
+  "modelArtifact": {
+    "artifactID": "fixture-model-v1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "configuration": {
+    "beam": "5",
+    "language": "mixed"
+  },
+  "corpus": {
+    "manifestID": "golden-fixture",
+    "version": "1.0.0",
+    "split": "smoke"
+  },
+  "environmentRef": "fixture://environment/arm64-offline",
+  "hardware": {
+    "osVersion": "14.2",
+    "architecture": "arm64",
+    "unifiedMemoryBytes": 17179869184,
+    "toolchainVersion": "Swift 6 fixture"
+  },
+  "samples": [
+    {
+      "sampleUUID": "70000000-0000-4000-8000-000000000002",
+      "transcript": {
+        "reference": "one two three",
+        "hypothesis": "one too three",
+        "referenceDangerousTokens": [
+          {
+            "category": "number",
+            "value": "42"
+          }
+        ],
+        "hypothesisDangerousTokens": [
+          {
+            "category": "number",
+            "value": "24"
+          }
+        ]
+      },
+      "diarization": {
+        "reference": [
+          {
+            "speakerID": "reference-a",
+            "startNanoseconds": 0,
+            "endNanoseconds": 2000000000
+          },
+          {
+            "speakerID": "reference-b",
+            "startNanoseconds": 2000000000,
+            "endNanoseconds": 4000000000
+          }
+        ],
+        "hypothesis": [
+          {
+            "speakerID": "hypothesis-x",
+            "startNanoseconds": 0,
+            "endNanoseconds": 1000000000
+          },
+          {
+            "speakerID": "hypothesis-y",
+            "startNanoseconds": 1000000000,
+            "endNanoseconds": 4000000000
+          }
+        ]
+      },
+      "identityAssignments": [
+        {
+          "occurrenceID": "70000000-0000-4000-8000-000000000010",
+          "expectedPersonID": "person-a",
+          "predictedPersonID": "global-1",
+          "evidenceSufficient": true
+        },
+        {
+          "occurrenceID": "70000000-0000-4000-8000-000000000011",
+          "expectedPersonID": "person-b",
+          "predictedPersonID": "global-1",
+          "evidenceSufficient": true
+        },
+        {
+          "occurrenceID": "70000000-0000-4000-8000-000000000012",
+          "expectedPersonID": "person-a",
+          "predictedPersonID": "global-2",
+          "evidenceSufficient": true
+        },
+        {
+          "occurrenceID": "70000000-0000-4000-8000-000000000013",
+          "expectedPersonID": "person-c",
+          "predictedPersonID": null,
+          "evidenceSufficient": true
+        }
+      ],
+      "audioDurationNanoseconds": 4000000000,
+      "inferenceDurationNanoseconds": 1000000000,
+      "latencyNanoseconds": 100000000,
+      "peakResidentBytes": 1000,
+      "backlogHighWatermark": 3,
+      "failureCategory": null
+    }
+  ]
+}

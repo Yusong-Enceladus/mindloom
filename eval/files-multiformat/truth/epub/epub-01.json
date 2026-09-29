@@ -1,0 +1,76 @@
+{
+ "file_id": "epub-01",
+ "path": "corpus/epub/epub-01.epub",
+ "type": "epub",
+ "ext": "epub",
+ "mime": "application/epub+zip",
+ "filename": "Lecture_Notes_Memory_Structures.epub",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "E93C5657-030D-5A29-9467-BF859BEEDCA3",
+  "ref": "talk_epub",
+  "events": [
+   "ev_talk"
+  ]
+ },
+ "text_layer": "full",
+ "text": "Lecture Notes: Memory Structures for Embodied Agents\n1. Three Kinds of Memory\nEpisodic memory stores what happened and when. Semantic memory stores what is true regardless of when it was learned. Procedural memory stores how to act.\nMemory type\tTypical store\tExample\nepisodic\tevent log\tthe cup was on the left shelf at 10:02\nsemantic\tknowledge graph\tcups are kept in the kitchen\nprocedural\tpolicy\topen the drawer before reaching in\n2. Benchmarks\nWe compare agents on 4 benchmark suites: HomeTidy, ShelfQA, DoorNav and ToolUse-12 (all fictional, invented for these notes).\nSuite\tEpisodes\tBest success rate\nHomeTidy\t1,200\t64.5%\nShelfQA\t800\t71.2%\nDoorNav\t2,000\t88.0%\nToolUse-12\t600\t42.7%\n3. Open Problems\n- When should an agent forget?\n- How to merge episodic traces into semantic facts\n- Evaluating memory without leaking test episodes\nSynthetic lecture notes for evaluation only.\n合成数据",
+ "key_lines": [
+  "Episodic memory stores what happened and when. Semantic memory stores what is true regardless of when it was learned. Procedural memory stores how to act.",
+  "procedural\tpolicy\topen the drawer before reaching in",
+  "We compare agents on 4 benchmark suites: HomeTidy, ShelfQA, DoorNav and ToolUse-12 (all fictional, invented for these notes).",
+  "ShelfQA\t800\t71.2%",
+  "ToolUse-12\t600\t42.7%"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "benchmark_suites": 4,
+  "ShelfQA_best": "71.2%",
+  "memory_types": [
+   "episodic",
+   "semantic",
+   "procedural"
+  ]
+ },
+ "numbers": [
+  {
+   "value": 4,
+   "label": "suites"
+  },
+  {
+   "value": 71.2,
+   "label": "ShelfQA"
+  },
+  {
+   "value": 42.7,
+   "label": "ToolUse-12"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "How many benchmark suites are compared?",
+   "a": 4,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "What is the best success rate on ShelfQA?",
+   "a": 71.2,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "Name the memory type that stores how to act.",
+   "a": "procedural",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "chapters": 3
+ },
+ "bytes": 3210,
+ "sha256": "e459767ae56231164dea5da5eb65db23257b53726c1ecee4f2b105a972ac1b72"
+}

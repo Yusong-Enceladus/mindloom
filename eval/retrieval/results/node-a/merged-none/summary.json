@@ -1,0 +1,746 @@
+{
+ "items_total": 128,
+ "items_scored": 104,
+ "items_first_mention": 16,
+ "items_noise": 8,
+ "mean_pool_size": 14.15,
+ "fused": {
+  "recall@1": 0.375,
+  "recall@3": 0.5192,
+  "recall@5": 0.5962,
+  "mrr": 0.4997,
+  "hits@5": 62
+ },
+ "similarity_only": {
+  "recall@1": 0.125,
+  "recall@3": 0.2692,
+  "recall@5": 0.4231,
+  "mrr": 0.2903,
+  "hits@5": 44
+ },
+ "random": {
+  "recall@1": 0.1027,
+  "recall@3": 0.2968,
+  "recall@5": 0.4522
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 42,
+   "hit@1": 15,
+   "hit@3": 21,
+   "hit@5": 22
+  },
+  "dictation": {
+   "n": 44,
+   "hit@1": 18,
+   "hit@3": 24,
+   "hit@5": 27
+  },
+  "meeting_offline": {
+   "n": 6,
+   "hit@1": 3,
+   "hit@3": 5,
+   "hit@5": 6
+  },
+  "meeting_online": {
+   "n": 4,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 2
+  },
+  "image": {
+   "n": 5,
+   "hit@1": 2,
+   "hit@3": 2,
+   "hit@5": 4
+  },
+  "document": {
+   "n": 3,
+   "hit@1": 0,
+   "hit@3": 1,
+   "hit@5": 1
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d2-03",
+   "kind": "image",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_dad_knee",
+    "ev_wuqing_samples",
+    "ev_sign",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d2-08",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_sign",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_member",
+    "ev_reno",
+    "ev_peggy_claim"
+   ]
+  },
+  {
+   "ref": "h2-d2-07",
+   "kind": "text",
+   "gold": [
+    "ev_peggy_claim",
+    "ev_peggy_quote"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "d2-10",
+   "kind": "text",
+   "gold": [
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_reno",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "h2-d2-08",
+   "kind": "text",
+   "gold": [
+    "ev_dad_knee"
+   ],
+   "top5": [
+    "ev_menu",
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "h2-d2-09",
+   "kind": "text",
+   "gold": [
+    "ev_wuqing_samples"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_menu",
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_beans"
+   ]
+  },
+  {
+   "ref": "d3-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_wuqing_samples",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "h2-d3-03",
+   "kind": "dictation",
+   "gold": [
+    "ev_peggy_claim"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_wuqing_samples"
+   ]
+  },
+  {
+   "ref": "d3-06",
+   "kind": "text",
+   "gold": [
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_reno",
+    "ev_wuqing_samples"
+   ]
+  },
+  {
+   "ref": "h2-d3-05",
+   "kind": "text",
+   "gold": [
+    "ev_q3_rebate"
+   ],
+   "top5": [
+    "ev_menu",
+    "ev_lease",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "h2-d3-06",
+   "kind": "text",
+   "gold": [
+    "ev_peggy_quote"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_q3_rebate",
+    "ev_menu",
+    "ev_spring_fair",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "h2-d3-09",
+   "kind": "text",
+   "gold": [
+    "ev_spring_fair"
+   ],
+   "top5": [
+    "ev_peggy_claim",
+    "ev_anniv",
+    "ev_peggy_quote",
+    "ev_member",
+    "ev_q3_rebate"
+   ]
+  },
+  {
+   "ref": "d3-10",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_peggy_quote",
+    "ev_q3_rebate",
+    "ev_menu",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "h2-d3-07",
+   "kind": "text",
+   "gold": [
+    "ev_nanan_po2611"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_anniv",
+    "ev_peggy_quote",
+    "ev_q3_rebate",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d4-01",
+   "kind": "text",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_momflat",
+    "ev_anniv",
+    "ev_peggy_quote",
+    "ev_q3_rebate"
+   ]
+  },
+  {
+   "ref": "d4-04",
+   "kind": "document",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_spring_fair",
+    "ev_dad_knee",
+    "ev_anniv",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d4-06",
+   "kind": "dictation",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_peggy_claim",
+    "ev_grinder",
+    "ev_reno",
+    "ev_dad_knee"
+   ]
+  },
+  {
+   "ref": "h2-d4-03",
+   "kind": "document",
+   "gold": [
+    "ev_dad_knee"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_nanan_po2611",
+    "ev_spring_fair",
+    "ev_peggy_quote",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d4-10",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_reno",
+    "ev_nanan_po2611",
+    "ev_peggy_claim",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "h2-d4-06",
+   "kind": "dictation",
+   "gold": [
+    "ev_q3_rebate"
+   ],
+   "top5": [
+    "ev_beans",
+    "ev_anniv",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "h2-d4-07",
+   "kind": "text",
+   "gold": [
+    "ev_dad_knee"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_peggy_claim",
+    "ev_lease",
+    "ev_grinder",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "d5-01",
+   "kind": "dictation",
+   "gold": [
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_dad_knee",
+    "ev_anniv",
+    "ev_q3_rebate",
+    "ev_beans",
+    "ev_sign"
+   ]
+  },
+  {
+   "ref": "d5-05",
+   "kind": "text",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_nanan_po2611",
+    "ev_menu",
+    "ev_dad_knee",
+    "ev_q3_rebate"
+   ]
+  },
+  {
+   "ref": "d5-06",
+   "kind": "dictation",
+   "gold": [
+    "ev_beans"
+   ],
+   "top5": [
+    "ev_peggy_quote",
+    "ev_reno",
+    "ev_anniv",
+    "ev_nanan_po2611",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d5-08",
+   "kind": "dictation",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_grinder",
+    "ev_dad_knee",
+    "ev_peggy_claim",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d5-09",
+   "kind": "dictation",
+   "gold": [
+    "ev_member",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_peggy_quote",
+    "ev_reno",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "h2-d5-06",
+   "kind": "text",
+   "gold": [
+    "ev_q3_rebate"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_peggy_quote",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d5-11",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_q3_rebate",
+    "ev_member",
+    "ev_nanan_po2611",
+    "ev_beans",
+    "ev_peggy_quote"
+   ]
+  },
+  {
+   "ref": "d5-12",
+   "kind": "text",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_q3_rebate",
+    "ev_member",
+    "ev_nanan_po2611",
+    "ev_beans"
+   ]
+  },
+  {
+   "ref": "h2-d6-01",
+   "kind": "dictation",
+   "gold": [
+    "ev_dad_knee"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_lease",
+    "ev_momflat",
+    "ev_q3_rebate",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "d6-02",
+   "kind": "dictation",
+   "gold": [
+    "ev_sign"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_q3_rebate",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "h2-d6-02",
+   "kind": "dictation",
+   "gold": [
+    "ev_wuqing_samples"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_momflat",
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_q3_rebate"
+   ]
+  },
+  {
+   "ref": "d6-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_wuqing_samples",
+    "ev_sign",
+    "ev_dad_knee",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "h2-d6-04",
+   "kind": "text",
+   "gold": [
+    "ev_nanan_po2611"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_peggy_claim",
+    "ev_dad_knee",
+    "ev_lease",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d6-06",
+   "kind": "text",
+   "gold": [
+    "ev_sign"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_member",
+    "ev_reno",
+    "ev_momflat",
+    "ev_wuqing_samples"
+   ]
+  },
+  {
+   "ref": "d6-09",
+   "kind": "dictation",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_member",
+    "ev_reno",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "h2-d6-05",
+   "kind": "dictation",
+   "gold": [
+    "ev_peggy_quote"
+   ],
+   "top5": [
+    "ev_nanan_po2611",
+    "ev_dad_knee",
+    "ev_anniv",
+    "ev_sign",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "d7-01",
+   "kind": "dictation",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_peggy_quote",
+    "ev_anniv",
+    "ev_sign",
+    "ev_nanan_po2611",
+    "ev_member"
+   ]
+  },
+  {
+   "ref": "d7-02",
+   "kind": "text",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_peggy_quote",
+    "ev_anniv",
+    "ev_sign",
+    "ev_nanan_po2611"
+   ]
+  },
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_lease",
+    "ev_peggy_quote",
+    "ev_anniv",
+    "ev_sign"
+   ]
+  },
+  {
+   "ref": "d7-05",
+   "kind": "dictation",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_grinder",
+    "ev_member",
+    "ev_lease",
+    "ev_peggy_quote",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d7-09",
+   "kind": "text",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_beans",
+    "ev_grinder",
+    "ev_member",
+    "ev_lease"
+   ]
+  }
+ ],
+ "label": "no-embedding",
+ "scenario": "dev-week-v1+holdout-week-v2",
+ "split": "stress",
+ "embedder": "none",
+ "embed_model": null,
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "embed_dim": null,
+ "embed_calls": 0,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": null,
+  "p95": null,
+  "max": null,
+  "mean": null
+ },
+ "embed_chars": {
+  "p50": null,
+  "max": null
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 7,
+  "misses": 0
+ },
+ "screenshot_readings": [
+  {
+   "ref": "h2-d1-04",
+   "text_chars": 142,
+   "summary_chars": 62,
+   "messages": 4
+  },
+  {
+   "ref": "h2-d1-06",
+   "text_chars": 148,
+   "summary_chars": 52,
+   "messages": 4
+  },
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 51,
+   "messages": 5
+  },
+  {
+   "ref": "h2-d3-02",
+   "text_chars": 125,
+   "summary_chars": 44,
+   "messages": 4
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 100,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 69,
+   "messages": 6
+  },
+  {
+   "ref": "h2-d5-04",
+   "text_chars": 146,
+   "summary_chars": 48,
+   "messages": 5
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 1.4,
+ "date": "2026-09-29T01:20:37+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "merged-2wk/scenario.json",
+  "--embedder",
+  "none",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--reading-cache",
+  "readings/merged-2wk",
+  "--label",
+  "no-embedding",
+  "--out",
+  "out/merged-none"
+ ]
+}

@@ -1,0 +1,832 @@
+{
+  "schemaVersion": 1,
+  "models": [
+    {
+      "id": "qwen3-asr-1.7b-8bit-a8379a2e",
+      "exactVersion": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/resolve/a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "source": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/tree/a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "sourceRevision": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "treeSHA256": "78e581bde728363d93dc3afc5e3b2bceae0acc2ee65805bb94d9f61e43a3edd1",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseRevision": "a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "licenseSource": "https://huggingface.co/mlx-community/Qwen3-ASR-1.7B-8bit/blob/a8379a2e2f9e313c9292cdf1af4055ab56d50d55/README.md",
+      "requiredAttribution": "Qwen3-ASR by Qwen; MLX conversion by mlx-community using mlx-audio 0.3.1. Retain Apache-2.0 license and source attribution.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; native integration measured on 48 GB. Minimum-device and release-holdout acceptance remain pending.",
+      "totalSizeBytes": 2467857511,
+      "networkBehavior": "Only the model-distribution boundary downloads this pinned public artifact after an explicit setup action. Inference uses verified local files and an in-memory tokenizer, without SDK network/download calls.",
+      "runtimeBehavior": "Native Qwen3-ASR 1.7B 8bit final candidate behind ASREngine and actor-owned cancellation-aware greedy public forward calls; 16 kHz mono journal derivatives, maximum 30 seconds and 2048 generated tokens per range. Paired with exact Qwen3 ForcedAligner; source-preserving natural phrases and dictionary normalization. Prior local final-ASR route remains available on candidate failure.",
+      "distributionImpact": "Downloaded through the App's explicit local component setup; activated models remain on the local user-data volume. Not embedded in the App or DMG; developer copies and redownloadable caches remain external.",
+      "productionCandidate": true,
+      "shipped": false,
+      "files": [
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/README.md",
+          "sizeBytes": 1008,
+          "sha256": "b356d4bdfbe7287b06b9b5ad084d9557a24ca98ca277a839beb2e682037b08f6"
+        },
+        {
+          "relativePath": "chat_template.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/chat_template.json",
+          "sizeBytes": 1161,
+          "sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/config.json",
+          "sizeBytes": 7188,
+          "sha256": "1b76b3b6c655fc54595da025f7a96474ad9fa86363303fbdd61a7d8483ccfaf7"
+        },
+        {
+          "relativePath": "generation_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/generation_config.json",
+          "sizeBytes": 142,
+          "sha256": "1da527824d81e07118facff437e03f2e24a23311e3bdeb2368973fe77e5f275c"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/model.safetensors",
+          "sizeBytes": 2463307541,
+          "sha256": "bf304b009cc7eca79283056f787b44c952d24ac22cec787b39732bba3c23c13c"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/model.safetensors.index.json",
+          "sizeBytes": 78968,
+          "sha256": "0a5d0ec11188602242ff81a9969883d0fdeb98cd5d85cd1413089d897c201af5"
+        },
+        {
+          "relativePath": "preprocessor_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/preprocessor_config.json",
+          "sizeBytes": 330,
+          "sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/tokenizer_config.json",
+          "sizeBytes": 12487,
+          "sha256": "4942d005604266809309cabc9f4e9cb89ce855d59b14681fdc0e1cc62ea26c4c"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-asr-1.7b-8bit-a8379a2e/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    {
+      "id": "qwen3-forced-aligner-0.6b-8bit-0e1a68e9",
+      "exactVersion": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/resolve/0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "source": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/tree/0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "sourceRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "treeSHA256": "8826e6c77a767e8370966e821357f96167fec399b67c829ae1c5efb9185d374e",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseRevision": "0e1a68e91d815300c7c9754b2a7639378b23db15",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "licenseSource": "https://huggingface.co/mlx-community/Qwen3-ForcedAligner-0.6B-8bit/blob/0e1a68e91d815300c7c9754b2a7639378b23db15/README.md",
+      "requiredAttribution": "Qwen3 ForcedAligner by Qwen; MLX conversion by mlx-community using mlx-audio 0.3.1. Retain Apache-2.0 license and source attribution.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; native integration measured on 48 GB. Minimum-device and release-holdout acceptance remain pending.",
+      "totalSizeBytes": 1276474460,
+      "networkBehavior": "Only the model-distribution boundary downloads this pinned public artifact after an explicit setup action. Inference uses verified local files and an in-memory tokenizer, without SDK network/download calls.",
+      "runtimeBehavior": "Native Qwen3 ForcedAligner 0.6B 8bit final alignment candidate; fixed timestamp tokenizer contract, 80 ms model quantization, bounded input and actor ownership. Natural phrase assembly retains all text and source ranges, coalesces zero-duration words and rejects invalid alignment. These tuning results do not establish absolute phonetic accuracy or release eligibility.",
+      "distributionImpact": "Downloaded through the App's explicit local component setup; activated models remain on the local user-data volume. Not embedded in the App or DMG; developer copies and redownloadable caches remain external.",
+      "productionCandidate": true,
+      "shipped": false,
+      "files": [
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/README.md",
+          "sizeBytes": 1068,
+          "sha256": "28c8a32f6bb223a4082f6bc38062890abbc1c702b13957388e52465dfdc06a56"
+        },
+        {
+          "relativePath": "chat_template.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/chat_template.json",
+          "sizeBytes": 1161,
+          "sha256": "75a8cfca24f00de72d796fbfed6858fc9614ef3dabd8696684cc3bc03a9c58ff"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/config.json",
+          "sizeBytes": 6940,
+          "sha256": "8dc126e1a4ac001acb02f3a9ca6277c8a20a25485fde293bc99eeab3aedc604d"
+        },
+        {
+          "relativePath": "generation_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/generation_config.json",
+          "sizeBytes": 115,
+          "sha256": "948d089b23bca1d214e768d59c4438365665f52ec6d33678f4062206b3fbbb8c"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/model.safetensors",
+          "sizeBytes": 1271924386,
+          "sha256": "be19ef8ac4326d032e7673342930b14c2df30bd68c1632493b0f563e30829f91"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/model.safetensors.index.json",
+          "sizeBytes": 79108,
+          "sha256": "766eb50873855eeb4d95ab92def358cfd173bfc8c7aabd8635ababa1edf6db79"
+        },
+        {
+          "relativePath": "preprocessor_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/preprocessor_config.json",
+          "sizeBytes": 330,
+          "sha256": "45e120a4eda2c20c5d7f2ea9354e63536bf35e27aa573fb7cdf78017b378770d"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/tokenizer_config.json",
+          "sizeBytes": 12666,
+          "sha256": "3ab80063f8511deb9566e6ad438d17b7a6277fcffd52d92854112f19d36bd81c"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-forced-aligner-0.6b-8bit-0e1a68e9/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    {
+      "id": "fluid-sensevoice-small-int8-0e0bf30b",
+      "exactVersion": "0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/FluidInference/sensevoice-small-coreml/resolve/0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "source": "https://huggingface.co/FluidInference/sensevoice-small-coreml/tree/0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "sourceRevision": "0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "treeSHA256": "df817fcc1009d0d909c2d7eea7dd6babdd4e3288f9b84973ce04fe66c27cf7be",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "LicenseRef-FunASR-Model-1.1",
+      "licenseSource": "https://github.com/modelscope/FunASR/blob/d1007c323068d0c5aaa8e0f198668aaebc1a4fc2/MODEL_LICENSE",
+      "licenseRevision": "d1007c323068d0c5aaa8e0f198668aaebc1a4fc2",
+      "licenseFile": "Legal/FunASR-MODEL-LICENSE-1.1.txt",
+      "licenseSHA256": "7dba975a2069691db4992b0592d70828b330d2f8a30a71450f4e152a554e84f8",
+      "requiredAttribution": "SenseVoice / FunASR model source and author: Alibaba Group. Retain the SenseVoice model name and the complete FunASR Model Open Source License Agreement 1.1.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64 with at least 16 GB unified memory; int8 inference uses Core ML CPU and Neural Engine",
+      "totalSizeBytes": 239918735,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. Normal runtime has no network access; the FluidAudio automatic-download API is prohibited.",
+      "runtimeBehavior": "SenseVoiceSmall int8 batch ASR through the exact-pinned FluidAudio runtime. Model loading is restricted to a model-manager-verified local directory.",
+      "distributionImpact": "The 239,918,735-byte model is not stored in Git and is not bundled in the current app. A future installer may stage these exact files under Application Support only after license presentation and digest verification; any bundled copy must use the declared package paths.",
+      "files": [
+        {
+          "relativePath": "SenseVoiceSmall_int8.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoiceSmall_int8.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "ab5e9ee0d49e1f88838f1c2178cbe58a20dac12b50c4da803a75a54c6229845a"
+        },
+        {
+          "relativePath": "SenseVoiceSmall_int8.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoiceSmall_int8.mlmodelc/coremldata.bin",
+          "sizeBytes": 436,
+          "sha256": "55ef1c194e641418817d7d07f6bfbd8032571e800b81264caba37eb63a95335b"
+        },
+        {
+          "relativePath": "SenseVoiceSmall_int8.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/SenseVoiceSmall_int8.mlmodelc/model.mil",
+          "sizeBytes": 1134696,
+          "sha256": "015fe7242a15eeb2fc0ca7f908ca3a09a5826b36e7d7f704803c8bbe60c1a148"
+        },
+        {
+          "relativePath": "SenseVoiceSmall_int8.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoiceSmall_int8.mlmodelc/weights/weight.bin",
+          "sizeBytes": 235373118,
+          "sha256": "dab122c65d5043cba5b47561d5c1d3a049dd123c662e802d9dbce8fdd0505a38"
+        },
+        {
+          "relativePath": "SenseVoicePreprocessor.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoicePreprocessor.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "5bdb0b132e48c7e852ec18eeba7e217b6cb7153e6a939ce76b5ed17242e956dd"
+        },
+        {
+          "relativePath": "SenseVoicePreprocessor.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoicePreprocessor.mlmodelc/coremldata.bin",
+          "sizeBytes": 330,
+          "sha256": "e64cc73b2a9b01bad799a23874bc20dba3cf3342c23e3f60012c3e884f682944"
+        },
+        {
+          "relativePath": "SenseVoicePreprocessor.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/SenseVoicePreprocessor.mlmodelc/model.mil",
+          "sizeBytes": 15008,
+          "sha256": "1b9b18be0a35b11165269b1ca071a30af736deb314d8bd82d9540c769137a70e"
+        },
+        {
+          "relativePath": "SenseVoicePreprocessor.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/SenseVoicePreprocessor.mlmodelc/weights/weight.bin",
+          "sizeBytes": 3037504,
+          "sha256": "69c630a115da5e4db36ec41662f0b776c0ef33ec6776d86f8cdaaba022518396"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/vocab.json",
+          "sizeBytes": 352064,
+          "sha256": "a2594fc1474e78973149cba8cd1f603ebed8c39c7decb470631f66e70ce58e97"
+        },
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/README.md",
+          "sizeBytes": 5093,
+          "sha256": "d5fd711ff425307424e797df1bc3e6bd8093c5c6aff77d10c96d67b8e78efff0"
+        }
+      ]
+    },
+    {
+      "id": "fluid-paraformer-large-zh-int8-5dd557bd",
+      "exactVersion": "5dd557bd06342a3cd07ceccb909d8a45e48b053a",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/FluidInference/paraformer-large-zh-coreml/resolve/5dd557bd06342a3cd07ceccb909d8a45e48b053a",
+      "source": "https://huggingface.co/FluidInference/paraformer-large-zh-coreml/tree/5dd557bd06342a3cd07ceccb909d8a45e48b053a",
+      "sourceRevision": "5dd557bd06342a3cd07ceccb909d8a45e48b053a",
+      "treeSHA256": "d1a072eea0c4b478452e0f5143920aae35a4e4484e9f20808ed5579e5a3b26b6",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "LicenseRef-FunASR-Model-1.1",
+      "licenseSource": "https://github.com/modelscope/FunASR/blob/d1007c323068d0c5aaa8e0f198668aaebc1a4fc2/MODEL_LICENSE",
+      "licenseRevision": "d1007c323068d0c5aaa8e0f198668aaebc1a4fc2",
+      "licenseFile": "Legal/FunASR-MODEL-LICENSE-1.1.txt",
+      "licenseSHA256": "7dba975a2069691db4992b0592d70828b330d2f8a30a71450f4e152a554e84f8",
+      "requiredAttribution": "Paraformer-large / FunASR model source and author: Alibaba Group. Retain the Paraformer model name and the complete FunASR Model Open Source License Agreement 1.1.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; int8 encoder and decoder use Core ML CPU and Neural Engine",
+      "totalSizeBytes": 222139557,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. Normal runtime has no network access; the FluidAudio automatic-download API is prohibited.",
+      "runtimeBehavior": "Paraformer-large Mandarin batch ASR through the exact-pinned FluidAudio runtime. The int8 model is loaded only from a model-manager-verified local directory and long audio is segmented before each bounded inference call.",
+      "distributionImpact": "The 222,139,557-byte Mandarin model is not stored in Git or bundled in the current app. A future installer may stage only these declared int8 files under Application Support after license presentation and digest verification.",
+      "files": [
+        {
+          "relativePath": "ParaformerCifAlphas.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerCifAlphas.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "eab07ffe1555c52bf453304c7440181d05cb813c507f7d2b9dc690f893daee7f"
+        },
+        {
+          "relativePath": "ParaformerCifAlphas.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerCifAlphas.mlmodelc/coremldata.bin",
+          "sizeBytes": 358,
+          "sha256": "1fdc3a31784fdd4ce76d8f6662cc1d5266a4bcb9f8ebff1f7364e4af9b9bfb1b"
+        },
+        {
+          "relativePath": "ParaformerCifAlphas.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerCifAlphas.mlmodelc/model.mil",
+          "sizeBytes": 5291,
+          "sha256": "7d1b26300097a8e9d227528395ecceb789478f89fee98be5679c7c5f8714c673"
+        },
+        {
+          "relativePath": "ParaformerCifAlphas.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerCifAlphas.mlmodelc/weights/weight.bin",
+          "sizeBytes": 1575168,
+          "sha256": "ca67890e3fd418ca1f3a227001ba4f1300d5523b8a49470bf3791eaba836bbee"
+        },
+        {
+          "relativePath": "ParaformerDecoder_int8.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerDecoder_int8.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "544bf35b7e52b54f0a84b9ece9ad6b0416a07a4cc707f5dd67e1f6027b3e1697"
+        },
+        {
+          "relativePath": "ParaformerDecoder_int8.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerDecoder_int8.mlmodelc/coremldata.bin",
+          "sizeBytes": 370,
+          "sha256": "744496100b6309842b94410d0ddd1dce65b3da773e308f86da010f86967161d8"
+        },
+        {
+          "relativePath": "ParaformerDecoder_int8.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerDecoder_int8.mlmodelc/model.mil",
+          "sizeBytes": 309868,
+          "sha256": "2c2dea30cc84c5669d4baf547eafa2f40274a22fdc1e6732a3cdb2b192389bab"
+        },
+        {
+          "relativePath": "ParaformerDecoder_int8.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerDecoder_int8.mlmodelc/weights/weight.bin",
+          "sizeBytes": 57440104,
+          "sha256": "1794d31522563f29357c6fdb5eb61bdb0cfe1cb9c1734265ae0cc5b154f702f6"
+        },
+        {
+          "relativePath": "ParaformerEncoder_int8.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerEncoder_int8.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "2ccb1ebd14f683926c047f44c52097b17ab7264f0d3be7f624a8e321e3770f5d"
+        },
+        {
+          "relativePath": "ParaformerEncoder_int8.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerEncoder_int8.mlmodelc/coremldata.bin",
+          "sizeBytes": 387,
+          "sha256": "09cc778f64866a7c25d454816c7da566d96fb7d0a9ea13d070276c9828150e0b"
+        },
+        {
+          "relativePath": "ParaformerEncoder_int8.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerEncoder_int8.mlmodelc/model.mil",
+          "sizeBytes": 806287,
+          "sha256": "219bc0334ca64d84b232f7320c900794149b612152b1594739a2e9e9cbccd9a3"
+        },
+        {
+          "relativePath": "ParaformerEncoder_int8.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerEncoder_int8.mlmodelc/weights/weight.bin",
+          "sizeBytes": 158884352,
+          "sha256": "e5a808ac41b0beade91c443ad13ee7aa8be85f94318bddc0d515f2334e147bef"
+        },
+        {
+          "relativePath": "ParaformerPreprocessor.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerPreprocessor.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "5ab78c2dbf08223650a6ebbd3d501e34700b86ddf6e099a4c7a9fe947c1d3412"
+        },
+        {
+          "relativePath": "ParaformerPreprocessor.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerPreprocessor.mlmodelc/coremldata.bin",
+          "sizeBytes": 330,
+          "sha256": "998336618c499cb44a66c39dcee7b37eff07a67e351de07beaf5563c11c7122d"
+        },
+        {
+          "relativePath": "ParaformerPreprocessor.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerPreprocessor.mlmodelc/model.mil",
+          "sizeBytes": 15008,
+          "sha256": "1b9b18be0a35b11165269b1ca071a30af736deb314d8bd82d9540c769137a70e"
+        },
+        {
+          "relativePath": "ParaformerPreprocessor.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/ParaformerPreprocessor.mlmodelc/weights/weight.bin",
+          "sizeBytes": 3037504,
+          "sha256": "69c630a115da5e4db36ec41662f0b776c0ef33ec6776d86f8cdaaba022518396"
+        },
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/README.md",
+          "sizeBytes": 3500,
+          "sha256": "3ef67eb26ee55a294d62d56a74d8fa1d84f98656eab7d1f49fe763ffac5451fb"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/fluid-paraformer-large-zh-int8-5dd557bd/vocab.json",
+          "sizeBytes": 60058,
+          "sha256": "14fcd6164b074459896831d6845b1c45d8832dc50c754c8cf4375481125f8ea2"
+        }
+      ]
+    },
+    {
+      "id": "fluid-parakeet-unified-en-int8-4252711f",
+      "exactVersion": "4252711f6f060f9a2f91e5f081a806d7f45eebd8",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/FluidInference/parakeet-unified-en-0.6b-coreml/resolve/4252711f6f060f9a2f91e5f081a806d7f45eebd8",
+      "source": "https://huggingface.co/FluidInference/parakeet-unified-en-0.6b-coreml/tree/4252711f6f060f9a2f91e5f081a806d7f45eebd8",
+      "sourceRevision": "4252711f6f060f9a2f91e5f081a806d7f45eebd8",
+      "treeSHA256": "78c6a306a7207f7a771a5468c1151c0a459d049702cbcc47d28fdc817392e2e4",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "CC-BY-4.0",
+      "licenseSource": "https://huggingface.co/FluidInference/parakeet-unified-en-0.6b-coreml/blob/4252711f6f060f9a2f91e5f081a806d7f45eebd8/README.md",
+      "licenseRevision": "4252711f6f060f9a2f91e5f081a806d7f45eebd8",
+      "licenseFile": "Legal/Fluid-Parakeet-Unified-MODEL-NOTICE-CC-BY-4.0.txt",
+      "licenseSHA256": "ba3860fa07d324df252296b64388d46bedb9c37f3e9c463154a0703e57cc0d67",
+      "requiredAttribution": "NVIDIA Parakeet model; Core ML conversion and Swift integration by Fluid Inference. Retain the CC BY 4.0 notice and source links.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64; int8 offline encoder uses Core ML CPU and Neural Engine, decoder and joint decision use CPU",
+      "totalSizeBytes": 614086243,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. Normal runtime has no network access; the FluidAudio automatic-download API is prohibited.",
+      "runtimeBehavior": "Parakeet Unified English batch ASR through the exact-pinned FluidAudio runtime. The int8 offline encoder and shared RNNT decoder are loaded only from a model-manager-verified local directory; long audio uses bounded overlapping windows.",
+      "distributionImpact": "The 614,086,243-byte English model is not stored in Git or bundled in the current app. A future installer may stage only these declared offline INT8 files under Application Support after license presentation and digest verification.",
+      "files": [
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/README.md",
+          "sizeBytes": 5323,
+          "sha256": "348925632679d32b9fc4d153f6c255f6450bcb83044065a5fa2918c53a1029e0"
+        },
+        {
+          "relativePath": "metadata.json",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/metadata.json",
+          "sizeBytes": 1046,
+          "sha256": "2b26a96b76fe1f7a04d3e867f50c75d6ce5dd1650d0dbcd4c35b591b22305f0e"
+        },
+        {
+          "relativePath": "parakeet_unified_decoder.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_decoder.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "9ae70f6559989f88b856b326e59315798f9f0d08207a19fcc2dd3287a30088a5"
+        },
+        {
+          "relativePath": "parakeet_unified_decoder.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_decoder.mlmodelc/coremldata.bin",
+          "sizeBytes": 560,
+          "sha256": "ce99c4488840fc463d59f8d4d6d2a9e8ceae8138ead51e3c265dde4d2ba4a0e9"
+        },
+        {
+          "relativePath": "parakeet_unified_decoder.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_decoder.mlmodelc/model.mil",
+          "sizeBytes": 13102,
+          "sha256": "6e60965b89c93943aa2be2d991c2461108145851fde05e1d048223a32d4cb20d"
+        },
+        {
+          "relativePath": "parakeet_unified_decoder.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_decoder.mlmodelc/weights/weight.bin",
+          "sizeBytes": 14429952,
+          "sha256": "96f990461a5986d5e7309ad1a0f36084fbf0f4b28aec35948f8b8d0dcbf8599e"
+        },
+        {
+          "relativePath": "parakeet_unified_encoder_int8.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_encoder_int8.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "57e116a9d5765e39c0cdf754137ab744ddae34d9c6d68a5fdcad6600ae3a7b6b"
+        },
+        {
+          "relativePath": "parakeet_unified_encoder_int8.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_encoder_int8.mlmodelc/coremldata.bin",
+          "sizeBytes": 492,
+          "sha256": "54f533d30343d5e62b324a0691e4c262a6768b07b6e88e7aa14c617a2baba8a3"
+        },
+        {
+          "relativePath": "parakeet_unified_encoder_int8.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_encoder_int8.mlmodelc/model.mil",
+          "sizeBytes": 1110902,
+          "sha256": "c1c5d71c6cbf4d35bba08458746bde3640da7b1b444e1229a269393a58222c10"
+        },
+        {
+          "relativePath": "parakeet_unified_encoder_int8.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_encoder_int8.mlmodelc/weights/weight.bin",
+          "sizeBytes": 595051904,
+          "sha256": "f984b81590a4deae041ae20fbab8981c2d2a5b528b2ac81fae81c432633535c6"
+        },
+        {
+          "relativePath": "parakeet_unified_joint_decision_single_step.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_joint_decision_single_step.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "163877ad14af97ec4107cd854fd1c6d336ee5d40ad25a657cc764fb763f452f5"
+        },
+        {
+          "relativePath": "parakeet_unified_joint_decision_single_step.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_joint_decision_single_step.mlmodelc/coremldata.bin",
+          "sizeBytes": 556,
+          "sha256": "68a081570a48b52ec9379e153bd56748a5408a50be16767601563f231eaeff03"
+        },
+        {
+          "relativePath": "parakeet_unified_joint_decision_single_step.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_joint_decision_single_step.mlmodelc/model.mil",
+          "sizeBytes": 9611,
+          "sha256": "03c21096090bcd0b71c896c5ae0eb815db31a91c6676f572a7868eee4299abe3"
+        },
+        {
+          "relativePath": "parakeet_unified_joint_decision_single_step.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/parakeet_unified_joint_decision_single_step.mlmodelc/weights/weight.bin",
+          "sizeBytes": 3446978,
+          "sha256": "06831afa6d1beb0c0b10350ebf7886bc37638e951d14e738d7e06fbd2a05012f"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/fluid-parakeet-unified-en-int8-4252711f/vocab.json",
+          "sizeBytes": 15088,
+          "sha256": "e1a7bff4f5df133c0f4ad47b8e43c96f6bf1865d99126a4c4725ef51d0108bec"
+        }
+      ]
+    },
+    {
+      "id": "qwen3-1.7b-mlx-4bit-21457c6f",
+      "exactVersion": "21457c6f51ed54a7c16e988c0844db973815c137",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/Qwen/Qwen3-1.7B-MLX-4bit/resolve/21457c6f51ed54a7c16e988c0844db973815c137",
+      "source": "https://huggingface.co/Qwen/Qwen3-1.7B-MLX-4bit/tree/21457c6f51ed54a7c16e988c0844db973815c137",
+      "sourceRevision": "21457c6f51ed54a7c16e988c0844db973815c137",
+      "treeSHA256": "09570edbadcacc0bb3abc5c58d688f92978cd62601cf98e11cf38356fd5bd7be",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseSource": "https://huggingface.co/Qwen/Qwen3-1.7B-MLX-4bit/blob/21457c6f51ed54a7c16e988c0844db973815c137/LICENSE",
+      "licenseRevision": "21457c6f51ed54a7c16e988c0844db973815c137",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "requiredAttribution": "Qwen3 model by Alibaba Cloud. Retain the Apache License 2.0 text and the Alibaba Cloud copyright notice.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64 with at least 16 GB unified memory; 4-bit MLX inference evaluated on Apple M4 Pro",
+      "totalSizeBytes": 930271884,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. The runtime receives only the verified local directory and has no network access.",
+      "runtimeBehavior": "Qwen3 1.7B 4-bit generation through exact-pinned MLX Swift. Non-thinking, temperature-zero output is constrained to a one-field JSON envelope, then protected-fact validation either accepts it or falls back to deterministic local punctuation.",
+      "distributionImpact": "The 930,271,884-byte model is not stored in Git or bundled in the current app. The app can copy an explicitly provisioned exact folder into Application Support after license acceptance and digest verification; a future installer may stage only these declared files.",
+      "files": [
+        {
+          "relativePath": ".gitattributes",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/.gitattributes",
+          "sizeBytes": 1570,
+          "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+        },
+        {
+          "relativePath": "LICENSE",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/LICENSE",
+          "sizeBytes": 11343,
+          "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+        },
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/README.md",
+          "sizeBytes": 12501,
+          "sha256": "c9bcd2e953fe51bcdabf7b0f537ce9a6aca8753c7405f0ff2a5cc393786b4d59"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/config.json",
+          "sizeBytes": 988,
+          "sha256": "4e95bb0b083bf4847aacc08e67c5d59410f45fff6f43889d6ff400511c243fa5"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/model.safetensors",
+          "sizeBytes": 914316100,
+          "sha256": "42e688d626b3e144bf721af7517a82f3ea7e97bb5764fef1c89942bf9165072a"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/model.safetensors.index.json",
+          "sizeBytes": 49731,
+          "sha256": "dae65ea418d2d8ea25e72d0b1f5b1d0a12633c1f46ca2c5ca97903bbcc3a6ce2"
+        },
+        {
+          "relativePath": "tokenizer.json",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/tokenizer.json",
+          "sizeBytes": 11422654,
+          "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/tokenizer_config.json",
+          "sizeBytes": 8311,
+          "sha256": "5fdfe1416aaa323832d52c5bd8624a6e9bba3e9acc6ca8104f017abc775e2368"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-1.7b-mlx-4bit-21457c6f/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    {
+      "id": "qwen3-4b-mlx-4bit-52a5ab34",
+      "exactVersion": "52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/Qwen/Qwen3-4B-MLX-4bit/resolve/52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "source": "https://huggingface.co/Qwen/Qwen3-4B-MLX-4bit/tree/52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "sourceRevision": "52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "treeSHA256": "0680d815bfd81891fb6413245bf5db78b1119cd3ba1f15ca5abfa66b7d65b505",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseSource": "https://huggingface.co/Qwen/Qwen3-4B-MLX-4bit/blob/52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495/LICENSE",
+      "licenseRevision": "52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "requiredAttribution": "Qwen3 model by Alibaba Cloud. Retain the Apache License 2.0 text and the Alibaba Cloud copyright notice.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64 with at least 16 GB unified memory; 4-bit MLX inference evaluated on Apple M4 Pro",
+      "totalSizeBytes": 2153299972,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. The runtime receives only the verified local directory and has no network access.",
+      "runtimeBehavior": "Qwen3 4B 4-bit generation through exact-pinned MLX Swift. Pinned for measurement only (SpokenModeProbeCLI --artifact large); the App loads the 1.7B, which measured better on Chinese rewrites.",
+      "distributionImpact": "The 2,153,299,972-byte model is not stored in Git or bundled in the current app. The app can copy an explicitly provisioned exact folder into Application Support after license acceptance and digest verification; a future installer may stage only these declared files.",
+      "files": [
+        {
+          "relativePath": ".gitattributes",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/.gitattributes",
+          "sizeBytes": 1570,
+          "sha256": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+        },
+        {
+          "relativePath": "LICENSE",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/LICENSE",
+          "sizeBytes": 11343,
+          "sha256": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+        },
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/README.md",
+          "sizeBytes": 14708,
+          "sha256": "a3ac01d2a1fff2f02be25e1d2e9160f03db51dbee2cc17f13b774f646648adf9"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/config.json",
+          "sizeBytes": 988,
+          "sha256": "76eae114d67a444c7296be7a6bc0409ecc15c340e113f1bac7572cb7d0928b6f"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/model.safetensors",
+          "sizeBytes": 2137326367,
+          "sha256": "e56a94b846a2dce7d1cc154ce58b9cfc4b8d99e8ffb74bfe256a265f4cbc7fb9"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/model.safetensors.index.json",
+          "sizeBytes": 63924,
+          "sha256": "278844a566da15beab6e9068c57f606c50a99c440d4515206b871a8b5282b3de"
+        },
+        {
+          "relativePath": "tokenizer.json",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/tokenizer.json",
+          "sizeBytes": 11422654,
+          "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/tokenizer_config.json",
+          "sizeBytes": 9732,
+          "sha256": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-4b-mlx-4bit-52a5ab34/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
+    },
+    {
+      "id": "fluid-speaker-diarization-coreml-1ed7a662",
+      "exactVersion": "1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/FluidInference/speaker-diarization-coreml/resolve/1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "source": "https://huggingface.co/FluidInference/speaker-diarization-coreml/tree/1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "sourceRevision": "1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "treeSHA256": "664824fe8a2d387aad8ad7965191a90b9b290c5ea5470c3bd13a86a8cc8bf9ab",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "CC-BY-4.0",
+      "licenseSource": "https://huggingface.co/FluidInference/speaker-diarization-coreml/blob/1ed7a662fdc7109e36d822db793ee6eebdaf8594/README.md",
+      "licenseRevision": "1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "licenseFile": "Legal/Fluid-Speaker-Diarization-MODEL-NOTICE-CC-BY-4.0.txt",
+      "licenseSHA256": "638b2185c4e3885a54d79d1ea6765a7778519b902389be632e37389c80e41a63",
+      "requiredAttribution": "FluidInference Speaker Diarization CoreML, based on pyannote community-1, CC BY 4.0. Retain source, license URI, modification status, and model-card citations.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64 with at least 16 GB unified memory; Core ML segmentation, embedding, filterbank and PLDA inference",
+      "totalSizeBytes": 21602781,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, embeddings, names, transcripts, and app context never enter model requests. Runtime loads only the verified local directory.",
+      "runtimeBehavior": "Offline multi-speaker diarization and 256-dimensional speaker embeddings through the exact-pinned FluidAudio runtime. Production code disables FluidAudio automatic download and supplies only model-manager-verified files.",
+      "distributionImpact": "The model is not stored in Git or bundled in the current app. The app downloads the declared subset into a disposable cache, verifies it, then atomically activates the installed version under Application Support while retaining the last known-good version.",
+      "files": [
+        {
+          "relativePath": "Embedding.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Embedding.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "8d6706436639b53830b4dbe8aaf9c9a843f7f582d63e16f3cb8bb7c6ccd58682"
+        },
+        {
+          "relativePath": "Embedding.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Embedding.mlmodelc/coremldata.bin",
+          "sizeBytes": 704,
+          "sha256": "4a705bac27d151d9642f37609296042a15602a42253039e0921dc9e75da7e004"
+        },
+        {
+          "relativePath": "Embedding.mlmodelc/metadata.json",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Embedding.mlmodelc/metadata.json",
+          "sizeBytes": 2818,
+          "sha256": "1854371eb6b438fb8aeac96afb45c999af7902581c06afdfcd7ff3cb1ce66be5"
+        },
+        {
+          "relativePath": "Embedding.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Embedding.mlmodelc/model.mil",
+          "sizeBytes": 78432,
+          "sha256": "22fa958aef72a561c21f874a07cbdcd30fdf40ee961c0bc2fb67c119273b46d3"
+        },
+        {
+          "relativePath": "Embedding.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Embedding.mlmodelc/weights/weight.bin",
+          "sizeBytes": 13412288,
+          "sha256": "99356b2985b8d43880a657024d941d450b38820451ccff903f76ed4e52d1868b"
+        },
+        {
+          "relativePath": "FBank.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/FBank.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "0e8bd3a8b82ac123580989f490e4d9245127c535857630b543311268accc3f0a"
+        },
+        {
+          "relativePath": "FBank.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/FBank.mlmodelc/coremldata.bin",
+          "sizeBytes": 853,
+          "sha256": "57ac436bb0671cbb5527a339134d695f752eb77f7a18966b93c6835335595759"
+        },
+        {
+          "relativePath": "FBank.mlmodelc/metadata.json",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/FBank.mlmodelc/metadata.json",
+          "sizeBytes": 3409,
+          "sha256": "2623785f5d186893b82d01e84aa33a7704ef763c3309e02055f22dc9d871ce9a"
+        },
+        {
+          "relativePath": "FBank.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/FBank.mlmodelc/model.mil",
+          "sizeBytes": 15667,
+          "sha256": "27aaeb21569e81bdbe2eef87789f50a37cfea800039bd134448a9417de2f30ed"
+        },
+        {
+          "relativePath": "FBank.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/FBank.mlmodelc/weights/weight.bin",
+          "sizeBytes": 1776896,
+          "sha256": "9e83fdd3ea78064b078069e4d9141603c61c47a27fd19e7e3142ff7476f8db36"
+        },
+        {
+          "relativePath": "PldaRho.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/PldaRho.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "8940ea6044dbcbefa22da8cc41e0b485e1fb5ed89aecaf37c6e0c483a97ddcd7"
+        },
+        {
+          "relativePath": "PldaRho.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/PldaRho.mlmodelc/coremldata.bin",
+          "sizeBytes": 763,
+          "sha256": "4d9741477f721c79b09fcdfe455110c4b7d4272e2de3496bf1729d966d3ee418"
+        },
+        {
+          "relativePath": "PldaRho.mlmodelc/metadata.json",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/PldaRho.mlmodelc/metadata.json",
+          "sizeBytes": 2749,
+          "sha256": "b314cf25a93e46b4076883a6f5a2f8848b73c3851bd9d36074d067f35a1c7945"
+        },
+        {
+          "relativePath": "PldaRho.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/PldaRho.mlmodelc/model.mil",
+          "sizeBytes": 7613,
+          "sha256": "83aee2e5310d19b5f202aea97d07a0e12102556d1b32ef3ed08b36f7f9725041"
+        },
+        {
+          "relativePath": "PldaRho.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/PldaRho.mlmodelc/weights/weight.bin",
+          "sizeBytes": 200192,
+          "sha256": "80f7d229202636d372428c90596f11a91545f07da77259f07153aaf225914a36"
+        },
+        {
+          "relativePath": "README.md",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/README.md",
+          "sizeBytes": 3364,
+          "sha256": "ff38be81e25e4b6eccf3aa584ccd7d6c9970f7af9b51ff7ba34bea1a38602c8d"
+        },
+        {
+          "relativePath": "Segmentation.mlmodelc/analytics/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Segmentation.mlmodelc/analytics/coremldata.bin",
+          "sizeBytes": 243,
+          "sha256": "64265f8e7ad41a5f68d630c15288c2499cca5892ad49e20096819cdeac004cdb"
+        },
+        {
+          "relativePath": "Segmentation.mlmodelc/coremldata.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Segmentation.mlmodelc/coremldata.bin",
+          "sizeBytes": 812,
+          "sha256": "ea51481b8bd3e496ad3cf16f066ddaa37f20e8772eaac76b3393c28de20e06bc"
+        },
+        {
+          "relativePath": "Segmentation.mlmodelc/metadata.json",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Segmentation.mlmodelc/metadata.json",
+          "sizeBytes": 3410,
+          "sha256": "88dbf0b07208fe142e1729c2b4c974ad3599fcb2ae5d5f18fce782b225384124"
+        },
+        {
+          "relativePath": "Segmentation.mlmodelc/model.mil",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Segmentation.mlmodelc/model.mil",
+          "sizeBytes": 43063,
+          "sha256": "d37e4ce30b406a6b34f765f769b9baed3178cc0c2b2e299c641daa43a052dd3f"
+        },
+        {
+          "relativePath": "Segmentation.mlmodelc/weights/weight.bin",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/Segmentation.mlmodelc/weights/weight.bin",
+          "sizeBytes": 5959360,
+          "sha256": "c3189a64946c75bc24fcb98afe89ad78c52bdbadfdf65e857fb1b81e2cc9fbb2"
+        },
+        {
+          "relativePath": "plda-parameters.json",
+          "packagePath": "Contents/Resources/Models/fluid-speaker-diarization-coreml-1ed7a662/plda-parameters.json",
+          "sizeBytes": 89416,
+          "sha256": "38ee28d4269c076cef254ee760bbd811f0738a92e0f01f9699ad372828c5de8f"
+        }
+      ]
+    }
+  ],
+  "selectionStatus": "The current product candidate uses automatic stage routing: Fluid SenseVoice int8 for live drafts and sentence-level Chinese-English mixing, Fluid Paraformer int8 for clearly Mandarin final recomputation, and Fluid Parakeet Unified int8 for clearly English final recomputation. The two monolingual final candidates passed their pinned public FLEURS real-human tuning profiles; SenseVoice failed the combined realistic profile and therefore is not treated as the all-language final default. This tuning selection is not release eligibility. Fluid offline diarization remains the frozen speaker candidate after the independent public AMI holdout, and Qwen3 1.7B MLX plus deterministic editing remains the protected local-text candidate. Every runtime loads only model-manager-verified local files."
+}

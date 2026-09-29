@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "kind": "release-smoke-summary",
+  "status": "blocked",
+  "smokeStatus": "pass",
+  "releaseEligible": false,
+  "failedCheck": "",
+  "package": "build-product://bestASR.app",
+  "dmg": {
+    "path": "build-product://bestASR-0.1.0.dmg",
+    "sizeBytes": 32990750,
+    "sha256": "f9fe7bf456a6a41c430270a4a9518d8e03dd886193e9f4977daa721e6e5cfa08"
+  },
+  "checks": {
+    "hardenedRuntime": "pass",
+    "architecture": "pass",
+    "minimumOS": "pass",
+    "appSignature": "pass",
+    "xpcSignature": "pass",
+    "dmg": "pass",
+    "developerID": "blocked",
+    "notarization": "blocked",
+    "staple": "blocked",
+    "gatekeeper": "blocked"
+  },
+  "developerIDIdentityCount": 0,
+  "notarizationSubmissionID": "",
+  "blockers": [
+    "developer-id-application-identity-missing",
+    "notary-keychain-profile-missing"
+  ]
+}

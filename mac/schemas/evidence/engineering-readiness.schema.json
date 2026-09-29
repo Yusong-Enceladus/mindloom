@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/engineering-readiness.schema.json",
+  "title": "bestASR engineering readiness report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "conclusion",
+    "verified",
+    "releaseEligible",
+    "deliveryStatus",
+    "gatesSHA256",
+    "tasksSHA256",
+    "gateCounts",
+    "completedTaskCount",
+    "pendingTaskCount",
+    "gates",
+    "pendingTasks",
+    "unresolvedDependencies"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "engineering-readiness-report"
+    },
+    "conclusion": {
+      "type": "string",
+      "enum": ["pass", "fail", "conditional"]
+    },
+    "verified": {
+      "type": "boolean"
+    },
+    "releaseEligible": {
+      "type": "boolean"
+    },
+    "deliveryStatus": {
+      "type": "string",
+      "enum": ["ready", "incomplete"]
+    },
+    "gatesSHA256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "tasksSHA256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gateCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pass", "fail", "conditional"],
+      "properties": {
+        "pass": {"type": "number", "minimum": 0},
+        "fail": {"type": "number", "minimum": 0},
+        "conditional": {"type": "number", "minimum": 0}
+      }
+    },
+    "completedTaskCount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "pendingTaskCount": {
+      "type": "number",
+      "minimum": 0
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "evidencePath",
+          "field",
+          "expectedValue",
+          "unmetStatus",
+          "taskRefs",
+          "blocker",
+          "status",
+          "observedValue",
+          "evidenceSHA256"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9-]+$"
+          },
+          "evidencePath": {
+            "type": "string",
+            "pattern": "^(artifacts/evidence/|config/|Tests/Fixtures/)[A-Za-z0-9._/-]+$"
+          },
+          "field": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9.]+$"
+          },
+          "expectedValue": {
+            "description": "A scalar expected value."
+          },
+          "unmetStatus": {
+            "type": "string",
+            "enum": ["fail", "conditional"]
+          },
+          "taskRefs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1}
+          },
+          "blocker": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pass", "fail", "conditional"]
+          },
+          "observedValue": {
+            "description": "A scalar observed value or null when evidence is absent."
+          },
+          "evidenceSHA256": {
+            "type": "string",
+            "pattern": "^$|^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "pendingTasks": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "unresolvedDependencies": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

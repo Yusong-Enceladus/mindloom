@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 81,
+   "retried": 1,
+   "latency_median_s": 5.355,
+   "latency_p95_s": 6.999,
+   "latency_total_s": 433.7,
+   "prompt_tokens_mean": 5204.6,
+   "completion_tokens_mean": 184,
+   "prompt_tokens_total": 426774,
+   "completion_tokens_total": 15088,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 62,
+   "ok_first_attempt": 42,
+   "retried": 36,
+   "latency_median_s": 7.306,
+   "latency_p95_s": 16.444,
+   "latency_total_s": 736.5,
+   "prompt_tokens_mean": 4933.0,
+   "completion_tokens_mean": 394.2,
+   "prompt_tokens_total": 384775,
+   "completion_tokens_total": 30746,
+   "errors_sample": [
+    "[format] status_line must be exactly one sentence",
+    "[format] status_line must be exactly one sentence; [unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「样品已顺丰发出，预计9月16日到」标为 done，但日期 2026-09-16 晚于证据素材的时间 2026-09-15；把已发生的部分和计划的部分拆成两条"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 12.178,
+   "latency_p95_s": 12.243,
+   "latency_total_s": 45.8,
+   "prompt_tokens_mean": 5389.2,
+   "completion_tokens_mean": 498.8,
+   "prompt_tokens_total": 21557,
+   "completion_tokens_total": 1995,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 10.241,
+   "latency_p95_s": 11.932,
+   "latency_total_s": 28.9,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 442.7,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1328,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 65,
+  "none": 4,
+  "ask": 4
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 65,
+  "none": 4,
+  "ask": 3,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 13,
+ "status_line_chars_mean": 32.4,
+ "title_chars_mean": 10.8,
+ "wall_s": 1251.7,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

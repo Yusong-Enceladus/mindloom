@@ -1,0 +1,77 @@
+{
+ "id": "chat-08",
+ "type": "chat_screenshot",
+ "split": "dev",
+ "image": "images/chat-08.png",
+ "lang": "zh",
+ "hard": [
+  "low_contrast",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "cf3b92d95e71245742e74a6126c0f3fb65d5e9eefe4043d8d8df444251914186",
+ "gt": {
+  "chat_title": "合租 502",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "许诺",
+    "is_self": false,
+    "time": "17:05",
+    "text": "这个月电费186.4元，水费57.3元，燃气88元",
+    "kind": "text"
+   },
+   {
+    "sender": "罗佳宁",
+    "is_self": false,
+    "time": "17:14",
+    "text": "一共331.7元，三个人每人110.57元",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "已转",
+    "kind": "text"
+   },
+   {
+    "sender": "许诺",
+    "is_self": false,
+    "time": "",
+    "text": "收到，下个月轮到我交网费",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "合租 502",
+  "许诺：这个月电费186.4元，水费57.3元，燃气88元",
+  "罗佳宁：一共331.7元，三个人每人110.57元",
+  "我：已转",
+  "许诺：收到，下个月轮到我交网费"
+ ],
+ "qa": [
+  {
+   "q": "这个月电费多少？",
+   "a": "186.4元",
+   "match": "number"
+  },
+  {
+   "q": "每人分摊多少？",
+   "a": "110.57元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "lowc_dark",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "rent",
+  "theme": "lowc_dark"
+ }
+}

@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Runtime data: never commit databases, logs, model files or local runs
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.log
+*.safetensors
+*.gguf
+/data/
+/logs/
+/run/
+smoke-out/
+
+# Local-only
+.DS_Store

@@ -1,0 +1,31 @@
+{
+ "id": "notice-c",
+ "template": "notice",
+ "split": "test",
+ "filename": "停水通知.docx",
+ "path": "data/notice-c.docx",
+ "sha256": "c7a74f5aec146eedace5a92a35b07a518576999e211fa7a82af2203571b778d0",
+ "size": 261999,
+ "error": null,
+ "must_contain_image": [
+  "储水式电热水器",
+  "G40128813"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "12 栋全楼停水",
+  "13:00-17:00"
+ ],
+ "summary_groups": [
+  [
+   "停水"
+  ],
+  [
+   "10月25日",
+   "10 月 25 日"
+  ]
+ ],
+ "doc_kind": "notice"
+}

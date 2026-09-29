@@ -1,0 +1,92 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.2.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.1"
+  },
+  {
+   "name": "event-merge",
+   "version": "1.0.0"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "f356f926ae46dd31",
+  "event-brief": "0f0367b4e62a5265",
+  "event-merge": "b0e1215aa418283e",
+  "file-read": "5810c0096d0a5445",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "75bba8fb61ada5cc",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "",
+ "date": "2026-09-29T15:06:27+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--out",
+  "eval/runs/sq-holdout-new"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "188045a5-edf5-4b2f-84d6-7064901b7168",
+  "E2": "4f02cd40-17e2-4783-9e9d-2e414bdfea78",
+  "E3": "8465ef33-e584-4ef3-89c6-3d9f30e35ede",
+  "E4": "e9e90842-0458-4784-8ded-13c8c849ac0a",
+  "E5": "7c188131-40ff-4434-ad96-de1b07c3b0e7",
+  "E6": "655ea14b-8fc7-4eb0-8295-1a248b455312",
+  "E7": "ca397888-13d1-41fa-8129-6b1b920c309f"
+ },
+ "bare_max_tokens": null
+}

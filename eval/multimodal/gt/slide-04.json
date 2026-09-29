@@ -1,0 +1,91 @@
+{
+ "id": "slide-04",
+ "type": "slide",
+ "split": "dev",
+ "image": "images/slide-04.jpg",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "low_contrast",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "49278a63107f6be79f548780c712c8869e67f550700032e1ce36871cc7aa75d0",
+ "gt": {
+  "title": "Q4 预算申请",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "总预算：56 万元"
+   },
+   {
+    "level": 1,
+    "text": "人力：30.8 万元"
+   },
+   {
+    "level": 1,
+    "text": "设备与服务器：14.0 万元"
+   },
+   {
+    "level": 1,
+    "text": "市场推广：11.2 万元"
+   },
+   {
+    "level": 0,
+    "text": "审批节点：部门负责人 → 财务 → 总经理"
+   },
+   {
+    "level": 0,
+    "text": "预算周期：2026 年 10 月至 12 月"
+   }
+  ],
+  "kpis": [
+   {
+    "label": "总预算",
+    "value": "56万"
+   }
+  ],
+  "footer": "示例科技有限公司 · 内部资料",
+  "page": "18 / 28"
+ },
+ "text_lines": [
+  "Q4 预算申请",
+  "总预算：56 万元",
+  "人力：30.8 万元",
+  "设备与服务器：14.0 万元",
+  "市场推广：11.2 万元",
+  "审批节点：部门负责人 → 财务 → 总经理",
+  "预算周期：2026 年 10 月至 12 月",
+  "总预算 56万",
+  "示例科技有限公司 · 内部资料",
+  "18 / 28"
+ ],
+ "qa": [
+  {
+   "q": "总预算多少？",
+   "a": "56 万元",
+   "match": "number"
+  },
+  {
+   "q": "市场推广预算多少？",
+   "a": "11.2 万元",
+   "match": "number"
+  },
+  {
+   "q": "这页幻灯片的标题是什么？",
+   "a": "Q4 预算申请",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "lowc",
+  "dense": false,
+  "downscale": "800x450"
+ },
+ "variant": {
+  "content": "budget",
+  "theme": "lowc",
+  "small": true
+ }
+}

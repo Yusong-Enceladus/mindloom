@@ -1,0 +1,112 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8130/v1",
+ "model": "nano-omni-org",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-29T17:34:17+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8130/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "/home/YOU/hack/claude-models/v2/out/nano-omni-org/org/h2-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "3606a4b4-7997-49a7-b1db-d2a0b4ebdae5",
+  "E2": "b251e4f7-a633-4607-ad13-66ccb0d1602b",
+  "E3": "5a34c729-c2a8-47bc-892a-f61ae6f3fa41",
+  "E4": "7f34f653-12a6-4d84-9995-a1499c73414e",
+  "E5": "2a5f71bc-0850-4a82-bed9-ddb495a97e98",
+  "E6": "acffe5ad-798a-40f5-9f13-d07b92c735a3",
+  "E7": "80647a12-8200-418c-ad2a-bae27ed38d0e",
+  "E8": "4a867401-88b2-4ddf-b6e8-ee8b75f159b7",
+  "E9": "ffb8fdde-1cc1-4bee-b4e3-12e125aead21",
+  "E10": "c4d2bb92-c1ef-4868-b73e-9f077b0710dd",
+  "E11": "ace75946-9716-4711-8cb3-79f6a3da768c",
+  "E12": "46c4cf6a-0dc4-443d-bf6e-3d67f99d0561",
+  "E13": "d96cf845-f5e2-41be-b6d4-53772fe48418",
+  "E14": "ac3e5431-2921-471e-a0d1-10de495846dd",
+  "E15": "fcc3fe7a-b085-4b07-afa6-a730378df236",
+  "E16": "490e90af-a9ae-4b62-a3ca-967c089e4f01",
+  "E17": "e96705ae-880c-4104-a070-7bd194eda744",
+  "E18": "ccb3a3ca-cdb8-46a7-973d-3265a823ddc2",
+  "E19": "b8bb8668-761d-40d9-9faf-94383284d3e2",
+  "E20": "53a3733a-2744-448f-a720-11e3ac3d8100",
+  "E21": "813110fa-4475-45b0-a8ad-031e941ca715",
+  "E22": "910e0cda-99dd-4a0f-aab1-b3ff5bd20673",
+  "E23": "e98bc7fe-686f-4c20-ad69-c01badf930cd",
+  "E24": "8c43fb6b-3d06-47ba-aaf9-97215fa71740",
+  "E25": "be045dec-520e-406a-9a34-7f1d4186ade6",
+  "E26": "3cbc5b53-d91c-4f0c-aad6-cf5a2205fec6",
+  "E27": "55a28e4b-61d8-419a-a971-7c70c901131f",
+  "E28": "c915be3c-6dc5-48de-a875-e72aedf63d2a",
+  "E29": "19b9a9ed-586c-4b53-984d-e8eff11349a5",
+  "E30": "c8f89180-6dd6-4d22-8551-1208935a3a49",
+  "E31": "b7ae0fa0-79f7-4224-9040-8831d4b5c9a1",
+  "E32": "82fd5899-7458-453d-8a61-d7283a889889",
+  "E33": "a42cd075-fc29-4b73-80e5-e2f3b5ff7f90",
+  "E34": "5659b984-0d7e-4224-a872-cdbb8cd981a4"
+ },
+ "bare_max_tokens": null
+}

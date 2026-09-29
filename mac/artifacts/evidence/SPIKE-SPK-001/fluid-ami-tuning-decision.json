@@ -1,0 +1,256 @@
+{
+  "candidate" : "fluid",
+  "corpusManifestID" : "ami-public-speaker-tuning-v1",
+  "corpusVersion" : "1.0.0",
+  "eligibleForHoldout" : true,
+  "enrollmentSeparationFeasible" : false,
+  "failedSampleUUIDs" : [
+
+  ],
+  "falseMergeCount" : 0,
+  "falseRejectCount" : 2,
+  "falseSplitCount" : 0,
+  "gates" : [
+    {
+      "id" : "parent-network-sandbox",
+      "observed" : 1,
+      "requirement" : "equal-to-1",
+      "status" : "pass"
+    },
+    {
+      "id" : "four-entry-mode-coverage",
+      "observed" : 4,
+      "requirement" : "equal-to-4",
+      "status" : "pass"
+    },
+    {
+      "id" : "enrollment-impostor-margin-protected",
+      "observed" : 0.030000000000000027,
+      "requirement" : "greater-than-or-equal-to-threshold-margin",
+      "status" : "pass"
+    },
+    {
+      "id" : "known-wrong-identity-count",
+      "observed" : 0,
+      "requirement" : "equal-to-0",
+      "status" : "pass"
+    },
+    {
+      "id" : "false-merge-count",
+      "observed" : 0,
+      "requirement" : "equal-to-0",
+      "status" : "pass"
+    },
+    {
+      "id" : "realtime-factor",
+      "observed" : 0.006091880918204864,
+      "requirement" : "less-than-or-equal-to-1",
+      "status" : "pass"
+    },
+    {
+      "id" : "known-correct-coverage",
+      "observed" : 0.875,
+      "requirement" : "greater-than-or-equal-to-0.5",
+      "status" : "pass"
+    }
+  ],
+  "kind" : "speaker-release-evaluation-decision",
+  "knownCorrectCount" : 14,
+  "knownQueryCount" : 16,
+  "knownRejectedCount" : 2,
+  "knownWrongCount" : 0,
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0.3371247291308321
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0.38060326334869
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0.3032050216933043
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0.011599178763667067
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0.022320528673860685
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 2
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 104.147542
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 5387.844625
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.006091880918204864
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 519012352
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 0
+    }
+  ],
+  "modeSummaries" : [
+    {
+      "knownCorrectCount" : 4,
+      "knownCount" : 4,
+      "knownRejectedCount" : 0,
+      "knownWrongCount" : 0,
+      "mode" : "dictation",
+      "unknownCount" : 0,
+      "unknownRejectedCount" : 0
+    },
+    {
+      "knownCorrectCount" : 4,
+      "knownCount" : 4,
+      "knownRejectedCount" : 0,
+      "knownWrongCount" : 0,
+      "mode" : "imported-media",
+      "unknownCount" : 0,
+      "unknownRejectedCount" : 0
+    },
+    {
+      "knownCorrectCount" : 2,
+      "knownCount" : 4,
+      "knownRejectedCount" : 2,
+      "knownWrongCount" : 0,
+      "mode" : "room-microphone",
+      "unknownCount" : 0,
+      "unknownRejectedCount" : 0
+    },
+    {
+      "knownCorrectCount" : 4,
+      "knownCount" : 4,
+      "knownRejectedCount" : 0,
+      "knownWrongCount" : 0,
+      "mode" : "system-audio",
+      "unknownCount" : 0,
+      "unknownRejectedCount" : 0
+    }
+  ],
+  "networkDeniedByParentSandbox" : true,
+  "observedModes" : [
+    "dictation",
+    "imported-media",
+    "room-microphone",
+    "system-audio"
+  ],
+  "phase" : "tuning-calibration",
+  "requiredModes" : [
+    "dictation",
+    "imported-media",
+    "room-microphone",
+    "system-audio"
+  ],
+  "sampleCount" : 26,
+  "schemaVersion" : 1,
+  "selectionEligible" : false,
+  "status" : "pass",
+  "threshold" : 0.5489600933809491,
+  "thresholdPolicy" : "enrollment-only-impostor-protected-conservative",
+  "unknownQueryCount" : 0,
+  "unknownRejectedCount" : 0
+}

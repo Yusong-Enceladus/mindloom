@@ -1,0 +1,103 @@
+{
+  "commands" : [
+    [
+      "script/run_security_storage_probe.sh"
+    ]
+  ],
+  "conclusion" : "conditional",
+  "criteria" : {
+    "fail" : [
+      "Any wrong key, tampered payload, or corrupt database is accepted as valid.",
+      "A failed migration, interrupted commit, or process crash loses committed source data or silently creates a new store."
+    ],
+    "pass" : [
+      "Encrypted stores expose neither a plaintext SQLite header nor a synthetic content marker at rest.",
+      "Correct keys restore data while wrong keys, tampering, and corruption fail closed.",
+      "Backup, interrupted migration, atomic envelope replacement, and process-crash recovery preserve committed data without a silent reset.",
+      "Keychain loss is reported explicitly and does not delete or replace encrypted data."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-encryption-at-rest",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-correct-and-wrong-key",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-online-backup-roundtrip",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-migration-rollback",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-corruption-detection",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "sqlcipher-crash-recovery",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "cryptokit-keychain-envelope-roundtrip",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "cryptokit-wrong-key-and-tamper",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "cryptokit-backup-and-atomic-recovery",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-SEC-001/matrix.json"
+      ],
+      "scenarioID" : "keychain-loss-is-explicit",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Do SQLCipher and CryptoKit/Keychain envelope designs preserve confidentiality, integrity, backup, migration, and crash recovery semantics?",
+  "runID" : "9E4613EF-79E6-49E9-8ACD-0F231843836E",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-SEC-001",
+  "unmetCriteria" : [
+    "GRDB 7.10.0 must be built and exercised against SQLCipher rather than system SQLite before ADR-0002 can be accepted.",
+    "The 10,000-dictation plus 1,000-hour metadata FTS performance matrix remains pending.",
+    "XPC access and signed/notarized app packaging with the SQLCipher XCFramework remain pending."
+  ]
+}

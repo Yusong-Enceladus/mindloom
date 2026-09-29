@@ -1,0 +1,60 @@
+{
+  "generatedAt" : "2026-08-30T03:48:58Z",
+  "kind" : "inference-queue-worker-matrix",
+  "runID" : "5D4D314A-2E67-4D97-82F0-2006706759B2",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "capacity" : "2",
+        "highWatermark" : "2",
+        "rejectedOfferCount" : "8"
+      },
+      "scenarioID" : "slow-inference-fills-bounded-queue",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "audioCommittedChunkCount" : "10",
+        "degradedLive" : "true",
+        "durableJobCount" : "10",
+        "sourceAudioLost" : "false"
+      },
+      "scenarioID" : "queue-full-preserves-source-and-schedules-catch-up",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "audioCommittedDuringDisconnect" : "true",
+        "disconnectMetadataContainsContent" : "false",
+        "recoveredSameJob" : "true",
+        "retryCount" : "1"
+      },
+      "scenarioID" : "worker-crash-does-not-stop-capture-and-lease-resumes",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "commitCount" : "1",
+        "duplicateOutcome" : "duplicate"
+      },
+      "scenarioID" : "duplicate-worker-response-is-idempotent",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "drainedJobCount" : "9",
+        "duplicateTranscriptCommitCount" : "0",
+        "succeededJobCount" : "10"
+      },
+      "scenarioID" : "reconnect-drains-durable-backlog-without-duplicate-transcript",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-WRK-001"
+}

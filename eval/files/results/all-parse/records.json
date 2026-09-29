@@ -1,0 +1,2372 @@
+[
+ {
+  "id": "notice-a",
+  "template": "notice",
+  "latency_s": 0.127,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "# 青松物业停水通知\n\n因二次供水设备检修，10 月 12 日 8:00-18:00 3 栋全楼停水，请提前储水。\n\n青松物业  2026-10-08\n\n| 楼栋 | 停水时段 |\n|---|---|\n| 3 栋 | 8:00-18:00 |",
+   "summary": "文档：青松物业停水通知",
+   "fields": [],
+   "counts": {
+    "images_found": 1,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "会议室",
+    "C-208"
+   ]
+  }
+ },
+ {
+  "id": "notice-b",
+  "template": "notice",
+  "latency_s": 0.129,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "# 绿洲花园物业停水通知\n\n因二次供水设备检修，11 月 3 日 9:00-16:30 7 栋全楼停水，请提前储水。\n\n绿洲花园物业  2026-10-29\n\n| 楼栋 | 停水时段 |\n|---|---|\n| 7 栋 | 9:00-16:30 |",
+   "summary": "文档：绿洲花园物业停水通知",
+   "fields": [],
+   "counts": {
+    "images_found": 1,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "商用咖啡机",
+    "E64466088"
+   ]
+  }
+ },
+ {
+  "id": "notice-c",
+  "template": "notice",
+  "latency_s": 0.127,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "# 湖畔家园服务中心停水通知\n\n因二次供水设备检修，10 月 25 日 13:00-17:00 12 栋全楼停水，请提前储水。\n\n湖畔家园服务中心  2026-10-20\n\n| 楼栋 | 停水时段 |\n|---|---|\n| 12 栋 | 13:00-17:00 |",
+   "summary": "文档：湖畔家园服务中心停水通知",
+   "fields": [],
+   "counts": {
+    "images_found": 1,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "储水式电热水器",
+    "G40128813"
+   ]
+  }
+ },
+ {
+  "id": "minutes-a",
+  "template": "minutes",
+  "latency_s": 0.053,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "点单小程序项目会议纪要\n时间：9 月 28 日 14:00\n记录人：唐宁\n待办\n事项\t负责人\t\t周四前提交支付联调报告\t唐宁",
+   "summary": "文档：点单小程序项目会议纪要",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "minutes-b",
+  "template": "minutes",
+  "latency_s": 0.048,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "门店翻新项目会议纪要\n时间：10 月 9 日 14:00\n记录人：谢雨桐\n待办\n事项\t负责人\t\t10 月 15 日前确定施工队\t谢雨桐",
+   "summary": "文档：门店翻新项目会议纪要",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "minutes-c",
+  "template": "minutes",
+  "latency_s": 0.046,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "年会筹备项目会议纪要\n时间：11 月 2 日 14:00\n记录人：Mia Chen\n待办\n事项\t负责人\t\t下周一前发出邀请函\tMia Chen",
+   "summary": "文档：年会筹备项目会议纪要",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contract-a",
+  "template": "contract",
+  "latency_s": 0.075,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "房屋租赁合同\n\n合同编号：ZL-2026-451\n\n出租方（甲方）：许诺\n\n承租方（乙方）：吴昊\n\n月租金：人民币 4,500 元\n\n租赁期限：2026年10月1日至2027年9月30日\n\n押金为一个月租金，每月 5 日前支付当月租金。",
+   "summary": "文档：房屋租赁合同",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contract-b",
+  "template": "contract",
+  "latency_s": 0.074,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "房屋租赁合同\n\n合同编号：ZL-2026-518\n\n出租方（甲方）：周明远\n\n承租方（乙方）：苏晓\n\n月租金：人民币 6,200 元\n\n租赁期限：2026年11月1日至2027年10月31日\n\n押金为一个月租金，每月 5 日前支付当月租金。",
+   "summary": "文档：房屋租赁合同",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contract-c",
+  "template": "contract",
+  "latency_s": 0.058,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "房屋租赁合同\n\n合同编号：ZL-2026-602\n\n出租方（甲方）：林海\n\n承租方（乙方）：陈可\n\n月租金：人民币 3,800 元\n\n租赁期限：2026年12月1日至2027年11月30日\n\n押金为一个月租金，每月 5 日前支付当月租金。",
+   "summary": "文档：房屋租赁合同",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invoice-a",
+  "template": "invoice",
+  "latency_s": 0.112,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": null,
+   "text": "增值税普通发票\n发票号码：04412233\n开票日期：2026年 09月 18日\n销售方：晨星文具有限公司\n购买方：示例科技有限公司\n货物名称 数量 金额\n打印纸 10 1,280.00",
+   "summary": "PDF 文档：增值税普通发票",
+   "fields": [],
+   "counts": {
+    "pages": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invoice-b",
+  "template": "invoice",
+  "latency_s": 0.065,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": null,
+   "text": "增值税普通发票\n发票号码：05510987\n开票日期：2026年 10月 02日\n销售方：云岭电器有限公司\n购买方：示例科技有限公司\n货物名称 数量 金额\n电热水壶 10 3,460.50",
+   "summary": "PDF 文档：增值税普通发票",
+   "fields": [],
+   "counts": {
+    "pages": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invoice-c",
+  "template": "invoice",
+  "latency_s": 0.083,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": null,
+   "text": "增值税普通发票\n发票号码：06623145\n开票日期：2026年 10月 11日\n销售方：穗禾里食品有限公司\n购买方：示例科技有限公司\n货物名称 数量 金额\n咖啡豆 10 865.00",
+   "summary": "PDF 文档：增值税普通发票",
+   "fields": [],
+   "counts": {
+    "pages": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "booking-a",
+  "template": "booking",
+  "latency_s": 0.051,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "预订确认单\n酒店：临溪湖景酒店\n预订号：HB88213\n入住日期：2026-10-16\n离店日期：2026-10-18\n房型：大床房 1 间\n订单总价：¥1,176",
+   "summary": "文档：预订确认单",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "booking-b",
+  "template": "booking",
+  "latency_s": 0.04,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "预订确认单\n酒店：白石山居\n预订号：HB90457\n入住日期：2026-11-05\n离店日期：2026-11-07\n房型：大床房 1 间\n订单总价：¥2,340",
+   "summary": "文档：预订确认单",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "booking-c",
+  "template": "booking",
+  "latency_s": 0.059,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "预订确认单\n酒店：梧桐大道商务酒店\n预订号：HB91120\n入住日期：2026-12-24\n离店日期：2026-12-26\n房型：大床房 1 间\n订单总价：¥980",
+   "summary": "文档：预订确认单",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": 0.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "scan-a",
+  "template": "scan",
+  "latency_s": 0.374,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "scanned_pdf",
+   "error": null,
+   "text": "## 第 1 页\n\n## 第 2 页",
+   "summary": "扫描版 PDF：第 1 页",
+   "fields": [],
+   "counts": {
+    "pages": 2,
+    "image_pages": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "关于国庆假期值班安排的通知",
+    "0000-3517。10月6日至7日由各门店店长自行安排。",
+    "房屋租赁合同（节选）",
+    "甲方将位于青川市东湖区望湖街136号11栋2502室的房屋出租给乙方居住"
+   ]
+  }
+ },
+ {
+  "id": "scan-b",
+  "template": "scan",
+  "latency_s": 0.365,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "scanned_pdf",
+   "error": null,
+   "text": "## 第 1 页\n\n## 第 2 页",
+   "summary": "扫描版 PDF：第 1 页",
+   "fields": [],
+   "counts": {
+    "pages": 2,
+    "image_pages": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "点单小程序项目会议纪要",
+    "聚合支付接入快、费率较高；直连方案费率为0.25%",
+    "秋季新品上市执行计划",
+    "8月14日"
+   ]
+  }
+ },
+ {
+  "id": "scan-c",
+  "template": "scan",
+  "latency_s": 0.333,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "scanned_pdf",
+   "error": null,
+   "text": "## 第 1 页\n\n## 第 2 页",
+   "summary": "扫描版 PDF：第 1 页",
+   "fields": [],
+   "counts": {
+    "pages": 2,
+    "image_pages": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "MEMORANDUM",
+    "2026.",
+    "Travel Reimbursement Policy (excerpt)",
+    "$0.70/mile"
+   ]
+  }
+ },
+ {
+  "id": "expense-a",
+  "template": "expense",
+  "latency_s": 0.12,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：9月报销\n| 姓名 | 项目 | 金额 | 状态 |\n|---|---|---|---|\n| 张三 | 打车 | 58.5 | 已审批 |\n| 李四 | 午餐招待 | 320 | 待审批 |\n| 王五 | 高铁票 | 553 | 已审批 |\n\n## 工作表：说明\n| 报销截止 | 9月底 |\n|---|---|",
+   "summary": "表格：报销明细.xlsx",
+   "fields": [],
+   "counts": {
+    "sheets": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "expense-b",
+  "template": "expense",
+  "latency_s": 0.127,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：10月报销\n| 姓名 | 项目 | 金额 | 状态 |\n|---|---|---|---|\n| 赵六 | 打印 | 86 | 已审批 |\n| 钱七 | 快递 | 42.5 | 待审批 |\n| 孙八 | 酒店 | 688 | 已审批 |\n\n## 工作表：说明\n| 报销截止 | 10月底 |\n|---|---|",
+   "summary": "表格：报销明细.xlsx",
+   "fields": [],
+   "counts": {
+    "sheets": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "expense-c",
+  "template": "expense",
+  "latency_s": 0.117,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：11月报销\n| 姓名 | 项目 | 金额 | 状态 |\n|---|---|---|---|\n| 周九 | 会议室 | 400 | 已审批 |\n| 吴十 | 茶歇 | 256 | 待审批 |\n| 郑一 | 机票 | 1320 | 已审批 |\n\n## 工作表：说明\n| 报销截止 | 11月底 |\n|---|---|",
+   "summary": "表格：报销明细.xlsx",
+   "fields": [],
+   "counts": {
+    "sheets": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "budget-a",
+  "template": "budget",
+  "latency_s": 0.057,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：国庆活动预算\n| 项目 | 金额（元） |\n|---|---|\n| 场地 | 3000 |\n| 餐饮 | 1500 |\n| 物料 | 820 |",
+   "summary": "表格：预算.xls",
+   "fields": [],
+   "counts": {
+    "sheets": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "budget-b",
+  "template": "budget",
+  "latency_s": 0.056,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：年会预算\n| 项目 | 金额（元） |\n|---|---|\n| 场地 | 12000 |\n| 抽奖礼品 | 6800 |\n| 主持 | 2500 |",
+   "summary": "表格：预算.xls",
+   "fields": [],
+   "counts": {
+    "sheets": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "budget-c",
+  "template": "budget",
+  "latency_s": 0.044,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：培训预算\n| 项目 | 金额（元） |\n|---|---|\n| 讲师费 | 5000 |\n| 教材 | 960 |\n| 茶歇 | 640 |",
+   "summary": "表格：预算.xls",
+   "fields": [],
+   "counts": {
+    "sheets": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "inventory-a",
+  "template": "inventory",
+  "latency_s": 0.055,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "| 物品 | 数量 | 库位 |\n|---|---|---|\n| 螺丝 M4×20 | 200 | A-03 |\n| 扎带 | 150 | B-11 |",
+   "summary": "表格：库存盘点.csv",
+   "fields": [],
+   "counts": {
+    "sheets": 1,
+    "rows": 3
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "inventory-b",
+  "template": "inventory",
+  "latency_s": 0.053,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "| 物品 | 数量 | 库位 |\n|---|---|---|\n| 纸杯 12oz | 800 | C-02 |\n| 吸管 | 1200 | C-05 |",
+   "summary": "表格：库存盘点.csv",
+   "fields": [],
+   "counts": {
+    "sheets": 1,
+    "rows": 3
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "inventory-c",
+  "template": "inventory",
+  "latency_s": 0.044,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "| 物品 | 数量 | 库位 |\n|---|---|---|\n| 咖啡豆 云南日晒 | 24 | D-01 |\n| 牛奶 1L | 36 | 冷藏-2 |",
+   "summary": "表格：库存盘点.csv",
+   "fields": [],
+   "counts": {
+    "sheets": 1,
+    "rows": 3
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "roadmap-a",
+  "template": "roadmap",
+  "latency_s": 0.082,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "## 第 1 张幻灯片：Q4 门店数字化路线图\n- 10 月上线会员积分\n- 11 月接入外卖平台\n备注：先讲目标再讲节奏\n\n## 第 2 张幻灯片：数据回顾\n- 见下图",
+   "summary": "演示文稿：Q4 门店数字化路线图",
+   "fields": [],
+   "counts": {
+    "slides": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "9月各品类销售占比",
+    "39.3%"
+   ]
+  }
+ },
+ {
+  "id": "roadmap-b",
+  "template": "roadmap",
+  "latency_s": 0.095,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "## 第 1 张幻灯片：2027 上半年产品计划\n- 3 月发布自助点单\n- 5 月上线储值卡\n备注：先讲目标再讲节奏\n\n## 第 2 张幻灯片：数据回顾\n- 见下图",
+   "summary": "演示文稿：2027 上半年产品计划",
+   "fields": [],
+   "counts": {
+    "slides": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "2026年下半年 门店月销售额",
+    "24.3"
+   ]
+  }
+ },
+ {
+  "id": "roadmap-c",
+  "template": "roadmap",
+  "latency_s": 0.129,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "## 第 1 张幻灯片：小程序增长方案\n- 首单立减 5 元\n- 邀请好友各得 10 元券\n备注：先讲目标再讲节奏\n\n## 第 2 张幻灯片：数据回顾\n- 见下图",
+   "summary": "演示文稿：小程序增长方案",
+   "fields": [],
+   "counts": {
+    "slides": 2,
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "小程序周活跃用户",
+    "第1周"
+   ]
+  }
+ },
+ {
+  "id": "training-a",
+  "template": "training",
+  "latency_s": 0.061,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "单击以编辑标题文本格式\n点击以编辑提纲文本格式\n第二提纲级别\n第三提纲级别\n第四提纲级别\n第五提纲级别\n第六提纲级别\n第七提纲级别\n新员工入职培训\n第一天：公司制度与安全\n第二天：收银系统实操\n考核\n结业测验 80 分合格",
+   "summary": "演示文稿：单击以编辑标题文本格式",
+   "fields": [],
+   "counts": {
+    "slides": 5
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "training-b",
+  "template": "training",
+  "latency_s": 0.05,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "单击以编辑标题文本格式\n点击以编辑提纲文本格式\n第二提纲级别\n第三提纲级别\n第四提纲级别\n第五提纲级别\n第六提纲级别\n第七提纲级别\n咖啡师进阶课程\n模块一：意式萃取参数\n模块二：拉花基础\n考核\n结业测验 80 分合格",
+   "summary": "演示文稿：单击以编辑标题文本格式",
+   "fields": [],
+   "counts": {
+    "slides": 5
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "training-c",
+  "template": "training",
+  "latency_s": 0.05,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "单击以编辑标题文本格式\n点击以编辑提纲文本格式\n第二提纲级别\n第三提纲级别\n第四提纲级别\n第五提纲级别\n第六提纲级别\n第七提纲级别\n门店消防演练\n步骤一：发现火情立即报警\n步骤二：按疏散路线撤离\n考核\n结业测验 80 分合格",
+   "summary": "演示文稿：单击以编辑标题文本格式",
+   "fields": [],
+   "counts": {
+    "slides": 5
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "email-a",
+  "template": "email",
+  "latency_s": 0.164,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "email",
+   "error": null,
+   "text": "主题：9 月采购对账\n发件人：周小满 <xiaoman@example.invalid>\n收件人：李四 <lisi@example.invalid>\n时间：Tue, 29 Sep 2026 09:30:00 +0800\n\n李四你好，\n附件是9 月采购对账的明细和小票照片，请在 10 月 8 日前确认金额。\n周小满\n\n## 附件：对账明细.xlsx\n## 工作表：对账\n| 日期 | 金额 |\n|---|---|\n| 9月3日 | 1260 |\n| 9月17日 | 845 |\n\n## 附件：小票.jpg",
+   "summary": "邮件：9 月采购对账",
+   "fields": [
+    {
+     "key": "subject",
+     "label": "主题",
+     "value": "9 月采购对账"
+    },
+    {
+     "key": "from",
+     "label": "发件人",
+     "value": "周小满 <xiaoman@example.invalid>"
+    },
+    {
+     "key": "to",
+     "label": "收件人",
+     "value": "李四 <lisi@example.invalid>"
+    },
+    {
+     "key": "date",
+     "label": "时间",
+     "value": "Tue, 29 Sep 2026 09:30:00 +0800"
+    }
+   ],
+   "counts": {
+    "attachments": 2,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "对账明细.xlsx",
+     "type": "spreadsheet",
+     "summary": "工作表：对账"
+    },
+    {
+     "filename": "小票.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "销售单",
+    "XS-20260804-899"
+   ]
+  }
+ },
+ {
+  "id": "email-b",
+  "template": "email",
+  "latency_s": 0.159,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "email",
+   "error": null,
+   "text": "主题：门店耗材报销\n发件人：周小满 <xiaoman@example.invalid>\n收件人：李四 <lisi@example.invalid>\n时间：Tue, 29 Sep 2026 09:30:00 +0800\n\n李四你好，\n附件是门店耗材报销的明细和小票照片，请本周五前审批。\n李晓\n\n## 附件：对账明细.xlsx\n## 工作表：对账\n| 日期 | 金额 |\n|---|---|\n| 9月3日 | 1260 |\n| 9月17日 | 845 |\n\n## 附件：小票.jpg",
+   "summary": "邮件：门店耗材报销",
+   "fields": [
+    {
+     "key": "subject",
+     "label": "主题",
+     "value": "门店耗材报销"
+    },
+    {
+     "key": "from",
+     "label": "发件人",
+     "value": "周小满 <xiaoman@example.invalid>"
+    },
+    {
+     "key": "to",
+     "label": "收件人",
+     "value": "李四 <lisi@example.invalid>"
+    },
+    {
+     "key": "date",
+     "label": "时间",
+     "value": "Tue, 29 Sep 2026 09:30:00 +0800"
+    }
+   ],
+   "counts": {
+    "attachments": 2,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "对账明细.xlsx",
+     "type": "spreadsheet",
+     "summary": "工作表：对账"
+    },
+    {
+     "filename": "小票.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "南巷咖啡",
+    "青川市桂香区梧桐大道25号"
+   ]
+  }
+ },
+ {
+  "id": "email-c",
+  "template": "email",
+  "latency_s": 0.173,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "email",
+   "error": null,
+   "text": "主题：样品费用确认\n发件人：周小满 <xiaoman@example.invalid>\n收件人：李四 <lisi@example.invalid>\n时间：Tue, 29 Sep 2026 09:30:00 +0800\n\n李四你好，\n附件是样品费用确认的明细和小票照片，麻烦 10 月 20 日前回复。\n陈思远\n\n## 附件：对账明细.xlsx\n## 工作表：对账\n| 日期 | 金额 |\n|---|---|\n| 9月3日 | 1260 |\n| 9月17日 | 845 |\n\n## 附件：小票.jpg",
+   "summary": "邮件：样品费用确认",
+   "fields": [
+    {
+     "key": "subject",
+     "label": "主题",
+     "value": "样品费用确认"
+    },
+    {
+     "key": "from",
+     "label": "发件人",
+     "value": "周小满 <xiaoman@example.invalid>"
+    },
+    {
+     "key": "to",
+     "label": "收件人",
+     "value": "李四 <lisi@example.invalid>"
+    },
+    {
+     "key": "date",
+     "label": "时间",
+     "value": "Tue, 29 Sep 2026 09:30:00 +0800"
+    }
+   ],
+   "counts": {
+    "attachments": 2,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "对账明细.xlsx",
+     "type": "spreadsheet",
+     "summary": "工作表：对账"
+    },
+    {
+     "filename": "小票.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "禾木生鲜超市",
+    "青川市白石区桂香路172号"
+   ]
+  }
+ },
+ {
+  "id": "invite-a",
+  "template": "invite",
+  "latency_s": 0.064,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "calendar",
+   "error": null,
+   "text": "日程：季度复盘会\n开始：2026-10-15 14:30 (Asia/Shanghai)\n结束：2026-10-15 16:00 (Asia/Shanghai)\n地点：3楼大会议室\n组织者：王经理\n参与者：李四\n说明：请带上 Q3 数据\n和改进计划（补充一行）",
+   "summary": "日程：季度复盘会",
+   "fields": [
+    {
+     "key": "summary",
+     "label": "日程",
+     "value": "季度复盘会"
+    },
+    {
+     "key": "start",
+     "label": "开始",
+     "value": "2026-10-15 14:30 (Asia/Shanghai)"
+    },
+    {
+     "key": "end",
+     "label": "结束",
+     "value": "2026-10-15 16:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "location",
+     "label": "地点",
+     "value": "3楼大会议室"
+    },
+    {
+     "key": "organizer",
+     "label": "组织者",
+     "value": "王经理"
+    }
+   ],
+   "counts": {
+    "events": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invite-b",
+  "template": "invite",
+  "latency_s": 0.053,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "calendar",
+   "error": null,
+   "text": "日程：供应商比价会\n开始：2026-11-03 10:00 (Asia/Shanghai)\n结束：2026-10-15 16:00 (Asia/Shanghai)\n地点：线上会议 8812\n组织者：赵主管\n参与者：李四\n说明：请带上 Q3 数据\n和改进计划（补充一行）",
+   "summary": "日程：供应商比价会",
+   "fields": [
+    {
+     "key": "summary",
+     "label": "日程",
+     "value": "供应商比价会"
+    },
+    {
+     "key": "start",
+     "label": "开始",
+     "value": "2026-11-03 10:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "end",
+     "label": "结束",
+     "value": "2026-10-15 16:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "location",
+     "label": "地点",
+     "value": "线上会议 8812"
+    },
+    {
+     "key": "organizer",
+     "label": "组织者",
+     "value": "赵主管"
+    }
+   ],
+   "counts": {
+    "events": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invite-c",
+  "template": "invite",
+  "latency_s": 0.045,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "calendar",
+   "error": null,
+   "text": "日程：年度体检\n开始：2026-11-20 08:30 (Asia/Shanghai)\n结束：2026-10-15 16:00 (Asia/Shanghai)\n地点：临溪体检中心\n组织者：人事部\n参与者：李四\n说明：请带上 Q3 数据\n和改进计划（补充一行）",
+   "summary": "日程：年度体检",
+   "fields": [
+    {
+     "key": "summary",
+     "label": "日程",
+     "value": "年度体检"
+    },
+    {
+     "key": "start",
+     "label": "开始",
+     "value": "2026-11-20 08:30 (Asia/Shanghai)"
+    },
+    {
+     "key": "end",
+     "label": "结束",
+     "value": "2026-10-15 16:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "location",
+     "label": "地点",
+     "value": "临溪体检中心"
+    },
+    {
+     "key": "organizer",
+     "label": "组织者",
+     "value": "人事部"
+    }
+   ],
+   "counts": {
+    "events": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contact-a",
+  "template": "contact",
+  "latency_s": 0.04,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "contact",
+   "error": null,
+   "text": "姓名：张三\n单位：青松物业\n职务：客服主管\n电话：139-0000-1234",
+   "summary": "联系人：张三",
+   "fields": [
+    {
+     "key": "name",
+     "label": "姓名",
+     "value": "张三"
+    },
+    {
+     "key": "org",
+     "label": "单位",
+     "value": "青松物业"
+    },
+    {
+     "key": "title",
+     "label": "职务",
+     "value": "客服主管"
+    },
+    {
+     "key": "phone",
+     "label": "电话",
+     "value": "139-0000-1234"
+    }
+   ],
+   "counts": {
+    "contacts": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contact-b",
+  "template": "contact",
+  "latency_s": 0.04,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "contact",
+   "error": null,
+   "text": "姓名：李鸣\n单位：云岭电器\n职务：销售经理\n电话：138-0000-5678",
+   "summary": "联系人：李鸣",
+   "fields": [
+    {
+     "key": "name",
+     "label": "姓名",
+     "value": "李鸣"
+    },
+    {
+     "key": "org",
+     "label": "单位",
+     "value": "云岭电器"
+    },
+    {
+     "key": "title",
+     "label": "职务",
+     "value": "销售经理"
+    },
+    {
+     "key": "phone",
+     "label": "电话",
+     "value": "138-0000-5678"
+    }
+   ],
+   "counts": {
+    "contacts": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contact-c",
+  "template": "contact",
+  "latency_s": 0.073,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "contact",
+   "error": null,
+   "text": "姓名：Chen Wei\n单位：Harbor Design\n职务：Designer\n电话：+86 137 0000 2468",
+   "summary": "联系人：Chen Wei",
+   "fields": [
+    {
+     "key": "name",
+     "label": "姓名",
+     "value": "Chen Wei"
+    },
+    {
+     "key": "org",
+     "label": "单位",
+     "value": "Harbor Design"
+    },
+    {
+     "key": "title",
+     "label": "职务",
+     "value": "Designer"
+    },
+    {
+     "key": "phone",
+     "label": "电话",
+     "value": "+86 137 0000 2468"
+    }
+   ],
+   "counts": {
+    "contacts": 1
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "article-a",
+  "template": "article",
+  "latency_s": 0.044,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "web",
+   "error": null,
+   "text": "网址：https://example.invalid/kitchen\n# 小户型厨房装修清单\n\n台面选石英石，预算 8,000 元以内。\n\n- 先量尺寸\n\n- 再比三家",
+   "summary": "网页：小户型厨房装修清单",
+   "fields": [
+    {
+     "key": "url",
+     "label": "网址",
+     "value": "https://example.invalid/kitchen"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "article-b",
+  "template": "article",
+  "latency_s": 0.044,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "web",
+   "error": null,
+   "text": "网址：https://example.invalid/camping\n# 秋季露营装备指南\n\n帐篷选三季帐，睡袋舒适温度 5℃。\n\n- 先量尺寸\n\n- 再比三家",
+   "summary": "网页：秋季露营装备指南",
+   "fields": [
+    {
+     "key": "url",
+     "label": "网址",
+     "value": "https://example.invalid/camping"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "article-c",
+  "template": "article",
+  "latency_s": 0.069,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "web",
+   "error": null,
+   "text": "网址：https://example.invalid/cat\n# 新手养猫准备\n\n猫砂盆放在安静角落，疫苗第 8 周开始。\n\n- 先量尺寸\n\n- 再比三家",
+   "summary": "网页：新手养猫准备",
+   "fields": [
+    {
+     "key": "url",
+     "label": "网址",
+     "value": "https://example.invalid/cat"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "archive-a",
+  "template": "archive",
+  "latency_s": 0.104,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "archive",
+   "error": null,
+   "text": "压缩包，共 3 个文件\n\n## 开业资料/说明.docx\n开业资料说明\n\n开业前一周完成试营业\n\n## 开业资料/清单.csv\n| 物品 | 数量 |\n|---|---|\n| 桌子 | 4 |\n| 椅子 | 16 |\n\n## 开业资料/白板.jpg",
+   "summary": "压缩包：开业资料.zip",
+   "fields": [],
+   "counts": {
+    "entries": 3,
+    "attachments": 3,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "开业资料/说明.docx",
+     "type": "document",
+     "summary": "开业资料说明"
+    },
+    {
+     "filename": "开业资料/清单.csv",
+     "type": "spreadsheet",
+     "summary": "物品 | 数量 |"
+    },
+    {
+     "filename": "开业资料/白板.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "客厅瓷砖"
+   ]
+  }
+ },
+ {
+  "id": "archive-b",
+  "template": "archive",
+  "latency_s": 0.097,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "archive",
+   "error": null,
+   "text": "压缩包，共 3 个文件\n\n## 展会资料/说明.docx\n展会资料说明\n\n展位号 B-17，布展 10 月 30 日\n\n## 展会资料/清单.csv\n| 物品 | 数量 |\n|---|---|\n| 桌子 | 4 |\n| 椅子 | 16 |\n\n## 展会资料/白板.jpg",
+   "summary": "压缩包：展会资料.zip",
+   "fields": [],
+   "counts": {
+    "entries": 3,
+    "attachments": 3,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "展会资料/说明.docx",
+     "type": "document",
+     "summary": "展会资料说明"
+    },
+    {
+     "filename": "展会资料/清单.csv",
+     "type": "spreadsheet",
+     "summary": "物品 | 数量 |"
+    },
+    {
+     "filename": "展会资料/白板.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "周会 8/5"
+   ]
+  }
+ },
+ {
+  "id": "archive-c",
+  "template": "archive",
+  "latency_s": 0.13,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "archive",
+   "error": null,
+   "text": "压缩包，共 3 个文件\n\n## 搬家资料/说明.docx\n搬家资料说明\n\n搬家公司预约 11 月 8 日上午\n\n## 搬家资料/清单.csv\n| 物品 | 数量 |\n|---|---|\n| 桌子 | 4 |\n| 椅子 | 16 |\n\n## 搬家资料/白板.jpg",
+   "summary": "压缩包：搬家资料.zip",
+   "fields": [],
+   "counts": {
+    "entries": 3,
+    "attachments": 3,
+    "images_read": 0
+   },
+   "attachments": [
+    {
+     "filename": "搬家资料/说明.docx",
+     "type": "document",
+     "summary": "搬家资料说明"
+    },
+    {
+     "filename": "搬家资料/清单.csv",
+     "type": "spreadsheet",
+     "summary": "物品 | 数量 |"
+    },
+    {
+     "filename": "搬家资料/白板.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 0.0,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "待办"
+   ]
+  }
+ },
+ {
+  "id": "notes-a",
+  "template": "notes",
+  "latency_s": 0.061,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "text",
+   "error": null,
+   "text": "# 读书会十月书单\n\n- 《活着》\n- 周六下午 3 点，湖畔咖啡馆",
+   "summary": "文本：读书会十月书单",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "notes-b",
+  "template": "notes",
+  "latency_s": 0.046,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "text",
+   "error": null,
+   "text": "# 装修待办\n\n- 确认橱柜尺寸\n- 周三约水电师傅",
+   "summary": "文本：装修待办",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "notes-c",
+  "template": "notes",
+  "latency_s": 0.04,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "text",
+   "error": null,
+   "text": "# 旅行准备\n\n- 订 10 月 1 日高铁\n- 带好充电宝和雨伞",
+   "summary": "文本：旅行准备",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "ebook-a",
+  "template": "ebook",
+  "latency_s": 0.091,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "ebook",
+   "error": null,
+   "text": "书名：咖啡简史\n作者：林欣\n\n第一章 咖啡的起源\n\n第二章 从港口到街角",
+   "summary": "电子书：咖啡简史",
+   "fields": [
+    {
+     "key": "title",
+     "label": "书名",
+     "value": "咖啡简史"
+    },
+    {
+     "key": "creator",
+     "label": "作者",
+     "value": "林欣"
+    }
+   ],
+   "counts": {
+    "chapters": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "ebook-b",
+  "template": "ebook",
+  "latency_s": 0.07,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "ebook",
+   "error": null,
+   "text": "书名：园艺入门\n作者：邓一凡\n\n第一章 认识土壤\n\n第二章 浇水的节奏",
+   "summary": "电子书：园艺入门",
+   "fields": [
+    {
+     "key": "title",
+     "label": "书名",
+     "value": "园艺入门"
+    },
+    {
+     "key": "creator",
+     "label": "作者",
+     "value": "邓一凡"
+    }
+   ],
+   "counts": {
+    "chapters": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "ebook-c",
+  "template": "ebook",
+  "latency_s": 0.093,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "ebook",
+   "error": null,
+   "text": "书名：城市散步\n作者：谢雨桐\n\n第一章 清晨的菜市场\n\n第二章 老街与新店",
+   "summary": "电子书：城市散步",
+   "fields": [
+    {
+     "key": "title",
+     "label": "书名",
+     "value": "城市散步"
+    },
+    {
+     "key": "creator",
+     "label": "作者",
+     "value": "谢雨桐"
+    }
+   ],
+   "counts": {
+    "chapters": 2
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "keynote-a",
+  "template": "keynote",
+  "latency_s": 0.096,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "（iWork 文稿，只能读取内嵌的第一页预览图）",
+   "summary": "演示文稿：汇报.key",
+   "fields": [],
+   "counts": {
+    "preview": "image",
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "Q4 预算申请",
+    "30.8"
+   ]
+  }
+ },
+ {
+  "id": "keynote-b",
+  "template": "keynote",
+  "latency_s": 0.103,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "（iWork 文稿，只能读取内嵌的第一页预览图）",
+   "summary": "演示文稿：汇报.key",
+   "fields": [],
+   "counts": {
+    "preview": "image",
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "点单小程序项目周报（第37周）",
+    "10月20日"
+   ]
+  }
+ },
+ {
+  "id": "keynote-c",
+  "template": "keynote",
+  "latency_s": 0.116,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "（iWork 文稿，只能读取内嵌的第一页预览图）",
+   "summary": "演示文稿：汇报.key",
+   "fields": [],
+   "counts": {
+    "preview": "image",
+    "images_read": 0
+   },
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 0.0,
+   "summary_hit": 0.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": [
+    "Q3 经营复盘",
+    "186.4万"
+   ]
+  }
+ },
+ {
+  "id": "locked-a",
+  "template": "locked",
+  "latency_s": 0.096,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": "encrypted",
+   "text": "",
+   "summary": "PDF 文档「工资单.pdf」已加密，需要密码，未读取内容",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [
+    "工资单.pdf：password-protected PDF"
+   ],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "locked-b",
+  "template": "locked",
+  "latency_s": 0.118,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": "encrypted",
+   "text": "",
+   "summary": "PDF 文档「体检报告.pdf」已加密，需要密码，未读取内容",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [
+    "体检报告.pdf：password-protected PDF"
+   ],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "locked-c",
+  "template": "locked",
+  "latency_s": 0.092,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": "encrypted",
+   "text": "",
+   "summary": "PDF 文档「合同扫描.pdf」已加密，需要密码，未读取内容",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [
+    "合同扫描.pdf：password-protected PDF"
+   ],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ }
+]

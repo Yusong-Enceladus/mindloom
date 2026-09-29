@@ -1,0 +1,91 @@
+{
+ "id": "slide-08",
+ "type": "slide",
+ "split": "dev",
+ "image": "images/slide-08.jpg",
+ "lang": "en",
+ "hard": [
+  "photo",
+  "perspective",
+  "glare",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "3b99c809d972a68756e9a4d550a7ea616c17b5c48fff5a2f3a3ae29ced75a5ed",
+ "gt": {
+  "title": "Launch Checklist",
+  "subtitle": "",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Code freeze: Sep 20"
+   },
+   {
+    "level": 0,
+    "text": "QA sign-off by the release owner"
+   },
+   {
+    "level": 0,
+    "text": "Staged rollout: 10% / 50% / 100% over 3 days"
+   },
+   {
+    "level": 1,
+    "text": "Roll back if crash rate exceeds 0.5%"
+   },
+   {
+    "level": 0,
+    "text": "Store review buffer: 5 business days"
+   },
+   {
+    "level": 0,
+    "text": "Post-launch review: Sep 6"
+   }
+  ],
+  "kpis": [],
+  "footer": "Bluecove Design Studio · Internal",
+  "page": "3 / 19"
+ },
+ "text_lines": [
+  "Launch Checklist",
+  "Code freeze: Sep 20",
+  "QA sign-off by the release owner",
+  "Staged rollout: 10% / 50% / 100% over 3 days",
+  "Roll back if crash rate exceeds 0.5%",
+  "Store review buffer: 5 business days",
+  "Post-launch review: Sep 6",
+  "Bluecove Design Studio · Internal",
+  "3 / 19"
+ ],
+ "qa": [
+  {
+   "q": "When is code freeze?",
+   "a": "Sep 20",
+   "match": "exact"
+  },
+  {
+   "q": "What crash rate triggers a rollback?",
+   "a": "0.5%",
+   "match": "number"
+  },
+  {
+   "q": "How long is the store review buffer?",
+   "a": "5 business days",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "Launch Checklist",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "dense": false,
+  "photo": "projected"
+ },
+ "variant": {
+  "content": "en_launch",
+  "theme": "dark",
+  "photo": true
+ }
+}

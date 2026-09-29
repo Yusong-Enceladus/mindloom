@@ -1,0 +1,73 @@
+{
+ "file_id": "webp-01",
+ "path": "corpus/webp/webp-01.webp",
+ "type": "webp",
+ "ext": "webp",
+ "mime": "image/webp",
+ "filename": "标注平台进度截图.webp",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "0D6D013D-ABE5-5A7B-B161-7EC68198D5DF",
+  "ref": "ann_webp",
+  "events": [
+   "ev_annot"
+  ]
+ },
+ "text_layer": "none",
+ "text": "数芽标注平台 · 项目看板\nKitchenQA 视频问答标注\n项目进度总览（截至 2026-10-16 15:00）\n进行中\n批次\t进度\t状态\t截止\n第1批\t5,000/5,000\t已验收\t10-14\n第2批\t1,240/5,000\t标注中\t10-22\n第3批\t0/5,000\t未开始\t10-30\n第4批\t0/5,000\t未开始\t11-06\n合成数据",
+ "key_lines": [
+  "第2批\t1,240/5,000\t标注中\t10-22",
+  "第4批\t0/5,000\t未开始\t11-06"
+ ],
+ "picture_only_lines": [
+  "第2批\t1,240/5,000\t标注中\t10-22",
+  "第4批\t0/5,000\t未开始\t11-06"
+ ],
+ "key_fields": {
+  "第2批进度": "1240/5000",
+  "第2批截止": "10-22",
+  "第4批截止": "11-06"
+ },
+ "numbers": [
+  {
+   "value": 1240,
+   "label": "第2批已完成"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第2批完成了多少条？",
+   "a": 1240,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "第2批截止日期？",
+   "a": "10-22",
+   "match": "contains",
+   "accept": [
+    "10月22日"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "第4批截止日期？",
+   "a": "11-06",
+   "match": "contains",
+   "accept": [
+    "11月6日"
+   ]
+  }
+ ],
+ "structure": {
+  "size": [
+   1280,
+   648
+  ]
+ },
+ "bytes": 25174,
+ "sha256": "bcb6df49fc72fb6aad040cfe0385044652b8e588bf66b406182f945636a7cad9"
+}

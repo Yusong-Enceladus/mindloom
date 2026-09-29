@@ -1,0 +1,138 @@
+{
+ "items_total": 46,
+ "items_scored": 35,
+ "items_first_mention": 7,
+ "items_noise": 4,
+ "mean_pool_size": 6.46,
+ "fused": {
+  "recall@1": 0.7714,
+  "recall@3": 1.0,
+  "recall@5": 1.0,
+  "mrr": 0.8714,
+  "hits@5": 35
+ },
+ "similarity_only": {
+  "recall@1": 0.9714,
+  "recall@3": 1.0,
+  "recall@5": 1.0,
+  "mrr": 0.9857,
+  "hits@5": 35
+ },
+ "random": {
+  "recall@1": 0.2321,
+  "recall@3": 0.5922,
+  "recall@5": 0.8361
+ },
+ "fused_by_kind": {
+  "meeting_offline": {
+   "n": 5,
+   "hit@1": 5,
+   "hit@3": 5,
+   "hit@5": 5
+  },
+  "meeting_online": {
+   "n": 2,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "dictation": {
+   "n": 10,
+   "hit@1": 7,
+   "hit@3": 10,
+   "hit@5": 10
+  },
+  "text": {
+   "n": 14,
+   "hit@1": 10,
+   "hit@3": 14,
+   "hit@5": 14
+  },
+  "document": {
+   "n": 2,
+   "hit@1": 2,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "image": {
+   "n": 2,
+   "hit@1": 2,
+   "hit@3": 2,
+   "hit@5": 2
+  }
+ },
+ "misses@5": [],
+ "label": "qwen3-embedding-4b",
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "embedder": "url",
+ "embed_model": "qwen3-embedding-4b",
+ "embed_url": "http://127.0.0.1:8023/v1",
+ "embed_dim": 2560,
+ "embed_calls": 46,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 97.28,
+  "p95": 110.95,
+  "max": 114.87,
+  "mean": 98.7
+ },
+ "embed_chars": {
+  "p50": 107,
+  "max": 279
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 4,
+  "misses": 0
+ },
+ "screenshot_readings": [
+  {
+   "ref": "d1-04",
+   "text_chars": 142,
+   "summary_chars": 51,
+   "messages": 4
+  },
+  {
+   "ref": "d1-06",
+   "text_chars": 148,
+   "summary_chars": 56,
+   "messages": 4
+  },
+  {
+   "ref": "d3-02",
+   "text_chars": 125,
+   "summary_chars": 45,
+   "messages": 4
+  },
+  {
+   "ref": "d5-04",
+   "text_chars": 146,
+   "summary_chars": 52,
+   "messages": 5
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 6.4,
+ "date": "2026-09-29T01:16:03+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "repo/eval/scenarios/holdout-week-v2/scenario.json",
+  "--embedder",
+  "url",
+  "--embed-url",
+  "http://127.0.0.1:8023/v1",
+  "--vision-model",
+  "qwen3.6-35b-a3b-nvfp4",
+  "--vision-url",
+  "http://127.0.0.1:1/v1",
+  "--reading-cache",
+  "readings/holdout-week-v2",
+  "--label",
+  "qwen3-embedding-4b",
+  "--out",
+  "out/holdout2-q4b"
+ ]
+}

@@ -1,0 +1,108 @@
+{
+  "commands" : [
+    [
+      "swift",
+      "run",
+      "--package-path",
+      "Packages/BestASRCore",
+      "--scratch-path",
+      ".build/SwiftPM",
+      "PortableMigrationProbeCLI"
+    ]
+  ],
+  "conclusion" : "conditional",
+  "criteria" : {
+    "fail" : [
+      "Any failure path modifies source history, accepts unauthenticated data, partially overwrites a destination, or leaves plaintext staging.",
+      "A clean destination identity requires the source Mac Keychain or rewrites stable UUIDs."
+    ],
+    "pass" : [
+      "Whole retained sources are byte-identical and range export is lossless without modifying source assets.",
+      "A portable user secret restores UUIDs, revisions, tombstones, person operations, dictionaries, derived documents, settings, and source bytes without the source Keychain.",
+      "Wrong secret, tampering, truncation, insufficient space, cancellation, and kill injection never partially commit or leave plaintext staging.",
+      "N-1 migration and duplicate import preserve stable identities and idempotency."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "export-imported-original-byte-identical",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "export-native-capture-byte-identical",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "export-lossless-range-without-source-rewrite",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "portable-archive-encrypted-export",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "restore-without-source-keychain",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "duplicate-import-is-idempotent",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "wrong-secret-tamper-and-truncation-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "insufficient-space-preflight-rejects-before-staging",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "cancel-and-kill-recovery-has-no-plaintext-staging",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-MIG-001/matrix.json"
+      ],
+      "scenarioID" : "legacy-n-minus-one-migrates-to-current",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can source audio be exported non-destructively and can a versioned authenticated archive restore under an independent local key identity without plaintext staging?",
+  "runID" : "3DC9765B-F3D7-480D-A67A-7C01DA7CC6F3",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-MIG-001",
+  "unmetCriteria" : [
+    "Production password UX and a memory-hard KDF remain unfrozen; this probe uses explicit PBKDF2 parameters and also supports a high-entropy recovery secret.",
+    "Multi-gigabyte streaming, real second macOS account, disk-full syscall injection, and all release audio containers remain pending."
+  ]
+}

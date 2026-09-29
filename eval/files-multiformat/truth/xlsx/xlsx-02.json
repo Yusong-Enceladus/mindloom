@@ -1,0 +1,95 @@
+{
+ "file_id": "xlsx-02",
+ "path": "corpus/xlsx/xlsx-02.xlsx",
+ "type": "xlsx",
+ "ext": "xlsx",
+ "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "filename": "数芽报价与结算.xlsx",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "1EEB4A86-DD8F-5C8E-BD21-9939F7815F41",
+  "ref": "ann_xlsx",
+  "events": [
+   "ev_annot"
+  ]
+ },
+ "text_layer": "full",
+ "text": "[报价]\nKitchenQA 标注报价（数芽标注）\n计价\n服务项\t数量(条)\t单价(元)\t金额(元)\t备注\n视频问答标注\t20000\t1.8\t36000\t每条≥3个问答对\n加急费\t0\t0.3\t0\t未启用\n合计\t\t\t36000\t含税\n合成数据\n[结算]\n批次\t交付条数\t抽检合格率\t应付(元)\t状态\n第1批\t5000\t0.962\t9000\t已验收\n第2批\t5000\t\t9000\t进行中\n第3批\t5000\t\t9000\t未开始\n第4批\t5000\t\t9000\t\n合计\t20000\t\t36000\t\n合成数据\n[联系人]\n角色\t姓名\t联系方式\n客户经理\t周蔓\tzhouman@example.com\n实验室财务\t顾青\tguqing@example.org\n合成数据",
+ "key_lines": [
+  "视频问答标注\t20000\t1.8\t36000\t每条≥3个问答对",
+  "加急费\t0\t0.3\t0\t未启用",
+  "合计\t\t\t36000\t含税",
+  "第1批\t5000\t0.962\t9000\t已验收",
+  "第2批\t5000\t\t9000\t进行中",
+  "第3批\t5000\t\t9000\t未开始",
+  "第4批\t5000\t\t9000",
+  "合计\t20000\t\t36000",
+  "客户经理\t周蔓\tzhouman@example.com"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "第1批合格率": 0.962,
+  "合计": 36000,
+  "加急单价": 0.3,
+  "客户经理": "周蔓"
+ },
+ "numbers": [
+  {
+   "value": 36000,
+   "label": "合计"
+  },
+  {
+   "value": 0.962,
+   "label": "第1批合格率"
+  },
+  {
+   "value": 9000,
+   "label": "每批"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第1批抽检合格率是多少？",
+   "a": 96.2,
+   "match": "number",
+   "accept": [
+    "96.2%",
+    "0.962"
+   ],
+   "tol": 0.05
+  },
+  {
+   "id": "q2",
+   "q": "合计金额多少元？",
+   "a": 36000,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "加急费单价多少？",
+   "a": 0.3,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "客户经理是谁？",
+   "a": "周蔓",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "报价",
+   "结算",
+   "联系人"
+  ],
+  "formulas": 9,
+  "merged": 3
+ },
+ "notes": "3 个工作表；合并标题、分组表头、纵向合并的状态列；金额和合计是带缓存值的公式；合格率是百分比格式的 0.962。",
+ "bytes": 7610,
+ "sha256": "5614df146cf27b65c98d03f28d15e6be84a37ceff604e756ba7ed9c9269e5a2a"
+}

@@ -1,0 +1,32 @@
+{
+ "id": "contract-a",
+ "template": "contract",
+ "split": "dev",
+ "filename": "租赁合同.odt",
+ "path": "data/contract-a.odt",
+ "sha256": "07168cca2988559283c2c0433d1ee9bcea9a245a8174f7e74ce13406b63b7cd7",
+ "size": 11992,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "parties": null,
+  "amount": "4,500",
+  "start_date": "2026年10月1日"
+ },
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "ZL-2026-451",
+  "月租金：人民币 4,500 元"
+ ],
+ "summary_groups": [
+  [
+   "租赁",
+   "租房"
+  ],
+  [
+   "4,500"
+  ]
+ ],
+ "doc_kind": "contract"
+}

@@ -1,0 +1,98 @@
+{
+ "file_id": "zip-01",
+ "path": "corpus/zip/zip-01.zip",
+ "type": "zip",
+ "ext": "zip",
+ "mime": "application/zip",
+ "filename": "中期交付物_v1.2.zip",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "9F8284E5-EBC8-5AE3-A39B-A735A7859292",
+  "ref": "col_zip",
+  "events": [
+   "ev_collab"
+  ]
+ },
+ "text_layer": "partial",
+ "text": "[member] README.txt\n澄川缺陷检测项目 中期交付物 v1.2\n包含：\n- metrics.csv  各类别 AP\n- 部署说明.md  环境与运行命令\n- 样例结果.zip  样例图片与检测结果\n中期验收：2026年10月20日，苏州工厂。\n合成数据\n[member] metrics.csv\n类别,AP@0.5,样本数\n划痕,0.902,820\n凹坑,0.861,790\n污渍,0.856,790\n平均,0.873,2400\n[member] 部署说明.md\n# 部署说明（v1.2）\n- 系统：Ubuntu 22.04\n- CUDA：12.4\n- 推理：单张 23 ms（RTX 4000 Ada）\n```bash\n./run_infer.sh --model defect_det_v1.2.onnx --input ./images\n```\n> 合成数据\n[member] 样例结果.zip\n[member] sample_0417.png\n[member] sample_0417.json\n{\n  \"image\": \"sample_0417.png\",\n  \"model\": \"v1.2\",\n  \"detections\": [\n    {\n      \"label\": \"划痕\",\n      \"score\": 0.94,\n      \"box\": [\n        112,\n        80,\n        342,\n        128\n      ]\n    },\n    {\n      \"label\": \"凹坑\",\n      \"score\": 0.81,\n      \"box\": [\n        410,\n        230,\n        470,\n        290\n      ]\n    }\n  ],\n  \"note\": \"合成数据\"\n}\n澄川测试集 v3 · 样例 #0417 · 模型 v1.2\n划痕 0.94\n凹坑 0.81\n合成数据",
+ "key_lines": [
+  "划痕,0.902,820",
+  "凹坑,0.861,790",
+  "平均,0.873,2400",
+  "- CUDA：12.4",
+  "- 推理：单张 23 ms（RTX 4000 Ada）",
+  "\"label\": \"划痕\",",
+  "划痕 0.94"
+ ],
+ "picture_only_lines": [
+  "划痕 0.94"
+ ],
+ "key_fields": {
+  "凹坑AP": 0.861,
+  "CUDA": "12.4",
+  "嵌套样例类别": [
+   "划痕",
+   "凹坑"
+  ],
+  "顶层文件数": 4
+ },
+ "numbers": [
+  {
+   "value": 0.861,
+   "label": "凹坑 AP"
+  },
+  {
+   "value": 0.873,
+   "label": "平均 AP"
+  },
+  {
+   "value": 23,
+   "label": "ms"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "凹坑类的 AP 是多少？",
+   "a": 0.861,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "部署要求的 CUDA 版本？",
+   "a": "12.4",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "嵌套压缩包里样例图的最高分检测类别是什么？",
+   "a": "划痕",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "压缩包顶层有几个文件？",
+   "a": 4,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "members": [
+   "README.txt",
+   "metrics.csv",
+   "部署说明.md",
+   "样例结果.zip",
+   "样例结果.zip/sample_0417.png",
+   "样例结果.zip/sample_0417.json"
+  ],
+  "nested_zips": [
+   "样例结果.zip"
+  ]
+ },
+ "notes": "zip 里有嵌套的“样例结果.zip”（含 PNG 与 JSON）。",
+ "bytes": 47101,
+ "sha256": "80a03d528a306e5cc7ed734001fcac5fb130db632ed8d73ab148b63eecd28cc6"
+}

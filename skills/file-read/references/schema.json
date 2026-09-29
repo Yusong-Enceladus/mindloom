@@ -1,0 +1,27 @@
+{
+ "type": "object",
+ "properties": {
+  "summary": {"type": "string", "minLength": 1, "maxLength": 80},
+  "doc_kind": {
+   "type": "string",
+   "enum": ["receipt_invoice", "booking_ticket", "contract", "notice", "report", "minutes", "plan", "resume",
+            "form", "letter", "manual", "dataset", "code", "other"]
+  },
+  "fields": {
+   "type": "array",
+   "maxItems": 12,
+   "items": {
+    "type": "object",
+    "properties": {
+     "key": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,31}$"},
+     "label": {"type": "string", "maxLength": 40},
+     "value": {"type": "string", "minLength": 1, "maxLength": 200}
+    },
+    "required": ["key", "label", "value"],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": ["summary", "doc_kind", "fields"],
+ "additionalProperties": false
+}

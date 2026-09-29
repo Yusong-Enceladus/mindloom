@@ -1,0 +1,374 @@
+{
+ "scenario_id": "holdout-week-v1",
+ "split": "holdout",
+ "n_items": 32,
+ "summary": {
+  "bcubed_precision": 0.8909090909090909,
+  "bcubed_recall": 0.8228358115314637,
+  "bcubed_f1": 0.8555204497180044,
+  "link_precision": 0.9333333333333333,
+  "link_recall": 0.8484848484848485,
+  "link_f1": 0.888888888888889,
+  "hard_decoy_leakage": 0.0,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "noise_unfiled_rate": 1.0,
+  "noise_singleton_rate": 0.0,
+  "noise_in_real_event_rate": 0.0,
+  "false_unfiled": 0,
+  "unfiled_precision": 1.0,
+  "decoy_seed_ok": "2/2",
+  "absorbed_matters": "none",
+  "pred_event_count": 5,
+  "gold_event_count": 5,
+  "question_count": 3,
+  "asks_total": 3,
+  "asks_per_100_items": 9.38,
+  "max_asks_per_day": 1,
+  "ask_useful_rate": 0.3333333333333333,
+  "ask_true_yes_rate": 0.3333333333333333,
+  "asks_suppressed": 0,
+  "status_fact_recall": 0.8125,
+  "plan_as_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.1111111111111111,
+  "home_rank_ran": "2/2",
+  "home_ndcg5": 0.9218117332491436,
+  "home_ndcg5_recency": 0.7294301820053384,
+  "home_top3_precision": 0.8333333333333333,
+  "home_g3_recall3": 1.0,
+  "home_gross_inversions": 0,
+  "home_clutter5": 0,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "person_link_accuracy": 0.18181818181818182,
+  "person_link_accuracy_cross_source": 0.25,
+  "checkpoints_scored": 2,
+  "checkpoints_total": 2
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.8909090909090909,
+    "recall": 0.8228358115314637,
+    "f1": 0.8555204497180044
+   },
+   "link": {
+    "precision": 0.9333333333333333,
+    "recall": 0.8484848484848485,
+    "f1": 0.888888888888889,
+    "tp": 28,
+    "n_pred": 30,
+    "n_gold": 33
+   },
+   "decoy_leakage": {
+    "hard": 0.0,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_studio": {
+      "difficulty": "hard",
+      "decoy_of": "ev_portfolio",
+      "pairs": 24,
+      "leakage": 0.0,
+      "decoy_items": 4
+     },
+     "ev_tablet": {
+      "difficulty": "easy",
+      "decoy_of": "ev_app",
+      "pairs": 30,
+      "leakage": 0.0,
+      "decoy_items": 3
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 2,
+    "total": 2,
+    "per_decoy": {
+     "ev_studio": {
+      "seed": "60f08fc6-02d7-5333-a520-465d91854fed",
+      "ok": true
+     },
+     "ev_tablet": {
+      "seed": "dab12d8f-3047-5f86-a254-77b4c709e280",
+      "ok": true
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [],
+    "rate": 1.0
+   },
+   "noise_abstention": {
+    "noise_items": 2,
+    "abstained": 2,
+    "rate": 1.0,
+    "singleton_rate": 0.0,
+    "in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 5,
+   "pred_event_count_multi_item": 5,
+   "gold_event_count": 5,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "00213bbe-44c1-4240-8bf2-d45025fb933a": "ev_app",
+   "4a387039-e2ab-40da-8b7c-588eb632b7c7": "ev_portfolio",
+   "8fae7050-ea52-4ec5-a924-7f9b376ba085": "ev_studio",
+   "53f63e2b-fef5-463e-887b-8b5ce0b77eb6": "ev_tablet",
+   "f951d840-3348-45ef-9cd9-1d6a6315a43d": "ev_talk"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.18181818181818182,
+   "pairs": 22,
+   "accuracy_cross_source": 0.25,
+   "pairs_cross_source": 16,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 2.25,
+   "name_match": 0.3333333333333333,
+   "mapping": {
+    "b840cbf9-a250-52a6-bef6-d7e60b8cee44": "p_feng",
+    "ad5d9cb3-3b86-5b18-9051-c08cc80f7458": "p_he",
+    "68d3afee-1837-5dbe-8f86-0d46ddab1bc2": "p_owner",
+    "fafdf922-af3b-5dbe-93d1-750ff4f669b3": "p_shi"
+   }
+  },
+  "questions": {
+   "count": 3,
+   "asked_total": 3,
+   "by_kind": {
+    "same_event": 3
+   },
+   "per_100_items": 9.38,
+   "resolvable": 3,
+   "true_yes_rate": 0.3333333333333333,
+   "unresolvable_merged": 0,
+   "asks_total": 3,
+   "asks_per_100_items": 9.38,
+   "max_asks_per_day": 1,
+   "ask_useful_rate": 0.3333333333333333,
+   "asks_suppressed": 0
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-h3",
+   "label": "周三晚",
+   "n_items": 18,
+   "bcubed_f1": 0.8961038961038961,
+   "link_f1": 0.8823529411764706,
+   "pred_event_count": 3,
+   "gold_event_count": 4,
+   "expected": 7,
+   "recalled": 6,
+   "fact_recall": 0.8571428571428571,
+   "plan_as_done": 0,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 3,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.8436234664982872,
+    "ndcg5_recency": 0.7314208228253873,
+    "top3_precision": 0.6666666666666666,
+    "g3_recall3": 1.0,
+    "gross_inversions": 0,
+    "gross_pairs": 1,
+    "clutter5": 0,
+    "order": [
+     [
+      "00213bbe-44c1-4240-8bf2-d45025fb933a",
+      "ev_app",
+      3,
+      0.65
+     ],
+     [
+      "8fae7050-ea52-4ec5-a924-7f9b376ba085",
+      "ev_studio",
+      1,
+      0.55
+     ],
+     [
+      "f951d840-3348-45ef-9cd9-1d6a6315a43d",
+      "ev_talk",
+      2,
+      0.45
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "00213bbe-44c1-4240-8bf2-d45025fb933a",
+     "status_line": "高保真稿已评审通过，总价5万已确认，定于10月12日交付，合同补充协议待法务发出。",
+     "recalled": [
+      "f_app_fee_2",
+      "f_app_due_2"
+     ],
+     "missing": []
+    },
+    "ev_portfolio": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_pf_launch"
+     ]
+    },
+    "ev_talk": {
+     "pred_event": "f951d840-3348-45ef-9cd9-1d6a6315a43d",
+     "status_line": "方若确认9月5日分享《把设计评审开短一点》，时长调整为40分钟。",
+     "recalled": [
+      "f_talk_date",
+      "f_talk_len_2"
+     ],
+     "missing": []
+    },
+    "ev_studio": {
+     "pred_event": "8fae7050-ea52-4ec5-a924-7f9b376ba085",
+     "status_line": "已考察工作室，月租3600元（一人1800元），定于9月1日搬入。",
+     "recalled": [
+      "f_studio_rent",
+      "f_studio_move"
+     ],
+     "missing": []
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 32,
+   "bcubed_f1": 0.8555204497180044,
+   "link_f1": 0.888888888888889,
+   "pred_event_count": 5,
+   "gold_event_count": 5,
+   "expected": 9,
+   "recalled": 7,
+   "fact_recall": 0.7777777777777778,
+   "plan_as_done": 0,
+   "stale_applicable": 6,
+   "stale": 1,
+   "stale_rate": 0.16666666666666666,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 5,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 1.0,
+    "ndcg5_recency": 0.7274395411852893,
+    "top3_precision": 1.0,
+    "g3_recall3": 1.0,
+    "gross_inversions": 0,
+    "gross_pairs": 4,
+    "clutter5": 0,
+    "order": [
+     [
+      "00213bbe-44c1-4240-8bf2-d45025fb933a",
+      "ev_app",
+      3,
+      0.9
+     ],
+     [
+      "8fae7050-ea52-4ec5-a924-7f9b376ba085",
+      "ev_studio",
+      2,
+      0.85
+     ],
+     [
+      "f951d840-3348-45ef-9cd9-1d6a6315a43d",
+      "ev_talk",
+      2,
+      0.6
+     ],
+     [
+      "4a387039-e2ab-40da-8b7c-588eb632b7c7",
+      "ev_portfolio",
+      2,
+      0.5
+     ],
+     [
+      "53f63e2b-fef5-463e-887b-8b5ce0b77eb6",
+      "ev_tablet",
+      0,
+      0.2
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "00213bbe-44c1-4240-8bf2-d45025fb933a",
+     "status_line": "高保真稿已评审通过，总价5万已确认，定于10月12日交付，合同补充协议待法务发出。",
+     "recalled": [
+      "f_app_due_2"
+     ],
+     "missing": [
+      "f_app_stage_2"
+     ],
+     "stale": [
+      "f_app_stage_1"
+     ]
+    },
+    "ev_portfolio": {
+     "pred_event": "4a387039-e2ab-40da-8b7c-588eb632b7c7",
+     "status_line": "案例页组件已生成，待办移动端图片懒加载，计划 8 月 28 日前完成。",
+     "recalled": [
+      "f_pf_launch",
+      "f_pf_stage_2"
+     ],
+     "missing": []
+    },
+    "ev_talk": {
+     "pred_event": "f951d840-3348-45ef-9cd9-1d6a6315a43d",
+     "status_line": "方若确认分享《把设计评审开短一点》（40分钟），海报已发（60+人），定于8月26日发PPT初稿。",
+     "recalled": [
+      "f_talk_len_2"
+     ],
+     "missing": [
+      "f_talk_date"
+     ]
+    },
+    "ev_studio": {
+     "pred_event": "8fae7050-ea52-4ec5-a924-7f9b376ba085",
+     "status_line": "已确认合租并转账7200元，定于9月1日搬入，老贺借车帮忙。",
+     "recalled": [
+      "f_studio_move",
+      "f_studio_deposit"
+     ],
+     "missing": []
+    },
+    "ev_tablet": {
+     "pred_event": "53f63e2b-fef5-463e-887b-8b5ce0b77eb6",
+     "status_line": "数位板已修好，8月23日寄回。",
+     "recalled": [
+      "f_tablet_fixed"
+     ],
+     "missing": []
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "failedStage": "",
+  "derivedDataKind": "repository-local",
+  "stages": [
+    {
+      "name": "bootstrap",
+      "status": "pass"
+    },
+    {
+      "name": "project-regeneration",
+      "status": "pass"
+    },
+    {
+      "name": "static-analysis",
+      "status": "pass"
+    },
+    {
+      "name": "foundation-fixtures",
+      "status": "pass"
+    },
+    {
+      "name": "swift-package-tests",
+      "status": "pass"
+    },
+    {
+      "name": "xcode-build",
+      "status": "pass"
+    },
+    {
+      "name": "unit-tests",
+      "status": "pass"
+    },
+    {
+      "name": "ui-tests",
+      "status": "pass"
+    },
+    {
+      "name": "privacy-scan",
+      "status": "pass"
+    },
+    {
+      "name": "artifact-manifests",
+      "status": "pass"
+    }
+  ]
+}

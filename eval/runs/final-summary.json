@@ -1,0 +1,2475 @@
+{
+ "label_holdout": "final code, holdout-v2 second evaluation (holdout was never used for tuning; first one-shot evaluation was at 3c65a4a)",
+ "code": "13c3ae1 (Spark repository main)",
+ "runs": {
+  "final-h2-skills-qwen-r1": {
+   "summary": {
+    "bcubed_precision": 0.814500683994528,
+    "bcubed_recall": 0.7526688552752103,
+    "bcubed_f1": 0.7823649989122463,
+    "link_precision": 0.813953488372093,
+    "link_recall": 0.5932203389830508,
+    "link_f1": 0.6862745098039216,
+    "hard_decoy_leakage": 0.25,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_q3_rebate",
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 3,
+    "asks_per_100_items": 6.52,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.3333333333333333,
+    "ask_true_yes_rate": 0.3333333333333333,
+    "asks_suppressed": 0,
+    "question_count": 3,
+    "status_fact_recall": 0.1839080459770115,
+    "card_fact_recall": 0.5172413793103449,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 1,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.0,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.9324758038892934,
+    "home_ndcg5_recency": 0.8857846647258821,
+    "home_top3_precision": 1.0,
+    "home_g3_recall3": 0.6944444444444445,
+    "home_gross_inversions": 0,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 13.5,
+    "ui_status_width_p90": 20.0,
+    "ui_status_width_max": 20.0,
+    "ui_fact_date_repeated": 8,
+    "person_link_accuracy": 0.29069767441860467,
+    "pred_event_count": 6,
+    "gold_event_count": 7,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 46,
+      "ok": 46,
+      "ok_first": 45,
+      "retried": 1,
+      "fails": {},
+      "p50": 4.412749767303467,
+      "p95": 5.672326564788818,
+      "prompt_tokens": 264644,
+      "completion_tokens": 8142
+     },
+     "brief": {
+      "calls": 43,
+      "ok": 27,
+      "ok_first": 10,
+      "retried": 33,
+      "fails": {
+       "validator": 16
+      },
+      "p50": 10.981253385543823,
+      "p95": 14.466164112091064,
+      "prompt_tokens": 381056,
+      "completion_tokens": 21420
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 6.217605829238892,
+      "p95": 6.863102197647095,
+      "prompt_tokens": 21928,
+      "completion_tokens": 1680
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.933258295059204,
+      "p95": 8.951934337615967,
+      "prompt_tokens": 9940,
+      "completion_tokens": 1616
+     }
+    },
+    "calls": 99,
+    "failed_calls": 16,
+    "fail_kinds": {
+     "validator": 16
+    },
+    "prompt_tokens": 677568,
+    "completion_tokens": 32858
+   },
+   "assign_actions": {
+    "new": 6,
+    "attach": 37,
+    "none": 3
+   },
+   "wall_s": 729.3,
+   "date": "2026-09-28T15:28:15+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-h2-skills-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "f266fbee7392a072",
+    "home-rank": "5b9631d010fb3265",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-h2-skills-qwen-r1",
+   "brief_rejection_tags": {
+    "unsupported_completion": 11,
+    "relative_date": 4,
+    "ungrounded_date": 3
+   }
+  },
+  "final-h2-skills-qwen-r2": {
+   "summary": {
+    "bcubed_precision": 0.814500683994528,
+    "bcubed_recall": 0.7526688552752103,
+    "bcubed_f1": 0.7823649989122463,
+    "link_precision": 0.813953488372093,
+    "link_recall": 0.5932203389830508,
+    "link_f1": 0.6862745098039216,
+    "hard_decoy_leakage": 0.25,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_q3_rebate",
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 4,
+    "asks_per_100_items": 8.7,
+    "max_asks_per_day": 2,
+    "ask_useful_rate": 0.25,
+    "ask_true_yes_rate": 0.25,
+    "asks_suppressed": 0,
+    "question_count": 4,
+    "status_fact_recall": 0.13793103448275862,
+    "card_fact_recall": 0.5057471264367817,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 1,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.0,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.9144371167534143,
+    "home_ndcg5_recency": 0.8857846647258821,
+    "home_top3_precision": 1.0,
+    "home_g3_recall3": 0.6944444444444445,
+    "home_gross_inversions": 0,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 13.0,
+    "ui_status_width_p90": 18.0,
+    "ui_status_width_max": 18.0,
+    "ui_fact_date_repeated": 12,
+    "person_link_accuracy": 0.29069767441860467,
+    "pred_event_count": 6,
+    "gold_event_count": 7,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 46,
+      "ok": 45,
+      "ok_first": 45,
+      "retried": 1,
+      "fails": {
+       "schema": 1
+      },
+      "p50": 4.640136241912842,
+      "p95": 6.0358500480651855,
+      "prompt_tokens": 265528,
+      "completion_tokens": 8271
+     },
+     "brief": {
+      "calls": 43,
+      "ok": 32,
+      "ok_first": 12,
+      "retried": 31,
+      "fails": {
+       "validator": 11
+      },
+      "p50": 10.677907466888428,
+      "p95": 15.489965438842773,
+      "prompt_tokens": 372494,
+      "completion_tokens": 21154
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 6.032687187194824,
+      "p95": 6.731218338012695,
+      "prompt_tokens": 22012,
+      "completion_tokens": 1721
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 8.141626119613647,
+      "p95": 9.344217777252197,
+      "prompt_tokens": 9940,
+      "completion_tokens": 1587
+     }
+    },
+    "calls": 99,
+    "failed_calls": 12,
+    "fail_kinds": {
+     "schema": 1,
+     "validator": 11
+    },
+    "prompt_tokens": 669974,
+    "completion_tokens": 32733
+   },
+   "assign_actions": {
+    "new": 6,
+    "attach": 37,
+    "none": 3
+   },
+   "wall_s": 728.5,
+   "date": "2026-09-28T15:28:14+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-h2-skills-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "f266fbee7392a072",
+    "home-rank": "5b9631d010fb3265",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-h2-skills-qwen-r2",
+   "brief_rejection_tags": {
+    "unsupported_completion": 8,
+    "relative_date": 4,
+    "ungrounded_date": 1
+   }
+  },
+  "final-h2-noskill-qwen-r1": {
+   "summary": {
+    "bcubed_precision": 0.9637188208616779,
+    "bcubed_recall": 0.4095835277098407,
+    "bcubed_f1": 0.5748528061274741,
+    "link_precision": 0.6904761904761905,
+    "link_recall": 0.4915254237288136,
+    "link_f1": 0.5742574257425742,
+    "hard_decoy_leakage": 0.08333333333333333,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 5,
+    "asks_per_100_items": 10.87,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.8,
+    "ask_true_yes_rate": 0.6666666666666666,
+    "asks_suppressed": 4,
+    "question_count": 6,
+    "status_fact_recall": 0.12643678160919541,
+    "card_fact_recall": 0.40229885057471265,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.15555555555555556,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.8137365276683172,
+    "home_ndcg5_recency": 0.7075183826832466,
+    "home_top3_precision": 0.7777777777777777,
+    "home_g3_recall3": 0.47222222222222227,
+    "home_gross_inversions": 1,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 14.0,
+    "ui_status_width_p90": 20.5,
+    "ui_status_width_max": 22.0,
+    "ui_fact_date_repeated": 1,
+    "person_link_accuracy": 0.27906976744186046,
+    "pred_event_count": 15,
+    "gold_event_count": 7,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 46,
+      "ok": 46,
+      "ok_first": 38,
+      "retried": 8,
+      "fails": {},
+      "p50": 4.988138437271118,
+      "p95": 8.767895936965942,
+      "prompt_tokens": 193007,
+      "completion_tokens": 10696
+     },
+     "brief": {
+      "calls": 42,
+      "ok": 14,
+      "ok_first": 4,
+      "retried": 38,
+      "fails": {
+       "validator": 28
+      },
+      "p50": 12.651277780532837,
+      "p95": 16.934279203414917,
+      "prompt_tokens": 141850,
+      "completion_tokens": 26625
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 8.396571397781372,
+      "p95": 11.194513082504272,
+      "prompt_tokens": 28008,
+      "completion_tokens": 2690
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 3,
+      "retried": 1,
+      "fails": {},
+      "p50": 9.619754314422607,
+      "p95": 15.669524431228638,
+      "prompt_tokens": 8911,
+      "completion_tokens": 2053
+     }
+    },
+    "calls": 98,
+    "failed_calls": 28,
+    "fail_kinds": {
+     "validator": 28
+    },
+    "prompt_tokens": 371776,
+    "completion_tokens": 42064
+   },
+   "assign_actions": {
+    "new": 8,
+    "attach": 27,
+    "ask_suppressed": 4,
+    "none": 4,
+    "ask": 3
+   },
+   "wall_s": 849.2,
+   "date": "2026-09-28T15:30:15+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-h2-noskill-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "1a65045b1cf0040e",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-h2-noskill-qwen-r1",
+   "brief_rejection_tags": {
+    "unsupported_completion": 18,
+    "relative_date": 14,
+    "ungrounded_date": 3,
+    "length": 1
+   }
+  },
+  "final-h2-noskill-qwen-r2": {
+   "summary": {
+    "bcubed_precision": 0.9404761904761905,
+    "bcubed_recall": 0.49537736204621713,
+    "bcubed_f1": 0.6489389025599813,
+    "link_precision": 0.8333333333333334,
+    "link_recall": 0.5932203389830508,
+    "link_f1": 0.6930693069306931,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 4,
+    "asks_per_100_items": 8.7,
+    "max_asks_per_day": 2,
+    "ask_useful_rate": 0.0,
+    "ask_true_yes_rate": 0.25,
+    "asks_suppressed": 2,
+    "question_count": 4,
+    "status_fact_recall": 0.09195402298850575,
+    "card_fact_recall": 0.45977011494252873,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.06666666666666667,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.7974854772047616,
+    "home_ndcg5_recency": 0.8151240496587077,
+    "home_top3_precision": 0.8888888888888888,
+    "home_g3_recall3": 0.47222222222222227,
+    "home_gross_inversions": 2,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 15.0,
+    "ui_status_width_p90": 18.0,
+    "ui_status_width_max": 21.0,
+    "ui_fact_date_repeated": 5,
+    "person_link_accuracy": 0.29069767441860467,
+    "pred_event_count": 9,
+    "gold_event_count": 7,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 48,
+      "ok": 47,
+      "ok_first": 37,
+      "retried": 11,
+      "fails": {
+       "json": 1
+      },
+      "p50": 4.92108941078186,
+      "p95": 10.57735824584961,
+      "prompt_tokens": 225794,
+      "completion_tokens": 12166
+     },
+     "brief": {
+      "calls": 42,
+      "ok": 13,
+      "ok_first": 8,
+      "retried": 34,
+      "fails": {
+       "validator": 29
+      },
+      "p50": 12.980127334594727,
+      "p95": 16.36652445793152,
+      "prompt_tokens": 149302,
+      "completion_tokens": 25946
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 6.348048686981201,
+      "p95": 9.134249448776245,
+      "prompt_tokens": 21965,
+      "completion_tokens": 2077
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.7714996337890625,
+      "p95": 8.24092984199524,
+      "prompt_tokens": 6776,
+      "completion_tokens": 1597
+     }
+    },
+    "calls": 100,
+    "failed_calls": 30,
+    "fail_kinds": {
+     "json": 1,
+     "validator": 29
+    },
+    "prompt_tokens": 403837,
+    "completion_tokens": 41786
+   },
+   "assign_actions": {
+    "fallback": 1,
+    "attach": 33,
+    "new": 6,
+    "none": 6,
+    "ask_suppressed": 2
+   },
+   "wall_s": 848.9,
+   "date": "2026-09-28T15:30:14+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-h2-noskill-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "1a65045b1cf0040e",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-h2-noskill-qwen-r2",
+   "brief_rejection_tags": {
+    "unsupported_completion": 25,
+    "relative_date": 7,
+    "ungrounded_date": 2
+   }
+  },
+  "final-dev-skills-qwen-r1": {
+   "summary": {
+    "bcubed_precision": 0.9471639471639471,
+    "bcubed_recall": 0.6385197672697672,
+    "bcubed_f1": 0.7628039534043144,
+    "link_precision": 0.8846153846153846,
+    "link_recall": 0.7263157894736842,
+    "link_f1": 0.7976878612716762,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 3,
+    "asks_per_100_items": 3.66,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.3333333333333333,
+    "ask_true_yes_rate": 0.6666666666666666,
+    "asks_suppressed": 3,
+    "question_count": 6,
+    "status_fact_recall": 0.38461538461538464,
+    "card_fact_recall": 0.8076923076923077,
+    "plan_as_done": 0,
+    "plan_labelled_done": 1,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.0,
+    "home_rank_ran": "4/4",
+    "home_ndcg5": 0.5969900493379918,
+    "home_ndcg5_recency": 0.6607988427581952,
+    "home_top3_precision": 0.75,
+    "home_g3_recall3": 0.35416666666666663,
+    "home_gross_inversions": 5,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 11.5,
+    "ui_status_width_p90": 15.0,
+    "ui_status_width_max": 18.5,
+    "ui_fact_date_repeated": 4,
+    "person_link_accuracy": 0.3055555555555556,
+    "pred_event_count": 14,
+    "gold_event_count": 9,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 83,
+      "ok": 83,
+      "ok_first": 81,
+      "retried": 2,
+      "fails": {},
+      "p50": 4.58670449256897,
+      "p95": 5.906648874282837,
+      "prompt_tokens": 436983,
+      "completion_tokens": 15338
+     },
+     "brief": {
+      "calls": 78,
+      "ok": 67,
+      "ok_first": 42,
+      "retried": 36,
+      "fails": {
+       "validator": 11
+      },
+      "p50": 7.36998987197876,
+      "p95": 13.633858919143677,
+      "prompt_tokens": 472250,
+      "completion_tokens": 28621
+     },
+     "rank": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 13.455940008163452,
+      "p95": 14.55177354812622,
+      "prompt_tokens": 21784,
+      "completion_tokens": 2086
+     },
+     "screenshot_read": {
+      "calls": 3,
+      "ok": 3,
+      "ok_first": 3,
+      "retried": 0,
+      "fails": {},
+      "p50": 9.938422441482544,
+      "p95": 11.036109924316406,
+      "prompt_tokens": 7914,
+      "completion_tokens": 1339
+     }
+    },
+    "calls": 168,
+    "failed_calls": 11,
+    "fail_kinds": {
+     "validator": 11
+    },
+    "prompt_tokens": 938931,
+    "completion_tokens": 47384
+   },
+   "assign_actions": {
+    "new": 10,
+    "attach": 64,
+    "none": 5,
+    "ask": 1,
+    "ask_suppressed": 3
+   },
+   "wall_s": 1083.0,
+   "date": "2026-09-28T15:48:57+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/dev-week-v1/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-dev-skills-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "f266fbee7392a072",
+    "home-rank": "5b9631d010fb3265",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-dev-skills-qwen-r1",
+   "brief_rejection_tags": {
+    "unsupported_completion": 7,
+    "relative_date": 4,
+    "ungrounded_date": 1
+   }
+  },
+  "final-dev-skills-qwen-r2": {
+   "summary": {
+    "bcubed_precision": 0.9365301365301365,
+    "bcubed_recall": 0.6027087478049017,
+    "bcubed_f1": 0.7334207985701721,
+    "link_precision": 0.8205128205128205,
+    "link_recall": 0.6736842105263158,
+    "link_f1": 0.7398843930635838,
+    "hard_decoy_leakage": 0.11904761904761904,
+    "easy_decoy_leakage": 0.0,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 4,
+    "asks_per_100_items": 4.88,
+    "max_asks_per_day": 2,
+    "ask_useful_rate": 1.0,
+    "ask_true_yes_rate": 0.7142857142857143,
+    "asks_suppressed": 3,
+    "question_count": 7,
+    "status_fact_recall": 0.34615384615384615,
+    "card_fact_recall": 0.6923076923076923,
+    "plan_as_done": 0,
+    "plan_labelled_done": 1,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.05,
+    "home_rank_ran": "4/4",
+    "home_ndcg5": 0.7054660560946622,
+    "home_ndcg5_recency": 0.5322404040971881,
+    "home_top3_precision": 0.75,
+    "home_g3_recall3": 0.625,
+    "home_gross_inversions": 8,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 12.5,
+    "ui_status_width_p90": 17.0,
+    "ui_status_width_max": 18.5,
+    "ui_fact_date_repeated": 4,
+    "person_link_accuracy": 0.3055555555555556,
+    "pred_event_count": 15,
+    "gold_event_count": 9,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 82,
+      "ok": 81,
+      "ok_first": 79,
+      "retried": 3,
+      "fails": {
+       "schema": 1
+      },
+      "p50": 4.499444246292114,
+      "p95": 6.0769898891448975,
+      "prompt_tokens": 438436,
+      "completion_tokens": 15349
+     },
+     "brief": {
+      "calls": 78,
+      "ok": 61,
+      "ok_first": 34,
+      "retried": 44,
+      "fails": {
+       "validator": 17
+      },
+      "p50": 7.707519292831421,
+      "p95": 14.302106618881226,
+      "prompt_tokens": 501688,
+      "completion_tokens": 30964
+     },
+     "rank": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 11.289141416549683,
+      "p95": 11.618048429489136,
+      "prompt_tokens": 23202,
+      "completion_tokens": 2163
+     },
+     "screenshot_read": {
+      "calls": 3,
+      "ok": 3,
+      "ok_first": 3,
+      "retried": 0,
+      "fails": {},
+      "p50": 8.856570959091187,
+      "p95": 10.231563329696655,
+      "prompt_tokens": 7914,
+      "completion_tokens": 1331
+     }
+    },
+    "calls": 167,
+    "failed_calls": 18,
+    "fail_kinds": {
+     "schema": 1,
+     "validator": 17
+    },
+    "prompt_tokens": 971240,
+    "completion_tokens": 49807
+   },
+   "assign_actions": {
+    "new": 10,
+    "ask": 2,
+    "attach": 63,
+    "none": 4,
+    "ask_suppressed": 3
+   },
+   "wall_s": 1118.3,
+   "date": "2026-09-28T15:49:32+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/dev-week-v1/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-dev-skills-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "f266fbee7392a072",
+    "home-rank": "5b9631d010fb3265",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-dev-skills-qwen-r2",
+   "brief_rejection_tags": {
+    "unsupported_completion": 13,
+    "ungrounded_date": 2,
+    "relative_date": 2
+   }
+  },
+  "final-dev-noskill-qwen-r1": {
+   "summary": {
+    "bcubed_precision": 0.9648484848484848,
+    "bcubed_recall": 0.5456577503692888,
+    "bcubed_f1": 0.6970868989676663,
+    "link_precision": 0.8133333333333334,
+    "link_recall": 0.6421052631578947,
+    "link_f1": 0.7176470588235295,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 3,
+    "unfiled_precision": 0.5714285714285714,
+    "asks_total": 4,
+    "asks_per_100_items": 4.88,
+    "max_asks_per_day": 2,
+    "ask_useful_rate": 0.5,
+    "ask_true_yes_rate": 0.8571428571428571,
+    "asks_suppressed": 4,
+    "question_count": 7,
+    "status_fact_recall": 0.3269230769230769,
+    "card_fact_recall": 0.7307692307692307,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.05,
+    "home_rank_ran": "4/4",
+    "home_ndcg5": 0.6328521227558467,
+    "home_ndcg5_recency": 0.5495119830879442,
+    "home_top3_precision": 0.41666666666666663,
+    "home_g3_recall3": 0.4583333333333333,
+    "home_gross_inversions": 5,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 14.0,
+    "ui_status_width_p90": 16.5,
+    "ui_status_width_max": 22.0,
+    "ui_fact_date_repeated": 0,
+    "person_link_accuracy": 0.3055555555555556,
+    "pred_event_count": 15,
+    "gold_event_count": 9,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 83,
+      "ok": 83,
+      "ok_first": 73,
+      "retried": 10,
+      "fails": {},
+      "p50": 4.753637790679932,
+      "p95": 9.460591793060303,
+      "prompt_tokens": 322921,
+      "completion_tokens": 18191
+     },
+     "brief": {
+      "calls": 75,
+      "ok": 37,
+      "ok_first": 20,
+      "retried": 55,
+      "fails": {
+       "validator": 38
+      },
+      "p50": 11.206169128417969,
+      "p95": 15.51832890510559,
+      "prompt_tokens": 226879,
+      "completion_tokens": 40315
+     },
+     "rank": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 10.306035995483398,
+      "p95": 11.978482723236084,
+      "prompt_tokens": 19917,
+      "completion_tokens": 1913
+     },
+     "screenshot_read": {
+      "calls": 3,
+      "ok": 3,
+      "ok_first": 3,
+      "retried": 0,
+      "fails": {},
+      "p50": 9.935290098190308,
+      "p95": 10.95505976676941,
+      "prompt_tokens": 5541,
+      "completion_tokens": 1331
+     }
+    },
+    "calls": 165,
+    "failed_calls": 38,
+    "fail_kinds": {
+     "validator": 38
+    },
+    "prompt_tokens": 575258,
+    "completion_tokens": 61750
+   },
+   "assign_actions": {
+    "new": 10,
+    "attach": 60,
+    "none": 8,
+    "ask_suppressed": 4,
+    "ask": 1
+   },
+   "wall_s": 1255.0,
+   "date": "2026-09-28T15:51:49+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/dev-week-v1/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-dev-noskill-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "1a65045b1cf0040e",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-dev-noskill-qwen-r1",
+   "brief_rejection_tags": {
+    "unsupported_completion": 28,
+    "relative_date": 16,
+    "ungrounded_date": 2
+   }
+  },
+  "final-dev-noskill-qwen-r2": {
+   "summary": {
+    "bcubed_precision": 0.978978978978979,
+    "bcubed_recall": 0.48610246235246235,
+    "bcubed_f1": 0.6496350016426469,
+    "link_precision": 0.7702702702702703,
+    "link_recall": 0.6,
+    "link_f1": 0.6745562130177515,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 4,
+    "unfiled_precision": 0.5,
+    "asks_total": 4,
+    "asks_per_100_items": 4.88,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.75,
+    "ask_true_yes_rate": 0.7142857142857143,
+    "asks_suppressed": 2,
+    "question_count": 7,
+    "status_fact_recall": 0.28846153846153844,
+    "card_fact_recall": 0.5576923076923077,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "ungrounded_card_dates": 0,
+    "stale_fact_rate": 0.1,
+    "home_rank_ran": "4/4",
+    "home_ndcg5": 0.6982385021284934,
+    "home_ndcg5_recency": 0.48656738052734766,
+    "home_top3_precision": 0.6666666666666666,
+    "home_g3_recall3": 0.5208333333333334,
+    "home_gross_inversions": 6,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "ui_status_over_24w": 0,
+    "ui_status_width_p50": 16.0,
+    "ui_status_width_p90": 21.0,
+    "ui_status_width_max": 22.5,
+    "ui_fact_date_repeated": 5,
+    "person_link_accuracy": 0.3055555555555556,
+    "pred_event_count": 17,
+    "gold_event_count": 9,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 83,
+      "ok": 83,
+      "ok_first": 71,
+      "retried": 12,
+      "fails": {},
+      "p50": 4.973161697387695,
+      "p95": 9.364239692687988,
+      "prompt_tokens": 322677,
+      "completion_tokens": 18712
+     },
+     "brief": {
+      "calls": 74,
+      "ok": 42,
+      "ok_first": 18,
+      "retried": 56,
+      "fails": {
+       "validator": 32
+      },
+      "p50": 10.829617261886597,
+      "p95": 15.376286268234253,
+      "prompt_tokens": 218861,
+      "completion_tokens": 37922
+     },
+     "rank": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 9.383704900741577,
+      "p95": 12.514158725738525,
+      "prompt_tokens": 20247,
+      "completion_tokens": 2014
+     },
+     "screenshot_read": {
+      "calls": 3,
+      "ok": 3,
+      "ok_first": 3,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.868654251098633,
+      "p95": 10.886418581008911,
+      "prompt_tokens": 5541,
+      "completion_tokens": 1297
+     }
+    },
+    "calls": 164,
+    "failed_calls": 32,
+    "fail_kinds": {
+     "validator": 32
+    },
+    "prompt_tokens": 567326,
+    "completion_tokens": 59945
+   },
+   "assign_actions": {
+    "new": 12,
+    "attach": 57,
+    "none": 8,
+    "ask": 4,
+    "ask_suppressed": 2
+   },
+   "wall_s": 1239.5,
+   "date": "2026-09-28T15:51:33+08:00",
+   "git": "13c3ae1",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/dev-week-v1/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/final-dev-noskill-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "clock": "replay",
+   "answer_questions": "none",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "1a65045b1cf0040e",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.4.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.3.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ],
+   "path": "eval/runs/final-dev-noskill-qwen-r2",
+   "brief_rejection_tags": {
+    "unsupported_completion": 23,
+    "relative_date": 14,
+    "ungrounded_date": 2,
+    "length": 1
+   }
+  }
+ },
+ "baselines": {
+  "holdout: embedding baseline tau=0.60 (dev-chosen)": {
+   "summary": {
+    "bcubed_precision": 0.8913043478260869,
+    "bcubed_recall": 0.2071129201972164,
+    "bcubed_f1": 0.3361211656749373,
+    "link_precision": 0.43478260869565216,
+    "link_recall": 0.3389830508474576,
+    "link_f1": 0.38095238095238093,
+    "hard_decoy_leakage": 0.027777777777777776,
+    "easy_decoy_leakage": null,
+    "noise_abstention": 0.0,
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 1.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "pred_event_count": 30,
+    "gold_event_count": 7,
+    "question_count": 0,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/6",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.4077188180163506,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "person_link_accuracy": 0.12790697674418605,
+    "person_link_accuracy_cross_source": 0.12790697674418605,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": null,
+   "path": "eval/runs/holdout2-baseline-qemb/t0.60",
+   "git": "8ee22d7",
+   "threshold": 0.6,
+   "date": "2026-09-28T02:10:29+08:00"
+  },
+  "holdout: lexical baseline tau=0.41 (dev-chosen)": {
+   "summary": {
+    "bcubed_precision": 0.3538647342995169,
+    "bcubed_recall": 0.6689815531399039,
+    "bcubed_f1": 0.46288280548146543,
+    "link_precision": 0.34782608695652173,
+    "link_recall": 0.2711864406779661,
+    "link_f1": 0.3047619047619048,
+    "hard_decoy_leakage": 0.625,
+    "easy_decoy_leakage": null,
+    "noise_abstention": 0.0,
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.75,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_peggy_claim,ev_spring_fair",
+    "pred_event_count": 9,
+    "gold_event_count": 7,
+    "question_count": 0,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/6",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.6973251639862577,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "person_link_accuracy": 0.12790697674418605,
+    "person_link_accuracy_cross_source": 0.12790697674418605,
+    "checkpoints_scored": 6,
+    "checkpoints_total": 6
+   },
+   "runs": null,
+   "path": "eval/runs/holdout2-baseline-hash/t0.41",
+   "git": "8ee22d7",
+   "threshold": 0.41,
+   "date": "2026-09-28T02:10:30+08:00"
+  },
+  "dev: embedding baseline tau=0.60 (dev-swept)": {
+   "summary": {
+    "bcubed_precision": 0.5616724738675958,
+    "bcubed_recall": 0.5010927818620126,
+    "bcubed_f1": 0.529656047576398,
+    "link_precision": 0.45121951219512196,
+    "link_recall": 0.3894736842105263,
+    "link_f1": 0.4180790960451977,
+    "hard_decoy_leakage": 0.5,
+    "easy_decoy_leakage": 0.0,
+    "noise_abstention": 0.0,
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 0.75,
+    "noise_in_real_event_rate": 0.25,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_momflat",
+    "pred_event_count": 23,
+    "gold_event_count": 9,
+    "question_count": 0,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/4",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.3414810006287139,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "person_link_accuracy": 0.06944444444444445,
+    "person_link_accuracy_cross_source": 0.06944444444444445,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": null,
+   "path": "eval/runs/dev-quality-baseline-qemb/t0.60",
+   "git": "05acaf7",
+   "threshold": 0.6,
+   "date": "2026-09-28T00:12:55+08:00"
+  },
+  "dev: lexical baseline tau=0.41 (dev-swept)": {
+   "summary": {
+    "bcubed_precision": 0.3794482207117153,
+    "bcubed_recall": 0.7126589756397449,
+    "bcubed_f1": 0.49522094751165735,
+    "link_precision": 0.3048780487804878,
+    "link_recall": 0.2631578947368421,
+    "link_f1": 0.28248587570621464,
+    "hard_decoy_leakage": 0.75,
+    "easy_decoy_leakage": 0.25,
+    "noise_abstention": 0.0,
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.75,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_beans,ev_momflat",
+    "pred_event_count": 14,
+    "gold_event_count": 9,
+    "question_count": 0,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/4",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.25886127221436406,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "person_link_accuracy": 0.06944444444444445,
+    "person_link_accuracy_cross_source": 0.06944444444444445,
+    "checkpoints_scored": 4,
+    "checkpoints_total": 4
+   },
+   "runs": null,
+   "path": "eval/runs/dev-quality-baseline-hash-low/t0.41",
+   "git": "05acaf7",
+   "threshold": 0.41,
+   "date": "2026-09-28T00:14:19+08:00"
+  }
+ },
+ "reference": {
+  "holdout-v2 first eval (skills), 8ee22d7 = 3c65a4a skills": [
+   {
+    "summary": {
+     "bcubed_precision": 0.9069767441860465,
+     "bcubed_recall": 0.56510176064404,
+     "bcubed_f1": 0.69634079068615,
+     "link_precision": 0.9069767441860465,
+     "link_recall": 0.6610169491525424,
+     "link_f1": 0.7647058823529412,
+     "hard_decoy_leakage": 0.0,
+     "easy_decoy_leakage": null,
+     "noise_abstention": 0.75,
+     "noise_unfiled_rate": 0.75,
+     "noise_singleton_rate": 0.25,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 0,
+     "unfiled_precision": 1.0,
+     "decoy_seed_ok": "2/2",
+     "absorbed_matters": "none",
+     "pred_event_count": 8,
+     "gold_event_count": 7,
+     "question_count": 4,
+     "asks_total": 4,
+     "asks_per_100_items": 8.7,
+     "max_asks_per_day": 2,
+     "ask_useful_rate": 0.25,
+     "ask_true_yes_rate": 0.0,
+     "asks_suppressed": 0,
+     "status_fact_recall": 0.42528735632183906,
+     "plan_as_done": 0,
+     "plan_labelled_done": 0,
+     "unsupported_completion": 0,
+     "relative_date_in_card": 0,
+     "stale_fact_rate": 0.06666666666666667,
+     "home_rank_ran": "6/6",
+     "home_ndcg5": 1.0033149540339883,
+     "home_ndcg5_recency": 0.9827020345186369,
+     "home_top3_precision": 1.0,
+     "home_g3_recall3": 0.7777777777777777,
+     "home_gross_inversions": 0,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.632183908045977,
+     "ui_status_over_24w": 29,
+     "ui_status_width_p50": 27.0,
+     "ui_status_width_p90": 35.5,
+     "ui_status_width_max": 40.0,
+     "ui_fact_date_repeated": 58,
+     "ungrounded_card_dates": 18,
+     "person_link_accuracy": 0.18604651162790697,
+     "person_link_accuracy_cross_source": 0.18604651162790697,
+     "checkpoints_scored": 6,
+     "checkpoints_total": 6
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 46,
+       "ok": 46,
+       "ok_first": 45,
+       "retried": 1,
+       "fails": {},
+       "p50": 4.604613304138184,
+       "p95": 6.908780097961426,
+       "prompt_tokens": 274530,
+       "completion_tokens": 8427
+      },
+      "brief": {
+       "calls": 43,
+       "ok": 28,
+       "ok_first": 13,
+       "retried": 30,
+       "fails": {
+        "validator": 15
+       },
+       "p50": 11.225825309753418,
+       "p95": 15.497745513916016,
+       "prompt_tokens": 269978,
+       "completion_tokens": 21490
+      },
+      "rank": {
+       "calls": 6,
+       "ok": 6,
+       "ok_first": 6,
+       "retried": 0,
+       "fails": {},
+       "p50": 7.992475986480713,
+       "p95": 9.87217092514038,
+       "prompt_tokens": 27054,
+       "completion_tokens": 2255
+      },
+      "screenshot_read": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 4,
+       "retried": 0,
+       "fails": {},
+       "p50": 7.732351064682007,
+       "p95": 8.41077184677124,
+       "prompt_tokens": 9940,
+       "completion_tokens": 1594
+      }
+     },
+     "calls": 99,
+     "failed_calls": 15,
+     "fail_kinds": {
+      "validator": 15
+     },
+     "prompt_tokens": 581502,
+     "completion_tokens": 33766
+    },
+    "path": "eval/runs/holdout2-skills-qwen-r1",
+    "git": "8ee22d7",
+    "note": "committed snapshots rescored with the final eval/score.py (13c3ae1); runs from holdout2-summary.json"
+   },
+   {
+    "summary": {
+     "bcubed_precision": 0.8186046511627908,
+     "bcubed_recall": 0.7155728931529879,
+     "bcubed_f1": 0.7636290868046778,
+     "link_precision": 0.7906976744186046,
+     "link_recall": 0.576271186440678,
+     "link_f1": 0.6666666666666667,
+     "hard_decoy_leakage": 0.25,
+     "easy_decoy_leakage": null,
+     "noise_abstention": 0.75,
+     "noise_unfiled_rate": 0.75,
+     "noise_singleton_rate": 0.25,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 0,
+     "unfiled_precision": 1.0,
+     "decoy_seed_ok": "1/2",
+     "absorbed_matters": "ev_q3_rebate",
+     "pred_event_count": 7,
+     "gold_event_count": 7,
+     "question_count": 4,
+     "asks_total": 4,
+     "asks_per_100_items": 8.7,
+     "max_asks_per_day": 1,
+     "ask_useful_rate": 0.5,
+     "ask_true_yes_rate": 0.5,
+     "asks_suppressed": 0,
+     "status_fact_recall": 0.3103448275862069,
+     "plan_as_done": 0,
+     "plan_labelled_done": 0,
+     "unsupported_completion": 1,
+     "relative_date_in_card": 0,
+     "stale_fact_rate": 0.0625,
+     "home_rank_ran": "6/6",
+     "home_ndcg5": 0.9079385530401775,
+     "home_ndcg5_recency": 0.876361114066812,
+     "home_top3_precision": 1.0,
+     "home_g3_recall3": 0.6388888888888888,
+     "home_gross_inversions": 0,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.5172413793103449,
+     "ui_status_over_24w": 28,
+     "ui_status_width_p50": 25.0,
+     "ui_status_width_p90": 32.5,
+     "ui_status_width_max": 41.5,
+     "ui_fact_date_repeated": 60,
+     "ungrounded_card_dates": 22,
+     "person_link_accuracy": 0.18604651162790697,
+     "person_link_accuracy_cross_source": 0.18604651162790697,
+     "checkpoints_scored": 6,
+     "checkpoints_total": 6
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 46,
+       "ok": 46,
+       "ok_first": 45,
+       "retried": 1,
+       "fails": {},
+       "p50": 4.612257480621338,
+       "p95": 6.2573082447052,
+       "prompt_tokens": 266629,
+       "completion_tokens": 8130
+      },
+      "brief": {
+       "calls": 43,
+       "ok": 31,
+       "ok_first": 18,
+       "retried": 25,
+       "fails": {
+        "validator": 12
+       },
+       "p50": 9.190856456756592,
+       "p95": 16.512187242507935,
+       "prompt_tokens": 289884,
+       "completion_tokens": 20623
+      },
+      "rank": {
+       "calls": 6,
+       "ok": 6,
+       "ok_first": 6,
+       "retried": 0,
+       "fails": {},
+       "p50": 6.823131084442139,
+       "p95": 7.240370273590088,
+       "prompt_tokens": 22985,
+       "completion_tokens": 1785
+      },
+      "screenshot_read": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 4,
+       "retried": 0,
+       "fails": {},
+       "p50": 7.917715072631836,
+       "p95": 8.304040670394897,
+       "prompt_tokens": 9940,
+       "completion_tokens": 1612
+      }
+     },
+     "calls": 99,
+     "failed_calls": 12,
+     "fail_kinds": {
+      "validator": 12
+     },
+     "prompt_tokens": 589438,
+     "completion_tokens": 32150
+    },
+    "path": "eval/runs/holdout2-skills-qwen-r2",
+    "git": "8ee22d7",
+    "note": "committed snapshots rescored with the final eval/score.py (13c3ae1); runs from holdout2-summary.json"
+   }
+  ],
+  "holdout-v2 first eval (noskill), 8ee22d7 = 3c65a4a skills": [
+   {
+    "summary": {
+     "bcubed_precision": 0.9125000000000002,
+     "bcubed_recall": 0.5046209541023093,
+     "bcubed_f1": 0.6498621296726854,
+     "link_precision": 0.725,
+     "link_recall": 0.4915254237288136,
+     "link_f1": 0.5858585858585859,
+     "hard_decoy_leakage": 0.4166666666666667,
+     "easy_decoy_leakage": null,
+     "noise_abstention": 1.0,
+     "noise_unfiled_rate": 1.0,
+     "noise_singleton_rate": 0.0,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 2,
+     "unfiled_precision": 0.6666666666666666,
+     "decoy_seed_ok": "1/2",
+     "absorbed_matters": "ev_peggy_quote",
+     "pred_event_count": 10,
+     "gold_event_count": 7,
+     "question_count": 6,
+     "asks_total": 5,
+     "asks_per_100_items": 10.87,
+     "max_asks_per_day": 1,
+     "ask_useful_rate": 0.2,
+     "ask_true_yes_rate": 0.3333333333333333,
+     "asks_suppressed": 3,
+     "status_fact_recall": 0.06896551724137931,
+     "plan_as_done": 0,
+     "plan_labelled_done": 0,
+     "unsupported_completion": 0,
+     "relative_date_in_card": 0,
+     "stale_fact_rate": 0.07692307692307693,
+     "home_rank_ran": "6/6",
+     "home_ndcg5": 0.6350181954654112,
+     "home_ndcg5_recency": 0.6032813919088756,
+     "home_top3_precision": 0.7777777777777777,
+     "home_g3_recall3": 0.27777777777777773,
+     "home_gross_inversions": 0,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.26436781609195403,
+     "ui_status_over_24w": 4,
+     "ui_status_width_p50": 17.5,
+     "ui_status_width_p90": 25.0,
+     "ui_status_width_max": 28.0,
+     "ui_fact_date_repeated": 17,
+     "ungrounded_card_dates": 8,
+     "person_link_accuracy": 0.1744186046511628,
+     "person_link_accuracy_cross_source": 0.1744186046511628,
+     "checkpoints_scored": 6,
+     "checkpoints_total": 6
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 51,
+       "ok": 51,
+       "ok_first": 36,
+       "retried": 15,
+       "fails": {},
+       "p50": 4.863680124282837,
+       "p95": 9.879124402999878,
+       "prompt_tokens": 249305,
+       "completion_tokens": 12274
+      },
+      "brief": {
+       "calls": 40,
+       "ok": 14,
+       "ok_first": 6,
+       "retried": 34,
+       "fails": {
+        "validator": 26
+       },
+       "p50": 13.971451044082642,
+       "p95": 16.863712072372437,
+       "prompt_tokens": 156350,
+       "completion_tokens": 25906
+      },
+      "rank": {
+       "calls": 6,
+       "ok": 6,
+       "ok_first": 6,
+       "retried": 0,
+       "fails": {},
+       "p50": 6.583011865615845,
+       "p95": 7.704900026321411,
+       "prompt_tokens": 20258,
+       "completion_tokens": 1929
+      },
+      "screenshot_read": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 3,
+       "retried": 1,
+       "fails": {},
+       "p50": 8.460848569869995,
+       "p95": 15.523544073104858,
+       "prompt_tokens": 8902,
+       "completion_tokens": 2018
+      }
+     },
+     "calls": 101,
+     "failed_calls": 26,
+     "fail_kinds": {
+      "validator": 26
+     },
+     "prompt_tokens": 434815,
+     "completion_tokens": 42127
+    },
+    "path": "eval/runs/holdout2-noskill-qwen-r1",
+    "git": "8ee22d7",
+    "note": "committed snapshots rescored with the final eval/score.py (13c3ae1); runs from holdout2-summary.json"
+   },
+   {
+    "summary": {
+     "bcubed_precision": 0.9761904761904762,
+     "bcubed_recall": 0.494648337433264,
+     "bcubed_f1": 0.6565926756802736,
+     "link_precision": 0.8095238095238095,
+     "link_recall": 0.576271186440678,
+     "link_f1": 0.6732673267326733,
+     "hard_decoy_leakage": 0.0,
+     "easy_decoy_leakage": null,
+     "noise_abstention": 1.0,
+     "noise_unfiled_rate": 1.0,
+     "noise_singleton_rate": 0.0,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 0,
+     "unfiled_precision": 1.0,
+     "decoy_seed_ok": "2/2",
+     "absorbed_matters": "none",
+     "pred_event_count": 11,
+     "gold_event_count": 7,
+     "question_count": 5,
+     "asks_total": 5,
+     "asks_per_100_items": 10.87,
+     "max_asks_per_day": 1,
+     "ask_useful_rate": 0.2,
+     "ask_true_yes_rate": 0.2,
+     "asks_suppressed": 3,
+     "status_fact_recall": 0.14942528735632185,
+     "plan_as_done": 0,
+     "plan_labelled_done": 0,
+     "unsupported_completion": 0,
+     "relative_date_in_card": 0,
+     "stale_fact_rate": 0.28888888888888886,
+     "home_rank_ran": "6/6",
+     "home_ndcg5": 0.7347149881912259,
+     "home_ndcg5_recency": 0.7301128400202295,
+     "home_top3_precision": 0.7777777777777777,
+     "home_g3_recall3": 0.2222222222222222,
+     "home_gross_inversions": 2,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.4482758620689655,
+     "ui_status_over_24w": 25,
+     "ui_status_width_p50": 24.0,
+     "ui_status_width_p90": 29.0,
+     "ui_status_width_max": 34.0,
+     "ui_fact_date_repeated": 18,
+     "ungrounded_card_dates": 4,
+     "person_link_accuracy": 0.18604651162790697,
+     "person_link_accuracy_cross_source": 0.18604651162790697,
+     "checkpoints_scored": 6,
+     "checkpoints_total": 6
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 48,
+       "ok": 47,
+       "ok_first": 36,
+       "retried": 12,
+       "fails": {
+        "json": 1
+       },
+       "p50": 5.157092094421387,
+       "p95": 11.076026916503906,
+       "prompt_tokens": 235360,
+       "completion_tokens": 12268
+      },
+      "brief": {
+       "calls": 42,
+       "ok": 18,
+       "ok_first": 8,
+       "retried": 34,
+       "fails": {
+        "validator": 24
+       },
+       "p50": 12.07129454612732,
+       "p95": 16.763097763061523,
+       "prompt_tokens": 142316,
+       "completion_tokens": 25865
+      },
+      "rank": {
+       "calls": 6,
+       "ok": 6,
+       "ok_first": 6,
+       "retried": 0,
+       "fails": {},
+       "p50": 7.103802919387817,
+       "p95": 10.602418899536133,
+       "prompt_tokens": 25088,
+       "completion_tokens": 2383
+      },
+      "screenshot_read": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 4,
+       "retried": 0,
+       "fails": {},
+       "p50": 8.43419885635376,
+       "p95": 8.612317085266113,
+       "prompt_tokens": 6776,
+       "completion_tokens": 1618
+      }
+     },
+     "calls": 100,
+     "failed_calls": 25,
+     "fail_kinds": {
+      "json": 1,
+      "validator": 24
+     },
+     "prompt_tokens": 409540,
+     "completion_tokens": 42134
+    },
+    "path": "eval/runs/holdout2-noskill-qwen-r2",
+    "git": "8ee22d7",
+    "note": "committed snapshots rescored with the final eval/score.py (13c3ae1); runs from holdout2-summary.json"
+   }
+  ],
+  "dev same code earlier runs (dev-polish2, b55ff41)": [
+   {
+    "summary": {
+     "bcubed_precision": 0.9681429681429682,
+     "bcubed_recall": 0.6497641567833876,
+     "bcubed_f1": 0.7776275778126829,
+     "link_precision": 0.8846153846153846,
+     "link_recall": 0.7263157894736842,
+     "link_f1": 0.7976878612716762,
+     "hard_decoy_leakage": 0.0,
+     "easy_decoy_leakage": 0.0,
+     "noise_abstention": 1.0,
+     "noise_unfiled_rate": 1.0,
+     "noise_singleton_rate": 0.0,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 0,
+     "unfiled_precision": 1.0,
+     "decoy_seed_ok": "2/2",
+     "absorbed_matters": "none",
+     "pred_event_count": 14,
+     "gold_event_count": 9,
+     "question_count": 6,
+     "asks_total": 3,
+     "asks_per_100_items": 3.66,
+     "max_asks_per_day": 2,
+     "ask_useful_rate": 0.6666666666666666,
+     "ask_true_yes_rate": 0.6666666666666666,
+     "asks_suppressed": 1,
+     "status_fact_recall": 0.36538461538461536,
+     "plan_as_done": 0,
+     "plan_labelled_done": 1,
+     "unsupported_completion": 0,
+     "relative_date_in_card": 1,
+     "stale_fact_rate": 0.0,
+     "home_rank_ran": "4/4",
+     "home_ndcg5": 0.6881490048301445,
+     "home_ndcg5_recency": 0.6323176686566511,
+     "home_top3_precision": 0.75,
+     "home_g3_recall3": 0.29166666666666663,
+     "home_gross_inversions": 5,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.7115384615384616,
+     "ui_status_over_24w": 0,
+     "ui_status_width_p50": 11.5,
+     "ui_status_width_p90": 13.5,
+     "ui_status_width_max": 18.5,
+     "ui_fact_date_repeated": 5,
+     "ungrounded_card_dates": 0,
+     "person_link_accuracy": 0.3055555555555556,
+     "person_link_accuracy_cross_source": 0.3055555555555556,
+     "checkpoints_scored": 4,
+     "checkpoints_total": 4
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 83,
+       "ok": 83,
+       "ok_first": 82,
+       "p50": 3.454,
+       "prompt_tokens": 427798,
+       "completion_tokens": 15310,
+       "failed": 0
+      },
+      "brief": {
+       "calls": 78,
+       "ok": 70,
+       "ok_first": 41,
+       "p50": 4.589,
+       "prompt_tokens": 468781,
+       "completion_tokens": 27987,
+       "failed": 8
+      },
+      "rank": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 4,
+       "p50": 8.766,
+       "prompt_tokens": 21960,
+       "completion_tokens": 2068,
+       "failed": 0
+      },
+      "screenshot_read": {
+       "calls": 3,
+       "ok": 3,
+       "ok_first": 3,
+       "p50": 6.819,
+       "prompt_tokens": 7914,
+       "completion_tokens": 1317,
+       "failed": 0
+      }
+     },
+     "calls": 168,
+     "failed_calls": 8,
+     "prompt_tokens": 926453,
+     "completion_tokens": 46682,
+     "fail_kinds": null
+    },
+    "path": "eval/runs/dev-polish2-qwen-r1",
+    "note": "same organizer/skill code (b55ff41; 13c3ae1 only adds run records), committed earlier"
+   },
+   {
+    "summary": {
+     "bcubed_precision": 0.9594017094017093,
+     "bcubed_recall": 0.6034602897102896,
+     "bcubed_f1": 0.7408982160076345,
+     "link_precision": 0.8333333333333334,
+     "link_recall": 0.6842105263157895,
+     "link_f1": 0.7514450867052023,
+     "hard_decoy_leakage": 0.07142857142857142,
+     "easy_decoy_leakage": 0.0,
+     "noise_abstention": 1.0,
+     "noise_unfiled_rate": 1.0,
+     "noise_singleton_rate": 0.0,
+     "noise_in_real_event_rate": 0.0,
+     "false_unfiled": 0,
+     "unfiled_precision": 1.0,
+     "decoy_seed_ok": "1/2",
+     "absorbed_matters": "none",
+     "pred_event_count": 17,
+     "gold_event_count": 9,
+     "question_count": 6,
+     "asks_total": 3,
+     "asks_per_100_items": 3.66,
+     "max_asks_per_day": 1,
+     "ask_useful_rate": 0.3333333333333333,
+     "ask_true_yes_rate": 0.5,
+     "asks_suppressed": 4,
+     "status_fact_recall": 0.40384615384615385,
+     "plan_as_done": 0,
+     "plan_labelled_done": 0,
+     "unsupported_completion": 0,
+     "relative_date_in_card": 0,
+     "stale_fact_rate": 0.05,
+     "home_rank_ran": "4/4",
+     "home_ndcg5": 0.6650197419124018,
+     "home_ndcg5_recency": 0.5925458502134711,
+     "home_top3_precision": 0.5833333333333333,
+     "home_g3_recall3": 0.14583333333333331,
+     "home_gross_inversions": 6,
+     "home_clutter5": 0,
+     "ui_titles_over_20": 0,
+     "ui_status_over_54": 0,
+     "card_fact_recall": 0.7692307692307693,
+     "ui_status_over_24w": 0,
+     "ui_status_width_p50": 12.5,
+     "ui_status_width_p90": 16.5,
+     "ui_status_width_max": 17.5,
+     "ui_fact_date_repeated": 4,
+     "ungrounded_card_dates": 0,
+     "person_link_accuracy": 0.3055555555555556,
+     "person_link_accuracy_cross_source": 0.3055555555555556,
+     "checkpoints_scored": 4,
+     "checkpoints_total": 4
+    },
+    "runs": {
+     "per_job": {
+      "assign": {
+       "calls": 82,
+       "ok": 82,
+       "ok_first": 81,
+       "p50": 3.46,
+       "prompt_tokens": 428215,
+       "completion_tokens": 15158,
+       "failed": 0
+      },
+      "brief": {
+       "calls": 78,
+       "ok": 65,
+       "ok_first": 38,
+       "p50": 5.003,
+       "prompt_tokens": 488044,
+       "completion_tokens": 29910,
+       "failed": 13
+      },
+      "rank": {
+       "calls": 4,
+       "ok": 4,
+       "ok_first": 4,
+       "p50": 8.722,
+       "prompt_tokens": 24407,
+       "completion_tokens": 2481,
+       "failed": 0
+      },
+      "screenshot_read": {
+       "calls": 3,
+       "ok": 3,
+       "ok_first": 3,
+       "p50": 6.454,
+       "prompt_tokens": 7914,
+       "completion_tokens": 1315,
+       "failed": 0
+      }
+     },
+     "calls": 167,
+     "failed_calls": 13,
+     "prompt_tokens": 948580,
+     "completion_tokens": 48864,
+     "fail_kinds": null
+    },
+    "path": "eval/runs/dev-polish2-qwen-r2",
+    "note": "same organizer/skill code (b55ff41; 13c3ae1 only adds run records), committed earlier"
+   }
+  ]
+ },
+ "means": {
+  "holdout_final_skills": {
+   "bcubed_f1": 0.7823649989122463,
+   "bcubed_precision": 0.814500683994528,
+   "bcubed_recall": 0.7526688552752103,
+   "link_f1": 0.6862745098039216,
+   "hard_decoy_leakage": 0.25,
+   "noise_unfiled_rate": 0.75,
+   "asks_per_100_items": 7.609999999999999,
+   "ask_useful_rate": 0.29166666666666663,
+   "status_fact_recall": 0.16091954022988506,
+   "card_fact_recall": 0.5114942528735633,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "ungrounded_card_dates": 0,
+   "home_ndcg5": 0.9234564603213539,
+   "home_ndcg5_recency": 0.8857846647258821,
+   "ui_status_width_p50": 13.25,
+   "ui_status_width_p90": 19.0,
+   "ui_status_width_max": 19.0,
+   "pred_event_count": 6
+  },
+  "holdout_final_noskill": {
+   "bcubed_f1": 0.6118958543437277,
+   "bcubed_precision": 0.9520975056689343,
+   "bcubed_recall": 0.4524804448780289,
+   "link_f1": 0.6336633663366337,
+   "hard_decoy_leakage": 0.041666666666666664,
+   "noise_unfiled_rate": 1.0,
+   "asks_per_100_items": 9.785,
+   "ask_useful_rate": 0.4,
+   "status_fact_recall": 0.10919540229885058,
+   "card_fact_recall": 0.43103448275862066,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "ungrounded_card_dates": 0,
+   "home_ndcg5": 0.8056110024365394,
+   "home_ndcg5_recency": 0.7613212161709771,
+   "ui_status_width_p50": 14.5,
+   "ui_status_width_p90": 19.25,
+   "ui_status_width_max": 21.5,
+   "pred_event_count": 12
+  },
+  "holdout_first_skills": {
+   "bcubed_f1": 0.7299849387454138,
+   "bcubed_precision": 0.8627906976744186,
+   "bcubed_recall": 0.640337326898514,
+   "link_f1": 0.715686274509804,
+   "hard_decoy_leakage": 0.125,
+   "noise_unfiled_rate": 0.75,
+   "asks_per_100_items": 8.7,
+   "ask_useful_rate": 0.375,
+   "status_fact_recall": 0.367816091954023,
+   "card_fact_recall": 0.5747126436781609,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "ungrounded_card_dates": 20,
+   "home_ndcg5": 0.9556267535370828,
+   "home_ndcg5_recency": 0.9295315742927245,
+   "ui_status_width_p50": 26.0,
+   "ui_status_width_p90": 34.0,
+   "ui_status_width_max": 40.75,
+   "pred_event_count": 7.5
+  },
+  "holdout_first_noskill": {
+   "bcubed_f1": 0.6532274026764795,
+   "bcubed_precision": 0.9443452380952382,
+   "bcubed_recall": 0.49963464576778666,
+   "link_f1": 0.6295629562956295,
+   "hard_decoy_leakage": 0.20833333333333334,
+   "noise_unfiled_rate": 1.0,
+   "asks_per_100_items": 10.87,
+   "ask_useful_rate": 0.2,
+   "status_fact_recall": 0.10919540229885058,
+   "card_fact_recall": 0.3563218390804598,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "ungrounded_card_dates": 6,
+   "home_ndcg5": 0.6848665918283185,
+   "home_ndcg5_recency": 0.6666971159645525,
+   "ui_status_width_p50": 20.75,
+   "ui_status_width_p90": 27.0,
+   "ui_status_width_max": 31.0,
+   "pred_event_count": 10.5
+  },
+  "dev_final_skills": {
+   "bcubed_f1": 0.7481123759872432,
+   "bcubed_precision": 0.9418470418470418,
+   "bcubed_recall": 0.6206142575373345,
+   "link_f1": 0.76878612716763,
+   "hard_decoy_leakage": 0.05952380952380952,
+   "noise_unfiled_rate": 1.0,
+   "asks_per_100_items": 4.27,
+   "ask_useful_rate": 0.6666666666666666,
+   "status_fact_recall": 0.3653846153846154,
+   "card_fact_recall": 0.75,
+   "plan_as_done": 0,
+   "plan_labelled_done": 1,
+   "ungrounded_card_dates": 0,
+   "home_ndcg5": 0.651228052716327,
+   "home_ndcg5_recency": 0.5965196234276917,
+   "ui_status_width_p50": 12.0,
+   "ui_status_width_p90": 16.0,
+   "ui_status_width_max": 18.5,
+   "pred_event_count": 14.5
+  },
+  "dev_final_noskill": {
+   "bcubed_f1": 0.6733609503051565,
+   "bcubed_precision": 0.9719137319137319,
+   "bcubed_recall": 0.5158801063608756,
+   "link_f1": 0.6961016359206404,
+   "hard_decoy_leakage": 0.0,
+   "noise_unfiled_rate": 1.0,
+   "asks_per_100_items": 4.88,
+   "ask_useful_rate": 0.625,
+   "status_fact_recall": 0.3076923076923077,
+   "card_fact_recall": 0.6442307692307692,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "ungrounded_card_dates": 0,
+   "home_ndcg5": 0.66554531244217,
+   "home_ndcg5_recency": 0.5180396818076459,
+   "ui_status_width_p50": 15.0,
+   "ui_status_width_p90": 18.75,
+   "ui_status_width_max": 22.25,
+   "pred_event_count": 16
+  },
+  "dev_polish2_skills": {
+   "bcubed_f1": 0.7592628969101587,
+   "bcubed_precision": 0.9637723387723387,
+   "bcubed_recall": 0.6266122232468386,
+   "link_f1": 0.7745664739884393,
+   "hard_decoy_leakage": 0.03571428571428571,
+   "noise_unfiled_rate": 1.0,
+   "asks_per_100_items": 3.66,
+   "ask_useful_rate": 0.5,
+   "status_fact_recall": 0.3846153846153846,
+   "card_fact_recall": 0.7403846153846154,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0.5,
+   "ungrounded_card_dates": 0,
+   "home_ndcg5": 0.6765843733712731,
+   "home_ndcg5_recency": 0.612431759435061,
+   "ui_status_width_p50": 12.0,
+   "ui_status_width_p90": 15.0,
+   "ui_status_width_max": 18.0,
+   "pred_event_count": 15.5
+  }
+ },
+ "note": "Final evaluation of frozen code (synthetic data only). No organizer, skill, prompt, scorer or scenario change was made in this workflow. summary = eval/score.py summary of each run; runs = per-call aggregates from runs.jsonl (runs.jsonl, snapshots and databases stay on the Spark ~/hack/claude-final/out and are not committed): final failed calls by kind (json / schema / validator; 'schema' also covers the event-assign decision-consistency check), per-call latency p50/p95 in seconds, server-reported token totals.",
+ "frozen_check": {
+  "scenario": "eval/scenarios/holdout-week-v2",
+  "file": "FROZEN.sha256",
+  "result": "scenario.json and 4 screenshots OK on the Mac worktree and again on the Spark immediately before launch; no commit touched the scenario after 8ee22d7"
+ },
+ "code_check": "sha256 over every tracked file except eval/runs is identical on the Mac worktree (13c3ae1) and the rsynced tree on the Spark ~/hack/claude-final/repo (EVAL_GIT_REV=13c3ae1)",
+ "driver": "eval/run_eval.py --condition skills | without-skills --llm-url http://127.0.0.1:8000/v1 --embed-url http://127.0.0.1:8013/v1 --keep-db (replay clock, no question answering), same driver as the BENCHMARK rows",
+ "model": "qwen3.6-35b-a3b-nvfp4 (vLLM on the Spark :8000, shared with other load, thinking off, temperature 0); embeddings qwen3-embedding-0.6b :8013 (read-only clients)",
+ "schedule": {
+  "holdout": "4 runs concurrently, 2026-09-28 about 15:16-15:30 CST (same concurrency as the first holdout-v2 evaluation)",
+  "dev": "4 runs concurrently, about 15:31-15:52 CST"
+ },
+ "prompt_hashes": {
+  "skills": {
+   "event-assign": "39382f7aa536988f",
+   "event-brief": "f266fbee7392a072",
+   "home-rank": "5b9631d010fb3265"
+  },
+  "without_skill_text": {
+   "event-assign": "eb4c1634018ce0f5",
+   "event-brief": "1a65045b1cf0040e",
+   "home-rank": "22d28d3e84a08265"
+  }
+ },
+ "baselines_note": "Baselines were not rerun: rows are the committed score.json of holdout2-baseline-{qemb/t0.60,hash/t0.41} (8ee22d7) and dev-quality-baseline-qemb/t0.60, dev-quality-baseline-hash-low/t0.41 (05acaf7). Baselines make no model calls and produce no cards, so card metrics are n/a.",
+ "reference_note": "First holdout-v2 evaluation rows (8ee22d7; skill files identical to 3c65a4a) are the committed snapshots rescored with the final eval/score.py so that card fact recall, ungrounded card dates and status width exist for them; all previously reported metrics are unchanged except unsupported_completion (skills r2 0 -> 1, scorer change).",
+ "caveats": [
+  "n = 2 per condition on one holdout scenario; temperature 0 on a shared vLLM with 4 concurrent runs is still nondeterministic.",
+  "Status fact recall is the frozen metric (home status line only). event-brief 1.3.0+ narrows the status line to one Home-card line (width <= 24), so this metric is expected to fall; card fact recall (status line + facts) is the comparable measure of retained facts.",
+  "home NDCG@5 can exceed 1.0 (known scorer issue: a card takes the highest grade among gold events holding >= 1/3 of its items); holdout cp1 reached 1.089 / 1.073.",
+  "Holdout independence: the holdout was not used as a tuning target, but between 3c65a4a and 13c3ae1 the first-eval holdout-v2 results (scores and snapshots) were committed and visible to later branches; spark/organizer/persons.py (added in dcfee67) uses 'Peggy Chen' as a comment example while the holdout has a 'Peggy Mok'. No other holdout-v2 wording (company, order numbers, products, other names) appears in skills, prompts or organizer code."
+ ],
+ "table_md": "### holdout-week-v2 — final code, holdout-v2 second evaluation (holdout was never used for tuning; first one-shot evaluation was at 3c65a4a)\n\n| condition | n | B³ F1 (r1 / r2) | B³ P/R | Link F1 | hard-decoy leakage ↓ | noise unfiled | asks/100 items (useful rate) | status fact recall (frozen) | card fact recall | plan-as-done guard/gold ↓ | ungrounded card dates ↓ | home NDCG@5 (recency-only) | status width p50–p90–max | final failed calls / calls (kinds) | latency p50 assign / brief (s) | tokens in / out per run |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| **skills** · final 13c3ae1 | 2 | 0.782 / 0.782 (mean 0.782) | 0.81/0.75 ; 0.81/0.75 | 0.686 / 0.686 (mean 0.686) | 0.250 / 0.250 (mean 0.250) | 0.75 / 0.75 | 6.5 (0.33) / 8.7 (0.25) | 0.184 / 0.138 (mean 0.161) | 0.517 / 0.506 (mean 0.511) | 0/0 / 0/0 | 0 / 0 | 0.932 (0.886) / 0.914 (0.886) | 13.5–20.0–20.0 / 13.0–18.0–18.0 | 16/99 (validator 16) ; 12/99 (schema 1, validator 11) | 4.4 / 11.0 ; 4.6 / 10.7 | 678k / 32.9k ; 670k / 32.7k |\n| **without skill text** · final 13c3ae1 | 2 | 0.575 / 0.649 (mean 0.612) | 0.96/0.41 ; 0.94/0.50 | 0.574 / 0.693 (mean 0.634) | 0.083 / 0.000 (mean 0.042) | 1.00 / 1.00 | 10.9 (0.80) / 8.7 (0.00) | 0.126 / 0.092 (mean 0.109) | 0.402 / 0.460 (mean 0.431) | 0/0 / 0/0 | 0 / 0 | 0.814 (0.708) / 0.797 (0.815) | 14.0–20.5–22.0 / 15.0–18.0–21.0 | 28/98 (validator 28) ; 30/100 (json 1, validator 29) | 5.0 / 12.7 ; 4.9 / 13.0 | 372k / 42.1k ; 404k / 41.8k |\n| ref: skills · first eval 8ee22d7 (rescored) | 2 | 0.696 / 0.764 (mean 0.730) | 0.91/0.57 ; 0.82/0.72 | 0.765 / 0.667 (mean 0.716) | 0.000 / 0.250 (mean 0.125) | 0.75 / 0.75 | 8.7 (0.25) / 8.7 (0.50) | 0.425 / 0.310 (mean 0.368) | 0.632 / 0.517 (mean 0.575) | 0/0 / 0/0 | 18 / 22 | 1.003 (0.983) / 0.908 (0.876) | 27.0–35.5–40.0 / 25.0–32.5–41.5 | 15/99 (validator 15) ; 12/99 (validator 12) | 4.6 / 11.2 ; 4.6 / 9.2 | 582k / 33.8k ; 589k / 32.1k |\n| ref: without skill text · first eval (rescored) | 2 | 0.650 / 0.657 (mean 0.653) | 0.91/0.50 ; 0.98/0.49 | 0.586 / 0.673 (mean 0.630) | 0.417 / 0.000 (mean 0.208) | 1.00 / 1.00 | 10.9 (0.20) / 10.9 (0.20) | 0.069 / 0.149 (mean 0.109) | 0.264 / 0.448 (mean 0.356) | 0/0 / 0/0 | 8 / 4 | 0.635 (0.603) / 0.735 (0.730) | 17.5–25.0–28.0 / 24.0–29.0–34.0 | 26/101 (validator 26) ; 25/100 (json 1, validator 24) | 4.9 / 14.0 ; 5.2 / 12.1 | 435k / 42.1k ; 410k / 42.1k |\n| embedding baseline tau=0.60 (dev-chosen) (committed, 8ee22d7) | 1 | 0.336 | 0.89/0.21 | 0.381 | 0.028 | 0.00 | 0.0 (no asks) | n/a (no status line) | n/a (no cards) | n/a | n/a | n/a, no ranking (0.408) | n/a | 0 (no model calls) | n/a | 0 / 0 |\n| lexical baseline tau=0.41 (dev-chosen) (committed, 8ee22d7) | 1 | 0.463 | 0.35/0.67 | 0.305 | 0.625 | 0.00 | 0.0 (no asks) | n/a (no status line) | n/a (no cards) | n/a | n/a | n/a, no ranking (0.697) | n/a | 0 (no model calls) | n/a | 0 / 0 |\n\n### dev-week-v1 — final code 13c3ae1\n\n| condition | n | B³ F1 (r1 / r2) | B³ P/R | Link F1 | hard-decoy leakage ↓ | noise unfiled | asks/100 items (useful rate) | status fact recall (frozen) | card fact recall | plan-as-done guard/gold ↓ | ungrounded card dates ↓ | home NDCG@5 (recency-only) | status width p50–p90–max | final failed calls / calls (kinds) | latency p50 assign / brief (s) | tokens in / out per run |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| **skills** · final 13c3ae1 | 2 | 0.763 / 0.733 (mean 0.748) | 0.95/0.64 ; 0.94/0.60 | 0.798 / 0.740 (mean 0.769) | 0.000 / 0.119 (mean 0.060) | 1.00 / 1.00 | 3.7 (0.33) / 4.9 (1.00) | 0.385 / 0.346 (mean 0.365) | 0.808 / 0.692 (mean 0.750) | 0/1 / 0/1 | 0 / 0 | 0.597 (0.661) / 0.705 (0.532) | 11.5–15.0–18.5 / 12.5–17.0–18.5 | 11/168 (validator 11) ; 18/167 (schema 1, validator 17) | 4.6 / 7.4 ; 4.5 / 7.7 | 939k / 47.4k ; 971k / 49.8k |\n| **without skill text** · final 13c3ae1 | 2 | 0.697 / 0.650 (mean 0.673) | 0.96/0.55 ; 0.98/0.49 | 0.718 / 0.675 (mean 0.696) | 0.000 / 0.000 (mean 0.000) | 1.00 / 1.00 | 4.9 (0.50) / 4.9 (0.75) | 0.327 / 0.288 (mean 0.308) | 0.731 / 0.558 (mean 0.644) | 0/0 / 0/0 | 0 / 0 | 0.633 (0.550) / 0.698 (0.487) | 14.0–16.5–22.0 / 16.0–21.0–22.5 | 38/165 (validator 38) ; 32/164 (validator 32) | 4.8 / 11.2 ; 5.0 / 10.8 | 575k / 61.8k ; 567k / 59.9k |\n| ref: skills · same code, earlier runs (dev-polish2) | 2 | 0.778 / 0.741 (mean 0.759) | 0.97/0.65 ; 0.96/0.60 | 0.798 / 0.751 (mean 0.775) | 0.000 / 0.071 (mean 0.036) | 1.00 / 1.00 | 3.7 (0.67) / 3.7 (0.33) | 0.365 / 0.404 (mean 0.385) | 0.712 / 0.769 (mean 0.740) | 0/1 / 0/0 | 0 / 0 | 0.688 (0.632) / 0.665 (0.593) | 11.5–13.5–18.5 / 12.5–16.5–17.5 | 8/168 ; 13/167 | 3.5 / 4.6 ; 3.5 / 5.0 | 926k / 46.7k ; 949k / 48.9k |\n| embedding baseline tau=0.60 (dev-swept) (committed, 05acaf7) | 1 | 0.530 | 0.56/0.50 | 0.418 | 0.500 | 0.00 | 0.0 (no asks) | n/a (no status line) | n/a (no cards) | n/a | n/a | n/a, no ranking (0.341) | n/a | 0 (no model calls) | n/a | 0 / 0 |\n| lexical baseline tau=0.41 (dev-swept) (committed, 05acaf7) | 1 | 0.495 | 0.38/0.71 | 0.282 | 0.750 | 0.00 | 0.0 (no asks) | n/a (no status line) | n/a (no cards) | n/a | n/a | n/a, no ranking (0.259) | n/a | 0 (no model calls) | n/a | 0 / 0 |\n"
+}

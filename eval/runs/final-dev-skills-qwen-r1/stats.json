@@ -1,0 +1,84 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 81,
+   "retried": 2,
+   "latency_median_s": 4.587,
+   "latency_p95_s": 5.907,
+   "latency_total_s": 385.1,
+   "prompt_tokens_mean": 5264.9,
+   "completion_tokens_mean": 184.8,
+   "prompt_tokens_total": 436983,
+   "completion_tokens_total": 15338,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 67,
+   "ok_first_attempt": 42,
+   "retried": 36,
+   "latency_median_s": 7.37,
+   "latency_p95_s": 13.634,
+   "latency_total_s": 616.8,
+   "prompt_tokens_mean": 6054.5,
+   "completion_tokens_mean": 366.9,
+   "prompt_tokens_total": 472250,
+   "completion_tokens_total": 28621,
+   "errors_sample": [
+    "[ungrounded_date] status_facts[2]「定金待付，9月26日完工」里的「9月26日」不在它引用的素材里；素材里没有这个日期；只写素材写了或 dates 换算出的日期，没有就不写日期",
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[1] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 13.456,
+   "latency_p95_s": 14.552,
+   "latency_total_s": 47.4,
+   "prompt_tokens_mean": 5446,
+   "completion_tokens_mean": 521.5,
+   "prompt_tokens_total": 21784,
+   "completion_tokens_total": 2086,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 9.938,
+   "latency_p95_s": 11.036,
+   "latency_total_s": 26.7,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 446.3,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1339,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 64,
+  "none": 5,
+  "ask": 4
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 64,
+  "none": 5,
+  "ask": 1,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 14,
+ "status_line_chars_mean": 14,
+ "title_chars_mean": 10.1,
+ "wall_s": 1083.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,135 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 79,
+   "retried": 3,
+   "latency_median_s": 10.153,
+   "latency_p95_s": 34.192,
+   "latency_total_s": 1075.0,
+   "prompt_tokens_mean": 5962.2,
+   "completion_tokens_mean": 196.4,
+   "prompt_tokens_total": 488897,
+   "completion_tokens_total": 16106,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 81,
+   "ok": 39,
+   "ok_first_attempt": 39,
+   "retried": 0,
+   "latency_median_s": 11.291,
+   "latency_p95_s": 36.455,
+   "latency_total_s": 1207.7,
+   "prompt_tokens_mean": 4290.7,
+   "completion_tokens_mean": 257.6,
+   "prompt_tokens_total": 347544,
+   "completion_tokens_total": 20863,
+   "errors_sample": [
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] quote「九点进场拆吧台」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[relative_date] status_facts[0] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.977,
+   "latency_p95_s": 4.613,
+   "latency_total_s": 8.1,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 13.3,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 40,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 13.083,
+   "latency_p95_s": 17.997,
+   "latency_total_s": 40.7,
+   "prompt_tokens_mean": 4477,
+   "completion_tokens_mean": 367.3,
+   "prompt_tokens_total": 13431,
+   "completion_tokens_total": 1102,
+   "errors_sample": []
+  },
+  "merge": {
+   "calls": 14,
+   "ok": 14,
+   "ok_first_attempt": 13,
+   "retried": 1,
+   "latency_median_s": 6.839,
+   "latency_p95_s": 15.79,
+   "latency_total_s": 107.0,
+   "prompt_tokens_mean": 3131.3,
+   "completion_tokens_mean": 172.5,
+   "prompt_tokens_total": 43838,
+   "completion_tokens_total": 2415,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 20.578,
+   "latency_p95_s": 22.23,
+   "latency_total_s": 70.7,
+   "prompt_tokens_mean": 5070.8,
+   "completion_tokens_mean": 475.5,
+   "prompt_tokens_total": 20283,
+   "completion_tokens_total": 1902,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 8.606,
+   "latency_p95_s": 23.651,
+   "latency_total_s": 37.3,
+   "prompt_tokens_mean": 2738.3,
+   "completion_tokens_mean": 96.3,
+   "prompt_tokens_total": 8215,
+   "completion_tokens_total": 289,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 69,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 63,
+  "ask": 1,
+  "none": 4,
+  "ask_suppressed": 5
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 13.9,
+ "title_chars_mean": 9.6,
+ "wall_s": 2554.0,
+ "items_per_min": 1.93,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

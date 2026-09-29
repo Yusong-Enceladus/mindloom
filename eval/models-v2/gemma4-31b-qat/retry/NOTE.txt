@@ -1,0 +1,1 @@
+Retry without fp8 KV cache (15:55 CST): server starts, but every request (text-only too) returns only token id 0 until max_tokens; with JSON schema xgrammar rejects token 0 and vLLM returns 500. Same on first start with fp8 KV. Conclusion: W4A16 compressed-tensors Gemma 4 path produces degenerate logits on GB10/SM121 in vLLM 0.30.0.

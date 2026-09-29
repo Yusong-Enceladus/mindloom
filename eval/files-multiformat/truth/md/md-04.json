@@ -1,0 +1,64 @@
+{
+ "file_id": "md-04",
+ "path": "corpus/md/md-04.md",
+ "type": "md",
+ "ext": "md",
+ "mime": "text/markdown",
+ "filename": "Product Design Sprint — Agenda.md",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Product Design Sprint — Agenda\nDate: September 28, 2026\nVenue: Lab Annex 1\nCapacity: 40 participants\nTime\tSession\tSpeaker\n09:00\tWelcome and goals\tLucas Meyer\n09:30\tHands-on session 1\tMaya Chen\n11:00\tCase study\tNora Lindqvist\n13:30\tGroup exercise\tDaniel Okafor\n15:30\tWrap-up and feedback\tLucas Meyer\nLunch is served 12:15–13:30. Synthetic agenda for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Venue: Lab Annex 1",
+  "Capacity: 40 participants",
+  "11:00\tCase study\tNora Lindqvist",
+  "13:30\tGroup exercise\tDaniel Okafor",
+  "Lunch is served 12:15–13:30. Synthetic agenda for evaluation only."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "date": "2026-09-28",
+  "venue": "Lab Annex 1",
+  "capacity": 40,
+  "case_study_speaker": "Nora Lindqvist"
+ },
+ "numbers": [
+  {
+   "value": 40,
+   "label": "capacity"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Where is the workshop held?",
+   "a": "Lab Annex 1",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Who presents the case study?",
+   "a": "Nora Lindqvist",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the group exercise start?",
+   "a": "13:30",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How many participants can attend?",
+   "a": 40,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 489,
+ "sha256": "ba515d0affd5e6138d09a7ca5fa4d5a768e9a8004908b27ee37e1172e16e7b4f",
+ "family": "agenda_en"
+}

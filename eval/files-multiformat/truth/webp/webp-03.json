@@ -1,0 +1,77 @@
+{
+ "file_id": "webp-03",
+ "path": "corpus/webp/webp-03.webp",
+ "type": "webp",
+ "ext": "webp",
+ "mime": "image/webp",
+ "filename": "实验记录：土壤pH测定.webp",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "土壤pH测定：各样品pH\nS01  S02  S03  S04\npH: S01 3.25, S02 4.24, S03 2.49, S04 7.68\n合成数据",
+ "key_lines": [
+  "S01  S02  S03  S04",
+  "pH: S01 3.25, S02 4.24, S03 2.49, S04 7.68"
+ ],
+ "picture_only_lines": [
+  "S01  S02  S03  S04",
+  "pH: S01 3.25, S02 4.24, S03 2.49, S04 7.68"
+ ],
+ "key_fields": {
+  "样品": [
+   "S01",
+   "S02",
+   "S03",
+   "S04"
+  ],
+  "pH": [
+   3.25,
+   4.24,
+   2.49,
+   7.68
+  ]
+ },
+ "numbers": [
+  {
+   "value": 3.25,
+   "label": "S01"
+  },
+  {
+   "value": 4.24,
+   "label": "S02"
+  },
+  {
+   "value": 2.49,
+   "label": "S03"
+  },
+  {
+   "value": 7.68,
+   "label": "S04"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "S02 的pH是多少？",
+   "a": 4.24,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "哪个样品最高？",
+   "a": "S04",
+   "match": "exact"
+  }
+ ],
+ "structure": {
+  "size": [
+   1200,
+   760
+  ]
+ },
+ "bytes": 15300,
+ "sha256": "2be13e7fd980c40bcf9386d60d28244b7ad20e774c789b9eb0b89411091f6746",
+ "family": "lab_chart"
+}

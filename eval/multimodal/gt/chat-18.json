@@ -1,0 +1,99 @@
+{
+ "id": "chat-18",
+ "type": "chat_screenshot",
+ "split": "dev",
+ "image": "images/chat-18.png",
+ "lang": "zh",
+ "hard": [
+  "similar_names",
+  "dated_time",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "fa7b91c5772805c3cb4987a57c6b9da6f0590ddbcebae60e030da2be2eaabf55",
+ "gt": {
+  "chat_title": "采购对接群",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "张一帆",
+    "is_self": false,
+    "time": "8月30日 20:31",
+    "text": "样品6件已寄出，单号YD871654982642",
+    "kind": "text"
+   },
+   {
+    "sender": "张亦凡",
+    "is_self": false,
+    "time": "",
+    "text": "我这边还没开发票，金额是2380元对吧？",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "8月30日 20:38",
+    "text": "对，是2380元，样品我收到后再确认",
+    "kind": "text"
+   },
+   {
+    "sender": "张一帆",
+    "is_self": false,
+    "time": "",
+    "text": "好的",
+    "kind": "text"
+   },
+   {
+    "sender": "张亦凡",
+    "is_self": false,
+    "time": "",
+    "text": "收到，今天下午开",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "采购对接群",
+  "张一帆：样品6件已寄出，单号YD871654982642",
+  "张亦凡：我这边还没开发票，金额是2380元对吧？",
+  "我：对，是2380元，样品我收到后再确认",
+  "张一帆：好的",
+  "张亦凡：收到，今天下午开"
+ ],
+ "qa": [
+  {
+   "q": "寄出的样品有几件？",
+   "a": "6件",
+   "match": "number"
+  },
+  {
+   "q": "快递单号是多少？",
+   "a": "YD871654982642",
+   "match": "exact"
+  },
+  {
+   "q": "谁说今天下午开发票？",
+   "a": "张亦凡",
+   "match": "exact"
+  },
+  {
+   "q": "谁寄出了样品？",
+   "a": "张一帆",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "samples",
+  "theme": "dark",
+  "similar": true,
+  "similar_pair": 3,
+  "time_style": "date"
+ }
+}

@@ -1,0 +1,120 @@
+{
+ "id": "receipt-08",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-08.jpg",
+ "lang": "zh",
+ "hard": [
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "b6907db2a5d27afc46b8b08e77478e453c636a074eec4ee497dba333f3b690c9",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "鹿野咖啡",
+  "date": "2026-09-11",
+  "date_text": "2026-09-11 12:17",
+  "time": "12:17",
+  "doc_no": "202609117584",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "燕麦奶 加料",
+    "qty": 1,
+    "unit": "份",
+    "unit_price": "3.00",
+    "amount": "3.00"
+   },
+   {
+    "name": "手冲 耶加雪菲",
+    "qty": 2,
+    "unit": "杯",
+    "unit_price": "38.00",
+    "amount": "76.00"
+   },
+   {
+    "name": "美式（中杯）",
+    "qty": 3,
+    "unit": "杯",
+    "unit_price": "20.00",
+    "amount": "60.00"
+   },
+   {
+    "name": "可颂",
+    "qty": 4,
+    "unit": "个",
+    "unit_price": "16.00",
+    "amount": "64.00"
+   },
+   {
+    "name": "拿铁（中杯）",
+    "qty": 1,
+    "unit": "杯",
+    "unit_price": "25.00",
+    "amount": "25.00"
+   },
+   {
+    "name": "拿铁（大杯）",
+    "qty": 2,
+    "unit": "杯",
+    "unit_price": "28.00",
+    "amount": "56.00"
+   }
+  ],
+  "subtotal": "284.00",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "284.00",
+  "payment_method": "现金"
+ },
+ "text_lines": [
+  "鹿野咖啡",
+  "溪桥市东湖区桂香路189号",
+  "电话：0000-7574",
+  "单号：202609117584 收银员：16",
+  "日期：2026-09-11 12:17",
+  "燕麦奶 加料 1 3.00 3.00",
+  "手冲 耶加雪菲 2 38.00 76.00",
+  "美式（中杯） 3 20.00 60.00",
+  "可颂 4 16.00 64.00",
+  "拿铁（中杯） 1 25.00 25.00",
+  "拿铁（大杯） 2 28.00 56.00",
+  "合计件数：6",
+  "小计 284.00",
+  "实付 ¥284.00",
+  "支付方式：现金",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥284.00",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "鹿野咖啡",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-09-11",
+   "match": "date"
+  },
+  {
+   "q": "手冲 耶加雪菲的金额是多少？",
+   "a": "76.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "bg": "wood"
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "file_id": "json-02",
+ "path": "corpus/json/json-02.json",
+ "type": "json",
+ "ext": "json",
+ "mime": "application/json",
+ "filename": "标注规范_v2.json",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "3F76B458-6492-5CB0-8118-9D2251BF5CF3",
+  "ref": "ann_json",
+  "events": [
+   "ev_annot"
+  ]
+ },
+ "text_layer": "full",
+ "text": "{\n  \"schema_version\": \"2.0\",\n  \"project\": \"KitchenQA 视频问答标注\",\n  \"vendor\": \"数芽标注\",\n  \"contact\": \"周蔓\",\n  \"total_clips\": 20000,\n  \"clip_length_sec\": {\n    \"min\": 60,\n    \"max\": 600\n  },\n  \"question_types\": [\n    {\n      \"id\": \"temporal\",\n      \"name\": \"时序\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"causal\",\n      \"name\": \"因果\",\n      \"min_per_clip\": 1\n    },\n    {\n      \"id\": \"counting\",\n      \"name\": \"计数\",\n      \"min_per_clip\": 1\n    }\n  ],\n  \"answer_format\": {\n    \"type\": \"multiple_choice\",\n    \"options\": 4,\n    \"distractor_rule\": \"干扰项须来自同一视频\"\n  },\n  \"qc\": {\n    \"sample_rate\": 0.1,\n    \"pass_threshold\": 0.95,\n    \"double_annotation\": true\n  },\n  \"batches\": 4,\n  \"note\": \"合成数据\"\n}",
+ "key_lines": [
+  "\"total_clips\": 20000,",
+  "\"options\": 4,",
+  "\"sample_rate\": 0.1,",
+  "\"pass_threshold\": 0.95,",
+  "\"batches\": 4,"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "pass_threshold": 0.95,
+  "total_clips": 20000,
+  "options": 4,
+  "sample_rate": 0.1
+ },
+ "numbers": [
+  {
+   "value": 0.95,
+   "label": "合格线"
+  },
+  {
+   "value": 20000,
+   "label": "总条数"
+  },
+  {
+   "value": 4,
+   "label": "选项数"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "质检合格线是多少？",
+   "a": 0.95,
+   "match": "number",
+   "accept": [
+    "95%"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "总共多少条视频？",
+   "a": 20000,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "每题几个选项？",
+   "a": 4,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "抽检比例是多少？",
+   "a": 0.1,
+   "match": "number",
+   "accept": [
+    "10%"
+   ]
+  }
+ ],
+ "structure": {},
+ "bytes": 757,
+ "sha256": "a81c1ff004e4d0eddd85c56322c1485f674fd0508db302fe89758beab54ec790"
+}

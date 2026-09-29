@@ -1,0 +1,50 @@
+{
+  "capabilities" : [
+    {
+      "capability" : "asr",
+      "durationNanoseconds" : 4123875,
+      "outputDigest" : "5028d62ac86efea6648b815252334e19bcb6988b6f2c9aaac6e4162fa8b98465",
+      "status" : "pass"
+    },
+    {
+      "capability" : "speaker",
+      "durationNanoseconds" : 25125,
+      "outputDigest" : "c7faf857518dc81ae168b75648f915fc62cc2b982c2ece875ef26d768f0689b7",
+      "status" : "pass"
+    },
+    {
+      "capability" : "llm",
+      "durationNanoseconds" : 15125,
+      "outputDigest" : "5157c00d0be3209fb79e2e862a38a218ed9b27c60daeca1e4db3121663b3ea50",
+      "status" : "pass"
+    },
+    {
+      "capability" : "search",
+      "durationNanoseconds" : 9583,
+      "outputDigest" : "d2b3f20fb3829bc630ca4999164e2b78c0b6d6390d0e224b98f43b1addb76c07",
+      "status" : "pass"
+    },
+    {
+      "capability" : "evidence",
+      "durationNanoseconds" : 4875,
+      "outputDigest" : "7ce847adc11e4c94603bcb5db189f1a4ef14051cd2b8ec35c598c5589c22a0e9",
+      "status" : "pass"
+    }
+  ],
+  "enforcement" : "macos-sandbox-exec",
+  "kind" : "offline-smoke-summary",
+  "networkDenialProbe" : {
+    "attempted" : true,
+    "blocked" : true,
+    "errorCode" : 1
+  },
+  "networkPolicy" : "deny-all",
+  "requestAudit" : {
+    "allowedRequests" : 0,
+    "attemptedRequests" : 0,
+    "deniedRequests" : 0
+  },
+  "runID" : "31A7B242-BCA7-41C2-A701-CBA44B5AB0A8",
+  "schemaVersion" : 1,
+  "status" : "pass"
+}

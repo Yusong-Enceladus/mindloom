@@ -1,0 +1,74 @@
+{
+ "id": "chart-09",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-09.png",
+ "lang": "zh",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "08cb34d66f99e79f9d3e009c2e290aa3f74d030a3f027535b3f444ed9d905c3c",
+ "gt": {
+  "chart_type": "pie",
+  "title": "用户来源渠道占比",
+  "x_label": "",
+  "y_label": "",
+  "unit": "%",
+  "categories": [
+   "自然搜索",
+   "朋友推荐",
+   "社群",
+   "门店扫码",
+   "其他"
+  ],
+  "series": [
+   {
+    "name": "占比",
+    "values": [
+     44.2,
+     22.0,
+     17.1,
+     13.6,
+     3.1
+    ],
+    "labels": [
+     "44.2%",
+     "22.0%",
+     "17.1%",
+     "13.6%",
+     "3.1%"
+    ]
+   }
+  ],
+  "trend": {}
+ },
+ "text_lines": [
+  "用户来源渠道占比",
+  "占比 自然搜索: 44.2%",
+  "占比 朋友推荐: 22.0%",
+  "占比 社群: 17.1%",
+  "占比 门店扫码: 13.6%",
+  "占比 其他: 3.1%"
+ ],
+ "qa": [
+  {
+   "q": "用户来源渠道占比中，朋友推荐的占比是多少？",
+   "a": "22.0%",
+   "match": "number"
+  },
+  {
+   "q": "占比最高的是哪一项？",
+   "a": "自然搜索",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "pie"
+ },
+ "variant": {
+  "chart": "pie",
+  "donut": true
+ }
+}

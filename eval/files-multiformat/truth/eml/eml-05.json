@@ -1,0 +1,65 @@
+{
+ "file_id": "eml-05",
+ "path": "corpus/eml/eml-05.eml",
+ "type": "eml",
+ "ext": "eml",
+ "mime": "message/rfc822",
+ "filename": "本周推荐：长沙一日游路线.eml",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "From: 城市生活周刊 <news@example.com>\nTo: 订阅用户 <reader@example.com>\nDate: Sat, 10 Oct 2026 07:30:00 +0800\nSubject: 本周推荐：长沙一日游路线\n长沙一日游路线\n内部页面合成数据\n长沙一日游路线\n适合周末的长沙城市漫步路线，全程步行加地铁。\n\t时间\t地点\t门票（元）\n\t09:00\t博物馆\t0\n\t11:00\t湿地公园\t0\n\t14:30\t夜市\t35\n\t18:30\t美术馆\t20\n门票合计 55 元。建议穿舒适的鞋。（合成数据）\n合成数据 · 仅供评测使用\n[attachment] 路线.csv\n时间,地点,门票（元）\n09:00,博物馆,0\n11:00,湿地公园,0\n14:30,夜市,35\n18:30,美术馆,20\n长沙一日游路线\n本周推荐\n合成数据",
+ "key_lines": [
+  "09:00\t博物馆\t0",
+  "14:30\t夜市\t35",
+  "门票合计 55 元。建议穿舒适的鞋。（合成数据）",
+  "09:00,博物馆,0",
+  "14:30,夜市,35"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "城市": "长沙",
+  "第一站": "博物馆",
+  "门票合计": 55
+ },
+ "numbers": [
+  {
+   "value": 55,
+   "label": "门票合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第一站去哪？",
+   "a": "博物馆",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "门票合计多少元？",
+   "a": 55,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "几点到夜市？",
+   "a": "14:30",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "attachments": [
+   "路线.csv"
+  ],
+  "parts": [
+   "text/html"
+  ]
+ },
+ "notes": "只有 HTML 正文（无纯文本），内嵌图片，另附 CSV。",
+ "bytes": 20959,
+ "sha256": "2d700e11e0d4370b865d574ea434ae2de81285c9758431f22a7f00b83c7f21cc",
+ "family": "newsletter_html"
+}

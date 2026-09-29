@@ -1,0 +1,27 @@
+{
+ "id": "expense-a",
+ "template": "expense",
+ "split": "dev",
+ "filename": "报销明细.xlsx",
+ "path": "data/expense-a.xlsx",
+ "sha256": "af7b76fccfdf0302b707b67b698a406d2e3e118e733b37be3def2ca3a6898368",
+ "size": 5567,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "## 工作表：9月报销",
+  "| 李四 | 午餐招待 |"
+ ],
+ "summary_groups": [
+  [
+   "报销"
+  ],
+  [
+   "9月"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

@@ -1,0 +1,106 @@
+{
+ "id": "receipt-05",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-05.jpg",
+ "lang": "en",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "f0add090eb991463c25313860b0cf2cdf6f2ff4ef0217f5f1f6f5b03bc8f3f27",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "Bluewren Hardware",
+  "date": "2026-08-17",
+  "date_text": "08/17/2026 10:30 AM",
+  "time": "10:30",
+  "doc_no": "9087",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Extension cord 10 ft",
+    "qty": 3,
+    "unit": "ea",
+    "unit_price": "14.99",
+    "amount": "44.97"
+   },
+   {
+    "name": "Wood screws #8 x 1-1/4in",
+    "qty": 2,
+    "unit": "box",
+    "unit_price": "6.49",
+    "amount": "12.98"
+   },
+   {
+    "name": "Copper wire",
+    "qty": 0.35,
+    "unit": "ft",
+    "unit_price": "0.45",
+    "amount": "0.16"
+   },
+   {
+    "name": "Painter's tape 2in",
+    "qty": 4,
+    "unit": "roll",
+    "unit_price": "7.99",
+    "amount": "31.96"
+   }
+  ],
+  "subtotal": "90.07",
+  "discount": "0.00",
+  "tax": "7.43",
+  "total": "97.50",
+  "payment_method": "Mobile pay",
+  "tax_rate": 8.25
+ },
+ "text_lines": [
+  "Bluewren Hardware",
+  "110 Birch Lane, Lakeside",
+  "Tel (555) 015-5337",
+  "Order #9087 Cashier 07",
+  "08/17/2026 10:30 AM",
+  "Extension cord 10 ft 3 14.99 44.97",
+  "Wood screws #8 x 1-1/4in 2 6.49 12.98",
+  "Copper wire 0.35ft 0.45 0.16",
+  "Painter's tape 2in 4 7.99 31.96",
+  "Subtotal 90.07",
+  "Tax 8.25% 7.43",
+  "Total $97.50",
+  "Paid: Mobile pay",
+  "Thank you!",
+  "Returns within 14 days with receipt"
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$97.50",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Bluewren Hardware",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-08-17",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$7.43",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "lang": "en"
+ }
+}

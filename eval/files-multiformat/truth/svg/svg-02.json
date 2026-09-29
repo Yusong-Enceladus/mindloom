@@ -1,0 +1,62 @@
+{
+ "file_id": "svg-02",
+ "path": "corpus/svg/svg-02.svg",
+ "type": "svg",
+ "ext": "svg",
+ "mime": "image/svg+xml",
+ "filename": "讲座报名通知.svg",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "讲座报名通知\n时间：2026年3月6日 08:00\n地点：A座1–5层\n联系人：张晨阳 +86-10-5550-0181\n合成数据",
+ "key_lines": [
+  "时间：2026年3月6日 08:00",
+  "地点：A座1–5层",
+  "联系人：张晨阳 +86-10-5550-0181"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "地点": "A座1–5层",
+  "日期": "2026年3月6日",
+  "开始时间": "08:00",
+  "联系人": "张晨阳",
+  "电话": "+86-10-5550-0181"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "涉及哪个地点？",
+   "a": "A座1–5层",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "哪天？",
+   "a": "2026年3月6日",
+   "match": "contains",
+   "accept": [
+    "3月6日",
+    "2026-03-06"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "几点开始？",
+   "a": "08:00",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "联系人是谁？",
+   "a": "张晨阳",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 1383,
+ "sha256": "c88f0fa7e18363c3dfed2d92fc177bd9580015f89a94aa6d9c4cdacbe342b83f",
+ "family": "poster"
+}

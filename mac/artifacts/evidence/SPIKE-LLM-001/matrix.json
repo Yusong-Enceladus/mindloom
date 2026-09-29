@@ -1,0 +1,152 @@
+{
+  "candidates" : [
+    {
+      "candidateID" : "fact-preserving-fixture",
+      "categoryResults" : [
+        {
+          "category" : "action-owner",
+          "errorCount" : 0,
+          "hardLimit" : 0,
+          "passed" : true
+        },
+        {
+          "category" : "date",
+          "errorCount" : 0,
+          "hardLimit" : 0,
+          "passed" : true
+        },
+        {
+          "category" : "negation",
+          "errorCount" : 0,
+          "hardLimit" : 0,
+          "passed" : true
+        },
+        {
+          "category" : "number",
+          "errorCount" : 0,
+          "hardLimit" : 0,
+          "passed" : true
+        },
+        {
+          "category" : "person",
+          "errorCount" : 0,
+          "hardLimit" : 0,
+          "passed" : true
+        }
+      ],
+      "failedSampleUUIDs" : [
+
+      ],
+      "hardGateEligible" : true,
+      "meanStylePreferenceScore" : 0.8,
+      "modelArtifactSHA256" : "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "candidateID" : "style-preferred-factually-unsafe-fixture",
+      "categoryResults" : [
+        {
+          "category" : "action-owner",
+          "errorCount" : 1,
+          "hardLimit" : 0,
+          "passed" : false
+        },
+        {
+          "category" : "date",
+          "errorCount" : 1,
+          "hardLimit" : 0,
+          "passed" : false
+        },
+        {
+          "category" : "negation",
+          "errorCount" : 1,
+          "hardLimit" : 0,
+          "passed" : false
+        },
+        {
+          "category" : "number",
+          "errorCount" : 1,
+          "hardLimit" : 0,
+          "passed" : false
+        },
+        {
+          "category" : "person",
+          "errorCount" : 1,
+          "hardLimit" : 0,
+          "passed" : false
+        }
+      ],
+      "failedSampleUUIDs" : [
+        "69000000-0000-4000-8000-000000000001",
+        "69000000-0000-4000-8000-000000000002",
+        "69000000-0000-4000-8000-000000000003",
+        "69000000-0000-4000-8000-000000000004",
+        "69000000-0000-4000-8000-000000000005"
+      ],
+      "hardGateEligible" : false,
+      "meanStylePreferenceScore" : 0.99,
+      "modelArtifactSHA256" : "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "categoryCoverage" : [
+    "action-owner",
+    "date",
+    "negation",
+    "number",
+    "person"
+  ],
+  "conclusion" : "pass",
+  "fixtureSHA256" : "c64eb6cfc580e195e1129b4f2c99a80e4d97554a4a02a271d9eafb6a3ab9a44f",
+  "kind" : "llm-factual-gate-matrix",
+  "runID" : "69000000-0000-4000-8000-000000000900",
+  "scenarios" : [
+    {
+      "observedErrors" : 0,
+      "scenarioID" : "fact-preserving-candidate-remains-eligible",
+      "status" : "pass"
+    },
+    {
+      "category" : "action-owner",
+      "observedErrors" : 1,
+      "scenarioID" : "planted-action-owner-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "category" : "date",
+      "observedErrors" : 1,
+      "scenarioID" : "planted-date-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "category" : "negation",
+      "observedErrors" : 1,
+      "scenarioID" : "planted-negation-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "category" : "number",
+      "observedErrors" : 1,
+      "scenarioID" : "planted-number-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "category" : "person",
+      "observedErrors" : 1,
+      "scenarioID" : "planted-person-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "observedErrors" : 5,
+      "scenarioID" : "higher-style-score-cannot-bypass-hard-gate",
+      "status" : "pass"
+    },
+    {
+      "observedErrors" : 0,
+      "scenarioID" : "source-transcripts-remain-unchanged",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "sourceMutationDetected" : false,
+  "sourceSampleCount" : 5,
+  "spikeID" : "SPIKE-LLM-001"
+}

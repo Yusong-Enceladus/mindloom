@@ -1,0 +1,94 @@
+{
+ "id": "chat-11",
+ "type": "chat_screenshot",
+ "split": "dev",
+ "image": "images/chat-11.png",
+ "lang": "en",
+ "hard": [
+  "dated_time",
+  "non_text_bubbles"
+ ],
+ "synthetic": true,
+ "image_sha256": "5843f002c1002448a38c4505cfd22e7514b1681b4cfc2ee2cd42d25dcdfbc0be",
+ "gt": {
+  "chat_title": "Julia Park",
+  "is_group": false,
+  "messages": [
+   {
+    "sender": "Julia Park",
+    "is_self": false,
+    "time": "Tue 3:49 PM",
+    "text": "Movers confirmed for Saturday 10 AM, 12 boxes plus the desk",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "Me",
+    "is_self": true,
+    "time": "",
+    "text": "Great, is the $240 quote still valid?",
+    "kind": "text"
+   },
+   {
+    "sender": "Julia Park",
+    "is_self": false,
+    "time": "",
+    "text": "Yes, $240 flat, cash or card",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "Me",
+    "is_self": true,
+    "time": "",
+    "text": "Perfect. I'll leave the keys with the front desk",
+    "kind": "text"
+   },
+   {
+    "sender": "Julia Park",
+    "is_self": false,
+    "time": "Tue 3:55 PM",
+    "text": "[图片]",
+    "kind": "image",
+    "sender_shown": false
+   }
+  ]
+ },
+ "text_lines": [
+  "Julia Park",
+  "Julia Park：Movers confirmed for Saturday 10 AM, 12 boxes plus the desk",
+  "Me：Great, is the $240 quote still valid?",
+  "Julia Park：Yes, $240 flat, cash or card",
+  "Me：Perfect. I'll leave the keys with the front desk",
+  "Julia Park：[图片]"
+ ],
+ "qa": [
+  {
+   "q": "What time do the movers come?",
+   "a": "Saturday 10 AM",
+   "match": "contains"
+  },
+  {
+   "q": "How much is the quote?",
+   "a": "$240",
+   "match": "number"
+  },
+  {
+   "q": "How many boxes?",
+   "a": "12 boxes",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "fonts": [
+   "helv",
+   "helv_bold"
+  ]
+ },
+ "variant": {
+  "conv": "en_move",
+  "theme": "dark",
+  "time_style": "weekday"
+ }
+}

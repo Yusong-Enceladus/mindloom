@@ -1,0 +1,37 @@
+{
+  "architecture" : "arm64",
+  "availableBytes" : 28722339840,
+  "checks" : {
+    "disk" : {
+      "path" : "\/Volumes\/BestASRBuild\/bestASR",
+      "status" : "pass"
+    },
+    "swift" : {
+      "actualVersion" : "6.3.3",
+      "expectedVersion" : "6.3.3",
+      "status" : "pass"
+    },
+    "xcode" : {
+      "actualVersion" : "26.6",
+      "developerDirectory" : "\/Applications\/Xcode.app\/Contents\/Developer",
+      "expectedVersion" : "26.6",
+      "firstLaunchStatus" : "pass",
+      "licenseStatus" : "pass",
+      "sdkPath" : "\/Applications\/Xcode.app\/Contents\/Developer\/Platforms\/MacOSX.platform\/Developer\/SDKs\/MacOSX26.5.sdk",
+      "status" : "pass"
+    },
+    "xcodegen" : {
+      "actualVersion" : "2.45.3",
+      "expectedVersion" : "2.45.3",
+      "status" : "pass"
+    }
+  },
+  "diskHardReserveBytes" : 10737418240,
+  "diskSoftReserveBytes" : 26843545600,
+  "errorCategory" : "",
+  "failedCheck" : "",
+  "remediation" : "",
+  "requiredBytes" : 0,
+  "schemaVersion" : 1,
+  "status" : "pass"
+}

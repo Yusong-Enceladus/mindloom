@@ -1,0 +1,67 @@
+{
+ "file_id": "mbox-03",
+ "path": "corpus/mbox/mbox-03.mbox",
+ "type": "mbox",
+ "ext": "mbox",
+ "mime": "application/mbox",
+ "filename": "Interview for Data Analyst.mbox",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[message 1]\nFrom: Daniel Okafor <recruit@example.org>\nTo: Hana Sato <cand@example.net>\nDate: Tue, 20 Oct 2026 09:00:00 +0800\nSubject: Interview for Data Analyst\nHi Hana,\nWe'd like to invite you to interview for the Data Analyst role. Are you free on Tuesday, November 3?\nDaniel Okafor\n[message 2]\nFrom: Hana Sato <cand@example.net>\nTo: Daniel Okafor <recruit@example.org>\nDate: Tue, 20 Oct 2026 12:30:00 +0800\nSubject: Re: Interview for Data Analyst\nHi Daniel,\nTuesday, November 3 works. Morning would be best.\nHana Sato\n[message 3]\nFrom: Daniel Okafor <recruit@example.org>\nTo: Hana Sato <cand@example.net>\nCc: Ethan Novak <mgr@example.org>\nDate: Tue, 20 Oct 2026 16:45:00 +0800\nSubject: Re: Interview for Data Analyst\nGreat, confirmed for Tuesday, November 3 at 10:30, room 4B. You'll meet Ethan Novak. The interview lasts 45 minutes.\n[message 4]\nFrom: Hana Sato <cand@example.net>\nTo: Daniel Okafor <recruit@example.org>\nDate: Wed, 21 Oct 2026 08:10:00 +0800\nSubject: Re: Interview for Data Analyst\nThank you, see you then. (synthetic data)",
+ "key_lines": [
+  "Cc: Ethan Novak <mgr@example.org>",
+  "Date: Tue, 20 Oct 2026 16:45:00 +0800",
+  "Great, confirmed for Tuesday, November 3 at 10:30, room 4B. You'll meet Ethan Novak. The interview lasts 45 minutes."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "role": "Data Analyst",
+  "day": "Tuesday, November 3",
+  "time": "10:30",
+  "room": "4B",
+  "interviewer": "Ethan Novak",
+  "minutes": 45
+ },
+ "numbers": [
+  {
+   "value": 45,
+   "label": "minutes"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What time is the interview?",
+   "a": "10:30",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Which room?",
+   "a": "4B",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "Who will the candidate meet?",
+   "a": "Ethan Novak",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How long is the interview (minutes)?",
+   "a": 45,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "messages": 4,
+  "attachments": []
+ },
+ "bytes": 1963,
+ "sha256": "51d533ac1d81b71d9fb23a9b4ba65901c32a33f400c3d70e773f1e5370fbd80f",
+ "family": "hiring_en"
+}

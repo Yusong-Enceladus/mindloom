@@ -1,0 +1,64 @@
+{
+ "file_id": "ics-05",
+ "path": "corpus/ics/ics-05.ics",
+ "type": "ics",
+ "ext": "ics",
+ "mime": "text/calendar",
+ "filename": "Trip calendar.ics",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "CALENDAR: Trip\n[event 1]\nSUMMARY: Flight QT 247 to Lisbon\nSTART: 2026-11-12 07:15 (Asia/Shanghai)\nEND: 2026-11-12 10:10 (Asia/Shanghai)\nLOCATION: Terminal 2, Gate B14\nDESCRIPTION: Traveller: Hana Sato. Seat 14C. Synthetic data.\n[event 2]\nSUMMARY: Client workshop\nSTART: 2026-11-12 14:00 (Asia/Shanghai)\nEND: 2026-11-12 17:00 (Asia/Shanghai)\nLOCATION: Rua das Flores 12, Lisbon\nDESCRIPTION: Bring the prototype.",
+ "key_lines": [
+  "SUMMARY: Flight QT 247 to Lisbon",
+  "LOCATION: Terminal 2, Gate B14",
+  "DESCRIPTION: Traveller: Hana Sato. Seat 14C. Synthetic data.",
+  "START: 2026-11-12 14:00 (Asia/Shanghai)"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "flight": "QT 247",
+  "gate": "B14",
+  "seat": "14C",
+  "workshop": "14:00"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the flight number?",
+   "a": "QT 247",
+   "match": "exact",
+   "accept": [
+    "QT247"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "Which gate?",
+   "a": "B14",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the client workshop start?",
+   "a": "14:00",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "What is the seat?",
+   "a": "14C",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "events": 2,
+  "calname": "Trip"
+ },
+ "bytes": 853,
+ "sha256": "766bf19ac27656c8f1f53a1a0df0ddbd8b517237c1b7875f0f864eabe57d60d2",
+ "family": "trip_en"
+}

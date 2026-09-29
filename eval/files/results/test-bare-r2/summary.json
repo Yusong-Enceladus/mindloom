@@ -1,0 +1,40 @@
+{
+ "split": "test",
+ "condition": "bare",
+ "parse_only": false,
+ "files": 40,
+ "type_ok": [
+  1.0,
+  40
+ ],
+ "text_recall": [
+  1.0,
+  34
+ ],
+ "image_recall": [
+  0.917,
+  12
+ ],
+ "summary_hit": [
+  0.95,
+  40
+ ],
+ "summary_model": [
+  0.825,
+  40
+ ],
+ "field_em": [
+  1.0,
+  6
+ ],
+ "det_field_em": [
+  1.0,
+  6
+ ],
+ "summary_first_try": 2,
+ "summary_calls": 38,
+ "latency_p50": 14.15,
+ "latency_p90": 49.91,
+ "prompt_hash": "f8cbae666459776e",
+ "model": "qwen3.6-35b-a3b-nvfp4"
+}

@@ -1,0 +1,105 @@
+{
+ "id": "chart-08",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-08.png",
+ "lang": "en",
+ "hard": [
+  "similar_colors",
+  "small_text",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "cf8843a1b61d9cc429b9df0072cc4e24c8ccfa7bff683455d17ba04ac134f111",
+ "gt": {
+  "chart_type": "grouped_bar",
+  "title": "Active users: iOS vs Android",
+  "x_label": "Month",
+  "y_label": "Users (K)",
+  "unit": "K",
+  "categories": [
+   "Jun",
+   "Jul",
+   "Aug",
+   "Sep"
+  ],
+  "series": [
+   {
+    "name": "iOS",
+    "values": [
+     13.7,
+     27.7,
+     34.6,
+     42.2
+    ],
+    "labels": [
+     "13.7",
+     "27.7",
+     "34.6",
+     "42.2"
+    ]
+   },
+   {
+    "name": "Android",
+    "values": [
+     29.5,
+     42.2,
+     29.8,
+     13.7
+    ],
+    "labels": [
+     "29.5",
+     "42.2",
+     "29.8",
+     "13.7"
+    ]
+   }
+  ],
+  "trend": {
+   "iOS": "up",
+   "Android": "rise_then_fall"
+  }
+ },
+ "text_lines": [
+  "Active users: iOS vs Android",
+  "iOS Jun: 13.7",
+  "iOS Jul: 27.7",
+  "iOS Aug: 34.6",
+  "iOS Sep: 42.2",
+  "Android Jun: 29.5",
+  "Android Jul: 42.2",
+  "Android Aug: 29.8",
+  "Android Sep: 13.7"
+ ],
+ "qa": [
+  {
+   "q": "In 'Active users: iOS vs Android', what is the value for Jun (Android)?",
+   "a": "29.5",
+   "match": "number"
+  },
+  {
+   "q": "Which month has the highest Android?",
+   "a": "Jul",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of Android?",
+   "a": "rises then falls",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "grouped_bar"
+ },
+ "variant": {
+  "chart": "grouped_bar",
+  "lang": "en",
+  "patterns": [
+   "up",
+   "rise_then_fall"
+  ],
+  "similar_colors": true,
+  "small": true
+ }
+}

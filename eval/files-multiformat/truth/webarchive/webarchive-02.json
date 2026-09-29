@@ -1,0 +1,65 @@
+{
+ "file_id": "webarchive-02",
+ "path": "corpus/webarchive/webarchive-02.webarchive",
+ "type": "webarchive",
+ "ext": "webarchive",
+ "mime": "application/x-webarchive",
+ "filename": "计划停电通知.webarchive",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "美食记\n计划停电通知\n各位同事：\n因线路检修，中心图书馆将于2026年8月8日 08:00至18:00停电，请提前保存工作并关闭用电设备。\n联系人：程雨萱\n电话：+86-10-5550-0177\n发布单位：云杉建筑设计事务所 行政部\n发布日期：2026年8月5日\n特此通知。（合成数据）\n合成数据\n美食记\n合成数据",
+ "key_lines": [
+  "因线路检修，中心图书馆将于2026年8月8日 08:00至18:00停电，请提前保存工作并关闭用电设备。",
+  "联系人：程雨萱"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "地点": "中心图书馆",
+  "日期": "2026年8月8日",
+  "开始时间": "08:00",
+  "联系人": "程雨萱",
+  "电话": "+86-10-5550-0177"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "涉及哪个地点？",
+   "a": "中心图书馆",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "哪天？",
+   "a": "2026年8月8日",
+   "match": "contains",
+   "accept": [
+    "8月8日",
+    "2026-08-08"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "几点开始？",
+   "a": "08:00",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "联系人是谁？",
+   "a": "程雨萱",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "url": "https://www.news.example.com/page/9984",
+  "subresources": 1
+ },
+ "notes": "Safari 网页归档，含一个 PNG 子资源。",
+ "bytes": 7131,
+ "sha256": "19aa59a91f96b2d7038a2bc03ea87e3fb1adfd29ae03aeaec574c92866b8f328",
+ "family": "notice"
+}

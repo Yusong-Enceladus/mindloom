@@ -1,0 +1,43 @@
+{
+ "segments": [
+  {
+   "label": "qwen36-q8-llamacpp",
+   "backend": "openai",
+   "model": "qwen3.6-35b-a3b",
+   "url": "http://127.0.0.1:30000",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 98,
+   "start": {
+    "time": 1790619249.245682,
+    "gpu_apps": [
+     "2239353, /home/YOU/hack/llama.cpp/build/bin/llama-server, 17029 MiB",
+     "2246101, /home/YOU/hack/llama.cpp/build/bin/llama-server, 41815 MiB"
+    ],
+    "gpu_util": "94 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          86           1           2          37          35\n交换：             0           0           0",
+    "metrics": [
+     "llamacpp:requests_processing 0",
+     "llamacpp:requests_deferred 0",
+     "llamacpp:n_busy_slots_per_decode 1.89369"
+    ]
+   },
+   "wall_s": 632.86,
+   "end": {
+    "time": 1790619882.1545572,
+    "gpu_apps": [
+     "2239353, /home/YOU/hack/llama.cpp/build/bin/llama-server, 17029 MiB",
+     "2246101, /home/YOU/hack/llama.cpp/build/bin/llama-server, 41815 MiB"
+    ],
+    "gpu_util": "92 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          86           1           2          37          35\n交换：             0           0           0",
+    "metrics": [
+     "llamacpp:requests_processing 0",
+     "llamacpp:requests_deferred 0",
+     "llamacpp:n_busy_slots_per_decode 1.693"
+    ]
+   }
+  }
+ ]
+}

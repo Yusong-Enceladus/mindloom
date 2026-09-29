@@ -1,0 +1,4 @@
+(APIServer pid=455344) ERROR 09-29 15:52:16 [repo_utils.py:119] Error parsing config for /home/YOU/hack/claude-models/v2/w/phi4-rv-15b: module 'transformers.models.siglip2.image_processing_siglip2' has no attribute 'filter_out_non_signature_kwargs', retrying 1 of 2
+(APIServer pid=455344) ERROR 09-29 15:52:18 [repo_utils.py:117] Error parsing config for /home/YOU/hack/claude-models/v2/w/phi4-rv-15b: module 'transformers.models.siglip2.image_processing_siglip2' has no attribute 'filter_out_non_signature_kwargs'
+(APIServer pid=455344) Traceback (most recent call last):
+(APIServer pid=455344) AttributeError: module 'transformers.models.siglip2.image_processing_siglip2' has no attribute 'filter_out_non_signature_kwargs'

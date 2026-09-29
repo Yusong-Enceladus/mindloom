@@ -1,0 +1,112 @@
+{
+ "id": "receipt-00",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-00.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "09526b0033cefe33d046d25eec5bbaf3a62e70481b593ff18bd0cc4e9ab4868d",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "橙石五金",
+  "date": "2026-09-14",
+  "date_text": "2026-09-14 13:06",
+  "time": "13:06",
+  "doc_no": "202609145102",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "布基胶带 48mm",
+    "qty": 1,
+    "unit": "卷",
+    "unit_price": "5.50",
+    "amount": "5.50"
+   },
+   {
+    "name": "延长线插座 3m",
+    "qty": 1,
+    "unit": "个",
+    "unit_price": "39.00",
+    "amount": "39.00"
+   },
+   {
+    "name": "钻头 6mm",
+    "qty": 4,
+    "unit": "支",
+    "unit_price": "12.00",
+    "amount": "48.00"
+   },
+   {
+    "name": "自攻螺丝 M4×20",
+    "qty": 3,
+    "unit": "盒",
+    "unit_price": "6.50",
+    "amount": "19.50"
+   },
+   {
+    "name": "PVC 水管 20mm",
+    "qty": 2.06,
+    "unit": "m",
+    "unit_price": "4.20",
+    "amount": "8.65"
+   }
+  ],
+  "subtotal": "120.65",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "120.65",
+  "payment_method": "会员卡"
+ },
+ "text_lines": [
+  "橙石五金",
+  "溪桥市东湖区青石巷143号",
+  "电话：0000-9742",
+  "单号：202609145102 收银员：12",
+  "日期：2026-09-14 13:06",
+  "布基胶带 48mm 1 5.50 5.50",
+  "延长线插座 3m 1 39.00 39.00",
+  "钻头 6mm 4 12.00 48.00",
+  "自攻螺丝 M4×20 3 6.50 19.50",
+  "PVC 水管 20mm 2.06m 4.20 8.65",
+  "合计件数：5",
+  "小计 120.65",
+  "实付 ¥120.65",
+  "支付方式：会员卡",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥120.65",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "橙石五金",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-09-14",
+   "match": "date"
+  },
+  {
+   "q": "钻头 6mm的金额是多少？",
+   "a": "48.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt"
+ }
+}

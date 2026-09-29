@@ -1,0 +1,136 @@
+{
+ "id": "scan-05",
+ "type": "scanned_document",
+ "split": "test",
+ "image": "images/scan-05.jpg",
+ "lang": "en",
+ "hard": [
+  "table",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "43294fb3fe485d14a81db0f2c30dcb804eb5be8b7ed12582a7fc283e8df4847e",
+ "gt": {
+  "title": "Travel Reimbursement Policy (excerpt)",
+  "fields": [
+   {
+    "key": "Policy no.",
+    "value": "FIN-50"
+   },
+   {
+    "key": "Effective",
+    "value": "October 1, 2026"
+   },
+   {
+    "key": "Owner",
+    "value": "Finance"
+   }
+  ],
+  "blocks": [
+   {
+    "type": "heading",
+    "text": "1. Meals"
+   },
+   {
+    "type": "paragraph",
+    "text": "Employees on approved travel receive a per diem of $55 per full day. Travel days are paid at 75% of the per diem."
+   },
+   {
+    "type": "heading",
+    "text": "2. Mileage"
+   },
+   {
+    "type": "paragraph",
+    "text": "Use of a personal car is reimbursed at $0.70 per mile. Parking and tolls are reimbursed at cost with receipts."
+   },
+   {
+    "type": "heading",
+    "text": "3. Lodging"
+   },
+   {
+    "type": "paragraph",
+    "text": "Hotel rates up to $220 per night are pre-approved. Higher rates need written approval from the budget owner."
+   },
+   {
+    "type": "heading",
+    "text": "4. Claims"
+   },
+   {
+    "type": "paragraph",
+    "text": "Submit claims within 45 days of returning. Claims submitted later than 45 days may be declined."
+   },
+   {
+    "type": "table",
+    "header": [
+     "Item",
+     "Limit",
+     "Receipt needed"
+    ],
+    "rows": [
+     [
+      "Per diem",
+      "$55/day",
+      "No"
+     ],
+     [
+      "Mileage",
+      "$0.70/mile",
+      "Log only"
+     ],
+     [
+      "Hotel",
+      "$220/night",
+      "Yes"
+     ]
+    ]
+   }
+  ],
+  "full_text": "Travel Reimbursement Policy (excerpt)\nPolicy no.: FIN-50\nEffective: October 1, 2026\nOwner: Finance\n1. Meals\nEmployees on approved travel receive a per diem of $55 per full day. Travel days are paid at 75% of the per diem.\n2. Mileage\nUse of a personal car is reimbursed at $0.70 per mile. Parking and tolls are reimbursed at cost with receipts.\n3. Lodging\nHotel rates up to $220 per night are pre-approved. Higher rates need written approval from the budget owner.\n4. Claims\nSubmit claims within 45 days of returning. Claims submitted later than 45 days may be declined.\nItem | Limit | Receipt needed\nPer diem | $55/day | No\nMileage | $0.70/mile | Log only\nHotel | $220/night | Yes\nPage 1 of 1"
+ },
+ "text_lines": [
+  "Travel Reimbursement Policy (excerpt)",
+  "Policy no.: FIN-50",
+  "Effective: October 1, 2026",
+  "Owner: Finance",
+  "1. Meals",
+  "Employees on approved travel receive a per diem of $55 per full day. Travel days are paid at 75% of the per diem.",
+  "2. Mileage",
+  "Use of a personal car is reimbursed at $0.70 per mile. Parking and tolls are reimbursed at cost with receipts.",
+  "3. Lodging",
+  "Hotel rates up to $220 per night are pre-approved. Higher rates need written approval from the budget owner.",
+  "4. Claims",
+  "Submit claims within 45 days of returning. Claims submitted later than 45 days may be declined.",
+  "Item | Limit | Receipt needed",
+  "Per diem | $55/day | No",
+  "Mileage | $0.70/mile | Log only",
+  "Hotel | $220/night | Yes",
+  "Page 1 of 1"
+ ],
+ "qa": [
+  {
+   "q": "What is the per diem?",
+   "a": "$55",
+   "match": "number"
+  },
+  {
+   "q": "What is the mileage rate?",
+   "a": "$0.70 per mile",
+   "match": "number"
+  },
+  {
+   "q": "Within how many days must claims be submitted?",
+   "a": "45 days",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "rotate_deg": -0.98,
+  "blur": 0.6,
+  "dpi": 150,
+  "body_pt": 11.0,
+  "engine": "reportlab+pdfium"
+ },
+ "variant": {
+  "content": "en_policy"
+ }
+}

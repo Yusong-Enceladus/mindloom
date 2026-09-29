@@ -1,0 +1,81 @@
+{
+ "id": "label-10",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-10.jpg",
+ "lang": "en",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "15caa3b4f17d72ba607f9fe8b387b4fb56b9f225fedc3f04461914968119442f",
+ "gt": {
+  "label_kind": "hours_sign",
+  "fields": [
+   {
+    "key": "shop",
+    "label": "",
+    "value": "Northfield Books"
+   },
+   {
+    "key": "weekday_hours",
+    "label": "Mon to Fri",
+    "value": "7:30 AM to 8:00 PM"
+   },
+   {
+    "key": "weekend_hours",
+    "label": "Sat and Sun",
+    "value": "10:00 AM to 6:00 PM"
+   },
+   {
+    "key": "parking_limit",
+    "label": "",
+    "value": "1 hour limit"
+   },
+   {
+    "key": "parking_fee",
+    "label": "",
+    "value": "$10 per hour"
+   }
+  ],
+  "lines": [
+   "Northfield Books",
+   "STORE HOURS",
+   "Mon to Fri 7:30 AM to 8:00 PM",
+   "Sat and Sun 10:00 AM to 6:00 PM",
+   "CUSTOMER PARKING",
+   "1 hour limit",
+   "$10 per hour after limit"
+  ]
+ },
+ "text_lines": [
+  "Northfield Books",
+  "STORE HOURS",
+  "Mon to Fri 7:30 AM to 8:00 PM",
+  "Sat and Sun 10:00 AM to 6:00 PM",
+  "CUSTOMER PARKING",
+  "1 hour limit",
+  "$10 per hour after limit"
+ ],
+ "qa": [
+  {
+   "q": "When does the store open on Saturday?",
+   "a": "10:00 AM",
+   "match": "exact"
+  },
+  {
+   "q": "What is the parking fee after the limit?",
+   "a": "$10 per hour",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "hours_sign",
+  "background": "wall"
+ },
+ "variant": {
+  "kind": "hours_sign",
+  "lang": "en"
+ }
+}

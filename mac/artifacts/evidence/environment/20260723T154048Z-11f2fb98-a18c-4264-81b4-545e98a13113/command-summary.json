@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "status": "pass",
+  "command": [
+    "script/check.sh",
+    "--summary",
+    "artifacts/evidence/environment/20260723T154048Z-11f2fb98-a18c-4264-81b4-545e98a13113/check-summary.json",
+    "--derived-data",
+    ".build/EnvironmentGate/20260723T154048Z-11f2fb98-a18c-4264-81b4-545e98a13113/DerivedData"
+  ],
+  "exitCode": 0
+}

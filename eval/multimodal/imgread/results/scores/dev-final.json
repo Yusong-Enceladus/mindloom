@@ -1,0 +1,2853 @@
+{
+ "split": "dev",
+ "runs": {
+  "skills": {
+   "path": "results/raw/dev-s4-skills.jsonl",
+   "n": 42,
+   "errors": 0,
+   "type_accuracy": 100.0,
+   "type_confusion": [],
+   "first_try_valid": 41,
+   "retried": 1,
+   "still_failing_after_retry": 0,
+   "type_step_failed": 0,
+   "values_sanitized": 0,
+   "gist_numbers": 168,
+   "gist_fabricated_numbers": 4,
+   "gists_with_fabricated_number": 2,
+   "gist_fabricated_examples": [
+    "6",
+    "9",
+    "7",
+    "9"
+   ],
+   "gists_empty": 0,
+   "latency_p50": 10.11,
+   "latency_p90": 14.85,
+   "step_latency_p50": {
+    "image_detect": 1.68,
+    "image_read": 8.31
+   },
+   "prompt_tokens_mean": 9703.8,
+   "completion_tokens_mean": 462.9,
+   "fab_number_rate_macro_without_gist": 0.0,
+   "images_with_fabrication_macro_without_gist": 0.0,
+   "images_with_fabrication_macro": 4.8,
+   "extraction": {
+    "cer_macro": 0.5,
+    "key_field_em_macro": 99.3,
+    "qa_found_macro": 100.0,
+    "fab_number_rate_macro": 0.6,
+    "unsupported_rate_macro": 0.0,
+    "num_recall": 100.0,
+    "valid_json": 100.0
+   },
+   "by_type": {
+    "chart_dashboard": {
+     "n": 6,
+     "cer": 0.0,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 2.8,
+     "latency_p50": 10.31,
+     "point_acc": 100.0,
+     "kpi_acc": 100.0,
+     "trend_acc": 100.0,
+     "chart_type_ok": 83.3
+    },
+    "chat_screenshot": {
+     "n": 6,
+     "cer": 0.0,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 9.83,
+     "sender_acc": 100.0,
+     "time_acc": 100.0,
+     "is_self_acc": 100.0,
+     "msg_count_ok": 100.0,
+     "msg_text_exact": 100.0
+    },
+    "form_label_sign": {
+     "n": 6,
+     "cer": 0.0,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 8.7,
+     "label_field_acc": 100.0,
+     "label_field_contains": 100.0,
+     "label_kind_ok": 100.0
+    },
+    "receipt_invoice": {
+     "n": 6,
+     "cer": 2.9,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 14.56,
+     "item_f1": 100.0,
+     "self_consistent": 100.0,
+     "date_ok": 100.0
+    },
+    "scanned_document": {
+     "n": 6,
+     "cer": 0.0,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 1.2,
+     "latency_p50": 13.69,
+     "table_cell_acc": 100.0
+    },
+    "slide": {
+     "n": 6,
+     "cer": 0.0,
+     "key_field_em": 100.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 9.27,
+     "bullet_recall": 100.0,
+     "bullet_precision": 100.0,
+     "bullet_level_acc": 100.0,
+     "title_exact": 100.0
+    },
+    "whiteboard_handwriting": {
+     "n": 6,
+     "cer": 0.9,
+     "key_field_em": 95.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 9.04,
+     "line_exact": 90.9,
+     "struck_recall": 100.0,
+     "struck_acc": 100.0,
+     "checked_acc": 100.0
+    }
+   },
+   "images": [
+    {
+     "id": "chat-08",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      65
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-11",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      156
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-12",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      98
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-06",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      75
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-05",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      67
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-03",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      71
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-15",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      84
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-18",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      77
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-11",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      43
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-16",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      169
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-17",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      161
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-08",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [
+      "6",
+      "7",
+      "9"
+     ],
+     "unsupported": [],
+     "cer": [
+      0,
+      80
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-04",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      105
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-08",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      209
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-05",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      139
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-09",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      227
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-10",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      119
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-03",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-11",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      145
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-05",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      61
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-10",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-11",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [
+      [
+       "text",
+       "line",
+       false
+      ],
+      [
+       "number",
+       "line",
+       false
+      ],
+      [
+       "text",
+       "line",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      3,
+      95
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-17",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-18",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      94
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-00",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      217
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-10",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      20,
+      175
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-05",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      286
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-11",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      6,
+      206
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-14",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      13,
+      312
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-17",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      169
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-01",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      270
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-02",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      286
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-13",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [
+      "9"
+     ],
+     "unsupported": [],
+     "cer": [
+      0,
+      496
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-10",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      204
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-16",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      284
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-17",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      201
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-07",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      40
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-04",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      58
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-09",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      84
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-12",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      102
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-19",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      39
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-13",
+     "detected": "form_label_sign",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      66
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    }
+   ]
+  },
+  "without-skills": {
+   "path": "results/raw/dev-final-noskill.jsonl",
+   "n": 42,
+   "errors": 0,
+   "type_accuracy": 88.1,
+   "type_confusion": [
+    [
+     "form_label_sign",
+     "receipt_invoice",
+     1
+    ],
+    [
+     "form_label_sign",
+     "scanned_document",
+     4
+    ]
+   ],
+   "first_try_valid": 29,
+   "retried": 13,
+   "still_failing_after_retry": 5,
+   "type_step_failed": 0,
+   "values_sanitized": 2,
+   "gist_numbers": 187,
+   "gist_fabricated_numbers": 4,
+   "gists_with_fabricated_number": 2,
+   "gist_fabricated_examples": [
+    "9",
+    "7",
+    "9",
+    "9"
+   ],
+   "gists_empty": 4,
+   "latency_p50": 7.98,
+   "latency_p90": 22.64,
+   "step_latency_p50": {
+    "image_detect": 0.79,
+    "image_read": 7.12
+   },
+   "prompt_tokens_mean": 4857.2,
+   "completion_tokens_mean": 1171.6,
+   "fab_number_rate_macro_without_gist": 3.0,
+   "images_with_fabrication_macro_without_gist": 23.8,
+   "images_with_fabrication_macro": 26.2,
+   "extraction": {
+    "cer_macro": 23.3,
+    "key_field_em_macro": 59.2,
+    "qa_found_macro": 91.5,
+    "fab_number_rate_macro": 3.6,
+    "unsupported_rate_macro": 4.5,
+    "num_recall": 82.4,
+    "valid_json": 100.0
+   },
+   "by_type": {
+    "chart_dashboard": {
+     "n": 6,
+     "cer": 56.7,
+     "key_field_em": 43.8,
+     "qa_found": 57.9,
+     "fab_number_rate": 20.4,
+     "latency_p50": 14.34,
+     "point_acc": 58.3,
+     "kpi_acc": 0.0,
+     "trend_acc": 66.7,
+     "chart_type_ok": 50.0
+    },
+    "chat_screenshot": {
+     "n": 6,
+     "cer": 1.4,
+     "key_field_em": 76.5,
+     "qa_found": 100.0,
+     "fab_number_rate": 1.9,
+     "latency_p50": 8.4,
+     "sender_acc": 96.8,
+     "time_acc": 51.6,
+     "is_self_acc": 96.8,
+     "msg_count_ok": 83.3,
+     "msg_text_exact": 93.5
+    },
+    "form_label_sign": {
+     "n": 6,
+     "cer": 75.1,
+     "key_field_em": 6.2,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 7.91,
+     "label_field_acc": 6.2,
+     "label_field_contains": 6.2,
+     "label_kind_ok": 16.7
+    },
+    "receipt_invoice": {
+     "n": 6,
+     "cer": 4.9,
+     "key_field_em": 78.2,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 15.21,
+     "item_f1": 66.7,
+     "self_consistent": 100.0,
+     "date_ok": 100.0
+    },
+    "scanned_document": {
+     "n": 6,
+     "cer": 24.5,
+     "key_field_em": 44.9,
+     "qa_found": 82.6,
+     "fab_number_rate": 1.5,
+     "latency_p50": 7.64,
+     "table_cell_acc": 44.4
+    },
+    "slide": {
+     "n": 6,
+     "cer": 0.1,
+     "key_field_em": 70.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 1.7,
+     "latency_p50": 5.8,
+     "bullet_recall": 100.0,
+     "bullet_precision": 100.0,
+     "bullet_level_acc": 69.4,
+     "title_exact": 100.0
+    },
+    "whiteboard_handwriting": {
+     "n": 6,
+     "cer": 0.3,
+     "key_field_em": 95.0,
+     "qa_found": 100.0,
+     "fab_number_rate": 0.0,
+     "latency_p50": 4.92,
+     "line_exact": 97.0,
+     "struck_recall": 100.0,
+     "struck_acc": 100.0,
+     "checked_acc": 100.0
+    }
+   },
+   "images": [
+    {
+     "id": "chat-08",
+     "detected": "chat_screenshot",
+     "fields_wrong": [
+      [
+       "flag",
+       "kind",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      65
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-12",
+     "detected": "chat_screenshot",
+     "fields_wrong": [
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      98
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-06",
+     "detected": "chat_screenshot",
+     "fields_wrong": [
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "text",
+       "message_text",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      4,
+      75
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-11",
+     "detected": "chat_screenshot",
+     "fields_wrong": [
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "name",
+       "sender",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "flag",
+       "is_self",
+       false
+      ],
+      [
+       "flag",
+       "kind",
+       false
+      ],
+      [
+       "text",
+       "message_text",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      4,
+      156
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 1
+    },
+    {
+     "id": "chat-15",
+     "detected": "chat_screenshot",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      84
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chat-18",
+     "detected": "chat_screenshot",
+     "fields_wrong": [
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ],
+      [
+       "date",
+       "time",
+       false
+      ]
+     ],
+     "fab": [
+      "2026"
+     ],
+     "unsupported": [
+      "2026-08-30 20:31",
+      "2026-08-30 20:31",
+      "2026-08-30 20:38",
+      "2026-08-30 20:38",
+      "2026-08-30 20:38"
+     ],
+     "cer": [
+      0,
+      77
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-03",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [
+      "22"
+     ],
+     "unsupported": [
+      "最高温度",
+      "最低温度"
+     ],
+     "cer": [
+      0,
+      71
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-05",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [
+      "18",
+      "19",
+      "21",
+      "23",
+      "24",
+      "25"
+     ],
+     "unsupported": [
+      "+18",
+      "+24",
+      "+25"
+     ],
+     "cer": [
+      0,
+      67
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-11",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [
+      "0"
+     ],
+     "unsupported": [],
+     "cer": [
+      5,
+      43
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-08",
+     "detected": "chart_dashboard",
+     "fields_wrong": [],
+     "fab": [
+      "0",
+      "7",
+      "9"
+     ],
+     "unsupported": [
+      "iOS 峰值",
+      "0.0K",
+      "0.0K"
+     ],
+     "cer": [
+      0,
+      80
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-04",
+     "detected": "slide",
+     "fields_wrong": [
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "page",
+       false
+      ],
+      [
+       "text",
+       "footer",
+       false
+      ]
+     ],
+     "fab": [
+      "2"
+     ],
+     "unsupported": [],
+     "cer": [
+      0,
+      105
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-05",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      139
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-09",
+     "detected": "slide",
+     "fields_wrong": [
+      [
+       "number",
+       "page",
+       false
+      ],
+      [
+       "text",
+       "footer",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      227
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-08",
+     "detected": "slide",
+     "fields_wrong": [
+      [
+       "text",
+       "footer",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      1,
+      209
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 1
+    },
+    {
+     "id": "slide-10",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [
+      "灰度发布门店数"
+     ],
+     "cer": [
+      0,
+      119
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "slide-11",
+     "detected": "slide",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      145
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-03",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-05",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      61
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-10",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-11",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [
+      [
+       "number",
+       "line",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      1,
+      95
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-17",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      34
+     ],
+     "qa": [
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "board-18",
+     "detected": "whiteboard_handwriting",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      94
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-00",
+     "detected": "receipt_invoice",
+     "fields_wrong": [
+      [
+       "number",
+       "total",
+       false
+      ],
+      [
+       "number",
+       "subtotal",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      217
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-05",
+     "detected": "receipt_invoice",
+     "fields_wrong": [
+      [
+       "number",
+       "doc_no",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      286
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-10",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      20,
+      175
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-14",
+     "detected": "receipt_invoice",
+     "fields_wrong": [
+      [
+       "number",
+       "total",
+       false
+      ],
+      [
+       "number",
+       "subtotal",
+       false
+      ],
+      [
+       "number",
+       "tax",
+       false
+      ],
+      [
+       "name",
+       "payment_method",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ],
+      [
+       "number",
+       "item_amount",
+       false
+      ],
+      [
+       "number",
+       "item_qty",
+       false
+      ],
+      [
+       "number",
+       "item_unit_price",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      41,
+      312
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-11",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      6,
+      206
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "receipt-17",
+     "detected": "receipt_invoice",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      169
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-01",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "text",
+       "title",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "number",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "number",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "number",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "number",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "number",
+       "table_cell",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [
+      "行政部关于2026年国庆假期值班安排的通知",
+      "注意事项",
+      "2026年10月1日至10月7日"
+     ],
+     "cer": [
+      80,
+      270
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-10",
+     "detected": "scanned_document",
+     "fields_wrong": [],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      6,
+      204
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-13",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "date",
+       "header_field",
+       false
+      ],
+      [
+       "name",
+       "header_field",
+       false
+      ],
+      [
+       "name",
+       "header_field",
+       false
+      ]
+     ],
+     "fab": [
+      "9"
+     ],
+     "unsupported": [],
+     "cer": [
+      8,
+      496
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-16",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "name",
+       "header_field",
+       false
+      ],
+      [
+       "name",
+       "header_field",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [
+      "房屋地址",
+      "费用承担"
+     ],
+     "cer": [
+      27,
+      284
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-17",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ],
+      [
+       "date",
+       "table_cell",
+       false
+      ],
+      [
+       "name",
+       "table_cell",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [
+      "配方定稿（9月2日，赵磊）；门店培训（9月5日，许诺）；正式上市（10月19日，赵磊）"
+     ],
+     "cer": [
+      20,
+      201
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-16",
+     "detected": "chart_dashboard",
+     "fields_wrong": [
+      [
+       "text",
+       "title",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "flag",
+       "trend",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      169,
+      169
+     ],
+     "qa": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "label-04",
+     "detected": "receipt_invoice",
+     "fields_wrong": [
+      [
+       "name",
+       "field:product",
+       false
+      ],
+      [
+       "number",
+       "field:spec",
+       false
+      ],
+      [
+       "name",
+       "field:origin",
+       false
+      ],
+      [
+       "number",
+       "field:unit_price",
+       false
+      ],
+      [
+       "number",
+       "field:original_price",
+       false
+      ],
+      [
+       "number",
+       "field:price",
+       false
+      ],
+      [
+       "number",
+       "field:barcode",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      58
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "chart-17",
+     "detected": "chart_dashboard",
+     "fields_wrong": [
+      [
+       "text",
+       "title",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "number",
+       "point",
+       false
+      ],
+      [
+       "text",
+       "category",
+       false
+      ],
+      [
+       "flag",
+       "trend",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ],
+      [
+       "number",
+       "kpi_value",
+       false
+      ],
+      [
+       "number",
+       "kpi_delta",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      161,
+      161
+     ],
+     "qa": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "label-12",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "name",
+       "field:reporter",
+       false
+      ],
+      [
+       "name",
+       "field:room",
+       false
+      ],
+      [
+       "number",
+       "field:phone",
+       false
+      ],
+      [
+       "name",
+       "field:issue",
+       false
+      ],
+      [
+       "date",
+       "field:visit_time",
+       false
+      ],
+      [
+       "name",
+       "field:emergency_contact",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      102,
+      102
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-13",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "number",
+       "field:location",
+       false
+      ],
+      [
+       "name",
+       "field:item",
+       false
+      ],
+      [
+       "number",
+       "field:sku",
+       false
+      ],
+      [
+       "number",
+       "field:quantity",
+       false
+      ],
+      [
+       "number",
+       "field:lot",
+       false
+      ],
+      [
+       "date",
+       "field:expiry",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      66,
+      66
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-09",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "name",
+       "field:shop",
+       false
+      ],
+      [
+       "number",
+       "field:weekday_hours",
+       false
+      ],
+      [
+       "number",
+       "field:weekend_hours",
+       false
+      ],
+      [
+       "number",
+       "field:parking_limit",
+       false
+      ],
+      [
+       "number",
+       "field:parking_fee",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      84,
+      84
+     ],
+     "qa": [
+      1,
+      1,
+      1,
+      1
+     ],
+     "attempts": 2,
+     "sanitized": 0
+    },
+    {
+     "id": "label-19",
+     "detected": "form_label_sign",
+     "fields_wrong": [
+      [
+       "name",
+       "field:room",
+       false
+      ],
+      [
+       "number",
+       "field:contact_ext",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      0,
+      39
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "label-07",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "name",
+       "field:room",
+       false
+      ],
+      [
+       "number",
+       "field:capacity",
+       false
+      ],
+      [
+       "name",
+       "field:equipment",
+       false
+      ],
+      [
+       "number",
+       "field:contact_ext",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      40,
+      40
+     ],
+     "qa": [
+      1,
+      1,
+      1
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    },
+    {
+     "id": "scan-02",
+     "detected": "scanned_document",
+     "fields_wrong": [
+      [
+       "text",
+       "title",
+       false
+      ],
+      [
+       "name",
+       "header_field",
+       false
+      ],
+      [
+       "name",
+       "header_field",
+       false
+      ],
+      [
+       "number",
+       "header_field",
+       false
+      ]
+     ],
+     "fab": [],
+     "unsupported": [],
+     "cer": [
+      286,
+      286
+     ],
+     "qa": [
+      0,
+      0,
+      0,
+      0
+     ],
+     "attempts": 3,
+     "sanitized": 0
+    }
+   ]
+  }
+ }
+}

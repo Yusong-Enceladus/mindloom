@@ -1,0 +1,108 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 83,
+   "retried": 0,
+   "latency_median_s": 3.507,
+   "latency_p95_s": 4.336,
+   "latency_total_s": 288.1,
+   "prompt_tokens_mean": 5176.7,
+   "completion_tokens_mean": 177.2,
+   "prompt_tokens_total": 429667,
+   "completion_tokens_total": 14711,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 63,
+   "ok_first_attempt": 39,
+   "retried": 40,
+   "latency_median_s": 5.797,
+   "latency_p95_s": 10.763,
+   "latency_total_s": 489.9,
+   "prompt_tokens_mean": 6272.2,
+   "completion_tokens_mean": 389.2,
+   "prompt_tokens_total": 495505,
+   "completion_tokens_total": 30750,
+   "errors_sample": [
+    "[ungrounded_date] status_facts[2] 的 date 2026-09-20 不在它引用的素材里；素材只给了一个范围（9月24日–9月30日）；写「9月24日那周」或「9月30日前」，或者不写日期，不要挑其中某一天（没有就留空 \"\"）",
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[ungrounded_date] status_facts[0]「楼下已投诉，约9月20日前看」里的「9月20日」不在它引用的素材里；素材里没有这个日期；只写素材写了或 dates 换算出的日期，没有就不写日期"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 8.027,
+   "latency_p95_s": 8.294,
+   "latency_total_s": 29.5,
+   "prompt_tokens_mean": 4968,
+   "completion_tokens_mean": 457.2,
+   "prompt_tokens_total": 19872,
+   "completion_tokens_total": 1829,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 6.466,
+   "latency_p95_s": 8.176,
+   "latency_total_s": 19.5,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 445,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1335,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 1,
+   "retried": 2,
+   "latency_median_s": 3.42,
+   "latency_p95_s": 5.383,
+   "latency_total_s": 10.8,
+   "prompt_tokens_mean": 4071,
+   "completion_tokens_mean": 176.7,
+   "prompt_tokens_total": 12213,
+   "completion_tokens_total": 530,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 67,
+  "none": 4,
+  "ask": 2
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 67,
+  "none": 4,
+  "ask": 1,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 13.9,
+ "title_chars_mean": 9.9,
+ "wall_s": 841.9,
+ "items_per_min": 5.84,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

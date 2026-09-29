@@ -1,0 +1,156 @@
+{
+  "commands" : [
+    [
+      "script/run_audio_journal_probe.sh"
+    ]
+  ],
+  "conclusion" : "conditional",
+  "criteria" : {
+    "fail" : [
+      "A committed chunk becomes unreadable, a corrupt journal finalizes successfully, a pre-manifest chunk is published to inference, or loss exceeds one in-flight chunk."
+    ],
+    "pass" : [
+      "Inference ranges appear only after the chunk rename and manifest fsync/atomic rename complete.",
+      "Truncation, digest corruption, duplicate sequence, and missing files create recovery issues/gaps and cannot be finalized as complete.",
+      "Across deterministic SIGKILL seeds, every manifest-committed chunk remains readable and uncommitted loss is bounded by the single chunk being written."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "normal-two-track-finalize",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "inference-range-publishes-after-durable-manifest",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "truncated-committed-chunk-is-a-gap",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "digest-corruption-is-quarantined",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "duplicate-sequence-is-not-published-twice",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "missing-committed-chunk-is-a-gap",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-007",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-008",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-009",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-010",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-019",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-020",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-021",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-022",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-031",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-032",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-033",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-JRN-001/matrix.json"
+      ],
+      "scenarioID" : "sigkill-seed-034",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can a two-track short-chunk AudioJournal survive real SIGKILL at deterministic randomized write points while publishing only durably committed ranges?",
+  "runID" : "6F52FDB3-1D0C-41F8-8264-41A7DF866AD9",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-JRN-001",
+  "unmetCriteria" : [
+    "The probe uses short synthetic PCM files on the current filesystem; final PCM/CAF/ALAC encoding and production chunk duration remain unfrozen.",
+    "Physical disk exhaustion, two-hour dual-track capture, sleep/wake, and real device changes remain mandatory in task 4.5."
+  ]
+}

@@ -1,0 +1,144 @@
+{
+ "id": "label-15",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-15.jpg",
+ "lang": "zh",
+ "hard": [
+  "shadow",
+  "small_text",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "b5f3323d1fcc999ba035a9789053749b5d0915c6fa80f6b6d0531e46f3369584",
+ "gt": {
+  "label_kind": "shipping_label",
+  "fields": [
+   {
+    "key": "carrier",
+    "label": "",
+    "value": "示例快运"
+   },
+   {
+    "key": "tracking_no",
+    "label": "运单号",
+    "value": "3032 1993 4920"
+   },
+   {
+    "key": "recipient",
+    "label": "收",
+    "value": "林欣"
+   },
+   {
+    "key": "recipient_phone",
+    "label": "",
+    "value": "132****8929"
+   },
+   {
+    "key": "recipient_address",
+    "label": "",
+    "value": "青川市白石区云栖路104号17栋601"
+   },
+   {
+    "key": "sender",
+    "label": "寄",
+    "value": "宋柯"
+   },
+   {
+    "key": "sender_phone",
+    "label": "",
+    "value": "180****2137"
+   },
+   {
+    "key": "sender_address",
+    "label": "",
+    "value": "云岭市白石区杉木路125号"
+   },
+   {
+    "key": "goods",
+    "label": "物品",
+    "value": "咖啡豆样品"
+   },
+   {
+    "key": "weight",
+    "label": "重量",
+    "value": "0.62kg"
+   },
+   {
+    "key": "pieces",
+    "label": "件数",
+    "value": "1/1"
+   },
+   {
+    "key": "date",
+    "label": "寄件日期",
+    "value": "2026-09-18"
+   }
+  ],
+  "lines": [
+   "示例快运",
+   "标准快递",
+   "青川-白石 D38",
+   "运单号 3032 1993 4920",
+   "收",
+   "林欣  132****8929",
+   "青川市白石区云栖路104号17栋601",
+   "寄",
+   "宋柯  180****2137",
+   "云岭市白石区杉木路125号",
+   "物品：咖啡豆样品",
+   "重量：0.62kg",
+   "件数：1/1",
+   "寄件日期：2026-09-18",
+   "签收人："
+  ]
+ },
+ "text_lines": [
+  "示例快运",
+  "标准快递",
+  "青川-白石 D38",
+  "运单号 3032 1993 4920",
+  "收",
+  "林欣  132****8929",
+  "青川市白石区云栖路104号17栋601",
+  "寄",
+  "宋柯  180****2137",
+  "云岭市白石区杉木路125号",
+  "物品：咖啡豆样品",
+  "重量：0.62kg",
+  "件数：1/1",
+  "寄件日期：2026-09-18",
+  "签收人："
+ ],
+ "qa": [
+  {
+   "q": "收件人是谁？",
+   "a": "林欣",
+   "match": "exact"
+  },
+  {
+   "q": "包裹多重？",
+   "a": "0.62kg",
+   "match": "number"
+  },
+  {
+   "q": "运单号是多少？",
+   "a": "3032 1993 4920",
+   "match": "exact"
+  },
+  {
+   "q": "寄件人是谁？",
+   "a": "宋柯",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "shipping_label",
+  "background": "cardboard"
+ },
+ "variant": {
+  "kind": "shipping_label",
+  "far": true,
+  "shadow": true
+ }
+}

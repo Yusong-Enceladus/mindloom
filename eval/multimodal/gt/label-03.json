@@ -1,0 +1,125 @@
+{
+ "id": "label-03",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-03.jpg",
+ "lang": "zh",
+ "hard": [
+  "low_contrast",
+  "units",
+  "glare",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "f6fed8c94a185bdfd41966b2a9a5d854af99beda30d57e3329e1993e88221648",
+ "gt": {
+  "label_kind": "nameplate",
+  "fields": [
+   {
+    "key": "product",
+    "label": "",
+    "value": "储水式电热水器"
+   },
+   {
+    "key": "model",
+    "label": "型号",
+    "value": "DSZF-60A"
+   },
+   {
+    "key": "voltage",
+    "label": "额定电压",
+    "value": "220V~"
+   },
+   {
+    "key": "frequency",
+    "label": "额定频率",
+    "value": "50Hz"
+   },
+   {
+    "key": "power",
+    "label": "额定功率",
+    "value": "2200W"
+   },
+   {
+    "key": "capacity",
+    "label": "额定容量",
+    "value": "60L"
+   },
+   {
+    "key": "ip_rating",
+    "label": "防水等级",
+    "value": "IPX4"
+   },
+   {
+    "key": "serial_no",
+    "label": "出厂编号",
+    "value": "G40128813"
+   },
+   {
+    "key": "manufacture_date",
+    "label": "生产日期",
+    "value": "2026年11月"
+   },
+   {
+    "key": "manufacturer",
+    "label": "",
+    "value": "云岭电器有限公司"
+   }
+  ],
+  "lines": [
+   "储水式电热水器",
+   "型号：DSZF-60A",
+   "额定电压：220V~",
+   "额定频率：50Hz",
+   "额定功率：2200W",
+   "额定容量：60L",
+   "防水等级：IPX4",
+   "出厂编号：G40128813",
+   "生产日期：2026年11月",
+   "云岭电器有限公司"
+  ]
+ },
+ "text_lines": [
+  "储水式电热水器",
+  "型号：DSZF-60A",
+  "额定电压：220V~",
+  "额定频率：50Hz",
+  "额定功率：2200W",
+  "额定容量：60L",
+  "防水等级：IPX4",
+  "出厂编号：G40128813",
+  "生产日期：2026年11月",
+  "云岭电器有限公司"
+ ],
+ "qa": [
+  {
+   "q": "额定功率是多少？",
+   "a": "2200W",
+   "match": "number"
+  },
+  {
+   "q": "型号是什么？",
+   "a": "DSZF-60A",
+   "match": "exact"
+  },
+  {
+   "q": "出厂编号是多少？",
+   "a": "G40128813",
+   "match": "exact"
+  },
+  {
+   "q": "额定容量是多少？",
+   "a": "60L",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "nameplate",
+  "background": "desk_grey"
+ },
+ "variant": {
+  "kind": "nameplate",
+  "faint": true,
+  "glare": true
+ }
+}

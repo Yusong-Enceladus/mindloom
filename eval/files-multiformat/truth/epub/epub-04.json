@@ -1,0 +1,56 @@
+{
+ "file_id": "epub-04",
+ "path": "corpus/epub/epub-04.epub",
+ "type": "epub",
+ "ext": "epub",
+ "mime": "application/epub+zip",
+ "filename": "Aurora Field Instruments Onboarding Handbook.epub",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Aurora Field Instruments Onboarding Handbook\nYour first week\nOn day one you meet your buddy, Lucas Meyer, at 9:30 in the lobby.\n- Collect your badge\n- Set up your laptop\n- Book the safety briefing\nTime off\nFull-time staff receive 10 days of paid leave per year, plus public holidays.\nPractical things\nGuest Wi-Fi network: Aurora-Guest. The office opens at 7:30 and closes at 20:00.\nThis handbook is synthetic data for evaluation only.\n合成数据",
+ "key_lines": [
+  "Full-time staff receive 10 days of paid leave per year, plus public holidays.",
+  "Guest Wi-Fi network: Aurora-Guest. The office opens at 7:30 and closes at 20:00."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "leave_days": 10,
+  "wifi": "Aurora-Guest",
+  "office_hours": "7:30-20:00"
+ },
+ "numbers": [
+  {
+   "value": 10,
+   "label": "leave days"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "How many days of paid leave per year?",
+   "a": 10,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "What is the guest Wi-Fi network?",
+   "a": "Aurora-Guest",
+   "match": "exact"
+  },
+  {
+   "id": "q3",
+   "q": "When does the office close?",
+   "a": "20:00",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "chapters": 3
+ },
+ "bytes": 2849,
+ "sha256": "d750982fcf965ddf514c35e1b40256ab12a2a6be028cd35466ad7ed12c497c2e",
+ "family": "handbook_en"
+}

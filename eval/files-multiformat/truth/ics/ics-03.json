@@ -1,0 +1,70 @@
+{
+ "file_id": "ics-03",
+ "path": "corpus/ics/ics-03.ics",
+ "type": "ics",
+ "ext": "ics",
+ "mime": "text/calendar",
+ "filename": "团队日历.ics",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "CALENDAR: 团队日历\n[event 1]\nSUMMARY: 周例会\nSTART: 2026-10-19 10:00 (Asia/Shanghai)\nEND: 2026-10-19 11:00 (Asia/Shanghai)\nRRULE: FREQ=WEEKLY;BYDAY=MO;COUNT=6\nLOCATION: 会议室 A\nDESCRIPTION: 每周一例会，共 6 次。主持：于浩然（合成数据）\nORGANIZER: 于浩然 <host@example.com>\nALARM: -PT15M\n[event 2]\nSUMMARY: 季度复盘\nSTART: 2026-10-30 14:30 (Asia/Shanghai)\nEND: 2026-10-30 17:00 (Asia/Shanghai)\nLOCATION: 会议室 A\nDESCRIPTION: 准备人：康浩然\nORGANIZER: 李嘉怡 <review@example.com>",
+ "key_lines": [
+  "RRULE: FREQ=WEEKLY;BYDAY=MO;COUNT=6",
+  "LOCATION: 会议室 A",
+  "DESCRIPTION: 每周一例会，共 6 次。主持：于浩然（合成数据）",
+  "START: 2026-10-30 14:30 (Asia/Shanghai)"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "例会": "每周一 10:00-11:00 共6次",
+  "复盘": "2026-10-30 14:30",
+  "地点": "会议室 A"
+ },
+ "numbers": [
+  {
+   "value": 6,
+   "label": "次数"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "周例会一共几次？",
+   "a": 6,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "季度复盘几点开始？",
+   "a": "14:30",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "例会在哪？",
+   "a": "会议室 A",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "周例会是每周几？",
+   "a": "周一",
+   "match": "contains",
+   "accept": [
+    "星期一",
+    "MO",
+    "Monday"
+   ]
+  }
+ ],
+ "structure": {
+  "events": 2,
+  "calname": "团队日历"
+ },
+ "bytes": 1062,
+ "sha256": "5e5cd03e84e900f20ba454d227736ef454ee78b921214fc95efc4ed4a6e69996",
+ "family": "weekly_meeting"
+}

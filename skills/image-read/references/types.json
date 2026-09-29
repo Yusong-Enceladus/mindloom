@@ -1,0 +1,587 @@
+{
+ "chat_screenshot": {
+  "type": "object",
+  "properties": {
+   "chat_title": {
+    "type": "string"
+   },
+   "is_group": {
+    "type": "boolean"
+   },
+   "messages": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "sender": {
+       "type": "string"
+      },
+      "is_self": {
+       "type": "boolean"
+      },
+      "time": {
+       "type": "string"
+      },
+      "text": {
+       "type": "string"
+      },
+      "kind": {
+       "type": "string",
+       "enum": [
+        "text",
+        "voice",
+        "image",
+        "file"
+       ]
+      }
+     },
+     "required": [
+      "sender",
+      "is_self",
+      "time",
+      "text",
+      "kind"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 120
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "chat_title",
+   "is_group",
+   "messages",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "chart_dashboard": {
+  "type": "object",
+  "properties": {
+   "chart_type": {
+    "type": "string",
+    "enum": [
+     "bar",
+     "line",
+     "grouped_bar",
+     "pie",
+     "hbar",
+     "dashboard"
+    ]
+   },
+   "title": {
+    "type": "string"
+   },
+   "x_label": {
+    "type": "string"
+   },
+   "y_label": {
+    "type": "string"
+   },
+   "unit": {
+    "type": "string"
+   },
+   "kpis": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "label": {
+       "type": "string"
+      },
+      "value": {
+       "type": "string"
+      },
+      "delta": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "label",
+      "value",
+      "delta"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 40
+   },
+   "series": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "points": {
+       "type": "array",
+       "items": {
+        "type": "object",
+        "properties": {
+         "category": {
+          "type": "string"
+         },
+         "value": {
+          "type": "string"
+         }
+        },
+        "required": [
+         "category",
+         "value"
+        ],
+        "additionalProperties": false
+       },
+       "maxItems": 120
+      },
+      "trend": {
+       "type": "string",
+       "enum": [
+        "up",
+        "down",
+        "flat",
+        "rise_then_fall",
+        "fall_then_rise",
+        "none"
+       ]
+      }
+     },
+     "required": [
+      "name",
+      "points",
+      "trend"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 20
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "chart_type",
+   "title",
+   "x_label",
+   "y_label",
+   "unit",
+   "kpis",
+   "series",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "slide": {
+  "type": "object",
+  "properties": {
+   "title": {
+    "type": "string"
+   },
+   "subtitle": {
+    "type": "string"
+   },
+   "bullets": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "level": {
+       "type": "integer",
+       "enum": [
+        0,
+        1,
+        2
+       ]
+      },
+      "text": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "level",
+      "text"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 60
+   },
+   "kpis": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "label": {
+       "type": "string"
+      },
+      "value": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "label",
+      "value"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 30
+   },
+   "footer": {
+    "type": "string"
+   },
+   "page": {
+    "type": "string"
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "title",
+   "subtitle",
+   "bullets",
+   "kpis",
+   "footer",
+   "page",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "whiteboard_handwriting": {
+  "type": "object",
+  "properties": {
+   "surface": {
+    "type": "string",
+    "enum": [
+     "whiteboard",
+     "blackboard",
+     "notebook",
+     "sticky_notes",
+     "paper"
+    ]
+   },
+   "lines": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "text": {
+       "type": "string"
+      },
+      "struck": {
+       "type": "boolean"
+      },
+      "checked": {
+       "type": "boolean"
+      },
+      "is_title": {
+       "type": "boolean"
+      }
+     },
+     "required": [
+      "text",
+      "struck",
+      "checked",
+      "is_title"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 150
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "surface",
+   "lines",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "receipt_invoice": {
+  "type": "object",
+  "properties": {
+   "doc_kind": {
+    "type": "string",
+    "enum": [
+     "receipt",
+     "invoice"
+    ]
+   },
+   "merchant": {
+    "type": "string"
+   },
+   "buyer": {
+    "type": "string"
+   },
+   "date": {
+    "type": "string"
+   },
+   "date_text": {
+    "type": "string"
+   },
+   "time": {
+    "type": "string"
+   },
+   "doc_no": {
+    "type": "string"
+   },
+   "currency": {
+    "type": "string"
+   },
+   "items": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "name": {
+       "type": "string"
+      },
+      "qty": {
+       "type": "string"
+      },
+      "unit": {
+       "type": "string"
+      },
+      "unit_price": {
+       "type": "string"
+      },
+      "amount": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "name",
+      "qty",
+      "unit",
+      "unit_price",
+      "amount"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 120
+   },
+   "subtotal": {
+    "type": "string"
+   },
+   "discount": {
+    "type": "string"
+   },
+   "tax": {
+    "type": "string"
+   },
+   "total": {
+    "type": "string"
+   },
+   "payment_method": {
+    "type": "string"
+   },
+   "total_in_words": {
+    "type": "string"
+   },
+   "lines": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    },
+    "maxItems": 250
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "doc_kind",
+   "merchant",
+   "buyer",
+   "date",
+   "date_text",
+   "time",
+   "doc_no",
+   "currency",
+   "items",
+   "subtotal",
+   "discount",
+   "tax",
+   "total",
+   "payment_method",
+   "total_in_words",
+   "lines",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "scanned_document": {
+  "type": "object",
+  "properties": {
+   "title": {
+    "type": "string"
+   },
+   "fields": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "key": {
+       "type": "string"
+      },
+      "value": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "key",
+      "value"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 40
+   },
+   "blocks": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "type": {
+       "type": "string",
+       "enum": [
+        "heading",
+        "paragraph",
+        "list_item",
+        "table"
+       ]
+      },
+      "text": {
+       "type": "string"
+      },
+      "header": {
+       "type": "array",
+       "items": {
+        "type": "string"
+       },
+       "maxItems": 30
+      },
+      "rows": {
+       "type": "array",
+       "items": {
+        "type": "array",
+        "items": {
+         "type": "string"
+        },
+        "maxItems": 30
+       },
+       "maxItems": 120
+      }
+     },
+     "required": [
+      "type",
+      "text",
+      "header",
+      "rows"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 150
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "title",
+   "fields",
+   "blocks",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "form_label_sign": {
+  "type": "object",
+  "properties": {
+   "label_kind": {
+    "type": "string",
+    "enum": [
+     "shipping_label",
+     "nameplate",
+     "price_tag",
+     "room_sign",
+     "hours_sign",
+     "repair_form",
+     "bin_label",
+     "other"
+    ]
+   },
+   "fields": {
+    "type": "array",
+    "items": {
+     "type": "object",
+     "properties": {
+      "key": {
+       "type": "string"
+      },
+      "label": {
+       "type": "string"
+      },
+      "value": {
+       "type": "string"
+      }
+     },
+     "required": [
+      "key",
+      "label",
+      "value"
+     ],
+     "additionalProperties": false
+    },
+    "maxItems": 60
+   },
+   "lines": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    },
+    "maxItems": 200
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "label_kind",
+   "fields",
+   "lines",
+   "gist"
+  ],
+  "additionalProperties": false
+ },
+ "other": {
+  "type": "object",
+  "properties": {
+   "lines": {
+    "type": "array",
+    "items": {
+     "type": "string"
+    },
+    "maxItems": 250
+   },
+   "gist": {
+    "type": "string",
+    "maxLength": 80
+   }
+  },
+  "required": [
+   "lines",
+   "gist"
+  ],
+  "additionalProperties": false
+ }
+}

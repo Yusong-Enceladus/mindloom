@@ -1,0 +1,121 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/environment.schema.json",
+  "title": "bestASR evidence environment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "runID",
+    "capturedAt",
+    "repository",
+    "platform",
+    "toolchain",
+    "privacy"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "kind": {
+      "const": "environment"
+    },
+    "runID": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "capturedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "commit",
+        "dirty"
+      ],
+      "properties": {
+        "commit": {
+          "type": "string",
+          "pattern": "^(working-tree|[0-9a-f]{40})$"
+        },
+        "dirty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "platform": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "osVersion",
+        "architecture",
+        "modelIdentifier",
+        "unifiedMemoryBytes"
+      ],
+      "properties": {
+        "osVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "architecture": {
+          "const": "arm64"
+        },
+        "modelIdentifier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "unifiedMemoryBytes": {
+          "type": "integer",
+          "minimum": 17179869184
+        }
+      }
+    },
+    "toolchain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xcodeVersion",
+        "swiftVersion",
+        "xcodegenVersion"
+      ],
+      "properties": {
+        "xcodeVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "swiftVersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "xcodegenVersion": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "telemetryEnabled",
+        "networkPolicy"
+      ],
+      "properties": {
+        "telemetryEnabled": {
+          "const": false
+        },
+        "networkPolicy": {
+          "type": "string",
+          "enum": [
+            "deny-all",
+            "update-only",
+            "not-measured"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,889 @@
+{
+ "scenario_id": "dev-week-v1",
+ "split": "dev",
+ "n_items": 82,
+ "summary": {
+  "bcubed_precision": 0.3794482207117153,
+  "bcubed_recall": 0.7126589756397449,
+  "bcubed_f1": 0.49522094751165735,
+  "link_precision": 0.3048780487804878,
+  "link_recall": 0.2631578947368421,
+  "link_f1": 0.28248587570621464,
+  "hard_decoy_leakage": 0.75,
+  "easy_decoy_leakage": 0.25,
+  "noise_abstention": 0.0,
+  "noise_unfiled_rate": 0.0,
+  "noise_singleton_rate": 0.25,
+  "noise_in_real_event_rate": 0.75,
+  "false_unfiled": 0,
+  "unfiled_precision": null,
+  "decoy_seed_ok": "1/2",
+  "absorbed_matters": "ev_beans,ev_momflat",
+  "pred_event_count": 14,
+  "gold_event_count": 9,
+  "question_count": 0,
+  "asks_total": 0,
+  "asks_per_100_items": 0.0,
+  "max_asks_per_day": 0,
+  "ask_useful_rate": null,
+  "ask_true_yes_rate": null,
+  "asks_suppressed": 0,
+  "status_fact_recall": 0.0,
+  "plan_as_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": null,
+  "home_rank_ran": "0/4",
+  "home_ndcg5": null,
+  "home_ndcg5_recency": 0.25886127221436406,
+  "home_top3_precision": null,
+  "home_g3_recall3": null,
+  "home_gross_inversions": null,
+  "home_clutter5": null,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "person_link_accuracy": 0.06944444444444445,
+  "person_link_accuracy_cross_source": 0.06944444444444445,
+  "checkpoints_scored": 4,
+  "checkpoints_total": 4
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.3794482207117153,
+    "recall": 0.7126589756397449,
+    "f1": 0.49522094751165735
+   },
+   "link": {
+    "precision": 0.3048780487804878,
+    "recall": 0.2631578947368421,
+    "f1": 0.28248587570621464,
+    "tp": 25,
+    "n_pred": 82,
+    "n_gold": 95
+   },
+   "decoy_leakage": {
+    "hard": 0.75,
+    "easy": 0.25,
+    "per_decoy": {
+     "ev_momflat": {
+      "difficulty": "hard",
+      "decoy_of": "ev_reno",
+      "pairs": 84,
+      "leakage": 0.75,
+      "decoy_items": 7
+     },
+     "ev_grinder": {
+      "difficulty": "easy",
+      "decoy_of": "ev_beans",
+      "pairs": 36,
+      "leakage": 0.25,
+      "decoy_items": 4
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 1,
+    "total": 2,
+    "per_decoy": {
+     "ev_momflat": {
+      "seed": "7883b63b-fa24-52be-bd83-889fb9da895c",
+      "ok": false
+     },
+     "ev_grinder": {
+      "seed": "0713a85c-7205-51e8-8fad-5b73a4ce043f",
+      "ok": true
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [
+     "ev_beans",
+     "ev_momflat"
+    ],
+    "rate": 0.7777777777777778
+   },
+   "noise_abstention": {
+    "noise_items": 4,
+    "abstained": 0,
+    "rate": 0.0,
+    "singleton_rate": 0.25,
+    "in_real_event_rate": 0.75,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 14,
+   "pred_event_count_multi_item": 4,
+   "gold_event_count": 9,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "8a338684-31f0-40e3-a750-e68b557de5b8": "ev_anniv",
+   "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63": "ev_grinder",
+   "0a6ef37e-acf1-48fa-818e-74906faeb2a1": "ev_lease",
+   "6b56391c-5c67-4756-96e2-7d593e444dab": "ev_member",
+   "688d1485-3483-4d39-bfb3-0ef4e3834461": "ev_menu",
+   "c3d8f0c1-aafd-45f7-a239-d526c0ffee24": "ev_reno"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.06944444444444445,
+   "pairs": 72,
+   "accuracy_cross_source": 0.06944444444444445,
+   "pairs_cross_source": 72,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 2.6,
+   "name_match": 0.75,
+   "mapping": {
+    "dfdb0e53-639c-54fd-a1c5-60009599f4f4": "p_gao",
+    "fafb3a58-6d9a-55a2-b74c-c79558ba8f7b": "p_lin",
+    "79606bc9-0821-5ab3-85dc-24b2f287f5c0": "p_owner",
+    "75f7185c-af77-5e23-b6cf-8d63f15750dc": "p_su",
+    "802f2b75-a0a3-51c6-b1c2-d02ae668e6ae": "p_zhou"
+   }
+  },
+  "questions": {
+   "count": 0,
+   "asked_total": 0,
+   "by_kind": {},
+   "per_100_items": 0.0,
+   "resolvable": 0,
+   "true_yes_rate": null,
+   "unresolvable_merged": 0,
+   "asks_total": 0,
+   "asks_per_100_items": 0.0,
+   "max_asks_per_day": 0,
+   "ask_useful_rate": null,
+   "asks_suppressed": 0
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-d2",
+   "label": "周二晚",
+   "n_items": 27,
+   "bcubed_f1": 0.5712866415311953,
+   "link_f1": 0.38596491228070173,
+   "pred_event_count": 8,
+   "gold_event_count": 9,
+   "expected": 11,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 8,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.1986208297366903,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 2,
+    "clutter5": null,
+    "order": [
+     [
+      "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+      "ev_grinder",
+      1,
+      0.5
+     ],
+     [
+      "eca17523-a35a-4fb0-9b34-379f03845369",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "688d1485-3483-4d39-bfb3-0ef4e3834461",
+      "ev_menu",
+      2,
+      0.5
+     ],
+     [
+      "6b56391c-5c67-4756-96e2-7d593e444dab",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "e64ea5bd-29aa-4c74-84c1-6d0dfa08983d",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+      "ev_lease",
+      3,
+      0.5
+     ],
+     [
+      "e00ba702-e91d-406e-b855-7e39be89acc7",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+      "ev_reno",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_stage_1",
+      "f_reno_date_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_1"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "688d1485-3483-4d39-bfb3-0ef4e3834461",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_choice",
+      "f_sign_install_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "6b56391c-5c67-4756-96e2-7d593e444dab",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_rule"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d3",
+   "label": "周三晚",
+   "n_items": 38,
+   "bcubed_f1": 0.5567274956143131,
+   "link_f1": 0.3703703703703704,
+   "pred_event_count": 8,
+   "gold_event_count": 9,
+   "expected": 10,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 8,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.31048185498826186,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 2,
+    "clutter5": null,
+    "order": [
+     [
+      "688d1485-3483-4d39-bfb3-0ef4e3834461",
+      "ev_sign",
+      2,
+      0.5
+     ],
+     [
+      "6b56391c-5c67-4756-96e2-7d593e444dab",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+      "ev_grinder",
+      1,
+      0.5
+     ],
+     [
+      "eca17523-a35a-4fb0-9b34-379f03845369",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e64ea5bd-29aa-4c74-84c1-6d0dfa08983d",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+      "ev_lease",
+      3,
+      0.5
+     ],
+     [
+      "e00ba702-e91d-406e-b855-7e39be89acc7",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+      "ev_reno",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "688d1485-3483-4d39-bfb3-0ef4e3834461",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_term"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "6b56391c-5c67-4756-96e2-7d593e444dab",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_redeem"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d5",
+   "label": "周五晚",
+   "n_items": 64,
+   "bcubed_f1": 0.5191962795401293,
+   "link_f1": 0.3065693430656934,
+   "pred_event_count": 13,
+   "gold_event_count": 9,
+   "expected": 15,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 13,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.2335470509513427,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 10,
+    "clutter5": null,
+    "order": [
+     [
+      "688d1485-3483-4d39-bfb3-0ef4e3834461",
+      "ev_menu",
+      2,
+      0.5
+     ],
+     [
+      "43d7497f-6ac0-419c-99bc-1b9e159fe9f5",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "a97aa180-4224-4e7d-a34d-9f25093aca47",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "96965bf8-3dc4-4a89-9105-3677d0d43c75",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+      "ev_grinder",
+      0,
+      0.5
+     ],
+     [
+      "6b56391c-5c67-4756-96e2-7d593e444dab",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "e481b33b-349e-4dd5-8e18-877f12dcf410",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "8a338684-31f0-40e3-a750-e68b557de5b8",
+      "ev_anniv",
+      3,
+      0.5
+     ],
+     [
+      "eca17523-a35a-4fb0-9b34-379f03845369",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e64ea5bd-29aa-4c74-84c1-6d0dfa08983d",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+      "ev_lease",
+      3,
+      0.5
+     ],
+     [
+      "e00ba702-e91d-406e-b855-7e39be89acc7",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+      "ev_reno",
+      2,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "688d1485-3483-4d39-bfb3-0ef4e3834461",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_2",
+      "f_menu_cake"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_2",
+      "f_beans_first"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "8a338684-31f0-40e3-a750-e68b557de5b8",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_stalls_2",
+      "f_anniv_poster_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "6b56391c-5c67-4756-96e2-7d593e444dab",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_launch"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 82,
+   "bcubed_f1": 0.49522094751165735,
+   "link_f1": 0.28248587570621464,
+   "pred_event_count": 14,
+   "gold_event_count": 9,
+   "expected": 16,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 14,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.29279535318116134,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 10,
+    "clutter5": null,
+    "order": [
+     [
+      "688d1485-3483-4d39-bfb3-0ef4e3834461",
+      "ev_menu",
+      2,
+      0.5
+     ],
+     [
+      "fefe0bb8-235e-4ef7-a294-35bc62b76f59",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "6b56391c-5c67-4756-96e2-7d593e444dab",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "43d7497f-6ac0-419c-99bc-1b9e159fe9f5",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "a97aa180-4224-4e7d-a34d-9f25093aca47",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "96965bf8-3dc4-4a89-9105-3677d0d43c75",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+      "ev_grinder",
+      0,
+      0.5
+     ],
+     [
+      "e481b33b-349e-4dd5-8e18-877f12dcf410",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "8a338684-31f0-40e3-a750-e68b557de5b8",
+      "ev_anniv",
+      2,
+      0.5
+     ],
+     [
+      "eca17523-a35a-4fb0-9b34-379f03845369",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e64ea5bd-29aa-4c74-84c1-6d0dfa08983d",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+      "ev_lease",
+      2,
+      0.5
+     ],
+     [
+      "e00ba702-e91d-406e-b855-7e39be89acc7",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+      "ev_reno",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "c3d8f0c1-aafd-45f7-a239-d526c0ffee24",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_reno_stage_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "0a6ef37e-acf1-48fa-818e-74906faeb2a1",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "688d1485-3483-4d39-bfb3-0ef4e3834461",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_2",
+      "f_menu_launch"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_beans_trial",
+      "f_beans_first"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "8a338684-31f0-40e3-a750-e68b557de5b8",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date",
+      "f_anniv_poster_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "6b56391c-5c67-4756-96e2-7d593e444dab",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_member_launch",
+      "f_member_android"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_mom_start",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "3c8a10ef-8d7d-4a10-8bde-a7ecda25ee63",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  }
+ ]
+}

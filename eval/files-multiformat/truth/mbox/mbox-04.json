@@ -1,0 +1,58 @@
+{
+ "file_id": "mbox-04",
+ "path": "corpus/mbox/mbox-04.mbox",
+ "type": "mbox",
+ "ext": "mbox",
+ "mime": "application/mbox",
+ "filename": "报销单退回.mbox",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[message 1]\nFrom: 蒋立新 <fin@example.com>\nTo: 高语桐 <b@example.com>\nDate: Mon, 28 Sep 2026 11:00:00 +0800\nSubject: 报销单退回\n高语桐，你的报销单（2380 元）缺少发票原件，已退回，请补齐后重新提交。\n蒋立新\n[message 2]\nFrom: 高语桐 <b@example.com>\nTo: 蒋立新 <fin@example.com>\nDate: Mon, 28 Sep 2026 15:20:00 +0800\nSubject: Re: 报销单退回\n收到，发票原件明天上午交到财务室 204。\n高语桐\n（合成数据）",
+ "key_lines": [
+  "高语桐，你的报销单（2380 元）缺少发票原件，已退回，请补齐后重新提交。",
+  "收到，发票原件明天上午交到财务室 204。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "金额": 2380,
+  "原因": "缺少发票原件",
+  "房间": "204"
+ },
+ "numbers": [
+  {
+   "value": 2380,
+   "label": "报销金额"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "报销单金额多少元？",
+   "a": 2380,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "为什么被退回？",
+   "a": "缺少发票原件",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "原件交到哪个房间？",
+   "a": "204",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "messages": 2,
+  "attachments": []
+ },
+ "notes": "GBK 字符集的邮件。",
+ "bytes": 1020,
+ "sha256": "7614a2491c66c387f7e95a5d8229e54eaa3b58536f1eb446be6f747d60ec1b3b",
+ "family": "gbk_thread"
+}

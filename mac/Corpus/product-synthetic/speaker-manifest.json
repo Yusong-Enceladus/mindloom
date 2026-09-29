@@ -1,0 +1,163 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "product-synthetic-speaker-smoke",
+  "version": "1.0.0",
+  "tier": "product-synthetic",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000001",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-001",
+      "contentDigest": "bfdc6d7cd9daf08a1c46c063c20f738d09ca2b7996952e3a27d4c4f384705ac0",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "dictation",
+        "local-only",
+        "single-speaker",
+        "smoke",
+        "speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000002",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-002",
+      "contentDigest": "a96e85e864cc4afbbbf79a39ba9d5a7777ad0a4e3c509cbbe998958363fe460f",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "dictation",
+        "local-only",
+        "smoke",
+        "speaker",
+        "two-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000003",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-003",
+      "contentDigest": "ab1a4736666324f2753d70580069c2c762ecf394edbc24d3728a41236b00e1de",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "dictation",
+        "local-only",
+        "short-turns",
+        "smoke",
+        "speaker",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000004",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-004",
+      "contentDigest": "368a32748362aa53681cc589b1f20f2deda525c888e9386606ec23db32778fd5",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "background-noise",
+        "dictation",
+        "local-only",
+        "overlap",
+        "smoke",
+        "speaker",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000005",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-005",
+      "contentDigest": "b9ba0f43558195eb2990b1eb7f40ad2792db4926a9d593cc6d0275cbc5cdbc34",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "local-only",
+        "overlap",
+        "room-microphone",
+        "smoke",
+        "speaker",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000006",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-006",
+      "contentDigest": "e829dd1e5cfe83eee53d41a79b38208bb723ae9423f741b647e55d277d37dc4c",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "local-only",
+        "overlap",
+        "smoke",
+        "speaker",
+        "system-audio",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000007",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-007",
+      "contentDigest": "3c9cc33249425a0408192e9cd49f97476fbcd50ca4d5d2a7badaff092715f383",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "imported-media",
+        "local-only",
+        "overlap",
+        "smoke",
+        "speaker",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000008",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-008",
+      "contentDigest": "13666a3f48126a6fc0c00c8b034a99968a5af5aa0cd9169ddad0d3c04822ebea",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "cross-entry",
+        "cross-session",
+        "local-only",
+        "room-microphone",
+        "smoke",
+        "speaker",
+        "three-speaker"
+      ]
+    },
+    {
+      "sampleUUID": "35000000-0000-4000-8000-000000000009",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/speaker-v1/spk-v1-009",
+      "contentDigest": "7a36007054cddff5524b458293a6f549e4774cfb6f0e24cb36beafa685155035",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "imported-media",
+        "local-only",
+        "smoke",
+        "speaker",
+        "unknown-person"
+      ]
+    }
+  ]
+}

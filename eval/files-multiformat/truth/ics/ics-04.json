@@ -1,0 +1,59 @@
+{
+ "file_id": "ics-04",
+ "path": "corpus/ics/ics-04.ics",
+ "type": "ics",
+ "ext": "ics",
+ "mime": "text/calendar",
+ "filename": "城市设计论坛.ics",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "CALENDAR: 会议\n[event 1]\nSUMMARY: 城市设计论坛（合肥）\nSTART: 2026-11-05 (all day)\nEND: 2026-11-07 (all day)\nLOCATION: 合肥国际会展中心 7号馆\nDESCRIPTION: 两天全天会议，需提前线上签到。（合成数据）\nALARM: -P1D",
+ "key_lines": [
+  "SUMMARY: 城市设计论坛（合肥）",
+  "START: 2026-11-05 (all day)",
+  "LOCATION: 合肥国际会展中心 7号馆"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "会议": "城市设计论坛",
+  "日期": "2026-11-05至11-06",
+  "地点": "合肥国际会展中心 7号馆"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "会议在哪个城市？",
+   "a": "合肥",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "会议哪天开始？",
+   "a": "11月5日",
+   "match": "contains",
+   "accept": [
+    "2026-11-05",
+    "11/05",
+    "20261105"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "会议持续几天？",
+   "a": 2,
+   "match": "number",
+   "derived": true
+  }
+ ],
+ "structure": {
+  "events": 1,
+  "calname": "会议"
+ },
+ "bytes": 674,
+ "sha256": "695bbaa5a9bd69547e7a2da231e9d98c3b9323977c4dda036efbce16e2ece2cb",
+ "family": "allday_conf"
+}

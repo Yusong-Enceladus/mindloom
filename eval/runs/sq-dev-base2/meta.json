@@ -1,0 +1,98 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "file-read": "5810c0096d0a5445",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "",
+ "date": "2026-09-29T15:44:37+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--out",
+  "eval/runs/sq-dev-base2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "3a7726cd-0fd1-45af-ace3-e801ff22189d",
+  "E2": "876d6b0e-bdac-4137-bc12-b6ba8d1ced53",
+  "E3": "e9cef920-5e4b-470c-824a-ccd48e65a913",
+  "E4": "14aaf359-bbca-45f5-86b8-412db3078df0",
+  "E5": "bac9563c-c2be-4aeb-bcf0-38eb4eb5c18a",
+  "E6": "7a602db1-d4b0-47ce-ae10-b74c29fbd93b",
+  "E7": "5864a7a0-26aa-416f-9466-195985a9b9dd",
+  "E8": "b0ce438d-84e1-41ec-9fe9-8e13b597601e",
+  "E9": "54c489b7-446e-428e-8f2d-be5187e4100a",
+  "E10": "d25192a9-8513-4da1-95dc-4d139aaf9cae",
+  "E11": "cba59f43-e6ad-4794-b451-2da6982e5495",
+  "E12": "5ec5b275-6954-48e9-a39b-2e72c2cb5fe4",
+  "E13": "f2dbe076-ce36-4dfc-917b-5e9ff10ef0cb",
+  "E14": "c6d21607-c60f-4688-a901-9a701c688c64",
+  "E15": "b539df46-99ad-49eb-a451-113bd717c6de",
+  "E16": "7014933b-4eca-4232-8c84-1ab031f3e851",
+  "E17": "168a6052-66aa-400d-b6e6-3f3d27aa2ec9",
+  "E18": "49cd443b-080f-4e90-85fe-5023ca99d0d7"
+ },
+ "bare_max_tokens": null
+}

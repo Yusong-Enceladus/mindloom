@@ -1,0 +1,205 @@
+{
+  "schemaVersion": 1,
+  "kind": "recommended-memory-speaker-smoke-summary",
+  "conclusion": "conditional-recommended-memory-smoke-only",
+  "releaseEligible": false,
+  "selectionDecision": "no-default-candidate-selected",
+  "candidateRegistry": {
+    "path": "config/speaker-candidates.json",
+    "sha256": "2a1d7e829274c7c42ec8ba0be1b21ff9941ac61e9eda72319725f598d8a7d295"
+  },
+  "scope": {
+    "deviceClass": "recommended-memory-development-host",
+    "hardware": "Apple M4 Pro",
+    "architecture": "arm64",
+    "osVersion": "26.5.2",
+    "unifiedMemoryBytes": 51539607552,
+    "toolchainVersion": "Xcode 26.6; Swift 6.3.3",
+    "networkDeniedDuringInference": true
+  },
+  "corpus": {
+    "manifestID": "product-synthetic-speaker-smoke",
+    "version": "1.0.0",
+    "manifestPath": "Corpus/product-synthetic/speaker-manifest.json",
+    "manifestSHA256": "391dc81931c174d7e9bb4078137560b5d450e72626c8adc6737a2b76c7b31bfa",
+    "diarizationSampleCount": 9,
+    "diarizationAudioDurationSeconds": 194.76725,
+    "identityManifestSHA256": "95501875ffa430294c9a43a03f07482cf684c4c6a2b77bec705c5b42a462d973",
+    "identityEnrollmentCount": 6,
+    "identityQueryCount": 16,
+    "identityAudioDurationSeconds": 119.40375,
+    "languages": [
+      "en-US"
+    ],
+    "scenarios": [
+      "dictation-one-two-three-speakers",
+      "dictation-rapid-short-turns",
+      "dictation-overlap-and-background-voice",
+      "room-microphone",
+      "system-audio",
+      "imported-media",
+      "cross-entry-and-cross-session-same-person",
+      "unknown-person-rejection"
+    ],
+    "contentPolicy": "synthetic-local-only-audio-and-identity-payloads; aggregate-results-only-in-git"
+  },
+  "protocol": {
+    "diarizationModes": [
+      "automatic-candidate-estimated-speaker-count",
+      "oracle-reference-speaker-count-diagnostic"
+    ],
+    "diarizationEvaluationCount": 54,
+    "identityEmbeddingCount": 66,
+    "identityThresholdPolicy": "enrollment-only-conservative-upper-bound",
+    "identityThresholdMargin": 0.03,
+    "queryDataUsedForThresholdTuning": false,
+    "oracleResultsEligibleForSelection": false
+  },
+  "implementationDigests": {
+    "corpusBuilderSHA256": "0ea4805bfb7acb2a4ae01d2b51f56f461c14fe5490da4f0d2085dea92aa2f664",
+    "diarizationRunnerSHA256": "86453f1f8cb9bfd7c837eaf99d5b85a3fca099de0eb9b22e7fa5dee2dded1e57",
+    "fluidIdentityRunnerSHA256": "7b7dbaf5991c2a278ee5567ceace329425309c17673fa43a81618ce7363193fe",
+    "argmaxIdentityAdapterSHA256": "c4ced32910416104e9b71a420016958dc454a5acfadb9042c0bd468294276ede",
+    "sherpaIdentityAdapterSHA256": "3c3c6e5fceddc91680d55e70e7fe013d622f248f493c1ad6a0e139080e861331",
+    "collationRunnerSHA256": "55a946ed3d3ad3c560ac2894026af7834de16e0653734fedc6747cfe7eabc82a",
+    "collatorSHA256": "b4b73452a538d7a207de21b46cf408e87d00dd3d68273712bca2cd92daf63e3a",
+    "identityEvaluatorSHA256": "24b2682d2bf850d6fc452a5ad38e20a8525351cd5401f071efcf4393383be6f0"
+  },
+  "candidates": [
+    {
+      "candidateID": "fluid",
+      "runtimeRevision": "19600a485baa4998812e4654b70d2bab8f2c9949",
+      "modelArtifactID": "fluid-speaker-diarization-coreml@1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+      "modelTreeSHA256": "a91670d08b56d441b516fe0ec5532f02dfbd10f6752ebddec49ce6324af1f932",
+      "executionProvider": "coreml-cpu-and-neural-engine",
+      "automatic": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-automatic-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "3466e07212893ec054bbde1612ae3e336eedd515dc8ddf18eb5a3865cbe5ef95",
+        "der": 0.3492667030912263,
+        "jer": 0.40804060753118965,
+        "latencyP95Milliseconds": 340,
+        "realtimeFactor": 0.014222103562072166,
+        "peakResidentBytes": 177504256
+      },
+      "oracle": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-oracle-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "36cf9a9c70bc32045c98dee4a4c1a07fe98a98ec091646a345fd9da62e19ffe6",
+        "der": 0.3123392091460715,
+        "jer": 0.38130449734603983,
+        "latencyP95Milliseconds": 390,
+        "realtimeFactor": 0.014632850235345008,
+        "peakResidentBytes": 178143232
+      },
+      "identity": {
+        "embeddingDimension": 256,
+        "enrollmentSeparationFeasible": false,
+        "enrollmentSeparationGap": 0.038766607976409184,
+        "threshold": 0.9187655050950714,
+        "knownQueryCount": 12,
+        "knownCorrectCount": 6,
+        "knownWrongCount": 0,
+        "knownRejectedCount": 6,
+        "unknownQueryCount": 4,
+        "unknownRejectedCount": 4,
+        "falseMergeCount": 0,
+        "falseSplitCount": 0,
+        "falseRejectCount": 6
+      }
+    },
+    {
+      "candidateID": "argmax",
+      "runtimeRevision": "25c62997041c134b03ca82731ce2f6fd2cae1eb9",
+      "modelArtifactID": "argmax-speakerkit-coreml@86ec9c929b52208b6656eb6a6361ed0d822a1f78",
+      "modelTreeSHA256": "69ffa676b5e1eeacf0a4593172a8005521d77f40e578e148358b09f98f58d7a4",
+      "executionProvider": "coreml-cpu-and-neural-engine",
+      "automatic": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/argmax-automatic-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "d4182f0acf53beff902f21a7a0c7ef999019bb8bdba91d44cd17e73694da194d",
+        "der": 0.3769108570535691,
+        "jer": 0.4268785535792574,
+        "latencyP95Milliseconds": 290,
+        "realtimeFactor": 0.012784490205617217,
+        "peakResidentBytes": 147881984
+      },
+      "oracle": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/argmax-oracle-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "4e7cbb5723ff4153c195d67df86781f6864e0e59ce02667c8f94fbd80602d0dc",
+        "der": 0.278788510117451,
+        "jer": 0.30313353665449416,
+        "latencyP95Milliseconds": 280,
+        "realtimeFactor": 0.012630460203139902,
+        "peakResidentBytes": 147865600
+      },
+      "identity": {
+        "embeddingDimension": 256,
+        "enrollmentSeparationFeasible": false,
+        "enrollmentSeparationGap": -0.002172118759316888,
+        "threshold": 0.9589142838226712,
+        "knownQueryCount": 12,
+        "knownCorrectCount": 6,
+        "knownWrongCount": 0,
+        "knownRejectedCount": 6,
+        "unknownQueryCount": 4,
+        "unknownRejectedCount": 4,
+        "falseMergeCount": 0,
+        "falseSplitCount": 0,
+        "falseRejectCount": 6
+      }
+    },
+    {
+      "candidateID": "sherpa",
+      "runtimeRevision": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+      "modelArtifactID": "sherpa-speaker-model-set@v1.13.2",
+      "modelTreeSHA256": "785c40512db184221c560db6b2b628eb4e5622f5ec11a220c0cf453e67f152c9",
+      "executionProvider": "onnxruntime-cpu",
+      "automatic": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/sherpa-automatic-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "7bced052d6462fcb904b9a4f9c55b1d093d5ca956eab2aacce6f0c6d86769770",
+        "der": 0.2573035756139483,
+        "jer": 0.32223598705339973,
+        "latencyP95Milliseconds": 6890,
+        "realtimeFactor": 0.2243703702752901,
+        "peakResidentBytes": 283344896
+      },
+      "oracle": {
+        "benchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/sherpa-oracle-recommended-memory-smoke.json",
+        "benchmarkResultSHA256": "9ade3f1c1cea0a5533531cb2d7f829b9c8bfacfca889f5c754ca51f113f97107",
+        "der": 0.22047449152321674,
+        "jer": 0.2815500302901428,
+        "latencyP95Milliseconds": 6920,
+        "realtimeFactor": 0.22524320695599492,
+        "peakResidentBytes": 273186816
+      },
+      "identity": {
+        "embeddingDimension": 512,
+        "enrollmentSeparationFeasible": true,
+        "enrollmentSeparationGap": 0.21746326103124813,
+        "threshold": 0.8330900609600482,
+        "knownQueryCount": 12,
+        "knownCorrectCount": 9,
+        "knownWrongCount": 0,
+        "knownRejectedCount": 3,
+        "unknownQueryCount": 4,
+        "unknownRejectedCount": 4,
+        "falseMergeCount": 0,
+        "falseSplitCount": 0,
+        "falseRejectCount": 3
+      }
+    }
+  ],
+  "observations": [
+    "All six diarization benchmark runs completed without failed samples.",
+    "All candidates made zero known-person wrong assignments and rejected all four unknown-person queries under the enrollment-only conservative threshold.",
+    "sherpa had the lowest automatic DER/JER and fewer conservative known-person rejects in this synthetic smoke, but substantially higher latency and resource use.",
+    "These observations are not a default-model decision and cannot be extrapolated to authorized real-human or release-holdout data."
+  ],
+  "unmetReleaseCriteria": [
+    "The same versioned speaker corpus has not run on a 16 GB minimum-support device.",
+    "The current corpus is synthetic TTS, not an authorized real-human device-lab, private-consented, or release-holdout matrix.",
+    "Per-scenario release thresholds, human correction UX, thermal degradation, and long-session backlog remain pending.",
+    "Argmax SpeakerKit model licensing is unspecified in the pinned model repository.",
+    "The sherpa 3D-Speaker embedding model and linked ONNX Runtime license/NOTICE inventory remain unresolved.",
+    "Fluid model attribution and base-model redistribution obligations require final packaging review.",
+    "No speaker runtime or model has passed release signing, notarization, package-size, or rollback validation."
+  ]
+}

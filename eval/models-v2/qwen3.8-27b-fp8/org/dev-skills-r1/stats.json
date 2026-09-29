@@ -1,0 +1,119 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 81,
+   "retried": 2,
+   "latency_median_s": 10.765,
+   "latency_p95_s": 12.793,
+   "latency_total_s": 912.5,
+   "prompt_tokens_mean": 5294.6,
+   "completion_tokens_mean": 167.7,
+   "prompt_tokens_total": 439452,
+   "completion_tokens_total": 13916,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 68,
+   "ok_first_attempt": 36,
+   "retried": 42,
+   "latency_median_s": 22.2,
+   "latency_p95_s": 38.102,
+   "latency_total_s": 1877.4,
+   "prompt_tokens_mean": 6577.9,
+   "completion_tokens_mean": 446.9,
+   "prompt_tokens_total": 513077,
+   "completion_tokens_total": 34856,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「今天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「我也推荐B」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「续签我想签三年」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「续签我想签三年」只说做了决定，不能证明「已提出签三年、月租1.2万方案」已办完（签）；写成「已决定/已同意…」，或摘录明确说已经办完的原话"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 3.249,
+   "latency_p95_s": 3.266,
+   "latency_total_s": 9.6,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 42,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 19.057,
+   "latency_p95_s": 22.635,
+   "latency_total_s": 56.5,
+   "prompt_tokens_mean": 4477,
+   "completion_tokens_mean": 369.3,
+   "prompt_tokens_total": 13431,
+   "completion_tokens_total": 1108,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 27.5,
+   "latency_p95_s": 30.414,
+   "latency_total_s": 105.0,
+   "prompt_tokens_mean": 5417.2,
+   "completion_tokens_mean": 474.5,
+   "prompt_tokens_total": 21669,
+   "completion_tokens_total": 1898,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 7.935,
+   "latency_p95_s": 11.535,
+   "latency_total_s": 25.3,
+   "prompt_tokens_mean": 3250.7,
+   "completion_tokens_mean": 132.3,
+   "prompt_tokens_total": 9752,
+   "completion_tokens_total": 397,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 12,
+  "attach": 66,
+  "none": 5
+ },
+ "assign_actions": {
+  "new": 12,
+  "attach": 66,
+  "none": 5
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 13,
+ "title_chars_mean": 9,
+ "wall_s": 2990.9,
+ "items_per_min": 1.64,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

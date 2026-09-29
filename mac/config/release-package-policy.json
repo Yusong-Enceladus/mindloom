@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "packageIdentifier": "com.bestasr.app",
+  "packageVersion": "0.1.0",
+  "buildConfiguration": "Release",
+  "allowSymlinks": false,
+  "firstPartyMachOPaths": [
+    "Contents/MacOS/bestASR",
+    "Contents/XPCServices/InferenceWorker.xpc/Contents/MacOS/InferenceWorker"
+  ],
+  "modelFileExtensions": [
+    "bin",
+    "gguf",
+    "mlmodel",
+    "mlmodelc",
+    "onnx",
+    "safetensors",
+    "tflite"
+  ]
+}

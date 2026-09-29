@@ -1,0 +1,372 @@
+{
+ "summary": {
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "backend": "openai",
+  "url": "http://127.0.0.1:8000/v1",
+  "images": 6,
+  "ok": 6,
+  "ok_first_attempt": 6,
+  "kind_chat": 6,
+  "msg_count_match": 6,
+  "gold_messages": 30,
+  "sender_acc": 1.0,
+  "is_self_acc": 1.0,
+  "time_acc": 0.6667,
+  "text_exact_acc": 1.0,
+  "text_sim_mean": 1.0,
+  "latency_median_s": 8.9,
+  "latency_max_s": 10.96,
+  "completion_tokens_mean": 438,
+  "prompt_tokens_mean": 1847
+ },
+ "rows": [
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d2-03",
+   "repeat": 0,
+   "run": "final-dev-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 9.94,
+   "prompt_tokens": 1949,
+   "completion_tokens": 461,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "栗壳翻新群内沟通拆除进度，确认吧台已拆、设备已入库，并安排下午水电进场及检查旧排水管。",
+    "text": "栗壳翻新群(4) 周工 08:58 许老板，吧台已经拆完了，垃圾中午清走。 满满 09:05 咖啡机和磨豆机都搬到仓库了，盖好了防尘布。 周工 09:20 拆除完成，今天下午水电师傅进场。 我 09:31 辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？ 周工 09:40 看了，得换，明天现场跟你细说。",
+    "messages": [
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "08:58",
+      "text": "许老板，吧台已经拆完了，垃圾中午清走。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:05",
+      "text": "咖啡机和磨豆机都搬到仓库了，盖好了防尘布。"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:20",
+      "text": "拆除完成，今天下午水电师傅进场。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:31",
+      "text": "辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:40",
+      "text": "看了，得换，明天现场跟你细说。"
+     }
+    ]
+   },
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 5,
+   "text_exact": 5,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d4-03",
+   "repeat": 0,
+   "run": "final-dev-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.0,
+   "prompt_tokens": 1575,
+   "completion_tokens": 316,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与陈总沟通后院使用及合同事宜，约定25号见面。",
+    "text": "陈总：后院可以用，下午六点前收摊，别堵消防通道。我：好的，一定注意，谢谢陈总！陈总：合同我让中介打印好了，25号见。我：25号见～",
+    "messages": [
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:52",
+      "text": "后院可以用，下午六点前收摊，别堵消防通道。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "08:52",
+      "text": "好的，一定注意，谢谢陈总！"
+     },
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:57",
+      "text": "合同我让中介打印好了，25号见。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "08:57",
+      "text": "25号见～"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d5-03",
+   "repeat": 0,
+   "run": "final-dev-noskill-r1",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 10.96,
+   "prompt_tokens": 2017,
+   "completion_tokens": 554,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "两周年市集摊主群通知：9月27日周日13:00-18:00在栗壳咖啡后院举办，共12个摊位，提供长桌和咖啡券，需提交名单和电源需求。",
+    "text": "两周年市集摊主群(14) 09:41 满满：各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。 木木陶艺：收到！我想要靠门口的位置。 满满：摊位一共12个，今天中午前把名单和需要的电源发我。 09:47 青柠花艺：请问需要自带桌子吗？ 满满：桌子我们提供，每个摊位一张长桌。 09:52 我：每个摊位再送两张咖啡券，欢迎大家～",
+    "messages": [
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。"
+     },
+     {
+      "sender": "木木陶艺",
+      "is_self": false,
+      "time": "09:41",
+      "text": "收到！我想要靠门口的位置。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "摊位一共12个，今天中午前把名单和需要的电源发我。"
+     },
+     {
+      "sender": "青柠花艺",
+      "is_self": false,
+      "time": "09:47",
+      "text": "请问需要自带桌子吗？"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:47",
+      "text": "桌子我们提供，每个摊位一张长桌。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:52",
+      "text": "每个摊位再送两张咖啡券，欢迎大家～"
+     }
+    ]
+   },
+   "gold_messages": 6,
+   "pred_messages": 6,
+   "kind": "chat",
+   "sender_ok": 6,
+   "is_self_ok": 6,
+   "time_ok": 3,
+   "text_exact": 6,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d2-03",
+   "repeat": 1,
+   "run": "final-dev-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.87,
+   "prompt_tokens": 1949,
+   "completion_tokens": 427,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "栗壳翻新群内沟通拆除进度，吧台已拆完，水电师傅下午进场，需更换旧排水管。",
+    "text": "栗壳翻新群(4) 周工 许老板，吧台已经拆完了，垃圾中午清走。 满满 咖啡机和磨豆机都搬到仓库了，盖好了防尘布。 周工 拆除完成，今天下午水电师傅进场。 我 辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？ 周工 看了，得换，明天现场跟你细说。",
+    "messages": [
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "08:58",
+      "text": "许老板，吧台已经拆完了，垃圾中午清走。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:05",
+      "text": "咖啡机和磨豆机都搬到仓库了，盖好了防尘布。"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:20",
+      "text": "拆除完成，今天下午水电师傅进场。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:31",
+      "text": "辛苦了！吧台下面那根排水管看着很旧，能顺便看看吗？"
+     },
+     {
+      "sender": "周工",
+      "is_self": false,
+      "time": "09:40",
+      "text": "看了，得换，明天现场跟你细说。"
+     }
+    ]
+   },
+   "gold_messages": 5,
+   "pred_messages": 5,
+   "kind": "chat",
+   "sender_ok": 5,
+   "is_self_ok": 5,
+   "time_ok": 5,
+   "text_exact": 5,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d4-03",
+   "repeat": 1,
+   "run": "final-dev-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 7.33,
+   "prompt_tokens": 1575,
+   "completion_tokens": 316,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "与陈总沟通后院使用及合同事宜，约定25号见面。",
+    "text": "陈总：后院可以用，下午六点前收摊，别堵消防通道。我：好的，一定注意，谢谢陈总！陈总：合同我让中介打印好了，25号见。我：25号见～",
+    "messages": [
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:52",
+      "text": "后院可以用，下午六点前收摊，别堵消防通道。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "08:52",
+      "text": "好的，一定注意，谢谢陈总！"
+     },
+     {
+      "sender": "陈总",
+      "is_self": false,
+      "time": "08:57",
+      "text": "合同我让中介打印好了，25号见。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "08:57",
+      "text": "25号见～"
+     }
+    ]
+   },
+   "gold_messages": 4,
+   "pred_messages": 4,
+   "kind": "chat",
+   "sender_ok": 4,
+   "is_self_ok": 4,
+   "time_ok": 2,
+   "text_exact": 4,
+   "text_sim_mean": 1.0
+  },
+  {
+   "scenario": "dev-week-v1",
+   "ref": "d5-03",
+   "repeat": 1,
+   "run": "final-dev-noskill-r2",
+   "ok": true,
+   "attempts": 1,
+   "latency_s": 10.89,
+   "prompt_tokens": 2017,
+   "completion_tokens": 554,
+   "prompt_hash": "6ed5ddfc9ecd5297",
+   "output": {
+    "kind": "chat",
+    "app_guess": "微信",
+    "summary": "两周年市集摊主群通知：9月27日周日13:00-18:00在栗壳咖啡后院举办，共12个摊位，提供长桌和咖啡券，需提交名单和电源需求。",
+    "text": "两周年市集摊主群(14) 09:41 满满：各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。 木木陶艺：收到！我想要靠门口的位置。 满满：摊位一共12个，今天中午前把名单和需要的电源发我。 09:47 青柠花艺：请问需要自带桌子吗？ 满满：桌子我们提供，每个摊位一张长桌。 09:52 我：每个摊位再送两张咖啡券，欢迎大家～",
+    "messages": [
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "各位摊主好～市集定在9月27日周日下午1点到6点，地点是栗壳咖啡后院。"
+     },
+     {
+      "sender": "木木陶艺",
+      "is_self": false,
+      "time": "09:41",
+      "text": "收到！我想要靠门口的位置。"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:41",
+      "text": "摊位一共12个，今天中午前把名单和需要的电源发我。"
+     },
+     {
+      "sender": "青柠花艺",
+      "is_self": false,
+      "time": "09:47",
+      "text": "请问需要自带桌子吗？"
+     },
+     {
+      "sender": "满满",
+      "is_self": false,
+      "time": "09:47",
+      "text": "桌子我们提供，每个摊位一张长桌。"
+     },
+     {
+      "sender": "我",
+      "is_self": true,
+      "time": "09:52",
+      "text": "每个摊位再送两张咖啡券，欢迎大家～"
+     }
+    ]
+   },
+   "gold_messages": 6,
+   "pred_messages": 6,
+   "kind": "chat",
+   "sender_ok": 6,
+   "is_self_ok": 6,
+   "time_ok": 3,
+   "text_exact": 6,
+   "text_sim_mean": 1.0
+  }
+ ]
+}

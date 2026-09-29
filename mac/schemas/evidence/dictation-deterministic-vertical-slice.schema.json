@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bestasr.local/schemas/evidence/dictation-deterministic-vertical-slice.schema.json",
+  "title": "bestASR deterministic dictation vertical-slice evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "kind",
+    "status",
+    "finalPhase",
+    "hardwareRequired",
+    "networkAttemptCount",
+    "audioRangeCount",
+    "rawTranscriptRevisionCount",
+    "derivedRevisionCount",
+    "insertionCallCount",
+    "insertionMutationCount",
+    "speakerScheduleCount"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "kind": { "type": "string", "const": "dictation-deterministic-vertical-slice" },
+    "status": { "type": "string", "enum": ["pass", "fail"] },
+    "finalPhase": { "type": "string", "enum": ["completed", "failedRecoverable"] },
+    "hardwareRequired": { "type": "boolean", "const": false },
+    "networkAttemptCount": { "type": "integer", "minimum": 0 },
+    "audioRangeCount": { "type": "integer", "minimum": 0 },
+    "rawTranscriptRevisionCount": { "type": "integer", "minimum": 0 },
+    "derivedRevisionCount": { "type": "integer", "minimum": 0 },
+    "insertionCallCount": { "type": "integer", "minimum": 0 },
+    "insertionMutationCount": { "type": "integer", "minimum": 0 },
+    "speakerScheduleCount": { "type": "integer", "minimum": 0 }
+  }
+}

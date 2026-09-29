@@ -1,0 +1,75 @@
+{
+ "file_id": "ods-02",
+ "path": "corpus/ods/ods-02.ods",
+ "type": "ods",
+ "ext": "ods",
+ "mime": "application/vnd.oasis.opendocument.spreadsheet",
+ "filename": "社区运动会预算与实际支出.ods",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[预算]\n社区运动会预算与实际支出\n金额（元）\n类别\t预算（元）\t实际（元）\t差额（元）\n保险\t17000\t17800\t800\n餐饮\t17000\t16900\t-100\n宣传\t5000\t5700\t700\n物料\t17500\t17000\t-500\n人员\t13000\t13000\t0\n合计\t69500\t70400\t900\n合成数据\n[说明]\n项目\t内容\n活动\t社区运动会\n最大类别\t物料\n执行率\t1.0129\n合成数据",
+ "key_lines": [
+  "保险\t17000\t17800\t800",
+  "餐饮\t17000\t16900\t-100",
+  "物料\t17500\t17000\t-500",
+  "合计\t69500\t70400\t900",
+  "最大类别\t物料"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "总预算": 69500,
+  "实际支出": 70400,
+  "最大类别": "物料"
+ },
+ "numbers": [
+  {
+   "value": 69500,
+   "label": "总预算"
+  },
+  {
+   "value": 70400,
+   "label": "实际"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "总预算是多少元？",
+   "a": 69500,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "实际支出多少元？",
+   "a": 70400,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "预算最大的类别是什么？",
+   "a": "物料",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "餐饮的预算是多少元？",
+   "a": 17000,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "预算",
+   "说明"
+  ],
+  "formulas": 9,
+  "merged": 2
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 2638,
+ "sha256": "0dd4e9ef3dca1cfbec13eeb75b2254a5f85294f910521f984edc7107c60e652c",
+ "family": "budget"
+}

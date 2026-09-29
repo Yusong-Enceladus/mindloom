@@ -1,0 +1,77 @@
+{
+ "file_id": "json-01",
+ "path": "corpus/json/json-01.json",
+ "type": "json",
+ "ext": "json",
+ "mime": "application/json",
+ "filename": "run42_result.json",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "933CD372-1459-584B-8856-1AC6C2C3EDD2",
+  "ref": "paper_json",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "full",
+ "text": "{\n  \"run_id\": \"run42\",\n  \"model\": \"LoomNet\",\n  \"dataset\": \"LongVid-QA\",\n  \"config\": {\n    \"lr\": 0.0003,\n    \"batch_size\": 256,\n    \"memory_slots\": 64,\n    \"schedule\": \"cosine\",\n    \"warmup_steps\": 2000,\n    \"seed\": 42,\n    \"gpus\": 16\n  },\n  \"results\": {\n    \"test\": {\n      \"short\": 82.6,\n      \"long\": 74.2,\n      \"avg\": 78.4\n    },\n    \"baseline_avg\": 75.3,\n    \"delta\": 3.1\n  },\n  \"gpu_hours\": 352,\n  \"finished_at\": \"2026-10-14T20:37:00+08:00\",\n  \"note\": \"合成数据\"\n}",
+ "key_lines": [
+  "\"run_id\": \"run42\",",
+  "\"seed\": 42,",
+  "\"avg\": 78.4",
+  "\"delta\": 3.1",
+  "\"gpu_hours\": 352,"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "test_avg": 78.4,
+  "delta": 3.1,
+  "seed": 42,
+  "gpu_hours": 352
+ },
+ "numbers": [
+  {
+   "value": 78.4,
+   "label": "test avg"
+  },
+  {
+   "value": 3.1,
+   "label": "delta"
+  },
+  {
+   "value": 352,
+   "label": "GPU·时"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "run42 在 test 上的平均准确率是多少？",
+   "a": 78.4,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "比 baseline 高多少个点？",
+   "a": 3.1,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "随机种子是多少？",
+   "a": 42,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这次训练用了多少 GPU·时？",
+   "a": 352,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 475,
+ "sha256": "0e3cbc7191f3ff1669cda115204cd754741180b6350d9d297cf2d3fc8efbcc44"
+}

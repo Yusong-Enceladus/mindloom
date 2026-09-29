@@ -1,0 +1,86 @@
+{
+  "commands" : [
+    [
+      "script/run_llm_factual_gate_probe.sh"
+    ]
+  ],
+  "conclusion" : "pass",
+  "criteria" : {
+    "fail" : [
+      "any planted dangerous-token change remains eligible or source evidence mutates"
+    ],
+    "pass" : [
+      "all five dangerous-token categories reject planted changes at zero tolerance",
+      "a fact-preserving candidate remains eligible",
+      "a higher style score cannot override a factual hard failure",
+      "source transcript fixtures remain unchanged"
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/workspace-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "fact-preserving-candidate-remains-eligible",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "planted-action-owner-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "planted-date-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "planted-negation-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "planted-number-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "planted-person-regression-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "higher-style-score-cannot-bypass-hard-gate",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-LLM-001/matrix.json"
+      ],
+      "scenarioID" : "source-transcripts-remain-unchanged",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can style preference ever mask a dangerous factual change?",
+  "runID" : "69000000-0000-4000-8000-000000000900",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-LLM-001",
+  "unmetCriteria" : [
+
+  ]
+}

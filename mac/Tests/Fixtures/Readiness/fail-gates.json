@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "kind": "engineering-readiness-gates",
+  "gates": [
+    {
+      "id": "fixture-fail",
+      "evidencePath": "Tests/Fixtures/Readiness/evidence.json",
+      "field": "conclusion",
+      "expectedValue": "pass",
+      "unmetStatus": "fail",
+      "taskRefs": ["fixture"],
+      "blocker": "The planted failing conclusion must fail readiness."
+    }
+  ]
+}

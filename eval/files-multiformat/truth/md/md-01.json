@@ -1,0 +1,81 @@
+{
+ "file_id": "md-01",
+ "path": "corpus/md/md-01.md",
+ "type": "md",
+ "ext": "md",
+ "mime": "text/markdown",
+ "filename": "LoomNet投稿TODO.md",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "6B08B81D-8F74-5BEC-BFF7-0B77FABB9EF8",
+  "ref": "paper_todo",
+  "events": [
+   "ev_paper"
+  ]
+ },
+ "text_layer": "full",
+ "text": "project: LoomNet\nupdated: 2026-10-12\nowner: 贺一鸣\nLoomNet 投稿 TODO（ICVL 2027）\n关键日期\n摘要截止：2026年10月16日 23:59 AoE\n全文截止：2026年10月23日 23:59 AoE\n补充材料截止：2026年10月30日\n页数限制：正文 8 页（不含参考文献）\n任务\n- [ ] 贺一鸣：补完 memory_slots 消融（32/64/128），10月14日前\n- [ ] 陶然：预留 16 张卡跑最终实验（10月13日—10月20日）\n- [ ] 沈知遥：改写引言和相关工作，10月18日前\n- [x] 贺一鸣：LongVid-QA 主实验 run37（平均 76.9）\n备注\n目标：在 LongVid-QA 上超过 baseline（75.3）至少 2 个点；本次投稿算力预算 2,000 GPU·时。\n合成数据",
+ "key_lines": [
+  "全文截止：2026年10月23日 23:59 AoE",
+  "页数限制：正文 8 页（不含参考文献）",
+  "- [ ] 沈知遥：改写引言和相关工作，10月18日前",
+  "目标：在 LongVid-QA 上超过 baseline（75.3）至少 2 个点；本次投稿算力预算 2,000 GPU·时。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "摘要截止": "2026-10-16",
+  "全文截止": "2026-10-23",
+  "补充材料截止": "2026-10-30",
+  "页数限制": "8页"
+ },
+ "numbers": [
+  {
+   "value": 8,
+   "label": "页数限制"
+  },
+  {
+   "value": 75.3,
+   "label": "baseline"
+  },
+  {
+   "value": 2000,
+   "label": "算力预算 GPU·时"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "全文截止日期是哪天？",
+   "a": "10月23日",
+   "match": "contains",
+   "accept": [
+    "2026-10-23",
+    "10/23",
+    "10-23"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "正文页数限制是多少页？",
+   "a": 8,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "谁负责改写引言和相关工作？",
+   "a": "沈知遥",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "算力预算是多少 GPU·时？",
+   "a": 2000,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 748,
+ "sha256": "56df98d947ce867342d0e8a2066bce57ab0e676265ff2648aaacf87e4944aa24"
+}

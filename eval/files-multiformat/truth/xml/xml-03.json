@@ -1,0 +1,79 @@
+{
+ "file_id": "xml-03",
+ "path": "corpus/xml/xml-03.xml",
+ "type": "xml",
+ "ext": "xml",
+ "mime": "application/xml",
+ "filename": "山海户外用品有限公司 销售单.xml",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- 合成数据 -->\n<Invoice xmlns=\"urn:example:invoice:2\" number=\"No.46946956\" date=\"2026-10-19\">\n  <Seller>山海户外用品有限公司</Seller>\n  <Buyer>启明仪器有限公司</Buyer>\n  <Lines>\n    <Line no=\"1\"><Item>A4 复印纸（箱）</Item><Qty>8</Qty><UnitPrice currency=\"CNY\">128</UnitPrice><Amount currency=\"CNY\">1024</Amount></Line>\n    <Line no=\"2\"><Item>文件柜（四门）</Item><Qty>2</Qty><UnitPrice currency=\"CNY\">760</UnitPrice><Amount currency=\"CNY\">1520</Amount></Line>\n    <Line no=\"3\"><Item>移动硬盘 2TB</Item><Qty>7</Qty><UnitPrice currency=\"CNY\">520</UnitPrice><Amount currency=\"CNY\">3640</Amount></Line>\n    <Line no=\"4\"><Item>投影仪</Item><Qty>3</Qty><UnitPrice currency=\"CNY\">3280</UnitPrice><Amount currency=\"CNY\">9840</Amount></Line>\n  </Lines>\n  <Subtotal>16024</Subtotal>\n  <Tax rate=\"0.13\">2083.12</Tax>\n  <Total currency=\"CNY\">18107.12</Total>\n</Invoice>",
+ "key_lines": [
+  "<Invoice xmlns=\"urn:example:invoice:2\" number=\"No.46946956\" date=\"2026-10-19\">",
+  "<Buyer>启明仪器有限公司</Buyer>",
+  "<Line no=\"2\"><Item>文件柜（四门）</Item><Qty>2</Qty><UnitPrice currency=\"CNY\">760</UnitPrice><Amount currency=\"CNY\">1520</Amount></Line>",
+  "<Line no=\"3\"><Item>移动硬盘 2TB</Item><Qty>7</Qty><UnitPrice currency=\"CNY\">520</UnitPrice><Amount currency=\"CNY\">3640</Amount></Line>",
+  "<Subtotal>16024</Subtotal>",
+  "<Tax rate=\"0.13\">2083.12</Tax>",
+  "<Total currency=\"CNY\">18107.12</Total>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "单据编号": "No.46946956",
+  "客户": "启明仪器有限公司",
+  "小计": 16024,
+  "税率": "13%",
+  "合计": 18107.12
+ },
+ "numbers": [
+  {
+   "value": 16024,
+   "label": "小计"
+  },
+  {
+   "value": 2083.12,
+   "label": "税额"
+  },
+  {
+   "value": 18107.12,
+   "label": "合计"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "合计金额是多少元？",
+   "a": 18107.12,
+   "match": "number",
+   "tol": 0.01
+  },
+  {
+   "id": "q2",
+   "q": "单据编号是多少？",
+   "a": "No.46946956",
+   "match": "exact",
+   "accept": [
+    "46946956"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "文件柜（四门）买了多少？",
+   "a": 2,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "开给哪个客户？",
+   "a": "启明仪器有限公司",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 943,
+ "sha256": "386879263989f9ed2d15a1b68510ada0d1553a2b9dd707e69888bc6d00521553",
+ "family": "invoice"
+}

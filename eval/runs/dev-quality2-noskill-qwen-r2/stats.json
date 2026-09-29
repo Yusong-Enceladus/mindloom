@@ -1,0 +1,87 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 69,
+   "retried": 13,
+   "latency_median_s": 4.393,
+   "latency_p95_s": 8.781,
+   "latency_total_s": 390.1,
+   "prompt_tokens_mean": 3996.5,
+   "completion_tokens_mean": 233.6,
+   "prompt_tokens_total": 327710,
+   "completion_tokens_total": 19158,
+   "errors_sample": [
+    "not valid JSON: Expecting value: line 10 column 20 (char 179)"
+   ]
+  },
+  "brief": {
+   "calls": 73,
+   "ok": 40,
+   "ok_first_attempt": 11,
+   "retried": 62,
+   "latency_median_s": 10.917,
+   "latency_p95_s": 15.358,
+   "latency_total_s": 733.6,
+   "prompt_tokens_mean": 3213.8,
+   "completion_tokens_mean": 599.4,
+   "prompt_tokens_total": 234610,
+   "completion_tokens_total": 43758,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「建议先表达感谢」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「第二杯的比例最好」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.734,
+   "latency_p95_s": 8.02,
+   "latency_total_s": 26.8,
+   "prompt_tokens_mean": 4739,
+   "completion_tokens_mean": 485.2,
+   "prompt_tokens_total": 18956,
+   "completion_tokens_total": 1941,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 9.593,
+   "latency_p95_s": 10.017,
+   "latency_total_s": 25.3,
+   "prompt_tokens_mean": 1847,
+   "completion_tokens_mean": 443,
+   "prompt_tokens_total": 5541,
+   "completion_tokens_total": 1329,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "fallback": 1,
+  "attach": 67,
+  "new": 5,
+  "none": 9
+ },
+ "assign_actions": {
+  "fallback": 1,
+  "attach": 60,
+  "new": 5,
+  "none": 9,
+  "ask": 4,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 13,
+ "status_line_chars_mean": 25.2,
+ "title_chars_mean": 7.8,
+ "wall_s": 1182.0,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,91 @@
+{
+ "id": "chart-19",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-19.jpg",
+ "lang": "en",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "3fa3de52a3e889d8c08a1f22fe9dbe3bf578513fc89f0b83946245ca6d690a8b",
+ "gt": {
+  "chart_type": "bar",
+  "title": "Monthly recurring revenue",
+  "x_label": "Month",
+  "y_label": "MRR ($K)",
+  "unit": "$K",
+  "categories": [
+   "Mar",
+   "Apr",
+   "May",
+   "Jun",
+   "Jul",
+   "Aug"
+  ],
+  "series": [
+   {
+    "name": "MRR",
+    "values": [
+     53.4,
+     67.7,
+     76.2,
+     87.7,
+     99.3,
+     110.4
+    ],
+    "labels": [
+     "53.4",
+     "67.7",
+     "76.2",
+     "87.7",
+     "99.3",
+     "110.4"
+    ]
+   }
+  ],
+  "trend": {
+   "MRR": "up"
+  }
+ },
+ "text_lines": [
+  "Monthly recurring revenue",
+  "MRR Mar: 53.4",
+  "MRR Apr: 67.7",
+  "MRR May: 76.2",
+  "MRR Jun: 87.7",
+  "MRR Jul: 99.3",
+  "MRR Aug: 110.4"
+ ],
+ "qa": [
+  {
+   "q": "In 'Monthly recurring revenue', what is the value for Jul (MRR)?",
+   "a": "99.3",
+   "match": "number"
+  },
+  {
+   "q": "Which month has the highest MRR?",
+   "a": "Aug",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of MRR?",
+   "a": "upward",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "bar",
+  "jpeg": 70
+ },
+ "variant": {
+  "chart": "bar",
+  "lang": "en",
+  "topic": "rev",
+  "patterns": [
+   "up"
+  ],
+  "jpeg": 70
+ }
+}

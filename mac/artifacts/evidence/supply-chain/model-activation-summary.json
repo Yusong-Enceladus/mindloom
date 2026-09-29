@@ -1,0 +1,73 @@
+{
+  "kind" : "model-activation-summary",
+  "runID" : "A8232937-4C59-40B6-9B39-372BA69197A3",
+  "scenarios" : [
+    {
+      "attempt" : {
+        "activeVersionAfter" : "1.0.0",
+        "artifactID" : "fixture-model",
+        "lastKnownGoodPreserved" : true,
+        "requestedVersion" : "1.0.0",
+        "schemaVersion" : 1,
+        "stagingRemoved" : true,
+        "status" : "pass",
+        "verifiedFileCount" : 1
+      },
+      "name" : "known-good-activation",
+      "result" : "pass"
+    },
+    {
+      "attempt" : {
+        "activeVersionAfter" : "1.0.0",
+        "artifactID" : "fixture-model",
+        "failureCategory" : "partialDownload",
+        "lastKnownGoodPreserved" : true,
+        "previousActiveVersion" : "1.0.0",
+        "requestedVersion" : "2.0.0",
+        "schemaVersion" : 1,
+        "stagingRemoved" : true,
+        "status" : "fail",
+        "verifiedFileCount" : 1
+      },
+      "expectedFailureCategory" : "partialDownload",
+      "name" : "partial-download",
+      "result" : "pass"
+    },
+    {
+      "attempt" : {
+        "activeVersionAfter" : "1.0.0",
+        "artifactID" : "fixture-model",
+        "failureCategory" : "digestMismatch",
+        "lastKnownGoodPreserved" : true,
+        "previousActiveVersion" : "1.0.0",
+        "requestedVersion" : "3.0.0",
+        "schemaVersion" : 1,
+        "stagingRemoved" : true,
+        "status" : "fail",
+        "verifiedFileCount" : 0
+      },
+      "expectedFailureCategory" : "digestMismatch",
+      "name" : "digest-mismatch",
+      "result" : "pass"
+    },
+    {
+      "attempt" : {
+        "activeVersionAfter" : "1.0.0",
+        "artifactID" : "fixture-model",
+        "failureCategory" : "healthCheckFailed",
+        "lastKnownGoodPreserved" : true,
+        "previousActiveVersion" : "1.0.0",
+        "requestedVersion" : "4.0.0",
+        "schemaVersion" : 1,
+        "stagingRemoved" : true,
+        "status" : "fail",
+        "verifiedFileCount" : 1
+      },
+      "expectedFailureCategory" : "healthCheckFailed",
+      "name" : "health-check-failure",
+      "result" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "status" : "pass"
+}

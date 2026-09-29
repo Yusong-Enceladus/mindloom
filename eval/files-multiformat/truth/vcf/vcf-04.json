@@ -1,0 +1,52 @@
+{
+ "file_id": "vcf-04",
+ "path": "corpus/vcf/vcf-04.vcf",
+ "type": "vcf",
+ "ext": "vcf",
+ "mime": "text/vcard",
+ "filename": "联系人（旧手机导出）.vcf",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[contact 1]\nN: 董 浩然\nFN: 董浩然\nORG: 星桥教育咨询有限公司\nTEL: +86-10-5550-0185\nNOTE: 周末勿扰（合成数据）\n[contact 2]\nN: 汪 天佑\nFN: 汪天佑\nORG: 蓝湾文化传媒有限公司\nTEL: +86-10-5550-0170\nNOTE: 周末勿扰（合成数据）",
+ "key_lines": [
+  "NOTE: 周末勿扰（合成数据）",
+  "TEL: +86-10-5550-0170"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "董浩然": "+86-10-5550-0185",
+  "汪天佑": "+86-10-5550-0170"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "董浩然的备注是什么？",
+   "a": "周末勿扰",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "汪天佑的电话？",
+   "a": "5550-0170",
+   "match": "contains",
+   "accept": [
+    "+86-10-5550-0170"
+   ]
+  }
+ ],
+ "structure": {
+  "cards": 2,
+  "versions": [
+   "2.1",
+   "2.1"
+  ]
+ },
+ "notes": "旧安卓导出格式：vCard 2.1，CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE。",
+ "bytes": 968,
+ "sha256": "fafadd8c1083ebc591e46a21f92f04cfde1e56e3f20c12a3005497c03a172b38",
+ "family": "contacts_qp"
+}

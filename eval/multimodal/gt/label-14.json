@@ -1,0 +1,90 @@
+{
+ "id": "label-14",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-14.jpg",
+ "lang": "en",
+ "hard": [
+  "small_text",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "810178aef16cd96710a6c80b21e3caa2ddd09bdb2d29c6ef8185a435c250204d",
+ "gt": {
+  "label_kind": "bin_label",
+  "fields": [
+   {
+    "key": "location",
+    "label": "BIN",
+    "value": "C-04-12"
+   },
+   {
+    "key": "item",
+    "label": "Item",
+    "value": "Coffee beans, natural, 1 kg"
+   },
+   {
+    "key": "sku",
+    "label": "SKU",
+    "value": "SKU404548"
+   },
+   {
+    "key": "quantity",
+    "label": "Qty",
+    "value": "24 units"
+   },
+   {
+    "key": "lot",
+    "label": "Lot",
+    "value": "20260811"
+   },
+   {
+    "key": "expiry",
+    "label": "Best before",
+    "value": "11/01/2027"
+   }
+  ],
+  "lines": [
+   "BIN C-04-12",
+   "Item: Coffee beans, natural, 1 kg",
+   "SKU: SKU404548",
+   "Qty: 24 units",
+   "Lot: 20260811",
+   "Best before: 11/01/2027"
+  ]
+ },
+ "text_lines": [
+  "BIN C-04-12",
+  "Item: Coffee beans, natural, 1 kg",
+  "SKU: SKU404548",
+  "Qty: 24 units",
+  "Lot: 20260811",
+  "Best before: 11/01/2027"
+ ],
+ "qa": [
+  {
+   "q": "Which bin?",
+   "a": "C-04-12",
+   "match": "exact"
+  },
+  {
+   "q": "How many units?",
+   "a": "24",
+   "match": "number"
+  },
+  {
+   "q": "Best before?",
+   "a": "2027-11-01",
+   "match": "date"
+  }
+ ],
+ "render": {
+  "kind": "bin_label",
+  "background": "cardboard"
+ },
+ "variant": {
+  "kind": "bin_label",
+  "lang": "en",
+  "far": true
+ }
+}

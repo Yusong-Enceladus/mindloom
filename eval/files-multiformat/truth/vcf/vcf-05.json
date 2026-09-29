@@ -1,0 +1,65 @@
+{
+ "file_id": "vcf-05",
+ "path": "corpus/vcf/vcf-05.vcf",
+ "type": "vcf",
+ "ext": "vcf",
+ "mime": "text/vcard",
+ "filename": "汤立新.vcf",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[contact 1]\nN: 汤 立新\nFN: 汤立新\nORG: 青禾生物科技有限公司\nTITLE: 项目总监\nTEL: +86-10-5550-0116\nTEL: +86-10-5550-0204\nEMAIL: director@example.com\nADR: 青石路66号 南京 895011 中国\nURL: https://www.example.com/team\nNOTE: 合成数据",
+ "key_lines": [
+  "TITLE: 项目总监",
+  "TEL: +86-10-5550-0204",
+  "ADR: 青石路66号 南京 895011 中国"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "姓名": "汤立新",
+  "城市": "南京",
+  "邮编": "895011",
+  "职位": "项目总监"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "汤立新在哪个城市？",
+   "a": "南京",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "邮编是多少？",
+   "a": "895011",
+   "match": "exact"
+  },
+  {
+   "id": "q3",
+   "q": "职位是什么？",
+   "a": "项目总监",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "办公电话之外的第二个号码？",
+   "a": "5550-0204",
+   "match": "contains",
+   "accept": [
+    "+86-10-5550-0204"
+   ]
+  }
+ ],
+ "structure": {
+  "cards": 1,
+  "versions": [
+   "3.0"
+  ]
+ },
+ "bytes": 337,
+ "sha256": "6fa607acb2c0158eeed89c46d8ac4ba102ee5eed5df7bf137872d46ad5306376",
+ "family": "contact_full"
+}

@@ -1,0 +1,283 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mindloom.local/eval/schema/scenario.schema.json",
+  "title": "Organizer evaluation scenario",
+  "description": "One hand-authored, fully synthetic week. It generates every intake asset (API items, rendered screenshots) and carries every gold label (item->events, item->persons, facts with supersession, status-line checkpoints). Gold fields (events, persons, facts, checkpoints, tags) are never sent to the organizer; tools/to_items.py strips them.",
+  "type": "object",
+  "required": ["scenario_id", "version", "synthetic", "split", "owner_person_id", "people", "events", "items", "facts", "checkpoints"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {"type": "string"},
+    "scenario_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "version": {"type": "integer", "minimum": 1},
+    "split": {"enum": ["dev", "holdout", "fixture"], "description": "dev may be tuned on; holdout is scored separately and never tuned on."},
+    "synthetic": {"const": true, "description": "Guard: run_eval.py refuses to send a scenario that is not marked synthetic."},
+    "locale": {"type": "string"},
+    "title": {"type": "string"},
+    "description": {"type": "string"},
+    "home_rubric": {
+      "type": "string",
+      "description": "How checkpoint home grades (0-3) were assigned. Grades come from the scenario's own dates and stakes, never from model outputs; holdout grades are frozen before any holdout run is scored."
+    },
+    "owner_person_id": {"type": "string", "description": "The Mac's user. Excluded from person-linking metrics."},
+    "people": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/person"}},
+    "events": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/event"}},
+    "items": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/item"}},
+    "facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}},
+    "checkpoints": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/checkpoint"}},
+    "actions": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/action"},
+      "description": "Optional act-stage log: exports of one event as plain text to Claude/Codex/a person, with the item that brought the result back. Gold only; never sent."
+    },
+    "demo_threads": {
+      "type": "array",
+      "description": "Optional demo storylines: which items to replay for each.",
+      "items": {
+        "type": "object",
+        "required": ["thread", "shot_item_ids"],
+        "additionalProperties": false,
+        "properties": {"thread": {"type": "integer"}, "title": {"type": "string"}, "shot_item_ids": {"type": "array", "items": {"$ref": "#/$defs/uuid"}}}
+      }
+    },
+    "generation": {
+      "type": "object",
+      "description": "Optional provenance of a generated scenario (plan seed, generator tools, models, nodes, throughput). Not used for scoring and never sent to the organizer."
+    },
+    "person_questions": {
+      "type": "array",
+      "description": "Optional gold for person-identity questions: surfaces that must be asked (two candidates) or merged (recognition errors, nicknames).",
+      "items": {
+        "type": "object",
+        "required": ["surface", "candidates", "answer"],
+        "additionalProperties": false,
+        "properties": {"surface": {"type": "string"}, "candidates": {"type": "array", "items": {"$ref": "#/$defs/id"}}, "answer": {"enum": ["ask", "merge"]}, "note": {"type": "string"}}
+      }
+    },
+    "source": {"type": "string", "description": "Optional path of the scenario bible the plan was derived from."}
+  },
+  "$defs": {
+    "id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "uuid": {"type": "string", "pattern": "^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$"},
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2}(\\.\\d+)?)?\\+08:00$",
+      "description": "ISO 8601 with the +08:00 offset."
+    },
+    "person": {
+      "type": "object",
+      "required": ["person_id", "display_name"],
+      "additionalProperties": false,
+      "properties": {
+        "person_id": {"$ref": "#/$defs/id"},
+        "display_name": {"type": "string", "minLength": 1},
+        "is_owner": {"type": "boolean"},
+        "role": {"type": "string"},
+        "aliases": {"type": "array", "items": {"type": "string", "minLength": 1}, "description": "Other surface names used for this person in other sources (chat nicknames, how people address them, the Mac's voice label)."},
+        "voice": {"description": "How the Mac's on-device voice pipeline sees this person, or null (or absent) if they never speak in an audio item. Audio and voiceprints never leave the Mac; only mac_person_id and the user's label travel with a transcript.", "oneOf": [{"type": "null"}, {"type": "object", "required": ["mac_person_id", "user_label"], "additionalProperties": false, "properties": {"mac_person_id": {"$ref": "#/$defs/uuid"}, "user_label": {"type": ["string", "null"], "description": "Name the user gave this voice on the Mac; null = recognised but not yet named."}, "tts_hint": {"type": "string", "description": "Optional hint for synthesising audio for this person."}}}]}
+      }
+    },
+    "event": {
+      "type": "object",
+      "required": ["event_id", "kind"],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {"$ref": "#/$defs/id"},
+        "kind": {"enum": ["main", "decoy", "noise"], "description": "main = a real matter; decoy = a real but separate matter built to look like decoy_of; noise = a label that marks items as belonging to no event (the scorer drops noise-kind labels from gold)."},
+        "difficulty": {"enum": ["hard", "easy"]},
+        "decoy_of": {"$ref": "#/$defs/id"},
+        "title": {"type": "string"},
+        "summary": {"type": "string"},
+        "now": {"type": "string", "description": "Optional: where the matter stands at the end of the scenario (one line)."},
+        "status_at_end": {"enum": ["planned", "in_progress", "done", "cancelled"]},
+        "people": {"type": "array", "items": {"$ref": "#/$defs/id"}},
+        "related": {"type": "array", "items": {"$ref": "#/$defs/id"}, "description": "Other events this one links to (not the same matter)."},
+        "lookalike_of": {"type": "array", "items": {"$ref": "#/$defs/id"}, "description": "Events built to look like this one but that are separate matters."},
+        "privacy": {"type": "string"},
+        "anchor": {"type": "string", "description": "The formal object the matter is about (contract, PO, document)."},
+        "weight_pct": {"type": "number"}
+      },
+      "allOf": [{"if": {"properties": {"kind": {"const": "decoy"}}}, "then": {"required": ["difficulty", "decoy_of"]}}]
+    },
+    "segment": {
+      "type": "object",
+      "required": ["start_ms", "end_ms", "person_id", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "start_ms": {"type": "integer", "minimum": 0},
+        "end_ms": {"type": "integer", "minimum": 0},
+        "person_id": {"$ref": "#/$defs/id", "description": "Gold speaker (a people[].person_id). to_items.py replaces it with that person's mac_person_id."},
+        "text": {"type": "string", "minLength": 1}
+      }
+    },
+    "message": {
+      "type": "object",
+      "required": ["sender", "text"],
+      "additionalProperties": false,
+      "properties": {
+        "sender": {"type": "string", "minLength": 1, "description": "Name as shown in the chat app (often an alias)."},
+        "time": {"type": "string"},
+        "text": {"type": "string", "minLength": 1}
+      }
+    },
+    "image": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "style": {"enum": ["generic_im", "generic_table", "generic_terminal", "generic_card", "generic_design", "generic_doc", "board", "doc", "table", "whiteboard", "photo"], "description": "generic_im (default) = chat screen (messages); generic_table = spreadsheet/dashboard table (columns, rows); generic_terminal = terminal window (lines); generic_card = document, receipt, notice, alert, ticket, SMS, calendar or offer card (fields as {label, value} objects or [label, value] pairs); generic_design = design mock with review notes (blocks, annotations); generic_doc = a scanned page (paragraphs); board = dashboard (title, kpis, rows, chart); doc/table = document page (title, rows, lines); whiteboard (lines); photo = drawn stand-in scene with annotation lines. All drawn in neutral generic styles by tools/render_screenshots.py; none imitates a real app."},
+        "chat_title": {"type": "string"},
+        "self_sender": {"type": "string", "description": "Sender name drawn on the right as the Mac user's own bubbles."},
+        "messages": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/message"}},
+        "title": {"type": "string"},
+        "columns": {"type": "array", "items": {"type": ["string", "number"]}},
+        "rows": {"type": "array", "items": {"type": "array", "items": {"type": ["string", "number", "null"]}}},
+        "note": {"type": ["string", "null"]},
+        "lines": {"type": "array", "items": {"type": "string"}},
+        "fields": {"type": "array", "items": {"oneOf": [{"type": "object", "required": ["label", "value"], "additionalProperties": false, "properties": {"label": {"type": "string"}, "value": {"type": "string"}}}, {"type": "array", "items": {"type": ["string", "number", "null"]}}]}},
+        "body": {"type": "string"},
+        "ocr_text": {"type": "string", "description": "Gold: the text a reader can see in the image."},
+        "kpis": {"type": "array", "items": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "string"}}},
+        "chart": {"type": ["object", "null"], "properties": {"label": {"type": "string"}, "series": {"type": "array", "items": {"type": "number"}}}},
+        "subtitle": {"type": "string"},
+        "footer": {"type": "string"},
+        "blocks": {"type": "array", "items": {"type": "object", "properties": {"label": {"type": "string"}, "text": {"type": "string"}}}},
+        "annotations": {"type": "array", "items": {"type": "string"}},
+        "paragraphs": {"type": "array", "items": {"type": "string"}}
+      },
+      "allOf": [
+        {"if": {"anyOf": [{"not": {"required": ["style"]}}, {"properties": {"style": {"const": "generic_im"}}}]}, "then": {"required": ["messages"]}},
+        {"if": {"properties": {"style": {"const": "generic_table"}}, "required": ["style"]}, "then": {"required": ["columns", "rows"]}},
+        {"if": {"properties": {"style": {"const": "generic_terminal"}}, "required": ["style"]}, "then": {"required": ["lines"]}},
+        {"if": {"properties": {"style": {"const": "generic_card"}}, "required": ["style"]}, "then": {"required": ["fields"]}},
+        {"if": {"properties": {"style": {"const": "generic_design"}}, "required": ["style"]}, "then": {"required": ["blocks"]}},
+        {"if": {"properties": {"style": {"const": "generic_doc"}}, "required": ["style"]}, "then": {"required": ["paragraphs"]}},
+        {"if": {"properties": {"style": {"enum": ["board", "doc", "table", "whiteboard", "photo"]}}, "required": ["style"]}, "then": {"required": ["title"]}}
+      ]
+    },
+    "item": {
+      "type": "object",
+      "required": ["item_id", "t", "kind", "source_app", "persons", "events"],
+      "additionalProperties": false,
+      "properties": {
+        "item_id": {"$ref": "#/$defs/uuid"},
+        "ref": {"type": "string", "description": "Short human handle, e.g. d3-02. Also names the rendered PNG."},
+        "t": {"$ref": "#/$defs/timestamp", "description": "Capture start (API started_at)."},
+        "duration_ms": {"type": "integer", "minimum": 0},
+        "kind": {"enum": ["dictation", "meeting_online", "meeting_offline", "imported_media", "text", "image", "document"], "description": "Same values as the organizer API ItemKind."},
+        "source_app": {"type": "string", "minLength": 1, "description": "e.g. 微信, 腾讯会议, 线下, Claude, Codex, ChatGPT, Finder, 淘宝."},
+        "persons": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}, "description": "Gold: people who speak, send, are addressed or are named in the item (implicit references like '那个师傅' are not labelled)."},
+        "events": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/id"}, "description": "Gold multi-label item->events; empty = noise that should belong to no event. Order follows the order the matters appear in the item."},
+        "tags": {"type": "array", "items": {"type": "string"}, "description": "Analysis tags: agent_result, noise, injection, multi_label, decoy_bridge."},
+        "text": {"type": "string", "minLength": 1},
+        "segments": {"type": "array", "minItems": 1, "items": {"oneOf": [{"$ref": "#/$defs/segment"}, {"$ref": "#/$defs/gold_segment"}]}, "description": "Voice segments of a meeting, or for a text item covering several matters its gold segments [{event_id, quote}] (never mixed in one item)."},
+        "image": {"$ref": "#/$defs/image"},
+        "filename": {"type": "string"},
+        "event_segments": {"type": "array", "items": {"$ref": "#/$defs/gold_segment"}, "description": "Gold segments of a multi-matter item (also one that has voice segments): which verbatim span belongs to which event; event_id null = unrelated aside."},
+        "file": {"type": "string", "minLength": 1, "description": "Optional original file the user dropped in (any format), relative to the scenario directory. to_items.py sends its bytes (file_b64, filename, mime_type); text, if present, is the caption the user typed with it."},
+        "mime_type": {"type": "string", "description": "MIME type of file."},
+        "file_truth": {"type": "string", "description": "Gold: ground-truth JSON of file (text, key fields, QA), relative to the scenario directory. Never sent."},
+        "file_text": {"type": "string", "description": "Gold: the file's readable content (copied from file_truth) so score.py can ground claims in it. Never sent (to_items.py --file-text gold sends it as an oracle reading)."},
+        "asset": {"type": "string", "description": "Optional rendered file (PNG/PDF) relative to the scenario directory."},
+        "format": {"type": "string", "description": "Optional: the intake/export format the item imitates, e.g. tencent_transcript, feishu_transcript, zoom_transcript, zoom_vtt, zoom_txt, chat_paste, phone_ime, mac_dictation, email, claude_result, codex_result, doc_text, screenshot, pdf, calendar_text. Not sent to the organizer."},
+        "input_mode": {"enum": ["typed", "voice", "dictation"], "description": "Optional: phone keyboard typed or voice input, or Mac Fn dictation."},
+        "content_time": {"$ref": "#/$defs/timestamp", "description": "Optional: when the content itself happened, if earlier than t (a pasted old chat, a late transcript export, a PDF dragged in days later)."},
+        "channel": {"type": "string"},
+        "meeting": {"type": "object", "additionalProperties": false, "required": ["meeting_id", "segment", "segments"], "properties": {"meeting_id": {"type": "string"}, "title": {"type": "string"}, "started_at": {"$ref": "#/$defs/timestamp"}, "segment": {"type": "integer", "minimum": 1}, "segments": {"type": "integer", "minimum": 1}}},
+        "event_spans": {"type": "array", "items": {"$ref": "#/$defs/span"}, "description": "Optional segment-level gold for multi-matter items: which piece of the item is about which event."},
+        "facts_introduced": {"type": "array", "items": {"$ref": "#/$defs/id"}, "description": "Facts whose valid_from is this item (derived)."},
+        "followup_of": {"$ref": "#/$defs/uuid", "description": "An earlier item this one continues, days later, without naming the matter."},
+        "cue": {"enum": ["pronoun", "person", "object"]},
+        "split_of": {"$ref": "#/$defs/uuid", "description": "First half of the same chat, pasted earlier."},
+        "distractor_of": {"$ref": "#/$defs/id", "description": "The look-alike event this item is built to be confused with."},
+        "privacy_tags": {"type": "array", "items": {"type": "string"}},
+        "demo_thread": {"type": "integer"},
+        "expected_ask": {"type": "object", "description": "A question the organizer may reasonably ask here, with the gold answer."},
+        "name_confusion": {"type": "object", "additionalProperties": false, "properties": {"pair": {"type": "string"}, "person_id": {"$ref": "#/$defs/id"}, "written_as": {"type": "string"}}},
+        "noise_theme": {"type": "string"},
+        "generator": {"type": "object", "description": "Provenance of generated text (model, node, attempts, checks)."},
+        "source": {"enum": ["meeting_tencent", "meeting_feishu", "meeting_zoom", "phone_typed", "phone_dictated", "mac_fn", "chat_wechat", "chat_wecom", "chat_feishu", "email", "feishu_doc", "claude", "codex", "screenshot", "pdf", "calendar"], "description": "Where the item came from (finer than kind/source_app)."},
+        "imported_at": {"$ref": "#/$defs/timestamp", "description": "When the user brought the item in, if later than t (late meeting exports)."},
+        "primary_event": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}]},
+        "facts": {"type": "array", "description": "Gold: which arc facts this item conveys and how.", "items": {"type": "object", "required": ["fact_id", "relation"], "additionalProperties": false, "properties": {"fact_id": {"$ref": "#/$defs/id"}, "relation": {"enum": ["states", "plans", "confirms", "supersedes", "cancels", "repeats"]}}}},
+        "time_refs": {"type": "array", "items": {"type": "object", "required": ["surface", "resolved_date"], "additionalProperties": false, "properties": {"surface": {"type": "string"}, "resolved_date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}}}},
+        "should_ask": {"type": "boolean", "description": "Gold: a genuine ambiguity the organizer should ask about once."},
+        "expected_question": {"type": "string"},
+        "expected_answer": {"$ref": "#/$defs/id"},
+        "ground_truth_text": {"type": "string", "description": "All text drawn in a screenshot."},
+        "gen_notes": {"type": "array", "items": {"type": "string"}, "description": "Validation notes from generation (unverified checks)."},
+        "matter_segments": {"type": "array", "items": {"type": "object", "required": ["event_id", "quote"], "additionalProperties": false, "properties": {"event_id": {"$ref": "#/$defs/id"}, "quote": {"type": "string", "minLength": 1}, "located": {"enum": ["model", "auto"]}}}, "description": "Gold, multi-matter items: for each event, a verbatim quote of the part of the item that is about it."},
+        "fact_refs": {"type": "array", "items": {"type": "object", "required": ["fact_id", "role"], "additionalProperties": false, "properties": {"fact_id": {"$ref": "#/$defs/id"}, "role": {"enum": ["new", "repeat", "stale"]}}}, "description": "Gold: facts the item states. new = first evidence; repeat = restated while still valid; stale = restated after it was superseded (must not pull the status back)."},
+        "person_mentions": {"type": "array", "items": {"type": "object", "required": ["person_id", "surface"], "additionalProperties": false, "properties": {"person_id": {"$ref": "#/$defs/id"}, "surface": {"type": "string"}}}, "description": "Gold: the surface form each person has in this item (aliases collide across people)."},
+        "sensitive": {"type": "array", "items": {"type": "string"}, "description": "Gold: sensitive categories in the item (薪酬, 绩效, 健康 ...)."},
+        "reading": {"type": "string", "description": "Gold: the standard reading of an image or PDF (what a correct reader extracts)."}
+      },
+      "allOf": [
+        {"if": {"properties": {"kind": {"enum": ["meeting_online", "meeting_offline"]}}}, "then": {"required": ["segments"]}},
+        {"if": {"properties": {"kind": {"const": "image"}}}, "then": {"anyOf": [{"required": ["image"]}, {"required": ["file"]}]}},
+        {"if": {"properties": {"kind": {"enum": ["dictation", "text"]}}}, "then": {"required": ["text"]}},
+        {"if": {"properties": {"kind": {"const": "document"}}}, "then": {"required": ["filename"], "anyOf": [{"required": ["text"]}, {"required": ["file"]}]}},
+        {"if": {"required": ["file"]}, "then": {"required": ["filename", "mime_type"]}}
+      ]
+    },
+    "fact": {
+      "type": "object",
+      "required": ["fact_id", "event_id", "text", "keys", "valid_from"],
+      "additionalProperties": false,
+      "properties": {
+        "fact_id": {"$ref": "#/$defs/id"},
+        "event_id": {"$ref": "#/$defs/id"},
+        "text": {"type": "string", "minLength": 1},
+        "keys": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "All keys must appear in the normalised status line; '|' separates alternatives inside one key. Normalisation: NFKC, lower case, no spaces/commas, numbers (1.5万=15000=一万五), dates (9/28=9月28号=9月28日)."},
+        "valid_from": {"$ref": "#/$defs/uuid", "description": "item_id at which the fact becomes true (its evidence)."},
+        "superseded_by": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}], "description": "fact_id that replaces this one; from that fact's valid_from on, mentioning this one without the replacement counts as stale."},
+        "state": {"enum": ["planned", "in_progress", "done", "cancelled", "info"], "description": "Progress state at valid_from. A planned fact matched in a clause that claims completion scores as plan_as_done, not as recall."},
+        "date": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$", "description": "Resolved date of a planned action (from the evidence item's capture time)."}
+      }
+    },
+    "checkpoint": {
+      "type": "object",
+      "required": ["checkpoint_id", "after_item_id", "expected"],
+      "additionalProperties": false,
+      "properties": {
+        "checkpoint_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]+$"},
+        "after_item_id": {"$ref": "#/$defs/uuid", "description": "Snapshot is taken after this item (in time order) has been ingested and processed."},
+        "label": {"type": "string"},
+        "expected": {"type": "object", "description": "event_id -> fact_ids that event's one status line should state at this checkpoint.", "additionalProperties": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/id"}}},
+        "home": {"type": "object", "description": "Expected home-screen importance at this checkpoint (see home_rubric). Every non-noise gold event with items at or before after_item_id is graded; noise cards are implicitly 0.", "required": ["grades"], "additionalProperties": false, "properties": {"grades": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0, "maximum": 3}}, "why": {"type": "object", "additionalProperties": {"type": "string"}}, "reference_order": {"type": "array", "items": {"$ref": "#/$defs/id"}, "description": "Optional: an author-written reference order of the top of the home screen (ties in grades broken by the scenario's own story)."}}}
+      }
+    },
+    "gold_segment": {
+      "type": "object",
+      "description": "Segment-level truth: a verbatim quote from the item text (as sent) and the event that part belongs to. Scored by score.py segment Link F1.",
+      "required": ["event_id", "quote"],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/id"}], "description": "The event this part is about; null = an unrelated aside."},
+        "quote": {"type": "string", "minLength": 2}
+      }
+    },
+    "span": {
+      "type": "object",
+      "required": ["event_id", "quote"],
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {"$ref": "#/$defs/id"},
+        "quote": {"type": "string", "minLength": 1, "description": "Verbatim piece of the item that is about this event."}
+      }
+    },
+    "action": {
+      "type": "object",
+      "required": ["action_id", "t", "type", "event_id", "target"],
+      "additionalProperties": false,
+      "properties": {
+        "action_id": {"type": "string"},
+        "t": {"$ref": "#/$defs/timestamp"},
+        "type": {"enum": ["export"]},
+        "event_id": {"$ref": "#/$defs/id"},
+        "target": {"type": "string", "description": "Claude, Codex, 自己, or a person_id."},
+        "result_item_id": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/uuid"}]},
+        "what": {"type": "string"}
+      }
+    }
+  }
+}

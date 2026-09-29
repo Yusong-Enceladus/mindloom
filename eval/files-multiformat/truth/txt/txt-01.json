@@ -1,0 +1,74 @@
+{
+ "file_id": "txt-01",
+ "path": "corpus/txt/txt-01.txt",
+ "type": "txt",
+ "ext": "txt",
+ "mime": "text/plain",
+ "filename": "答辩意见整理.txt",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "A5172A4A-FEF5-5081-A312-3A347F055108",
+  "ref": "def_txt",
+  "events": [
+   "ev_defense"
+  ]
+ },
+ "text_layer": "full",
+ "text": "开题答辩意见整理（林晓棠）\n2026-10-15 晚\n结论：通过（3票同意）。\n需要修改：\n1. 标注一致性：ClassSum-120 双人标注，Kappa 不低于 0.75；\n2. 增加对比：至少 2 个商用会议摘要工具；\n3. 技术路线：去掉多任务部分，集中在记忆模块。\n时间：修改稿 10月25日前发给沈老师，11月1日开始标注。\n—— 合成数据",
+ "key_lines": [
+  "1. 标注一致性：ClassSum-120 双人标注，Kappa 不低于 0.75；",
+  "2. 增加对比：至少 2 个商用会议摘要工具；",
+  "时间：修改稿 10月25日前发给沈老师，11月1日开始标注。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "修改稿截止": "2026-10-25",
+  "开始标注": "2026-11-01",
+  "对比工具数": 2
+ },
+ "numbers": [
+  {
+   "value": 0.75,
+   "label": "Kappa"
+  },
+  {
+   "value": 2,
+   "label": "对比工具数"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "修改稿什么时候前交？",
+   "a": "10月25日",
+   "match": "contains",
+   "accept": [
+    "2026-10-25"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "哪天开始标注？",
+   "a": "11月1日",
+   "match": "contains",
+   "accept": [
+    "2026-11-01"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "至少对比几个商用工具？",
+   "a": 2,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "encoding": "gb18030",
+  "newline": "LF"
+ },
+ "notes": "GB18030 编码（不是 UTF-8）。",
+ "bytes": 291,
+ "sha256": "b5e9bd74145c3209466cf9369d7ba92daeeb521517fe421c31d151525a363053"
+}

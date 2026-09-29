@@ -1,0 +1,817 @@
+{
+  "chunkDurationNanoseconds" : 2000000000,
+  "committedChunkCount" : 7199,
+  "conclusion" : "pass",
+  "cpuSeconds" : 123.33481499999999,
+  "deviceEvents" : [
+    {
+      "gapDurationNanoseconds" : 2000000000,
+      "kind" : "deviceDisconnected",
+      "monotonicNanoseconds" : 507368943682833,
+      "sourceTrack" : "microphone"
+    },
+    {
+      "gapDurationNanoseconds" : 0,
+      "kind" : "deviceReconnected",
+      "monotonicNanoseconds" : 507370943661875,
+      "sourceTrack" : "microphone"
+    }
+  ],
+  "driftNanoseconds" : 5241250,
+  "droppedFrameCount" : 0,
+  "gapCount" : 1,
+  "generatedAt" : "2026-07-23T19:42:44Z",
+  "kind" : "long-recording-stability",
+  "maximumThermalState" : "nominal",
+  "measuredDurationNanoseconds" : 7200005241250,
+  "peakResidentBytes" : 157171712,
+  "requestedDurationNanoseconds" : 7200000000000,
+  "resourceSamples" : [
+    {
+      "cpuSeconds" : 0.050740999999999994,
+      "elapsedNanoseconds" : 3065625,
+      "residentBytes" : 11321344,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 0.25159600000000004,
+      "elapsedNanoseconds" : 60014243666,
+      "residentBytes" : 13041664,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 0.5286679999999999,
+      "elapsedNanoseconds" : 122017946583,
+      "residentBytes" : 14155776,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 0.792458,
+      "elapsedNanoseconds" : 184015754625,
+      "residentBytes" : 15286272,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 1.10307,
+      "elapsedNanoseconds" : 244015802458,
+      "residentBytes" : 16416768,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 1.364758,
+      "elapsedNanoseconds" : 306018206958,
+      "residentBytes" : 18087936,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 1.6527669999999999,
+      "elapsedNanoseconds" : 366019566208,
+      "residentBytes" : 19087360,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 1.974173,
+      "elapsedNanoseconds" : 426021447375,
+      "residentBytes" : 20152320,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 2.3140419999999997,
+      "elapsedNanoseconds" : 488019450375,
+      "residentBytes" : 21168128,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 2.66384,
+      "elapsedNanoseconds" : 550010931625,
+      "residentBytes" : 22167552,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 3.074111,
+      "elapsedNanoseconds" : 612010569333,
+      "residentBytes" : 23674880,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 3.4971370000000004,
+      "elapsedNanoseconds" : 672028493958,
+      "residentBytes" : 24690688,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 3.890827,
+      "elapsedNanoseconds" : 734021363541,
+      "residentBytes" : 25690112,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 4.297951,
+      "elapsedNanoseconds" : 794024406791,
+      "residentBytes" : 26673152,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 4.718674,
+      "elapsedNanoseconds" : 856023879083,
+      "residentBytes" : 27770880,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 5.127771,
+      "elapsedNanoseconds" : 918021142166,
+      "residentBytes" : 28819456,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 5.619752,
+      "elapsedNanoseconds" : 978024395000,
+      "residentBytes" : 29818880,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 6.14728,
+      "elapsedNanoseconds" : 1040026339958,
+      "residentBytes" : 30932992,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 6.709384,
+      "elapsedNanoseconds" : 1100031986750,
+      "residentBytes" : 31948800,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 7.293138000000001,
+      "elapsedNanoseconds" : 1162030058791,
+      "residentBytes" : 33685504,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 7.845898,
+      "elapsedNanoseconds" : 1222032570166,
+      "residentBytes" : 34766848,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 8.444590999999999,
+      "elapsedNanoseconds" : 1284025850333,
+      "residentBytes" : 35880960,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 9.005294,
+      "elapsedNanoseconds" : 1344035147666,
+      "residentBytes" : 36847616,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 9.643436,
+      "elapsedNanoseconds" : 1406020951083,
+      "residentBytes" : 37978112,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 10.241585,
+      "elapsedNanoseconds" : 1466032856625,
+      "residentBytes" : 40583168,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 10.881323,
+      "elapsedNanoseconds" : 1526035173625,
+      "residentBytes" : 41615360,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 11.402192,
+      "elapsedNanoseconds" : 1588036568750,
+      "residentBytes" : 42729472,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 12.036487,
+      "elapsedNanoseconds" : 1650015528500,
+      "residentBytes" : 43843584,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 12.554008999999999,
+      "elapsedNanoseconds" : 1710016214000,
+      "residentBytes" : 44843008,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 13.096674,
+      "elapsedNanoseconds" : 1770017493000,
+      "residentBytes" : 45842432,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 13.806836,
+      "elapsedNanoseconds" : 1830031719291,
+      "residentBytes" : 46874624,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 14.549229,
+      "elapsedNanoseconds" : 1890032008250,
+      "residentBytes" : 48037888,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 15.303508999999998,
+      "elapsedNanoseconds" : 1952032331750,
+      "residentBytes" : 49086464,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 16.05844,
+      "elapsedNanoseconds" : 2012033237041,
+      "residentBytes" : 49987584,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 16.792239,
+      "elapsedNanoseconds" : 2074035894291,
+      "residentBytes" : 51134464,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 17.625941,
+      "elapsedNanoseconds" : 2136030795958,
+      "residentBytes" : 52150272,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 18.390141999999997,
+      "elapsedNanoseconds" : 2196040725041,
+      "residentBytes" : 53280768,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 19.230592,
+      "elapsedNanoseconds" : 2258037324791,
+      "residentBytes" : 55050240,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 20.041067,
+      "elapsedNanoseconds" : 2318038527583,
+      "residentBytes" : 56049664,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 20.86178,
+      "elapsedNanoseconds" : 2378041754000,
+      "residentBytes" : 56967168,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 21.707174000000002,
+      "elapsedNanoseconds" : 2440017775166,
+      "residentBytes" : 58933248,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 22.377618,
+      "elapsedNanoseconds" : 2500025480125,
+      "residentBytes" : 60309504,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 23.17484,
+      "elapsedNanoseconds" : 2560043792208,
+      "residentBytes" : 61292544,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 24.010435,
+      "elapsedNanoseconds" : 2620045334375,
+      "residentBytes" : 62242816,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 24.91122,
+      "elapsedNanoseconds" : 2682039752500,
+      "residentBytes" : 63356928,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 25.851439,
+      "elapsedNanoseconds" : 2744043636041,
+      "residentBytes" : 64372736,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 26.724205,
+      "elapsedNanoseconds" : 2806021688958,
+      "residentBytes" : 65388544,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 27.54216,
+      "elapsedNanoseconds" : 2866039675875,
+      "residentBytes" : 66420736,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 28.550032,
+      "elapsedNanoseconds" : 2926041293291,
+      "residentBytes" : 67452928,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 29.522793999999998,
+      "elapsedNanoseconds" : 2986042200750,
+      "residentBytes" : 68435968,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 30.497116,
+      "elapsedNanoseconds" : 3048040890083,
+      "residentBytes" : 69435392,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 31.396615999999998,
+      "elapsedNanoseconds" : 3108041703500,
+      "residentBytes" : 70516736,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 32.421714,
+      "elapsedNanoseconds" : 3168042998416,
+      "residentBytes" : 71483392,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 33.416264,
+      "elapsedNanoseconds" : 3230042273250,
+      "residentBytes" : 72450048,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 34.359541,
+      "elapsedNanoseconds" : 3290048656833,
+      "residentBytes" : 73482240,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 35.269259,
+      "elapsedNanoseconds" : 3350048770125,
+      "residentBytes" : 74481664,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 36.341961,
+      "elapsedNanoseconds" : 3410049485125,
+      "residentBytes" : 75497472,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 37.447816,
+      "elapsedNanoseconds" : 3472045082583,
+      "residentBytes" : 76562432,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 38.531102000000004,
+      "elapsedNanoseconds" : 3532052113875,
+      "residentBytes" : 77561856,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 39.542569,
+      "elapsedNanoseconds" : 3594049265875,
+      "residentBytes" : 79183872,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 40.583584,
+      "elapsedNanoseconds" : 3656053405708,
+      "residentBytes" : 80216064,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 41.730947,
+      "elapsedNanoseconds" : 3718046388458,
+      "residentBytes" : 81166336,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 42.675433,
+      "elapsedNanoseconds" : 3778053577833,
+      "residentBytes" : 82198528,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 43.723957999999996,
+      "elapsedNanoseconds" : 3840045140333,
+      "residentBytes" : 83214336,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 44.887068,
+      "elapsedNanoseconds" : 3902029830625,
+      "residentBytes" : 84180992,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 45.828097,
+      "elapsedNanoseconds" : 3962031591458,
+      "residentBytes" : 85311488,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 46.919129,
+      "elapsedNanoseconds" : 4022048628041,
+      "residentBytes" : 86294528,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 48.161595000000005,
+      "elapsedNanoseconds" : 4084047191666,
+      "residentBytes" : 87310336,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 49.387268000000006,
+      "elapsedNanoseconds" : 4144048850916,
+      "residentBytes" : 88424448,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 50.620359,
+      "elapsedNanoseconds" : 4206051072833,
+      "residentBytes" : 89489408,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 51.700626,
+      "elapsedNanoseconds" : 4268025165291,
+      "residentBytes" : 92405760,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 52.929542,
+      "elapsedNanoseconds" : 4328054100416,
+      "residentBytes" : 93421568,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 54.133804,
+      "elapsedNanoseconds" : 4390055686583,
+      "residentBytes" : 94355456,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 55.335737,
+      "elapsedNanoseconds" : 4450056883000,
+      "residentBytes" : 95469568,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 56.353874000000005,
+      "elapsedNanoseconds" : 4512051795708,
+      "residentBytes" : 98074624,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 57.609978999999996,
+      "elapsedNanoseconds" : 4574055043625,
+      "residentBytes" : 99057664,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 58.983784,
+      "elapsedNanoseconds" : 4636058177250,
+      "residentBytes" : 100057088,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 60.259643,
+      "elapsedNanoseconds" : 4698055537916,
+      "residentBytes" : 101072896,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 61.639288,
+      "elapsedNanoseconds" : 4760042185583,
+      "residentBytes" : 102039552,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 63.002545000000005,
+      "elapsedNanoseconds" : 4820053943916,
+      "residentBytes" : 103088128,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 64.26246900000001,
+      "elapsedNanoseconds" : 4882056425375,
+      "residentBytes" : 104169472,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 65.444543,
+      "elapsedNanoseconds" : 4942056860958,
+      "residentBytes" : 105463808,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 66.842694,
+      "elapsedNanoseconds" : 5004052168041,
+      "residentBytes" : 106446848,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 68.261219,
+      "elapsedNanoseconds" : 5064066737666,
+      "residentBytes" : 107528192,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 69.653651,
+      "elapsedNanoseconds" : 5126034165041,
+      "residentBytes" : 108560384,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 70.888948,
+      "elapsedNanoseconds" : 5186034479875,
+      "residentBytes" : 109527040,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 72.282752,
+      "elapsedNanoseconds" : 5246053088083,
+      "residentBytes" : 110444544,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 73.70864,
+      "elapsedNanoseconds" : 5306059184166,
+      "residentBytes" : 111460352,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 75.005552,
+      "elapsedNanoseconds" : 5368058557750,
+      "residentBytes" : 112394240,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 76.518159,
+      "elapsedNanoseconds" : 5430059587541,
+      "residentBytes" : 113360896,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 77.93987200000001,
+      "elapsedNanoseconds" : 5490060274291,
+      "residentBytes" : 114442240,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 79.285252,
+      "elapsedNanoseconds" : 5552056185916,
+      "residentBytes" : 115425280,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 80.597471,
+      "elapsedNanoseconds" : 5612063057666,
+      "residentBytes" : 116424704,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 82.060634,
+      "elapsedNanoseconds" : 5674034253708,
+      "residentBytes" : 117473280,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 83.377981,
+      "elapsedNanoseconds" : 5734045941916,
+      "residentBytes" : 118423552,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 84.59320000000001,
+      "elapsedNanoseconds" : 5794065187958,
+      "residentBytes" : 119390208,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 86.10899699999999,
+      "elapsedNanoseconds" : 5856042684375,
+      "residentBytes" : 120389632,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 87.672851,
+      "elapsedNanoseconds" : 5918037885791,
+      "residentBytes" : 121470976,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 89.02071600000001,
+      "elapsedNanoseconds" : 5978061860000,
+      "residentBytes" : 122437632,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 90.459641,
+      "elapsedNanoseconds" : 6040065775291,
+      "residentBytes" : 127680512,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 91.859667,
+      "elapsedNanoseconds" : 6102041745875,
+      "residentBytes" : 130613248,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 93.324031,
+      "elapsedNanoseconds" : 6162058061458,
+      "residentBytes" : 130613248,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 94.921341,
+      "elapsedNanoseconds" : 6222069970708,
+      "residentBytes" : 135036928,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 96.612935,
+      "elapsedNanoseconds" : 6284070082291,
+      "residentBytes" : 135184384,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 97.887594,
+      "elapsedNanoseconds" : 6346036335791,
+      "residentBytes" : 135184384,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 99.299944,
+      "elapsedNanoseconds" : 6406058671916,
+      "residentBytes" : 135184384,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 100.913547,
+      "elapsedNanoseconds" : 6466064096666,
+      "residentBytes" : 135184384,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 102.65351,
+      "elapsedNanoseconds" : 6528063950250,
+      "residentBytes" : 138018816,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 104.403027,
+      "elapsedNanoseconds" : 6590068061291,
+      "residentBytes" : 140886016,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 106.180103,
+      "elapsedNanoseconds" : 6652062372166,
+      "residentBytes" : 142376960,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 107.932075,
+      "elapsedNanoseconds" : 6712065541416,
+      "residentBytes" : 142393344,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 109.705013,
+      "elapsedNanoseconds" : 6774064906833,
+      "residentBytes" : 142393344,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 111.45048200000001,
+      "elapsedNanoseconds" : 6834068576916,
+      "residentBytes" : 144932864,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 113.208734,
+      "elapsedNanoseconds" : 6894068639250,
+      "residentBytes" : 144932864,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 114.97873999999999,
+      "elapsedNanoseconds" : 6954071949375,
+      "residentBytes" : 147357696,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 116.80879300000001,
+      "elapsedNanoseconds" : 7016063989791,
+      "residentBytes" : 147357696,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 118.590429,
+      "elapsedNanoseconds" : 7076072434833,
+      "residentBytes" : 149749760,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 120.368299,
+      "elapsedNanoseconds" : 7136072916041,
+      "residentBytes" : 149749760,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 122.251716,
+      "elapsedNanoseconds" : 7198071477125,
+      "residentBytes" : 151470080,
+      "thermalState" : "nominal"
+    },
+    {
+      "cpuSeconds" : 122.251949,
+      "elapsedNanoseconds" : 7200005241250,
+      "residentBytes" : 151470080,
+      "thermalState" : "nominal"
+    }
+  ],
+  "runID" : "9B375ECC-2A88-412A-BC32-113E88DF45B7",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "measuredDurationNanoseconds" : "7200005241250",
+        "requestedDurationNanoseconds" : "7200000000000",
+        "syntheticSource" : "true"
+      },
+      "scenarioID" : "two-hour-dual-track-endurance",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "captureContinued" : "true",
+        "heavyInferencePaused" : "true"
+      },
+      "scenarioID" : "storage-soft-watermark-pauses-heavy-inference",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunksPreserved" : "true",
+        "finalState" : "stoppedForDiskPressure",
+        "markedComplete" : "false"
+      },
+      "scenarioID" : "storage-hard-watermark-stops-without-false-complete",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "deviceEventCount" : "2",
+        "gapCount" : "1",
+        "systemTrackContinued" : "true"
+      },
+      "scenarioID" : "device-change-records-gap-and-recovers",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "committedChunkCount" : "7199",
+        "readableChunkCount" : "7199",
+        "recoveryIssueCount" : "0"
+      },
+      "scenarioID" : "final-reopen-validates-all-committed-chunks",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "cpuSeconds" : "123.334815",
+        "driftNanoseconds" : "5241250",
+        "droppedFrameCount" : "0",
+        "peakResidentBytes" : "157171712",
+        "thermalState" : "nominal"
+      },
+      "scenarioID" : "resource-and-timeline-metrics-are-recorded",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-JRN-001"
+}

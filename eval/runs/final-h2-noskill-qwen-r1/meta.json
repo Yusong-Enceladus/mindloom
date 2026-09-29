@@ -1,0 +1,80 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "without-skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "eb4c1634018ce0f5",
+  "event-brief": "1a65045b1cf0040e",
+  "home-rank": "22d28d3e84a08265",
+  "recall": "d8fbb1754cec1f6a",
+  "screenshot-read": "6ed5ddfc9ecd5297"
+ },
+ "git": "13c3ae1",
+ "date": "2026-09-28T15:30:15+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "without-skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/final-h2-noskill-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "fe0dcfd4-46a1-4788-9ec5-e56a1ddaa5cc",
+  "E2": "7a6c028c-c8c9-4758-bb2e-c3ce6e65c0b0",
+  "E3": "de63b3ce-a299-4739-b157-ee7614be9c2b",
+  "E4": "f9a4ab9b-3cc7-4d0b-9342-abf28397e0e4",
+  "E5": "9befa898-4584-4c41-ab9a-40e92daca7dd",
+  "E6": "83d634a0-6577-41cf-b905-0d027c102a96",
+  "E7": "da19593a-7b08-4005-af73-895a77580f98",
+  "E8": "257b598c-585b-4215-af02-5a198f8b63d0",
+  "E9": "33cf6e50-103b-41e4-80cf-78e1ac35110e",
+  "E10": "45cd72ff-a0d9-4836-8a67-12c1e9040ace",
+  "E11": "67cfd5e5-d63e-42a6-8a01-bebd2e4cf188",
+  "E12": "507a4f57-034a-49a8-a5a7-1c3edad38ce2",
+  "E13": "eeeef3fc-001a-40d3-9f2f-3e73f429b06d",
+  "E14": "09bed1a0-5fa9-416d-b2ff-72f4b46eb590",
+  "E15": "c7900c51-0fca-4116-aeea-e9c651c561ac"
+ },
+ "bare_max_tokens": null
+}

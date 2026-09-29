@@ -1,0 +1,149 @@
+{
+ "items_total": 46,
+ "items_scored": 35,
+ "items_first_mention": 7,
+ "items_noise": 4,
+ "mean_pool_size": 6.46,
+ "fused": {
+  "recall@1": 0.5143,
+  "recall@3": 0.8571,
+  "recall@5": 0.9714,
+  "mrr": 0.6924,
+  "hits@5": 34
+ },
+ "similarity_only": {
+  "recall@1": 0.6286,
+  "recall@3": 0.9143,
+  "recall@5": 0.9714,
+  "mrr": 0.7762,
+  "hits@5": 34
+ },
+ "random": {
+  "recall@1": 0.2321,
+  "recall@3": 0.5922,
+  "recall@5": 0.8361
+ },
+ "fused_by_kind": {
+  "meeting_offline": {
+   "n": 5,
+   "hit@1": 4,
+   "hit@3": 5,
+   "hit@5": 5
+  },
+  "meeting_online": {
+   "n": 2,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "dictation": {
+   "n": 10,
+   "hit@1": 6,
+   "hit@3": 9,
+   "hit@5": 10
+  },
+  "text": {
+   "n": 14,
+   "hit@1": 5,
+   "hit@3": 10,
+   "hit@5": 13
+  },
+  "document": {
+   "n": 2,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "image": {
+   "n": 2,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d3-06",
+   "kind": "text",
+   "gold": [
+    "ev_peggy_quote"
+   ],
+   "top5": [
+    "ev_peggy_claim",
+    "ev_q3_rebate",
+    "ev_dad_knee",
+    "ev_nanan_po2611",
+    "ev_spring_fair"
+   ]
+  }
+ ],
+ "label": "lexical-hash",
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "embedder": "hash",
+ "embed_model": "hash-bigram-256",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "embed_dim": 256,
+ "embed_calls": 46,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 0.08,
+  "p95": 0.18,
+  "max": 0.22,
+  "mean": 0.1
+ },
+ "embed_chars": {
+  "p50": 107,
+  "max": 279
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 0,
+  "misses": 4
+ },
+ "screenshot_readings": [
+  {
+   "ref": "d1-04",
+   "text_chars": 142,
+   "summary_chars": 51,
+   "messages": 4
+  },
+  {
+   "ref": "d1-06",
+   "text_chars": 148,
+   "summary_chars": 56,
+   "messages": 4
+  },
+  {
+   "ref": "d3-02",
+   "text_chars": 125,
+   "summary_chars": 45,
+   "messages": 4
+  },
+  {
+   "ref": "d5-04",
+   "text_chars": 146,
+   "summary_chars": 52,
+   "messages": 5
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 31.1,
+ "date": "2026-09-29T01:07:14+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "repo/eval/scenarios/holdout-week-v2/scenario.json",
+  "--embedder",
+  "hash",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--reading-cache",
+  "readings/holdout-week-v2",
+  "--label",
+  "lexical-hash",
+  "--out",
+  "out/holdout2-hash"
+ ]
+}

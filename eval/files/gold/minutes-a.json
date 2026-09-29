@@ -1,0 +1,28 @@
+{
+ "id": "minutes-a",
+ "template": "minutes",
+ "split": "dev",
+ "filename": "会议纪要.doc",
+ "path": "data/minutes-a.doc",
+ "sha256": "97dcbd1edbbba99b2132a7b052b74777df28b241480cb9c6ba1c430ec9ccae8f",
+ "size": 10240,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "点单小程序项目会议纪要",
+  "周四前提交支付联调报告"
+ ],
+ "summary_groups": [
+  [
+   "点单小程序"
+  ],
+  [
+   "纪要",
+   "会议"
+  ]
+ ],
+ "doc_kind": "minutes"
+}

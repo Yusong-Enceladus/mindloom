@@ -1,0 +1,131 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 61,
+   "ok": 61,
+   "ok_first_attempt": 57,
+   "retried": 4,
+   "latency_median_s": 2.662,
+   "latency_p95_s": 4.442,
+   "latency_total_s": 164.8,
+   "prompt_tokens_mean": 6283.2,
+   "completion_tokens_mean": 124.6,
+   "prompt_tokens_total": 383274,
+   "completion_tokens_total": 7598,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 59,
+   "ok": 18,
+   "ok_first_attempt": 12,
+   "retried": 47,
+   "latency_median_s": 8.337,
+   "latency_p95_s": 14.038,
+   "latency_total_s": 473.5,
+   "prompt_tokens_mean": 8665.2,
+   "completion_tokens_mean": 460.2,
+   "prompt_tokens_total": 511248,
+   "completion_tokens_total": 27151,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[1] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[1] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 1.043,
+   "latency_p95_s": 1.067,
+   "latency_total_s": 4.2,
+   "prompt_tokens_mean": 5156.5,
+   "completion_tokens_mean": 9,
+   "prompt_tokens_total": 20626,
+   "completion_tokens_total": 36,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 1,
+   "latency_median_s": 5.508,
+   "latency_p95_s": 10.746,
+   "latency_total_s": 25.8,
+   "prompt_tokens_mean": 6591.2,
+   "completion_tokens_mean": 387.2,
+   "prompt_tokens_total": 26365,
+   "completion_tokens_total": 1549,
+   "errors_sample": [
+    "messages[0] is_self=true 时 sender 写\"我\"（英文界面写\"Me\"）; messages[1] is_self=true 时 sender 写\"我\"（英文界面写\"Me\"）; messages[2] is_self=true 时 sender 写\"我\"（英文界面写\"Me\"）; messages[3] sender=\"我\" 时 is_self 应为 true"
+   ]
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 2,
+   "latency_median_s": 9.345,
+   "latency_p95_s": 50.774,
+   "latency_total_s": 120.9,
+   "prompt_tokens_mean": 11457.3,
+   "completion_tokens_mean": 1173.7,
+   "prompt_tokens_total": 68744,
+   "completion_tokens_total": 7042,
+   "errors_sample": [
+    "event ids ranked more than once: ['E24', 'E23']; events missing from ranking: ['E1', 'E2']",
+    "event ids ranked more than once: ['E17', 'E20']; events missing from ranking: ['E15', 'E8']"
+   ]
+  },
+  "split": {
+   "calls": 15,
+   "ok": 5,
+   "ok_first_attempt": 4,
+   "retried": 11,
+   "latency_median_s": 4.545,
+   "latency_p95_s": 12.039,
+   "latency_total_s": 84.2,
+   "prompt_tokens_mean": 5378.1,
+   "completion_tokens_mean": 329.8,
+   "prompt_tokens_total": 80672,
+   "completion_tokens_total": 4947,
+   "errors_sample": [
+    "segments[2]: overlaps or is out of order with the previous segment",
+    "segments[0].gist is wider than 20 (中文字算1); segments[1].gist is wider than 20 (中文字算1)",
+    "segments[0].gist is wider than 20 (中文字算1); matters[1] has no segment; drop it or give it its units; matters[2] has no segment; drop it or give it its units; matters[3] has no segment; drop it or give "
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 3,
+  "attach": 26,
+  "ask": 30,
+  "none": 2
+ },
+ "assign_actions": {
+  "new": 3,
+  "attach": 25,
+  "ask": 6,
+  "none": 2,
+  "ask_suppressed": 25
+ },
+ "final_live_events": 34,
+ "status_line_chars_mean": 17.4,
+ "title_chars_mean": 13.6,
+ "wall_s": 875.7,
+ "items_per_min": 3.15,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 7,
+  "segments": 22,
+  "rejected": 7
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 7
+}

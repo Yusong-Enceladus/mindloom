@@ -1,0 +1,23 @@
+{
+ "label": "hash-bigram-256 (in-process)",
+ "model": "hash-bigram-256",
+ "embed_url": null,
+ "dim": 256,
+ "texts": 121,
+ "chars_p50": 47,
+ "chars_max": 379,
+ "single_ms": {
+  "p50": 0.03,
+  "p95": 0.11,
+  "mean": 0.05,
+  "n": 363
+ },
+ "batch": {
+  "size": 16,
+  "texts_per_s": 21182.4
+ },
+ "memory": {
+  "gpu_used_mib": 0
+ },
+ "date": "2026-09-29T01:21:27+0800"
+}

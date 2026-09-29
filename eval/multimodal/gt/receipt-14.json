@@ -1,0 +1,100 @@
+{
+ "id": "receipt-14",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-14.jpg",
+ "lang": "en",
+ "hard": [
+  "glare",
+  "similar_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "74e0318acf47d4d429c748ab84d073d41d8d20a6683310780fd7b7af1f1018ed",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "Fernhollow Foods Inc.",
+  "date": "2026-08-25",
+  "date_text": "Aug 25, 2026",
+  "time": "",
+  "doc_no": "INV-2026-2312",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Oat milk 1 L",
+    "qty": 96,
+    "unit": "carton",
+    "unit_price": "2.35",
+    "amount": "225.60"
+   },
+   {
+    "name": "Coffee beans, washed, 1 kg",
+    "qty": 24,
+    "unit": "bag",
+    "unit_price": "21.40",
+    "amount": "513.60"
+   },
+   {
+    "name": "Coffee beans, natural, 1 kg",
+    "qty": 72,
+    "unit": "bag",
+    "unit_price": "19.80",
+    "amount": "1425.60"
+   }
+  ],
+  "subtotal": "2164.80",
+  "discount": "0.00",
+  "tax": "135.30",
+  "total": "2300.10",
+  "payment_method": "Bank transfer",
+  "buyer": "Northwind Labs Ltd.",
+  "tax_rate": 6.25,
+  "due_date": "2026-09-24"
+ },
+ "text_lines": [
+  "INVOICE",
+  "Fernhollow Foods Inc.",
+  "Bill to: Northwind Labs Ltd. Invoice no.: INV-2026-2312",
+  "Date: Aug 25, 2026 Due: Sep 24, 2026",
+  "Oat milk 1 L 96 2.35 225.60",
+  "Coffee beans, washed, 1 kg 24 21.40 513.60",
+  "Coffee beans, natural, 1 kg 72 19.80 1425.60",
+  "Subtotal $2,164.80",
+  "Tax (6.25%) $135.30",
+  "Total due $2,300.10",
+  "Payment terms: net 30 days by bank transfer. Please quote the invoice number."
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$2,300.10",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Fernhollow Foods Inc.",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-08-25",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$135.30",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "lang": "en",
+  "similar": true,
+  "glare": true
+ }
+}

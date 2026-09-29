@@ -1,0 +1,105 @@
+{
+ "id": "receipt-12",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-12.jpg",
+ "lang": "zh",
+ "hard": [
+  "low_contrast",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "5f617864b8c853ea8877b6dd73f8a4e4ccb0fa73ac7e8a25b5de8dad609eb8df",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "云岭电器有限公司",
+  "date": "2026-08-04",
+  "date_text": "2026年8月4日",
+  "time": "",
+  "doc_no": "XS-20260804-815",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "布基胶带 48mm",
+    "qty": 20,
+    "unit": "卷",
+    "unit_price": "5.50",
+    "amount": "110.00"
+   },
+   {
+    "name": "自攻螺丝 M4×20",
+    "qty": 10,
+    "unit": "盒",
+    "unit_price": "6.50",
+    "amount": "65.00"
+   },
+   {
+    "name": "延长线插座 3m",
+    "qty": 36,
+    "unit": "个",
+    "unit_price": "39.00",
+    "amount": "1404.00"
+   },
+   {
+    "name": "PVC 水管 20mm",
+    "qty": 2.43,
+    "unit": "m",
+    "unit_price": "4.20",
+    "amount": "10.21"
+   }
+  ],
+  "subtotal": "1589.21",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "1589.21",
+  "payment_method": "月结",
+  "buyer": "穗禾里食品有限公司",
+  "total_in_words": "壹仟伍佰捌拾玖元贰角壹分"
+ },
+ "text_lines": [
+  "送货单",
+  "云岭电器有限公司",
+  "客户：穗禾里食品有限公司 单号：XS-20260804-815",
+  "日期：2026年8月4日 结算方式：月结",
+  "布基胶带 48mm 20 5.50 110.00",
+  "自攻螺丝 M4×20 10 6.50 65.00",
+  "延长线插座 3m 36 39.00 1404.00",
+  "PVC 水管 20mm 2.43m 4.20 10.21",
+  "合计金额： ¥1,589.21",
+  "大写： 壹仟伍佰捌拾玖元贰角壹分",
+  "备注：货物当面点清，如有质量问题请于 3 日内联系。",
+  "开单人：郑楠"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥1,589.21",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "云岭电器有限公司",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-08-04",
+   "match": "date"
+  },
+  {
+   "q": "延长线插座 3m的金额是多少？",
+   "a": "1,404.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": true,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "faint": true
+ }
+}

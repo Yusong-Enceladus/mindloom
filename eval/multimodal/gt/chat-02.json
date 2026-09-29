@@ -1,0 +1,102 @@
+{
+ "id": "chat-02",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-02.png",
+ "lang": "zh",
+ "hard": [
+  "non_text_bubbles",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "6f1595234bb1de8af3a482ce7a3918057f5b7d20dd28ad85d6d5d1b0a3351909",
+ "gt": {
+  "chat_title": "袁野",
+  "is_group": false,
+  "messages": [
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "11:53",
+    "text": "周四晚上聚餐定在哪？",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "就学校东门那家，9个人",
+    "kind": "text"
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "",
+    "text": "我订了19:00的包间，人均大概85元",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "好的，我跟大家说一声",
+    "kind": "text"
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "11:58",
+    "text": "[图片]",
+    "kind": "image",
+    "sender_shown": false
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "",
+    "text": "这是菜单，你看看要不要加菜",
+    "kind": "text",
+    "sender_shown": false
+   }
+  ]
+ },
+ "text_lines": [
+  "袁野",
+  "袁野：周四晚上聚餐定在哪？",
+  "我：就学校东门那家，9个人",
+  "袁野：我订了19:00的包间，人均大概85元",
+  "我：好的，我跟大家说一声",
+  "袁野：[图片]",
+  "袁野：这是菜单，你看看要不要加菜"
+ ],
+ "qa": [
+  {
+   "q": "聚餐几点开始？",
+   "a": "19:00",
+   "match": "exact"
+  },
+  {
+   "q": "人均大概多少钱？",
+   "a": "85元",
+   "match": "number"
+  },
+  {
+   "q": "聚餐一共几个人？",
+   "a": "9个人",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "dinner",
+  "theme": "light"
+ }
+}

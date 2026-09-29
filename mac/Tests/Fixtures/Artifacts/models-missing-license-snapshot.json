@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "models": [
+    {
+      "id": "fixture-model",
+      "exactVersion": "1111111111111111111111111111111111111111",
+      "activationSequence": 1,
+      "source": "https://example.invalid/model/1111111111111111111111111111111111111111",
+      "sourceRevision": "1111111111111111111111111111111111111111",
+      "treeSHA256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "license": "LicenseRef-Fixture",
+      "licenseSource": "https://example.invalid/license",
+      "licenseRevision": "2222222222222222222222222222222222222222",
+      "requiredAttribution": "Fixture attribution",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64",
+      "totalSizeBytes": 1,
+      "networkBehavior": "Offline",
+      "runtimeBehavior": "Fixture",
+      "distributionImpact": "Fixture only",
+      "files": [
+        {
+          "relativePath": "model.bin",
+          "packagePath": "Contents/Resources/Models/model.bin",
+          "sizeBytes": 1,
+          "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        }
+      ]
+    }
+  ],
+  "selectionStatus": "Invalid fixture intentionally omits the license snapshot."
+}

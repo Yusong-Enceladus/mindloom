@@ -1,0 +1,85 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.3.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "231d69c720f4b94b",
+  "home-rank": "5b9631d010fb3265",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "dcfee67",
+ "date": "2026-09-28T13:27:14+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/dev-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "e827b99f-db3a-4225-9168-391071afa460",
+  "E2": "b70fa21f-a1cc-4479-af6b-d2e834539a38",
+  "E3": "ce4f42f6-06aa-40f0-a77c-b964c2a28220",
+  "E4": "e1a8aa8b-fb31-4050-86b4-2023129cbad6",
+  "E5": "679ddb69-b954-4541-8ca3-0caaf7405883",
+  "E6": "29cf0ef1-557c-4291-90e1-506c85961757",
+  "E7": "f798e5b0-1a49-4470-9eb7-57492b18cc34",
+  "E8": "3970ce39-1c66-452c-ae19-2a05a4a3f3d6",
+  "E9": "aa03940c-e087-4179-9d47-9d3dbb017ff0",
+  "E10": "50a732da-0011-40eb-a6c2-12e1d41bac53",
+  "E11": "cf2ae2d8-9baa-492f-b658-c89b310d17bf",
+  "E12": "59bf303a-8f09-4c68-bc05-ce5a4259acfb",
+  "E13": "3949a698-10d6-4348-9e3c-29b562f486b4",
+  "E14": "ef606d46-7262-4c63-8a99-341ee6fc413d",
+  "E15": "06bc0574-0392-4a6a-95a9-7595bf1042dd",
+  "E16": "2b984829-1409-4299-b43d-538fe8deecf3",
+  "E17": "46e4924e-1a3d-45cb-9beb-15ebcd42caee",
+  "E18": "ec8e2587-24df-43ce-bdaa-321f9aaa3e14",
+  "E19": "63a7868f-7522-464c-bef0-8426c2f5bb18",
+  "E20": "48eca61f-6a2b-42d7-a20a-97f9f1c44e08"
+ },
+ "bare_max_tokens": null
+}

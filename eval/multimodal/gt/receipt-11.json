@@ -1,0 +1,106 @@
+{
+ "id": "receipt-11",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-11.jpg",
+ "lang": "zh",
+ "hard": [
+  "shadow",
+  "similar_items",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "792037e9c0eb39f659aa7e09c75550032aba8210da272456ffba9b315d96df76",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "穗禾里食品有限公司",
+  "date": "2026-09-04",
+  "date_text": "2026年9月4日",
+  "time": "",
+  "doc_no": "XS-20260904-155",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "燕麦奶 1L",
+    "qty": 20,
+    "unit": "盒",
+    "unit_price": "16.50",
+    "amount": "330.00"
+   },
+   {
+    "name": "咖啡豆 云南水洗 1kg",
+    "qty": 20,
+    "unit": "袋",
+    "unit_price": "126.00",
+    "amount": "2520.00"
+   },
+   {
+    "name": "咖啡豆 云南日晒 1kg",
+    "qty": 40,
+    "unit": "袋",
+    "unit_price": "118.00",
+    "amount": "4720.00"
+   },
+   {
+    "name": "杯盖 90mm（100只）",
+    "qty": 20,
+    "unit": "条",
+    "unit_price": "15.00",
+    "amount": "300.00"
+   }
+  ],
+  "subtotal": "7870.00",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "7870.00",
+  "payment_method": "月结",
+  "buyer": "拾光文化传媒",
+  "total_in_words": "柒仟捌佰柒拾元整"
+ },
+ "text_lines": [
+  "销售单",
+  "穗禾里食品有限公司",
+  "客户：拾光文化传媒 单号：XS-20260904-155",
+  "日期：2026年9月4日 结算方式：月结",
+  "燕麦奶 1L 20 16.50 330.00",
+  "咖啡豆 云南水洗 1kg 20 126.00 2520.00",
+  "咖啡豆 云南日晒 1kg 40 118.00 4720.00",
+  "杯盖 90mm（100只） 20 15.00 300.00",
+  "合计金额： ¥7,870.00",
+  "大写： 柒仟捌佰柒拾元整",
+  "备注：货物当面点清，如有质量问题请于 3 日内联系。",
+  "开单人：韩梅"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥7,870.00",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "穗禾里食品有限公司",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-09-04",
+   "match": "date"
+  },
+  {
+   "q": "咖啡豆 云南日晒 1kg的金额是多少？",
+   "a": "4,720.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "similar": true,
+  "shadow": true
+ }
+}

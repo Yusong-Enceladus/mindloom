@@ -1,0 +1,18 @@
+FluidInference Parakeet Unified English CoreML model notice
+
+Model: FluidInference/parakeet-unified-en-0.6b-coreml
+Pinned source revision: 4252711f6f060f9a2f91e5f081a806d7f45eebd8
+Source: https://huggingface.co/FluidInference/parakeet-unified-en-0.6b-coreml
+Base model: nvidia/parakeet-tdt-0.6b-v2
+License: Creative Commons Attribution 4.0 International (CC BY 4.0)
+License URI: https://creativecommons.org/licenses/by/4.0/
+
+The pinned model is an English FastConformer-RNNT checkpoint converted to
+Core ML by Fluid Inference. bestASR uses the unmodified INT8 offline encoder,
+decoder, joint-decision model, vocabulary, and metadata for fully local English
+speech recognition. Audio and transcripts are not sent to Fluid Inference,
+NVIDIA, or Hugging Face during normal operation.
+
+Attribution: NVIDIA Parakeet model; Core ML conversion and Swift integration by
+Fluid Inference. No endorsement by NVIDIA, Fluid Inference, Hugging Face, or
+their contributors is implied.

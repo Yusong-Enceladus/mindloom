@@ -1,0 +1,86 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 78,
+   "retried": 4,
+   "latency_median_s": 4.292,
+   "latency_p95_s": 5.43,
+   "latency_total_s": 359.1,
+   "prompt_tokens_mean": 5486.2,
+   "completion_tokens_mean": 195.8,
+   "prompt_tokens_total": 449866,
+   "completion_tokens_total": 16055,
+   "errors_sample": [
+    "decision=attach should target E1 (the best-ranked linked candidate)"
+   ]
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 68,
+   "ok_first_attempt": 45,
+   "retried": 33,
+   "latency_median_s": 5.484,
+   "latency_p95_s": 12.001,
+   "latency_total_s": 524.6,
+   "prompt_tokens_mean": 5140.8,
+   "completion_tokens_mean": 366.8,
+   "prompt_tokens_total": 400979,
+   "completion_tokens_total": 28611,
+   "errors_sample": [
+    "[unsupported_completion] quote「进场拆吧台」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] 事实「桂花拿铁已试做，比例确定」标为 done，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 11.719,
+   "latency_p95_s": 12.764,
+   "latency_total_s": 42.2,
+   "prompt_tokens_mean": 6067.5,
+   "completion_tokens_mean": 591.8,
+   "prompt_tokens_total": 24270,
+   "completion_tokens_total": 2367,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 8.181,
+   "latency_p95_s": 8.665,
+   "latency_total_s": 22.3,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 442.7,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1328,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 65,
+  "ask": 3,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 62,
+  "ask": 3,
+  "none": 4,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 16,
+ "status_line_chars_mean": 13.5,
+ "title_chars_mean": 9.2,
+ "wall_s": 955.7,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

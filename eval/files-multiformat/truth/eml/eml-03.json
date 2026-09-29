@@ -1,0 +1,75 @@
+{
+ "file_id": "eml-03",
+ "path": "corpus/eml/eml-03.eml",
+ "type": "eml",
+ "ext": "eml",
+ "mime": "message/rfc822",
+ "filename": "【请查收】社区运动会预算与实际支出.eml",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "From: 薛一诺 <admin@example.com>\nTo: 姜雨萱 <team@example.com>\nDate: Fri, 09 Oct 2026 10:20:00 +0800\nSubject: 【请查收】社区运动会预算与实际支出\n各位好：\n附件是社区运动会预算与实际支出，总预算 50,000 元，请在周五前核对各自负责的类别。\n薛一诺\n（合成数据）\n[attachment] 社区运动会预算与实际支出.xlsx\n[预算]\n社区运动会预算与实际支出\t\t\t\n\t金额（元）\t\t\n类别\t预算（元）\t实际（元）\t差额（元）\n餐饮\t11000\t10800\t-200\n奖品\t4000\t4000\t0\n宣传\t12000\t12700\t700\n物料\t7500\t7700\t200\n人员\t15500\t15200\t-300\n合计\t50000\t50400\t400\n合成数据\t\t\t\n[说明]\n项目\t内容\n活动\t社区运动会\n最大类别\t人员\n执行率\t1.008\n合成数据\t",
+ "key_lines": [
+  "附件是社区运动会预算与实际支出，总预算 50,000 元，请在周五前核对各自负责的类别。",
+  "奖品\t4000\t4000\t0",
+  "人员\t15500\t15200\t-300",
+  "合计\t50000\t50400\t400",
+  "最大类别\t人员"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "总预算": 50000,
+  "实际支出": 50400,
+  "最大类别": "人员"
+ },
+ "numbers": [
+  {
+   "value": 50000,
+   "label": "总预算"
+  },
+  {
+   "value": 50400,
+   "label": "实际"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "总预算是多少元？",
+   "a": 50000,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "实际支出多少元？",
+   "a": 50400,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "预算最大的类别是什么？",
+   "a": "人员",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "奖品的预算是多少元？",
+   "a": 4000,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "attachments": [
+   "社区运动会预算与实际支出.xlsx"
+  ],
+  "parts": [
+   "text/plain"
+  ]
+ },
+ "notes": "正文 base64；明细在 xlsx 附件里。",
+ "bytes": 10414,
+ "sha256": "ede191c7017ed96e02675e7551ef5f123977c79fbc24b6c2e799d5b727fcb510",
+ "family": "notice_xlsx"
+}

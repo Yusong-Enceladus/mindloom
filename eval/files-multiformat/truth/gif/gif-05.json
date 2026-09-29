@@ -1,0 +1,81 @@
+{
+ "file_id": "gif-05",
+ "path": "corpus/gif/gif-05.gif",
+ "type": "gif",
+ "ext": "gif",
+ "mime": "image/gif",
+ "filename": "Open Science Day — Agenda.gif",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "Open Science Day — Agenda\nLab Annex 1\nCapacity: 30 participants\n合成数据\nMorning\n09:00 Welcome and goals (Grace Liu)\n09:30 Hands-on session 1 (Lucas Meyer)\n11:00 Case study (Daniel Okafor)\n合成数据\nAfternoon\n13:30 Group exercise (Tom Becker)\n15:30 Wrap-up and feedback (Grace Liu)\n合成数据",
+ "key_lines": [
+  "Lab Annex 1",
+  "Capacity: 30 participants",
+  "09:30 Hands-on session 1 (Lucas Meyer)",
+  "11:00 Case study (Daniel Okafor)",
+  "13:30 Group exercise (Tom Becker)",
+  "15:30 Wrap-up and feedback (Grace Liu)"
+ ],
+ "picture_only_lines": [
+  "Lab Annex 1",
+  "Capacity: 30 participants",
+  "09:30 Hands-on session 1 (Lucas Meyer)",
+  "11:00 Case study (Daniel Okafor)",
+  "13:30 Group exercise (Tom Becker)",
+  "15:30 Wrap-up and feedback (Grace Liu)"
+ ],
+ "key_fields": {
+  "date": "2026-03-28",
+  "venue": "Lab Annex 1",
+  "capacity": 30,
+  "case_study_speaker": "Daniel Okafor"
+ },
+ "numbers": [
+  {
+   "value": 30,
+   "label": "capacity"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Where is the workshop held?",
+   "a": "Lab Annex 1",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Who presents the case study?",
+   "a": "Daniel Okafor",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the group exercise start?",
+   "a": "13:30",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How many participants can attend?",
+   "a": 30,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "frames": 3,
+  "frame_ms": 1500,
+  "frame_titles": [
+   "Open Science Day — Agenda",
+   "Morning",
+   "Afternoon"
+  ]
+ },
+ "notes": "3-frame animated agenda.",
+ "bytes": 57776,
+ "sha256": "ff203b174de608d1aa6cea13792416c99f2ed69a79e41d69c6099a7e8b05c4fb",
+ "family": "agenda_en"
+}

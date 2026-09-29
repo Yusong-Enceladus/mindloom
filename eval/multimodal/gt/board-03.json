@@ -1,0 +1,81 @@
+{
+ "id": "board-03",
+ "type": "whiteboard_handwriting",
+ "split": "dev",
+ "image": "images/board-03.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "glare",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "1685da5b417b05e0414287635e0402bf6aaed1492c501d6376e054a743416a8c",
+ "gt": {
+  "surface": "whiteboard",
+  "lines": [
+   {
+    "text": "客厅瓷砖",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "面积 30㎡",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "损耗 8%",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "需要 32.4㎡",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "每箱 1.44㎡ → 23箱",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "客厅瓷砖",
+  "面积 30㎡",
+  "损耗 8%",
+  "需要 32.4㎡",
+  "每箱 1.44㎡ → 23箱"
+ ],
+ "qa": [
+  {
+   "q": "客厅面积多少？",
+   "a": "30㎡",
+   "match": "number"
+  },
+  {
+   "q": "一共要几箱？",
+   "a": "23箱",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "whiteboard",
+  "font": "hand_wawa",
+  "size": 64,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "formula",
+  "font": "hand_wawa",
+  "surface": "whiteboard"
+ }
+}

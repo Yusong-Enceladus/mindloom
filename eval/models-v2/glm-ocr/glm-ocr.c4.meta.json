@@ -1,0 +1,41 @@
+{
+ "segments": [
+  {
+   "label": "glm-ocr-vllm",
+   "backend": "openai",
+   "model": "glm-ocr",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 4,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 28,
+   "start": {
+    "time": 1790671595.0477,
+    "gpu_apps": [
+     "2193609, /home/YOU/hack/vllm-venv/bin/python, 1803 MiB",
+     "2678047, VLLM::EngineCore, 36715 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          50          65           0           6          70\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"glm-ocr\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"glm-ocr\"} 0.0"
+    ]
+   },
+   "wall_s": 181.14,
+   "end": {
+    "time": 1790671776.2526352,
+    "gpu_apps": [
+     "2193609, /home/YOU/hack/vllm-venv/bin/python, 1803 MiB",
+     "2678047, VLLM::EngineCore, 36715 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          50          65           0           6          70\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"glm-ocr\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"glm-ocr\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

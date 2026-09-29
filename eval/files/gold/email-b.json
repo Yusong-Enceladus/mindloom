@@ -1,0 +1,29 @@
+{
+ "id": "email-b",
+ "template": "email",
+ "split": "test",
+ "filename": "门店耗材报销.eml",
+ "path": "data/email-b.eml",
+ "sha256": "2342061eceb99c92c868361964de8245d6d929e26f1433e250b3af30dfefa0d6",
+ "size": 344926,
+ "error": null,
+ "must_contain_image": [
+  "南巷咖啡",
+  "青川市桂香区梧桐大道25号"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "email",
+ "must_contain": [
+  "主题：门店耗材报销",
+  "请本周五前审批",
+  "| 9月3日 | 1260 |"
+ ],
+ "summary_groups": [
+  [
+   "门店耗材",
+   "门店耗材"
+  ]
+ ],
+ "doc_kind": "letter"
+}

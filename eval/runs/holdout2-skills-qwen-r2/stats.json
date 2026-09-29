@@ -1,0 +1,83 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 46,
+   "ok": 46,
+   "ok_first_attempt": 45,
+   "retried": 1,
+   "latency_median_s": 4.612,
+   "latency_p95_s": 6.257,
+   "latency_total_s": 217.8,
+   "prompt_tokens_mean": 5796.3,
+   "completion_tokens_mean": 176.7,
+   "prompt_tokens_total": 266629,
+   "completion_tokens_total": 8130,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 43,
+   "ok": 31,
+   "ok_first_attempt": 18,
+   "retried": 25,
+   "latency_median_s": 9.191,
+   "latency_p95_s": 16.512,
+   "latency_total_s": 435.8,
+   "prompt_tokens_mean": 6741.5,
+   "completion_tokens_mean": 479.6,
+   "prompt_tokens_total": 289884,
+   "completion_tokens_total": 20623,
+   "errors_sample": [
+    "[unsupported_completion] quote「PO改成3200套」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「我们会先核对」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「我们会先核对」里有「会」，说的是计划或条件，不能标 done",
+    "[unsupported_completion] quote「非常抱歉 MB-0915 这批8寸盘有42个破损」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 6.823,
+   "latency_p95_s": 7.24,
+   "latency_total_s": 40.1,
+   "prompt_tokens_mean": 3830.8,
+   "completion_tokens_mean": 297.5,
+   "prompt_tokens_total": 22985,
+   "completion_tokens_total": 1785,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 7.918,
+   "latency_p95_s": 8.304,
+   "latency_total_s": 31.7,
+   "prompt_tokens_mean": 2485,
+   "completion_tokens_mean": 403,
+   "prompt_tokens_total": 9940,
+   "completion_tokens_total": 1612,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 5,
+  "attach": 37,
+  "ask": 1,
+  "none": 3
+ },
+ "assign_actions": {
+  "new": 5,
+  "attach": 36,
+  "ask": 2,
+  "none": 3
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 30,
+ "title_chars_mean": 13.9,
+ "wall_s": 729.4,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

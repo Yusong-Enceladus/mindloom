@@ -1,0 +1,68 @@
+{
+ "file_id": "doc-04",
+ "path": "corpus/doc/doc-04.doc",
+ "type": "doc",
+ "ext": "doc",
+ "mime": "application/msword",
+ "filename": "实验记录：土壤pH测定.doc",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "实验记录：土壤pH测定\n实验编号：EXP-2026776\n日期：2026年8月15日\n操作人：黄天佑\n温度：22℃\n反应/测试时间：60 分钟\n样品\tpH\nS01\t3.47\nS02\t7.04\nS03\t2.13\nS04\t6.88\nS05\t1.46\n平均值 4.2，最高为样品 S02（7.04）。\n结论：数据重复性良好，下次增加对照组。本记录为合成数据。\n合成数据",
+ "key_lines": [
+  "操作人：黄天佑",
+  "温度：22℃",
+  "S02\t7.04",
+  "平均值 4.2，最高为样品 S02（7.04）。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "实验编号": "EXP-2026776",
+  "操作人": "黄天佑",
+  "温度": "22℃",
+  "平均值": 4.2,
+  "最高样品": "S02"
+ },
+ "numbers": [
+  {
+   "value": 4.2,
+   "label": "平均值"
+  },
+  {
+   "value": 22,
+   "label": "温度"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "实验温度是多少摄氏度？",
+   "a": 22,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "样品 S02 的pH是多少？",
+   "a": 7.04,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "哪个样品最高？",
+   "a": "S02",
+   "match": "exact"
+  },
+  {
+   "id": "q4",
+   "q": "操作人是谁？",
+   "a": "黄天佑",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 19456,
+ "sha256": "bfca23f48766e127af7203286efd59531db8afca67cedd5a60e0d766a62f9f34",
+ "family": "labrecord"
+}

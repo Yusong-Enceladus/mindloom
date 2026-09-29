@@ -1,0 +1,492 @@
+{
+ "scenario_id": "dev-week-v1",
+ "split": "dev",
+ "n_items": 82,
+ "summary": {
+  "bcubed_precision": 0.74519368723099,
+  "bcubed_recall": 0.637908039254193,
+  "bcubed_f1": 0.6873898496159758,
+  "link_precision": 0.6585365853658537,
+  "link_recall": 0.5684210526315789,
+  "link_f1": 0.6101694915254238,
+  "hard_decoy_leakage": 0.7142857142857143,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 0.0,
+  "pred_event_count": 18,
+  "gold_event_count": 9,
+  "question_count": 2,
+  "status_fact_recall": 0.34615384615384615,
+  "stale_fact_rate": 0.058823529411764705,
+  "person_link_accuracy": 0.08333333333333333,
+  "person_link_accuracy_cross_source": 0.08333333333333333,
+  "checkpoints_scored": 4,
+  "checkpoints_total": 4
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.74519368723099,
+    "recall": 0.637908039254193,
+    "f1": 0.6873898496159758
+   },
+   "link": {
+    "precision": 0.6585365853658537,
+    "recall": 0.5684210526315789,
+    "f1": 0.6101694915254238,
+    "tp": 54,
+    "n_pred": 82,
+    "n_gold": 95
+   },
+   "decoy_leakage": {
+    "hard": 0.7142857142857143,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_momflat": {
+      "difficulty": "hard",
+      "decoy_of": "ev_reno",
+      "pairs": 84,
+      "leakage": 0.7142857142857143,
+      "decoy_items": 7
+     },
+     "ev_grinder": {
+      "difficulty": "easy",
+      "decoy_of": "ev_beans",
+      "pairs": 36,
+      "leakage": 0.0,
+      "decoy_items": 4
+     }
+    }
+   },
+   "noise_abstention": {
+    "noise_items": 4,
+    "abstained": 0,
+    "rate": 0.0
+   },
+   "pred_event_count": 18,
+   "pred_event_count_multi_item": 9,
+   "gold_event_count": 9,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "cf65e59c-2f42-40c5-ad4b-5957f6963483": "ev_beans",
+   "48c68f1d-899b-4a7a-b76d-ca34bd750982": "ev_grinder",
+   "e2741c4d-63f0-48a0-979b-254ab0737655": "ev_lease",
+   "1ae19859-7cbf-4773-892d-a72c919c7c44": "ev_member",
+   "72b7762a-aa4e-4342-a3a4-f250fea21dca": "ev_menu",
+   "83290170-815c-4de9-8bde-a19662885c7f": "ev_momflat",
+   "f4a50175-7690-4416-a619-a01d86e6702f": "ev_reno",
+   "e2904e0f-2f5c-45b2-ae8d-8aada77c0a36": "ev_sign"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.08333333333333333,
+   "pairs": 72,
+   "accuracy_cross_source": 0.08333333333333333,
+   "pairs_cross_source": 72,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 4.0,
+   "name_match": 0.8,
+   "mapping": {
+    "chat-acb0f9cc-9b63-5543-84d0-f08845325ba6": "p_chen",
+    "dfdb0e53-639c-54fd-a1c5-60009599f4f4": "p_gao",
+    "chat-842aa5bb-99a3-5619-9106-5b283e1ee39c": "p_lin",
+    "79606bc9-0821-5ab3-85dc-24b2f287f5c0": "p_owner",
+    "75f7185c-af77-5e23-b6cf-8d63f15750dc": "p_su",
+    "802f2b75-a0a3-51c6-b1c2-d02ae668e6ae": "p_zhou"
+   }
+  },
+  "questions": {
+   "count": 2,
+   "asked_total": 2,
+   "by_kind": {
+    "same_person": 2
+   },
+   "per_100_items": 2.44,
+   "resolvable": 2,
+   "true_yes_rate": 1.0
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-d2",
+   "label": "周二晚",
+   "n_items": 27,
+   "bcubed_f1": 0.815790673811424,
+   "link_f1": 0.7719298245614035,
+   "pred_event_count": 10,
+   "gold_event_count": 9,
+   "expected": 11,
+   "recalled": 2,
+   "fact_recall": 0.18181818181818182,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "f4a50175-7690-4416-a619-a01d86e6702f",
+     "status_line": "装修报价已确认并约定支付定金，咖啡设备已搬迁，吧台拆除完成且水电师傅即将进场，周师傅已答应周六查看卫生间漏水问题。",
+     "recalled": [
+      "f_reno_stage_1"
+     ],
+     "missing": [
+      "f_reno_date_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "e2741c4d-63f0-48a0-979b-254ab0737655",
+     "status_line": "已收到房东涨租至1.3万的提议，并获取了AI提供的谈判策略建议。",
+     "recalled": [
+      "f_lease_rent_1"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "72b7762a-aa4e-4342-a3a4-f250fea21dca",
+     "status_line": "已下达试做指令，林小满已完成桂花拿铁试做并反馈第二杯比例最佳，栗子蛋糕试做待明日进行。",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "e2904e0f-2f5c-45b2-ae8d-8aada77c0a36",
+     "status_line": "已确认采用暖木色加手写字方案，苏苏将于20号前出终稿，并免费赠送两周年海报设计。",
+     "recalled": [],
+     "missing": [
+      "f_sign_choice",
+      "f_sign_install_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "cf65e59c-2f42-40c5-ad4b-5957f6963483",
+     "status_line": "高经理已确认今日顺丰寄出样品并提议周四下午开会，我正安排内部人员准备会议议题。",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "85c62dd6-ca30-4a3e-a503-4d411799b199",
+     "status_line": "已完成需求构思与数据库设计，准备进入开发阶段",
+     "recalled": [],
+     "missing": [
+      "f_member_rule"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "83290170-815c-4de9-8bde-a19662885c7f",
+     "status_line": "楼下邻居因天花板滴水问题上门投诉，母亲正联系装修师傅处理",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "30fa5eff-c99a-47be-a1ef-34fa69eee81f",
+     "status_line": "已提供磨豆机研磨不均的问题描述，等待生成退货理由。",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d3",
+   "label": "周三晚",
+   "n_items": 38,
+   "bcubed_f1": 0.7771311766062596,
+   "link_f1": 0.6913580246913581,
+   "pred_event_count": 12,
+   "gold_event_count": 9,
+   "expected": 10,
+   "recalled": 3,
+   "fact_recall": 0.3,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "f4a50175-7690-4416-a619-a01d86e6702f",
+     "status_line": "吧台拆除及设备搬运已完成，水电师傅已进场，因发现排水管需更换导致工期延至9月30日，周师傅已约定周六上门查看卫生间漏水问题。",
+     "recalled": [
+      "f_reno_date_2"
+     ],
+     "missing": [
+      "f_reno_price_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "e2904e0f-2f5c-45b2-ae8d-8aada77c0a36",
+     "status_line": "已确认采用暖木色加手写字方案，苏苏将于20号前出终稿并免费赠送两周年海报，因安装延期至29号，目前正等待周师傅提供招牌尺寸。",
+     "recalled": [
+      "f_sign_install_2"
+     ],
+     "missing": []
+    },
+    "ev_lease": {
+     "pred_event": "e2741c4d-63f0-48a0-979b-254ab0737655",
+     "status_line": "已提出以1.2万续签三年的反提案，房东表示考虑中，预计明日回复。",
+     "recalled": [
+      "f_lease_term"
+     ],
+     "missing": []
+    },
+    "ev_member": {
+     "pred_event": "1ae19859-7cbf-4773-892d-a72c919c7c44",
+     "status_line": "功能开发完成，单元测试通过，待处理店员端扫码页面",
+     "recalled": [],
+     "missing": [
+      "f_member_redeem"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "83290170-815c-4de9-8bde-a19662885c7f",
+     "status_line": "楼下邻居因天花板滴水问题上门投诉，母亲正联系装修师傅处理",
+     "recalled": [],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "72b7762a-aa4e-4342-a3a4-f250fea21dca",
+     "status_line": "桂花拿铁试做完成并确定最佳比例，栗子蛋糕因过甜正在调整配方准备二次试做。",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "cf65e59c-2f42-40c5-ad4b-5957f6963483",
+     "status_line": "高经理已确认今日顺丰寄出样品并提议周四下午开会，我正安排内部人员准备会议议题。",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "30fa5eff-c99a-47be-a1ef-34fa69eee81f",
+     "status_line": "已提供磨豆机研磨不均的问题描述，等待生成退货理由。",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d5",
+   "label": "周五晚",
+   "n_items": 64,
+   "bcubed_f1": 0.720314715547982,
+   "link_f1": 0.6423357664233577,
+   "pred_event_count": 16,
+   "gold_event_count": 9,
+   "expected": 15,
+   "recalled": 6,
+   "fact_recall": 0.4,
+   "stale_applicable": 6,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "f4a50175-7690-4416-a619-a01d86e6702f",
+     "status_line": "吧台拆除及设备搬运已完成，水电已进场并验收，因发现旧排水管需更换导致工期延至9月30日，周师傅已约定周六上门查看卫生间漏水问题，新增4000元费用的新报价单（总计4.2万）已确认，瓷砖明日到达。",
+     "recalled": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ],
+     "missing": []
+    },
+    "ev_lease": {
+     "pred_event": "e2741c4d-63f0-48a0-979b-254ab0737655",
+     "status_line": "租约续签条款已谈妥（1.2万/月，签三年，含装修免租期），定于25日上午签合同，并确认了后院市集使用事宜。",
+     "recalled": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "72b7762a-aa4e-4342-a3a4-f250fea21dca",
+     "status_line": "桂花拿铁定价调整为28元，栗子蛋糕减糖后第二版试做成功并确定配方。",
+     "recalled": [
+      "f_menu_price_2",
+      "f_menu_cake"
+     ],
+     "missing": []
+    },
+    "ev_beans": {
+     "pred_event": "cf65e59c-2f42-40c5-ad4b-5957f6963483",
+     "status_line": "双方已就试用合同、价格及首批送货时间达成一致，高经理将发送合同并附带新品样品。",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_2",
+      "f_beans_first"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "e2904e0f-2f5c-45b2-ae8d-8aada77c0a36",
+     "status_line": "已确认采用暖木色加手写字方案，苏苏将于20号前出终稿并免费赠送两周年海报，因安装延期至29号，目前正等待周师傅提供招牌尺寸。",
+     "recalled": [],
+     "missing": [
+      "f_anniv_stalls_2",
+      "f_anniv_poster_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_sign_install_2"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "1ae19859-7cbf-4773-892d-a72c919c7c44",
+     "status_line": "后端防重复逻辑与单元测试已完成，开始开发店员端扫码页面",
+     "recalled": [],
+     "missing": [
+      "f_member_launch"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "83290170-815c-4de9-8bde-a19662885c7f",
+     "status_line": "楼下邻居因天花板滴水问题上门投诉，母亲正联系装修师傅处理",
+     "recalled": [],
+     "missing": [
+      "f_mom_visit",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "48c68f1d-899b-4a7a-b76d-ca34bd750982",
+     "status_line": "用户已寄回商品，淘宝仓库已签收，退款将在1-3个工作日内原路退回。",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 82,
+   "bcubed_f1": 0.6873898496159758,
+   "link_f1": 0.6101694915254238,
+   "pred_event_count": 18,
+   "gold_event_count": 9,
+   "expected": 16,
+   "recalled": 7,
+   "fact_recall": 0.4375,
+   "stale_applicable": 8,
+   "stale": 1,
+   "stale_rate": 0.125,
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "f4a50175-7690-4416-a619-a01d86e6702f",
+     "status_line": "吧台拆除及设备搬运已完成，水电已进场并验收，因发现旧排水管需更换导致工期延至9月30日，周师傅已约定周六上门查看卫生间漏水问题，新增4000元费用的新报价单（总计4.2万）已确认，瓷砖明日到达。",
+     "recalled": [
+      "f_reno_date_2"
+     ],
+     "missing": [
+      "f_reno_stage_2"
+     ],
+     "stale": [
+      "f_reno_stage_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "e2741c4d-63f0-48a0-979b-254ab0737655",
+     "status_line": "租约续签条款已谈妥（1.2万/月，签三年，含装修免租期），定于25日上午签合同，并确认了后院市集使用事宜。",
+     "recalled": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "72b7762a-aa4e-4342-a3a4-f250fea21dca",
+     "status_line": "桂花拿铁定价调整为28元，栗子蛋糕减糖后第二版试做成功并确定配方。",
+     "recalled": [
+      "f_menu_price_2"
+     ],
+     "missing": [
+      "f_menu_launch"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "cf65e59c-2f42-40c5-ad4b-5957f6963483",
+     "status_line": "双方已敲定首批20公斤咖啡豆的采购细节、价格及9月22日送货安排，并确认追加浅烘哥伦比亚样品以测试桂花拿铁新品。",
+     "recalled": [
+      "f_beans_first"
+     ],
+     "missing": [
+      "f_beans_trial"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date",
+      "f_anniv_poster_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "e2904e0f-2f5c-45b2-ae8d-8aada77c0a36",
+     "status_line": "门头方案B已确认并下单制作，两周年海报已定稿并安排印刷，因安装延期至29号，目前正等待周师傅确认安装配合。",
+     "recalled": [
+      "f_sign_install_2"
+     ],
+     "missing": []
+    },
+    "ev_member": {
+     "pred_event": "1ae19859-7cbf-4773-892d-a72c919c7c44",
+     "status_line": "后端防重复逻辑与单元测试已完成，正在排查店员端扫码页面在安卓上的相机权限问题",
+     "recalled": [
+      "f_member_android"
+     ],
+     "missing": [
+      "f_member_launch"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "83290170-815c-4de9-8bde-a19662885c7f",
+     "status_line": "楼下邻居因天花板滴水问题上门投诉，母亲正联系装修师傅处理",
+     "recalled": [],
+     "missing": [
+      "f_mom_start",
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "48c68f1d-899b-4a7a-b76d-ca34bd750982",
+     "status_line": "用户已寄回商品，淘宝仓库已签收，退款将在1-3个工作日内原路退回。",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,92 @@
+{
+ "id": "chat-12",
+ "type": "chat_screenshot",
+ "split": "dev",
+ "image": "images/chat-12.png",
+ "lang": "mixed",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "2710414423cc4d93462b3cf6c2e87e11f8ccc3c8c394fc61a40e3cf05544731e",
+ "gt": {
+  "chat_title": "邓一凡",
+  "is_group": false,
+  "messages": [
+   {
+    "sender": "邓一凡",
+    "is_self": false,
+    "time": "17:18",
+    "text": "明天的 review 改到 14:00 了，room A-1105",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "OK，deck 我今晚发你",
+    "kind": "text"
+   },
+   {
+    "sender": "邓一凡",
+    "is_self": false,
+    "time": "",
+    "text": "记得加上 Q3 的 GMV：86.4 万，同比 +12%",
+    "kind": "text",
+    "sender_shown": false
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "17:23",
+    "text": "好，retention 那页要不要保留？",
+    "kind": "text"
+   },
+   {
+    "sender": "邓一凡",
+    "is_self": false,
+    "time": "",
+    "text": "保留，放在 appendix",
+    "kind": "text",
+    "sender_shown": false
+   }
+  ]
+ },
+ "text_lines": [
+  "邓一凡",
+  "邓一凡：明天的 review 改到 14:00 了，room A-1105",
+  "我：OK，deck 我今晚发你",
+  "邓一凡：记得加上 Q3 的 GMV：86.4 万，同比 +12%",
+  "我：好，retention 那页要不要保留？",
+  "邓一凡：保留，放在 appendix"
+ ],
+ "qa": [
+  {
+   "q": "review 改到几点？",
+   "a": "14:00",
+   "match": "exact"
+  },
+  {
+   "q": "在哪个会议室？",
+   "a": "A-1105",
+   "match": "exact"
+  },
+  {
+   "q": "Q3 的 GMV 是多少？",
+   "a": "86.4 万",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "theme": "mint",
+  "fonts": [
+   "hei",
+   "hei_bold"
+  ]
+ },
+ "variant": {
+  "conv": "mixed_review",
+  "theme": "mint"
+ }
+}

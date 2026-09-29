@@ -1,0 +1,27 @@
+{
+ "id": "budget-a",
+ "template": "budget",
+ "split": "dev",
+ "filename": "预算.xls",
+ "path": "data/budget-a.xls",
+ "sha256": "5e6d7532536d5e2c926918175875c34d13117b66f32397bd1669907c3ba1fc53",
+ "size": 5632,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "## 工作表：国庆活动预算",
+  "| 场地 | 3000 |"
+ ],
+ "summary_groups": [
+  [
+   "国庆"
+  ],
+  [
+   "预算"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

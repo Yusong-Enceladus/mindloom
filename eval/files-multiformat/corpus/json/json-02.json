@@ -1,0 +1,40 @@
+{
+  "schema_version": "2.0",
+  "project": "KitchenQA 视频问答标注",
+  "vendor": "数芽标注",
+  "contact": "周蔓",
+  "total_clips": 20000,
+  "clip_length_sec": {
+    "min": 60,
+    "max": 600
+  },
+  "question_types": [
+    {
+      "id": "temporal",
+      "name": "时序",
+      "min_per_clip": 1
+    },
+    {
+      "id": "causal",
+      "name": "因果",
+      "min_per_clip": 1
+    },
+    {
+      "id": "counting",
+      "name": "计数",
+      "min_per_clip": 1
+    }
+  ],
+  "answer_format": {
+    "type": "multiple_choice",
+    "options": 4,
+    "distractor_rule": "干扰项须来自同一视频"
+  },
+  "qc": {
+    "sample_rate": 0.1,
+    "pass_threshold": 0.95,
+    "double_annotation": true
+  },
+  "batches": 4,
+  "note": "合成数据"
+}

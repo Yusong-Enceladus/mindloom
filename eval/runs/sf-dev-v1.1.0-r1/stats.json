@@ -1,0 +1,108 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 83,
+   "retried": 0,
+   "latency_median_s": 6.326,
+   "latency_p95_s": 37.352,
+   "latency_total_s": 833.0,
+   "prompt_tokens_mean": 5149.8,
+   "completion_tokens_mean": 179.3,
+   "prompt_tokens_total": 427433,
+   "completion_tokens_total": 14882,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 63,
+   "ok_first_attempt": 37,
+   "retried": 42,
+   "latency_median_s": 12.274,
+   "latency_p95_s": 47.026,
+   "latency_total_s": 1284.0,
+   "prompt_tokens_mean": 6436.6,
+   "completion_tokens_mean": 407.9,
+   "prompt_tokens_total": 508488,
+   "completion_tokens_total": 32228,
+   "errors_sample": [
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「样品今天顺丰发出」只说做了决定，不能证明「样品已顺丰发出」已办完（发）；写成「已决定/已同意…」，或摘录明确说已经办完的原话",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「样品今天顺丰发出」只说做了决定，不能证明「样品已顺丰发出」已办完（发）；写成「已决定/已同意…」，或摘录明确说已经办完的原话"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 13.491,
+   "latency_p95_s": 16.25,
+   "latency_total_s": 54.2,
+   "prompt_tokens_mean": 5959.2,
+   "completion_tokens_mean": 603.8,
+   "prompt_tokens_total": 23837,
+   "completion_tokens_total": 2415,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 24.088,
+   "latency_p95_s": 28.718,
+   "latency_total_s": 59.6,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 442,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1326,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 3.117,
+   "latency_p95_s": 6.223,
+   "latency_total_s": 11.5,
+   "prompt_tokens_mean": 2429.3,
+   "completion_tokens_mean": 96.3,
+   "prompt_tokens_total": 7288,
+   "completion_tokens_total": 289,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 66,
+  "none": 4,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 65,
+  "none": 4,
+  "ask": 2,
+  "ask_suppressed": 2
+ },
+ "final_live_events": 14,
+ "status_line_chars_mean": 13.7,
+ "title_chars_mean": 9.6,
+ "wall_s": 2247.0,
+ "items_per_min": 2.19,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

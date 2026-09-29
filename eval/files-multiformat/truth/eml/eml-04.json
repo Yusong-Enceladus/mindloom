@@ -1,0 +1,80 @@
+{
+ "file_id": "eml-04",
+ "path": "corpus/eml/eml-04.eml",
+ "type": "eml",
+ "ext": "eml",
+ "mime": "message/rfc822",
+ "filename": "PO-2026771 — please confirm.eml",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "From: Hana Sato <purchasing@example.com>\nTo: Orders <orders@example.com>\nDate: Thu, 08 Oct 2026 15:05:00 +0800\nSubject: PO-2026771 — please confirm\nHello,\nPlease find attached purchase order PO-2026771. Kindly confirm the delivery date by reply.\nThanks,\nPurchasing\n(synthetic data)\n[attachment] PO-2026771.pdf\n合成数据\n1\nPurchase Order PO-2026771\nBuyer: Juniper Health Supplies\nVendor: Tidewater Analytics\nOrder date: April 15, 2026\nDeliver by: April 22, 2026\nContact: Tom Becker\nItem\nQty\nUnit price (USD)\nAmount (USD)\nLabel printer\n5\n89.50\n447.50\nUSB-C docking station\n3\n129.00\n387.00\nPortable projector\n9\n420.00\n3,780.00\nSubtotal: USD 4,614.50\nShipping: USD 0.00\nTotal: USD 4,614.50\nPayment terms: net 30. Synthetic document for evaluation only.",
+ "key_lines": [
+  "Subject: PO-2026771 — please confirm",
+  "Please find attached purchase order PO-2026771. Kindly confirm the delivery date by reply.",
+  "[attachment] PO-2026771.pdf",
+  "Purchase Order PO-2026771",
+  "Vendor: Tidewater Analytics",
+  "5",
+  "Subtotal: USD 4,614.50",
+  "Total: USD 4,614.50"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "po_number": "PO-2026771",
+  "vendor": "Tidewater Analytics",
+  "total_usd": 4614.5,
+  "deliver_by": "2026-04-22"
+ },
+ "numbers": [
+  {
+   "value": 4614.5,
+   "label": "subtotal"
+  },
+  {
+   "value": 4614.5,
+   "label": "total"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the PO number?",
+   "a": "PO-2026771",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "What is the order total in USD?",
+   "a": 4614.5,
+   "match": "number",
+   "tol": 0.01
+  },
+  {
+   "id": "q3",
+   "q": "How many units of 'Label printer' are ordered?",
+   "a": 5,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "Who is the vendor?",
+   "a": "Tidewater Analytics",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "attachments": [
+   "PO-2026771.pdf"
+  ],
+  "parts": [
+   "text/plain"
+  ]
+ },
+ "notes": "Order details only in the PDF attachment.",
+ "bytes": 87021,
+ "sha256": "00a58ba92ccdca4e7780ea6113837373af7e9f987fc4ca0629ec702d81d5527c",
+ "family": "po_pdf_en"
+}

@@ -1,0 +1,78 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8003/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.0.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.1.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.1.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "b97de8ce18f6abfd",
+  "event-brief": "5b98ecd440ee0de5",
+  "home-rank": "d7d4a2eb22021ed6",
+  "recall": "eeca2991c4184401",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "",
+ "date": "2026-09-27T17:54:14+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8003/v1",
+  "--keep-db",
+  "--out",
+  "../out/dev-skills-v4-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "d1c7b95f-c3f5-46a2-b9ee-182d6c224a5a",
+  "E2": "6957884b-12f2-4542-91e8-d7896f1b53fd",
+  "E3": "0db54c55-0aa3-4f5d-a168-dbaa05524121",
+  "E4": "0169c43a-9cca-4fe7-a0ce-57f26a1a260f",
+  "E5": "c32f5be3-4353-493d-b4c9-73dc97d42eaa",
+  "E6": "b1a2aefc-535c-4188-8d85-db2990f1204a",
+  "E7": "fc832b54-e3fb-4213-be43-c6d231ae3a6d",
+  "E8": "b3ad35fd-f324-404d-96d3-1479111f752c",
+  "E9": "c0ba4722-c092-4001-a3ba-d697b4d443ae",
+  "E10": "dde0c225-9bde-4e43-8c55-02505d10d95f",
+  "E11": "6a2d092e-89f3-414d-9a89-a1e54b88794c",
+  "E12": "6aff3696-57b4-4bba-aff1-255315c72ebd",
+  "E13": "713f1dc6-c33d-44ac-b933-3c77fbf90bad"
+ },
+ "bare_max_tokens": null
+}

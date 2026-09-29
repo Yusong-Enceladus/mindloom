@@ -1,0 +1,24 @@
+{
+ "model": "qwen3-vl-emb-8b",
+ "url": "http://127.0.0.1:8140",
+ "scenarios": {
+  "dev-week-v1": {
+   "queries": 78,
+   "items": 78,
+   "recall@5": 0.8684,
+   "mrr": 0.9872,
+   "ndcg@10": 0.8021,
+   "embed_seconds": 1.3,
+   "dim": 4096
+  },
+  "holdout-week-v2": {
+   "queries": 42,
+   "items": 42,
+   "recall@5": 0.8536,
+   "mrr": 0.9653,
+   "ndcg@10": 0.7989,
+   "embed_seconds": 0.87,
+   "dim": 4096
+  }
+ }
+}

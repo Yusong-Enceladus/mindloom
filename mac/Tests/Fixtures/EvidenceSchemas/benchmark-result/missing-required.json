@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "kind": "benchmark-result",
+  "benchmarkID": "asr-smoke-v1",
+  "runID": "11111111-1111-4111-8111-111111111111",
+  "task": "asr",
+  "modelArtifact": {
+    "artifactID": "fixture-asr-v1",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "configHash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "corpus": {
+    "manifestID": "synthetic-smoke",
+    "version": "1.0.0",
+    "split": "smoke"
+  },
+  "environmentRef": "fixture://environment/arm64-offline",
+  "failedSampleUUIDs": []
+}

@@ -1,0 +1,76 @@
+{
+ "file_id": "csv-02",
+ "path": "corpus/csv/csv-02.csv",
+ "type": "csv",
+ "ext": "csv",
+ "mime": "text/csv",
+ "filename": "第1批质检报告.csv",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "75ECB7DB-80C5-5948-9A71-4B429D9C5EFE",
+  "ref": "ann_csv",
+  "events": [
+   "ev_annot"
+  ]
+ },
+ "text_layer": "full",
+ "text": "# 数芽标注 KitchenQA 第1批质检报告 2026-10-14（合成数据）\n标注员ID,交付条数,抽检条数,合格条数,合格率\nA01,1200,120,117,97.5%\nA02,1000,100,95,95.0%\nA03,1300,130,126,96.9%\nA04,1500,150,143,95.3%\n合计,5000,500,481,96.2%",
+ "key_lines": [
+  "A02,1000,100,95,95.0%",
+  "合计,5000,500,481,96.2%"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "总体合格率": "96.2%",
+  "最低": "A02",
+  "抽检条数": 500,
+  "合格条数": 481
+ },
+ "numbers": [
+  {
+   "value": 96.2,
+   "label": "总体合格率"
+  },
+  {
+   "value": 500,
+   "label": "抽检"
+  },
+  {
+   "value": 481,
+   "label": "合格"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "第1批总体合格率是多少？",
+   "a": 96.2,
+   "match": "number",
+   "accept": [
+    "96.2%"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "合格率最低的标注员是谁？",
+   "a": "A02",
+   "match": "exact"
+  },
+  {
+   "id": "q3",
+   "q": "一共抽检了多少条？",
+   "a": 500,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "encoding": "gb18030",
+  "delimiter": "comma",
+  "rows": 5
+ },
+ "notes": "GB18030 编码，首行是注释行。",
+ "bytes": 223,
+ "sha256": "f795ee4cfc370106f67ddc964eb30b4a7e7fc587ab7a114d32b13199bd5c170d"
+}

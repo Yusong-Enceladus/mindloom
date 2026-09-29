@@ -1,0 +1,45 @@
+{
+ "segments": [
+  {
+   "label": "step3-vl-10b-q8-np4",
+   "backend": "step3",
+   "model": "step3-vl-10b",
+   "url": "http://127.0.0.1:30101",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 98,
+   "start": {
+    "time": 1790618725.7512112,
+    "gpu_apps": [
+     "930802, /home/YOU/hack/tts/venv/bin/python, 26809 MiB",
+     "3077950, /home/YOU/hack/claude-mm/bin/llama-server, 19650 MiB",
+     "3142832, /home/YOU/hack/claude-mm/bin/llama-server, 21444 MiB"
+    ],
+    "gpu_util": "0 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          86           1           1          36          34\n交换：             0           0           0",
+    "metrics": [
+     "llamacpp:requests_processing 0",
+     "llamacpp:requests_deferred 0",
+     "llamacpp:n_busy_slots_per_decode 0"
+    ]
+   },
+   "wall_s": 1529.94,
+   "end": {
+    "time": 1790620255.7404127,
+    "gpu_apps": [
+     "930802, /home/YOU/hack/tts/venv/bin/python, 26809 MiB",
+     "3077950, /home/YOU/hack/claude-mm/bin/llama-server, 19650 MiB",
+     "3142832, /home/YOU/hack/claude-mm/bin/llama-server, 21552 MiB"
+    ],
+    "gpu_util": "94 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          95           1           1          27          26\n交换：             0           0           0",
+    "metrics": [
+     "llamacpp:requests_processing 0",
+     "llamacpp:requests_deferred 0",
+     "llamacpp:n_busy_slots_per_decode 1"
+    ]
+   }
+  }
+ ]
+}

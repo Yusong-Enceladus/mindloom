@@ -1,0 +1,86 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 79,
+   "retried": 3,
+   "latency_median_s": 4.499,
+   "latency_p95_s": 6.077,
+   "latency_total_s": 388.8,
+   "prompt_tokens_mean": 5346.8,
+   "completion_tokens_mean": 187.2,
+   "prompt_tokens_total": 438436,
+   "completion_tokens_total": 15349,
+   "errors_sample": [
+    "decision=attach should target E1 (the best-ranked linked candidate)"
+   ]
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 61,
+   "ok_first_attempt": 34,
+   "retried": 44,
+   "latency_median_s": 7.708,
+   "latency_p95_s": 14.302,
+   "latency_total_s": 652.9,
+   "prompt_tokens_mean": 6431.9,
+   "completion_tokens_mean": 397.0,
+   "prompt_tokens_total": 501688,
+   "completion_tokens_total": 30964,
+   "errors_sample": [
+    "[ungrounded_date] status_facts[2] 的 date 2026-09-20 不在它引用的素材里；素材只给了一个范围（9月24日–9月30日）；写「9月24日那周」或「9月30日前」，或者不写日期，不要挑其中某一天（没有就留空 \"\"）",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「样品今天顺丰发出」只说做了决定，不能证明「样品已顺丰发出」已办完（发）；写成「已决定/已同意…」，或摘录明确说已经办完的原话",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「样品今天顺丰发出」只说做了决定，不能证明「样品已顺丰发出」已办完（发）；写成「已决定/已同意…」，或摘录明确说已经办完的原话"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 11.289,
+   "latency_p95_s": 11.618,
+   "latency_total_s": 43.8,
+   "prompt_tokens_mean": 5800.5,
+   "completion_tokens_mean": 540.8,
+   "prompt_tokens_total": 23202,
+   "completion_tokens_total": 2163,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 8.857,
+   "latency_p95_s": 10.232,
+   "latency_total_s": 25.4,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 443.7,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1331,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "ask": 4,
+  "attach": 64,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 10,
+  "ask": 2,
+  "attach": 63,
+  "none": 4,
+  "ask_suppressed": 3
+ },
+ "final_live_events": 15,
+ "status_line_chars_mean": 13.4,
+ "title_chars_mean": 9.3,
+ "wall_s": 1118.3,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

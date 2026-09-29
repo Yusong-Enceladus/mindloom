@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-08-30",
+  "status": "pass",
+  "scope": "Bounded retained-audio playback and manual re-recognition repair; not complete product acceptance",
+  "installedRevision": "85346392987a2de211c8b3b643ff45d0ab23eb8e",
+  "bundleIdentifier": "com.bestasr.app",
+  "signing": "Existing stable Apple Development identity; not Developer ID distribution",
+  "networkDeniedDuringInstalledChecks": true,
+  "normalLaunchRestoredAfterChecks": true,
+  "checks": {
+    "retainedRoomDurationSecondsDisplayed": 22,
+    "retainedSystemDurationSecondsDisplayed": 15,
+    "systemPlayerDurationSecondsDisplayed": 15,
+    "systemPlaybackAdvancedFromZeroToSeconds": 2,
+    "roomPlaybackAdvancedFromZeroToSeconds": 3,
+    "transcriptTimestampNavigationAdvancedPlayback": true,
+    "pauseStateDisplayedCorrectly": true,
+    "previousRecordFeedbackAbsentAfterNavigation": true,
+    "reprocessedSystemSpeakerCountBefore": 1,
+    "reprocessedSystemSpeakerCountAfter": 2,
+    "reprocessedSystemDistinctPersonCountAfter": 2,
+    "speakerFollowUpState": "succeeded",
+    "speakerFollowUpInputRevision": 20,
+    "sourceChunksUnchanged": 32,
+    "sourceFramesUnchanged": 740352,
+    "sourceSampleRateHertz": 48000,
+    "originalSessionCountPreserved": 8,
+    "originalSessionStatesAndRevisionsUnchanged": true,
+    "affectedPersistenceRegressionsPassed": 9,
+    "affectedHostedAppRegressionsPassed": 2,
+    "staticAndPrivacyChecksPassed": true
+  },
+  "cleanup": {
+    "ownedRecordingsAndTheirRetainedSourceRemoved": 4,
+    "testExclusiveIdentitiesRetired": 4,
+    "activeOrphanedPersonEmbeddingsCreatedDuringTest": 0,
+    "originalSourcePickerRestored": true,
+    "originalMicrophoneTrackSettingUnchanged": true,
+    "returnedToHome": true,
+    "sqliteQuickCheck": "ok",
+    "foreignKeyViolations": 0,
+    "publicSyntheticInputsAndOwnedDigitalRegressionExportRetainedExternally": true
+  },
+  "limitations": [
+    "The native XCTest UI runner was unavailable; scoped native Accessibility operations exercised the real installed bundle.",
+    "Playback position and pause were observed; this is not a claim of an independent physical-speaker listening measurement.",
+    "The complete continuous PRD 24.6 journey and remaining model-quality comparisons are still open.",
+    "External storage remains below the project's 25 GiB soft reserve; no new model download or full gate was started."
+  ]
+}

@@ -1,0 +1,181 @@
+{
+ "items_total": 128,
+ "items_scored": 104,
+ "items_first_mention": 16,
+ "items_noise": 8,
+ "mean_pool_size": 14.15,
+ "fused": {
+  "recall@1": 0.7692,
+  "recall@3": 0.9615,
+  "recall@5": 0.9808,
+  "mrr": 0.8679,
+  "hits@5": 102
+ },
+ "similarity_only": {
+  "recall@1": 0.8942,
+  "recall@3": 1.0,
+  "recall@5": 1.0,
+  "mrr": 0.9423,
+  "hits@5": 104
+ },
+ "random": {
+  "recall@1": 0.1027,
+  "recall@3": 0.2968,
+  "recall@5": 0.4522
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 42,
+   "hit@1": 35,
+   "hit@3": 42,
+   "hit@5": 42
+  },
+  "dictation": {
+   "n": 44,
+   "hit@1": 33,
+   "hit@3": 41,
+   "hit@5": 42
+  },
+  "meeting_offline": {
+   "n": 6,
+   "hit@1": 5,
+   "hit@3": 6,
+   "hit@5": 6
+  },
+  "meeting_online": {
+   "n": 4,
+   "hit@1": 1,
+   "hit@3": 3,
+   "hit@5": 4
+  },
+  "image": {
+   "n": 5,
+   "hit@1": 4,
+   "hit@3": 5,
+   "hit@5": 5
+  },
+  "document": {
+   "n": 3,
+   "hit@1": 2,
+   "hit@3": 3,
+   "hit@5": 3
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d5-08",
+   "kind": "dictation",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_lease",
+    "ev_dad_knee",
+    "ev_grinder",
+    "ev_peggy_claim"
+   ]
+  },
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_peggy_quote",
+    "ev_lease",
+    "ev_reno",
+    "ev_member",
+    "ev_beans"
+   ]
+  }
+ ],
+ "label": "qwen3-embedding-0.6b",
+ "scenario": "dev-week-v1+holdout-week-v2",
+ "split": "stress",
+ "embedder": "url",
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "embed_dim": 1024,
+ "embed_calls": 128,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 31.15,
+  "p95": 36.74,
+  "max": 39.33,
+  "mean": 28.36
+ },
+ "embed_chars": {
+  "p50": 48,
+  "max": 392
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 7,
+  "misses": 0
+ },
+ "screenshot_readings": [
+  {
+   "ref": "h2-d1-04",
+   "text_chars": 142,
+   "summary_chars": 62,
+   "messages": 4
+  },
+  {
+   "ref": "h2-d1-06",
+   "text_chars": 148,
+   "summary_chars": 52,
+   "messages": 4
+  },
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 51,
+   "messages": 5
+  },
+  {
+   "ref": "h2-d3-02",
+   "text_chars": 125,
+   "summary_chars": 44,
+   "messages": 4
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 100,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 69,
+   "messages": 6
+  },
+  {
+   "ref": "h2-d5-04",
+   "text_chars": 146,
+   "summary_chars": 48,
+   "messages": 5
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 10.1,
+ "date": "2026-09-29T01:20:35+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "merged-2wk/scenario.json",
+  "--embedder",
+  "url",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--reading-cache",
+  "readings/merged-2wk",
+  "--label",
+  "qwen3-embedding-0.6b",
+  "--out",
+  "out/merged-q06"
+ ]
+}

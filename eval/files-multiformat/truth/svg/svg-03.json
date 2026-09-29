@@ -1,0 +1,63 @@
+{
+ "file_id": "svg-03",
+ "path": "corpus/svg/svg-03.svg",
+ "type": "svg",
+ "ext": "svg",
+ "mime": "image/svg+xml",
+ "filename": "篮球联赛积分.svg",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "篮球联赛积分\n24\n北极星队\n24\n闪电队\n18\n飞鹰队\n18\n海豚队\n3\n银杏队\n合成数据",
+ "key_lines": [
+  "24",
+  "北极星队",
+  "18"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "第一名": "北极星队"
+ },
+ "numbers": [
+  {
+   "value": 24,
+   "label": "北极星队"
+  },
+  {
+   "value": 24,
+   "label": "闪电队"
+  },
+  {
+   "value": 18,
+   "label": "飞鹰队"
+  },
+  {
+   "value": 18,
+   "label": "海豚队"
+  },
+  {
+   "value": 3,
+   "label": "银杏队"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分最高的队？",
+   "a": "北极星队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "闪电队多少分？",
+   "a": 24,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 3021,
+ "sha256": "7419bf27901709516bd20328c965c7c05fe35f56e6249a4f9f1de8b914c556cd",
+ "family": "bar_chart"
+}

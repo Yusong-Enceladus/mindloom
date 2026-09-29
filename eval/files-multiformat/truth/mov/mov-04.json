@@ -1,0 +1,83 @@
+{
+ "file_id": "mov-04",
+ "path": "corpus/mov/mov-04.mov",
+ "type": "mov",
+ "ext": "mov",
+ "mime": "video/quicktime",
+ "filename": "山海户外杯乒乓球联赛积分榜.mov",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "山海户外杯乒乓球联赛积分榜\n合成数据 · 仅供评测\n合成数据\n数据表\n队名\t胜\t负\t积分\n闪电队\t6\t0\t18\n海豚队\t6\t5\t18\n火焰队\t5\t3\t15\n飞鹰队\t4\t0\t12\n青松队\t4\t6\t12\n合成数据\n山海户外杯乒乓球联赛积分榜\n胜一场积3分，负不得分。（合成数据）\n合成数据",
+ "key_lines": [
+  "闪电队\t6\t0\t18",
+  "海豚队\t6\t5\t18",
+  "火焰队\t5\t3\t15",
+  "青松队\t4\t6\t12"
+ ],
+ "picture_only_lines": [
+  "闪电队\t6\t0\t18",
+  "海豚队\t6\t5\t18",
+  "火焰队\t5\t3\t15",
+  "青松队\t4\t6\t12"
+ ],
+ "key_fields": {
+  "第一名": "闪电队",
+  "火焰队": 15
+ },
+ "numbers": [
+  {
+   "value": 18,
+   "label": "第一名积分"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分榜第一是哪个队？",
+   "a": "闪电队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "火焰队积多少分？",
+   "a": 15,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "海豚队赢了几场？",
+   "a": 6,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "slides": 3,
+  "seconds": [
+   2.5,
+   2.5,
+   2.5
+  ],
+  "duration_s": 7.5,
+  "audio": "silent AAC",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "山海户外杯乒乓球联赛积分榜"
+   },
+   {
+    "start_s": 2.5,
+    "title": "数据表"
+   },
+   {
+    "start_s": 5.0,
+    "title": "山海户外杯乒乓球联赛积分榜"
+   }
+  ]
+ },
+ "bytes": 42653,
+ "sha256": "bc8805dcf3c2d9b7effc18151dadfd0ec9dd40b58350c9d9e151c7faf8cf8dba",
+ "family": "league"
+}

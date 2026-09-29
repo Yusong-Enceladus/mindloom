@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "fixtureID": "bestasr-persistence-schema",
+  "contentPolicy": "synthetic-stable-uuid-only",
+  "nMinusOne": {
+    "userVersion": 1,
+    "appliedMigrations": [
+      "v1-foundation"
+    ],
+    "tableNames": [
+      "audio_chunks",
+      "durable_jobs",
+      "grdb_migrations",
+      "model_artifacts",
+      "persons",
+      "session_speakers",
+      "sessions",
+      "timeline_events",
+      "tracks",
+      "transcript_revisions"
+    ]
+  },
+  "current": {
+    "userVersion": 2,
+    "appliedMigrations": [
+      "v1-foundation",
+      "v2-sync-identity"
+    ],
+    "tableNames": [
+      "audio_chunks",
+      "change_log",
+      "durable_jobs",
+      "grdb_migrations",
+      "model_artifacts",
+      "person_corrections",
+      "persons",
+      "session_speakers",
+      "sessions",
+      "speaker_occurrence_tracks",
+      "speaker_occurrences",
+      "timeline_events",
+      "tombstones",
+      "tracks",
+      "transcript_revisions"
+    ]
+  }
+}

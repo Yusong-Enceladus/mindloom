@@ -1,0 +1,74 @@
+{
+ "file_id": "mbox-01",
+ "path": "corpus/mbox/mbox-01.mbox",
+ "type": "mbox",
+ "ext": "mbox",
+ "mime": "application/mbox",
+ "filename": "澄川项目往来邮件.mbox",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "30106E8C-A024-5EA9-B3C5-8EF61FF71EDA",
+  "ref": "col_mbox",
+  "events": [
+   "ev_collab"
+  ]
+ },
+ "text_layer": "full",
+ "text": "[message 1]\nFrom: 马骏 <majun@example.com>\nTo: 沈知遥 <shenzy@example.org>\nDate: Mon, 12 Oct 2026 18:05:00 +0800\nSubject: 中期验收时间\n沈老师好，我们这边希望10月20日（周二）在苏州工厂做中期验收，现场跑一遍v1.2模型。您看时间方便吗？需要的话我们安排车。\n马骏\n澄川科技（合成数据）\n[message 2]\nFrom: 沈知遥 <shenzy@example.org>\nTo: 马骏 <majun@example.com>\nCc: 贺一鸣 <heym@example.org>\nDate: Tue, 13 Oct 2026 09:12:00 +0800\nSubject: Re: 中期验收时间\n马经理好，10月20日可以。我和贺一鸣上午9点到，带部署包和测试报告。请准备一台带GPU的工控机。\n沈知遥\n[message 3]\nFrom: 马骏 <majun@example.com>\nTo: 沈知遥 <shenzy@example.org>\nDate: Tue, 13 Oct 2026 17:40:00 +0800\nSubject: Re: Re: 中期验收时间\n好的，10月20日上午9:30在苏州工厂3号楼会议室，我们这边质量部的赵工参加。工控机已备好（RTX 4000 Ada）。第二期款在验收签字后走流程。\n马骏",
+ "key_lines": [
+  "Cc: 贺一鸣 <heym@example.org>",
+  "马经理好，10月20日可以。我和贺一鸣上午9点到，带部署包和测试报告。请准备一台带GPU的工控机。",
+  "好的，10月20日上午9:30在苏州工厂3号楼会议室，我们这边质量部的赵工参加。工控机已备好（RTX 4000 Ada）。第二期款在验收签字后走流程。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "验收日期": "2026-10-20",
+  "验收时间": "9:30",
+  "地点": "苏州工厂3号楼会议室",
+  "显卡": "RTX 4000 Ada"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "中期验收在哪里？",
+   "a": "3号楼会议室",
+   "match": "contains",
+   "accept": [
+    "苏州工厂3号楼会议室",
+    "苏州工厂3号楼"
+   ]
+  },
+  {
+   "id": "q2",
+   "q": "验收几点开始？",
+   "a": "9:30",
+   "match": "contains",
+   "accept": [
+    "09:30",
+    "上午9:30"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "工控机是什么显卡？",
+   "a": "RTX 4000 Ada",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "沈老师和谁一起去？",
+   "a": "贺一鸣",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "messages": 3,
+  "attachments": []
+ },
+ "notes": "3 封邮件的线程；第 2 封正文 base64，第 3 封 quoted-printable。",
+ "bytes": 2343,
+ "sha256": "7166d8fe39fbb8820e34820252f1f2fb23fbc2a0dd143498cb8517c00bee0286"
+}

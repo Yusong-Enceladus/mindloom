@@ -1,0 +1,1721 @@
+[
+ {
+  "id": "notice-b",
+  "template": "notice",
+  "latency_s": 33.144,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "# 绿洲花园物业停水通知\n\n因二次供水设备检修，11 月 3 日 9:00-16:30 7 栋全楼停水，请提前储水。\n\n绿洲花园物业  2026-10-29\n\n| 楼栋 | 停水时段 |\n|---|---|\n| 7 栋 | 9:00-16:30 |\n\n[文档图片 1·图片识别] 青槐厨房设备有限公司生产的商用咖啡机铭牌，型号EC-2G-10，功率3000W，生产日期2026年4月。\n商用咖啡机\n型号：EC-2G-10\n额定电压：220V~\n额定频率：50Hz\n额定功率：3000W\n额定容量：10L\n防水等级：IPX1\n出厂编号：E64466088\n生产日期：2026年4月\n青槐厨房设备有限公司",
+   "summary": "绿洲花园物业通知 11 月 3 日 9:00-16:30 7 栋停水检修，请提前储水。",
+   "fields": [],
+   "counts": {
+    "images_found": 1,
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "notice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "78bef711-83b5-4019-b6c9-a24742af3e2d"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "notice-c",
+  "template": "notice",
+  "latency_s": 33.143,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "# 湖畔家园服务中心停水通知\n\n因二次供水设备检修，10 月 25 日 13:00-17:00 12 栋全楼停水，请提前储水。\n\n湖畔家园服务中心  2026-10-20\n\n| 楼栋 | 停水时段 |\n|---|---|\n| 12 栋 | 13:00-17:00 |\n\n[文档图片 1·图片识别] 云岭电器有限公司生产的DSZF-60A型储水式电热水器铭牌，额定功率2200W，容量60L，生产日期2026年11月。\n储水式电热水器\n型号：DSZF-60A\n额定电压：220V~\n额定频率：50Hz\n额定功率：2200W\n额定容量：60L\n防水等级：IPX4\n出厂编号：G40128813\n生产日期：2026年11月\n云岭电器有限公司",
+   "summary": "湖畔家园服务中心通知10月25日13:00-17:00 12栋因设备检修停水。",
+   "fields": [],
+   "counts": {
+    "images_found": 1,
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "notice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "fa068f62-968f-4b16-a758-7a6e9738b8e4"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "minutes-b",
+  "template": "minutes",
+  "latency_s": 7.402,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "门店翻新项目会议纪要\n时间：10 月 9 日 14:00\n记录人：谢雨桐\n待办\n事项\t负责人\t\t10 月 15 日前确定施工队\t谢雨桐",
+   "summary": "10 月 9 日门店翻新项目会议，待办：谢雨桐 10 月 15 日前确定施工队。",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "minutes",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "d5394075-ea81-4b30-ad8b-59a9e984b81a"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "minutes-c",
+  "template": "minutes",
+  "latency_s": 5.344,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "年会筹备项目会议纪要\n时间：11 月 2 日 14:00\n记录人：Mia Chen\n待办\n事项\t负责人\t\t下周一前发出邀请函\tMia Chen",
+   "summary": "11 月 2 日年会筹备项目会议，待办：Mia Chen 下周一前发出邀请函。",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "minutes",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "b01a232e-ba62-42e8-8ea1-ec7794b047cd"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contract-b",
+  "template": "contract",
+  "latency_s": 12.09,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "房屋租赁合同\n\n合同编号：ZL-2026-518\n\n出租方（甲方）：周明远\n\n承租方（乙方）：苏晓\n\n月租金：人民币 6,200 元\n\n租赁期限：2026年11月1日至2027年10月31日\n\n押金为一个月租金，每月 5 日前支付当月租金。",
+   "summary": "周明远与苏晓签订房屋租赁合同，租期2026年11月1日至2027年10月31日，月租金6,200元。",
+   "fields": [
+    {
+     "key": "parties",
+     "label": "出租方（甲方）",
+     "value": "周明远"
+    },
+    {
+     "key": "parties",
+     "label": "承租方（乙方）",
+     "value": "苏晓"
+    },
+    {
+     "key": "amount",
+     "label": "月租金",
+     "value": "人民币 6,200 元"
+    },
+    {
+     "key": "start_date",
+     "label": "租赁期限",
+     "value": "2026年11月1日"
+    },
+    {
+     "key": "end_date",
+     "label": "租赁期限",
+     "value": "2027年10月31日"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "contract",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "92074f82-9018-415f-9cc0-d5dff6f9df45"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contract-c",
+  "template": "contract",
+  "latency_s": 14.963,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "房屋租赁合同\n\n合同编号：ZL-2026-602\n\n出租方（甲方）：林海\n\n承租方（乙方）：陈可\n\n月租金：人民币 3,800 元\n\n租赁期限：2026年12月1日至2027年11月30日\n\n押金为一个月租金，每月 5 日前支付当月租金。",
+   "summary": "林海与陈可签订房屋租赁合同，租期2026年12月1日至2027年11月30日，月租金3,800元。",
+   "fields": [
+    {
+     "key": "parties",
+     "label": "出租方（甲方）",
+     "value": "林海"
+    },
+    {
+     "key": "parties",
+     "label": "承租方（乙方）",
+     "value": "陈可"
+    },
+    {
+     "key": "amount",
+     "label": "月租金",
+     "value": "人民币 3,800 元"
+    },
+    {
+     "key": "start_date",
+     "label": "租赁期限",
+     "value": "2026年12月1日"
+    },
+    {
+     "key": "end_date",
+     "label": "租赁期限",
+     "value": "2027年11月30日"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "contract",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "8fc5b882-6ac6-4d22-896f-aacf06e9227e"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invoice-b",
+  "template": "invoice",
+  "latency_s": 13.435,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": null,
+   "text": "增值税普通发票\n发票号码：05510987\n开票日期：2026年 10月 02日\n销售方：云岭电器有限公司\n购买方：示例科技有限公司\n货物名称 数量 金额\n电热水壶 10 3,460.50",
+   "summary": "云岭电器向示例科技销售10个电热水壶，开票日期2026年10月2日，金额3,460.50元。",
+   "fields": [
+    {
+     "key": "doc_no",
+     "label": "发票号码：",
+     "value": "05510987"
+    },
+    {
+     "key": "date",
+     "label": "开票日期：",
+     "value": "2026年 10月 02日"
+    },
+    {
+     "key": "merchant",
+     "label": "销售方：",
+     "value": "云岭电器有限公司"
+    },
+    {
+     "key": "buyer",
+     "label": "购买方：",
+     "value": "示例科技有限公司"
+    },
+    {
+     "key": "total",
+     "label": "金额",
+     "value": "3,460.50"
+    }
+   ],
+   "counts": {
+    "pages": 1
+   },
+   "attachments": [],
+   "doc_kind": "receipt_invoice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "1f4350e7-8052-41f0-8c91-8f1858a72aa2"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 0.5,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invoice-c",
+  "template": "invoice",
+  "latency_s": 11.454,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": null,
+   "text": "增值税普通发票\n发票号码：06623145\n开票日期：2026年 10月 11日\n销售方：穗禾里食品有限公司\n购买方：示例科技有限公司\n货物名称 数量 金额\n咖啡豆 10 865.00",
+   "summary": "穗禾里食品向示例科技开具 2026 年 10 月 11 日增值税普通发票，金额 865.00 元。",
+   "fields": [
+    {
+     "key": "doc_no",
+     "label": "发票号码",
+     "value": "06623145"
+    },
+    {
+     "key": "date",
+     "label": "开票日期",
+     "value": "2026年 10月 11日"
+    },
+    {
+     "key": "merchant",
+     "label": "销售方",
+     "value": "穗禾里食品有限公司"
+    },
+    {
+     "key": "buyer",
+     "label": "购买方",
+     "value": "示例科技有限公司"
+    },
+    {
+     "key": "total",
+     "label": "金额",
+     "value": "865.00"
+    }
+   ],
+   "counts": {
+    "pages": 1
+   },
+   "attachments": [],
+   "doc_kind": "receipt_invoice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "79078cc3-0836-4f14-8613-3e4dfcb239e9"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "booking-b",
+  "template": "booking",
+  "latency_s": 12.199,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "预订确认单\n酒店：白石山居\n预订号：HB90457\n入住日期：2026-11-05\n离店日期：2026-11-07\n房型：大床房 1 间\n订单总价：¥2,340",
+   "summary": "白石山居预订确认，预订号HB90457，2026-11-05至11-07入住大床房1间，总价¥2,340。",
+   "fields": [
+    {
+     "key": "merchant",
+     "label": "酒店：",
+     "value": "白石山居"
+    },
+    {
+     "key": "booking_no",
+     "label": "预订号：",
+     "value": "HB90457"
+    },
+    {
+     "key": "start_date",
+     "label": "入住日期：",
+     "value": "2026-11-05"
+    },
+    {
+     "key": "end_date",
+     "label": "离店日期：",
+     "value": "2026-11-07"
+    },
+    {
+     "key": "total",
+     "label": "订单总价：",
+     "value": "¥2,340"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "booking_ticket",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "8645b984-5966-4845-83b7-81f12141f12c"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "booking-c",
+  "template": "booking",
+  "latency_s": 11.093,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "document",
+   "error": null,
+   "text": "预订确认单\n酒店：梧桐大道商务酒店\n预订号：HB91120\n入住日期：2026-12-24\n离店日期：2026-12-26\n房型：大床房 1 间\n订单总价：¥980",
+   "summary": "梧桐大道商务酒店 12 月 24 日至 26 日大床房预订确认，订单总价 980 元。",
+   "fields": [
+    {
+     "key": "merchant",
+     "label": "酒店：",
+     "value": "梧桐大道商务酒店"
+    },
+    {
+     "key": "booking_no",
+     "label": "预订号：",
+     "value": "HB91120"
+    },
+    {
+     "key": "start_date",
+     "label": "入住日期：",
+     "value": "2026-12-24"
+    },
+    {
+     "key": "end_date",
+     "label": "离店日期：",
+     "value": "2026-12-26"
+    },
+    {
+     "key": "total",
+     "label": "订单总价：",
+     "value": "¥980"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "booking_ticket",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "c77e5fd0-5190-4089-baf3-bd6183674a60"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": 1.0,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "scan-b",
+  "template": "scan",
+  "latency_s": 37.382,
+  "summary_attempts": 1,
+  "image_parts": 2,
+  "reading": {
+   "type": "scanned_pdf",
+   "error": null,
+   "text": "## 第 1 页\n[第 1 页（扫描）·图片识别] 2026年9月30日会议纪要：确定支付直连方案（费率0.25%），预算7.5万元，灰度覆盖2家门店。\n点单小程序项目会议纪要\n时间：2026年9月30日 14:00至15:30\n地点：3楼第二会议室\n参会人：李明、李鸣、唐宁、谢雨桐\n记录人：唐宁\n一、会议议题\n本次会议讨论支付接入方案、门店灰度计划和第四季度预算，确认上线前的分工。\n二、讨论内容\n李明介绍了两种支付接入方案：聚合支付接入快、费率较高；直连方案费率为0.25%，但需要约 3 周开发。李鸣补充了测试排期，认为回归测试至少需要 5 个工作日。\n与会人员同意先上线点单功能，支付功能推迟到10月7日之后再评估。\n三、会议决议\n1. 项目总预算调整为 7.5 万元，由谢雨桐在本周五前提交审批。\n2. 灰度发布先覆盖 2 家门店，观察 7 天后再扩大范围。\n3. 支付方案选择直连方案，费率 0.25%。\n事项 | 负责人 | 截止日期\n提交预算审批 | 谢雨桐 | 9月28日\n回归测试清单 | 李鸣 | 9月28日\n门店培训材料 | 李明 | 9月28日\n\n## 第 2 页\n[第 2 页（扫描）·图片识别] 陈思远编制的秋季新品上市计划，目标首月销量 2.4 万杯，总预算 36 万元，9 月 6 日正式上市。\n秋季新品上市执行计划\n编制：陈思远\n审核：陈思源\n版本：V1.2\n1. 目标\n在 6 家门店同步上市 3 款秋季饮品，首月销量目标 2.4 万杯，毛利率不低于 62%。\n2. 里程碑\n阶段 | 完成日期 | 负责人\n配方定稿 | 8月14日 | 陈思远\n门店培训 | 8月15日 | 陈思源\n正式上市 | 9月6日 | 陈思远\n3. 预算\n总预算 36 万元，其中物料 14.4 万元、推广 16.2 万元、培训及其他 5.4 万元。\n4. 风险\n原料到货若晚于计划 5 天以上，上市日期顺延一周，并提前通知门店。",
+   "summary": "2026年9月30日会议纪要确定直连支付方案及7.5万预算，另含陈思远编制的秋季新品上市计划（预算36万，9月6日上市）。",
+   "fields": [],
+   "counts": {
+    "pages": 2,
+    "image_pages": 2,
+    "images_read": 2
+   },
+   "attachments": [],
+   "doc_kind": "minutes",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "ece5c626-bddd-4fab-b1e1-14ea78bd1e5f"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 1.0,
+   "summary_hit": 0.5,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "scan-c",
+  "template": "scan",
+  "latency_s": 36.461,
+  "summary_attempts": 1,
+  "image_parts": 2,
+  "reading": {
+   "type": "scanned_pdf",
+   "error": null,
+   "text": "## 第 1 页\n[第 1 页（扫描）·图片识别] Operations team moves to Floor 12 on Aug 27, 2026; budget $22,400.\nMEMORANDUM\nTo：All staff, Operations\nFrom：Mia Chen\nDate：September 22, 2026\nSubject：Office move to Floor 12\nThe operations team will move to Suite 7C on Floor 12 on Aug 27, 2026. Please pack your desk into no more than 5 boxes and label each box with your name and new desk number.\nMovers arrive at 8:30 AM. Network and phones will be offline from 6:00 PM the day before until noon on moving day. Tom Becker coordinates the move; send questions to the facilities queue.\nThe approved moving budget is $22,400. Receipts for personal items are not reimbursed.\n1. Pack by 4:00 PM the day before the move.\n2. Keep laptops with you; do not pack them.\n3. Unpack by Friday so the old floor can be handed back.\n\n## 第 2 页\n[第 2 页（扫描）·图片识别] 2026年10月1日生效的差旅报销政策，规定餐费55美元/天、里程0.70美元/英里、酒店220美元/晚。\nTravel Reimbursement Policy (excerpt)\nPolicy no.：FIN-50\nEffective：October 1, 2026\nOwner：Finance\n1. Meals\nEmployees on approved travel receive a per diem of $55 per full day. Travel days are paid at 75% of the per diem.\n2. Mileage\nUse of a personal car is reimbursed at $0.70 per mile. Parking and tolls are reimbursed at cost with receipts.\n3. Lodging\nHotel rates up to $220 per night are pre-approved. Higher rates need written approval from the budget owner.\n4. Claims\nSubmit claims within 45 days of returning. Claims submitted later than 45 days may be declined.\nItem | Limit | Receipt needed\nPer diem | $55/day | No\nMileage | $0.70/mile | Log only\nHotel | $220/night | Yes",
+   "summary": "Mia Chen 通知运营团队 2026 年 8 月 27 日搬迁至 12 楼 7C 室，预算 22,400 美元；另含 10 月 1 日生效的差旅报销政策。",
+   "fields": [],
+   "counts": {
+    "pages": 2,
+    "image_pages": 2,
+    "images_read": 2
+   },
+   "attachments": [],
+   "doc_kind": "notice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "a6424ba3-657e-42fb-9ef6-8edc2c8e689f"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "expense-b",
+  "template": "expense",
+  "latency_s": 4.783,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：10月报销\n| 姓名 | 项目 | 金额 | 状态 |\n|---|---|---|---|\n| 赵六 | 打印 | 86 | 已审批 |\n| 钱七 | 快递 | 42.5 | 待审批 |\n| 孙八 | 酒店 | 688 | 已审批 |\n\n## 工作表：说明\n| 报销截止 | 10月底 |\n|---|---|",
+   "summary": "10月报销明细，按人列出打印、快递、酒店等项目的金额和审批状态，截止10月底。",
+   "fields": [
+    {
+     "key": "date",
+     "label": "报销截止",
+     "value": "10月底"
+    }
+   ],
+   "counts": {
+    "sheets": 2
+   },
+   "attachments": [],
+   "doc_kind": "receipt_invoice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "2d01bb5e-86ce-4f49-8e9a-1a12a7100f0a"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "expense-c",
+  "template": "expense",
+  "latency_s": 3.449,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：11月报销\n| 姓名 | 项目 | 金额 | 状态 |\n|---|---|---|---|\n| 周九 | 会议室 | 400 | 已审批 |\n| 吴十 | 茶歇 | 256 | 待审批 |\n| 郑一 | 机票 | 1320 | 已审批 |\n\n## 工作表：说明\n| 报销截止 | 11月底 |\n|---|---|",
+   "summary": "11月报销明细，按人列出会议室、茶歇、机票等金额及审批状态，截止11月底。",
+   "fields": [],
+   "counts": {
+    "sheets": 2
+   },
+   "attachments": [],
+   "doc_kind": "dataset",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "801ed412-ecf9-48b7-ad7f-196438bf9850"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "budget-b",
+  "template": "budget",
+  "latency_s": 13.894,
+  "summary_attempts": 2,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：年会预算\n| 项目 | 金额（元） |\n|---|---|\n| 场地 | 12000 |\n| 抽奖礼品 | 6800 |\n| 主持 | 2500 |",
+   "summary": "年会预算表，列出场地12000元、抽奖礼品6800元、主持2500元三项费用。",
+   "fields": [],
+   "counts": {
+    "sheets": 1
+   },
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "1553c3b3-7c6e-4df7-a02c-a7d03ae42710"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "budget-c",
+  "template": "budget",
+  "latency_s": 7.817,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "## 工作表：培训预算\n| 项目 | 金额（元） |\n|---|---|\n| 讲师费 | 5000 |\n| 教材 | 960 |\n| 茶歇 | 640 |",
+   "summary": "培训预算表，列出讲师费5000元、教材960元、茶歇640元。",
+   "fields": [],
+   "counts": {
+    "sheets": 1
+   },
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "570af075-2fba-411f-9911-e249eee9223c"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "inventory-b",
+  "template": "inventory",
+  "latency_s": 6.872,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "| 物品 | 数量 | 库位 |\n|---|---|---|\n| 纸杯 12oz | 800 | C-02 |\n| 吸管 | 1200 | C-05 |",
+   "summary": "库存盘点表，记录纸杯和吸管的数量及库位。",
+   "fields": [],
+   "counts": {
+    "sheets": 1,
+    "rows": 3
+   },
+   "attachments": [],
+   "doc_kind": "dataset",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "789c6465-6c56-4158-afbd-82c55ef63888"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "inventory-c",
+  "template": "inventory",
+  "latency_s": 6.611,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "spreadsheet",
+   "error": null,
+   "text": "| 物品 | 数量 | 库位 |\n|---|---|---|\n| 咖啡豆 云南日晒 | 24 | D-01 |\n| 牛奶 1L | 36 | 冷藏-2 |",
+   "summary": "库存盘点表，记录咖啡豆和牛奶的数量及库位。",
+   "fields": [],
+   "counts": {
+    "sheets": 1,
+    "rows": 3
+   },
+   "attachments": [],
+   "doc_kind": "dataset",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "865a2e4f-e84d-4ac6-a00e-60bd4bbde0a7"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "roadmap-b",
+  "template": "roadmap",
+  "latency_s": 19.007,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "## 第 1 张幻灯片：2027 上半年产品计划\n- 3 月发布自助点单\n- 5 月上线储值卡\n备注：先讲目标再讲节奏\n\n## 第 2 张幻灯片：数据回顾\n- 见下图\n[第 2 张幻灯片的图片 1·图片识别] 2026年下半年门店月销售额，10月最高达55.8万元，7月最低为24.3万元。\n2026年下半年 门店月销售额\n横轴：月份；纵轴：销售额（万元）；单位：万元\n销售额：7月 24.3，8月 38.4，9月 45.8，10月 55.8，11月 44.4，12月 36.5",
+   "summary": "2027上半年产品计划，3月发布自助点单，5月上线储值卡。",
+   "fields": [],
+   "counts": {
+    "slides": 2,
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "bcb479aa-4585-4071-9042-8d73d5f6fa96"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "roadmap-c",
+  "template": "roadmap",
+  "latency_s": 24.959,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "## 第 1 张幻灯片：小程序增长方案\n- 首单立减 5 元\n- 邀请好友各得 10 元券\n备注：先讲目标再讲节奏\n\n## 第 2 张幻灯片：数据回顾\n- 见下图\n[第 2 张幻灯片的图片 1·图片识别] 小程序周活跃用户从第1周的1,800人持续上升至第8周的4,800人。\n小程序周活跃用户\n横轴：周；纵轴：周活跃用户（人）；单位：人\n周活跃用户：第1周 1,800，第2周 2,317，第3周 2,619，第4周 3,109，第5周 3,432，第6周 3,958，第7周 4,398，第8周 4,800",
+   "summary": "小程序增长方案含首单立减5元及邀请奖励，周活跃用户从第1周1,800人升至第8周4,800人。",
+   "fields": [],
+   "counts": {
+    "slides": 2,
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "33ebca8b-ebb4-4eb8-9898-1da45d5c5c02"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "training-b",
+  "template": "training",
+  "latency_s": 7.729,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "单击以编辑标题文本格式\n点击以编辑提纲文本格式\n第二提纲级别\n第三提纲级别\n第四提纲级别\n第五提纲级别\n第六提纲级别\n第七提纲级别\n咖啡师进阶课程\n模块一：意式萃取参数\n模块二：拉花基础\n考核\n结业测验 80 分合格",
+   "summary": "咖啡师进阶课程大纲，含意式萃取、拉花基础及结业测验（80分合格）。",
+   "fields": [],
+   "counts": {
+    "slides": 5
+   },
+   "attachments": [],
+   "doc_kind": "manual",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "c8db16e7-39f1-438a-a247-b04e8d5f1845"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "training-c",
+  "template": "training",
+  "latency_s": 4.898,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "单击以编辑标题文本格式\n点击以编辑提纲文本格式\n第二提纲级别\n第三提纲级别\n第四提纲级别\n第五提纲级别\n第六提纲级别\n第七提纲级别\n门店消防演练\n步骤一：发现火情立即报警\n步骤二：按疏散路线撤离\n考核\n结业测验 80 分合格",
+   "summary": "门店消防演练培训课件，包含发现火情报警、按疏散路线撤离等步骤及80分合格考核要求。",
+   "fields": [],
+   "counts": {
+    "slides": 5
+   },
+   "attachments": [],
+   "doc_kind": "manual",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "049c125b-4c9b-460a-bf96-c685789d032b"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "email-b",
+  "template": "email",
+  "latency_s": 43.076,
+  "summary_attempts": 2,
+  "image_parts": 1,
+  "reading": {
+   "type": "email",
+   "error": null,
+   "text": "主题：门店耗材报销\n发件人：周小满 <xiaoman@example.invalid>\n收件人：李四 <lisi@example.invalid>\n时间：Tue, 29 Sep 2026 09:30:00 +0800\n\n李四你好，\n附件是门店耗材报销的明细和小票照片，请本周五前审批。\n李晓\n\n## 附件：对账明细.xlsx\n## 工作表：对账\n| 日期 | 金额 |\n|---|---|\n| 9月3日 | 1260 |\n| 9月17日 | 845 |\n\n## 附件：小票.jpg\n[小票.jpg·图片识别] 南巷咖啡 2026-09-26 消费 136.00 元，含拿铁和美式。\n南巷咖啡\n青川市桂香区梧桐大道25号\n电话：0000-5724\n单号：202609265269\n收银员：02\n日期：2026-09-26 17:34\n品名\n数量\n单价\n金额\n拿铁（中杯）\n1\n25.00\n25.00\n拿铁（大杯）\n2\n28.00\n56.00\n美式（中杯）\n3\n20.00\n60.00\n合计件数：3\n小计\n141.00\n优惠\n-5.00\n实付\n¥136.00\n支付方式：银行卡\n谢谢惠顾，欢迎再次光临\n请妥善保管小票，7日内凭票退换",
+   "summary": "周小满于 9 月 29 日发邮件请李四审批门店耗材报销，附 9 月对账明细及 9 月 26 日南巷咖啡 136 元小票。",
+   "fields": [
+    {
+     "key": "subject",
+     "label": "主题",
+     "value": "门店耗材报销"
+    },
+    {
+     "key": "from",
+     "label": "发件人",
+     "value": "周小满 <xiaoman@example.invalid>"
+    },
+    {
+     "key": "to",
+     "label": "收件人",
+     "value": "李四 <lisi@example.invalid>"
+    },
+    {
+     "key": "date",
+     "label": "时间",
+     "value": "Tue, 29 Sep 2026 09:30:00 +0800"
+    },
+    {
+     "key": "merchant",
+     "label": "",
+     "value": "南巷咖啡"
+    },
+    {
+     "key": "total",
+     "label": "实付",
+     "value": "¥136.00"
+    },
+    {
+     "key": "payment_method",
+     "label": "支付方式",
+     "value": "银行卡"
+    }
+   ],
+   "counts": {
+    "attachments": 2,
+    "images_read": 1
+   },
+   "attachments": [
+    {
+     "filename": "对账明细.xlsx",
+     "type": "spreadsheet",
+     "summary": "工作表：对账"
+    },
+    {
+     "filename": "小票.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "receipt_invoice",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "564c93fa-3ed4-4908-a9d5-a62236e69b37"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "email-c",
+  "template": "email",
+  "latency_s": 28.942,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "email",
+   "error": null,
+   "text": "主题：样品费用确认\n发件人：周小满 <xiaoman@example.invalid>\n收件人：李四 <lisi@example.invalid>\n时间：Tue, 29 Sep 2026 09:30:00 +0800\n\n李四你好，\n附件是样品费用确认的明细和小票照片，麻烦 10 月 20 日前回复。\n陈思远\n\n## 附件：对账明细.xlsx\n## 工作表：对账\n| 日期 | 金额 |\n|---|---|\n| 9月3日 | 1260 |\n| 9月17日 | 845 |\n\n## 附件：小票.jpg\n[小票.jpg·图片识别] 2026年8月31日在禾木生鲜超市购买香蕉、牛奶和面包，实付217.31元。\n禾木生鲜超市\n青川市白石区桂香路172号\n电话：0000-8654\n单号：202608315743\n收银员：05\n日期：2026-08-31 11:28\n品名\n数量\n单价\n金额\n香蕉\n1.706kg\n7.98\n13.61\n纯牛奶 250mL×12\n3\n59.90\n179.70\n全麦面包\n3\n8.00\n24.00\n合计件数：3\n小计\n217.31\n实付\n¥217.31\n支付方式：扫码支付\n谢谢惠顾，欢迎再次光临\n请妥善保管小票，7日内凭票退换",
+   "summary": "周小满向李四发送样品费用确认邮件，附对账明细及小票，要求10月20日前回复。",
+   "fields": [
+    {
+     "key": "subject",
+     "label": "主题",
+     "value": "样品费用确认"
+    },
+    {
+     "key": "from",
+     "label": "发件人",
+     "value": "周小满 <xiaoman@example.invalid>"
+    },
+    {
+     "key": "to",
+     "label": "收件人",
+     "value": "李四 <lisi@example.invalid>"
+    },
+    {
+     "key": "date",
+     "label": "时间",
+     "value": "Tue, 29 Sep 2026 09:30:00 +0800"
+    }
+   ],
+   "counts": {
+    "attachments": 2,
+    "images_read": 1
+   },
+   "attachments": [
+    {
+     "filename": "对账明细.xlsx",
+     "type": "spreadsheet",
+     "summary": "工作表：对账"
+    },
+    {
+     "filename": "小票.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "letter",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "95da7733-77ce-465c-bd51-42b47bd5c66f"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invite-b",
+  "template": "invite",
+  "latency_s": 4.343,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "calendar",
+   "error": null,
+   "text": "日程：供应商比价会\n开始：2026-11-03 10:00 (Asia/Shanghai)\n结束：2026-10-15 16:00 (Asia/Shanghai)\n地点：线上会议 8812\n组织者：赵主管\n参与者：李四\n说明：请带上 Q3 数据\n和改进计划（补充一行）",
+   "summary": "赵主管发起 11 月 3 日线上供应商比价会，要求李四带 Q3 数据。",
+   "fields": [
+    {
+     "key": "summary",
+     "label": "日程",
+     "value": "供应商比价会"
+    },
+    {
+     "key": "start",
+     "label": "开始",
+     "value": "2026-11-03 10:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "end",
+     "label": "结束",
+     "value": "2026-10-15 16:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "location",
+     "label": "地点",
+     "value": "线上会议 8812"
+    },
+    {
+     "key": "organizer",
+     "label": "组织者",
+     "value": "赵主管"
+    }
+   ],
+   "counts": {
+    "events": 1
+   },
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "1c28e9b7-9ce9-497c-b1ed-72f39cbf259b"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "invite-c",
+  "template": "invite",
+  "latency_s": 4.477,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "calendar",
+   "error": null,
+   "text": "日程：年度体检\n开始：2026-11-20 08:30 (Asia/Shanghai)\n结束：2026-10-15 16:00 (Asia/Shanghai)\n地点：临溪体检中心\n组织者：人事部\n参与者：李四\n说明：请带上 Q3 数据\n和改进计划（补充一行）",
+   "summary": "人事部通知李四于 2026 年 11 月 20 日 08:30 在临溪体检中心进行年度体检，需携带 Q3 数据。",
+   "fields": [
+    {
+     "key": "summary",
+     "label": "日程",
+     "value": "年度体检"
+    },
+    {
+     "key": "start",
+     "label": "开始",
+     "value": "2026-11-20 08:30 (Asia/Shanghai)"
+    },
+    {
+     "key": "end",
+     "label": "结束",
+     "value": "2026-10-15 16:00 (Asia/Shanghai)"
+    },
+    {
+     "key": "location",
+     "label": "地点",
+     "value": "临溪体检中心"
+    },
+    {
+     "key": "organizer",
+     "label": "组织者",
+     "value": "人事部"
+    }
+   ],
+   "counts": {
+    "events": 1
+   },
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "ce5b084f-8fba-44c7-b71b-0ebd876184c3"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contact-b",
+  "template": "contact",
+  "latency_s": 2.606,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "contact",
+   "error": null,
+   "text": "姓名：李鸣\n单位：云岭电器\n职务：销售经理\n电话：138-0000-5678",
+   "summary": "云岭电器销售经理李鸣的联系方式。",
+   "fields": [
+    {
+     "key": "name",
+     "label": "姓名",
+     "value": "李鸣"
+    },
+    {
+     "key": "org",
+     "label": "单位",
+     "value": "云岭电器"
+    },
+    {
+     "key": "title",
+     "label": "职务",
+     "value": "销售经理"
+    },
+    {
+     "key": "phone",
+     "label": "电话",
+     "value": "138-0000-5678"
+    }
+   ],
+   "counts": {
+    "contacts": 1
+   },
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "884e6aab-9ed2-483e-b2f5-f9dfb255493c"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "contact-c",
+  "template": "contact",
+  "latency_s": 3.574,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "contact",
+   "error": null,
+   "text": "姓名：Chen Wei\n单位：Harbor Design\n职务：Designer\n电话：+86 137 0000 2468",
+   "summary": "Harbor Design 设计师 Chen Wei 的联系方式，电话 +86 137 0000 2468。",
+   "fields": [
+    {
+     "key": "name",
+     "label": "姓名",
+     "value": "Chen Wei"
+    },
+    {
+     "key": "org",
+     "label": "单位",
+     "value": "Harbor Design"
+    },
+    {
+     "key": "title",
+     "label": "职务",
+     "value": "Designer"
+    },
+    {
+     "key": "phone",
+     "label": "电话",
+     "value": "+86 137 0000 2468"
+    }
+   ],
+   "counts": {
+    "contacts": 1
+   },
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "b186fda3-92e6-4c04-b128-729ec6d78711"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "article-b",
+  "template": "article",
+  "latency_s": 4.291,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "web",
+   "error": null,
+   "text": "网址：https://example.invalid/camping\n# 秋季露营装备指南\n\n帐篷选三季帐，睡袋舒适温度 5℃。\n\n- 先量尺寸\n\n- 再比三家",
+   "summary": "秋季露营装备指南，推荐三季帐和舒适温度5℃的睡袋，建议先量尺寸再比价。",
+   "fields": [
+    {
+     "key": "url",
+     "label": "网址",
+     "value": "https://example.invalid/camping"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "353af172-6f20-4909-b8df-03ba2473e60e"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "article-c",
+  "template": "article",
+  "latency_s": 6.412,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "web",
+   "error": null,
+   "text": "网址：https://example.invalid/cat\n# 新手养猫准备\n\n猫砂盆放在安静角落，疫苗第 8 周开始。\n\n- 先量尺寸\n\n- 再比三家",
+   "summary": "新手养猫准备指南，提及猫砂盆放置、8 周开始疫苗及选购建议。",
+   "fields": [
+    {
+     "key": "url",
+     "label": "网址",
+     "value": "https://example.invalid/cat"
+    }
+   ],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "424b246d-92f7-486e-82b1-9201db06550a"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "archive-b",
+  "template": "archive",
+  "latency_s": 21.535,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "archive",
+   "error": null,
+   "text": "压缩包，共 3 个文件\n\n## 展会资料/说明.docx\n展会资料说明\n\n展位号 B-17，布展 10 月 30 日\n\n## 展会资料/清单.csv\n| 物品 | 数量 |\n|---|---|\n| 桌子 | 4 |\n| 椅子 | 16 |\n\n## 展会资料/白板.jpg\n[展会资料/白板.jpg·图片识别] 8/5 周会记录：点单上线定在 8/12，预算 5.8 万已确认，需向王晓林要样品。\n周会 8/5\n1. 点单上线 → 8/12\n2. 支付走方案B，费率0.25%\n[✓] 3. 预算5.8万（已确认）\n4. 找王晓林要样品×3\n5. 王晓琳：发票周五前开",
+   "summary": "展会资料压缩包，含布展说明、物品清单及8月5日周会记录（点单上线、预算5.8万等）。",
+   "fields": [],
+   "counts": {
+    "entries": 3,
+    "attachments": 3,
+    "images_read": 1
+   },
+   "attachments": [
+    {
+     "filename": "展会资料/说明.docx",
+     "type": "document",
+     "summary": "展会资料说明"
+    },
+    {
+     "filename": "展会资料/清单.csv",
+     "type": "spreadsheet",
+     "summary": "物品 | 数量 |"
+    },
+    {
+     "filename": "展会资料/白板.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "5d9977e7-7cd1-497b-979b-cff9fb9d9266"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "archive-c",
+  "template": "archive",
+  "latency_s": 20.309,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "archive",
+   "error": null,
+   "text": "压缩包，共 3 个文件\n\n## 搬家资料/说明.docx\n搬家资料说明\n\n搬家公司预约 11 月 8 日上午\n\n## 搬家资料/清单.csv\n| 物品 | 数量 |\n|---|---|\n| 桌子 | 4 |\n| 椅子 | 16 |\n\n## 搬家资料/白板.jpg\n[搬家资料/白板.jpg·图片识别] 待办清单：豆子报价改为 136 元/公斤并订购 10 公斤，10 月 7 日前付定金；磨豆机保养已完成，周六需盘点库存。\n待办\n（已划掉）豆子报价 142 元/公斤\n改为 136 元/公斤，订 10 公斤\n10 月 7 日前付定金\n[✓] 磨豆机保养\n周六盘点库存",
+   "summary": "搬家资料压缩包，含 11 月 8 日搬家预约说明、物品清单及包含报价修改和保养记录的白板照片。",
+   "fields": [],
+   "counts": {
+    "entries": 3,
+    "attachments": 3,
+    "images_read": 1
+   },
+   "attachments": [
+    {
+     "filename": "搬家资料/说明.docx",
+     "type": "document",
+     "summary": "搬家资料说明"
+    },
+    {
+     "filename": "搬家资料/清单.csv",
+     "type": "spreadsheet",
+     "summary": "物品 | 数量 |"
+    },
+    {
+     "filename": "搬家资料/白板.jpg",
+     "type": "image",
+     "summary": "图片"
+    }
+   ],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "73bb661f-b2d3-41f0-bca5-a402a12d3da8"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "notes-b",
+  "template": "notes",
+  "latency_s": 4.396,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "text",
+   "error": null,
+   "text": "# 装修待办\n\n- 确认橱柜尺寸\n- 周三约水电师傅",
+   "summary": "装修待办笔记，包含确认橱柜尺寸和周三约水电师傅两项任务。",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "19b99b6d-031f-4e91-a7d6-1486c00f5266"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "notes-c",
+  "template": "notes",
+  "latency_s": 4.44,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "text",
+   "error": null,
+   "text": "# 旅行准备\n\n- 订 10 月 1 日高铁\n- 带好充电宝和雨伞",
+   "summary": "记录旅行准备事项，包括预订 10 月 1 日高铁及携带充电宝雨伞。",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "plan",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "0aa67763-140b-4f2d-a557-0d1e053907ae"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "ebook-b",
+  "template": "ebook",
+  "latency_s": 3.998,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "ebook",
+   "error": null,
+   "text": "书名：园艺入门\n作者：邓一凡\n\n第一章 认识土壤\n\n第二章 浇水的节奏",
+   "summary": "邓一凡著《园艺入门》电子书，含认识土壤和浇水节奏两章。",
+   "fields": [
+    {
+     "key": "title",
+     "label": "书名",
+     "value": "园艺入门"
+    },
+    {
+     "key": "creator",
+     "label": "作者",
+     "value": "邓一凡"
+    }
+   ],
+   "counts": {
+    "chapters": 2
+   },
+   "attachments": [],
+   "doc_kind": "manual",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "fad95118-c584-4b0b-ab1a-3d3a7fd5b25a"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "ebook-c",
+  "template": "ebook",
+  "latency_s": 2.371,
+  "summary_attempts": 1,
+  "image_parts": 0,
+  "reading": {
+   "type": "ebook",
+   "error": null,
+   "text": "书名：城市散步\n作者：谢雨桐\n\n第一章 清晨的菜市场\n\n第二章 老街与新店",
+   "summary": "谢雨桐所著电子书《城市散步》，含清晨菜市场与老街新店两章。",
+   "fields": [
+    {
+     "key": "title",
+     "label": "书名",
+     "value": "城市散步"
+    },
+    {
+     "key": "creator",
+     "label": "作者",
+     "value": "谢雨桐"
+    }
+   ],
+   "counts": {
+    "chapters": 2
+   },
+   "attachments": [],
+   "doc_kind": "other",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "0b36a4c3-c997-44fc-9828-a18031bbfc40"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": 1.0,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": 1.0,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "keynote-b",
+  "template": "keynote",
+  "latency_s": 18.683,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "（iWork 文稿，只能读取内嵌的第一页预览图）\n[文稿预览图（第一页）·图片识别] 点单小程序项目第37周周报：接口成功率98.7%，预计10月20日提测，下周灰度发布到2家门店。\n点单小程序项目周报（第37周）\n· 已完成：点单模块联调，接口成功率 98.7%\n· 进行中：支付对接，预计 10月20日 提测\n  · 支付沙箱已通，等待正式商户号\n· 风险：第三方审核需要 3 个工作日\n· 下周：灰度发布到 2 家门店，收集反馈\n青岚设计工作室 · 内部资料\n2 / 29",
+   "summary": "青岚设计工作室点单小程序第37周周报，接口成功率98.7%，预计10月20日提测并灰度发布至2家门店。",
+   "fields": [],
+   "counts": {
+    "preview": "image",
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "report",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "0edc1112-1c4e-4314-8d90-a3057a8cdbbd"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 1.0,
+   "summary_hit": 1.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "keynote-c",
+  "template": "keynote",
+  "latency_s": 22.487,
+  "summary_attempts": 1,
+  "image_parts": 1,
+  "reading": {
+   "type": "slides",
+   "error": null,
+   "text": "（iWork 文稿，只能读取内嵌的第一页预览图）\n[文稿预览图（第一页）·图片识别] 2026 年 Q3 营收 186.4 万元（同比 +8.6%），新增会员 1,865 人，Q4 重点为会员复购与新品上市。\nQ3 经营复盘\n2026 年第三季度\n· 营收 186.4 万元，同比 +8.6%\n· 客单价 ¥36.5，较上季度持平\n· 新增会员 1,865 人，其中小程序渠道占 62%\n· 退款率降至 1.8%\n  · 主要来自出餐超时减少\n· Q4 重点：会员复购与新品上市\n营收 186.4万\n同比 +8.6%\n新增会员 1,865\n青岚设计工作室 · 内部资料\n5 / 13",
+   "summary": "青岚设计工作室 2026 年 Q3 营收 186.4 万元，新增会员 1,865 人，Q4 重点为会员复购与新品上市。",
+   "fields": [],
+   "counts": {
+    "preview": "image",
+    "images_read": 1
+   },
+   "attachments": [],
+   "doc_kind": "report",
+   "summary_source": "model",
+   "notes": [],
+   "run_id": "06ba81e9-853f-4baa-a249-8096e0d542e4"
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": 1.0,
+   "summary_hit": 0.0,
+   "summary_model": true,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "locked-b",
+  "template": "locked",
+  "latency_s": 0.088,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": "encrypted",
+   "text": "",
+   "summary": "PDF 文档「体检报告.pdf」已加密，需要密码，未读取内容",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [
+    "体检报告.pdf：password-protected PDF"
+   ],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ },
+ {
+  "id": "locked-c",
+  "template": "locked",
+  "latency_s": 0.073,
+  "summary_attempts": null,
+  "image_parts": 0,
+  "reading": {
+   "type": "pdf",
+   "error": "encrypted",
+   "text": "",
+   "summary": "PDF 文档「合同扫描.pdf」已加密，需要密码，未读取内容",
+   "fields": [],
+   "counts": {},
+   "attachments": [],
+   "doc_kind": "",
+   "summary_source": "plain",
+   "notes": [
+    "合同扫描.pdf：password-protected PDF"
+   ],
+   "run_id": null
+  },
+  "score": {
+   "type_ok": true,
+   "text_recall": null,
+   "image_recall": null,
+   "summary_hit": 1.0,
+   "summary_model": false,
+   "field_em": null,
+   "det_field_em": null,
+   "missing_text": [],
+   "missing_image": []
+  }
+ }
+]

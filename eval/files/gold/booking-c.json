@@ -1,0 +1,31 @@
+{
+ "id": "booking-c",
+ "template": "booking",
+ "split": "test",
+ "filename": "预订确认.rtf",
+ "path": "data/booking-c.rtf",
+ "sha256": "17760500df2bad2e9f279874d295b3b829c9ed26568268da4e21af1bbc62400d",
+ "size": 3802,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {
+  "booking_no": "HB91120",
+  "place": "梧桐大道商务酒店"
+ },
+ "det_fields": {},
+ "type": "document",
+ "must_contain": [
+  "预订号：HB91120",
+  "2026-12-24"
+ ],
+ "summary_groups": [
+  [
+   "梧桐大道"
+  ],
+  [
+   "预订",
+   "入住"
+  ]
+ ],
+ "doc_kind": "booking_ticket"
+}

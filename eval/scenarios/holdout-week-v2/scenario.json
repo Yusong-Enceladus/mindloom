@@ -1,0 +1,2283 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "scenario_id": "holdout-week-v2",
+  "version": 1,
+  "split": "holdout",
+  "synthetic": true,
+  "locale": "zh-CN",
+  "title": "禾田器物出口周（留出集 v2）",
+  "description": "虚构：三人小型陶瓷餐具出口贸易公司负责人程芸在2026年11月9日（周一）至15日（周日）这一周里，同时推进新加坡客户的出货单、同一客户的样品需求、澳洲客户的新单报价和旧单破损索赔、父亲膝关节置换术后出院康复、三季度出口退税和春季展会报名。两个难诱饵：同一客户Wilson与同一工厂的样品事（诱饵）对出货单（主）；同一客户Peggy、同一品类8寸盘的旧单索赔（诱饵）对新单报价（主）。另有4条噪声（物业停水通知、宠物用品提醒、航运周报、新年贺卡祝福语）。人名、公司、单号、地址全部虚构；截图用通用聊天界面渲染。作者在盲写状态下完成（未读取整理器代码、技能或既有场景条目）。",
+  "home_rubric": "本场景作者自拟的首页重要度（0-3），只按检查点时刻 T、场景内的日期与事态判定，不参考任何系统的阈值或输出；holdout 分级在任何运行前冻结。3 = 本人必须在 T 当天剩余时间或次日亲自办理、到场或答复（有明确日期，或本人已承诺“明天”）；或家人的健康安排在当天/次日有节点。2 = 仍在进行，且 T 之后 4 个自然日内有任何人的明确日期节点；或 T 前 24 小时内出现改期、改量、改价、新事项，或完成了关键节点（报价发出、出院、验货通过、申报、定金确认等）；但不满足 3。1 = 未结束，但最近的日期节点在 4 个自然日之后，或只是在等别人、没有近期节点。0 = 全部办完且无待办，或已取消。多条同时满足取最高。噪声条目不属于任何事件，不分级。",
+  "owner_person_id": "p_owner",
+  "people": [
+    {
+      "person_id": "p_owner",
+      "display_name": "程芸",
+      "is_owner": true,
+      "role": "禾田器物（三人小型陶瓷餐具出口贸易公司）负责人（本人）",
+      "aliases": [
+        "我",
+        "芸姐",
+        "程总",
+        "小芸",
+        "芸",
+        "Yun"
+      ],
+      "voice": {
+        "mac_person_id": "96FB4614-43FE-5320-9B4E-CE71D829BD8A",
+        "user_label": "我",
+        "tts_hint": "female-30s-brisk"
+      }
+    },
+    {
+      "person_id": "p_wilson",
+      "display_name": "黄立伟",
+      "role": "新加坡南岸家居采购经理（大客户）",
+      "aliases": [
+        "Wilson",
+        "Wilson Huang",
+        "黄生",
+        "黄立伟先生"
+      ],
+      "voice": {
+        "mac_person_id": "D6B7781F-0A78-54BF-8923-BCF796C478C9",
+        "user_label": "Wilson",
+        "tts_hint": "male-40s-singapore-mandarin"
+      }
+    },
+    {
+      "person_id": "p_xu",
+      "display_name": "许国栋",
+      "role": "德盛窑厂厂长（供货工厂）",
+      "aliases": [
+        "许厂长",
+        "老许",
+        "许总"
+      ],
+      "voice": {
+        "mac_person_id": "2C40EE55-2F44-58DE-B38A-BC15FC7E68A7",
+        "user_label": "许厂长",
+        "tts_hint": "male-50s-jiangxi-accent"
+      }
+    },
+    {
+      "person_id": "p_he",
+      "display_name": "贺晓兰",
+      "role": "第三方验货员（南岸家居委托）",
+      "aliases": [
+        "贺工",
+        "小贺"
+      ],
+      "voice": {
+        "mac_person_id": "2D3E762C-2269-5E40-811C-772CA391085D",
+        "user_label": null,
+        "tts_hint": "female-30s-crisp"
+      }
+    },
+    {
+      "person_id": "p_deng",
+      "display_name": "邓志强",
+      "role": "货代",
+      "aliases": [
+        "阿强",
+        "强哥",
+        "强哥-货代",
+        "邓经理"
+      ],
+      "voice": null
+    },
+    {
+      "person_id": "p_tang",
+      "display_name": "唐悦",
+      "role": "跟单助理（本公司员工）",
+      "aliases": [
+        "小唐",
+        "悦悦"
+      ],
+      "voice": {
+        "mac_person_id": "8B910E15-7A9A-5E68-87F5-DBDEEFE89779",
+        "user_label": "小唐",
+        "tts_hint": "female-20s-quick"
+      }
+    },
+    {
+      "person_id": "p_peggy",
+      "display_name": "莫佩琪",
+      "role": "墨尔本家居小店店主（老客户）",
+      "aliases": [
+        "Peggy",
+        "Peggy Mok",
+        "莫小姐"
+      ],
+      "voice": {
+        "mac_person_id": "C39795F9-1328-5CB7-9CC9-B26151F58285",
+        "user_label": "Peggy",
+        "tts_hint": "female-40s-cantonese-accent"
+      }
+    },
+    {
+      "person_id": "p_feng",
+      "display_name": "冯静",
+      "role": "代账会计",
+      "aliases": [
+        "冯姐",
+        "冯会计"
+      ],
+      "voice": null
+    },
+    {
+      "person_id": "p_dad",
+      "display_name": "程建华",
+      "role": "父亲（右膝关节置换术后）",
+      "aliases": [
+        "爸",
+        "老爸",
+        "程叔叔",
+        "你爸"
+      ],
+      "voice": {
+        "mac_person_id": "0BA10ACB-24BB-56F7-A2B5-C1D2241ECC1E",
+        "user_label": "爸",
+        "tts_hint": "male-70s-slow"
+      }
+    },
+    {
+      "person_id": "p_mom",
+      "display_name": "周秀琴",
+      "role": "母亲",
+      "aliases": [
+        "妈",
+        "老妈"
+      ],
+      "voice": {
+        "mac_person_id": "C8A507D8-7196-5D67-B9F4-DE2E1FD30754",
+        "user_label": "妈",
+        "tts_hint": "female-60s-warm"
+      }
+    },
+    {
+      "person_id": "p_bro",
+      "display_name": "程磊",
+      "role": "哥哥",
+      "aliases": [
+        "哥",
+        "磊哥"
+      ],
+      "voice": {
+        "mac_person_id": "49C1624A-9B4B-50D1-AF63-BF81D5A45974",
+        "user_label": "哥",
+        "tts_hint": "male-40s-steady"
+      }
+    },
+    {
+      "person_id": "p_meng",
+      "display_name": "孟宇",
+      "role": "社区医院康复治疗师",
+      "aliases": [
+        "孟老师",
+        "孟治疗师"
+      ],
+      "voice": {
+        "mac_person_id": "62E7C2BE-5080-589A-8614-D744AA0D7A59",
+        "user_label": null,
+        "tts_hint": "male-30s-gentle"
+      }
+    }
+  ],
+  "events": [
+    {
+      "event_id": "ev_nanan_po2611",
+      "kind": "main",
+      "difficulty": "hard",
+      "title": "南岸家居 PO-2611 石器餐具出货",
+      "summary": "Wilson（黄立伟）的订单：数量从3000套加到3200套；验货从11月12日改到11月13日并通过；船期从11月20日改为11月23日，11月21日上午装柜；尾款70%由Wilson在11月16日安排。"
+    },
+    {
+      "event_id": "ev_wuqing_samples",
+      "kind": "decoy",
+      "difficulty": "hard",
+      "decoy_of": "ev_nanan_po2611",
+      "title": "南岸春季目录 雾青马克杯样品",
+      "summary": "同一客户、同一工厂的另一件事：6个雾青哑光釉350ml竹柄马克杯样品，11月20日前到新加坡供拍照；11月14日出窑并寄出，预计11月18日到。"
+    },
+    {
+      "event_id": "ev_peggy_quote",
+      "kind": "main",
+      "difficulty": "hard",
+      "title": "Peggy 新单 8寸燕麦白平盘报价",
+      "summary": "Peggy询价1800个8寸燕麦白平盘；11月12日报4.80美元；11月13日她还价4.30；本人决定11月16日回价：2000个起4.55美元。"
+    },
+    {
+      "event_id": "ev_peggy_claim",
+      "kind": "decoy",
+      "difficulty": "hard",
+      "decoy_of": "ev_peggy_quote",
+      "title": "Peggy 旧单 MB-0915 平盘破损索赔",
+      "summary": "同一客户、同一品类（8寸盘）的另一件事：上一批MB-0915有42个破损，索赔193.20美元；查明为转运压损、有货运险；本人答应11月18日前全额退款，保险由小唐和货代去报。"
+    },
+    {
+      "event_id": "ev_dad_knee",
+      "kind": "main",
+      "difficulty": "easy",
+      "title": "爸膝关节置换术后出院与康复",
+      "summary": "出院从11月11日推迟到11月12日；每周二、四下午社区医院康复，首次11月17日（哥送），11月19日本人送；11月20日骨科复查拆线；助行器和马桶扶手已下单。"
+    },
+    {
+      "event_id": "ev_q3_rebate",
+      "kind": "main",
+      "difficulty": "easy",
+      "title": "三季度出口退税申报",
+      "summary": "冯姐要3371报关单退税联和许厂长8月进项发票，11月13日中午前交；发票11月11日开好，材料11月12日交齐，11月13日下午已申报，退税额11232元。"
+    },
+    {
+      "event_id": "ev_spring_fair",
+      "kind": "main",
+      "difficulty": "easy",
+      "title": "2027春季家居礼品展展位报名",
+      "summary": "报名11月16日截止；只要一个标准展位；定金8000元11月12日付，展位C2-17（主通道，加2000元）；余款2027年2月28日前付。"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "a500e1b8-64df-5656-a321-35e6693cd6f3",
+      "ref": "d1-01",
+      "t": "2026-11-09T08:40:00+08:00",
+      "kind": "dictation",
+      "source_app": "备忘录",
+      "persons": [
+        "p_owner",
+        "p_tang",
+        "p_wilson",
+        "p_feng",
+        "p_xu"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_q3_rebate"
+      ],
+      "duration_ms": 21000,
+      "tags": [
+        "multi_label"
+      ],
+      "text": "今天几件事：一，上午跟小唐过一下南岸那单的进度，Wilson那边这周要安排验货；二，冯姐说三季度退税还缺东西，要找许厂长要8月的进项发票；三，下午四点跟Wilson开视频会。"
+    },
+    {
+      "item_id": "72408c39-4259-54d2-bae8-edbccb9f876b",
+      "ref": "d1-02",
+      "t": "2026-11-09T09:15:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_feng",
+        "p_owner",
+        "p_xu"
+      ],
+      "events": [
+        "ev_q3_rebate"
+      ],
+      "text": "冯姐：芸，三季度出口退税我这两天在整理。8月发新加坡那票（报关单号尾号3371）还缺报关单退税联的电子版，另外许总那边8月的增值税进项发票还没开过来。这两样周五13号中午前给我，我周五下午统一申报。"
+    },
+    {
+      "item_id": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+      "ref": "d1-03",
+      "t": "2026-11-09T10:30:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_owner",
+        "p_tang",
+        "p_wilson",
+        "p_xu",
+        "p_deng"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_spring_fair"
+      ],
+      "tags": [
+        "multi_label"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 8250,
+          "person_id": "p_tang",
+          "text": "芸姐，南岸那单3000套，许厂长说最后一窑明天出，周三可以全部包装完。"
+        },
+        {
+          "start_ms": 8650,
+          "end_ms": 16690,
+          "person_id": "p_owner",
+          "text": "好，Wilson说验货放在周四，你跟他们那边的验货公司先对一下时间。"
+        },
+        {
+          "start_ms": 17090,
+          "end_ms": 23030,
+          "person_id": "p_tang",
+          "text": "嗯。还有订舱，阿强说先按20号那班船给我们留位。"
+        },
+        {
+          "start_ms": 23430,
+          "end_ms": 25800,
+          "person_id": "p_owner",
+          "text": "可以，先留着。"
+        },
+        {
+          "start_ms": 26200,
+          "end_ms": 36130,
+          "person_id": "p_tang",
+          "text": "另外春季礼品展报名16号截止，标准展位一个九平米，报名的时候交定金八千，剩下的年后付。"
+        },
+        {
+          "start_ms": 36530,
+          "end_ms": 42680,
+          "person_id": "p_owner",
+          "text": "今年还是只要一个标准展位，你先把申请表填了给我看。"
+        },
+        {
+          "start_ms": 43080,
+          "end_ms": 47550,
+          "person_id": "p_tang",
+          "text": "好的。中午我点外卖，你要不要一份？"
+        },
+        {
+          "start_ms": 47950,
+          "end_ms": 50740,
+          "person_id": "p_owner",
+          "text": "不用了，我带了饭。"
+        }
+      ]
+    },
+    {
+      "item_id": "b955ce07-234a-560b-89e5-43ab21ca0f53",
+      "ref": "d1-04",
+      "t": "2026-11-09T13:20:00+08:00",
+      "kind": "image",
+      "source_app": "微信",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_quote"
+      ],
+      "image": {
+        "style": "generic_im",
+        "chat_title": "Peggy Mok",
+        "self_sender": "我",
+        "messages": [
+          {
+            "sender": "Peggy",
+            "time": "13:02",
+            "text": "Hi Yun，上次那批盘子卖得挺好，想再订8寸燕麦白平盘，1800个。"
+          },
+          {
+            "sender": "Peggy",
+            "time": "13:03",
+            "text": "麻烦周五（13号）前给我报个价，FOB，明年2月中要到墨尔本。"
+          },
+          {
+            "sender": "我",
+            "time": "13:10",
+            "text": "收到，我算好成本周四前发你。"
+          },
+          {
+            "sender": "Peggy",
+            "time": "13:11",
+            "text": "好的，谢谢！"
+          }
+        ]
+      }
+    },
+    {
+      "item_id": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+      "ref": "d1-05",
+      "t": "2026-11-09T16:00:00+08:00",
+      "kind": "meeting_online",
+      "source_app": "腾讯会议",
+      "persons": [
+        "p_wilson",
+        "p_owner",
+        "p_xu",
+        "p_he"
+      ],
+      "events": [
+        "ev_nanan_po2611"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 11610,
+          "person_id": "p_wilson",
+          "text": "Yun，PO-2611这边，我们门店反馈碗卖得很快，想加200套，总数到3200，还能不能同一个柜走？"
+        },
+        {
+          "start_ms": 12010,
+          "end_ms": 20050,
+          "person_id": "p_owner",
+          "text": "40尺高柜装3200套应该装得下，我得先问许厂长产能，明天给你答复。"
+        },
+        {
+          "start_ms": 20450,
+          "end_ms": 26180,
+          "person_id": "p_wilson",
+          "text": "好。验货我们还是按周四12号上午，贺工去工厂。"
+        },
+        {
+          "start_ms": 26580,
+          "end_ms": 29370,
+          "person_id": "p_owner",
+          "text": "没问题，周四上午。"
+        },
+        {
+          "start_ms": 29770,
+          "end_ms": 34870,
+          "person_id": "p_wilson",
+          "text": "尾款还是按合同，提单出来之前付清70%。"
+        },
+        {
+          "start_ms": 35270,
+          "end_ms": 39530,
+          "person_id": "p_owner",
+          "text": "对，30%的定金我们已经收到了。"
+        }
+      ]
+    },
+    {
+      "item_id": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+      "ref": "d1-06",
+      "t": "2026-11-09T16:50:00+08:00",
+      "kind": "image",
+      "source_app": "微信",
+      "persons": [
+        "p_wilson",
+        "p_xu",
+        "p_owner"
+      ],
+      "events": [
+        "ev_wuqing_samples"
+      ],
+      "image": {
+        "style": "generic_im",
+        "chat_title": "Wilson 南岸",
+        "self_sender": "我",
+        "messages": [
+          {
+            "sender": "Wilson",
+            "time": "16:41",
+            "text": "刚才忘了说，我们春季目录要拍一款新马克杯。"
+          },
+          {
+            "sender": "Wilson",
+            "time": "16:42",
+            "text": "能不能请许厂长做6个样品？雾青哑光釉，350ml，竹柄。"
+          },
+          {
+            "sender": "Wilson",
+            "time": "16:44",
+            "text": "20号前要到新加坡，21号拍照。"
+          },
+          {
+            "sender": "我",
+            "time": "16:50",
+            "text": "我明天去厂里当面跟许厂长说，看釉色要不要先打试片。"
+          }
+        ]
+      }
+    },
+    {
+      "item_id": "25438cfa-edc4-57ae-ae89-6272f7181821",
+      "ref": "d1-07",
+      "t": "2026-11-09T20:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_bro",
+        "p_dad",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "duration_ms": 18000,
+      "text": "哥，医生说爸周三上午可以出院，你那天能不能请半天假开车去接？我周三上午要在厂里盯包装。出院手续我明天下午先去护士站问清楚。"
+    },
+    {
+      "item_id": "e3558998-2358-5a9b-ab56-ad371183c28c",
+      "ref": "d1-08",
+      "t": "2026-11-09T21:10:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [],
+      "events": [],
+      "tags": [
+        "noise"
+      ],
+      "text": "【青枫里物业】各位业主：本周四（11月12日）9:00-15:00二期3、5、7栋停水检修，请提前储水。给您带来不便，敬请谅解。"
+    },
+    {
+      "item_id": "df4f0be7-27e2-576f-9775-f001da7ed36d",
+      "ref": "d2-01",
+      "t": "2026-11-10T08:20:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_xu",
+        "p_owner",
+        "p_wilson",
+        "p_feng"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples",
+        "ev_q3_rebate"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 8040,
+          "person_id": "p_xu",
+          "text": "芸，跟你说个事，2号窑的热电偶昨晚坏了，最后一窑要推到周三晚上才出。"
+        },
+        {
+          "start_ms": 8440,
+          "end_ms": 14170,
+          "person_id": "p_owner",
+          "text": "那黄生要加的200套呢？他想总数加到3200。"
+        },
+        {
+          "start_ms": 14570,
+          "end_ms": 25130,
+          "person_id": "p_xu",
+          "text": "200套能做，跟这窑一起烧，不过包装要到周四，验货周四上午肯定来不及，周五13号上午比较稳。"
+        },
+        {
+          "start_ms": 25530,
+          "end_ms": 34830,
+          "person_id": "p_owner",
+          "text": "行，我跟他说改周五。另外他春季目录要6个雾青哑光的马克杯样品，竹柄，350毫升。"
+        },
+        {
+          "start_ms": 35230,
+          "end_ms": 45160,
+          "person_id": "p_xu",
+          "text": "雾青我们上次调过，今天先打个试片，没问题的话周五跟那窑一起烧，周六14号上午能出样品。"
+        },
+        {
+          "start_ms": 45560,
+          "end_ms": 51500,
+          "person_id": "p_owner",
+          "text": "好。还有8月的进项发票，冯会计在催，周五之前要。"
+        },
+        {
+          "start_ms": 51900,
+          "end_ms": 57210,
+          "person_id": "p_xu",
+          "text": "我让我们会计明天开，开好了电子版直接发你。"
+        }
+      ]
+    },
+    {
+      "item_id": "538ba357-588a-5835-8bf4-35dab69ce5eb",
+      "ref": "d2-02",
+      "t": "2026-11-10T09:30:00+08:00",
+      "kind": "text",
+      "source_app": "邮件",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim"
+      ],
+      "text": "发件人：Peggy Mok\n主题：MB-0915 破损\nYun，你好。9月发来的MB-0915那批8寸盘上周到店，开箱发现600个里有42个碎了，照片在附件。按单价4.60美元算，一共193.20美元，希望退款或者在账上抵扣。另外外箱有几个明显压扁了。\nPeggy"
+    },
+    {
+      "item_id": "bc13aee7-6cc8-5fde-a33e-f04a8aa4eff9",
+      "ref": "d2-03",
+      "t": "2026-11-10T10:05:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_wilson",
+        "p_xu",
+        "p_he",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples"
+      ],
+      "duration_ms": 27000,
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "Wilson，早。工厂2号窑出了点故障，最后一窑周三晚上才出，加的200套可以做，但要周四才能包完，验货能不能改到周五13号上午？到时候我在厂里陪贺工。雾青杯子许厂长今天打试片，周六14号能出样品，赶得上20号到新加坡。"
+    },
+    {
+      "item_id": "f59fd6e7-5510-5366-ba25-dd686b963a90",
+      "ref": "d2-04",
+      "t": "2026-11-10T11:30:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_wilson",
+        "p_he",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "Wilson：OK，验货改周五13号上午，我这边通知贺工。PO改成3200套，更新的PO下午发你邮箱。样品出来了直接快递到我办公室，地址还是上次那个。"
+    },
+    {
+      "item_id": "cf9562cc-5bcd-526d-9a33-63c7301964f3",
+      "ref": "d2-05",
+      "t": "2026-11-10T12:40:00+08:00",
+      "kind": "dictation",
+      "source_app": "备忘录",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [],
+      "duration_ms": 9000,
+      "tags": [
+        "noise"
+      ],
+      "text": "提醒一下，周末去宠物店买猫砂和冻干，豆豆的驱虫药也快没了。"
+    },
+    {
+      "item_id": "44efbc09-2e97-5b24-82b0-f89308b69c21",
+      "ref": "d2-06",
+      "t": "2026-11-10T14:10:00+08:00",
+      "kind": "document",
+      "source_app": "Finder",
+      "persons": [
+        "p_wilson",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611"
+      ],
+      "text": "采购订单 PURCHASE ORDER  PO-2611（第2版）\n买方：南岸家居（新加坡）有限公司  采购联系人：黄立伟\n卖方：禾田器物贸易有限公司  联系人：程芸\n品名：石器餐具四件套（碗、汤盘、平盘、杯）  釉色：燕麦白\n数量：3200套（原3000套，2026-11-10修订）\n单价：USD 9.60/套  FOB宁波   总额：USD 30,720.00\n付款：30%定金（已收）；70%尾款于提单签发前付清\n交期：不晚于2026-11-24离港\n验货：出货前第三方验货，AQL 2.5",
+      "filename": "南岸家居_PO-2611_rev2.pdf"
+    },
+    {
+      "item_id": "87619ad1-1153-5e01-96fc-234eb83ab9fd",
+      "ref": "d2-07",
+      "t": "2026-11-10T15:30:00+08:00",
+      "kind": "text",
+      "source_app": "Claude",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim",
+        "ev_peggy_quote"
+      ],
+      "tags": [
+        "agent_result",
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "下面是给 Peggy 的回复草稿（中文，可直接发）：\n\nPeggy 你好，\n非常抱歉 MB-0915 这批8寸盘有42个破损。我们会先核对出货装箱照片和货代的运输记录，尽快给你确定的处理方案：全额退款193.20美元，或者在下一单里抵扣，由你选择。\n另外，你新询价的那批燕麦白平盘，我们会改用双层瓦楞外箱加隔板，避免再出现压损。\n程芸"
+    },
+    {
+      "item_id": "cfc41248-0176-512b-b648-020a546f215c",
+      "ref": "d2-08",
+      "t": "2026-11-10T19:00:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_mom",
+        "p_bro",
+        "p_dad",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "text": "周秀琴：护士说爸明天早上再抽一次血，炎症指标要是还高，出院可能要晚一天。\n程磊：那我周三周四两天都请了假，哪天出院我都能去接。\n我：好，辛苦哥。明早抽血结果出来妈在群里说一声。"
+    },
+    {
+      "item_id": "24f8ce66-1669-5bd0-8eda-6c9f6e7b25cc",
+      "ref": "d2-09",
+      "t": "2026-11-10T22:05:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_xu",
+        "p_owner",
+        "p_wilson"
+      ],
+      "events": [
+        "ev_wuqing_samples"
+      ],
+      "text": "许厂长：雾青试片烧出来了，比上次偏灰一点，我把氧化铁减了0.3，周五那窑直接烧样品，你看行不行？\n我：行，按你调的来，颜色拍张照我先发Wilson看看。"
+    },
+    {
+      "item_id": "0788d4de-0737-553f-a6c9-e1cbc0ba3555",
+      "ref": "d3-01",
+      "t": "2026-11-11T08:00:00+08:00",
+      "kind": "text",
+      "source_app": "浏览器",
+      "persons": [],
+      "events": [],
+      "tags": [
+        "noise"
+      ],
+      "text": "【航运周报·第45周】本周远东至东南亚航线即期运价环比下跌4.2%，远东至澳新航线基本持平；多家船公司宣布12月起征收旺季附加费。分析认为年底前舱位整体偏宽松，但个别热门航次仍可能出现甩柜。"
+    },
+    {
+      "item_id": "712422c1-12a1-58ae-948b-c33bcf13f69d",
+      "ref": "d3-02",
+      "t": "2026-11-11T10:40:00+08:00",
+      "kind": "image",
+      "source_app": "微信",
+      "persons": [
+        "p_mom",
+        "p_bro",
+        "p_owner",
+        "p_dad",
+        "p_meng"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "image": {
+        "style": "generic_im",
+        "chat_title": "程家一家人",
+        "self_sender": "我",
+        "messages": [
+          {
+            "sender": "妈",
+            "time": "10:21",
+            "text": "抽血结果出来了，指标还有一点高，医生说再观察一天。"
+          },
+          {
+            "sender": "哥",
+            "time": "10:24",
+            "text": "改到明天（周四）上午出院了，我九点到医院。"
+          },
+          {
+            "sender": "我",
+            "time": "10:30",
+            "text": "好，我明天也过去，孟老师说出院那天会来讲康复的事。"
+          },
+          {
+            "sender": "妈",
+            "time": "10:31",
+            "text": "那你带件厚外套给你爸。"
+          }
+        ]
+      }
+    },
+    {
+      "item_id": "1fb07450-1637-5a43-8bff-4c477a2270a8",
+      "ref": "d3-03",
+      "t": "2026-11-11T11:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "企业微信",
+      "persons": [
+        "p_tang",
+        "p_peggy",
+        "p_deng",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim"
+      ],
+      "duration_ms": 24000,
+      "text": "小唐，Peggy那个MB-0915的破损，你查一下出货那天的装箱照片和阿强那边的运输记录，看是装箱问题还是路上压的。如果是运输的问题，问问阿强货运险能不能赔。明天下班前告诉我。"
+    },
+    {
+      "item_id": "ce64f746-3d7d-5fbc-ada9-7859dc5234b2",
+      "ref": "d3-04",
+      "t": "2026-11-11T14:00:00+08:00",
+      "kind": "document",
+      "source_app": "Finder",
+      "persons": [
+        "p_tang",
+        "p_owner"
+      ],
+      "events": [
+        "ev_spring_fair"
+      ],
+      "text": "2027春季家居礼品展 参展申请表\n参展单位：禾田器物贸易有限公司    联系人：唐悦\n展位类型：标准展位（3m×3m）    数量：1\n展位费：16,000元/个；报名时缴纳定金8,000元，余款于2027年2月28日前付清\n报名截止：2026年11月16日\n展期：2027年3月18日至21日\n备注：主通道位置每个加收2,000元，与余款一并支付",
+      "filename": "2027春季家居礼品展_参展申请表.docx"
+    },
+    {
+      "item_id": "534962c6-99f6-5169-bd0e-04b4f9d22e78",
+      "ref": "d3-05",
+      "t": "2026-11-11T16:00:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_xu",
+        "p_owner"
+      ],
+      "events": [
+        "ev_q3_rebate"
+      ],
+      "text": "许厂长：芸，8月的进项发票开好了，电子版发你邮箱了，发票号尾号0452，价税合计86,400元。\n我：收到，谢谢许总。"
+    },
+    {
+      "item_id": "8da43827-7f2e-5310-89ed-74e6af408c80",
+      "ref": "d3-06",
+      "t": "2026-11-11T17:20:00+08:00",
+      "kind": "text",
+      "source_app": "ChatGPT",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_quote"
+      ],
+      "tags": [
+        "agent_result"
+      ],
+      "text": "给 Peggy 的8寸燕麦白平盘报价测算（按你给的数）：\n出厂价22.5元/个，包装（双层瓦楞+隔板）1.6元/个，内陆运输和报关摊到每个0.9元，合计25.0元；汇率按7.10，约合3.52美元。\n目标毛利20%：约4.22美元；再加港杂和银行费约3%：FOB约4.35美元。\n建议：首报留出砍价空间，报4.80美元；底线不低于4.40美元。"
+    },
+    {
+      "item_id": "3c43c87d-2e28-54b9-b002-e07b3f11674b",
+      "ref": "d3-09",
+      "t": "2026-11-11T18:30:00+08:00",
+      "kind": "text",
+      "source_app": "企业微信",
+      "persons": [
+        "p_tang",
+        "p_owner"
+      ],
+      "events": [
+        "ev_spring_fair"
+      ],
+      "text": "小唐：芸姐，参展申请表我填好了放你桌上。主通道边上的位置还剩三个，要的话得这周定。"
+    },
+    {
+      "item_id": "e225c1d9-c48c-5690-a291-ec4a474014ce",
+      "ref": "d3-07",
+      "t": "2026-11-11T21:00:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_deng",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611"
+      ],
+      "text": "强哥-货代：芸姐，南岸那票，20号的船位被船公司甩了，最早给到23号开的，截关21号中午12点。要的话今晚回我，我锁舱。"
+    },
+    {
+      "item_id": "d4948e26-f8dd-53df-a66b-b593e1e03819",
+      "ref": "d3-08",
+      "t": "2026-11-11T21:15:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_deng",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611"
+      ],
+      "duration_ms": 15000,
+      "text": "强哥，23号那班可以，锁吧，一个40尺高柜。我们21号上午在厂里装柜，中午前肯定进港。"
+    },
+    {
+      "item_id": "7804b6c8-c94f-5d4c-8a75-db2e14864c55",
+      "ref": "d4-01",
+      "t": "2026-11-12T09:40:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_meng",
+        "p_dad",
+        "p_bro",
+        "p_mom",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 8250,
+          "person_id": "p_meng",
+          "text": "程叔叔今天出院，回家以后每天练屈膝和直腿抬高，一天三次，每次十五分钟。"
+        },
+        {
+          "start_ms": 8650,
+          "end_ms": 11230,
+          "person_id": "p_dad",
+          "text": "膝盖还是有点胀。"
+        },
+        {
+          "start_ms": 11630,
+          "end_ms": 23450,
+          "person_id": "p_meng",
+          "text": "胀是正常的，冰敷二十分钟就好。门诊康复我给你们约在社区医院，每周二、周四下午两点，第一次是下周二17号。"
+        },
+        {
+          "start_ms": 23850,
+          "end_ms": 27690,
+          "person_id": "p_bro",
+          "text": "周二我送，周四我单位走不开。"
+        },
+        {
+          "start_ms": 28090,
+          "end_ms": 30670,
+          "person_id": "p_owner",
+          "text": "周四那次我来送。"
+        },
+        {
+          "start_ms": 31070,
+          "end_ms": 34700,
+          "person_id": "p_mom",
+          "text": "家里卫生间要不要装个扶手？"
+        },
+        {
+          "start_ms": 35100,
+          "end_ms": 41670,
+          "person_id": "p_meng",
+          "text": "最好装一个马桶扶手，再备一个助行器，这两周走路都要用。"
+        }
+      ]
+    },
+    {
+      "item_id": "1cc73a4f-0021-599f-a7f2-ada0aa6e5150",
+      "ref": "d4-02",
+      "t": "2026-11-12T11:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "邮件",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_quote",
+        "ev_peggy_claim"
+      ],
+      "duration_ms": 31000,
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "Hi Peggy，8寸燕麦白平盘1800个的报价：FOB宁波每个4.80美元，含双层瓦楞外箱加隔板包装，下单后45天交货，2月中可以到墨尔本，报价有效期到11月30日。MB-0915破损的事我们在查，明天给你答复。程芸"
+    },
+    {
+      "item_id": "4374b76e-e718-53bb-a7f4-7e0a5f64b232",
+      "ref": "d4-03",
+      "t": "2026-11-12T12:30:00+08:00",
+      "kind": "document",
+      "source_app": "Finder",
+      "persons": [
+        "p_dad",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "text": "出院小结\n姓名：程建华  性别：男  年龄：71岁\n入院日期：2026-11-05  出院日期：2026-11-12\n诊断：右膝骨关节炎；11月6日行右侧全膝关节置换术\n出院医嘱：1. 按康复计划进行功能锻炼；2. 术后两周（11月20日）骨科门诊复查、拆线；3. 助行器辅助行走；4. 切口红肿渗液或发热请及时就诊。",
+      "filename": "出院小结_程建华.pdf"
+    },
+    {
+      "item_id": "a7c39f58-691f-580b-a35d-a1b44e9660b4",
+      "ref": "d4-04",
+      "t": "2026-11-12T15:00:00+08:00",
+      "kind": "text",
+      "source_app": "企业微信",
+      "persons": [
+        "p_tang",
+        "p_deng",
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim"
+      ],
+      "text": "小唐：芸姐，查了。MB-0915出货照片里外箱都是完好的，货代签收单上也没有异常，应该是在墨尔本那边转运时压的。阿强说这票买了货运险，破损可以报案理赔，要莫小姐提供开箱照片和破损清单，大概两到三周能赔下来。"
+    },
+    {
+      "item_id": "f460cdac-36bf-5486-bffd-9a4a5bf1947e",
+      "ref": "d4-05",
+      "t": "2026-11-12T16:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "企业微信",
+      "persons": [
+        "p_tang",
+        "p_deng",
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_spring_fair",
+        "ev_peggy_claim"
+      ],
+      "duration_ms": 21000,
+      "tags": [
+        "multi_label"
+      ],
+      "text": "小唐，展位就定一个标准展位，主通道要是还有位置就加那两千。定金八千你今天走公账付掉，付完把回执发我。另外Peggy那票的保险理赔，你先跟阿强把报案材料准备起来。"
+    },
+    {
+      "item_id": "c9e4f102-82cf-5300-a6f2-03c52aee56f3",
+      "ref": "d4-06",
+      "t": "2026-11-12T17:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_feng",
+        "p_xu",
+        "p_owner"
+      ],
+      "events": [
+        "ev_q3_rebate"
+      ],
+      "duration_ms": 14000,
+      "text": "冯姐，许总的8月进项发票和3371那票的报关单退税联，我刚才都发你邮箱了，你看看还缺什么。"
+    },
+    {
+      "item_id": "951c244b-a8b5-50bb-8dd5-39116519ae3e",
+      "ref": "d4-07",
+      "t": "2026-11-12T20:10:00+08:00",
+      "kind": "text",
+      "source_app": "Claude",
+      "persons": [
+        "p_dad",
+        "p_meng",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "tags": [
+        "agent_result"
+      ],
+      "text": "根据你说的情况（父亲右膝置换术后，11月12日出院，每周二、四下午去社区医院康复），第一周在家可以这样安排：\n1. 屈膝、直腿抬高每天3次，每次15分钟，按治疗师的要求来，不要自己加量；\n2. 练完冰敷15到20分钟消肿；\n3. 卫生间装马桶扶手、地面铺防滑垫，走路全程用助行器；\n4. 小腿明显肿痛、发热超过38.5℃要及时回医院。\n以上是一般性建议，具体以孟治疗师和主刀医生的医嘱为准。"
+    },
+    {
+      "item_id": "ee4364e4-ab1c-52a6-882a-fce4470671f4",
+      "ref": "d4-08",
+      "t": "2026-11-12T21:30:00+08:00",
+      "kind": "text",
+      "source_app": "ChatGPT",
+      "persons": [],
+      "events": [],
+      "tags": [
+        "noise",
+        "agent_result"
+      ],
+      "text": "给海外客户的新年贺卡祝福语（中英对照）：\n1. 愿新的一年生意兴隆——Wishing you a prosperous New Year.\n2. 感谢一年来的信任与合作——Thank you for your trust and partnership this year.\n3. 期待来年继续携手——Looking forward to working together in the year ahead."
+    },
+    {
+      "item_id": "6263703c-de5e-52d8-bae3-5566124f41f6",
+      "ref": "d5-01",
+      "t": "2026-11-13T09:30:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_he",
+        "p_xu",
+        "p_owner",
+        "p_wilson"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 10770,
+          "person_id": "p_he",
+          "text": "程总，按AQL 2.5抽了315套，4套釉面针孔，2套口沿缺角，都在允收范围内，这批验货通过。"
+        },
+        {
+          "start_ms": 11170,
+          "end_ms": 14170,
+          "person_id": "p_owner",
+          "text": "好，报告什么时候出？"
+        },
+        {
+          "start_ms": 14570,
+          "end_ms": 18830,
+          "person_id": "p_he",
+          "text": "今天晚上发给黄立伟那边，抄送您。"
+        },
+        {
+          "start_ms": 19230,
+          "end_ms": 26640,
+          "person_id": "p_xu",
+          "text": "不合格那6套我今天就换掉。样品那窑也点火了，明天上午九点出窑。"
+        },
+        {
+          "start_ms": 27040,
+          "end_ms": 31720,
+          "person_id": "p_owner",
+          "text": "出窑拍照给我，我明天中午之前寄出去。"
+        },
+        {
+          "start_ms": 32120,
+          "end_ms": 39320,
+          "person_id": "p_he",
+          "text": "箱唛我也看了，PO号和数量都对得上，3200套一共400箱。"
+        }
+      ]
+    },
+    {
+      "item_id": "88bc7056-1295-5b3f-b3ab-2478f87e3038",
+      "ref": "d5-02",
+      "t": "2026-11-13T11:00:00+08:00",
+      "kind": "text",
+      "source_app": "企业微信",
+      "persons": [
+        "p_tang",
+        "p_owner"
+      ],
+      "events": [
+        "ev_spring_fair"
+      ],
+      "text": "小唐：芸姐，展位定金8000昨天下午已经付了，今天收到主办方确认，展位号C2-17，在主通道边上，加的2000跟余款一起付。"
+    },
+    {
+      "item_id": "8062f82d-dede-5094-b0ec-1d6ed1c463b5",
+      "ref": "d5-03",
+      "t": "2026-11-13T14:00:00+08:00",
+      "kind": "meeting_online",
+      "source_app": "腾讯会议",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_quote",
+        "ev_peggy_claim"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 9090,
+          "person_id": "p_peggy",
+          "text": "Yun，报价我看了，4.80有点高，今年澳洲那边运费涨了，我这边最多4.30。"
+        },
+        {
+          "start_ms": 9490,
+          "end_ms": 20260,
+          "person_id": "p_owner",
+          "text": "4.30低于我们的成本线了。如果数量能到2000个，我可以再让一点，周一16号之前给你最终价。"
+        },
+        {
+          "start_ms": 20660,
+          "end_ms": 26810,
+          "person_id": "p_peggy",
+          "text": "好，2000个也可以考虑。那破损的42个怎么处理？"
+        },
+        {
+          "start_ms": 27210,
+          "end_ms": 43860,
+          "person_id": "p_owner",
+          "text": "查过了，是转运途中压的，我们买了货运险。你把开箱照片和破损清单发给我，我先全额退你193.20美元，下周三18号之前打到你账上，保险那边我们自己去赔。"
+        },
+        {
+          "start_ms": 44260,
+          "end_ms": 48100,
+          "person_id": "p_peggy",
+          "text": "那太好了，今晚就把清单发你。"
+        }
+      ]
+    },
+    {
+      "item_id": "167412fd-1e7d-588c-99e9-3a0ee70db3fb",
+      "ref": "d5-04",
+      "t": "2026-11-13T15:10:00+08:00",
+      "kind": "image",
+      "source_app": "微信",
+      "persons": [
+        "p_wilson",
+        "p_he",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "image": {
+        "style": "generic_im",
+        "chat_title": "Wilson 南岸",
+        "self_sender": "我",
+        "messages": [
+          {
+            "sender": "我",
+            "time": "14:52",
+            "text": "Wilson，验货通过了，贺工晚上把报告发你。"
+          },
+          {
+            "sender": "Wilson",
+            "time": "14:58",
+            "text": "Great，辛苦！尾款70%我周一16号安排付。"
+          },
+          {
+            "sender": "我",
+            "time": "15:00",
+            "text": "好的。船期改到23号开，21号上午装柜。"
+          },
+          {
+            "sender": "Wilson",
+            "time": "15:03",
+            "text": "OK。杯子样品明天能寄出吗？拍照是21号。"
+          },
+          {
+            "sender": "我",
+            "time": "15:05",
+            "text": "明早出窑，中午前寄。"
+          }
+        ]
+      }
+    },
+    {
+      "item_id": "b1c5c4da-fbd8-5037-9ba5-5fc76c126cbb",
+      "ref": "d5-05",
+      "t": "2026-11-13T16:30:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_tang",
+        "p_deng",
+        "p_peggy",
+        "p_xu",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim",
+        "ev_nanan_po2611"
+      ],
+      "tags": [
+        "multi_label"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 8250,
+          "person_id": "p_tang",
+          "text": "芸姐，Peggy那票保险报案，邓经理说要破损清单、开箱照片和原始发票。"
+        },
+        {
+          "start_ms": 8650,
+          "end_ms": 16480,
+          "person_id": "p_owner",
+          "text": "发票你从系统里导出来。清单Peggy说今晚发，到了你就跟阿强报案。"
+        },
+        {
+          "start_ms": 16880,
+          "end_ms": 23240,
+          "person_id": "p_tang",
+          "text": "好。还有南岸21号装柜，要不要叫老许那边多派两个人？"
+        },
+        {
+          "start_ms": 23640,
+          "end_ms": 30210,
+          "person_id": "p_owner",
+          "text": "我明天跟老许说。截关是21号中午，装完柜你跟车去码头。"
+        },
+        {
+          "start_ms": 30610,
+          "end_ms": 34450,
+          "person_id": "p_tang",
+          "text": "行，我跟阿强对一下进港时间。"
+        }
+      ]
+    },
+    {
+      "item_id": "0edf3ae3-c507-51bd-82a2-10482be7ee1a",
+      "ref": "d5-06",
+      "t": "2026-11-13T18:10:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_feng",
+        "p_owner"
+      ],
+      "events": [
+        "ev_q3_rebate"
+      ],
+      "text": "冯姐：芸，三季度退税今天下午已经申报了，这期退税额11,232元，一般二十个工作日左右到账，到了我跟你说。"
+    },
+    {
+      "item_id": "dc2c8a42-0c5e-5a22-a2a7-a5b568f61a63",
+      "ref": "d6-01",
+      "t": "2026-11-14T09:40:00+08:00",
+      "kind": "dictation",
+      "source_app": "备忘录",
+      "persons": [
+        "p_dad",
+        "p_bro",
+        "p_owner"
+      ],
+      "events": [
+        "ev_dad_knee"
+      ],
+      "duration_ms": 24000,
+      "text": "周六：给爸买的助行器和马桶扶手已经下单了，明天上午送到家，哥说他下午去装。下周二第一次康复哥送，周四那次我送，记得把那天下午空出来。"
+    },
+    {
+      "item_id": "9207dcfb-64b9-5f20-a404-70cf700c27a4",
+      "ref": "d6-02",
+      "t": "2026-11-14T12:10:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_wilson",
+        "p_owner"
+      ],
+      "events": [
+        "ev_wuqing_samples"
+      ],
+      "duration_ms": 20000,
+      "text": "Wilson，6个雾青杯样品刚寄出了，运单号7730 2291 0456，预计周三18号到你办公室，颜色比上次试片暖一点，照片我发你了。"
+    },
+    {
+      "item_id": "6d398915-008d-563c-9601-f3f4dcbad4ed",
+      "ref": "d6-03",
+      "t": "2026-11-14T15:00:00+08:00",
+      "kind": "text",
+      "source_app": "邮件",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_claim",
+        "ev_peggy_quote"
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "发件人：Peggy Mok\n主题：Re: MB-0915 破损\nYun，破损清单和开箱照片都在附件里了，一共42个，跟之前说的一样。退款到账跟我说一声。另外新单如果做2000个，我等你周一的价格。\nPeggy"
+    },
+    {
+      "item_id": "a1328b1c-3f3f-5198-9c36-fc649b75e402",
+      "ref": "d6-04",
+      "t": "2026-11-14T16:00:00+08:00",
+      "kind": "text",
+      "source_app": "Claude",
+      "persons": [
+        "p_wilson",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611"
+      ],
+      "tags": [
+        "agent_result"
+      ],
+      "text": "装运通知（Shipping Advice）草稿：\n致：南岸家居 黄立伟先生\n订单号：PO-2611；货物：石器餐具四件套3200套，共400箱；\n柜型：40尺高柜×1；装柜日期：2026年11月21日；预计离港：2026年11月23日；\n请于提单签发前安排支付70%尾款 USD 21,504.00。\n装柜当天我们会提供装柜照片。"
+    },
+    {
+      "item_id": "c3ea9950-fe3c-54d7-a83e-30c1b80016fa",
+      "ref": "d6-05",
+      "t": "2026-11-14T20:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "备忘录",
+      "persons": [
+        "p_peggy",
+        "p_owner"
+      ],
+      "events": [
+        "ev_peggy_quote"
+      ],
+      "duration_ms": 12000,
+      "text": "Peggy那单想好了：2000个起给4.55美元，1800个还是4.80，周一上午发给她。"
+    },
+    {
+      "item_id": "3a6ad26d-c335-599c-b6b3-dcb75c126dc5",
+      "ref": "d7-01",
+      "t": "2026-11-15T21:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "备忘录",
+      "persons": [
+        "p_wilson",
+        "p_peggy",
+        "p_tang",
+        "p_dad",
+        "p_bro",
+        "p_owner"
+      ],
+      "events": [
+        "ev_nanan_po2611",
+        "ev_wuqing_samples",
+        "ev_peggy_claim",
+        "ev_dad_knee"
+      ],
+      "duration_ms": 42000,
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ],
+      "text": "这周复盘一下：南岸那单验货过了，23号开船，21号上午装柜，Wilson说明天付尾款；雾青样品昨天寄了，周三到。Peggy的193.20美元周三前退给她，保险小唐在报。爸后天第一次康复，哥送，周四那次我送。"
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "f1_add200_pending",
+      "event_id": "ev_nanan_po2611",
+      "text": "Wilson想加200套、总数到3200套，待工厂确认",
+      "keys": [
+        "3200"
+      ],
+      "valid_from": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+      "superseded_by": "f1_qty_3200",
+      "state": "in_progress"
+    },
+    {
+      "fact_id": "f1_qc_1112",
+      "event_id": "ev_nanan_po2611",
+      "text": "验货定在11月12日上午",
+      "keys": [
+        "验货|质检",
+        "11月12日"
+      ],
+      "valid_from": "a734ca8b-e5b6-5dda-ac97-8a9a587cf356",
+      "superseded_by": "f1_qc_1113",
+      "state": "planned",
+      "date": "2026-11-12"
+    },
+    {
+      "fact_id": "f1_etd_1120",
+      "event_id": "ev_nanan_po2611",
+      "text": "订舱先按11月20日那班船留位",
+      "keys": [
+        "11月20日"
+      ],
+      "valid_from": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+      "superseded_by": "f1_etd_1123",
+      "state": "planned",
+      "date": "2026-11-20"
+    },
+    {
+      "fact_id": "f1_qty_3200",
+      "event_id": "ev_nanan_po2611",
+      "text": "PO-2611改为3200套（原3000套）",
+      "keys": [
+        "3200"
+      ],
+      "valid_from": "f59fd6e7-5510-5366-ba25-dd686b963a90",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f1_qc_1113",
+      "event_id": "ev_nanan_po2611",
+      "text": "验货改到11月13日上午",
+      "keys": [
+        "验货|质检",
+        "11月13日"
+      ],
+      "valid_from": "f59fd6e7-5510-5366-ba25-dd686b963a90",
+      "superseded_by": "f1_qc_passed",
+      "state": "planned",
+      "date": "2026-11-13"
+    },
+    {
+      "fact_id": "f1_etd_1123",
+      "event_id": "ev_nanan_po2611",
+      "text": "船期改为11月23日开船（截关11月21日中午）",
+      "keys": [
+        "11月23日"
+      ],
+      "valid_from": "d4948e26-f8dd-53df-a66b-b593e1e03819",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-23"
+    },
+    {
+      "fact_id": "f1_loading_1121",
+      "event_id": "ev_nanan_po2611",
+      "text": "11月21日上午在厂里装柜",
+      "keys": [
+        "装柜",
+        "11月21日"
+      ],
+      "valid_from": "d4948e26-f8dd-53df-a66b-b593e1e03819",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-21"
+    },
+    {
+      "fact_id": "f1_qc_passed",
+      "event_id": "ev_nanan_po2611",
+      "text": "11月13日验货通过（AQL 2.5）",
+      "keys": [
+        "验货|质检",
+        "通过|合格"
+      ],
+      "valid_from": "6263703c-de5e-52d8-bae3-5566124f41f6",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f1_balance_1116",
+      "event_id": "ev_nanan_po2611",
+      "text": "Wilson在11月16日安排付70%尾款",
+      "keys": [
+        "尾款",
+        "11月16日"
+      ],
+      "valid_from": "167412fd-1e7d-588c-99e9-3a0ee70db3fb",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-16"
+    },
+    {
+      "fact_id": "f2_request",
+      "event_id": "ev_wuqing_samples",
+      "text": "要6个雾青哑光釉350ml竹柄马克杯样品",
+      "keys": [
+        "雾青",
+        "样品"
+      ],
+      "valid_from": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f2_need_1120",
+      "event_id": "ev_wuqing_samples",
+      "text": "样品11月20日前到新加坡（21日拍照）",
+      "keys": [
+        "11月20日"
+      ],
+      "valid_from": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-20"
+    },
+    {
+      "fact_id": "f2_ready_1114",
+      "event_id": "ev_wuqing_samples",
+      "text": "样品11月14日上午出窑",
+      "keys": [
+        "11月14日"
+      ],
+      "valid_from": "df4f0be7-27e2-576f-9775-f001da7ed36d",
+      "superseded_by": "f2_shipped",
+      "state": "planned",
+      "date": "2026-11-14"
+    },
+    {
+      "fact_id": "f2_shipped",
+      "event_id": "ev_wuqing_samples",
+      "text": "11月14日样品已寄出",
+      "keys": [
+        "寄出|已寄|寄了|发出"
+      ],
+      "valid_from": "9207dcfb-64b9-5f20-a404-70cf700c27a4",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f2_eta_1118",
+      "event_id": "ev_wuqing_samples",
+      "text": "样品预计11月18日到Wilson办公室",
+      "keys": [
+        "11月18日"
+      ],
+      "valid_from": "9207dcfb-64b9-5f20-a404-70cf700c27a4",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-18"
+    },
+    {
+      "fact_id": "f3_request",
+      "event_id": "ev_peggy_quote",
+      "text": "Peggy询价8寸燕麦白平盘1800个",
+      "keys": [
+        "1800"
+      ],
+      "valid_from": "b955ce07-234a-560b-89e5-43ab21ca0f53",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f3_due_1113",
+      "event_id": "ev_peggy_quote",
+      "text": "11月13日前给Peggy报价",
+      "keys": [
+        "报价",
+        "11月13日"
+      ],
+      "valid_from": "b955ce07-234a-560b-89e5-43ab21ca0f53",
+      "superseded_by": "f3_quote_480",
+      "state": "planned",
+      "date": "2026-11-13"
+    },
+    {
+      "fact_id": "f3_quote_480",
+      "event_id": "ev_peggy_quote",
+      "text": "已报价FOB每个4.80美元",
+      "keys": [
+        "4.80|4.8"
+      ],
+      "valid_from": "1cc73a4f-0021-599f-a7f2-ada0aa6e5150",
+      "superseded_by": "f3_final_455",
+      "state": "done"
+    },
+    {
+      "fact_id": "f3_counter_430",
+      "event_id": "ev_peggy_quote",
+      "text": "Peggy还价每个4.30美元",
+      "keys": [
+        "4.30|4.3"
+      ],
+      "valid_from": "8062f82d-dede-5094-b0ec-1d6ed1c463b5",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f3_final_by_1116",
+      "event_id": "ev_peggy_quote",
+      "text": "11月16日前给Peggy最终价（数量到2000个可再让）",
+      "keys": [
+        "11月16日"
+      ],
+      "valid_from": "8062f82d-dede-5094-b0ec-1d6ed1c463b5",
+      "superseded_by": "f3_final_455",
+      "state": "planned",
+      "date": "2026-11-16"
+    },
+    {
+      "fact_id": "f3_final_455",
+      "event_id": "ev_peggy_quote",
+      "text": "决定11月16日回价：2000个起每个4.55美元",
+      "keys": [
+        "4.55",
+        "2000"
+      ],
+      "valid_from": "c3ea9950-fe3c-54d7-a83e-30c1b80016fa",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-16"
+    },
+    {
+      "fact_id": "f4_claim",
+      "event_id": "ev_peggy_claim",
+      "text": "MB-0915破损42个，索赔193.20美元",
+      "keys": [
+        "42",
+        "193.20|193.2"
+      ],
+      "valid_from": "538ba357-588a-5835-8bf4-35dab69ce5eb",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f4_cause",
+      "event_id": "ev_peggy_claim",
+      "text": "查明为转运途中压损，货运险可理赔",
+      "keys": [
+        "保险|货运险"
+      ],
+      "valid_from": "a7c39f58-691f-580b-a35d-a1b44e9660b4",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f4_reply_by_1113",
+      "event_id": "ev_peggy_claim",
+      "text": "11月13日给Peggy处理答复",
+      "keys": [
+        "11月13日"
+      ],
+      "valid_from": "1cc73a4f-0021-599f-a7f2-ada0aa6e5150",
+      "superseded_by": "f4_refund_1118",
+      "state": "planned",
+      "date": "2026-11-13"
+    },
+    {
+      "fact_id": "f4_refund_1118",
+      "event_id": "ev_peggy_claim",
+      "text": "先全额退款193.20美元，11月18日前到账",
+      "keys": [
+        "退",
+        "11月18日"
+      ],
+      "valid_from": "8062f82d-dede-5094-b0ec-1d6ed1c463b5",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-18"
+    },
+    {
+      "fact_id": "f4_list_received",
+      "event_id": "ev_peggy_claim",
+      "text": "Peggy已发破损清单和开箱照片",
+      "keys": [
+        "清单"
+      ],
+      "valid_from": "6d398915-008d-563c-9601-f3f4dcbad4ed",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f5_discharge_1111",
+      "event_id": "ev_dad_knee",
+      "text": "爸计划11月11日出院",
+      "keys": [
+        "出院",
+        "11月11日"
+      ],
+      "valid_from": "25438cfa-edc4-57ae-ae89-6272f7181821",
+      "superseded_by": "f5_discharge_1112",
+      "state": "planned",
+      "date": "2026-11-11"
+    },
+    {
+      "fact_id": "f5_discharge_1112",
+      "event_id": "ev_dad_knee",
+      "text": "出院改到11月12日上午",
+      "keys": [
+        "出院",
+        "11月12日"
+      ],
+      "valid_from": "712422c1-12a1-58ae-948b-c33bcf13f69d",
+      "superseded_by": "f5_discharged",
+      "state": "planned",
+      "date": "2026-11-12"
+    },
+    {
+      "fact_id": "f5_discharged",
+      "event_id": "ev_dad_knee",
+      "text": "11月12日已出院",
+      "keys": [
+        "已出院|出院了|已经出院|出院回家"
+      ],
+      "valid_from": "7804b6c8-c94f-5d4c-8a75-db2e14864c55",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f5_rehab_1117",
+      "event_id": "ev_dad_knee",
+      "text": "首次门诊康复11月17日下午两点（社区医院，每周二、四）",
+      "keys": [
+        "康复",
+        "11月17日"
+      ],
+      "valid_from": "7804b6c8-c94f-5d4c-8a75-db2e14864c55",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-17"
+    },
+    {
+      "fact_id": "f5_owner_1119",
+      "event_id": "ev_dad_knee",
+      "text": "11月19日那次康复由本人送",
+      "keys": [
+        "11月19日"
+      ],
+      "valid_from": "7804b6c8-c94f-5d4c-8a75-db2e14864c55",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-19"
+    },
+    {
+      "fact_id": "f5_followup_1120",
+      "event_id": "ev_dad_knee",
+      "text": "11月20日骨科门诊复查、拆线",
+      "keys": [
+        "复查|拆线",
+        "11月20日"
+      ],
+      "valid_from": "4374b76e-e718-53bb-a7f4-7e0a5f64b232",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-11-20"
+    },
+    {
+      "fact_id": "f5_aids",
+      "event_id": "ev_dad_knee",
+      "text": "助行器和马桶扶手已下单",
+      "keys": [
+        "助行器"
+      ],
+      "valid_from": "dc2c8a42-0c5e-5a22-a2a7-a5b568f61a63",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f6_missing",
+      "event_id": "ev_q3_rebate",
+      "text": "缺3371报关单退税联和许总8月进项发票",
+      "keys": [
+        "退税联|3371",
+        "发票"
+      ],
+      "valid_from": "72408c39-4259-54d2-bae8-edbccb9f876b",
+      "superseded_by": "f6_docs_sent",
+      "state": "info"
+    },
+    {
+      "fact_id": "f6_deadline_1113",
+      "event_id": "ev_q3_rebate",
+      "text": "11月13日中午前交材料，当天下午申报",
+      "keys": [
+        "11月13日"
+      ],
+      "valid_from": "72408c39-4259-54d2-bae8-edbccb9f876b",
+      "superseded_by": "f6_filed",
+      "state": "planned",
+      "date": "2026-11-13"
+    },
+    {
+      "fact_id": "f6_invoice_received",
+      "event_id": "ev_q3_rebate",
+      "text": "许厂长8月进项发票已开好收到",
+      "keys": [
+        "发票",
+        "开好|已开|收到|已收"
+      ],
+      "valid_from": "534962c6-99f6-5169-bd0e-04b4f9d22e78",
+      "superseded_by": "f6_docs_sent",
+      "state": "done"
+    },
+    {
+      "fact_id": "f6_docs_sent",
+      "event_id": "ev_q3_rebate",
+      "text": "发票和退税联已发给冯姐",
+      "keys": [
+        "冯姐|冯会计|会计",
+        "已发|发给|交齐|交给|已交"
+      ],
+      "valid_from": "c9e4f102-82cf-5300-a6f2-03c52aee56f3",
+      "superseded_by": "f6_filed",
+      "state": "done"
+    },
+    {
+      "fact_id": "f6_filed",
+      "event_id": "ev_q3_rebate",
+      "text": "11月13日已申报，退税额11232元",
+      "keys": [
+        "申报",
+        "11232"
+      ],
+      "valid_from": "0edf3ae3-c507-51bd-82a2-10482be7ee1a",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f7_deadline_1116",
+      "event_id": "ev_spring_fair",
+      "text": "报名11月16日截止",
+      "keys": [
+        "11月16日"
+      ],
+      "valid_from": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+      "superseded_by": "f7_deposit_paid",
+      "state": "planned",
+      "date": "2026-11-16"
+    },
+    {
+      "fact_id": "f7_one_booth",
+      "event_id": "ev_spring_fair",
+      "text": "只报一个标准展位",
+      "keys": [
+        "标准展位"
+      ],
+      "valid_from": "75f681a2-d1e7-5f43-8ae4-9ed3d70f5f5a",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f7_deposit_plan",
+      "event_id": "ev_spring_fair",
+      "text": "11月12日公账付定金8000元",
+      "keys": [
+        "定金",
+        "8000"
+      ],
+      "valid_from": "f460cdac-36bf-5486-bffd-9a4a5bf1947e",
+      "superseded_by": "f7_deposit_paid",
+      "state": "planned",
+      "date": "2026-11-12"
+    },
+    {
+      "fact_id": "f7_deposit_paid",
+      "event_id": "ev_spring_fair",
+      "text": "定金8000元已付，展位C2-17（主通道）",
+      "keys": [
+        "c2-17"
+      ],
+      "valid_from": "88bc7056-1295-5b3f-b3ab-2478f87e3038",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f7_balance_0228",
+      "event_id": "ev_spring_fair",
+      "text": "余款及主通道加价于2027年2月28日前付",
+      "keys": [
+        "2月28日"
+      ],
+      "valid_from": "88bc7056-1295-5b3f-b3ab-2478f87e3038",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2027-02-28"
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpoint_id": "cp1_mon_night",
+      "after_item_id": "e3558998-2358-5a9b-ab56-ad371183c28c",
+      "label": "周一晚",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qc_1112",
+          "f1_add200_pending",
+          "f1_etd_1120"
+        ],
+        "ev_wuqing_samples": [
+          "f2_request",
+          "f2_need_1120"
+        ],
+        "ev_peggy_quote": [
+          "f3_request",
+          "f3_due_1113"
+        ],
+        "ev_dad_knee": [
+          "f5_discharge_1111"
+        ],
+        "ev_q3_rebate": [
+          "f6_missing",
+          "f6_deadline_1113"
+        ],
+        "ev_spring_fair": [
+          "f7_deadline_1116"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 3,
+          "ev_wuqing_samples": 3,
+          "ev_peggy_quote": 2,
+          "ev_dad_knee": 3,
+          "ev_q3_rebate": 2,
+          "ev_spring_fair": 1
+        },
+        "why": {
+          "ev_nanan_po2611": "本人承诺周二答复Wilson能否加到3200套；验货在周四",
+          "ev_wuqing_samples": "本人说周二当面去厂里跟许厂长谈样品",
+          "ev_peggy_quote": "报价要在周四到周五给出，在4天内，但不是明天",
+          "ev_dad_knee": "本人周二下午去护士站办出院手续；周三出院",
+          "ev_q3_rebate": "材料周五中午截止，在4天内；本人明天无必办",
+          "ev_spring_fair": "报名11月16日截止，超过4天，由小唐填表"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp2_tue_night",
+      "after_item_id": "24f8ce66-1669-5bd0-8eda-6c9f6e7b25cc",
+      "label": "周二晚",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qty_3200",
+          "f1_qc_1113",
+          "f1_etd_1120"
+        ],
+        "ev_wuqing_samples": [
+          "f2_request",
+          "f2_ready_1114",
+          "f2_need_1120"
+        ],
+        "ev_peggy_quote": [
+          "f3_request",
+          "f3_due_1113"
+        ],
+        "ev_peggy_claim": [
+          "f4_claim"
+        ],
+        "ev_dad_knee": [
+          "f5_discharge_1111"
+        ],
+        "ev_q3_rebate": [
+          "f6_missing",
+          "f6_deadline_1113"
+        ],
+        "ev_spring_fair": [
+          "f7_deadline_1116"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 2,
+          "ev_wuqing_samples": 2,
+          "ev_peggy_quote": 2,
+          "ev_peggy_claim": 2,
+          "ev_dad_knee": 3,
+          "ev_q3_rebate": 2,
+          "ev_spring_fair": 1
+        },
+        "why": {
+          "ev_nanan_po2611": "今天改了数量和验货日期；验货周五在4天内；本人明天无必办",
+          "ev_wuqing_samples": "样品周六出窑，在4天内",
+          "ev_peggy_quote": "本人承诺周四前报价，在4天内但不是明天",
+          "ev_peggy_claim": "今天新到的索赔，Peggy在等答复，无明确日期",
+          "ev_dad_knee": "家人健康节点在明天：周三出院（可能推迟）",
+          "ev_q3_rebate": "发票周三开、材料周五中午截止，都在4天内",
+          "ev_spring_fair": "截止日11月16日距今6天"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp3_wed_night",
+      "after_item_id": "d4948e26-f8dd-53df-a66b-b593e1e03819",
+      "label": "周三晚",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qty_3200",
+          "f1_qc_1113",
+          "f1_etd_1123",
+          "f1_loading_1121"
+        ],
+        "ev_wuqing_samples": [
+          "f2_ready_1114",
+          "f2_need_1120"
+        ],
+        "ev_peggy_quote": [
+          "f3_request",
+          "f3_due_1113"
+        ],
+        "ev_peggy_claim": [
+          "f4_claim"
+        ],
+        "ev_dad_knee": [
+          "f5_discharge_1112"
+        ],
+        "ev_q3_rebate": [
+          "f6_invoice_received",
+          "f6_deadline_1113"
+        ],
+        "ev_spring_fair": [
+          "f7_deadline_1116"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 2,
+          "ev_wuqing_samples": 2,
+          "ev_peggy_quote": 3,
+          "ev_peggy_claim": 2,
+          "ev_dad_knee": 3,
+          "ev_q3_rebate": 2,
+          "ev_spring_fair": 1
+        },
+        "why": {
+          "ev_nanan_po2611": "今晚船期改为23日；验货周五（后天）在4天内；本人明天无必办",
+          "ev_wuqing_samples": "样品周六出窑，在4天内",
+          "ev_peggy_quote": "本人承诺周四前把报价发给Peggy，明天到期",
+          "ev_peggy_claim": "小唐明天下班前回报调查结果，在4天内",
+          "ev_dad_knee": "明天上午出院，本人要到医院",
+          "ev_q3_rebate": "今天收到发票；材料周五中午截止，在4天内",
+          "ev_spring_fair": "截止日11月16日距今5天，申请表只是填好待看"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp4_thu_night",
+      "after_item_id": "ee4364e4-ab1c-52a6-882a-fce4470671f4",
+      "label": "周四晚",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qty_3200",
+          "f1_qc_1113",
+          "f1_etd_1123",
+          "f1_loading_1121"
+        ],
+        "ev_wuqing_samples": [
+          "f2_ready_1114",
+          "f2_need_1120"
+        ],
+        "ev_peggy_quote": [
+          "f3_quote_480"
+        ],
+        "ev_peggy_claim": [
+          "f4_claim",
+          "f4_cause",
+          "f4_reply_by_1113"
+        ],
+        "ev_dad_knee": [
+          "f5_discharged",
+          "f5_rehab_1117",
+          "f5_followup_1120"
+        ],
+        "ev_q3_rebate": [
+          "f6_docs_sent",
+          "f6_deadline_1113"
+        ],
+        "ev_spring_fair": [
+          "f7_deposit_plan"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 3,
+          "ev_wuqing_samples": 2,
+          "ev_peggy_quote": 2,
+          "ev_peggy_claim": 3,
+          "ev_dad_knee": 2,
+          "ev_q3_rebate": 2,
+          "ev_spring_fair": 2
+        },
+        "why": {
+          "ev_nanan_po2611": "明天上午验货，本人承诺在厂里陪贺工",
+          "ev_wuqing_samples": "样品周六出窑，在4天内",
+          "ev_peggy_quote": "今天已发报价（关键节点），等Peggy回复",
+          "ev_peggy_claim": "本人对Peggy承诺明天给处理答复",
+          "ev_dad_knee": "今天出院（关键节点）；首次康复11月17日超过4天",
+          "ev_q3_rebate": "今天材料已交齐；冯姐明天申报，在4天内",
+          "ev_spring_fair": "今天安排付定金；报名截止11月16日在4天内"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp5_fri_evening",
+      "after_item_id": "0edf3ae3-c507-51bd-82a2-10482be7ee1a",
+      "label": "周五傍晚",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qc_passed",
+          "f1_etd_1123",
+          "f1_loading_1121",
+          "f1_balance_1116"
+        ],
+        "ev_wuqing_samples": [
+          "f2_ready_1114",
+          "f2_need_1120"
+        ],
+        "ev_peggy_quote": [
+          "f3_quote_480",
+          "f3_counter_430",
+          "f3_final_by_1116"
+        ],
+        "ev_peggy_claim": [
+          "f4_refund_1118",
+          "f4_cause"
+        ],
+        "ev_dad_knee": [
+          "f5_discharged",
+          "f5_rehab_1117",
+          "f5_followup_1120"
+        ],
+        "ev_q3_rebate": [
+          "f6_filed"
+        ],
+        "ev_spring_fair": [
+          "f7_deposit_paid",
+          "f7_balance_0228"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 3,
+          "ev_wuqing_samples": 3,
+          "ev_peggy_quote": 2,
+          "ev_peggy_claim": 2,
+          "ev_dad_knee": 2,
+          "ev_q3_rebate": 2,
+          "ev_spring_fair": 2
+        },
+        "why": {
+          "ev_nanan_po2611": "本人说明天跟老许谈装柜加人；今天验货通过",
+          "ev_wuqing_samples": "本人承诺明天中午前寄出样品",
+          "ev_peggy_quote": "今天Peggy还价；本人承诺周一16日给最终价，在4天内",
+          "ev_peggy_claim": "今天谈妥退款，18日前到账（超过4天）；今天有关键进展",
+          "ev_dad_knee": "首次康复11月17日在4天内",
+          "ev_q3_rebate": "今天已申报（关键节点），之后只等到账",
+          "ev_spring_fair": "今天确认展位C2-17（关键节点）；余款到2月底"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp6_sun_night",
+      "after_item_id": "3a6ad26d-c335-599c-b6b3-dcb75c126dc5",
+      "label": "周日晚（最终）",
+      "expected": {
+        "ev_nanan_po2611": [
+          "f1_qc_passed",
+          "f1_etd_1123",
+          "f1_loading_1121",
+          "f1_balance_1116"
+        ],
+        "ev_wuqing_samples": [
+          "f2_shipped",
+          "f2_eta_1118"
+        ],
+        "ev_peggy_quote": [
+          "f3_counter_430",
+          "f3_final_455"
+        ],
+        "ev_peggy_claim": [
+          "f4_refund_1118",
+          "f4_list_received"
+        ],
+        "ev_dad_knee": [
+          "f5_rehab_1117",
+          "f5_owner_1119",
+          "f5_followup_1120",
+          "f5_aids"
+        ],
+        "ev_q3_rebate": [
+          "f6_filed"
+        ],
+        "ev_spring_fair": [
+          "f7_deposit_paid",
+          "f7_balance_0228"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_nanan_po2611": 2,
+          "ev_wuqing_samples": 2,
+          "ev_peggy_quote": 3,
+          "ev_peggy_claim": 2,
+          "ev_dad_knee": 2,
+          "ev_q3_rebate": 1,
+          "ev_spring_fair": 1
+        },
+        "why": {
+          "ev_nanan_po2611": "尾款明天到（Wilson付款），装柜21日；本人明天无必办",
+          "ev_wuqing_samples": "样品周三18日到，在4天内",
+          "ev_peggy_quote": "本人计划明天上午给Peggy发4.55的最终价",
+          "ev_peggy_claim": "本人要在周三18日前退款，在4天内但不是明天",
+          "ev_dad_knee": "首次康复周二17日（后天），在4天内",
+          "ev_q3_rebate": "已申报，只等约20个工作日到账，无近期节点",
+          "ev_spring_fair": "定金已付，余款到2027年2月28日"
+        }
+      }
+    }
+  ]
+}

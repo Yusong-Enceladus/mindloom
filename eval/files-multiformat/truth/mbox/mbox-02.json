@@ -1,0 +1,63 @@
+{
+ "file_id": "mbox-02",
+ "path": "corpus/mbox/mbox-02.mbox",
+ "type": "mbox",
+ "ext": "mbox",
+ "mime": "application/mbox",
+ "filename": "场地预订往来.mbox",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[message 1]\nFrom: 文心怡 <event@example.com>\nTo: 常心怡 <venue@example.com>\nDate: Mon, 05 Oct 2026 09:00:00 +0800\nSubject: 场地预订咨询\n您好，想预订一楼报告厅，11月8日下午，约60人，请问价格？\n文心怡\n[message 2]\nFrom: 常心怡 <venue@example.com>\nTo: 文心怡 <event@example.com>\nDate: Mon, 05 Oct 2026 14:10:00 +0800\nSubject: Re: 场地预订咨询\n文心怡您好，一楼报告厅半天 2400 元，含投影和音响，需付 30% 定金。\n常心怡\n[message 3]\nFrom: 文心怡 <event@example.com>\nTo: 常心怡 <venue@example.com>\nDate: Tue, 06 Oct 2026 10:00:00 +0800\nSubject: Re: Re: 场地预订咨询\n好的，确认预订，定金 720 元今天转账。\n文心怡\n（合成数据）",
+ "key_lines": [
+  "您好，想预订一楼报告厅，11月8日下午，约60人，请问价格？",
+  "文心怡您好，一楼报告厅半天 2400 元，含投影和音响，需付 30% 定金。",
+  "好的，确认预订，定金 720 元今天转账。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "场地": "一楼报告厅",
+  "价格": 2400,
+  "定金": 720,
+  "日期": "11月8日下午"
+ },
+ "numbers": [
+  {
+   "value": 2400,
+   "label": "价格"
+  },
+  {
+   "value": 720,
+   "label": "定金"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "场地半天多少钱？",
+   "a": 2400,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "定金多少元？",
+   "a": 720,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "预订的是哪个场地？",
+   "a": "一楼报告厅",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "messages": 3,
+  "attachments": []
+ },
+ "bytes": 1559,
+ "sha256": "72783da17dd924289e4d800ed26bcbc39d294f0d5e665c1c9671f9ff9c1640f6",
+ "family": "venue_thread"
+}

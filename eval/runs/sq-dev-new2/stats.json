@@ -1,0 +1,137 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 80,
+   "retried": 2,
+   "latency_median_s": 2.506,
+   "latency_p95_s": 6.286,
+   "latency_total_s": 268.3,
+   "prompt_tokens_mean": 5931.8,
+   "completion_tokens_mean": 193.7,
+   "prompt_tokens_total": 486408,
+   "completion_tokens_total": 15887,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 44,
+   "ok_first_attempt": 36,
+   "retried": 11,
+   "latency_median_s": 2.917,
+   "latency_p95_s": 7.921,
+   "latency_total_s": 293.2,
+   "prompt_tokens_mean": 4777.0,
+   "completion_tokens_mean": 283.6,
+   "prompt_tokens_total": 377381,
+   "completion_tokens_total": 22404,
+   "errors_sample": [
+    "[unsupported_completion] quote「九点进场拆吧台」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] quote「下午两点前要搬完」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「下午两点前要搬完」里有「要」，说的是计划或条件，不能标 done"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.69,
+   "latency_p95_s": 1.831,
+   "latency_total_s": 3.0,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 13.3,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 40,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 7.094,
+   "latency_p95_s": 8.744,
+   "latency_total_s": 18.5,
+   "prompt_tokens_mean": 6195.3,
+   "completion_tokens_mean": 513.7,
+   "prompt_tokens_total": 18586,
+   "completion_tokens_total": 1541,
+   "errors_sample": []
+  },
+  "merge": {
+   "calls": 12,
+   "ok": 12,
+   "ok_first_attempt": 11,
+   "retried": 1,
+   "latency_median_s": 1.697,
+   "latency_p95_s": 4.103,
+   "latency_total_s": 26.2,
+   "prompt_tokens_mean": 3217.4,
+   "completion_tokens_mean": 172,
+   "prompt_tokens_total": 38609,
+   "completion_tokens_total": 2064,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 4.756,
+   "latency_p95_s": 4.913,
+   "latency_total_s": 17.7,
+   "prompt_tokens_mean": 4971.2,
+   "completion_tokens_mean": 475.5,
+   "prompt_tokens_total": 19885,
+   "completion_tokens_total": 1902,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 2,
+   "ok_first_attempt": 1,
+   "retried": 2,
+   "latency_median_s": 2.806,
+   "latency_p95_s": 5.577,
+   "latency_total_s": 9.4,
+   "prompt_tokens_mean": 4578,
+   "completion_tokens_mean": 174.7,
+   "prompt_tokens_total": 13734,
+   "completion_tokens_total": 524,
+   "errors_sample": [
+    "segments[0].gist is wider than 20 (中文字算1)"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 68,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 65,
+  "ask": 1,
+  "none": 4,
+  "ask_suppressed": 2
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 14.5,
+ "title_chars_mean": 8.9,
+ "wall_s": 641.7,
+ "items_per_min": 7.67,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

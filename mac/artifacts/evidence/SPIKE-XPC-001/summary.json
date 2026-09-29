@@ -1,0 +1,71 @@
+{
+  "commands" : [
+    [
+      "script/run_xpc_probe.sh"
+    ]
+  ],
+  "conclusion" : "pass",
+  "criteria" : {
+    "fail" : [
+      "The protocol is implicit, timeout/cancellation commits a result, the XPC service cannot restart, capture stops, or duplicate transcript commits appear."
+    ],
+    "pass" : [
+      "Health and requests negotiate an explicit protocol version and incompatible requests fail without crashing the worker.",
+      "Cancellation and timeout produce no result commit; forced worker exit is observed and a fresh XPC process accepts replay.",
+      "The host AudioJournal keeps committing during worker failure and duplicate responses collapse by the durable idempotency key."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "versioned-health-check",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "incompatible-protocol-is-rejected",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "cancellation-is-versioned-and-terminal",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "request-timeout-invalidates-connection",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "worker-crash-restart-and-job-replay",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-XPC-001/matrix.json"
+      ],
+      "scenarioID" : "duplicate-response-collapses-by-idempotency-key",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can a versioned embedded XPC inference worker reject incompatible clients, cancel and time out requests, restart after a forced exit, and replay jobs without duplicate commits while capture continues?",
+  "runID" : "AB7D2FF1-3B0C-42B9-805F-AD7BE81F37DA",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-XPC-001",
+  "unmetCriteria" : [
+
+  ]
+}

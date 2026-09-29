@@ -1,0 +1,12 @@
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] Traceback (most recent call last):
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114]     raise CalledProcessError(self.returncode, self.args, self.stdout,
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] subprocess.CalledProcessError: Command '['/home/YOU/hack/vllm-venv/bin/python', '-m', 'vllm.model_executor.models.registry']' returned non-zero exit status 1.
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] Traceback (most recent call last):
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114]     raise RuntimeError(
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] RuntimeError: Error raised in subprocess:
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] Traceback (most recent call last):
+(APIServer pid=3289995) ERROR 09-29 15:15:45 [registry.py:1114] ImportError: cannot import name 'PixtralRotaryEmbedding' from 'transformers.models.pixtral.modeling_pixtral' (/home/YOU/hack/vllm-venv/lib/python3.12/site-packages/transformers/models/pixtral/modeling_pixtral.py). Did you mean: 'PixtralVisionRotaryEmbedding'?
+(APIServer pid=3289995) Traceback (most recent call last):
+(APIServer pid=3289995) pydantic_core._pydantic_core.ValidationError: 1 validation error for ModelConfig
+(APIServer pid=3289995)   Value error, Model architectures ['PixtralForConditionalGeneration'] failed to be inspected. Please check the logs for more details. [type=value_error, input_value=ArgsKwargs((), {'model': ...nderer_num_workers': 1}), input_type=ArgsKwargs]
+(APIServer pid=3289995)     For further information visit https://errors.pydantic.dev/2.13/v/value_error

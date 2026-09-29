@@ -1,0 +1,90 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "baseline",
+ "threshold": 0.6,
+ "llm_url": null,
+ "model": null,
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.2.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.2.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": null,
+ "git": "8ee22d7",
+ "date": "2026-09-28T02:10:29+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "baseline",
+  "--embed",
+  "url",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--threshold",
+  "0.60",
+  "--out",
+  "../out/h2-baseline-qemb"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "6cce47e5-ddd8-4dfa-a0b1-96ec68acb775",
+  "E2": "1fa94c51-b187-4c74-8652-779aaa01bdfa",
+  "E3": "28df3cf7-5224-43c2-a6f8-9ac02be2e484",
+  "E4": "00e5e02c-d4a9-4de2-877f-78b6c22afa89",
+  "E5": "50686806-3353-4add-8beb-3c38f960446b",
+  "E6": "520b042c-0776-480d-a796-16ba842a1b07",
+  "E7": "8943d23d-3cec-4863-87ab-c1552f584d9a",
+  "E8": "1e36be56-6dd7-42fe-83b8-b650c50ed004",
+  "E9": "820450a3-b8e9-450a-b690-fc08eee65ddb",
+  "E10": "7bea9487-b904-47fe-94f1-80d54ace4807",
+  "E11": "4f06fe56-ada8-4dec-9253-8e8abf46dfd3",
+  "E12": "a897e3c8-8086-4be1-abca-b18fb804c833",
+  "E13": "8f8d14ca-f744-4ef4-a8df-0d2ea9c5e978",
+  "E14": "e8af97dc-2ac3-41fb-8814-88eaa8a10663",
+  "E15": "98e585fb-706e-4388-93f7-4ab705de1a06",
+  "E16": "945f217c-9b8b-4710-82f2-ea8501a90f27",
+  "E17": "1ef2e7e8-d523-4545-8a2d-16d715c70608",
+  "E18": "aa60b066-3175-45ae-8d3f-e30b9cc0e25a",
+  "E19": "38fe82e6-8d79-430d-ab9b-cca76cfe7543",
+  "E20": "e2c92212-82b0-48fb-8cc2-adb23096d997",
+  "E21": "8ac707e5-9cf7-4074-9fdd-127578255617",
+  "E22": "e665226a-0178-4565-9519-61e03a4d616b",
+  "E23": "ab158a6d-db82-4543-9e84-4feb2e4c7c35",
+  "E24": "c67e6618-9bd5-4fdc-a8f2-9664e1014b3d",
+  "E25": "880ac854-5abf-43b7-9571-b8df0c436d05",
+  "E26": "c8f02c1f-d9ac-405e-8ed9-b6a717cb0b2a",
+  "E27": "d2de27a4-ac8c-4461-bff1-d49dbb861247",
+  "E28": "1e3ecda5-903d-4db5-8f98-68633a0e93f8",
+  "E29": "a361c6de-c8e4-4ee8-b258-5fb8350e5ab3",
+  "E30": "2663ddfb-42c6-464e-ba3c-8bd0caa2b05e"
+ },
+ "bare_max_tokens": null
+}

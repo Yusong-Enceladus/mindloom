@@ -1,0 +1,97 @@
+{
+ "id": "chat-09",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-09.png",
+ "lang": "zh",
+ "hard": [
+  "similar_names",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "d77a1b7d021944dfa419c5d90d2bdd49a8c90451aa9fba20b3959fbfeb3e534f",
+ "gt": {
+  "chat_title": "采购对接群",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "王晓林",
+    "is_self": false,
+    "time": "18:36",
+    "text": "样品5件已寄出，单号YD690860200102",
+    "kind": "text"
+   },
+   {
+    "sender": "王晓琳",
+    "is_self": false,
+    "time": "19:17",
+    "text": "我这边还没开发票，金额是2380元对吧？",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "19:26",
+    "text": "对，是2380元，样品我收到后再确认",
+    "kind": "text"
+   },
+   {
+    "sender": "王晓林",
+    "is_self": false,
+    "time": "",
+    "text": "好的",
+    "kind": "text"
+   },
+   {
+    "sender": "王晓琳",
+    "is_self": false,
+    "time": "19:32",
+    "text": "收到，今天下午开",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "采购对接群",
+  "王晓林：样品5件已寄出，单号YD690860200102",
+  "王晓琳：我这边还没开发票，金额是2380元对吧？",
+  "我：对，是2380元，样品我收到后再确认",
+  "王晓林：好的",
+  "王晓琳：收到，今天下午开"
+ ],
+ "qa": [
+  {
+   "q": "寄出的样品有几件？",
+   "a": "5件",
+   "match": "number"
+  },
+  {
+   "q": "快递单号是多少？",
+   "a": "YD690860200102",
+   "match": "exact"
+  },
+  {
+   "q": "谁说今天下午开发票？",
+   "a": "王晓琳",
+   "match": "exact"
+  },
+  {
+   "q": "谁寄出了样品？",
+   "a": "王晓林",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "heiti",
+   "heiti_med"
+  ]
+ },
+ "variant": {
+  "conv": "samples",
+  "theme": "light",
+  "similar": true,
+  "similar_pair": 0
+ }
+}

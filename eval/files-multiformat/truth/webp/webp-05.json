@@ -1,0 +1,63 @@
+{
+ "file_id": "webp-05",
+ "path": "corpus/webp/webp-05.webp",
+ "type": "webp",
+ "ext": "webp",
+ "mime": "image/webp",
+ "filename": "截屏2026-10-07 13.18.18.webp",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "赛事积分\n蓝湾文化杯乒乓球联赛积分榜\n胜一场积3分（合成数据）\n队名\t胜\t负\t积分\n海豚队\t6\t2\t18\n飞鹰队\t5\t3\t15\n银杏队\t4\t0\t12\n闪电队\t2\t1\t6\n青松队\t2\t2\t6\n合成数据",
+ "key_lines": [
+  "海豚队\t6\t2\t18",
+  "飞鹰队\t5\t3\t15",
+  "银杏队\t4\t0\t12"
+ ],
+ "picture_only_lines": [
+  "海豚队\t6\t2\t18",
+  "飞鹰队\t5\t3\t15",
+  "银杏队\t4\t0\t12"
+ ],
+ "key_fields": {
+  "第一名": "海豚队",
+  "银杏队": 12
+ },
+ "numbers": [
+  {
+   "value": 18,
+   "label": "第一名积分"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "积分榜第一是哪个队？",
+   "a": "海豚队",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "银杏队积多少分？",
+   "a": 12,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "飞鹰队赢了几场？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   1280,
+   696
+  ]
+ },
+ "bytes": 18672,
+ "sha256": "db289657cd7ad8e8beeb2fe7c8f81bfbba3026fe0289616bd14fb932ab964ea0",
+ "family": "league_table"
+}

@@ -1,0 +1,123 @@
+{
+ "id": "label-16",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-16.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "blur",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "54453685a300740eb304928a49f4d6fd55fdad2147ae18a6352f38a9a66c06c0",
+ "gt": {
+  "label_kind": "nameplate",
+  "fields": [
+   {
+    "key": "product",
+    "label": "",
+    "value": "双门冷藏柜"
+   },
+   {
+    "key": "model",
+    "label": "型号",
+    "value": "LC-980F"
+   },
+   {
+    "key": "voltage",
+    "label": "额定电压",
+    "value": "220V~"
+   },
+   {
+    "key": "frequency",
+    "label": "额定频率",
+    "value": "50Hz"
+   },
+   {
+    "key": "power",
+    "label": "额定功率",
+    "value": "420W"
+   },
+   {
+    "key": "capacity",
+    "label": "额定容量",
+    "value": "980L"
+   },
+   {
+    "key": "ip_rating",
+    "label": "防水等级",
+    "value": "IPX4"
+   },
+   {
+    "key": "serial_no",
+    "label": "出厂编号",
+    "value": "A28569478"
+   },
+   {
+    "key": "manufacture_date",
+    "label": "生产日期",
+    "value": "2025年1月"
+   },
+   {
+    "key": "manufacturer",
+    "label": "",
+    "value": "云岭电器有限公司"
+   }
+  ],
+  "lines": [
+   "双门冷藏柜",
+   "型号：LC-980F",
+   "额定电压：220V~",
+   "额定频率：50Hz",
+   "额定功率：420W",
+   "额定容量：980L",
+   "防水等级：IPX4",
+   "出厂编号：A28569478",
+   "生产日期：2025年1月",
+   "云岭电器有限公司"
+  ]
+ },
+ "text_lines": [
+  "双门冷藏柜",
+  "型号：LC-980F",
+  "额定电压：220V~",
+  "额定频率：50Hz",
+  "额定功率：420W",
+  "额定容量：980L",
+  "防水等级：IPX4",
+  "出厂编号：A28569478",
+  "生产日期：2025年1月",
+  "云岭电器有限公司"
+ ],
+ "qa": [
+  {
+   "q": "额定功率是多少？",
+   "a": "420W",
+   "match": "number"
+  },
+  {
+   "q": "型号是什么？",
+   "a": "LC-980F",
+   "match": "exact"
+  },
+  {
+   "q": "出厂编号是多少？",
+   "a": "A28569478",
+   "match": "exact"
+  },
+  {
+   "q": "额定容量是多少？",
+   "a": "980L",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "nameplate",
+  "background": "desk_grey"
+ },
+ "variant": {
+  "kind": "nameplate",
+  "motion": 5
+ }
+}

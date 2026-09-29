@@ -1,0 +1,87 @@
+{
+  "commands" : [
+    [
+      "script/run_process_tap_probe.sh"
+    ]
+  ],
+  "conclusion" : "pass",
+  "criteria" : {
+    "fail" : [
+      "A nonselected watermark is detected, a selected helper/restart watermark is missing, or a failure path leaks a tap or aggregate device."
+    ],
+    "pass" : [
+      "The selected synthetic application watermark is captured while the nonselected application watermark remains below the detection threshold.",
+      "A same-bundle child helper and a restarted source process are added to the existing tap without discarding prior captured frames.",
+      "A real secondary-output transition is observed and restored while selected-source capture remains continuous.",
+      "Silence does not end authorized capture; permission denial makes the selected watermark unreadable by rejecting I/O start or supplying only digital zero, and all private tap and aggregate objects are destroyed without leakage."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "audio-processes-group-as-applications",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "selected-app-captured-nonselected-app-excluded",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "helper-child-process-auto-joins-selected-app",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "selected-app-exit-and-restart-preserves-capture",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "silent-selected-source-keeps-io-alive",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "output-device-change-is-explicit",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json",
+        "artifacts/evidence/SPIKE-CAP-001/tcc-denial.json"
+      ],
+      "scenarioID" : "permission-denial-blocks-audio-content",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-CAP-001/matrix.json"
+      ],
+      "scenarioID" : "tap-and-aggregate-lifecycle-cleans-up",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can a macOS Core Audio Process Tap preserve an application boundary across helper and restart lifecycle events without leaking a nonselected watermark?",
+  "runID" : "FCA6F286-660D-41FA-8EE8-EF477E0E1083",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-CAP-001",
+  "unmetCriteria" : [
+
+  ]
+}

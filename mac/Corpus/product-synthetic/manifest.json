@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "product-synthetic-smoke",
+  "version": "1.1.0",
+  "tier": "product-synthetic",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "20000000-0000-4000-8000-000000000001",
+      "consentClass": "synthetic",
+      "assetReference": "fixture://product-synthetic/code-switch-smoke-001",
+      "contentDigest": "2222222222222222222222222222222222222222222222222222222222222222",
+      "languages": [
+        "zh-CN",
+        "en-US"
+      ],
+      "tags": [
+        "code-switch",
+        "metadata-only",
+        "smoke"
+      ]
+    },
+    {
+      "sampleUUID": "20000000-0000-4000-8000-000000000002",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/asr-v1/zh-dangerous",
+      "contentDigest": "d57e9bf10467e15ecf9b2c4ef4f7d7a5a4bfb090779aafb01b54d9cb30fbc165",
+      "languages": [
+        "zh-CN"
+      ],
+      "tags": [
+        "asr",
+        "dangerous-tokens",
+        "local-only",
+        "smoke"
+      ]
+    },
+    {
+      "sampleUUID": "20000000-0000-4000-8000-000000000003",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/asr-v1/en-dangerous",
+      "contentDigest": "9bed7becc39986f361eb4ad3df079b65528a453b328d812e86eec7087bff8ce1",
+      "languages": [
+        "en-US"
+      ],
+      "tags": [
+        "asr",
+        "dangerous-tokens",
+        "local-only",
+        "smoke"
+      ]
+    },
+    {
+      "sampleUUID": "20000000-0000-4000-8000-000000000004",
+      "consentClass": "synthetic",
+      "assetReference": "local-corpus://product-synthetic/asr-v1/mixed-dangerous",
+      "contentDigest": "d9b3e3f341e14bdc37ec0e750567bf732ea272e7d3478c20b9c95fed35406b7e",
+      "languages": [
+        "zh-CN",
+        "en-US"
+      ],
+      "tags": [
+        "asr",
+        "code-switch",
+        "dangerous-tokens",
+        "local-only",
+        "smoke"
+      ]
+    }
+  ]
+}

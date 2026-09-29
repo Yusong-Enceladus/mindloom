@@ -1,0 +1,111 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 85,
+   "ok": 85,
+   "ok_first_attempt": 85,
+   "retried": 0,
+   "latency_median_s": 8.532,
+   "latency_p95_s": 9.384,
+   "latency_total_s": 721.7,
+   "prompt_tokens_mean": 5520.2,
+   "completion_tokens_mean": 149.5,
+   "prompt_tokens_total": 469221,
+   "completion_tokens_total": 12707,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 81,
+   "ok": 47,
+   "ok_first_attempt": 20,
+   "retried": 61,
+   "latency_median_s": 23.413,
+   "latency_p95_s": 31.702,
+   "latency_total_s": 1731.6,
+   "prompt_tokens_mean": 8447.8,
+   "completion_tokens_mean": 516.5,
+   "prompt_tokens_total": 684269,
+   "completion_tokens_total": 41839,
+   "errors_sample": [
+    "[relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[1] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [relative_date] status_facts[2] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 0,
+   "ok_first_attempt": 0,
+   "retried": 0,
+   "latency_median_s": 0.008,
+   "latency_p95_s": 0.017,
+   "latency_total_s": 0.0,
+   "prompt_tokens_mean": 0,
+   "completion_tokens_mean": 0,
+   "prompt_tokens_total": 0,
+   "completion_tokens_total": 0,
+   "errors_sample": [
+    "client_error: ValueError: HTTP 400: {\"error\":{\"message\":\"nemotron-3-super-120b-a12b-nvfp4 is not a multimodal model\",\"type\":\"BadRequestError\",\"param\":null,\"code\":400}}",
+    "client_error: ValueError: HTTP 400: {\"error\":{\"message\":\"nemotron-3-super-120b-a12b-nvfp4 is not a multimodal model\",\"type\":\"BadRequestError\",\"param\":null,\"code\":400}}",
+    "client_error: ValueError: HTTP 400: {\"error\":{\"message\":\"nemotron-3-super-120b-a12b-nvfp4 is not a multimodal model\",\"type\":\"BadRequestError\",\"param\":null,\"code\":400}}"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 22.141,
+   "latency_p95_s": 23.422,
+   "latency_total_s": 87.5,
+   "prompt_tokens_mean": 5240.5,
+   "completion_tokens_mean": 578.2,
+   "prompt_tokens_total": 20962,
+   "completion_tokens_total": 2313,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 1,
+   "retried": 2,
+   "latency_median_s": 8.333,
+   "latency_p95_s": 17.956,
+   "latency_total_s": 30.9,
+   "prompt_tokens_mean": 4824.3,
+   "completion_tokens_mean": 223.3,
+   "prompt_tokens_total": 14473,
+   "completion_tokens_total": 670,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 69,
+  "none": 4,
+  "ask": 3
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 69,
+  "none": 4,
+  "ask": 3
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 14.4,
+ "title_chars_mean": 11.3,
+ "wall_s": 2578.8,
+ "items_per_min": 1.91,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 4,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

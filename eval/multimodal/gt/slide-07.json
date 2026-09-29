@@ -1,0 +1,93 @@
+{
+ "id": "slide-07",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-07.png",
+ "lang": "en",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "ff151730c7e6b227b7b0b02f979adbb43201557f168896330fbdd880468d9961",
+ "gt": {
+  "title": "Q3 Business Review",
+  "subtitle": "July to September 2026",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Revenue $1.83M, up 9% QoQ"
+   },
+   {
+    "level": 0,
+    "text": "Monthly churn 2.1%"
+   },
+   {
+    "level": 1,
+    "text": "Down from 3.0% after the onboarding fix"
+   },
+   {
+    "level": 0,
+    "text": "NPS 53 (survey n = 640)"
+   },
+   {
+    "level": 0,
+    "text": "Headcount 38, 4 open roles"
+   }
+  ],
+  "kpis": [
+   {
+    "label": "Revenue",
+    "value": "$1.83M"
+   },
+   {
+    "label": "NPS",
+    "value": "53"
+   }
+  ],
+  "footer": "Northwind Labs Ltd. · Internal",
+  "page": "7 / 17"
+ },
+ "text_lines": [
+  "Q3 Business Review",
+  "July to September 2026",
+  "Revenue $1.83M, up 9% QoQ",
+  "Monthly churn 2.1%",
+  "Down from 3.0% after the onboarding fix",
+  "NPS 53 (survey n = 640)",
+  "Headcount 38, 4 open roles",
+  "Revenue $1.83M",
+  "NPS 53",
+  "Northwind Labs Ltd. · Internal",
+  "7 / 17"
+ ],
+ "qa": [
+  {
+   "q": "What was revenue?",
+   "a": "$1.83M",
+   "match": "number"
+  },
+  {
+   "q": "What is monthly churn?",
+   "a": "2.1%",
+   "match": "number"
+  },
+  {
+   "q": "What is the NPS?",
+   "a": "53",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "Q3 Business Review",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "dense": false
+ },
+ "variant": {
+  "content": "en_review",
+  "theme": "dark"
+ }
+}

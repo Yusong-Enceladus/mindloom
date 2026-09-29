@@ -1,0 +1,64 @@
+{
+ "file_id": "docx-05",
+ "path": "corpus/docx/docx-05.docx",
+ "type": "docx",
+ "ext": "docx",
+ "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+ "filename": "Product Design Sprint — Agenda.docx",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Product Design Sprint — Agenda\nDate: August 7, 2026\nVenue: Main Auditorium\nCapacity: 60 participants\nTime\tSession\tSpeaker\n09:00\tWelcome and goals\tSofia Alvarez\n09:30\tHands-on session 1\tArjun Mehta\n11:00\tCase study\tLucas Meyer\n13:30\tGroup exercise\tTom Becker\n15:30\tWrap-up and feedback\tSofia Alvarez\nLunch is served 12:15–13:30. Synthetic agenda for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Venue: Main Auditorium",
+  "Capacity: 60 participants",
+  "11:00\tCase study\tLucas Meyer",
+  "13:30\tGroup exercise\tTom Becker",
+  "Lunch is served 12:15–13:30. Synthetic agenda for evaluation only."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "date": "2026-08-07",
+  "venue": "Main Auditorium",
+  "capacity": 60,
+  "case_study_speaker": "Lucas Meyer"
+ },
+ "numbers": [
+  {
+   "value": 60,
+   "label": "capacity"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Where is the workshop held?",
+   "a": "Main Auditorium",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Who presents the case study?",
+   "a": "Lucas Meyer",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the group exercise start?",
+   "a": "13:30",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How many participants can attend?",
+   "a": 60,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 38344,
+ "sha256": "ee8e7f585b8985ba2c36740697ab95c8896b68df9e3d1a6668d58fe7744dbf72",
+ "family": "agenda_en"
+}

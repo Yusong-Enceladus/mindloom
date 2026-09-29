@@ -1,0 +1,74 @@
+{
+ "file_id": "xlsx-03",
+ "path": "corpus/xlsx/xlsx-03.xlsx",
+ "type": "xlsx",
+ "ext": "xlsx",
+ "mime": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+ "filename": "社区运动会预算与实际支出.xlsx",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[预算]\n社区运动会预算与实际支出\n金额（元）\n类别\t预算（元）\t实际（元）\t差额（元）\n保险\t16000\t16300\t300\n宣传\t8000\t7200\t-800\n奖品\t3000\t3000\t0\n交通\t13000\t12700\t-300\n人员\t12500\t13200\t700\n合计\t52500\t52400\t-100\n合成数据\n[说明]\n项目\t内容\n活动\t社区运动会\n最大类别\t保险\n执行率\t0.9981\n合成数据",
+ "key_lines": [
+  "保险\t16000\t16300\t300",
+  "宣传\t8000\t7200\t-800",
+  "合计\t52500\t52400\t-100",
+  "最大类别\t保险"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "总预算": 52500,
+  "实际支出": 52400,
+  "最大类别": "保险"
+ },
+ "numbers": [
+  {
+   "value": 52500,
+   "label": "总预算"
+  },
+  {
+   "value": 52400,
+   "label": "实际"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "总预算是多少元？",
+   "a": 52500,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "实际支出多少元？",
+   "a": 52400,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "预算最大的类别是什么？",
+   "a": "保险",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "宣传的预算是多少元？",
+   "a": 8000,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "sheets": [
+   "预算",
+   "说明"
+  ],
+  "formulas": 9,
+  "merged": 2
+ },
+ "notes": "多工作表；合并单元格；公式带缓存值。",
+ "bytes": 6811,
+ "sha256": "714ceac51c5098faf492fb5f54ab11ec26c78eadeb3a48ec42444093d0123523",
+ "family": "budget"
+}

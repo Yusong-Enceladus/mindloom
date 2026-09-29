@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "kind": "dictation-alpha-readiness-gates",
+  "alphaGates": [
+    {
+      "id": "alpha-fail",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "alphaFail",
+      "expectedValue": true,
+      "unmetStatus": "fail",
+      "taskRefs": ["fixture"],
+      "blocker": "Alpha evidence failed."
+    }
+  ],
+  "wholeProductGaps": [
+    {
+      "id": "multi-speaker-gap",
+      "scope": "both",
+      "evidencePath": "Tests/Fixtures/DictationAlphaReadiness/evidence.json",
+      "field": "multiSpeakerReady",
+      "expectedValue": true,
+      "unmetStatus": "conditional",
+      "taskRefs": ["fixture"],
+      "blocker": "Multi-speaker remains pending."
+    }
+  ]
+}

@@ -1,0 +1,348 @@
+{
+ "cursor": 47,
+ "events": [
+  {
+   "event_id": "01d295e1-0650-47e2-a34b-1519f263a8c7",
+   "title": "明日早餐食材采购",
+   "title_user_edited": false,
+   "status_line": "待明天早上购买燕麦奶和鸡蛋。",
+   "status_facts": [
+    {
+     "text": "明天早上需购买燕麦奶和鸡蛋",
+     "item_ids": [
+      "B995B304-E5C0-5A18-9411-9A20C523CA69"
+     ]
+    }
+   ],
+   "importance": 0.95,
+   "importance_reason": "明日早餐食材采购，临近截止时间",
+   "started_at": "2026-08-17T21:00:00+08:00",
+   "updated_at": "2026-08-17T21:00:03.220000+08:00",
+   "item_ids": [
+    "B995B304-E5C0-5A18-9411-9A20C523CA69"
+   ],
+   "person_ids": [
+    "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "eabc5ebe-6791-46fd-a539-1e81e09dd2f0"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "eabc5ebe-6791-46fd-a539-1e81e09dd2f0"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "daa232b3-84ad-42ea-b059-53c338a969d3"
+    }
+   }
+  },
+  {
+   "event_id": "c63b9957-afd1-4b53-9f26-a939475d9296",
+   "title": "健身App首页改版及深色模式报价",
+   "title_user_edited": false,
+   "status_line": "深色模式报价5万及10月12日交付期已获冯总确认，合同补充协议由法务发送。",
+   "status_facts": [
+    {
+     "text": "深色模式新增5000元，总价5万，交付日顺延至10月12日",
+     "item_ids": [
+      "D03DCFAA-106D-5F68-BB31-71E6EDFFCCE7",
+      "C017373E-C350-5092-9023-941E99268B70"
+     ]
+    },
+    {
+     "text": "首页高保真评审通过，下一步做训练记录页",
+     "item_ids": [
+      "C017373E-C350-5092-9023-941E99268B70"
+     ]
+    },
+    {
+     "text": "石磊需深色模式色板token，我明天上午发送",
+     "item_ids": [
+      "C017373E-C350-5092-9023-941E99268B70",
+      "E2556881-EAB0-5DEB-9049-81FE1468D0AE"
+     ]
+    },
+    {
+     "text": "法务正在发送合同补充协议",
+     "item_ids": [
+      "C017373E-C350-5092-9023-941E99268B70"
+     ]
+    }
+   ],
+   "importance": 0.75,
+   "importance_reason": "合同补充协议由法务发送，需跟进",
+   "started_at": "2026-08-17T09:10:00+08:00",
+   "updated_at": "2026-08-19T16:00:00+08:00",
+   "item_ids": [
+    "11AF7903-0571-5D61-AC7D-2C26DF574237",
+    "7AB954AD-E276-59DB-AB82-E630A1A560DF",
+    "D7416080-9C1D-5E91-A3C5-F8242E7C72E7",
+    "3CF56B10-0232-55C5-99A1-CEF89558555E",
+    "4BC86E6A-7F21-52CD-A923-E887BA935743",
+    "CC388964-D07A-531A-A87C-E814B0CF260E",
+    "D03DCFAA-106D-5F68-BB31-71E6EDFFCCE7",
+    "C017373E-C350-5092-9023-941E99268B70",
+    "E2556881-EAB0-5DEB-9049-81FE1468D0AE",
+    "BC56F65D-0F6B-52E6-B2F2-6103B49DE46A"
+   ],
+   "person_ids": [
+    "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2",
+    "FAFDF922-AF3B-5DBE-93D1-750FF4F669B3",
+    "B840CBF9-A250-52A6-BEF6-D7E60B8CEE44"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "7eb6d848-911f-4ac8-8bea-1cd99f66bdbe"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "7eb6d848-911f-4ac8-8bea-1cd99f66bdbe"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "daa232b3-84ad-42ea-b059-53c338a969d3"
+    }
+   }
+  },
+  {
+   "event_id": "5c4dda88-ae8b-49fb-99ff-1f8ff2ded921",
+   "title": "与老贺合租工作室",
+   "title_user_edited": false,
+   "status_line": "老贺同意合租，月租各1800，9月1日入住，宽带由他办理。",
+   "status_facts": [
+    {
+     "text": "老贺同意月租3600元一人一半，各付1800元",
+     "item_ids": [
+      "753679EB-3869-5678-9CD1-8C1B64400D7F"
+     ]
+    },
+    {
+     "text": "房东确认9月1日可以搬进去",
+     "item_ids": [
+      "753679EB-3869-5678-9CD1-8C1B64400D7F"
+     ]
+    },
+    {
+     "text": "宽带由老贺负责办理",
+     "item_ids": [
+      "753679EB-3869-5678-9CD1-8C1B64400D7F"
+     ]
+    }
+   ],
+   "importance": 0.6,
+   "importance_reason": "9月1日入住，需准备搬家事宜",
+   "started_at": "2026-08-18T15:00:00+08:00",
+   "updated_at": "2026-08-18T16:20:00+08:00",
+   "item_ids": [
+    "60F08FC6-02D7-5333-A520-465D91854FED",
+    "753679EB-3869-5678-9CD1-8C1B64400D7F"
+   ],
+   "person_ids": [
+    "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "4a411f9e-7e86-4447-80c2-1a2a62a5b0b1"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "4a411f9e-7e86-4447-80c2-1a2a62a5b0b1"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "daa232b3-84ad-42ea-b059-53c338a969d3"
+    }
+   }
+  },
+  {
+   "event_id": "b51f510e-7f7b-4977-905f-146a671daeb4",
+   "title": "设计夜读9月5日邀请",
+   "title_user_edited": false,
+   "status_line": "方若确认接受邀请，时长由30分钟延长至40分钟，并增加现场演练环节。",
+   "status_facts": [
+    {
+     "text": "方若确定分享题目为《把设计评审开短一点》",
+     "item_ids": [
+      "C07E2215-1A9A-519D-9C5D-EEDDC5C0625A"
+     ]
+    },
+    {
+     "text": "因嘉宾缺席，时长从30分钟延长至40分钟",
+     "item_ids": [
+      "7622A422-835E-5AEB-9775-B838414E80DD"
+     ]
+    },
+    {
+     "text": "方若同意40分钟安排，并计划增加现场演练环节",
+     "item_ids": [
+      "7FA0342F-9093-5AC0-9B08-211AC768713D"
+     ]
+    }
+   ],
+   "importance": 0.5,
+   "importance_reason": "9月5日邀请，时间尚远",
+   "started_at": "2026-08-18T09:30:00+08:00",
+   "updated_at": "2026-08-19T19:45:05.290000+08:00",
+   "item_ids": [
+    "08FD953D-3EC6-5D5F-A599-9A6B94FD8FEA",
+    "C07E2215-1A9A-519D-9C5D-EEDDC5C0625A",
+    "B72DE617-EF3C-530B-8A08-DB7963CAAB3F",
+    "7622A422-835E-5AEB-9775-B838414E80DD",
+    "7FA0342F-9093-5AC0-9B08-211AC768713D"
+   ],
+   "person_ids": [
+    "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+   ],
+   "pinned": false,
+   "feature_less": false,
+   "deleted": false,
+   "merged_into": null,
+   "provenance": {
+    "status_line": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "8f822e58-4191-4afd-8951-cdb00a156248"
+    },
+    "title": {
+     "skill": "event-brief",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "3538eba13c2ad0b7",
+     "run_id": "8f822e58-4191-4afd-8951-cdb00a156248"
+    },
+    "importance": {
+     "skill": "home-rank",
+     "version": "1.0.0",
+     "model": "qwen3.6-35b-a3b-nvfp4",
+     "prompt_hash": "45c973f3a3407841",
+     "run_id": "daa232b3-84ad-42ea-b059-53c338a969d3"
+    }
+   }
+  }
+ ],
+ "questions": [],
+ "persons": [
+  {
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2",
+   "display_name": "我",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "FAFDF922-AF3B-5DBE-93D1-750FF4F669B3",
+   "display_name": null,
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  },
+  {
+   "person_id": "B840CBF9-A250-52A6-BEF6-D7E60B8CEE44",
+   "display_name": "石磊",
+   "aliases": [],
+   "origin": "voice",
+   "merged_into": null
+  }
+ ],
+ "item_persons": [
+  {
+   "item_id": "11AF7903-0571-5D61-AC7D-2C26DF574237",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "D7416080-9C1D-5E91-A3C5-F8242E7C72E7",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "4BC86E6A-7F21-52CD-A923-E887BA935743",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "B995B304-E5C0-5A18-9411-9A20C523CA69",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "C07E2215-1A9A-519D-9C5D-EEDDC5C0625A",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "D03DCFAA-106D-5F68-BB31-71E6EDFFCCE7",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "60F08FC6-02D7-5333-A520-465D91854FED",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "B72DE617-EF3C-530B-8A08-DB7963CAAB3F",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "C017373E-C350-5092-9023-941E99268B70",
+   "person_id": "FAFDF922-AF3B-5DBE-93D1-750FF4F669B3"
+  },
+  {
+   "item_id": "C017373E-C350-5092-9023-941E99268B70",
+   "person_id": "B840CBF9-A250-52A6-BEF6-D7E60B8CEE44"
+  },
+  {
+   "item_id": "C017373E-C350-5092-9023-941E99268B70",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "E2556881-EAB0-5DEB-9049-81FE1468D0AE",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  },
+  {
+   "item_id": "7FA0342F-9093-5AC0-9B08-211AC768713D",
+   "person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2"
+  }
+ ],
+ "questions_asked_total": 0
+}

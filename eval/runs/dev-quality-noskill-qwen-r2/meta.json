@@ -1,0 +1,83 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "without-skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8003/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.0.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.1.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.1.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "eb4c1634018ce0f5",
+  "event-brief": "2bbf1ccdc213c05f",
+  "home-rank": "22d28d3e84a08265",
+  "recall": "d8fbb1754cec1f6a",
+  "screenshot-read": "6ed5ddfc9ecd5297"
+ },
+ "git": "05acaf7",
+ "date": "2026-09-28T00:30:00+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "without-skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8003/v1",
+  "--keep-db",
+  "--out",
+  "../out/dev-noskill-v4-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "115a36ec-81b1-4b8f-9bc3-20b5589644eb",
+  "E2": "fe896d72-9b39-458d-ae74-3ef6be6a5980",
+  "E3": "f3d3b498-32bb-404f-b5bb-f96e2593c327",
+  "E4": "e550c807-9338-47ac-87d6-79ec4125d45a",
+  "E5": "dfe9d2c3-1b54-4e01-a05e-6ec7b48dc224",
+  "E6": "2cfc5aa6-58b1-4bc4-ab7c-77e41415f496",
+  "E7": "db7d5f0e-2487-4c49-ab3e-132fc4340930",
+  "E8": "1c911cb8-4ca6-4ada-824b-ec8f5851067e",
+  "E9": "7e17e305-c345-4420-b862-ada085e55bc6",
+  "E10": "b1f992f3-e4a1-4706-a4a0-5803cdf56425",
+  "E11": "bf09d632-b1ab-4517-a7c9-c6b2af9b8880",
+  "E12": "a9d53c4e-3ac3-4ca7-9074-32f5352cf2a0",
+  "E13": "c95479ce-2294-41b7-aab7-bd5bf558a98e",
+  "E14": "d767b260-7c02-4d13-9ee3-6f67aa74f494",
+  "E15": "8c115db3-f420-40ea-ace3-dc5a7b80136b",
+  "E16": "9df26b96-0257-4e0a-b923-2ad64ea90d15",
+  "E17": "6cb11796-ea02-420b-a5d6-a3c351ecabb6",
+  "E18": "37b1a803-628b-4592-8d32-97b281bcefde"
+ },
+ "bare_max_tokens": null
+}

@@ -1,0 +1,143 @@
+{
+ "items_total": 82,
+ "items_scored": 69,
+ "items_first_mention": 9,
+ "items_noise": 4,
+ "mean_pool_size": 7.75,
+ "fused": {
+  "recall@1": 0.8696,
+  "recall@3": 0.971,
+  "recall@5": 0.9855,
+  "mrr": 0.9209,
+  "hits@5": 68
+ },
+ "similarity_only": {
+  "recall@1": 0.913,
+  "recall@3": 1.0,
+  "recall@5": 1.0,
+  "mrr": 0.9565,
+  "hits@5": 69
+ },
+ "random": {
+  "recall@1": 0.1974,
+  "recall@3": 0.4774,
+  "recall@5": 0.688
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 28,
+   "hit@1": 27,
+   "hit@3": 28,
+   "hit@5": 28
+  },
+  "dictation": {
+   "n": 34,
+   "hit@1": 27,
+   "hit@3": 32,
+   "hit@5": 33
+  },
+  "image": {
+   "n": 3,
+   "hit@1": 3,
+   "hit@3": 3,
+   "hit@5": 3
+  },
+  "meeting_online": {
+   "n": 2,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 2
+  },
+  "meeting_offline": {
+   "n": 1,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 1
+  },
+  "document": {
+   "n": 1,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 1
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_lease",
+    "ev_reno",
+    "ev_member",
+    "ev_beans",
+    "ev_momflat"
+   ]
+  }
+ ],
+ "label": "qwen3-embedding-0.6b-rep",
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "embedder": "url",
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "embed_dim": 1024,
+ "embed_calls": 82,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": 26.47,
+  "p95": 35.38,
+  "max": 38.15,
+  "mean": 26.27
+ },
+ "embed_chars": {
+  "p50": 41,
+  "max": 392
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 3,
+  "misses": 0
+ },
+ "screenshot_readings": [
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 59,
+   "messages": 5
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 84,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 66,
+   "messages": 6
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 4.9,
+ "date": "2026-09-29T01:22:36+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "repo/eval/scenarios/dev-week-v1/scenario.json",
+  "--embedder",
+  "url",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--reading-cache",
+  "readings/dev-week-v1",
+  "--label",
+  "qwen3-embedding-0.6b-rep",
+  "--out",
+  "out/dev-q06-rep"
+ ]
+}

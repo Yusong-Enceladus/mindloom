@@ -1,0 +1,115 @@
+{
+ "id": "receipt-06",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-06.jpg",
+ "lang": "en",
+ "hard": [
+  "low_contrast",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "d64f2b5de094aa88ce677b784cfce46ae8e1a756c1bb62b06ad09683205acc29",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "Harborlane Coffee Co.",
+  "date": "2026-08-19",
+  "date_text": "08/19/2026 12:05 PM",
+  "time": "12:05",
+  "doc_no": "2206",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Croissant",
+    "qty": 1,
+    "unit": "ea",
+    "unit_price": "3.50",
+    "amount": "3.50"
+   },
+   {
+    "name": "Latte (M)",
+    "qty": 2,
+    "unit": "ea",
+    "unit_price": "4.75",
+    "amount": "9.50"
+   },
+   {
+    "name": "Latte (L)",
+    "qty": 2,
+    "unit": "ea",
+    "unit_price": "5.25",
+    "amount": "10.50"
+   },
+   {
+    "name": "Americano (M)",
+    "qty": 4,
+    "unit": "ea",
+    "unit_price": "3.95",
+    "amount": "15.80"
+   },
+   {
+    "name": "Oat milk add-on",
+    "qty": 1,
+    "unit": "ea",
+    "unit_price": "0.60",
+    "amount": "0.60"
+   }
+  ],
+  "subtotal": "39.90",
+  "discount": "0.00",
+  "tax": "3.29",
+  "total": "43.19",
+  "payment_method": "Card",
+  "tax_rate": 8.25
+ },
+ "text_lines": [
+  "Harborlane Coffee Co.",
+  "360 Maple Avenue, Lakeside",
+  "Tel (555) 015-8074",
+  "Order #2206 Cashier 06",
+  "08/19/2026 12:05 PM",
+  "Croissant 1 3.50 3.50",
+  "Latte (M) 2 4.75 9.50",
+  "Latte (L) 2 5.25 10.50",
+  "Americano (M) 4 3.95 15.80",
+  "Oat milk add-on 1 0.60 0.60",
+  "Subtotal 39.90",
+  "Tax 8.25% 3.29",
+  "Total $43.19",
+  "Paid: Card",
+  "Thank you!",
+  "Returns within 14 days with receipt"
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$43.19",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Harborlane Coffee Co.",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-08-19",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$3.29",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": true,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "lang": "en",
+  "faint": true
+ }
+}

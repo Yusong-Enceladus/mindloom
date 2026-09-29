@@ -1,0 +1,40 @@
+{
+ "split": "all",
+ "condition": "skills",
+ "parse_only": true,
+ "files": 60,
+ "type_ok": [
+  1.0,
+  60
+ ],
+ "text_recall": [
+  1.0,
+  51
+ ],
+ "image_recall": [
+  0.0,
+  18
+ ],
+ "summary_hit": [
+  0.7,
+  60
+ ],
+ "summary_model": [
+  0.0,
+  60
+ ],
+ "field_em": [
+  0.0,
+  9
+ ],
+ "det_field_em": [
+  1.0,
+  9
+ ],
+ "summary_first_try": 0,
+ "summary_calls": 0,
+ "latency_p50": 0.07,
+ "latency_p90": 0.13,
+ "prompt_hash": "5810c0096d0a5445",
+ "model": "none"
+}

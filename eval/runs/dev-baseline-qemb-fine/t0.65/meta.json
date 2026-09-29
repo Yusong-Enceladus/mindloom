@@ -1,0 +1,53 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "baseline",
+ "threshold": 0.65,
+ "llm_url": null,
+ "model": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "1.0.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.0.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": null,
+ "git": "c35aac3+wip",
+ "date": "2026-09-26T22:30:37+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "baseline",
+  "--embed",
+  "url",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--threshold",
+  "0.61,0.62,0.63,0.64,0.65,0.66,0.67,0.68,0.69,0.70,0.71,0.72",
+  "--out",
+  "eval/runs/dev-baseline-qemb-fine",
+  "--force"
+ ],
+ "no_rank": false,
+ "oracle_assign": false
+}

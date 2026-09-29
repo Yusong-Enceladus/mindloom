@@ -1,0 +1,161 @@
+{
+  "benchmarkID": "asr-qwen3-1-7b-8bit-fleurs-full",
+  "configHash": "472303f8ea162d4bd03ccc05f2b9d3ac738c076b5140fee068e84d51ea41b16d",
+  "corpus": {
+    "manifestID": "fleurs-public-asr-tuning-v1",
+    "split": "tuning",
+    "version": "1.0.0"
+  },
+  "environmentRef": "artifacts/evidence/environment/check-summary.json",
+  "failedSampleUUIDs": [],
+  "hardware": {
+    "architecture": "arm64",
+    "osVersion": "Version 26.6.2 (Build 25G83)",
+    "toolchainVersion": "Apple Swift 6",
+    "unifiedMemoryBytes": 51539607552
+  },
+  "implementationRevision": "cae704f53bc32a3d0b606823828fbc5bedaaf388",
+  "kind": "benchmark-result",
+  "metrics": [
+    {
+      "direction": "lower-is-better",
+      "name": "cer",
+      "unit": "ratio",
+      "value": 0.124
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "wer",
+      "unit": "ratio",
+      "value": 0.6300211416490487
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "mer",
+      "unit": "ratio",
+      "value": 0.05053695514845231
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors",
+      "unit": "count",
+      "value": 1
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors.action-owner",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors.date",
+      "unit": "count",
+      "value": 1
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors.negation",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors.number",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "dangerous-token-errors.person",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "der",
+      "unit": "ratio",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "jer",
+      "unit": "ratio",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "speaker-miss-rate",
+      "unit": "ratio",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "speaker-false-alarm-rate",
+      "unit": "ratio",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "speaker-confusion-rate",
+      "unit": "ratio",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "false-merge-count",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "false-split-count",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "false-reject-count",
+      "unit": "count",
+      "value": 0
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "latency-p50",
+      "unit": "milliseconds",
+      "value": 622.997
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "latency-p95",
+      "unit": "milliseconds",
+      "value": 1154.039917
+    },
+    {
+      "direction": "lower-is-better",
+      "name": "realtime-factor",
+      "unit": "ratio",
+      "value": 0.08163935514116064
+    },
+    {
+      "direction": "informational",
+      "name": "peak-rss",
+      "unit": "bytes",
+      "value": 5125062656
+    },
+    {
+      "direction": "informational",
+      "name": "backlog-high-watermark",
+      "unit": "jobs",
+      "value": 1
+    }
+  ],
+  "modelArtifact": {
+    "artifactID": "qwen3-asr-1.7b-8bit-a8379a2e",
+    "sha256": "78e581bde728363d93dc3afc5e3b2bceae0acc2ee65805bb94d9f61e43a3edd1"
+  },
+  "protocolVersion": 1,
+  "runID": "632C6F8B-DD80-5F21-BB7D-77A8F4017F99",
+  "schemaVersion": 1,
+  "task": "asr"
+}

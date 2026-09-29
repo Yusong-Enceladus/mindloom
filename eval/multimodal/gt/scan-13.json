@@ -1,0 +1,128 @@
+{
+ "id": "scan-13",
+ "type": "scanned_document",
+ "split": "dev",
+ "image": "images/scan-13.jpg",
+ "lang": "en",
+ "hard": [
+  "rotation",
+  "table",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "243df3b53a9be70c79232a6cac09d64c0eb5cfeeb37ff476cec895e833c3ddef",
+ "gt": {
+  "title": "Product Sync - Meeting Minutes",
+  "fields": [
+   {
+    "key": "Date",
+    "value": "Sep 10, 2026"
+   },
+   {
+    "key": "Attendees",
+    "value": "Sam Ortiz, Tom Becker, Mia Chen"
+   },
+   {
+    "key": "Note taker",
+    "value": "Mia Chen"
+   }
+  ],
+  "blocks": [
+   {
+    "type": "heading",
+    "text": "Decisions"
+   },
+   {
+    "type": "list_item",
+    "text": "1. Ship ordering in the next release; payments follow in a separate release."
+   },
+   {
+    "type": "list_item",
+    "text": "2. Raise the checkout timeout alert threshold to 600 ms."
+   },
+   {
+    "type": "heading",
+    "text": "Discussion"
+   },
+   {
+    "type": "paragraph",
+    "text": "Sam Ortiz reported that weekly active users grew 12% after the loyalty launch. Tom Becker raised concerns about support load during the rollout and asked for a staged release."
+   },
+   {
+    "type": "heading",
+    "text": "Action items"
+   },
+   {
+    "type": "table",
+    "header": [
+     "Action",
+     "Owner",
+     "Due"
+    ],
+    "rows": [
+     [
+      "Staged rollout plan",
+      "Tom Becker",
+      "Friday"
+     ],
+     [
+      "Alert threshold change",
+      "Sam Ortiz",
+      "Monday"
+     ],
+     [
+      "Release notes",
+      "Mia Chen",
+      "Tuesday"
+     ]
+    ]
+   }
+  ],
+  "full_text": "Product Sync - Meeting Minutes\nDate: Sep 10, 2026\nAttendees: Sam Ortiz, Tom Becker, Mia Chen\nNote taker: Mia Chen\nDecisions\n1. Ship ordering in the next release; payments follow in a separate release.\n2. Raise the checkout timeout alert threshold to 600 ms.\nDiscussion\nSam Ortiz reported that weekly active users grew 12% after the loyalty launch. Tom Becker raised concerns about support load during the rollout and asked for a staged release.\nAction items\nAction | Owner | Due\nStaged rollout plan | Tom Becker | Friday\nAlert threshold change | Sam Ortiz | Monday\nRelease notes | Mia Chen | Tuesday\nPage 1 of 1"
+ },
+ "text_lines": [
+  "Product Sync - Meeting Minutes",
+  "Date: Sep 10, 2026",
+  "Attendees: Sam Ortiz, Tom Becker, Mia Chen",
+  "Note taker: Mia Chen",
+  "Decisions",
+  "1. Ship ordering in the next release; payments follow in a separate release.",
+  "2. Raise the checkout timeout alert threshold to 600 ms.",
+  "Discussion",
+  "Sam Ortiz reported that weekly active users grew 12% after the loyalty launch. Tom Becker raised concerns about support load during the rollout and asked for a staged release.",
+  "Action items",
+  "Action | Owner | Due",
+  "Staged rollout plan | Tom Becker | Friday",
+  "Alert threshold change | Sam Ortiz | Monday",
+  "Release notes | Mia Chen | Tuesday",
+  "Page 1 of 1"
+ ],
+ "qa": [
+  {
+   "q": "By how much did weekly active users grow?",
+   "a": "12%",
+   "match": "number"
+  },
+  {
+   "q": "Who owns the staged rollout plan?",
+   "a": "Tom Becker",
+   "match": "exact"
+  },
+  {
+   "q": "What is the new alert threshold?",
+   "a": "600 ms",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "rotate_deg": -2.8,
+  "blur": 0.6,
+  "dpi": 150,
+  "body_pt": 11.0,
+  "engine": "reportlab+pdfium"
+ },
+ "variant": {
+  "content": "en_minutes",
+  "rotate": -2.8
+ }
+}

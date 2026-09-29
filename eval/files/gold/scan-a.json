@@ -1,0 +1,29 @@
+{
+ "id": "scan-a",
+ "template": "scan",
+ "split": "dev",
+ "filename": "扫描件.pdf",
+ "path": "data/scan-a.pdf",
+ "sha256": "7d71834603b49d4aaeb1f01b3185d5102cd7ec22329185b57e2db6b79927e4f5",
+ "size": 482401,
+ "error": null,
+ "must_contain_image": [
+  "关于国庆假期值班安排的通知",
+  "0000-3517。10月6日至7日由各门店店长自行安排。",
+  "房屋租赁合同（节选）",
+  "甲方将位于青川市东湖区望湖街136号11栋2502室的房屋出租给乙方居住"
+ ],
+ "fields": {},
+ "det_fields": {},
+ "type": "scanned_pdf",
+ "must_contain": [],
+ "summary_groups": [
+  [
+   "国庆"
+  ],
+  [
+   "值班"
+  ]
+ ],
+ "doc_kind": ""
+}

@@ -1,0 +1,113 @@
+{
+ "file_id": "mov-02",
+ "path": "corpus/mov/mov-02.mov",
+ "type": "mov",
+ "ext": "mov",
+ "mime": "video/quicktime",
+ "filename": "Project Status Update_ Warehouse Scanner Rollout.mov",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "Project Status Update: Warehouse Scanner Rollout\nSynthetic data · evaluation only\n合成数据\nProject Status Update: Warehouse Scanner Rollout\nOwner: Arjun Mehta\nOverall status: Amber\nBudget: USD 57,000\nBudget spent: 82%\n合成数据\nMilestones\n合成数据\nTable\nMilestone\tState\nDesign sign-off\tdone\nPilot at 2 sites\tin progress\nFull rollout\tplanned\n合成数据\nTop risk\nVendor delivery slipped by 10 days\n合成数据\nNext report\nNext update due on 2026-10-07. Synthetic report for evaluation only.\n合成数据",
+ "key_lines": [
+  "Owner: Arjun Mehta",
+  "Overall status: Amber",
+  "Budget: USD 57,000",
+  "Budget spent: 82%",
+  "Vendor delivery slipped by 10 days"
+ ],
+ "picture_only_lines": [
+  "Owner: Arjun Mehta",
+  "Overall status: Amber",
+  "Budget: USD 57,000",
+  "Budget spent: 82%",
+  "Vendor delivery slipped by 10 days"
+ ],
+ "key_fields": {
+  "owner": "Arjun Mehta",
+  "status": "Amber",
+  "budget_usd": 57000,
+  "spent_pct": 82,
+  "top_risk": "Vendor delivery slipped by 10 days"
+ },
+ "numbers": [
+  {
+   "value": 57000,
+   "label": "budget"
+  },
+  {
+   "value": 82,
+   "label": "spent %"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the overall status?",
+   "a": "Amber",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "What percentage of the budget is spent?",
+   "a": 82,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "What is the top risk?",
+   "a": "Vendor delivery slipped by 10 days",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "Who owns the project?",
+   "a": "Arjun Mehta",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "slides": 6,
+  "seconds": [
+   2.5,
+   2.5,
+   2.5,
+   2.5,
+   2.5,
+   2.5
+  ],
+  "duration_s": 15.0,
+  "audio": "silent AAC",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "Project Status Update: Warehouse Scanner Rollout"
+   },
+   {
+    "start_s": 2.5,
+    "title": "Project Status Update: Warehouse Scanner Rollout"
+   },
+   {
+    "start_s": 5.0,
+    "title": "Milestones"
+   },
+   {
+    "start_s": 7.5,
+    "title": "Table"
+   },
+   {
+    "start_s": 10.0,
+    "title": "Top risk"
+   },
+   {
+    "start_s": 12.5,
+    "title": "Next report"
+   }
+  ]
+ },
+ "bytes": 59540,
+ "sha256": "17b1ea1bc288f2bca3259f0397ffad29cb128faf7f896ae235a961ec47d4f5d8",
+ "family": "status_en"
+}

@@ -1,0 +1,80 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.3.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "231d69c720f4b94b",
+  "home-rank": "5b9631d010fb3265",
+  "recall": "53787149d58fb73a",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "dcfee67",
+ "date": "2026-09-28T13:27:21+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--out",
+  "../out/dev-skills-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "3c198127-3e66-4dcc-b375-db1ef95d4ba9",
+  "E2": "35d82bd2-10b7-444d-acfc-bddb20717530",
+  "E3": "fe5b07e1-5ebf-4248-9390-351a58c43ee2",
+  "E4": "0c0de5e7-fb76-4315-b2d4-ba1bbc9a443e",
+  "E5": "0d693517-47ed-44e7-9831-1313c40272e5",
+  "E6": "477b58df-673e-4d4f-aaed-0624ec5c0d9a",
+  "E7": "146028f1-0244-43d7-b03b-0939aab17cd3",
+  "E8": "b0665af1-3fdf-4f86-82d7-452160774de9",
+  "E9": "dd4d0bbc-61a1-4dc1-8ae5-68eaa06c2ead",
+  "E10": "da26a030-2f4a-4b13-bffb-ab17d1cb7a9f",
+  "E11": "e124b404-5246-4c54-a2aa-6722b95fdf9d",
+  "E12": "426cbeed-3e92-440e-9f01-5211cd1c1157",
+  "E13": "fd1e9d05-d5e4-4027-b2fb-9a6d154100db",
+  "E14": "4c4015af-93cd-4d94-8a98-df977ae88acb",
+  "E15": "953b50d4-a09d-4a33-8c13-a42c64851f6c"
+ },
+ "bare_max_tokens": null
+}

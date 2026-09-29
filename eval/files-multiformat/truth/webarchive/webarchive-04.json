@@ -1,0 +1,59 @@
+{
+ "file_id": "webarchive-04",
+ "path": "corpus/webarchive/webarchive-04.webarchive",
+ "type": "webarchive",
+ "ext": "webarchive",
+ "mime": "application/x-webarchive",
+ "filename": "Nimbus-32 空气净化器 · 产品详情.webarchive",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "禾木家居商城\nNimbus-32 空气净化器 · 产品详情\n型号：Nimbus-32\n价格：¥2,499\n适用面积：67㎡\n噪音：26dB\n包邮，30 天无理由退换。\n（合成数据页面）\n合成数据\n禾木家居商城\n合成数据",
+ "key_lines": [
+  "Nimbus-32 空气净化器 · 产品详情",
+  "型号：Nimbus-32",
+  "价格：¥2,499",
+  "包邮，30 天无理由退换。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "型号": "Nimbus-32",
+  "价格": 2499
+ },
+ "numbers": [
+  {
+   "value": 2499,
+   "label": "价格"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "这款净化器多少钱？",
+   "a": 2499,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "型号是什么？",
+   "a": "Nimbus-32",
+   "match": "exact"
+  },
+  {
+   "id": "q3",
+   "q": "几天无理由退换？",
+   "a": 30,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "url": "https://www.shop.example.com/page/1545",
+  "subresources": 1
+ },
+ "notes": "Safari 网页归档，含一个 PNG 子资源。",
+ "bytes": 9301,
+ "sha256": "2216b946a0e78711dee8901465ba9df3401142476867f142af79beacc05d3ea9",
+ "family": "product"
+}

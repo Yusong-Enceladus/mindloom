@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "kind": "speaker-candidate-registry",
+  "selectionStatus": "fluid-public-holdout-selected-production-candidate-16gb-release-gate-pending",
+  "minimumSupportedUnifiedMemoryBytes": 17179869184,
+  "networkPolicy": "model-manager-verified-artifacts-only",
+  "candidates": [
+    {
+      "candidateID": "fluid",
+      "runtimeID": "fluid-audio.speaker-diarization",
+      "upstreamRuntime": {
+        "name": "FluidAudio",
+        "exactVersion": "0.15.5",
+        "revision": "19600a485baa4998812e4654b70d2bab8f2c9949",
+        "source": "https://github.com/FluidInference/FluidAudio/tree/v0.15.5",
+        "license": "Apache-2.0"
+      },
+      "modelArtifact": {
+        "artifactID": "fluid-speaker-diarization-coreml@1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+        "revision": "1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+        "source": "https://huggingface.co/FluidInference/speaker-diarization-coreml/tree/1ed7a662fdc7109e36d822db793ee6eebdaf8594",
+        "treeSHA256": "a91670d08b56d441b516fe0ec5532f02dfbd10f6752ebddec49ce6324af1f932",
+        "fileCount": 81,
+        "totalSizeBytes": 129243647,
+        "license": "CC-BY-4.0",
+        "licenseStatus": "attribution-and-base-model-notice-recorded"
+      },
+      "capabilities": [
+        "speaker.diarization",
+        "speaker.embedding",
+        "speaker.overlap",
+        "speaker.unknown-rejection"
+      ],
+      "minimumOS": {
+        "major": 14,
+        "minor": 2,
+        "patch": 0
+      },
+      "supportedArchitectures": [
+        "arm64"
+      ],
+      "evidence": {
+        "automaticBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-automatic-recommended-memory-smoke.json",
+        "automaticBenchmarkResultSHA256": "3466e07212893ec054bbde1612ae3e336eedd515dc8ddf18eb5a3865cbe5ef95",
+        "oracleBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-oracle-recommended-memory-smoke.json",
+        "oracleBenchmarkResultSHA256": "36cf9a9c70bc32045c98dee4a4c1a07fe98a98ec091646a345fd9da62e19ffe6",
+        "identityEvaluationSHA256": "ce4dd45fe89b08dd825a3a77a2aa81bcab6cc249f0dbc194fc91a2342dc8b9c5",
+        "identityEvaluationStorage": "external-local-only",
+        "networkDenied": true,
+        "executionProvider": "coreml-cpu-and-neural-engine",
+        "publicReleaseHoldout": {
+          "tuningCorpusManifestPath": "Corpus/public/ami-speaker-manifest.json",
+          "tuningCorpusManifestSHA256": "fcc1a6c9751d2d52fe6c91e9bffd4f24a62ad029a91e10937abf49306c92dc2c",
+          "releaseCorpusManifestPath": "Corpus/release-holdout/ami-speaker-manifest.json",
+          "releaseCorpusManifestSHA256": "1e62d5269ce3343134143d41df1e5ebb3bda9935cd8a493643f1f2055fefce48",
+          "tuningBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-ami-tuning-benchmark.json",
+          "tuningBenchmarkResultSHA256": "8a68c953ff89e6353fc0bcd1d18221e22bbcf3a260bb0fe0a457ca4525ee72aa",
+          "tuningDecisionPath": "artifacts/evidence/SPIKE-SPK-001/fluid-ami-tuning-decision.json",
+          "tuningDecisionSHA256": "63a9dcff1991627c6b66a581f315c084bcbb79223d9d0cf78276fb43ab595d0c",
+          "releaseBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/fluid-ami-release-holdout-benchmark.json",
+          "releaseBenchmarkResultSHA256": "3b69913cbb6ee34980adc60cba9e4a177e0f831149c5885405902c23b08f6cd5",
+          "releaseDecisionPath": "artifacts/evidence/SPIKE-SPK-001/fluid-ami-release-holdout-decision.json",
+          "releaseDecisionSHA256": "b7ae7a8ffa7f2c51643b0abb2f4152ce77d5559570c4e3e327ea848d5eb01f90",
+          "modelArtifactID": "fluid-speaker-diarization-coreml-1ed7a662",
+          "modelTreeSHA256": "664824fe8a2d387aad8ad7965191a90b9b290c5ea5470c3bd13a86a8cc8bf9ab",
+          "thresholdPolicy": "enrollment-only-impostor-protected-conservative",
+          "threshold": 0.5489600933809491,
+          "selectionEligible": true,
+          "networkDenied": true,
+          "evaluatedUnifiedMemoryBytes": 51539607552,
+          "minimumHardwareGate": "pending-16gb-apple-silicon"
+        }
+      },
+      "frozenProductionCandidate": true,
+      "releaseEligible": false
+    },
+    {
+      "candidateID": "argmax",
+      "runtimeID": "argmax.speakerkit",
+      "upstreamRuntime": {
+        "name": "Argmax OSS / SpeakerKit",
+        "exactVersion": "1.0.0",
+        "revision": "25c62997041c134b03ca82731ce2f6fd2cae1eb9",
+        "source": "https://github.com/argmaxinc/argmax-oss-swift/releases/tag/v1.0.0",
+        "license": "MIT"
+      },
+      "modelArtifact": {
+        "artifactID": "argmax-speakerkit-coreml@86ec9c929b52208b6656eb6a6361ed0d822a1f78",
+        "revision": "86ec9c929b52208b6656eb6a6361ed0d822a1f78",
+        "source": "https://huggingface.co/argmaxinc/speakerkit-coreml/tree/86ec9c929b52208b6656eb6a6361ed0d822a1f78",
+        "treeSHA256": "69ffa676b5e1eeacf0a4593172a8005521d77f40e578e148358b09f98f58d7a4",
+        "fileCount": 45,
+        "totalSizeBytes": 33099539,
+        "license": "LicenseRef-Argmax-SpeakerKit-Model-Audit-Pending",
+        "licenseStatus": "model-repository-license-missing"
+      },
+      "capabilities": [
+        "speaker.diarization",
+        "speaker.embedding",
+        "speaker.unknown-rejection"
+      ],
+      "minimumOS": {
+        "major": 14,
+        "minor": 2,
+        "patch": 0
+      },
+      "supportedArchitectures": [
+        "arm64"
+      ],
+      "evidence": {
+        "automaticBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/argmax-automatic-recommended-memory-smoke.json",
+        "automaticBenchmarkResultSHA256": "d4182f0acf53beff902f21a7a0c7ef999019bb8bdba91d44cd17e73694da194d",
+        "oracleBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/argmax-oracle-recommended-memory-smoke.json",
+        "oracleBenchmarkResultSHA256": "4e7cbb5723ff4153c195d67df86781f6864e0e59ce02667c8f94fbd80602d0dc",
+        "identityEvaluationSHA256": "9753c580f0a90c0398319e2466ab99aebf956d4f31c8ee98a1f1058839a3def4",
+        "identityEvaluationStorage": "external-local-only",
+        "networkDenied": true,
+        "executionProvider": "coreml-cpu-and-neural-engine"
+      },
+      "releaseEligible": false
+    },
+    {
+      "candidateID": "sherpa",
+      "runtimeID": "k2-fsa.sherpa-onnx.speaker",
+      "upstreamRuntime": {
+        "name": "sherpa-onnx",
+        "exactVersion": "1.13.2",
+        "revision": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+        "source": "https://github.com/k2-fsa/sherpa-onnx/releases/tag/v1.13.2",
+        "license": "Apache-2.0"
+      },
+      "modelArtifact": {
+        "artifactID": "sherpa-speaker-model-set@v1.13.2",
+        "revision": "speaker-diarization-models+speaker-reco-models",
+        "source": "https://github.com/k2-fsa/sherpa-onnx/releases",
+        "treeSHA256": "785c40512db184221c560db6b2b628eb4e5622f5ec11a220c0cf453e67f152c9",
+        "fileCount": 2,
+        "totalSizeBytes": 45586674,
+        "license": "MIT-segmentation; LicenseRef-3D-Speaker-Embedding-Audit-Pending",
+        "licenseStatus": "embedding-model-and-transitive-notice-review-pending",
+        "supportingArtifacts": [
+          {
+            "artifactID": "sherpa-pyannote-segmentation-3-0",
+            "sha256": "220ad67ca923bef2fa91f2390c786097bf305bceb5e261d4af67b38e938e1079",
+            "sizeBytes": 5992913,
+            "license": "MIT"
+          },
+          {
+            "artifactID": "3dspeaker-eres2net-base-zh-cn-16k",
+            "sha256": "1a331345f04805badbb495c775a6ddffcdd1a732567d5ec8b3d5749e3c7a5e4b",
+            "sizeBytes": 39593761,
+            "license": "LicenseRef-3D-Speaker-Embedding-Audit-Pending"
+          }
+        ]
+      },
+      "capabilities": [
+        "speaker.diarization",
+        "speaker.embedding",
+        "speaker.unknown-rejection"
+      ],
+      "minimumOS": {
+        "major": 14,
+        "minor": 2,
+        "patch": 0
+      },
+      "supportedArchitectures": [
+        "arm64"
+      ],
+      "evidence": {
+        "automaticBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/sherpa-automatic-recommended-memory-smoke.json",
+        "automaticBenchmarkResultSHA256": "7bced052d6462fcb904b9a4f9c55b1d093d5ca956eab2aacce6f0c6d86769770",
+        "oracleBenchmarkResultPath": "artifacts/evidence/SPIKE-SPK-001/sherpa-oracle-recommended-memory-smoke.json",
+        "oracleBenchmarkResultSHA256": "9ade3f1c1cea0a5533531cb2d7f829b9c8bfacfca889f5c754ca51f113f97107",
+        "identityEvaluationSHA256": "b6a5a4c80520dd7484a5ce4b893b2b57d25161429904e479a7f7607d03fbb293",
+        "identityEvaluationStorage": "external-local-only",
+        "networkDenied": true,
+        "executionProvider": "onnxruntime-cpu"
+      },
+      "releaseEligible": false
+    }
+  ]
+}

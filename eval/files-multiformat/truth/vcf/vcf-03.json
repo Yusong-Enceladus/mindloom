@@ -1,0 +1,57 @@
+{
+ "file_id": "vcf-03",
+ "path": "corpus/vcf/vcf-03.vcf",
+ "type": "vcf",
+ "ext": "vcf",
+ "mime": "text/vcard",
+ "filename": "Contacts.vcf",
+ "lang": "en",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "[contact 1]\nN: Novak Ethan\nFN: Ethan Novak\nORG: Aurora Field Instruments\nTITLE: Lab Manager\nTEL: +1-202-555-0189\nEMAIL: ethan.brightline@example.com\nNOTE: 合成数据\n[contact 2]\nN: Liu Grace\nFN: Grace Liu\nORG: Juniper Health Supplies\nTITLE: Lab Manager\nTEL: +1-202-555-0119\nEMAIL: grace.brightline@example.com\nNOTE: 合成数据\n[contact 3]\nN: Sato Hana\nFN: Hana Sato\nORG: Aurora Field Instruments\nTITLE: Account Executive\nTEL: +1-202-555-0170\nEMAIL: hana.bluestem@example.com\nNOTE: 合成数据",
+ "key_lines": [
+  "EMAIL: ethan.brightline@example.com",
+  "ORG: Juniper Health Supplies",
+  "TITLE: Account Executive"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "Ethan Novak": "ethan.brightline@example.com",
+  "Grace Liu": "grace.brightline@example.com",
+  "Hana Sato": "hana.bluestem@example.com"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is Ethan Novak's email?",
+   "a": "ethan.brightline@example.com",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "What is Hana Sato's job title?",
+   "a": "Account Executive",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "Which organisation does Grace Liu work for?",
+   "a": "Juniper Health Supplies",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "cards": 3,
+  "versions": [
+   "4.0",
+   "4.0",
+   "4.0"
+  ]
+ },
+ "bytes": 642,
+ "sha256": "b5d91af349937ab261c88a9abc664e0e9c8e929d14e22eabfe96e5fcd7f5ab43",
+ "family": "contacts_en"
+}

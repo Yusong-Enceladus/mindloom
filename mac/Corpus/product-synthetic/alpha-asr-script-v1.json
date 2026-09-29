@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "kind": "synthetic-asr-script-plan",
+  "runID": "72000000-0000-4000-8000-000000000002",
+  "manifestID": "product-synthetic-alpha-asr-v1",
+  "version": "1.1.0",
+  "samples": [
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000001",
+      "key": "zh-baseline",
+      "generator": "speech",
+      "fileName": "zh-baseline.aiff",
+      "voice": "Tingting",
+      "rate": 180,
+      "spokenText": "这是本地口述测试。请把第一段保存下来，然后开始第二段。",
+      "reference": "这是本地口述测试请把第一段保存下来然后开始第二段",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "baseline", "punctuation"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000002",
+      "key": "en-baseline",
+      "generator": "speech",
+      "fileName": "en-baseline.aiff",
+      "voice": "Samantha",
+      "rate": 180,
+      "spokenText": "This is a fully local dictation test. Save the first paragraph, then begin the second paragraph.",
+      "reference": "this is a fully local dictation test save the first paragraph then begin the second paragraph",
+      "languages": ["en-US"],
+      "tags": ["english", "baseline", "punctuation"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000003",
+      "key": "mixed-dangerous",
+      "generator": "speech",
+      "fileName": "mixed-dangerous.aiff",
+      "voice": "Tingting",
+      "rate": 175,
+      "spokenText": "请在 best A S R 里记录 A P I version three point two，金额是 one hundred twenty eight dollars，不要取消任务。",
+      "reference": "请在 bestASR 里记录 API version three point two 金额是 one hundred twenty eight dollars 不要取消任务",
+      "languages": ["zh-CN", "en-US"],
+      "tags": ["mixed-language", "numbers-dates-negation", "code-switch"],
+      "dictionaryTerms": ["bestASR", "API"],
+      "dangerousTokens": [
+        {
+          "category": "number",
+          "canonicalValue": "3.2",
+          "acceptedSurfaceForms": ["three point two", "3.2", "三点二"]
+        },
+        {
+          "category": "number",
+          "canonicalValue": "128 dollars",
+          "acceptedSurfaceForms": ["one hundred twenty eight dollars", "128 dollars", "一百二十八美元"]
+        },
+        {
+          "category": "negation",
+          "canonicalValue": "不要取消",
+          "acceptedSurfaceForms": ["不要取消", "不能取消"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000004",
+      "key": "zh-names-terms",
+      "generator": "speech",
+      "fileName": "zh-names-terms.aiff",
+      "voice": "Tingting",
+      "rate": 175,
+      "spokenText": "张明负责本地识别集成，李娜负责发布前的质量检查。",
+      "reference": "张明负责本地识别集成李娜负责发布前的质量检查",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "names-terms", "dictionary"],
+      "dictionaryTerms": ["张明", "李娜"],
+      "dangerousTokens": [
+        {
+          "category": "person",
+          "canonicalValue": "张明",
+          "acceptedSurfaceForms": ["张明"]
+        },
+        {
+          "category": "action-owner",
+          "canonicalValue": "张明",
+          "acceptedSurfaceForms": ["张明"]
+        },
+        {
+          "category": "person",
+          "canonicalValue": "李娜",
+          "acceptedSurfaceForms": ["李娜"]
+        },
+        {
+          "category": "action-owner",
+          "canonicalValue": "李娜",
+          "acceptedSurfaceForms": ["李娜"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000005",
+      "key": "en-names-terms",
+      "generator": "speech",
+      "fileName": "en-names-terms.aiff",
+      "voice": "Samantha",
+      "rate": 175,
+      "spokenText": "Alice owns the Open A I integration, and Bob owns the Kubernetes migration for best A S R.",
+      "reference": "Alice owns the OpenAI integration and Bob owns the Kubernetes migration for bestASR",
+      "languages": ["en-US"],
+      "tags": ["english", "names-terms", "dictionary"],
+      "dictionaryTerms": ["Alice", "OpenAI", "Bob", "Kubernetes", "bestASR"],
+      "dangerousTokens": [
+        {
+          "category": "person",
+          "canonicalValue": "alice",
+          "acceptedSurfaceForms": ["alice"]
+        },
+        {
+          "category": "action-owner",
+          "canonicalValue": "alice",
+          "acceptedSurfaceForms": ["alice"]
+        },
+        {
+          "category": "person",
+          "canonicalValue": "bob",
+          "acceptedSurfaceForms": ["bob"]
+        },
+        {
+          "category": "action-owner",
+          "canonicalValue": "bob",
+          "acceptedSurfaceForms": ["bob"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000006",
+      "key": "zh-numbers-date-negation",
+      "generator": "speech",
+      "fileName": "zh-numbers-date-negation.aiff",
+      "voice": "Tingting",
+      "rate": 180,
+      "spokenText": "今天是二零二六年八月十五日，项目预算是一万二千三百四十五元，不要删除原始音频。",
+      "reference": "今天是二零二六年八月十五日项目预算是一万二千三百四十五元不要删除原始音频",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "numbers-dates-negation"],
+      "dictionaryTerms": [],
+      "dangerousTokens": [
+        {
+          "category": "date",
+          "canonicalValue": "2026-08-15",
+          "acceptedSurfaceForms": ["二零二六年八月十五日", "2026年8月15日", "2026-08-15"]
+        },
+        {
+          "category": "number",
+          "canonicalValue": "12345元",
+          "acceptedSurfaceForms": ["一万二千三百四十五元", "12345元", "12,345元"]
+        },
+        {
+          "category": "negation",
+          "canonicalValue": "不要删除",
+          "acceptedSurfaceForms": ["不要删除", "不能删除"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000007",
+      "key": "en-numbers-date-negation",
+      "generator": "speech",
+      "fileName": "en-numbers-date-negation.aiff",
+      "voice": "Samantha",
+      "rate": 180,
+      "spokenText": "The meeting starts at nine thirty on August fifteenth twenty twenty six. Alice will send a payment of twelve thousand three hundred forty five U S dollars. Do not delete the original audio.",
+      "reference": "the meeting starts at 930 on august 15 2026 Alice will send a payment of 12345 US dollars do not delete the original audio",
+      "languages": ["en-US"],
+      "tags": ["english", "numbers-dates-negation"],
+      "dictionaryTerms": ["Alice"],
+      "dangerousTokens": [
+        {
+          "category": "date",
+          "canonicalValue": "2026-08-15",
+          "acceptedSurfaceForms": ["august fifteenth twenty twenty six", "august 15th 2026", "august 15 2026", "2026-08-15"]
+        },
+        {
+          "category": "number",
+          "canonicalValue": "09:30",
+          "acceptedSurfaceForms": ["nine thirty", "9:30", "nine-thirty"]
+        },
+        {
+          "category": "number",
+          "canonicalValue": "12345 dollars",
+          "acceptedSurfaceForms": ["twelve thousand three hundred forty five u s dollars", "12345 us dollars", "12345 dollars", "12,345 dollars", "$12345"]
+        },
+        {
+          "category": "person",
+          "canonicalValue": "alice",
+          "acceptedSurfaceForms": ["alice"]
+        },
+        {
+          "category": "action-owner",
+          "canonicalValue": "alice",
+          "acceptedSurfaceForms": ["alice"]
+        },
+        {
+          "category": "negation",
+          "canonicalValue": "do not delete",
+          "acceptedSurfaceForms": ["do not delete", "don't delete"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000008",
+      "key": "zh-fast-pace",
+      "generator": "speech",
+      "fileName": "zh-fast-pace.aiff",
+      "voice": "Tingting",
+      "rate": 240,
+      "spokenText": "这是快速口述测试，我们需要检查连续说话时是否漏字，也要保留最后一句。",
+      "reference": "这是快速口述测试我们需要检查连续说话时是否漏字也要保留最后一句",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "pace", "fast"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000009",
+      "key": "en-slow-pace",
+      "generator": "speech",
+      "fileName": "en-slow-pace.aiff",
+      "voice": "Samantha",
+      "rate": 110,
+      "spokenText": "This is a deliberately slow dictation sample with clear spacing between each phrase.",
+      "reference": "this is a deliberately slow dictation sample with clear spacing between each phrase",
+      "languages": ["en-US"],
+      "tags": ["english", "pace", "slow"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000010",
+      "key": "zh-explicit-pause",
+      "generator": "speech",
+      "fileName": "zh-explicit-pause.aiff",
+      "voice": "Tingting",
+      "rate": 175,
+      "spokenText": "第一句话结束。 [[slnc 1200]] 一段停顿之后继续第二句话。",
+      "reference": "第一句话结束一段停顿之后继续第二句话",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "pause"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000011",
+      "key": "en-explicit-pause",
+      "generator": "speech",
+      "fileName": "en-explicit-pause.aiff",
+      "voice": "Samantha",
+      "rate": 175,
+      "spokenText": "The first sentence ends here. [[slnc 1200]] After a pause, the second sentence continues.",
+      "reference": "the first sentence ends here after a pause the second sentence continues",
+      "languages": ["en-US"],
+      "tags": ["english", "pause"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000012",
+      "key": "zh-self-correction",
+      "generator": "speech",
+      "fileName": "zh-self-correction.aiff",
+      "voice": "Tingting",
+      "rate": 180,
+      "spokenText": "请在明天下午三点，不对，改成下午四点提交报告。",
+      "reference": "请在明天下午三点不对改成下午四点提交报告",
+      "languages": ["zh-CN"],
+      "tags": ["mandarin", "self-correction"],
+      "dictionaryTerms": [],
+      "dangerousTokens": [
+        {
+          "category": "number",
+          "canonicalValue": "下午四点",
+          "acceptedSurfaceForms": ["下午四点", "下午4点", "4 p m"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000013",
+      "key": "en-self-correction",
+      "generator": "speech",
+      "fileName": "en-self-correction.aiff",
+      "voice": "Samantha",
+      "rate": 180,
+      "spokenText": "Send the report on Thursday, correction, send the report on Friday at four P M.",
+      "reference": "send the report on thursday correction send the report on friday at four p m",
+      "languages": ["en-US"],
+      "tags": ["english", "self-correction"],
+      "dictionaryTerms": [],
+      "dangerousTokens": [
+        {
+          "category": "date",
+          "canonicalValue": "friday",
+          "acceptedSurfaceForms": ["friday"]
+        },
+        {
+          "category": "number",
+          "canonicalValue": "4 p m",
+          "acceptedSurfaceForms": ["four p m", "4 p m", "4pm"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000014",
+      "key": "mixed-self-correction",
+      "generator": "speech",
+      "fileName": "mixed-self-correction.aiff",
+      "voice": "Tingting",
+      "rate": 180,
+      "spokenText": "把 deployment target 设成 fifteen，不对，改成 mac O S fourteen point two。",
+      "reference": "把 deployment target 设成 fifteen 不对改成 macOS fourteen point two",
+      "languages": ["zh-CN", "en-US"],
+      "tags": ["mixed-language", "self-correction", "names-terms"],
+      "dictionaryTerms": ["deployment target", "macOS"],
+      "dangerousTokens": [
+        {
+          "category": "number",
+          "canonicalValue": "14.2",
+          "acceptedSurfaceForms": ["fourteen point two", "14.2", "十四点二"]
+        }
+      ]
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000015",
+      "key": "silence-four-seconds",
+      "generator": "silence",
+      "fileName": "silence-four-seconds.wav",
+      "durationSeconds": 4,
+      "reference": "",
+      "languages": ["zh-CN", "en-US"],
+      "tags": ["silence", "adversarial"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    },
+    {
+      "sampleUUID": "21000000-0000-4000-8000-000000000016",
+      "key": "low-noise-four-seconds",
+      "generator": "noise",
+      "fileName": "low-noise-four-seconds.wav",
+      "durationSeconds": 4,
+      "amplitude": 0.008,
+      "reference": "",
+      "languages": ["zh-CN", "en-US"],
+      "tags": ["silence", "noise", "adversarial"],
+      "dictionaryTerms": [],
+      "dangerousTokens": []
+    }
+  ]
+}

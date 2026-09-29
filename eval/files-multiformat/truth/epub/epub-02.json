@@ -1,0 +1,56 @@
+{
+ "file_id": "epub-02",
+ "path": "corpus/epub/epub-02.epub",
+ "type": "epub",
+ "ext": "epub",
+ "mime": "application/epub+zip",
+ "filename": "成都慢游小册.epub",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "成都慢游小册\n第一章 出发前\n成都四季分明，最适合出游的是春秋两季。市区地铁共 9 条线路。\n第二章 三个去处\n- 茶园：建议停留 2 小时\n- 老城墙：建议停留 3 小时\n- 竹林寺：建议停留 3 小时\n老城墙门票 30 元，周一闭馆。\n第三章 吃什么\n推荐当地的早茶与夜市小吃，人均约 50 元。\n本书为合成数据。\n合成数据",
+ "key_lines": [
+  "- 茶园：建议停留 2 小时",
+  "老城墙门票 30 元，周一闭馆。"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "城市": "成都",
+  "门票": 30,
+  "闭馆": "周一"
+ },
+ "numbers": [
+  {
+   "value": 30,
+   "label": "门票"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "老城墙门票多少元？",
+   "a": 30,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "老城墙哪天闭馆？",
+   "a": "周一",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "推荐的第一个去处是哪里？",
+   "a": "茶园",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "chapters": 3
+ },
+ "bytes": 3006,
+ "sha256": "fd42ef7a571c3b3f084ffe939c1c3f97b57aba931212fb890948dcfd25af5cf2",
+ "family": "travel_book"
+}

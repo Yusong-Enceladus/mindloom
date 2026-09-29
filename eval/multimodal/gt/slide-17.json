@@ -1,0 +1,96 @@
+{
+ "id": "slide-17",
+ "type": "slide",
+ "split": "test",
+ "image": "images/slide-17.jpg",
+ "lang": "en",
+ "hard": [
+  "small_text",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "6b83635d79aaedbdfbd99b19b26bd1775c7d9d11cadf61784382a3e5ba33b22c",
+ "gt": {
+  "title": "Q3 Business Review",
+  "subtitle": "July to September 2026",
+  "bullets": [
+   {
+    "level": 0,
+    "text": "Revenue $1.2M, up 14% QoQ"
+   },
+   {
+    "level": 0,
+    "text": "Monthly churn 1.8%"
+   },
+   {
+    "level": 1,
+    "text": "Down from 3.0% after the onboarding fix"
+   },
+   {
+    "level": 0,
+    "text": "NPS 47 (survey n = 640)"
+   },
+   {
+    "level": 0,
+    "text": "Headcount 32, 4 open roles"
+   }
+  ],
+  "kpis": [
+   {
+    "label": "Revenue",
+    "value": "$1.2M"
+   },
+   {
+    "label": "NPS",
+    "value": "47"
+   }
+  ],
+  "footer": "Tallpine Logistics LLC · Internal",
+  "page": "18 / 21"
+ },
+ "text_lines": [
+  "Q3 Business Review",
+  "July to September 2026",
+  "Revenue $1.2M, up 14% QoQ",
+  "Monthly churn 1.8%",
+  "Down from 3.0% after the onboarding fix",
+  "NPS 47 (survey n = 640)",
+  "Headcount 32, 4 open roles",
+  "Revenue $1.2M",
+  "NPS 47",
+  "Tallpine Logistics LLC · Internal",
+  "18 / 21"
+ ],
+ "qa": [
+  {
+   "q": "What was revenue?",
+   "a": "$1.2M",
+   "match": "number"
+  },
+  {
+   "q": "What is monthly churn?",
+   "a": "1.8%",
+   "match": "number"
+  },
+  {
+   "q": "What is the NPS?",
+   "a": "47",
+   "match": "number"
+  },
+  {
+   "q": "What is the slide title?",
+   "a": "Q3 Business Review",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "corporate",
+  "dense": false,
+  "downscale": "800x450"
+ },
+ "variant": {
+  "content": "en_review",
+  "theme": "corporate",
+  "small": true
+ }
+}

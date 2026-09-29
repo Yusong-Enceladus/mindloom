@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "kind": "recommended-memory-asr-smoke-summary",
+  "conclusion": "conditional-recommended-memory-smoke-only",
+  "releaseEligible": false,
+  "selectionDecision": "no-default-candidate-selected",
+  "scope": {
+    "deviceClass": "recommended-memory-development-host",
+    "hardware": "Apple M4 Pro",
+    "architecture": "arm64",
+    "osVersion": "26.5.2",
+    "unifiedMemoryBytes": 51539607552,
+    "toolchainVersion": "Apple Swift 6.3.3",
+    "networkDeniedDuringInference": true
+  },
+  "corpus": {
+    "manifestID": "product-synthetic-smoke",
+    "version": "1.1.0",
+    "manifestSHA256": "6e7f842c3d8618b2bd0d6d449bd202d860e0157ae23334c0d95cb67d0ccb2069",
+    "sampleCount": 3,
+    "audioDurationSeconds": 24.322126,
+    "languages": [
+      "zh-CN",
+      "en-US",
+      "zh-CN+en-US"
+    ],
+    "contentPolicy": "synthetic-local-only-audio; aggregate-results-only-in-git"
+  },
+  "candidates": [
+    {
+      "candidateID": "fluid-sensevoice",
+      "runtimeVersion": "0.15.5",
+      "runtimeRevision": "19600a485baa4998812e4654b70d2bab8f2c9949",
+      "runtimeLicense": "Apache-2.0",
+      "modelArtifactID": "fluid-sensevoice-small-int8-0e0bf30b",
+      "modelRevision": "0e0bf30bfc6836f182ccd1d89984df919c949e26",
+      "modelTreeSHA256": "df817fcc1009d0d909c2d7eea7dd6babdd4e3288f9b84973ce04fe66c27cf7be",
+      "modelFileCount": 10,
+      "modelTotalSizeBytes": 239918735,
+      "modelLicense": "LicenseRef-FunASR-Model-1.1",
+      "executionProvider": "coreml-cpu-and-neural-engine",
+      "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/fluid-sensevoice-recommended-memory-smoke.json",
+      "benchmarkResultSHA256": "062ed2300cfb8bfaaee80e48818a44d7e861aa021e93282b0e35b65c37ae5d2e",
+      "metrics": {
+        "cer": 0.005154639175257732,
+        "wer": 0.025,
+        "mer": 0.011627906976744186,
+        "dangerousTokenErrors": 0,
+        "latencyP95Milliseconds": 1620,
+        "realtimeFactor": 0.17884949695598157,
+        "peakResidentBytes": 66764800
+      }
+    },
+    {
+      "candidateID": "whisperkit",
+      "runtimeVersion": "1.0.0",
+      "runtimeRevision": "25c62997041c134b03ca82731ce2f6fd2cae1eb9",
+      "runtimeLicense": "MIT",
+      "modelArtifactID": "whisperkit-openai-whisper-tiny-7c9dbc26",
+      "modelRevision": "7c9dbc26ff8919e0008ad2dab2c837f228cf76e1",
+      "modelTreeSHA256": "46a223998014e9877cb3868a9c0fd19270dfd670d96a1a67d97ba45a3bf244a1",
+      "modelFileCount": 19,
+      "modelTotalSizeBytes": 76628051,
+      "modelLicense": "MIT",
+      "supportingArtifact": {
+        "artifactID": "openai-whisper-tiny-tokenizer",
+        "revision": "169d4a4341b33bc18d8881c4b69c2e104e1cc0af",
+        "treeSHA256": "d28cda34814079103fec1cf026a06c2127fd015ce2aac4efba865ca84145cca4",
+        "fileCount": 3,
+        "totalSizeBytes": 2765132
+      },
+      "executionProvider": "coreml-cpu-and-neural-engine",
+      "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/whisperkit-recommended-memory-smoke.json",
+      "benchmarkResultSHA256": "7d5b0f758b410bd2ee11f0223996a27e84ac5b5f3208c63c4258e7191800b31a",
+      "metrics": {
+        "cer": 0.4793814432989691,
+        "wer": 0.575,
+        "mer": 0.5116279069767442,
+        "dangerousTokenErrors": 6,
+        "latencyP95Milliseconds": 660,
+        "realtimeFactor": 0.069484057438071,
+        "peakResidentBytes": 101416960
+      }
+    },
+    {
+      "candidateID": "sherpa-onnx",
+      "runtimeVersion": "1.13.2",
+      "runtimeRevision": "13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24",
+      "runtimeLicense": "Apache-2.0",
+      "modelArtifactID": "sherpa-zipformer-bilingual-zh-en-2023-02-20",
+      "modelRevision": "asr-models/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20",
+      "modelArchiveSHA256": "27ffbd9ee24ad186d99acc2f6354d7992b27bcab490812510665fa8f9389c5f8",
+      "modelTreeSHA256": "24e1e2cf660941096b792a617204442e929226ff485ff2ae91e36ae0ed75ccbc",
+      "modelFileCount": 15,
+      "modelTotalSizeBytes": 556522064,
+      "modelLicense": "LicenseRef-Community-Training-Data-Audit-Pending",
+      "executionProvider": "onnxruntime-cpu",
+      "providerObservation": "Core ML was requested but the pinned runtime reported fallback to CPU; no Core ML acceleration is claimed.",
+      "benchmarkResultPath": "artifacts/evidence/SPIKE-ASR-001/sherpa-onnx-recommended-memory-smoke.json",
+      "benchmarkResultSHA256": "5f9bba206c7b6e48cb051d397f8942b0e54b7304618d1069ca797a94e07366fd",
+      "metrics": {
+        "cer": 0.7371134020618557,
+        "wer": 0.45,
+        "mer": 0.1511627906976744,
+        "dangerousTokenErrors": 2,
+        "latencyP95Milliseconds": 910,
+        "realtimeFactor": 0.10730969817358894,
+        "peakResidentBytes": 814579712
+      }
+    }
+  ],
+  "unmetReleaseCriteria": [
+    "The same versioned release corpus has not run on a 16 GB minimum-support device.",
+    "The current three-sample synthetic smoke is not a tuning or release-holdout matrix.",
+    "Thermal degradation, long-session backlog, timestamps, streaming revision churn, and silence/noise hallucination gates remain pending.",
+    "SenseVoice and sherpa model/data license audits remain unresolved.",
+    "The shared diarization and speaker-identity matrix remains pending."
+  ]
+}

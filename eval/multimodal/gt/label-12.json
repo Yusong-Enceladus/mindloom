@@ -1,0 +1,112 @@
+{
+ "id": "label-12",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-12.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "c2e21d595e300e4994800fc5383b5029c3c0e34271df2fff09b3c3ccfbe9ef28",
+ "gt": {
+  "label_kind": "repair_form",
+  "fields": [
+   {
+    "key": "reporter",
+    "label": "报修人",
+    "value": "周婷"
+   },
+   {
+    "key": "room",
+    "label": "房号",
+    "value": "11-402"
+   },
+   {
+    "key": "phone",
+    "label": "联系电话",
+    "value": "181-79**-1062"
+   },
+   {
+    "key": "issue",
+    "label": "故障描述",
+    "value": "门锁卡住"
+   },
+   {
+    "key": "visit_time",
+    "label": "期望上门时间",
+    "value": "9月11日 晚上7点以后"
+   },
+   {
+    "key": "emergency_contact",
+    "label": "紧急联系人",
+    "value": "罗佳宁"
+   }
+  ],
+  "lines": [
+   "物业报修单",
+   "编号：BX091114",
+   "报修人",
+   "周婷",
+   "房号",
+   "11-402",
+   "联系电话",
+   "181-79**-1062",
+   "故障描述",
+   "门锁卡住",
+   "期望上门时间",
+   "9月11日 晚上7点以后",
+   "紧急联系人",
+   "罗佳宁",
+   "说明：本单一式两联，维修完成后请住户签字确认。"
+  ]
+ },
+ "text_lines": [
+  "物业报修单",
+  "编号：BX091114",
+  "报修人",
+  "周婷",
+  "房号",
+  "11-402",
+  "联系电话",
+  "181-79**-1062",
+  "故障描述",
+  "门锁卡住",
+  "期望上门时间",
+  "9月11日 晚上7点以后",
+  "紧急联系人",
+  "罗佳宁",
+  "说明：本单一式两联，维修完成后请住户签字确认。"
+ ],
+ "qa": [
+  {
+   "q": "报修人是谁？",
+   "a": "周婷",
+   "match": "exact"
+  },
+  {
+   "q": "房号是多少？",
+   "a": "11-402",
+   "match": "exact"
+  },
+  {
+   "q": "什么故障？",
+   "a": "门锁卡住",
+   "match": "exact"
+  },
+  {
+   "q": "紧急联系人是谁？",
+   "a": "罗佳宁",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "repair_form",
+  "background": "wood"
+ },
+ "variant": {
+  "kind": "repair_form",
+  "hand_font": "hand_note"
+ }
+}

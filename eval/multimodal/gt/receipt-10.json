@@ -1,0 +1,95 @@
+{
+ "id": "receipt-10",
+ "type": "receipt_invoice",
+ "split": "dev",
+ "image": "images/receipt-10.jpg",
+ "lang": "zh",
+ "hard": [
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "ba071a85ebb4ad3afd75fd5d8c115d416d5ccf06aff26180938e725c22a4e769",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "云岭电器有限公司",
+  "date": "2026-08-04",
+  "date_text": "2026年8月4日",
+  "time": "",
+  "doc_no": "XS-20260804-899",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "PVC 水管 20mm",
+    "qty": 1.07,
+    "unit": "m",
+    "unit_price": "4.20",
+    "amount": "4.49"
+   },
+   {
+    "name": "自攻螺丝 M4×20",
+    "qty": 12,
+    "unit": "盒",
+    "unit_price": "6.50",
+    "amount": "78.00"
+   },
+   {
+    "name": "布基胶带 48mm",
+    "qty": 10,
+    "unit": "卷",
+    "unit_price": "5.50",
+    "amount": "55.00"
+   }
+  ],
+  "subtotal": "137.49",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "137.49",
+  "payment_method": "月结",
+  "buyer": "示例科技有限公司",
+  "total_in_words": "壹佰叁拾柒元肆角玖分"
+ },
+ "text_lines": [
+  "销售单",
+  "云岭电器有限公司",
+  "客户：示例科技有限公司 单号：XS-20260804-899",
+  "日期：2026年8月4日 结算方式：月结",
+  "PVC 水管 20mm 1.07m 4.20 4.49",
+  "自攻螺丝 M4×20 12 6.50 78.00",
+  "布基胶带 48mm 10 5.50 55.00",
+  "合计金额： ¥137.49",
+  "大写： 壹佰叁拾柒元肆角玖分",
+  "备注：货物当面点清，如有质量问题请于 3 日内联系。",
+  "开单人：赵磊"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥137.49",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "云岭电器有限公司",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-08-04",
+   "match": "date"
+  },
+  {
+   "q": "自攻螺丝 M4×20的金额是多少？",
+   "a": "78.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice"
+ }
+}

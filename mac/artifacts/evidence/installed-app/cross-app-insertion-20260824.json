@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "kind": "installed-cross-app-dictation",
+  "result": "pass",
+  "recordedAt": "2026-08-24T14:35:00Z",
+  "application": {
+    "path": "~/Applications/bestASR.app",
+    "testedRevision": "d13d98c32571e1ab3a2f80609d8d5d1ae89d07c0",
+    "bundleIdentifier": "com.bestasr.app",
+    "bestASRWasFocused": false
+  },
+  "input": {
+    "capture": "built-in microphone",
+    "speechFixture": "local synthetic speech",
+    "trigger": "configured system-global shortcut",
+    "networkRequired": false
+  },
+  "targets": [
+    {
+      "application": "Codex",
+      "target": "controlled blank ProseMirror composer",
+      "recognitionBoundary": "exact Codex bundle, enabled AXTextArea, selection present, non-secure, ProseMirror DOM class",
+      "stableIdentity": "ChromeAXNodeId-derived digest",
+      "insertionMethod": "clipboardPaste",
+      "finalTextLength": 18,
+      "insertedOutcomeCount": 1,
+      "exactFinalTextInsertedOnce": true,
+      "clipboardRestored": true,
+      "controlledTargetClearedAfterTest": true
+    },
+    {
+      "application": "Microsoft Word",
+      "target": "new controlled blank unsaved document",
+      "insertionMethod": "clipboardPaste",
+      "finalTextLength": 23,
+      "insertedOutcomeCount": 1,
+      "exactFinalTextInsertedOnce": true,
+      "clipboardRestored": true,
+      "controlledDocumentClosedWithoutSaving": true,
+      "applicationReturnedToPretestRunningState": true
+    }
+  ],
+  "cleanup": {
+    "performedThroughInstalledApplicationUI": true,
+    "cleanupRevision": "b99a2d762cfc35543ee0a1d8b44a96ead261ad83",
+    "syntheticSessionsCreatedAcrossDebuggingAndFinalRuns": 9,
+    "syntheticSessionRowsAfterCleanup": 0,
+    "syntheticAssetDirectoriesAfterCleanup": 0,
+    "totalSessionRowsBeforeTesting": 13,
+    "totalSessionRowsAfterCleanup": 13,
+    "databaseQuickCheck": "ok"
+  },
+  "privacy": {
+    "containsTranscriptText": false,
+    "containsClipboardContent": false,
+    "containsWindowTitles": false,
+    "containsUserDocumentContent": false
+  },
+  "limitations": [
+    "This closes the controlled blank-target PRD acceptance path; it is not evidence for every Electron or rich-text application version.",
+    "The broader Terminal-class insertion matrix remains fail-closed and conditional until a controlled target can be proven empty without touching user content."
+  ]
+}

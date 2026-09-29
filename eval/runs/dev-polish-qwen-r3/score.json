@@ -1,0 +1,1039 @@
+{
+ "scenario_id": "dev-week-v1",
+ "split": "dev",
+ "n_items": 82,
+ "summary": {
+  "bcubed_precision": 0.979020979020979,
+  "bcubed_recall": 0.6224498329306021,
+  "bcubed_f1": 0.7610397145915478,
+  "link_precision": 0.8461538461538461,
+  "link_recall": 0.6947368421052632,
+  "link_f1": 0.7630057803468209,
+  "hard_decoy_leakage": 0.0,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "noise_unfiled_rate": 1.0,
+  "noise_singleton_rate": 0.0,
+  "noise_in_real_event_rate": 0.0,
+  "false_unfiled": 0,
+  "unfiled_precision": 1.0,
+  "decoy_seed_ok": "2/2",
+  "absorbed_matters": "none",
+  "pred_event_count": 17,
+  "gold_event_count": 9,
+  "question_count": 7,
+  "asks_total": 4,
+  "asks_per_100_items": 4.88,
+  "max_asks_per_day": 1,
+  "ask_useful_rate": 0.5,
+  "ask_true_yes_rate": 0.5714285714285714,
+  "asks_suppressed": 3,
+  "status_fact_recall": 0.4230769230769231,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.05,
+  "home_rank_ran": "4/4",
+  "home_ndcg5": 0.6576182459365616,
+  "home_ndcg5_recency": 0.5108035597674512,
+  "home_top3_precision": 0.75,
+  "home_g3_recall3": 0.5416666666666666,
+  "home_gross_inversions": 7,
+  "home_clutter5": 0,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "card_fact_recall": 0.75,
+  "ui_status_over_24w": 0,
+  "ui_status_width_p50": 12.5,
+  "ui_status_width_p90": 14.5,
+  "ui_status_width_max": 17.5,
+  "ui_fact_date_repeated": 4,
+  "person_link_accuracy": 0.3055555555555556,
+  "person_link_accuracy_cross_source": 0.3055555555555556,
+  "checkpoints_scored": 4,
+  "checkpoints_total": 4
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.979020979020979,
+    "recall": 0.6224498329306021,
+    "f1": 0.7610397145915478
+   },
+   "link": {
+    "precision": 0.8461538461538461,
+    "recall": 0.6947368421052632,
+    "f1": 0.7630057803468209,
+    "tp": 66,
+    "n_pred": 78,
+    "n_gold": 95
+   },
+   "decoy_leakage": {
+    "hard": 0.0,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_momflat": {
+      "difficulty": "hard",
+      "decoy_of": "ev_reno",
+      "pairs": 84,
+      "leakage": 0.0,
+      "decoy_items": 7
+     },
+     "ev_grinder": {
+      "difficulty": "easy",
+      "decoy_of": "ev_beans",
+      "pairs": 36,
+      "leakage": 0.0,
+      "decoy_items": 4
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 2,
+    "total": 2,
+    "per_decoy": {
+     "ev_momflat": {
+      "seed": "7883b63b-fa24-52be-bd83-889fb9da895c",
+      "ok": true
+     },
+     "ev_grinder": {
+      "seed": "0713a85c-7205-51e8-8fad-5b73a4ce043f",
+      "ok": true
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [],
+    "rate": 1.0
+   },
+   "noise_abstention": {
+    "noise_items": 4,
+    "abstained": 4,
+    "rate": 1.0,
+    "singleton_rate": 0.0,
+    "in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 17,
+   "pred_event_count_multi_item": 11,
+   "gold_event_count": 9,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "fee309f0-db29-4a40-bb18-b1384a6c0e25": "ev_anniv",
+   "03930ac7-55da-4273-886e-e43b654a2078": "ev_beans",
+   "ce411079-c967-432b-9156-f9289aa0d169": "ev_grinder",
+   "a75056f8-f578-40d7-8c1a-9071078ab4c3": "ev_lease",
+   "0ead3310-7ecd-4967-9f42-67bbfd373403": "ev_member",
+   "c4057915-2ed0-429c-8f17-9cd8b8e507ec": "ev_menu",
+   "92060632-962a-4239-9355-53a9874480b2": "ev_momflat",
+   "ddf34019-b240-47fc-a29d-12d9ffb07c6c": "ev_reno",
+   "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91": "ev_sign"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.3055555555555556,
+   "pairs": 72,
+   "accuracy_cross_source": 0.3055555555555556,
+   "pairs_cross_source": 72,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 5.4,
+   "name_match": 1.0,
+   "mapping": {
+    "chat-fec0fec2-8e1c-5441-becd-261aa38b43d2": "p_chen",
+    "chat-92599835-6789-5fec-82c6-a04bfa60724a": "p_gao",
+    "chat-e6aac8f2-5b6a-5835-904d-04af993532ed": "p_lin",
+    "79606bc9-0821-5ab3-85dc-24b2f287f5c0": "p_owner",
+    "chat-b8d29cd2-81b8-553d-8482-68d389ebcb9a": "p_su",
+    "chat-23ad0964-107f-5623-890c-a816de0e29ac": "p_zhou"
+   }
+  },
+  "questions": {
+   "count": 7,
+   "asked_total": 7,
+   "by_kind": {
+    "same_event": 4,
+    "same_person": 3
+   },
+   "per_100_items": 8.54,
+   "resolvable": 7,
+   "true_yes_rate": 0.5714285714285714,
+   "unresolvable_merged": 0,
+   "asks_total": 4,
+   "asks_per_100_items": 4.88,
+   "max_asks_per_day": 1,
+   "ask_useful_rate": 0.5,
+   "asks_suppressed": 3
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-d2",
+   "label": "周二晚",
+   "n_items": 27,
+   "bcubed_f1": 0.8776978417266188,
+   "link_f1": 0.8571428571428571,
+   "pred_event_count": 10,
+   "gold_event_count": 9,
+   "expected": 11,
+   "recalled": 2,
+   "fact_recall": 0.18181818181818182,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "card_recalled": 6,
+   "ui_fit": {
+    "cards": 10,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     12.5,
+     12.5,
+     13.5,
+     12.5,
+     10.5,
+     10.0,
+     12.5,
+     12.5,
+     8.0,
+     11.5
+    ],
+    "fact_date_repeated": 1,
+    "facts_total": 28
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.8272858410866246,
+    "ndcg5_recency": 0.5535403758653302,
+    "top3_precision": 1.0,
+    "g3_recall3": 0.5,
+    "gross_inversions": 2,
+    "gross_pairs": 8,
+    "clutter5": 0,
+    "order": [
+     [
+      "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+      "ev_reno",
+      3,
+      0.9
+     ],
+     [
+      "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+      "ev_anniv",
+      2,
+      0.85
+     ],
+     [
+      "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+      "ev_sign",
+      3,
+      0.75
+     ],
+     [
+      "03930ac7-55da-4273-886e-e43b654a2078",
+      "ev_beans",
+      3,
+      0.7
+     ],
+     [
+      "92060632-962a-4239-9355-53a9874480b2",
+      "ev_momflat",
+      1,
+      0.6
+     ],
+     [
+      "bbea327f-53bd-4c0e-b9b7-bd7ad68e744a",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "ce411079-c967-432b-9156-f9289aa0d169",
+      "ev_grinder",
+      1,
+      0.45
+     ],
+     [
+      "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+      "ev_menu",
+      2,
+      0.3
+     ],
+     [
+      "0ead3310-7ecd-4967-9f42-67bbfd373403",
+      "ev_member",
+      2,
+      0.2
+     ],
+     [
+      "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+      "ev_lease",
+      3,
+      0.15
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+     "status_line": "吧台已拆，9月16日换排水管",
+     "recalled": [],
+     "missing": [
+      "f_reno_stage_1",
+      "f_reno_date_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+     "status_line": "房东涨租至1.3万，待考虑",
+     "recalled": [
+      "f_lease_rent_1"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+     "status_line": "桂花拿铁定型，10月1日上新",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+     "status_line": "方案已定，9月17日出海报初稿",
+     "recalled": [],
+     "missing": [
+      "f_sign_choice",
+      "f_sign_install_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "03930ac7-55da-4273-886e-e43b654a2078",
+     "status_line": "样品已寄，9月17日线上沟通",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+     "status_line": "栗子泥已买，9月16日试蛋糕",
+     "recalled": [],
+     "missing": [
+      "f_anniv_date"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "0ead3310-7ecd-4967-9f42-67bbfd373403",
+     "status_line": "需求明确，待开发",
+     "recalled": [],
+     "missing": [
+      "f_member_rule"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "92060632-962a-4239-9355-53a9874480b2",
+     "status_line": "周师傅9月19日上门查看",
+     "recalled": [
+      "f_mom_visit"
+     ],
+     "missing": []
+    },
+    "ev_grinder": {
+     "pred_event": "ce411079-c967-432b-9156-f9289aa0d169",
+     "status_line": "退货已获批，9月22日前寄回",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d3",
+   "label": "周三晚",
+   "n_items": 38,
+   "bcubed_f1": 0.8408878557474669,
+   "link_f1": 0.8101265822784809,
+   "pred_event_count": 11,
+   "gold_event_count": 9,
+   "expected": 10,
+   "recalled": 3,
+   "fact_recall": 0.3,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "card_recalled": 6,
+   "ui_fit": {
+    "cards": 11,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     8.5,
+     12.5,
+     12.5,
+     12.5,
+     10.5,
+     10.5,
+     15.0,
+     14.0,
+     10.0,
+     12.5,
+     12.5
+    ],
+    "fact_date_repeated": 1,
+    "facts_total": 31
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.9172177896475359,
+    "ndcg5_recency": 0.49329472333833,
+    "top3_precision": 1.0,
+    "g3_recall3": 0.6666666666666666,
+    "gross_inversions": 0,
+    "gross_pairs": 6,
+    "clutter5": 0,
+    "order": [
+     [
+      "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+      "ev_lease",
+      3,
+      0.95
+     ],
+     [
+      "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+      "ev_reno",
+      3,
+      0.9
+     ],
+     [
+      "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+      "ev_anniv",
+      2,
+      0.85
+     ],
+     [
+      "03930ac7-55da-4273-886e-e43b654a2078",
+      "ev_beans",
+      3,
+      0.8
+     ],
+     [
+      "ddf34019-b240-47fc-a29d-12d9ffb07c6c",
+      "fragment",
+      0,
+      0.75
+     ],
+     [
+      "92060632-962a-4239-9355-53a9874480b2",
+      "ev_momflat",
+      1,
+      0.7
+     ],
+     [
+      "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+      "ev_sign",
+      2,
+      0.6
+     ],
+     [
+      "0ead3310-7ecd-4967-9f42-67bbfd373403",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "bbea327f-53bd-4c0e-b9b7-bd7ad68e744a",
+      "fragment",
+      0,
+      0.4
+     ],
+     [
+      "ce411079-c967-432b-9156-f9289aa0d169",
+      "ev_grinder",
+      1,
+      0.3
+     ],
+     [
+      "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+      "ev_menu",
+      2,
+      0.2
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+     "status_line": "吧台已拆，9月16日换排水管",
+     "recalled": [],
+     "missing": [
+      "f_reno_price_2",
+      "f_reno_date_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+     "status_line": "方案已定，20号出终稿，29号安装",
+     "recalled": [
+      "f_sign_install_2"
+     ],
+     "missing": []
+    },
+    "ev_lease": {
+     "pred_event": "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+     "status_line": "待房东9月17日回复",
+     "recalled": [],
+     "missing": [
+      "f_lease_term"
+     ]
+    },
+    "ev_member": {
+     "pred_event": "0ead3310-7ecd-4967-9f42-67bbfd373403",
+     "status_line": "核销接口已完成，待开发扫码页",
+     "recalled": [
+      "f_member_redeem"
+     ],
+     "missing": []
+    },
+    "ev_momflat": {
+     "pred_event": "92060632-962a-4239-9355-53a9874480b2",
+     "status_line": "9月19日周师傅上门查看",
+     "recalled": [],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+     "status_line": "9月17日试蛋糕，27日办市集",
+     "recalled": [
+      "f_anniv_date"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+     "status_line": "桂花拿铁定型，10月1日上新",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_1"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "03930ac7-55da-4273-886e-e43b654a2078",
+     "status_line": "样品已寄，9月17日线上沟通",
+     "recalled": [],
+     "missing": [
+      "f_beans_price_1"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "ce411079-c967-432b-9156-f9289aa0d169",
+     "status_line": "退货已获批，9月22日前寄回",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-d5",
+   "label": "周五晚",
+   "n_items": 64,
+   "bcubed_f1": 0.7820255239845567,
+   "link_f1": 0.7910447761194029,
+   "pred_event_count": 13,
+   "gold_event_count": 9,
+   "expected": 15,
+   "recalled": 7,
+   "fact_recall": 0.4666666666666667,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 7,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "card_recalled": 12,
+   "ui_fit": {
+    "cards": 13,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     11.5,
+     10.5,
+     14.5,
+     10.5,
+     15.0,
+     7.5,
+     12.5,
+     10.5,
+     14.0,
+     14.5,
+     10.0,
+     16.5,
+     12.5
+    ],
+    "fact_date_repeated": 1,
+    "facts_total": 34
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.6287917024508274,
+    "ndcg5_recency": 0.8011822377453702,
+    "top3_precision": 0.6666666666666666,
+    "g3_recall3": 1.0,
+    "gross_inversions": 5,
+    "gross_pairs": 8,
+    "clutter5": 0,
+    "order": [
+     [
+      "92060632-962a-4239-9355-53a9874480b2",
+      "ev_momflat",
+      1,
+      0.969
+     ],
+     [
+      "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+      "ev_lease",
+      3,
+      0.968
+     ],
+     [
+      "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+      "ev_sign",
+      2,
+      0.967
+     ],
+     [
+      "690aa205-c4e2-4bdc-8089-31e0592e9de3",
+      "fragment",
+      0,
+      0.966
+     ],
+     [
+      "03930ac7-55da-4273-886e-e43b654a2078",
+      "ev_beans",
+      2,
+      0.966
+     ],
+     [
+      "fe250530-c116-4569-aa31-cc1515a19a6b",
+      "fragment",
+      0,
+      0.966
+     ],
+     [
+      "ce411079-c967-432b-9156-f9289aa0d169",
+      "ev_grinder",
+      0,
+      0.963
+     ],
+     [
+      "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+      "ev_anniv",
+      2,
+      0.95
+     ],
+     [
+      "ddf34019-b240-47fc-a29d-12d9ffb07c6c",
+      "ev_reno",
+      2,
+      0.75
+     ],
+     [
+      "0ead3310-7ecd-4967-9f42-67bbfd373403",
+      "ev_member",
+      2,
+      0.5
+     ],
+     [
+      "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+      "ev_menu",
+      2,
+      0.5
+     ],
+     [
+      "bbea327f-53bd-4c0e-b9b7-bd7ad68e744a",
+      "fragment",
+      0,
+      0.45
+     ],
+     [
+      "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+      "fragment",
+      0,
+      0.1
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "ddf34019-b240-47fc-a29d-12d9ffb07c6c",
+     "status_line": "水电已验，9月30日完工",
+     "recalled": [
+      "f_reno_date_2"
+     ],
+     "missing": [
+      "f_reno_price_2"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+     "status_line": "已谈妥1.2万/月，9月25日签合同",
+     "recalled": [
+      "f_lease_rent_2",
+      "f_lease_sign"
+     ],
+     "missing": []
+    },
+    "ev_menu": {
+     "pred_event": "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+     "status_line": "桂花拿铁配方已定，10月1日上新",
+     "recalled": [],
+     "missing": [
+      "f_menu_price_2",
+      "f_menu_cake"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "03930ac7-55da-4273-886e-e43b654a2078",
+     "status_line": "样品已寄，9月22日送货",
+     "recalled": [
+      "f_beans_first"
+     ],
+     "missing": [
+      "f_beans_price_2"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+     "status_line": "海报已定稿，9月27日市集",
+     "recalled": [
+      "f_anniv_poster_1"
+     ],
+     "missing": [
+      "f_anniv_stalls_2"
+     ]
+    },
+    "ev_sign": {
+     "pred_event": "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+     "status_line": "方案已定，20号出终稿，29号安装",
+     "recalled": [
+      "f_sign_install_2"
+     ],
+     "missing": []
+    },
+    "ev_member": {
+     "pred_event": "0ead3310-7ecd-4967-9f42-67bbfd373403",
+     "status_line": "核销接口已完成，待开发扫码页",
+     "recalled": [],
+     "missing": [
+      "f_member_launch"
+     ]
+    },
+    "ev_momflat": {
+     "pred_event": "92060632-962a-4239-9355-53a9874480b2",
+     "status_line": "9月19日周师傅上门查看",
+     "recalled": [
+      "f_mom_visit"
+     ],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "ce411079-c967-432b-9156-f9289aa0d169",
+     "status_line": "退货已签收，退款预计9月20日前到账",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 82,
+   "bcubed_f1": 0.7610397145915478,
+   "link_f1": 0.7630057803468209,
+   "pred_event_count": 17,
+   "gold_event_count": 9,
+   "expected": 16,
+   "recalled": 10,
+   "fact_recall": 0.625,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 10,
+   "stale": 1,
+   "stale_rate": 0.1,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "card_recalled": 15,
+   "ui_fit": {
+    "cards": 17,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     13.0,
+     13.5,
+     11.5,
+     11.5,
+     17.5,
+     10.5,
+     10.0,
+     11.5,
+     11.5,
+     7.5,
+     12.5,
+     10.5,
+     9.5,
+     14.5,
+     16.5,
+     5.5,
+     12.5
+    ],
+    "fact_date_repeated": 1,
+    "facts_total": 44
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 0.25717765056125874,
+    "ndcg5_recency": 0.19519690212077423,
+    "top3_precision": 0.3333333333333333,
+    "g3_recall3": 0.0,
+    "gross_inversions": 0,
+    "gross_pairs": 9,
+    "clutter5": 0,
+    "order": [
+     [
+      "17e2324c-c472-4f21-9075-e2d3173a83d9",
+      "fragment",
+      0,
+      0.95
+     ],
+     [
+      "08e10eba-946f-450a-a1b6-4afd852b4f1e",
+      "fragment",
+      0,
+      0.85
+     ],
+     [
+      "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+      "ev_lease",
+      2,
+      0.82
+     ],
+     [
+      "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+      "ev_anniv",
+      2,
+      0.75
+     ],
+     [
+      "0ead3310-7ecd-4967-9f42-67bbfd373403",
+      "ev_member",
+      2,
+      0.72
+     ],
+     [
+      "ddf34019-b240-47fc-a29d-12d9ffb07c6c",
+      "ev_reno",
+      3,
+      0.65
+     ],
+     [
+      "bbea327f-53bd-4c0e-b9b7-bd7ad68e744a",
+      "fragment",
+      0,
+      0.62
+     ],
+     [
+      "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+      "ev_sign",
+      2,
+      0.55
+     ],
+     [
+      "b9b2d4cc-1c1a-4ea7-abc3-67d6fb5d9384",
+      "fragment",
+      0,
+      0.45
+     ],
+     [
+      "690aa205-c4e2-4bdc-8089-31e0592e9de3",
+      "fragment",
+      0,
+      0.42
+     ],
+     [
+      "03930ac7-55da-4273-886e-e43b654a2078",
+      "ev_beans",
+      3,
+      0.42
+     ],
+     [
+      "fe250530-c116-4569-aa31-cc1515a19a6b",
+      "fragment",
+      0,
+      0.42
+     ],
+     [
+      "92060632-962a-4239-9355-53a9874480b2",
+      "ev_momflat",
+      1,
+      0.4
+     ],
+     [
+      "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+      "ev_menu",
+      2,
+      0.35
+     ],
+     [
+      "ce411079-c967-432b-9156-f9289aa0d169",
+      "ev_grinder",
+      0,
+      0.25
+     ],
+     [
+      "fe96e53f-144e-4153-9131-2d3f9941f62f",
+      "fragment",
+      0,
+      0.15
+     ],
+     [
+      "48e109b2-42f2-4bc8-a1b4-d5d419fccb35",
+      "fragment",
+      0,
+      0.1
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_reno": {
+     "pred_event": "ddf34019-b240-47fc-a29d-12d9ffb07c6c",
+     "status_line": "水电已验，9月30日完工",
+     "recalled": [
+      "f_reno_date_2"
+     ],
+     "missing": [
+      "f_reno_stage_2"
+     ],
+     "stale": [
+      "f_reno_stage_1"
+     ]
+    },
+    "ev_lease": {
+     "pred_event": "a75056f8-f578-40d7-8c1a-9071078ab4c3",
+     "status_line": "条款已定，9月25日签合同",
+     "recalled": [
+      "f_lease_sign"
+     ],
+     "missing": [
+      "f_lease_rent_2"
+     ]
+    },
+    "ev_menu": {
+     "pred_event": "c4057915-2ed0-429c-8f17-9cd8b8e507ec",
+     "status_line": "桂花拿铁配方已定，10月1日上新",
+     "recalled": [
+      "f_menu_launch"
+     ],
+     "missing": [
+      "f_menu_price_2"
+     ]
+    },
+    "ev_beans": {
+     "pred_event": "03930ac7-55da-4273-886e-e43b654a2078",
+     "status_line": "样品已寄，9月22日送货",
+     "recalled": [
+      "f_beans_first"
+     ],
+     "missing": [
+      "f_beans_trial"
+     ]
+    },
+    "ev_anniv": {
+     "pred_event": "fee309f0-db29-4a40-bb18-b1384a6c0e25",
+     "status_line": "海报已印好，9月27日市集",
+     "recalled": [
+      "f_anniv_date",
+      "f_anniv_poster_2"
+     ],
+     "missing": []
+    },
+    "ev_sign": {
+     "pred_event": "6edaa5e5-82a9-49dd-bc69-a4f5a0068e91",
+     "status_line": "招牌已下单，9月29日安装",
+     "recalled": [
+      "f_sign_install_2"
+     ],
+     "missing": []
+    },
+    "ev_member": {
+     "pred_event": "0ead3310-7ecd-4967-9f42-67bbfd373403",
+     "status_line": "测试通过，优化安卓扫码，10月1日上线",
+     "recalled": [
+      "f_member_launch",
+      "f_member_android"
+     ],
+     "missing": []
+    },
+    "ev_momflat": {
+     "pred_event": "92060632-962a-4239-9355-53a9874480b2",
+     "status_line": "已查看，9月22日开工",
+     "recalled": [
+      "f_mom_start"
+     ],
+     "missing": [
+      "f_mom_quote"
+     ]
+    },
+    "ev_grinder": {
+     "pred_event": "ce411079-c967-432b-9156-f9289aa0d169",
+     "status_line": "退货已签收，退款预计9月20日前到账",
+     "recalled": [],
+     "missing": [
+      "f_grinder_refund"
+     ]
+    }
+   }
+  }
+ ]
+}

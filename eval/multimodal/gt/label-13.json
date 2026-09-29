@@ -1,0 +1,88 @@
+{
+ "id": "label-13",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-13.jpg",
+ "lang": "zh",
+ "hard": [
+  "perspective",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "f411c9b26d2c359681c3195850421637d7f6940bd9514c19b83747088972ccf0",
+ "gt": {
+  "label_kind": "bin_label",
+  "fields": [
+   {
+    "key": "location",
+    "label": "库位",
+    "value": "B-05-17"
+   },
+   {
+    "key": "item",
+    "label": "品名",
+    "value": "咖啡豆 云南日晒 1kg"
+   },
+   {
+    "key": "sku",
+    "label": "编码",
+    "value": "SKU638465"
+   },
+   {
+    "key": "quantity",
+    "label": "数量",
+    "value": "24 件"
+   },
+   {
+    "key": "lot",
+    "label": "批次",
+    "value": "20260912"
+   },
+   {
+    "key": "expiry",
+    "label": "有效期至",
+    "value": "2027-10-26"
+   }
+  ],
+  "lines": [
+   "库位 B-05-17",
+   "品名：咖啡豆 云南日晒 1kg",
+   "编码：SKU638465",
+   "数量：24 件",
+   "批次：20260912",
+   "有效期至：2027-10-26"
+  ]
+ },
+ "text_lines": [
+  "库位 B-05-17",
+  "品名：咖啡豆 云南日晒 1kg",
+  "编码：SKU638465",
+  "数量：24 件",
+  "批次：20260912",
+  "有效期至：2027-10-26"
+ ],
+ "qa": [
+  {
+   "q": "库位是哪里？",
+   "a": "B-05-17",
+   "match": "exact"
+  },
+  {
+   "q": "数量多少？",
+   "a": "24 件",
+   "match": "number"
+  },
+  {
+   "q": "有效期到哪天？",
+   "a": "2027-10-26",
+   "match": "date"
+  }
+ ],
+ "render": {
+  "kind": "bin_label",
+  "background": "cardboard"
+ },
+ "variant": {
+  "kind": "bin_label"
+ }
+}

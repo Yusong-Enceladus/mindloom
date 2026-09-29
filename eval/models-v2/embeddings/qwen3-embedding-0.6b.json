@@ -1,0 +1,24 @@
+{
+ "model": "qwen3-embedding-0.6b",
+ "url": "http://127.0.0.1:8012",
+ "scenarios": {
+  "dev-week-v1": {
+   "queries": 78,
+   "items": 78,
+   "recall@5": 0.7983,
+   "mrr": 0.9641,
+   "ndcg@10": 0.7325,
+   "embed_seconds": 1.58,
+   "dim": 1024
+  },
+  "holdout-week-v2": {
+   "queries": 42,
+   "items": 42,
+   "recall@5": 0.8393,
+   "mrr": 0.9663,
+   "ndcg@10": 0.7756,
+   "embed_seconds": 0.74,
+   "dim": 1024
+  }
+ }
+}

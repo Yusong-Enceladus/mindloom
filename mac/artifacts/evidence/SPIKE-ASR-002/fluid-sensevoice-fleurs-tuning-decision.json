@@ -1,0 +1,254 @@
+{
+  "corpusManifestID" : "fleurs-public-asr-tuning-v1",
+  "corpusVersion" : "1.0.0",
+  "failedSampleUUIDs" : [
+
+  ],
+  "gates" : [
+    {
+      "id" : "coverage",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "failed-samples",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "cer",
+      "maximum" : 0.15,
+      "observed" : 0.4736,
+      "status" : "fail"
+    },
+    {
+      "id" : "wer",
+      "maximum" : 0.25,
+      "observed" : 0.8379140239605356,
+      "status" : "fail"
+    },
+    {
+      "id" : "mer",
+      "maximum" : 0.2,
+      "observed" : 0.35123183828174354,
+      "status" : "fail"
+    },
+    {
+      "id" : "dangerous-token-errors",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    },
+    {
+      "id" : "latency-p95",
+      "maximum" : 3000,
+      "observed" : 3031.340167,
+      "status" : "fail"
+    },
+    {
+      "id" : "realtime-factor",
+      "maximum" : 0.75,
+      "observed" : 0.1490667941989087,
+      "status" : "pass"
+    },
+    {
+      "id" : "peak-rss",
+      "maximum" : 1610612736,
+      "observed" : 376651776,
+      "status" : "pass"
+    },
+    {
+      "id" : "network-denied",
+      "maximum" : 0,
+      "observed" : 0,
+      "status" : "pass"
+    }
+  ],
+  "kind" : "alpha-asr-evaluation-decision",
+  "metrics" : [
+    {
+      "direction" : "lower-is-better",
+      "name" : "cer",
+      "unit" : "ratio",
+      "value" : 0.4736
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "wer",
+      "unit" : "ratio",
+      "value" : 0.8379140239605356
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "mer",
+      "unit" : "ratio",
+      "value" : 0.35123183828174354
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.action-owner",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.date",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.negation",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.number",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "dangerous-token-errors.person",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "der",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "jer",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-miss-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-false-alarm-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "speaker-confusion-rate",
+      "unit" : "ratio",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-merge-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-split-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "false-reject-count",
+      "unit" : "count",
+      "value" : 0
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p50",
+      "unit" : "milliseconds",
+      "value" : 1303.909625
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "latency-p95",
+      "unit" : "milliseconds",
+      "value" : 3031.340167
+    },
+    {
+      "direction" : "lower-is-better",
+      "name" : "realtime-factor",
+      "unit" : "ratio",
+      "value" : 0.1490667941989087
+    },
+    {
+      "direction" : "informational",
+      "name" : "peak-rss",
+      "unit" : "bytes",
+      "value" : 376651776
+    },
+    {
+      "direction" : "informational",
+      "name" : "backlog-high-watermark",
+      "unit" : "jobs",
+      "value" : 1
+    }
+  ],
+  "modelArtifact" : {
+    "artifactID" : "fluid-sensevoice-small-int8-0e0bf30b",
+    "sha256" : "df817fcc1009d0d909c2d7eea7dd6babdd4e3288f9b84973ce04fe66c27cf7be"
+  },
+  "networkDeniedByParentSandbox" : true,
+  "observedTags" : [
+    "adversarial",
+    "asr",
+    "baseline",
+    "code-switch",
+    "dictionary",
+    "english",
+    "fast",
+    "female",
+    "fleurs",
+    "local-only",
+    "long",
+    "male",
+    "mandarin",
+    "medium",
+    "mixed-language",
+    "names-terms",
+    "noise",
+    "numbers-dates-negation",
+    "pace",
+    "pause",
+    "public-licensed",
+    "punctuation",
+    "read-speech",
+    "real-human",
+    "self-correction",
+    "short",
+    "silence",
+    "slow",
+    "tuning"
+  ],
+  "requiredTags" : [
+    "english",
+    "mandarin",
+    "mixed-language",
+    "names-terms",
+    "numbers-dates-negation",
+    "pace",
+    "self-correction",
+    "silence"
+  ],
+  "sampleCount" : 64,
+  "schemaVersion" : 1,
+  "selectionEligible" : false,
+  "status" : "fail"
+}

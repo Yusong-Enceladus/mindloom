@@ -1,0 +1,820 @@
+{
+ "note": "Per-run inputs of the clean holdout-week-v2 table in skills/*/BENCHMARK.md (synthetic data only). One-shot evaluation: scenario verified against eval/scenarios/holdout-week-v2/FROZEN.sha256 before running; no skill, prompt, organizer or scenario change before or after. Code 8ee22d7 (origin/main 3ba5e0d + holdout-v2 scenario). summary = score.json summary; runs = per-call aggregates from runs.jsonl (kept on the Spark, not published): final failed calls by kind (json / schema / validator), per-call latency p50/p95, token totals. Baseline thresholds are the dev-chosen ones (embedding 0.60, lexical 0.41); no holdout sweep.",
+ "location": {
+  "h2-skills-r1": "eval/runs/holdout2-skills-qwen-r1",
+  "h2-skills-r2": "eval/runs/holdout2-skills-qwen-r2",
+  "h2-noskill-r1": "eval/runs/holdout2-noskill-qwen-r1",
+  "h2-noskill-r2": "eval/runs/holdout2-noskill-qwen-r2",
+  "h2-baseline-qemb/t0.60": "eval/runs/holdout2-baseline-qemb/t0.60",
+  "h2-baseline-hash/t0.41": "eval/runs/holdout2-baseline-hash/t0.41"
+ },
+ "runs": {
+  "h2-skills-r1": {
+   "summary": {
+    "bcubed_precision": 0.9069767441860465,
+    "bcubed_recall": 0.56510176064404,
+    "bcubed_f1": 0.69634079068615,
+    "link_precision": 0.9069767441860465,
+    "link_recall": 0.6610169491525424,
+    "link_f1": 0.7647058823529412,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 4,
+    "asks_per_100_items": 8.7,
+    "max_asks_per_day": 2,
+    "ask_useful_rate": 0.25,
+    "ask_true_yes_rate": 0.0,
+    "asks_suppressed": 0,
+    "question_count": 4,
+    "status_fact_recall": 0.42528735632183906,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": 0.06666666666666667,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 1.0033149540339885,
+    "home_ndcg5_recency": 0.9827020345186369,
+    "home_top3_precision": 1.0,
+    "home_g3_recall3": 0.7777777777777778,
+    "home_gross_inversions": 0,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 8,
+    "gold_event_count": 7
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 46,
+      "ok": 46,
+      "ok_first": 45,
+      "retried": 1,
+      "fails": {},
+      "p50": 4.604613304138184,
+      "p95": 6.908780097961426,
+      "prompt_tokens": 274530,
+      "completion_tokens": 8427
+     },
+     "brief": {
+      "calls": 43,
+      "ok": 28,
+      "ok_first": 13,
+      "retried": 30,
+      "fails": {
+       "validator": 15
+      },
+      "p50": 11.225825309753418,
+      "p95": 15.497745513916016,
+      "prompt_tokens": 269978,
+      "completion_tokens": 21490
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.992475986480713,
+      "p95": 9.87217092514038,
+      "prompt_tokens": 27054,
+      "completion_tokens": 2255
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.732351064682007,
+      "p95": 8.41077184677124,
+      "prompt_tokens": 9940,
+      "completion_tokens": 1594
+     }
+    },
+    "calls": 99,
+    "failed_calls": 15,
+    "fail_kinds": {
+     "validator": 15
+    },
+    "prompt_tokens": 581502,
+    "completion_tokens": 33766
+   },
+   "assign_actions": {
+    "new": 7,
+    "attach": 35,
+    "none": 3,
+    "ask": 1
+   },
+   "wall_s": 759.3,
+   "date": "2026-09-28T02:22:58+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/h2-skills-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "081527e8b50b95bd",
+    "home-rank": "e91a92c4e7f388e6",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  },
+  "h2-skills-r2": {
+   "summary": {
+    "bcubed_precision": 0.8186046511627908,
+    "bcubed_recall": 0.7155728931529877,
+    "bcubed_f1": 0.7636290868046778,
+    "link_precision": 0.7906976744186046,
+    "link_recall": 0.576271186440678,
+    "link_f1": 0.6666666666666667,
+    "hard_decoy_leakage": 0.25,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_q3_rebate",
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 4,
+    "asks_per_100_items": 8.7,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.5,
+    "ask_true_yes_rate": 0.5,
+    "asks_suppressed": 0,
+    "question_count": 4,
+    "status_fact_recall": 0.3103448275862069,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": 0.0625,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.9079385530401773,
+    "home_ndcg5_recency": 0.876361114066812,
+    "home_top3_precision": 1.0,
+    "home_g3_recall3": 0.638888888888889,
+    "home_gross_inversions": 0,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 7,
+    "gold_event_count": 7
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 46,
+      "ok": 46,
+      "ok_first": 45,
+      "retried": 1,
+      "fails": {},
+      "p50": 4.612257480621338,
+      "p95": 6.2573082447052,
+      "prompt_tokens": 266629,
+      "completion_tokens": 8130
+     },
+     "brief": {
+      "calls": 43,
+      "ok": 31,
+      "ok_first": 18,
+      "retried": 25,
+      "fails": {
+       "validator": 12
+      },
+      "p50": 9.190856456756592,
+      "p95": 16.512187242507935,
+      "prompt_tokens": 289884,
+      "completion_tokens": 20623
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 6.823131084442139,
+      "p95": 7.240370273590088,
+      "prompt_tokens": 22985,
+      "completion_tokens": 1785
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.917715072631836,
+      "p95": 8.304040670394897,
+      "prompt_tokens": 9940,
+      "completion_tokens": 1612
+     }
+    },
+    "calls": 99,
+    "failed_calls": 12,
+    "fail_kinds": {
+     "validator": 12
+    },
+    "prompt_tokens": 589438,
+    "completion_tokens": 32150
+   },
+   "assign_actions": {
+    "new": 5,
+    "attach": 36,
+    "ask": 2,
+    "none": 3
+   },
+   "wall_s": 729.4,
+   "date": "2026-09-28T02:22:28+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/h2-skills-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "prompt_hashes": {
+    "event-assign": "39382f7aa536988f",
+    "event-brief": "081527e8b50b95bd",
+    "home-rank": "e91a92c4e7f388e6",
+    "recall": "53787149d58fb73a",
+    "screenshot-read": "f64ffa03fbcf5abe"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  },
+  "h2-noskill-r1": {
+   "summary": {
+    "bcubed_precision": 0.9125,
+    "bcubed_recall": 0.5046209541023091,
+    "bcubed_f1": 0.6498621296726852,
+    "link_precision": 0.725,
+    "link_recall": 0.4915254237288136,
+    "link_f1": 0.5858585858585859,
+    "hard_decoy_leakage": 0.4166666666666667,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_peggy_quote",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 2,
+    "unfiled_precision": 0.6666666666666666,
+    "asks_total": 5,
+    "asks_per_100_items": 10.87,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.2,
+    "ask_true_yes_rate": 0.3333333333333333,
+    "asks_suppressed": 3,
+    "question_count": 6,
+    "status_fact_recall": 0.06896551724137931,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": 0.07692307692307693,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.6350181954654113,
+    "home_ndcg5_recency": 0.6032813919088756,
+    "home_top3_precision": 0.7777777777777777,
+    "home_g3_recall3": 0.27777777777777773,
+    "home_gross_inversions": 0,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 10,
+    "gold_event_count": 7
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 51,
+      "ok": 51,
+      "ok_first": 36,
+      "retried": 15,
+      "fails": {},
+      "p50": 4.863680124282837,
+      "p95": 9.879124402999878,
+      "prompt_tokens": 249305,
+      "completion_tokens": 12274
+     },
+     "brief": {
+      "calls": 40,
+      "ok": 14,
+      "ok_first": 6,
+      "retried": 34,
+      "fails": {
+       "validator": 26
+      },
+      "p50": 13.971451044082642,
+      "p95": 16.863712072372437,
+      "prompt_tokens": 156350,
+      "completion_tokens": 25906
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 6.583011865615845,
+      "p95": 7.704900026321411,
+      "prompt_tokens": 20258,
+      "completion_tokens": 1929
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 3,
+      "retried": 1,
+      "fails": {},
+      "p50": 8.460848569869995,
+      "p95": 15.523544073104858,
+      "prompt_tokens": 8902,
+      "completion_tokens": 2018
+     }
+    },
+    "calls": 101,
+    "failed_calls": 26,
+    "fail_kinds": {
+     "validator": 26
+    },
+    "prompt_tokens": 434815,
+    "completion_tokens": 42127
+   },
+   "assign_actions": {
+    "new": 7,
+    "attach": 30,
+    "none": 11,
+    "ask_suppressed": 3
+   },
+   "wall_s": 871.9,
+   "date": "2026-09-28T02:24:50+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/h2-noskill-r1"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "2bbf1ccdc213c05f",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  },
+  "h2-noskill-r2": {
+   "summary": {
+    "bcubed_precision": 0.9761904761904762,
+    "bcubed_recall": 0.4946483374332639,
+    "bcubed_f1": 0.6565926756802735,
+    "link_precision": 0.8095238095238095,
+    "link_recall": 0.576271186440678,
+    "link_f1": 0.6732673267326733,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "asks_total": 5,
+    "asks_per_100_items": 10.87,
+    "max_asks_per_day": 1,
+    "ask_useful_rate": 0.2,
+    "ask_true_yes_rate": 0.2,
+    "asks_suppressed": 3,
+    "question_count": 5,
+    "status_fact_recall": 0.14942528735632185,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": 0.28888888888888886,
+    "home_rank_ran": "6/6",
+    "home_ndcg5": 0.7347149881912259,
+    "home_ndcg5_recency": 0.7301128400202295,
+    "home_top3_precision": 0.7777777777777777,
+    "home_g3_recall3": 0.2222222222222222,
+    "home_gross_inversions": 2,
+    "home_clutter5": 0,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 11,
+    "gold_event_count": 7
+   },
+   "runs": {
+    "per_job": {
+     "assign": {
+      "calls": 48,
+      "ok": 47,
+      "ok_first": 36,
+      "retried": 12,
+      "fails": {
+       "json": 1
+      },
+      "p50": 5.157092094421387,
+      "p95": 11.076026916503906,
+      "prompt_tokens": 235360,
+      "completion_tokens": 12268
+     },
+     "brief": {
+      "calls": 42,
+      "ok": 18,
+      "ok_first": 8,
+      "retried": 34,
+      "fails": {
+       "validator": 24
+      },
+      "p50": 12.07129454612732,
+      "p95": 16.763097763061523,
+      "prompt_tokens": 142316,
+      "completion_tokens": 25865
+     },
+     "rank": {
+      "calls": 6,
+      "ok": 6,
+      "ok_first": 6,
+      "retried": 0,
+      "fails": {},
+      "p50": 7.103802919387817,
+      "p95": 10.602418899536133,
+      "prompt_tokens": 25088,
+      "completion_tokens": 2383
+     },
+     "screenshot_read": {
+      "calls": 4,
+      "ok": 4,
+      "ok_first": 4,
+      "retried": 0,
+      "fails": {},
+      "p50": 8.43419885635376,
+      "p95": 8.612317085266113,
+      "prompt_tokens": 6776,
+      "completion_tokens": 1618
+     }
+    },
+    "calls": 100,
+    "failed_calls": 25,
+    "fail_kinds": {
+     "json": 1,
+     "validator": 24
+    },
+    "prompt_tokens": 409540,
+    "completion_tokens": 42134
+   },
+   "assign_actions": {
+    "fallback": 1,
+    "attach": 31,
+    "new": 6,
+    "ask": 1,
+    "none": 6,
+    "ask_suppressed": 3
+   },
+   "wall_s": 873.3,
+   "date": "2026-09-28T02:24:52+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "without-skills",
+    "--llm-url",
+    "http://127.0.0.1:8000/v1",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--keep-db",
+    "--out",
+    "../out/h2-noskill-r2"
+   ],
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "prompt_hashes": {
+    "event-assign": "eb4c1634018ce0f5",
+    "event-brief": "2bbf1ccdc213c05f",
+    "home-rank": "22d28d3e84a08265",
+    "recall": "d8fbb1754cec1f6a",
+    "screenshot-read": "6ed5ddfc9ecd5297"
+   },
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  },
+  "h2-baseline-qemb/t0.60": {
+   "summary": {
+    "bcubed_precision": 0.8913043478260869,
+    "bcubed_recall": 0.2071129201972164,
+    "bcubed_f1": 0.3361211656749373,
+    "link_precision": 0.43478260869565216,
+    "link_recall": 0.3389830508474576,
+    "link_f1": 0.38095238095238093,
+    "hard_decoy_leakage": 0.027777777777777776,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "2/2",
+    "absorbed_matters": "none",
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 1.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "question_count": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/6",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.4077188180163506,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 30,
+    "gold_event_count": 7
+   },
+   "runs": null,
+   "assign_actions": {
+    "new": 30,
+    "attach": 16
+   },
+   "wall_s": 2.5,
+   "date": "2026-09-28T02:10:29+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "baseline",
+    "--embed",
+    "url",
+    "--embed-url",
+    "http://127.0.0.1:8013/v1",
+    "--threshold",
+    "0.60",
+    "--out",
+    "../out/h2-baseline-qemb"
+   ],
+   "model": null,
+   "embed_model": "qwen3-embedding-0.6b",
+   "embed_url": "http://127.0.0.1:8013/v1",
+   "prompt_hashes": null,
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  },
+  "h2-baseline-hash/t0.41": {
+   "summary": {
+    "bcubed_precision": 0.3538647342995169,
+    "bcubed_recall": 0.6689815531399039,
+    "bcubed_f1": 0.46288280548146543,
+    "link_precision": 0.34782608695652173,
+    "link_recall": 0.2711864406779661,
+    "link_f1": 0.3047619047619048,
+    "hard_decoy_leakage": 0.625,
+    "easy_decoy_leakage": null,
+    "decoy_seed_ok": "1/2",
+    "absorbed_matters": "ev_peggy_claim,ev_spring_fair",
+    "noise_unfiled_rate": 0.0,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.75,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "asks_total": 0,
+    "asks_per_100_items": 0.0,
+    "max_asks_per_day": 0,
+    "ask_useful_rate": null,
+    "ask_true_yes_rate": null,
+    "asks_suppressed": 0,
+    "question_count": 0,
+    "status_fact_recall": 0.0,
+    "plan_as_done": 0,
+    "plan_labelled_done": 0,
+    "unsupported_completion": 0,
+    "relative_date_in_card": 0,
+    "stale_fact_rate": null,
+    "home_rank_ran": "0/6",
+    "home_ndcg5": null,
+    "home_ndcg5_recency": 0.6973251639862577,
+    "home_top3_precision": null,
+    "home_g3_recall3": null,
+    "home_gross_inversions": null,
+    "home_clutter5": null,
+    "ui_titles_over_20": 0,
+    "ui_status_over_54": 0,
+    "pred_event_count": 9,
+    "gold_event_count": 7
+   },
+   "runs": null,
+   "assign_actions": {
+    "new": 9,
+    "attach": 37
+   },
+   "wall_s": 0.4,
+   "date": "2026-09-28T02:10:30+08:00",
+   "git": "8ee22d7",
+   "argv": [
+    "eval/run_eval.py",
+    "--scenario",
+    "eval/scenarios/holdout-week-v2/scenario.json",
+    "--condition",
+    "baseline",
+    "--embed",
+    "hash",
+    "--threshold",
+    "0.41",
+    "--out",
+    "../out/h2-baseline-hash"
+   ],
+   "model": null,
+   "embed_model": "hash-bigram-256",
+   "embed_url": null,
+   "prompt_hashes": null,
+   "skills": [
+    {
+     "name": "event-assign",
+     "version": "2.1.0"
+    },
+    {
+     "name": "event-brief",
+     "version": "1.2.0"
+    },
+    {
+     "name": "home-rank",
+     "version": "1.2.0"
+    },
+    {
+     "name": "recall",
+     "version": "0.1.0"
+    },
+    {
+     "name": "screenshot-read",
+     "version": "1.0.0"
+    }
+   ]
+  }
+ }
+}

@@ -1,0 +1,8 @@
+[api_utils.py:286] non-default args: {'model_tag': '/home/YOU/hack/claude-mm-retrieval/models/Qwen3-Embedding-4B', 'host': '127.0.0.1', 'port': 8023, 'model': '/home/YOU/hack/claude-mm-retrieval/models/Qwen3-Embedding-4B', 'runner': 'pooling', 'max_model_len': 8192, 'enforce_eager': True, 'served_model_name': ['qwen3-embedding-4b'], 'gpu_memory_utilization': 0.16, 'max_num_seqs': 16}
+[model_runner.py:428] Model loading took 7.56 GiB memory and 53.990432 seconds
+[gpu_worker.py:640] Available KV cache memory: 10.85 GiB
+[kv_cache_utils.py:2395] GPU KV cache size: 79,024 tokens, Maximum concurrency for 8,192 tokens per request: 9.65x
+[api_utils.py:286] non-default args: {'model_tag': '/home/YOU/hack/claude-mm-retrieval/models/Qwen3-Embedding-0.6B', 'host': '127.0.0.1', 'port': 8024, 'model': '/home/YOU/hack/claude-mm-retrieval/models/Qwen3-Embedding-0.6B', 'runner': 'pooling', 'max_model_len': 8192, 'enforce_eager': True, 'served_model_name': ['qwen3-embedding-0.6b'], 'gpu_memory_utilization': 0.05, 'max_num_seqs': 16}
+[model_runner.py:428] Model loading took 1.12 GiB memory and 8.224038 seconds
+[gpu_worker.py:640] Available KV cache memory: 4.52 GiB
+[kv_cache_utils.py:2395] GPU KV cache size: 42,320 tokens, Maximum concurrency for 8,192 tokens per request: 5.17x

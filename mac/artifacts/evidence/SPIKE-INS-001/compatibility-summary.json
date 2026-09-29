@@ -1,0 +1,186 @@
+{
+  "conclusion" : "pass",
+  "externalApplicationMatrixEvaluated" : true,
+  "generatedAt" : "2026-08-28T11:56:16Z",
+  "hardwareArchitecture" : "arm64",
+  "kind" : "ax-compatibility-matrix",
+  "osVersion" : "Version 26.6.2 (Build 25G83)",
+  "persistedClipboardContent" : false,
+  "persistedTargetText" : false,
+  "persistedWindowTitle" : false,
+  "requiredTargetClasses" : [
+    "apple-editor",
+    "browser",
+    "office",
+    "chat",
+    "terminal",
+    "rich-text",
+    "electron"
+  ],
+  "runID" : "61BEE75D-CB1E-4D78-ADD8-3A57CFF055EB",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-INS-001",
+  "targets" : [
+    {
+      "accessibilityRole" : "AXTextArea",
+      "accessibilitySelectionCount" : 0,
+      "applicationVersion" : "150.0.7871.182",
+      "bundleID" : "com.google.Chrome",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 25,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 557.254708,
+      "p95Milliseconds" : 581.121791,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "browser"
+      ],
+      "targetID" : "chrome",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "accessibilityRole" : "AXTextArea",
+      "accessibilitySelectionCount" : 0,
+      "applicationVersion" : "16.104",
+      "bundleID" : "com.microsoft.Word",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 25,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 253.929458,
+      "p95Milliseconds" : 284.741583,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "office",
+        "rich-text"
+      ],
+      "targetID" : "microsoft-word",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "accessibilityRole" : "AXTextField",
+      "accessibilitySelectionCount" : 20,
+      "applicationVersion" : "16.104",
+      "bundleID" : "com.microsoft.Outlook",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 5,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 21.572125,
+      "p95Milliseconds" : 269.106708,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "chat"
+      ],
+      "targetID" : "outlook-empty-draft-subject",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "accessibilityRole" : "AXTextArea",
+      "accessibilitySelectionCount" : 0,
+      "applicationVersion" : "2.15",
+      "bundleID" : "com.apple.Terminal",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 25,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 265.503041,
+      "p95Milliseconds" : 272.521208,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "terminal"
+      ],
+      "targetID" : "terminal-2-15",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "accessibilityRole" : "AXTextArea",
+      "accessibilitySelectionCount" : 20,
+      "applicationVersion" : "1.20",
+      "bundleID" : "com.apple.TextEdit",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 5,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 4.499375,
+      "p95Milliseconds" : 239.0245,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "apple-editor",
+        "rich-text"
+      ],
+      "targetID" : "textedit",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    },
+    {
+      "accessibilityRole" : "AXTextArea",
+      "accessibilitySelectionCount" : 0,
+      "applicationVersion" : "1.127.0",
+      "bundleID" : "com.microsoft.VSCode",
+      "cleanupSucceeded" : true,
+      "clipboardFallbackCount" : 25,
+      "clipboardRestoreFailureCount" : 0,
+      "elementRefreshCount" : 0,
+      "failureCategories" : [
+
+      ],
+      "forcedFallbackTrialCount" : 5,
+      "p50Milliseconds" : 558.727875,
+      "p95Milliseconds" : 578.837125,
+      "standardTrialCount" : 20,
+      "status" : "pass",
+      "successRate" : 1,
+      "successfulTrialCount" : 25,
+      "targetClasses" : [
+        "electron"
+      ],
+      "targetID" : "vscode-screen-reader-mode",
+      "unexpectedSideEffectCount" : 0,
+      "wrongTargetWriteCount" : 0
+    }
+  ],
+  "unmetCriteria" : [
+
+  ]
+}

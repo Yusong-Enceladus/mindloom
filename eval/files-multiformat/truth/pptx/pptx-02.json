@@ -1,0 +1,69 @@
+{
+ "file_id": "pptx-02",
+ "path": "corpus/pptx/pptx-02.pptx",
+ "type": "pptx",
+ "ext": "pptx",
+ "mime": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+ "filename": "产品组周报（3月22日—3月26日）.pptx",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "产品组周报（3月22日—3月26日）\n合成数据 · 仅供评测\n合成数据\n产品组周报（3月22日—3月26日）\n填写人：龚博文\n整体进度：72%\n合成数据\n风险\n两名同事休假，人手紧张\n合成数据\n下周计划\n提交季度汇报\n周五前同步进度\n（合成数据）\n合成数据\n本周完成\n完成需求评审\n处理工单 78 个\n更新项目排期\n合成数据",
+ "key_lines": [
+  "填写人：龚博文",
+  "整体进度：72%",
+  "两名同事休假，人手紧张",
+  "提交季度汇报"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "填写人": "龚博文",
+  "进度": "72%",
+  "风险": "两名同事休假，人手紧张",
+  "下周": "提交季度汇报"
+ },
+ "numbers": [
+  {
+   "value": 72,
+   "label": "进度%"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "整体进度是多少？",
+   "a": 72,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "本周最大的风险是什么？",
+   "a": "两名同事休假，人手紧张",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "下周的主要计划是什么？",
+   "a": "提交季度汇报",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "周报是谁写的？",
+   "a": "龚博文",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "slides": 5,
+  "picture_only_slides": [
+   3
+  ],
+  "notes_slides": []
+ },
+ "bytes": 56332,
+ "sha256": "0edd3718e246096e425ebc5482fe8ec0ee19b4ae3c3d339078d62e5dd8f5445e",
+ "family": "weekly"
+}

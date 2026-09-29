@@ -1,0 +1,104 @@
+{
+ "id": "label-04",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-04.jpg",
+ "lang": "zh",
+ "hard": [
+  "two_prices",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "7e8707c228823350bcb96200df2bdfe6372350706eaa260f4a29755e5aad9dca",
+ "gt": {
+  "label_kind": "price_tag",
+  "fields": [
+   {
+    "key": "product",
+    "label": "",
+    "value": "橄榄油"
+   },
+   {
+    "key": "spec",
+    "label": "规格",
+    "value": "750mL"
+   },
+   {
+    "key": "origin",
+    "label": "产地",
+    "value": "进口"
+   },
+   {
+    "key": "unit_price",
+    "label": "单位价格",
+    "value": "¥47.87/L"
+   },
+   {
+    "key": "original_price",
+    "label": "原价",
+    "value": "¥39.90"
+   },
+   {
+    "key": "price",
+    "label": "",
+    "value": "¥35.90"
+   },
+   {
+    "key": "barcode",
+    "label": "",
+    "value": "6987098908420"
+   }
+  ],
+  "lines": [
+   "促销",
+   "橄榄油",
+   "规格：750mL",
+   "产地：进口",
+   "单位价格：¥47.87/L",
+   "原价 ¥39.90",
+   "¥35.90",
+   "6987098908420"
+  ]
+ },
+ "text_lines": [
+  "促销",
+  "橄榄油",
+  "规格：750mL",
+  "产地：进口",
+  "单位价格：¥47.87/L",
+  "原价 ¥39.90",
+  "¥35.90",
+  "6987098908420"
+ ],
+ "qa": [
+  {
+   "q": "现在卖多少钱？",
+   "a": "¥35.90",
+   "match": "number"
+  },
+  {
+   "q": "规格是多少？",
+   "a": "750mL",
+   "match": "exact"
+  },
+  {
+   "q": "单位价格是多少？",
+   "a": "¥47.87/L",
+   "match": "number"
+  },
+  {
+   "q": "原价是多少？",
+   "a": "¥39.90",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "kind": "price_tag",
+  "background": "desk_white"
+ },
+ "variant": {
+  "kind": "price_tag",
+  "promo": true
+ }
+}

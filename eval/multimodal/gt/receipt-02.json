@@ -1,0 +1,98 @@
+{
+ "id": "receipt-02",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-02.jpg",
+ "lang": "zh",
+ "hard": [
+  "low_contrast",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "1bc0e0ef9f5e0fe7b97b8c8d34163fd7c602ab492c9112fb8ab0c2a35932317c",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "禾木生鲜超市",
+  "date": "2026-08-31",
+  "date_text": "2026-08-31 11:28",
+  "time": "11:28",
+  "doc_no": "202608315743",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "香蕉",
+    "qty": 1.706,
+    "unit": "kg",
+    "unit_price": "7.98",
+    "amount": "13.61"
+   },
+   {
+    "name": "纯牛奶 250mL×12",
+    "qty": 3,
+    "unit": "箱",
+    "unit_price": "59.90",
+    "amount": "179.70"
+   },
+   {
+    "name": "全麦面包",
+    "qty": 3,
+    "unit": "个",
+    "unit_price": "8.00",
+    "amount": "24.00"
+   }
+  ],
+  "subtotal": "217.31",
+  "discount": "0.00",
+  "tax": "0.00",
+  "total": "217.31",
+  "payment_method": "扫码支付"
+ },
+ "text_lines": [
+  "禾木生鲜超市",
+  "青川市白石区桂香路172号",
+  "电话：0000-8654",
+  "单号：202608315743 收银员：05",
+  "日期：2026-08-31 11:28",
+  "香蕉 1.706kg 7.98 13.61",
+  "纯牛奶 250mL×12 3 59.90 179.70",
+  "全麦面包 3 8.00 24.00",
+  "合计件数：3",
+  "小计 217.31",
+  "实付 ¥217.31",
+  "支付方式：扫码支付",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥217.31",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "禾木生鲜超市",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-08-31",
+   "match": "date"
+  },
+  {
+   "q": "纯牛奶 250mL×12的金额是多少？",
+   "a": "179.70元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": true,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "faint": true
+ }
+}

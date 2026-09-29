@@ -1,0 +1,77 @@
+{
+ "id": "label-19",
+ "type": "form_label_sign",
+ "split": "dev",
+ "image": "images/label-19.jpg",
+ "lang": "zh",
+ "hard": [
+  "glare",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "f065706eb77c81194f6c688561adfc6ad4868285a6bbda214c7f319e26ec2555",
+ "gt": {
+  "label_kind": "room_sign",
+  "fields": [
+   {
+    "key": "room",
+    "label": "会议室",
+    "value": "B-302"
+   },
+   {
+    "key": "capacity",
+    "label": "容纳",
+    "value": "8 人"
+   },
+   {
+    "key": "equipment",
+    "label": "设备",
+    "value": "投屏 · 电话会议 · 白板"
+   },
+   {
+    "key": "contact_ext",
+    "label": "分机",
+    "value": "8160"
+   }
+  ],
+  "lines": [
+   "会议室",
+   "B-302",
+   "容纳 8 人",
+   "设备：投屏 · 电话会议 · 白板",
+   "预约请联系行政部 分机 8160"
+  ]
+ },
+ "text_lines": [
+  "会议室",
+  "B-302",
+  "容纳 8 人",
+  "设备：投屏 · 电话会议 · 白板",
+  "预约请联系行政部 分机 8160"
+ ],
+ "qa": [
+  {
+   "q": "会议室编号是什么？",
+   "a": "B-302",
+   "match": "exact"
+  },
+  {
+   "q": "能容纳几人？",
+   "a": "8 人",
+   "match": "number"
+  },
+  {
+   "q": "预约分机号是多少？",
+   "a": "8160",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "room_sign",
+  "background": "wall"
+ },
+ "variant": {
+  "kind": "room_sign",
+  "glare": true
+ }
+}

@@ -1,0 +1,68 @@
+{
+ "file_id": "heic-02",
+ "path": "corpus/heic/heic-02.heic",
+ "type": "heic",
+ "ext": "heic",
+ "mime": "image/heic",
+ "filename": "IMG_6251.heic",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "医用酒精棉片\n松间咖啡 出品\n货号 SKU-44671\n批号 L260183\n有效期至 2027-10\n数量 200 只/盒\n合成数据",
+ "key_lines": [
+  "批号 L260183",
+  "有效期至 2027-10",
+  "数量 200 只/盒"
+ ],
+ "picture_only_lines": [
+  "批号 L260183",
+  "有效期至 2027-10",
+  "数量 200 只/盒"
+ ],
+ "key_fields": {
+  "货号": "SKU-44671",
+  "批号": "L260183",
+  "有效期": "2027-10",
+  "数量": 200
+ },
+ "numbers": [
+  {
+   "value": 200,
+   "label": "数量"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "批号是多少？",
+   "a": "L260183",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "有效期到什么时候？",
+   "a": "2027-10",
+   "match": "contains",
+   "accept": [
+    "2027年10月"
+   ]
+  },
+  {
+   "id": "q3",
+   "q": "每盒多少只？",
+   "a": 200,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "size": [
+   896,
+   528
+  ]
+ },
+ "bytes": 22361,
+ "sha256": "e6dfc0773da9e72e5295a8032eb0c574030bb1f0fc2a221443483546a6552eef",
+ "family": "label_photo"
+}

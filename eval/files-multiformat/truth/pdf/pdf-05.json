@@ -1,0 +1,64 @@
+{
+ "file_id": "pdf-05",
+ "path": "corpus/pdf/pdf-05.pdf",
+ "type": "pdf",
+ "ext": "pdf",
+ "mime": "application/pdf",
+ "filename": "Field Safety Training — Agenda.pdf",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Field Safety Training — Agenda\nDate: September 26, 2026\nVenue: Lab Annex 1\nCapacity: 24 participants\nTime\tSession\tSpeaker\n09:00\tWelcome and goals\tArjun Mehta\n09:30\tHands-on session 1\tNora Lindqvist\n11:00\tCase study\tOmar Haddad\n13:30\tGroup exercise\tGrace Liu\n15:30\tWrap-up and feedback\tArjun Mehta\nLunch is served 12:15–13:30. Synthetic agenda for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Venue: Lab Annex 1",
+  "Capacity: 24 participants",
+  "11:00\tCase study\tOmar Haddad",
+  "13:30\tGroup exercise\tGrace Liu",
+  "Lunch is served 12:15–13:30. Synthetic agenda for evaluation only."
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "date": "2026-09-26",
+  "venue": "Lab Annex 1",
+  "capacity": 24,
+  "case_study_speaker": "Omar Haddad"
+ },
+ "numbers": [
+  {
+   "value": 24,
+   "label": "capacity"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "Where is the workshop held?",
+   "a": "Lab Annex 1",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "Who presents the case study?",
+   "a": "Omar Haddad",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "What time does the group exercise start?",
+   "a": "13:30",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "How many participants can attend?",
+   "a": 24,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 62006,
+ "sha256": "ddd272b443726ba46ce79d460384429a9283d63e7de572d8078b0122bcd2d5ed",
+ "family": "agenda_en"
+}

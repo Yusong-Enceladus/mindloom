@@ -1,0 +1,227 @@
+{
+  "boundaries" : [
+    {
+      "fromSegment" : 0,
+      "gapDurationNanoseconds" : 0,
+      "monotonicNanoseconds" : 12000000000,
+      "nextSampleRateHertz" : 44100,
+      "priorSampleRateHertz" : 48000,
+      "reason" : "sampleRateChanged",
+      "toSegment" : 1,
+      "trackID" : "microphone-track"
+    },
+    {
+      "fromSegment" : 1,
+      "gapDurationNanoseconds" : 150000000,
+      "monotonicNanoseconds" : 13000000000,
+      "nextSampleRateHertz" : 44100,
+      "priorSampleRateHertz" : 44100,
+      "reason" : "deviceReconnected",
+      "toSegment" : 2,
+      "trackID" : "microphone-track"
+    }
+  ],
+  "chunks" : [
+    {
+      "contentDigest" : "4046e7520d51ee945bd2bf39eda95aa9afffb9568a4705f9dbfa1e0624a59156",
+      "frameCount" : 44100,
+      "hostTime" : 10000000000,
+      "monotonicStartNanoseconds" : 10000000000,
+      "sampleRateHertz" : 44100,
+      "segment" : 0,
+      "sequence" : 0,
+      "trackID" : "system-track"
+    },
+    {
+      "contentDigest" : "4046e7520d51ee945bd2bf39eda95aa9afffb9568a4705f9dbfa1e0624a59156",
+      "frameCount" : 44100,
+      "hostTime" : 11000000000,
+      "monotonicStartNanoseconds" : 11000000000,
+      "sampleRateHertz" : 44100,
+      "segment" : 0,
+      "sequence" : 1,
+      "trackID" : "system-track"
+    },
+    {
+      "contentDigest" : "4046e7520d51ee945bd2bf39eda95aa9afffb9568a4705f9dbfa1e0624a59156",
+      "frameCount" : 44100,
+      "hostTime" : 12000000000,
+      "monotonicStartNanoseconds" : 12000000000,
+      "sampleRateHertz" : 44100,
+      "segment" : 0,
+      "sequence" : 2,
+      "trackID" : "system-track"
+    },
+    {
+      "contentDigest" : "fd6f479534cdd14635e88dfedf25c3859c01062b645f2a85570f20451b4a95bc",
+      "frameCount" : 44100,
+      "hostTime" : 13000000000,
+      "monotonicStartNanoseconds" : 13000000000,
+      "sampleRateHertz" : 44100,
+      "segment" : 0,
+      "sequence" : 3,
+      "trackID" : "system-track"
+    },
+    {
+      "contentDigest" : "a3a9ee1a458e0283363d1bae7006ea630a8019de995aa6ccd050188669c27b29",
+      "frameCount" : 48000,
+      "hostTime" : 10000051000,
+      "monotonicStartNanoseconds" : 10000051000,
+      "sampleRateHertz" : 48000,
+      "segment" : 0,
+      "sequence" : 0,
+      "trackID" : "microphone-track"
+    },
+    {
+      "contentDigest" : "1831fa9b56b142647f6423b91918b9692114e3628ad6ef0ba64a40b2010af784",
+      "frameCount" : 48000,
+      "hostTime" : 11000039000,
+      "monotonicStartNanoseconds" : 11000039000,
+      "sampleRateHertz" : 48000,
+      "segment" : 0,
+      "sequence" : 1,
+      "trackID" : "microphone-track"
+    },
+    {
+      "contentDigest" : "0009778d809a99302361395708f0973178131e6107fdf82b8c52283c3a9013a5",
+      "discontinuity" : "sampleRateChanged",
+      "frameCount" : 44100,
+      "hostTime" : 12000028000,
+      "monotonicStartNanoseconds" : 12000028000,
+      "sampleRateHertz" : 44100,
+      "segment" : 1,
+      "sequence" : 2,
+      "trackID" : "microphone-track"
+    },
+    {
+      "contentDigest" : "fd6f479534cdd14635e88dfedf25c3859c01062b645f2a85570f20451b4a95bc",
+      "discontinuity" : "deviceReconnected",
+      "frameCount" : 44100,
+      "hostTime" : 13150000000,
+      "monotonicStartNanoseconds" : 13150000000,
+      "sampleRateHertz" : 44100,
+      "segment" : 2,
+      "sequence" : 3,
+      "trackID" : "microphone-track"
+    }
+  ],
+  "drift" : {
+    "expectedPartsPerMillion" : -50,
+    "measuredPartsPerMillion" : -49.99999999999449,
+    "nominalSampleRateHertz" : 48000,
+    "observedSampleRateHertz" : 47997.6
+  },
+  "generatedAt" : "2026-08-30T03:48:56Z",
+  "kind" : "audio-timeline-matrix",
+  "pulseObservations" : [
+    {
+      "absoluteErrorNanoseconds" : 3275,
+      "expectedMonotonicNanoseconds" : 10237123456,
+      "observedMonotonicNanoseconds" : 10237120181,
+      "pulseID" : "pulse-0",
+      "trackID" : "system-track"
+    },
+    {
+      "absoluteErrorNanoseconds" : 3275,
+      "expectedMonotonicNanoseconds" : 11237123456,
+      "observedMonotonicNanoseconds" : 11237120181,
+      "pulseID" : "pulse-1",
+      "trackID" : "system-track"
+    },
+    {
+      "absoluteErrorNanoseconds" : 3275,
+      "expectedMonotonicNanoseconds" : 12237123456,
+      "observedMonotonicNanoseconds" : 12237120181,
+      "pulseID" : "pulse-2",
+      "trackID" : "system-track"
+    },
+    {
+      "absoluteErrorNanoseconds" : 9956,
+      "expectedMonotonicNanoseconds" : 10237123456,
+      "observedMonotonicNanoseconds" : 10237113500,
+      "pulseID" : "pulse-0",
+      "trackID" : "microphone-track"
+    },
+    {
+      "absoluteErrorNanoseconds" : 1123,
+      "expectedMonotonicNanoseconds" : 11237123456,
+      "observedMonotonicNanoseconds" : 11237122333,
+      "pulseID" : "pulse-1",
+      "trackID" : "microphone-track"
+    },
+    {
+      "absoluteErrorNanoseconds" : 2050,
+      "expectedMonotonicNanoseconds" : 12237123456,
+      "observedMonotonicNanoseconds" : 12237125506,
+      "pulseID" : "pulse-2",
+      "trackID" : "microphone-track"
+    }
+  ],
+  "runID" : "8AE64BDE-A09E-4A33-A3EE-1647214AB60C",
+  "scenarios" : [
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "chunkCount" : "8",
+        "independentClockDomains" : "2",
+        "trackCount" : "2"
+      },
+      "scenarioID" : "independent-source-track-metadata",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "maximumAbsoluteErrorNanoseconds" : "9956",
+        "maximumCrossTrackSkewNanoseconds" : "6681",
+        "pulseObservationCount" : "6"
+      },
+      "scenarioID" : "synthetic-pulses-align-by-monotonic-host-time",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "expectedPartsPerMillion" : "-50.00000000",
+        "measuredPartsPerMillion" : "-50.00000000",
+        "measurementErrorPartsPerMillion" : "0.00000000"
+      },
+      "scenarioID" : "known-clock-drift-is-measured",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "fromSampleRateHertz" : "48000",
+        "newSegment" : "1",
+        "toSampleRateHertz" : "44100"
+      },
+      "scenarioID" : "sample-rate-change-opens-new-segment",
+      "status" : "pass"
+    },
+    {
+      "errorCategory" : "none",
+      "metrics" : {
+        "gapDurationNanoseconds" : "150000000",
+        "newSegment" : "2",
+        "sourceTrackPreserved" : "true"
+      },
+      "scenarioID" : "device-hotplug-records-gap-and-boundary",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-TIM-001",
+  "tracks" : [
+    {
+      "clockDomain" : "synthetic-microphone-clock",
+      "sourceRole" : "microphoneLocal",
+      "trackID" : "microphone-track"
+    },
+    {
+      "clockDomain" : "synthetic-process-tap-clock",
+      "sourceRole" : "systemRemote",
+      "trackID" : "system-track"
+    }
+  ]
+}

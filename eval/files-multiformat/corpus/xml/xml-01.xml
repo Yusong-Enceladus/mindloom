@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 合成数据 · synthetic data -->
+<delivery xmlns="urn:example:delivery:1" project="CC-DEFECT-2026" version="1.2" date="2026-10-14">
+  <client>澄川科技（苏州）有限公司</client>
+  <supplier>清屿大学视觉智能实验室</supplier>
+  <artifacts>
+    <artifact name="defect_det_v1.2.onnx" type="model" size_mb="87.4" sha256="3f1c9a0d7e5b2c4a8f6e1d0b9c7a5e3f2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a"/>
+    <artifact name="deploy_guide.pdf" type="doc" pages="14"/>
+    <artifact name="test_report_v1.2.pdf" type="doc" pages="9"/>
+  </artifacts>
+  <metrics dataset="澄川测试集 v3" images="2400">
+    <metric name="mAP@0.5" value="0.873"/>
+    <metric name="recall_scratch" value="0.91"/>
+    <metric name="latency_ms" value="23"/>
+  </metrics>
+  <classes>
+    <class id="1">划痕</class>
+    <class id="2">凹坑</class>
+    <class id="3">污渍</class>
+  </classes>
+  <acceptance date="2026-10-20" place="苏州工厂"/>
+</delivery>

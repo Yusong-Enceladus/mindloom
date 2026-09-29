@@ -1,0 +1,102 @@
+{
+ "id": "chat-06",
+ "type": "chat_screenshot",
+ "split": "dev",
+ "image": "images/chat-06.jpg",
+ "lang": "zh",
+ "hard": [
+  "small_text",
+  "non_text_bubbles",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "2812bb951f54eb172b884341beb6ea432681af6beff7f981be185a07ccc8f39a",
+ "gt": {
+  "chat_title": "晨跑小分队",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "09:32",
+    "text": "今天配速5'18\"，跑了10.5km",
+    "kind": "text"
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "",
+    "text": "可以啊，比上周快",
+    "kind": "text"
+   },
+   {
+    "sender": "许诺",
+    "is_self": false,
+    "time": "10:13",
+    "text": "周六25公里长距离，6:30湖边集合",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "我能跑15公里，后面骑车跟着",
+    "kind": "text"
+   },
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "",
+    "text": "记得带能量胶",
+    "kind": "text"
+   },
+   {
+    "sender": "袁野",
+    "is_self": false,
+    "time": "10:57",
+    "text": "[语音 5秒]",
+    "kind": "voice",
+    "seconds": 5
+   }
+  ]
+ },
+ "text_lines": [
+  "晨跑小分队",
+  "冯晨：今天配速5'18\"，跑了10.5km",
+  "袁野：可以啊，比上周快",
+  "许诺：周六25公里长距离，6:30湖边集合",
+  "我：我能跑15公里，后面骑车跟着",
+  "冯晨：记得带能量胶",
+  "袁野：[语音 5秒]"
+ ],
+ "qa": [
+  {
+   "q": "冯晨今天跑了多少公里？",
+   "a": "10.5km",
+   "match": "number"
+  },
+  {
+   "q": "周六长距离跑多少公里？",
+   "a": "25公里",
+   "match": "number"
+  },
+  {
+   "q": "周六几点集合？",
+   "a": "6:30",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "dark",
+  "fonts": [
+   "hei",
+   "hei_bold"
+  ],
+  "downscale": 0.55
+ },
+ "variant": {
+  "conv": "run",
+  "theme": "dark",
+  "small": 0.55
+ }
+}

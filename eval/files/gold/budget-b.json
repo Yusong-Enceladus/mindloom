@@ -1,0 +1,27 @@
+{
+ "id": "budget-b",
+ "template": "budget",
+ "split": "test",
+ "filename": "预算.xls",
+ "path": "data/budget-b.xls",
+ "sha256": "cc1ffa09dc6c8ab4208299c748333156f2e6a442bda51ca6b11c6dc20d650393",
+ "size": 5632,
+ "error": null,
+ "must_contain_image": [],
+ "fields": {},
+ "det_fields": {},
+ "type": "spreadsheet",
+ "must_contain": [
+  "## 工作表：年会预算",
+  "| 场地 | 12000 |"
+ ],
+ "summary_groups": [
+  [
+   "年会"
+  ],
+  [
+   "预算"
+  ]
+ ],
+ "doc_kind": "dataset"
+}

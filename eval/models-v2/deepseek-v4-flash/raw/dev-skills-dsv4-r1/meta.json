@@ -1,0 +1,95 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8100/v1",
+ "model": "deepseek-v4-flash",
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_llm_url": "http://127.0.0.1:28731/v1",
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "",
+ "date": "2026-09-29T11:02:08+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8100/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--vision-llm-url",
+  "http://127.0.0.1:28731/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "/home/YOU/hack/claude-models/dsv4-organizer/out/dev-skills-dsv4-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "090aef15-9da6-48b0-bd1c-02d3d30c6041",
+  "E2": "74b93602-429a-42d9-90b8-88b33e919514",
+  "E3": "2ec0ab5d-a120-44d2-bd23-21aa16310cfe",
+  "E4": "b29365e7-b487-41ad-ab7f-9dc4f83aa2c4",
+  "E5": "7ec1cd64-af9b-40a4-bcff-a5719101ace7",
+  "E6": "0563b3c3-847d-4ffa-98a3-81c54a7d80b6",
+  "E7": "a5b364d4-9976-4ac0-82a6-98931d386a15",
+  "E8": "28cd92c7-a8fa-4511-b008-5775af51edbf",
+  "E9": "72eefd9f-818e-4aab-b3d7-9579abbfc193",
+  "E10": "d9ddfcc7-168c-49c1-a459-6b9a08ea794f",
+  "E11": "05d31805-8169-4438-9ef6-cc6d215ab37d",
+  "E12": "5992b61e-20fb-494c-b568-01433a917766",
+  "E13": "620d9c2d-257b-43a2-b1d1-156bd750d03c",
+  "E14": "31aa89f9-4097-4444-9f72-022c65ced116",
+  "E15": "f809997f-9a70-4947-84be-8713c185de79"
+ },
+ "bare_max_tokens": null
+}

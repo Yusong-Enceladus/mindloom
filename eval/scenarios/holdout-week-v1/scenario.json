@@ -1,0 +1,1028 @@
+{
+  "$schema": "../../schema/scenario.schema.json",
+  "scenario_id": "holdout-week-v1",
+  "version": 1,
+  "split": "holdout",
+  "synthetic": true,
+  "locale": "zh-CN",
+  "title": "自由设计师的一周（留出集）",
+  "description": "虚构：自由产品设计师方若一周里推进客户App改版、作品集网站、分享会演讲；和帮她做网站的朋友贺一舟同时在谈合租工作室（难干扰事件）；数位板寄修（易干扰事件）。人物、公司、金额全部为虚构。只用于留出评测，不得据此调参。 【已污染，2026-09-27】调提示词的代理在写技能之前读过本集全部素材和金标准，部分措辞（快递取件通知、客户交付）进入过技能；本集结果只能作参考，不能再称为未见测试集。需要由没看过技能的人另写一个冻结的新留出集。",
+  "home_rubric": "3 = 本人48小时内要做的事、要到场的约定，或别人在等本人回复（含高额决定）；2 = 进行中：10天内有明确日期节点，或24小时内有新进展；1 = 未结束但近期本人无事可做（别人在办），或小额个人琐事（<1000元、无人等待）；0 = 已结束或噪声。标注只依据场景素材的日期与内容，写在看任何模型输出之前（holdout）。",
+  "owner_person_id": "p_owner",
+  "people": [
+    {
+      "person_id": "p_owner",
+      "display_name": "方若",
+      "is_owner": true,
+      "role": "自由产品设计师（本人）",
+      "aliases": [
+        "我",
+        "方老师",
+        "若若"
+      ],
+      "voice": {
+        "mac_person_id": "68D3AFEE-1837-5DBE-8F86-0D46DDAB1BC2",
+        "user_label": "我",
+        "tts_hint": "female-30s-crisp"
+      }
+    },
+    {
+      "person_id": "p_feng",
+      "display_name": "冯启",
+      "role": "客户产品经理（跳格运动）",
+      "aliases": [
+        "冯总",
+        "冯经理"
+      ],
+      "voice": {
+        "mac_person_id": "FAFDF922-AF3B-5DBE-93D1-750FF4F669B3",
+        "user_label": null,
+        "tts_hint": "male-40s-steady"
+      }
+    },
+    {
+      "person_id": "p_he",
+      "display_name": "贺一舟",
+      "role": "朋友，独立开发者",
+      "aliases": [
+        "老贺",
+        "一舟",
+        "贺工"
+      ],
+      "voice": {
+        "mac_person_id": "AD5D9CB3-3B86-5B18-9051-C08CC80F7458",
+        "user_label": "老贺",
+        "tts_hint": "male-30s-relaxed"
+      }
+    },
+    {
+      "person_id": "p_ning",
+      "display_name": "宁佳",
+      "role": "“设计夜读”分享会组织者",
+      "aliases": [
+        "佳佳",
+        "宁老师"
+      ],
+      "voice": null
+    },
+    {
+      "person_id": "p_shi",
+      "display_name": "石磊",
+      "role": "客户前端工程师（跳格运动）",
+      "aliases": [
+        "石工",
+        "磊哥"
+      ],
+      "voice": {
+        "mac_person_id": "B840CBF9-A250-52A6-BEF6-D7E60B8CEE44",
+        "user_label": "石磊",
+        "tts_hint": "male-20s-fast"
+      }
+    }
+  ],
+  "events": [
+    {
+      "event_id": "ev_app",
+      "kind": "main",
+      "title": "跳格App改版",
+      "summary": "给跳格运动做健身App改版，加深色模式。"
+    },
+    {
+      "event_id": "ev_portfolio",
+      "kind": "main",
+      "title": "作品集网站上线",
+      "summary": "贺一舟帮忙开发个人作品集网站。"
+    },
+    {
+      "event_id": "ev_talk",
+      "kind": "main",
+      "title": "设计夜读分享",
+      "summary": "9月5日在设计夜读分享会演讲。"
+    },
+    {
+      "event_id": "ev_studio",
+      "kind": "decoy",
+      "difficulty": "hard",
+      "decoy_of": "ev_portfolio",
+      "title": "合租工作室",
+      "summary": "同一个人（贺一舟）、同一段时间，但是另一件事。"
+    },
+    {
+      "event_id": "ev_tablet",
+      "kind": "decoy",
+      "difficulty": "easy",
+      "decoy_of": "ev_app",
+      "title": "数位板保修",
+      "summary": "设计工具词汇相近的个人维修，没有共同人物。"
+    }
+  ],
+  "items": [
+    {
+      "item_id": "11AF7903-0571-5D61-AC7D-2C26DF574237",
+      "ref": "h1-01",
+      "t": "2026-08-17T09:10:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_feng"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "冯总早，改版的首页高保真我今天下午发您，周三线上评审可以吗？",
+      "duration_ms": 6900
+    },
+    {
+      "item_id": "7AB954AD-E276-59DB-AB82-E630A1A560DF",
+      "ref": "h1-02",
+      "t": "2026-08-17T09:40:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_feng"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "冯启：可以，周三下午两点腾讯会议。另外老板想加一个深色模式，费用你重新报一下，交付还是10月9号吗？"
+    },
+    {
+      "item_id": "D7416080-9C1D-5E91-A3C5-F8242E7C72E7",
+      "ref": "h1-03",
+      "t": "2026-08-17T11:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "Claude",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "我给一个健身App做改版，原来报价4.5万，客户要加深色模式，大概多8个页面，帮我估算一个合理的加价幅度。",
+      "duration_ms": 12190
+    },
+    {
+      "item_id": "3CF56B10-0232-55C5-99A1-CEF89558555E",
+      "ref": "h1-04",
+      "t": "2026-08-17T11:20:00+08:00",
+      "kind": "text",
+      "source_app": "Claude",
+      "persons": [],
+      "events": [
+        "ev_app"
+      ],
+      "text": "建议：深色模式通常占原设计量的15%到25%。按新增8个页面和全局色板调整估算，加价5000元左右较合理，总价约5万；建议同时把交付日期顺延3个工作日。",
+      "tags": [
+        "agent_result"
+      ]
+    },
+    {
+      "item_id": "4BC86E6A-7F21-52CD-A923-E887BA935743",
+      "ref": "h1-05",
+      "t": "2026-08-17T14:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_he"
+      ],
+      "events": [
+        "ev_portfolio"
+      ],
+      "text": "老贺，作品集网站首页我改了配色，你看看今晚能不能把新的样式合进去。",
+      "duration_ms": 7590
+    },
+    {
+      "item_id": "CC388964-D07A-531A-A87C-E814B0CF260E",
+      "ref": "h1-06",
+      "t": "2026-08-17T20:10:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_he"
+      ],
+      "events": [
+        "ev_portfolio"
+      ],
+      "text": "贺一舟：合进去了，预览链接发你了。首页开发完成，下周把案例页做完，28号上线没问题。"
+    },
+    {
+      "item_id": "B995B304-E5C0-5A18-9411-9A20C523CA69",
+      "ref": "h1-07",
+      "t": "2026-08-17T21:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [],
+      "text": "明天早上记得买燕麦奶和鸡蛋。",
+      "tags": [
+        "noise"
+      ],
+      "duration_ms": 3220
+    },
+    {
+      "item_id": "08FD953D-3EC6-5D5F-A599-9A6B94FD8FEA",
+      "ref": "h2-01",
+      "t": "2026-08-18T09:30:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "宁佳：方若你好，设计夜读9月5号周六晚上七点半，想请你讲30分钟，题目你来定～"
+    },
+    {
+      "item_id": "C07E2215-1A9A-519D-9C5D-EEDDC5C0625A",
+      "ref": "h2-02",
+      "t": "2026-08-18T10:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "佳佳好呀，我就讲《把设计评审开短一点》，30分钟可以。",
+      "duration_ms": 6210
+    },
+    {
+      "item_id": "D03DCFAA-106D-5F68-BB31-71E6EDFFCCE7",
+      "ref": "h2-03",
+      "t": "2026-08-18T11:30:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_feng"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "冯总，深色模式加5000，总价5万，交付日期从10月9号顺延到10月12号，您看可以吗？",
+      "duration_ms": 10120
+    },
+    {
+      "item_id": "60F08FC6-02D7-5333-A520-465D91854FED",
+      "ref": "h2-04",
+      "t": "2026-08-18T15:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_he"
+      ],
+      "events": [
+        "ev_studio"
+      ],
+      "text": "老贺，你上次说的那个合租工作室我去看了，采光挺好，月租3600我们一人一半？",
+      "duration_ms": 8740
+    },
+    {
+      "item_id": "753679EB-3869-5678-9CD1-8C1B64400D7F",
+      "ref": "h2-05",
+      "t": "2026-08-18T16:20:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_he"
+      ],
+      "events": [
+        "ev_studio"
+      ],
+      "text": "贺一舟：可以啊，一人1800。房东说9月1号可以搬进去，宽带我来办。"
+    },
+    {
+      "item_id": "B72DE617-EF3C-530B-8A08-DB7963CAAB3F",
+      "ref": "h2-06",
+      "t": "2026-08-18T20:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "ChatGPT",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "帮我列一个30分钟分享的大纲，主题是怎么把设计评审开短一点。",
+      "duration_ms": 6900
+    },
+    {
+      "item_id": "C017373E-C350-5092-9023-941E99268B70",
+      "ref": "h3-01",
+      "t": "2026-08-19T14:00:00+08:00",
+      "kind": "meeting_online",
+      "source_app": "腾讯会议",
+      "persons": [
+        "p_owner",
+        "p_feng",
+        "p_shi"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 5040,
+          "person_id": "p_feng",
+          "text": "方老师，首页高保真我们都看了，整体很清爽。"
+        },
+        {
+          "start_ms": 5740,
+          "end_ms": 12220,
+          "person_id": "p_shi",
+          "text": "我这边前端实现没问题，就是卡片阴影在安卓上可能要简化。"
+        },
+        {
+          "start_ms": 12920,
+          "end_ms": 16520,
+          "person_id": "p_owner",
+          "text": "可以，阴影我出一版扁平的备选。"
+        },
+        {
+          "start_ms": 17220,
+          "end_ms": 23220,
+          "person_id": "p_feng",
+          "text": "深色模式那个，5万我们同意，交付就按10月12号。"
+        },
+        {
+          "start_ms": 23920,
+          "end_ms": 30400,
+          "person_id": "p_owner",
+          "text": "好的，那首页高保真就算评审通过了，接下来做训练记录页。"
+        },
+        {
+          "start_ms": 31100,
+          "end_ms": 37580,
+          "person_id": "p_shi",
+          "text": "深色模式的色板麻烦给我一份token，我好直接接进去。"
+        },
+        {
+          "start_ms": 38280,
+          "end_ms": 41160,
+          "person_id": "p_owner",
+          "text": "明天发你色板token。"
+        },
+        {
+          "start_ms": 41860,
+          "end_ms": 45460,
+          "person_id": "p_feng",
+          "text": "合同补充协议我让法务今天发你。"
+        }
+      ]
+    },
+    {
+      "item_id": "E2556881-EAB0-5DEB-9049-81FE1468D0AE",
+      "ref": "h3-02",
+      "t": "2026-08-19T15:10:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_shi"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "石工，深色模式的色板token我整理成JSON，明天上午发你。",
+      "duration_ms": 7130
+    },
+    {
+      "item_id": "BC56F65D-0F6B-52E6-B2F2-6103B49DE46A",
+      "ref": "h3-03",
+      "t": "2026-08-19T16:00:00+08:00",
+      "kind": "document",
+      "source_app": "Finder",
+      "persons": [
+        "p_feng"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "补充协议\n甲方：跳格运动科技有限公司（联系人：冯启）\n乙方：方若\n一、新增深色模式设计，共8个页面及全局色板。\n二、费用：原合同金额45,000元，新增5,000元，合计50,000元。\n三、交付日期由2026年10月9日调整为2026年10月12日。\n四、其余条款不变。",
+      "filename": "跳格App改版补充协议.pdf"
+    },
+    {
+      "item_id": "7622A422-835E-5AEB-9775-B838414E80DD",
+      "ref": "h3-04",
+      "t": "2026-08-19T19:30:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "宁佳：题目很好！另外那天有位嘉宾来不了，你能讲40分钟吗？"
+    },
+    {
+      "item_id": "7FA0342F-9093-5AC0-9B08-211AC768713D",
+      "ref": "h3-05",
+      "t": "2026-08-19T19:45:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "可以，40分钟没问题，我加一个现场演练的环节。",
+      "duration_ms": 5290
+    },
+    {
+      "item_id": "98188AAD-B903-5115-8B87-8110A58A33A7",
+      "ref": "h4-01",
+      "t": "2026-08-20T10:00:00+08:00",
+      "kind": "meeting_offline",
+      "source_app": "线下",
+      "persons": [
+        "p_owner",
+        "p_he"
+      ],
+      "events": [
+        "ev_portfolio",
+        "ev_studio"
+      ],
+      "segments": [
+        {
+          "start_ms": 0,
+          "end_ms": 3840,
+          "person_id": "p_he",
+          "text": "案例页我做了三个模板，你挑一个。"
+        },
+        {
+          "start_ms": 4540,
+          "end_ms": 7660,
+          "person_id": "p_owner",
+          "text": "第二个，大图加时间线那个。"
+        },
+        {
+          "start_ms": 8360,
+          "end_ms": 13640,
+          "person_id": "p_he",
+          "text": "行，那28号上线应该稳。域名续费我昨天交了。"
+        },
+        {
+          "start_ms": 14340,
+          "end_ms": 19380,
+          "person_id": "p_owner",
+          "text": "作品集里跳格的案例先别放，等他们上线再说。"
+        },
+        {
+          "start_ms": 20080,
+          "end_ms": 27280,
+          "person_id": "p_he",
+          "text": "明白。对了工作室那边，房东要押一付三，一共要先交14400。"
+        },
+        {
+          "start_ms": 27980,
+          "end_ms": 32540,
+          "person_id": "p_owner",
+          "text": "那我先转你7200。桌子我们各买各的？"
+        },
+        {
+          "start_ms": 33240,
+          "end_ms": 38040,
+          "person_id": "p_he",
+          "text": "我那张旧桌子可以给你用，你买把椅子就行。"
+        },
+        {
+          "start_ms": 38740,
+          "end_ms": 41140,
+          "person_id": "p_owner",
+          "text": "好，那9月1号搬。"
+        }
+      ],
+      "tags": [
+        "multi_label",
+        "decoy_bridge"
+      ]
+    },
+    {
+      "item_id": "D916E1B7-65A1-5858-A50E-5820AC60EFE1",
+      "ref": "h4-02",
+      "t": "2026-08-20T11:30:00+08:00",
+      "kind": "image",
+      "source_app": "微信",
+      "persons": [
+        "p_he",
+        "p_owner"
+      ],
+      "events": [
+        "ev_studio"
+      ],
+      "image": {
+        "style": "generic_im",
+        "chat_title": "老贺",
+        "self_sender": "我",
+        "messages": [
+          {
+            "sender": "老贺",
+            "time": "11:02",
+            "text": "房东把合同发来了，你看下第3条。"
+          },
+          {
+            "sender": "我",
+            "time": "11:10",
+            "text": "押一付三，14400，我这边7200已经转你了。"
+          },
+          {
+            "sender": "老贺",
+            "time": "11:12",
+            "text": "收到，9月1号上午搬，我借了辆面包车。"
+          },
+          {
+            "sender": "我",
+            "time": "11:15",
+            "text": "好的！"
+          }
+        ]
+      }
+    },
+    {
+      "item_id": "DAB12D8F-3047-5F86-A254-77B4C709E280",
+      "ref": "h4-03",
+      "t": "2026-08-20T14:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [
+        "ev_tablet"
+      ],
+      "text": "你好，我的数位板屏幕有一条竖线，还在保修期内，请问怎么寄修？",
+      "duration_ms": 6900
+    },
+    {
+      "item_id": "A6FCB801-6306-5578-A24E-5123CA36DF48",
+      "ref": "h4-04",
+      "t": "2026-08-20T14:40:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [],
+      "events": [
+        "ev_tablet"
+      ],
+      "text": "售后客服：您好，保修期内免费维修，请寄到售后中心，预计7个工作日修好寄回。"
+    },
+    {
+      "item_id": "B1F6E4C0-4E75-595A-AD26-F938356D85B5",
+      "ref": "h4-05",
+      "t": "2026-08-20T16:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "Codex",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [
+        "ev_portfolio"
+      ],
+      "text": "作品集网站的案例页用时间线模板，每个案例一张大图加三段文字，帮我生成组件。",
+      "duration_ms": 8510
+    },
+    {
+      "item_id": "9C988074-A0B6-560A-A0A1-8C849F61BF7E",
+      "ref": "h4-06",
+      "t": "2026-08-20T21:00:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [],
+      "events": [],
+      "text": "【顺丰】您的快件已由驿站代收，取件码 6-2-3018，请尽快领取。",
+      "tags": [
+        "noise"
+      ]
+    },
+    {
+      "item_id": "F49323A0-9B73-561E-833F-EDB82F453AF7",
+      "ref": "h5-01",
+      "t": "2026-08-21T10:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_feng"
+      ],
+      "events": [
+        "ev_app"
+      ],
+      "text": "冯总，训练记录页的线框今天下午发您，下周一我们对一下。",
+      "duration_ms": 6210
+    },
+    {
+      "item_id": "B387B4F1-7A2B-5646-9A1E-4B9EC9473D54",
+      "ref": "h5-02",
+      "t": "2026-08-21T11:00:00+08:00",
+      "kind": "text",
+      "source_app": "Codex",
+      "persons": [],
+      "events": [
+        "ev_portfolio"
+      ],
+      "text": "任务完成：新增 CaseTimeline 组件和 3 个案例页，构建通过。待办：移动端图片懒加载。",
+      "tags": [
+        "agent_result"
+      ]
+    },
+    {
+      "item_id": "ED75D20D-A8E3-5C24-B74B-C51EE232B752",
+      "ref": "h5-03",
+      "t": "2026-08-21T15:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "佳佳，分享的PPT初稿周三发你，现场需要自带投影转接头吗？",
+      "duration_ms": 6670
+    },
+    {
+      "item_id": "256BA6BB-93ED-5DED-869C-3367BEF3FFB7",
+      "ref": "h5-04",
+      "t": "2026-08-21T17:30:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [
+        "p_ning"
+      ],
+      "events": [
+        "ev_talk"
+      ],
+      "text": "宁佳：场地有转接头。海报已经发出去了，报名的人有60多个！"
+    },
+    {
+      "item_id": "ED098359-22C7-52DC-A655-2E32D3D15820",
+      "ref": "h6-01",
+      "t": "2026-08-22T11:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_he"
+      ],
+      "events": [
+        "ev_studio"
+      ],
+      "text": "老贺，我在宜家看中一把椅子，599，工作室用的，你帮我看看颜色。",
+      "duration_ms": 7360
+    },
+    {
+      "item_id": "746174F5-F252-53C5-A3DD-D4C23A6C011B",
+      "ref": "h6-02",
+      "t": "2026-08-22T15:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "微信",
+      "persons": [
+        "p_owner",
+        "p_he"
+      ],
+      "events": [
+        "ev_portfolio"
+      ],
+      "text": "老贺，移动端懒加载弄好了吗？28号上线前我想再过一遍。",
+      "duration_ms": 6210
+    },
+    {
+      "item_id": "6B51713F-305E-55EB-B7FB-BEB498C1E0AE",
+      "ref": "h7-01",
+      "t": "2026-08-23T10:30:00+08:00",
+      "kind": "text",
+      "source_app": "微信",
+      "persons": [],
+      "events": [
+        "ev_tablet"
+      ],
+      "text": "售后客服：您的数位板已修好，今天寄回，单号已同步到订单。"
+    },
+    {
+      "item_id": "0F9BEFBF-ECCC-5B3F-9FD5-35CA3915172D",
+      "ref": "h7-02",
+      "t": "2026-08-23T20:00:00+08:00",
+      "kind": "dictation",
+      "source_app": "Claude",
+      "persons": [
+        "p_owner"
+      ],
+      "events": [
+        "ev_app",
+        "ev_portfolio",
+        "ev_talk"
+      ],
+      "text": "帮我排一下下周：跳格训练记录页、作品集上线前检查、分享会PPT，各安排在哪天。",
+      "duration_ms": 8970
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "f_app_fee_1",
+      "event_id": "ev_app",
+      "text": "原报价4.5万元",
+      "keys": [
+        "45000"
+      ],
+      "valid_from": "D7416080-9C1D-5E91-A3C5-F8242E7C72E7",
+      "superseded_by": "f_app_fee_2",
+      "state": "info"
+    },
+    {
+      "fact_id": "f_app_fee_2",
+      "event_id": "ev_app",
+      "text": "加深色模式后总价5万元",
+      "keys": [
+        "50000"
+      ],
+      "valid_from": "C017373E-C350-5092-9023-941E99268B70",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_app_due_1",
+      "event_id": "ev_app",
+      "text": "交付日期10月9日",
+      "keys": [
+        "10月9日"
+      ],
+      "valid_from": "7AB954AD-E276-59DB-AB82-E630A1A560DF",
+      "superseded_by": "f_app_due_2",
+      "state": "planned",
+      "date": "2026-10-09"
+    },
+    {
+      "fact_id": "f_app_due_2",
+      "event_id": "ev_app",
+      "text": "交付顺延到10月12日",
+      "keys": [
+        "10月12日"
+      ],
+      "valid_from": "C017373E-C350-5092-9023-941E99268B70",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-10-12"
+    },
+    {
+      "fact_id": "f_app_stage_1",
+      "event_id": "ev_app",
+      "text": "首页高保真评审通过",
+      "keys": [
+        "评审通过"
+      ],
+      "valid_from": "C017373E-C350-5092-9023-941E99268B70",
+      "superseded_by": "f_app_stage_2",
+      "state": "done"
+    },
+    {
+      "fact_id": "f_app_stage_2",
+      "event_id": "ev_app",
+      "text": "训练记录页线框已发，下周一对",
+      "keys": [
+        "训练记录"
+      ],
+      "valid_from": "F49323A0-9B73-561E-833F-EDB82F453AF7",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-08-24"
+    },
+    {
+      "fact_id": "f_pf_launch",
+      "event_id": "ev_portfolio",
+      "text": "作品集网站8月28日上线",
+      "keys": [
+        "28日"
+      ],
+      "valid_from": "CC388964-D07A-531A-A87C-E814B0CF260E",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-08-28"
+    },
+    {
+      "fact_id": "f_pf_stage_1",
+      "event_id": "ev_portfolio",
+      "text": "首页开发完成",
+      "keys": [
+        "首页"
+      ],
+      "valid_from": "CC388964-D07A-531A-A87C-E814B0CF260E",
+      "superseded_by": "f_pf_stage_2",
+      "state": "done"
+    },
+    {
+      "fact_id": "f_pf_stage_2",
+      "event_id": "ev_portfolio",
+      "text": "案例页完成，剩移动端懒加载",
+      "keys": [
+        "懒加载"
+      ],
+      "valid_from": "B387B4F1-7A2B-5646-9A1E-4B9EC9473D54",
+      "superseded_by": null,
+      "state": "done"
+    },
+    {
+      "fact_id": "f_pf_template",
+      "event_id": "ev_portfolio",
+      "text": "案例页选定时间线模板",
+      "keys": [
+        "时间线"
+      ],
+      "valid_from": "98188AAD-B903-5115-8B87-8110A58A33A7",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_talk_date",
+      "event_id": "ev_talk",
+      "text": "分享会9月5日周六晚上",
+      "keys": [
+        "5日"
+      ],
+      "valid_from": "08FD953D-3EC6-5D5F-A599-9A6B94FD8FEA",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-09-05"
+    },
+    {
+      "fact_id": "f_talk_title",
+      "event_id": "ev_talk",
+      "text": "题目《把设计评审开短一点》",
+      "keys": [
+        "设计评审"
+      ],
+      "valid_from": "C07E2215-1A9A-519D-9C5D-EEDDC5C0625A",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_talk_len_1",
+      "event_id": "ev_talk",
+      "text": "分享30分钟",
+      "keys": [
+        "30分钟"
+      ],
+      "valid_from": "08FD953D-3EC6-5D5F-A599-9A6B94FD8FEA",
+      "superseded_by": "f_talk_len_2",
+      "state": "info"
+    },
+    {
+      "fact_id": "f_talk_len_2",
+      "event_id": "ev_talk",
+      "text": "分享延长到40分钟",
+      "keys": [
+        "40分钟"
+      ],
+      "valid_from": "7FA0342F-9093-5AC0-9B08-211AC768713D",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_studio_rent",
+      "event_id": "ev_studio",
+      "text": "工作室月租3600，两人各1800",
+      "keys": [
+        "1800"
+      ],
+      "valid_from": "753679EB-3869-5678-9CD1-8C1B64400D7F",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_studio_move",
+      "event_id": "ev_studio",
+      "text": "9月1日搬进工作室",
+      "keys": [
+        "9月1日"
+      ],
+      "valid_from": "753679EB-3869-5678-9CD1-8C1B64400D7F",
+      "superseded_by": null,
+      "state": "planned",
+      "date": "2026-09-01"
+    },
+    {
+      "fact_id": "f_studio_deposit",
+      "event_id": "ev_studio",
+      "text": "押一付三先交14400，各出7200",
+      "keys": [
+        "14400|7200"
+      ],
+      "valid_from": "98188AAD-B903-5115-8B87-8110A58A33A7",
+      "superseded_by": null,
+      "state": "info"
+    },
+    {
+      "fact_id": "f_tablet_days",
+      "event_id": "ev_tablet",
+      "text": "数位板寄修，预计7个工作日",
+      "keys": [
+        "7个工作日"
+      ],
+      "valid_from": "A6FCB801-6306-5578-A24E-5123CA36DF48",
+      "superseded_by": "f_tablet_fixed",
+      "state": "planned"
+    },
+    {
+      "fact_id": "f_tablet_fixed",
+      "event_id": "ev_tablet",
+      "text": "数位板已修好寄回",
+      "keys": [
+        "修好"
+      ],
+      "valid_from": "6B51713F-305E-55EB-B7FB-BEB498C1E0AE",
+      "superseded_by": null,
+      "state": "done"
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpoint_id": "cp-h3",
+      "after_item_id": "7FA0342F-9093-5AC0-9B08-211AC768713D",
+      "label": "周三晚",
+      "expected": {
+        "ev_app": [
+          "f_app_fee_2",
+          "f_app_due_2"
+        ],
+        "ev_portfolio": [
+          "f_pf_launch"
+        ],
+        "ev_talk": [
+          "f_talk_date",
+          "f_talk_len_2"
+        ],
+        "ev_studio": [
+          "f_studio_rent",
+          "f_studio_move"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_app": 3,
+          "ev_talk": 2,
+          "ev_portfolio": 2,
+          "ev_studio": 1
+        },
+        "why": {
+          "ev_app": "h3-01/h3-02 明天上午发色板token；h3-03 补充协议5万、10月12日交付",
+          "ev_talk": "h3-04/05 今天改成40分钟；9月5日分享",
+          "ev_portfolio": "h1-06 8月28日上线，9天内",
+          "ev_studio": "h2-05 9月1日搬，宽带老贺办，近期本人无事"
+        }
+      }
+    },
+    {
+      "checkpoint_id": "cp-final",
+      "after_item_id": "0F9BEFBF-ECCC-5B3F-9FD5-35CA3915172D",
+      "label": "周日晚（最终）",
+      "expected": {
+        "ev_app": [
+          "f_app_stage_2",
+          "f_app_due_2"
+        ],
+        "ev_portfolio": [
+          "f_pf_launch",
+          "f_pf_stage_2"
+        ],
+        "ev_talk": [
+          "f_talk_date",
+          "f_talk_len_2"
+        ],
+        "ev_studio": [
+          "f_studio_move",
+          "f_studio_deposit"
+        ],
+        "ev_tablet": [
+          "f_tablet_fixed"
+        ]
+      },
+      "home": {
+        "grades": {
+          "ev_app": 3,
+          "ev_portfolio": 2,
+          "ev_talk": 2,
+          "ev_studio": 2,
+          "ev_tablet": 0
+        },
+        "why": {
+          "ev_app": "h5-01 下周一（8月24日）对训练记录页线框",
+          "ev_portfolio": "h6-02 8月28日上线前要过一遍，懒加载未完",
+          "ev_talk": "h5-03 周三（8月26日）交PPT初稿",
+          "ev_studio": "h4-02 9月1日搬家，9天内",
+          "ev_tablet": "h7-01 已修好寄回"
+        }
+      }
+    }
+  ]
+}

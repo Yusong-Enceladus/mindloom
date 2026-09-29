@@ -1,0 +1,65 @@
+{
+  "commands" : [
+    [
+      "script/run_audio_timeline_probe.sh"
+    ]
+  ],
+  "conclusion" : "conditional",
+  "criteria" : {
+    "fail" : [
+      "A sequence or digest is invalid, cross-track pulse skew exceeds two lowest-rate frames, or a rate/device transition lacks a boundary."
+    ],
+    "pass" : [
+      "Every source chunk records independent track identity, sequence, host time, monotonic nanoseconds, sample rate, frame count, and SHA-256 digest.",
+      "Synthetic pulses align within one source frame and a known drift fixture is measured within 0.001 ppm.",
+      "Sample-rate changes and microphone hotplug gaps create explicit segment boundaries rather than silently changing time conversion."
+    ]
+  },
+  "environmentRef" : "artifacts/evidence/environment/check-summary.json",
+  "kind" : "spike-summary",
+  "matrix" : [
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json"
+      ],
+      "scenarioID" : "independent-source-track-metadata",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json"
+      ],
+      "scenarioID" : "synthetic-pulses-align-by-monotonic-host-time",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json"
+      ],
+      "scenarioID" : "known-clock-drift-is-measured",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json"
+      ],
+      "scenarioID" : "sample-rate-change-opens-new-segment",
+      "status" : "pass"
+    },
+    {
+      "evidenceRefs" : [
+        "artifacts/evidence/SPIKE-TIM-001/matrix.json"
+      ],
+      "scenarioID" : "device-hotplug-records-gap-and-boundary",
+      "status" : "pass"
+    }
+  ],
+  "question" : "Can independent microphone and system tracks align on monotonic host time while making drift, sample-rate changes, and device gaps explicit?",
+  "runID" : "8AE64BDE-A09E-4A33-A3EE-1647214AB60C",
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-TIM-001",
+  "unmetCriteria" : [
+    "The alignment and drift cases use deterministic synthetic clocks; simultaneous live microphone and Process Tap capture remains a device-lab run.",
+    "A physical sample-rate switch and microphone unplug/replug remain part of the mandatory two-hour stability matrix in task 4.5."
+  ]
+}

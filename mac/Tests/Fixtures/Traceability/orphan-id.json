@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "kind": "traceability",
+  "manifestID": "traceability-validator-orphan-fixture",
+  "entries": [
+    {
+      "requirementIDs": ["REL-999"],
+      "threatIDs": ["TM-03"],
+      "scenarioIDs": ["Crash recovery is evaluated"],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRAudioJournalProbeTests/AudioJournalProbeTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/SPIKE-JRN-001/summary.json"
+      ]
+    }
+  ]
+}

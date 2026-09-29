@@ -1,0 +1,107 @@
+{
+ "id": "receipt-04",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-04.jpg",
+ "lang": "zh",
+ "hard": [
+  "shadow",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "2afb7cf51f1ac612f1dc4680bb7803a28858de169dbad42d251baa89b458bb98",
+ "gt": {
+  "doc_kind": "receipt",
+  "merchant": "橙石五金",
+  "date": "2026-10-02",
+  "date_text": "2026-10-02 10:45",
+  "time": "10:45",
+  "doc_no": "202610023840",
+  "currency": "CNY",
+  "items": [
+   {
+    "name": "自攻螺丝 M4×20",
+    "qty": 1,
+    "unit": "盒",
+    "unit_price": "6.50",
+    "amount": "6.50"
+   },
+   {
+    "name": "延长线插座 3m",
+    "qty": 3,
+    "unit": "个",
+    "unit_price": "39.00",
+    "amount": "117.00"
+   },
+   {
+    "name": "钻头 6mm",
+    "qty": 2,
+    "unit": "支",
+    "unit_price": "12.00",
+    "amount": "24.00"
+   },
+   {
+    "name": "PVC 水管 20mm",
+    "qty": 0.59,
+    "unit": "m",
+    "unit_price": "4.20",
+    "amount": "2.48"
+   }
+  ],
+  "subtotal": "149.98",
+  "discount": "2.00",
+  "tax": "0.00",
+  "total": "147.98",
+  "payment_method": "会员卡"
+ },
+ "text_lines": [
+  "橙石五金",
+  "江枫市临溪区梧桐大道13号",
+  "电话：0000-7251",
+  "单号：202610023840 收银员：08",
+  "日期：2026-10-02 10:45",
+  "自攻螺丝 M4×20 1 6.50 6.50",
+  "延长线插座 3m 3 39.00 117.00",
+  "钻头 6mm 2 12.00 24.00",
+  "PVC 水管 20mm 0.59m 4.20 2.48",
+  "合计件数：4",
+  "小计 149.98",
+  "优惠 -2.00",
+  "实付 ¥147.98",
+  "支付方式：会员卡",
+  "谢谢惠顾，欢迎再次光临",
+  "请妥善保管小票，7日内凭票退换"
+ ],
+ "qa": [
+  {
+   "q": "这张单据的实付/合计金额是多少？",
+   "a": "¥147.98",
+   "match": "number"
+  },
+  {
+   "q": "商家是哪家？",
+   "a": "橙石五金",
+   "match": "exact"
+  },
+  {
+   "q": "消费日期是哪天？",
+   "a": "2026-10-02",
+   "match": "date"
+  },
+  {
+   "q": "延长线插座 3m的金额是多少？",
+   "a": "117.00元",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "receipt",
+  "faint": false,
+  "curl": true
+ },
+ "variant": {
+  "kind": "receipt",
+  "shadow": true
+ }
+}

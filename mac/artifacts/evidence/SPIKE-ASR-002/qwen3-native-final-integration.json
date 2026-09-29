@@ -1,0 +1,149 @@
+{
+  "schemaVersion": 1,
+  "kind": "native-final-asr-integration-tuning",
+  "date": "2026-08-30",
+  "corpusManifestID": "fleurs-public-asr-tuning-v1",
+  "corpusVersion": "1.0.0",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "pipelineRevision": "qwen-native-final-v2-digital-silence-natural-phrases",
+  "modelArtifactID": "qwen3-asr-1.7b-8bit-a8379a2e",
+  "alignmentArtifactID": "qwen3-forced-aligner-0.6b-8bit-0e1a68e9",
+  "runtimeRevision": "cae704f53bc32a3d0b606823828fbc5bedaaf388",
+  "method": {
+    "initialRun": "64 public/synthetic clips through the production native adapter with all network denied, before App installation.",
+    "observedRegression": "The inherited absolute RMS/peak activity threshold silently discarded 15 quiet public-human speech clips. The failed initial results remain unchanged externally.",
+    "correction": "Only all-zero digital silence is skipped. Nonzero audio, at its original amplitude and with full bounded context, reaches the ASR model.",
+    "affectedRerun": "Only the 15 previously discarded clips plus the two non-speech controls were rerun with network denied. The other 47 already exercised the unchanged decode/alignment branch; no passing corpus inference was repeated.",
+    "aggregation": "Quality counts combine the 47 unchanged initial outputs with the 17 explicit replacement outputs by exact sample UUID, source path and reference. This is a composite regression result, not a second full timing run.",
+    "scoring": "Same repository TranscriptScorer and identical supplementary NFC/lowercase/alphanumeric content CER as the earlier comparison. No thresholds or accepted date surfaces were rewritten."
+  },
+  "outcomes": {
+    "speechClips": 62,
+    "nonSpeechClips": 2,
+    "recoveredQuietSpeechClips": 15,
+    "emptySpeechClips": 0,
+    "nonSpeechHallucinations": 0,
+    "playablePhraseSegments": 92,
+    "emptyOrOutOfSourceRangeSegments": 0
+  },
+  "qualityResults": [
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 160,
+      "contentCharacterErrors": 69,
+      "dangerousErrors": 0,
+      "failures": 0,
+      "mixedErrors": 41,
+      "profile": "mandarin",
+      "referenceCharacters": 1036,
+      "referenceContentCharacters": 1034,
+      "referenceMixedUnits": 988,
+      "referenceWords": 843,
+      "samples": 32,
+      "wordErrors": 853
+    },
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 298,
+      "contentCharacterErrors": 137,
+      "dangerousErrors": 1,
+      "failures": 0,
+      "mixedErrors": 35,
+      "profile": "english",
+      "referenceCharacters": 2591,
+      "referenceContentCharacters": 2579,
+      "referenceMixedUnits": 556,
+      "referenceWords": 551,
+      "samples": 32,
+      "wordErrors": 35
+    },
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 6,
+      "contentCharacterErrors": 0,
+      "dangerousErrors": 0,
+      "failures": 0,
+      "mixedErrors": 0,
+      "profile": "mixed-language",
+      "referenceCharacters": 123,
+      "referenceContentCharacters": 123,
+      "referenceMixedUnits": 39,
+      "referenceWords": 25,
+      "samples": 2,
+      "wordErrors": 2
+    },
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 464,
+      "contentCharacterErrors": 206,
+      "dangerousErrors": 1,
+      "failures": 0,
+      "mixedErrors": 76,
+      "profile": "combined",
+      "referenceCharacters": 3750,
+      "referenceContentCharacters": 3736,
+      "referenceMixedUnits": 1583,
+      "referenceWords": 1419,
+      "samples": 64,
+      "wordErrors": 890
+    },
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 143,
+      "contentCharacterErrors": 69,
+      "dangerousErrors": 0,
+      "failures": 0,
+      "mixedErrors": 41,
+      "profile": "public-mandarin",
+      "referenceCharacters": 885,
+      "referenceContentCharacters": 883,
+      "referenceMixedUnits": 837,
+      "referenceWords": 837,
+      "samples": 24,
+      "wordErrors": 836
+    },
+    {
+      "backend": "Qwen3 native aligned / targeted recovery",
+      "characterErrors": 187,
+      "contentCharacterErrors": 60,
+      "dangerousErrors": 0,
+      "failures": 0,
+      "mixedErrors": 19,
+      "profile": "public-english",
+      "referenceCharacters": 2149,
+      "referenceContentCharacters": 2137,
+      "referenceMixedUnits": 463,
+      "referenceWords": 458,
+      "samples": 24,
+      "wordErrors": 19
+    }
+  ],
+  "affectedRerunPerformance": {
+    "sampleCount": 17,
+    "latencyP50Milliseconds": 989.59275,
+    "latencyP95Milliseconds": 1701.823333,
+    "realtimeFactor": 0.11285906294894729,
+    "peakRSSBytes": 3787702272
+  },
+  "checks": {
+    "realNativeCancellationAndReuse": "passed under network denial; prepared model inference cancelled before completion, cancellation returned within the 5-second bound, same model then recognized nonempty speech",
+    "phraseJoining": "three focused English/Chinese boundary and source-provenance regressions passed",
+    "quietInputAndPersistence": "three focused quiet/silent input and timed-edit persistence regressions passed",
+    "hostedAppTests": {
+      "count": 48,
+      "failures": 0
+    },
+    "priorRuntimeAndAlignmentUnitTests": {
+      "passed": 14,
+      "optionalNativeSkippedInThatRun": 1
+    }
+  },
+  "limits": [
+    "The one previously reviewed strict date-surface flag remains; it is not silently counted as a passing gate.",
+    "The original combined WER and 1.5 GiB RSS gates remain failed. The 17-case partial rerun intentionally lacks full tag coverage; its generic combined decision also remains failed.",
+    "Amplitude-gate recovery and source-range validity do not establish independent phonetic alignment accuracy.",
+    "Installed App four-entry interaction acceptance, release holdout and minimum-device eligibility are not established by these tuning runs.",
+    "Codex Security tooling was unavailable; local boundary review is not a service scan."
+  ]
+}

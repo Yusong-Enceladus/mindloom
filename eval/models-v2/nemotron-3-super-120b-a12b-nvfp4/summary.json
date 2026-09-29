@@ -1,0 +1,95 @@
+{
+ "slug": "nemotron-3-super-120b-a12b-nvfp4",
+ "organizer": [
+  {
+   "run": "dev-skills-nemotron3super-r1",
+   "scenario": "dev-week-v1",
+   "model": "nemotron-3-super-120b-a12b-nvfp4",
+   "items": 82,
+   "b3_f1": 0.764,
+   "link_f1": 0.821,
+   "card_fact_recall": 0.788,
+   "status_fact_recall": 0.423,
+   "asks_per_100": 3.66,
+   "ungrounded_dates": 0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 1,
+   "unsupported_completion": 0,
+   "hard_decoy_leakage": 0.07142857142857142,
+   "noise_abstention": 1.0,
+   "relative_date_in_card": 1,
+   "stale_fact_rate": 0.05,
+   "absorbed_matters": "none",
+   "brief_ok": "47/81",
+   "home_ndcg5": 0.692,
+   "pred_gold_events": "12/9",
+   "wall_s": 2578.8,
+   "s_per_item": 31.45,
+   "llm_s_per_item": 31.36,
+   "completion_tok_s": 22.4,
+   "llm_calls": 173,
+   "llm_failed": 34,
+   "retried": {
+    "assign": 0,
+    "brief": 61,
+    "rank": 0,
+    "split": 2
+   },
+   "latency_median_s": {
+    "assign": 8.532,
+    "brief": 23.413,
+    "rank": 22.141,
+    "split": 8.333
+   },
+   "image_jobs": {
+    "image_detect": "0/3"
+   },
+   "path": "nemotron-3-super-120b-a12b-nvfp4/org/dev-skills-nemotron3super-r1"
+  },
+  {
+   "run": "h2-skills-nemotron3super-r1",
+   "scenario": "holdout-week-v2",
+   "model": "nemotron-3-super-120b-a12b-nvfp4",
+   "items": 46,
+   "b3_f1": 0.728,
+   "link_f1": 0.623,
+   "card_fact_recall": 0.322,
+   "status_fact_recall": 0.126,
+   "asks_per_100": 0.0,
+   "ungrounded_dates": 0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "unsupported_completion": 0,
+   "hard_decoy_leakage": 0.7777777777777778,
+   "noise_abstention": 0.25,
+   "relative_date_in_card": 0,
+   "stale_fact_rate": 0.034482758620689655,
+   "absorbed_matters": "ev_peggy_quote,ev_q3_rebate,ev_wuqing_samples",
+   "brief_ok": "12/51",
+   "home_ndcg5": 0.762,
+   "pred_gold_events": "7/7",
+   "wall_s": 2022.5,
+   "s_per_item": 43.97,
+   "llm_s_per_item": 43.88,
+   "completion_tok_s": 22.1,
+   "llm_calls": 126,
+   "llm_failed": 44,
+   "retried": {
+    "assign": 0,
+    "brief": 47,
+    "rank": 0,
+    "split": 12
+   },
+   "latency_median_s": {
+    "assign": 8.337,
+    "brief": 28.078,
+    "rank": 11.544,
+    "split": 9.242
+   },
+   "image_jobs": {
+    "image_detect": "0/4"
+   },
+   "path": "nemotron-3-super-120b-a12b-nvfp4/org/h2-skills-nemotron3super-r1"
+  }
+ ]
+}

@@ -1,0 +1,56 @@
+{
+ "file_id": "xml-02",
+ "path": "corpus/xml/xml-02.xml",
+ "type": "xml",
+ "ext": "xml",
+ "mime": "application/xml",
+ "filename": "北岸食品有限公司 新闻 RSS.xml",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rss version=\"2.0\">\n  <channel>\n    <title>北岸食品有限公司 新闻</title>\n    <link>https://news.example.com/</link>\n    <description>合成数据</description>\n    <item>\n      <title>北岸食品发布9月运营简报</title>\n      <link>https://news.example.com/1</link>\n      <pubDate>2026-03-21</pubDate>\n      <description>北岸食品发布9月运营简报。（合成数据）</description>\n    </item>\n    <item>\n      <title>新办公区将于下月启用</title>\n      <link>https://news.example.com/2</link>\n      <pubDate>2026-10-12</pubDate>\n      <description>新办公区将于下月启用。（合成数据）</description>\n    </item>\n    <item>\n      <title>年度志愿服务时长突破 3,000 小时</title>\n      <link>https://news.example.com/3</link>\n      <pubDate>2026-09-15</pubDate>\n      <description>年度志愿服务时长突破 3,000 小时。（合成数据）</description>\n    </item>\n  </channel>\n</rss>",
+ "key_lines": [
+  "<title>新办公区将于下月启用</title>",
+  "<description>新办公区将于下月启用。（合成数据）</description>",
+  "<title>年度志愿服务时长突破 3,000 小时</title>",
+  "<description>年度志愿服务时长突破 3,000 小时。（合成数据）</description>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "频道": "北岸食品有限公司 新闻",
+  "条目数": 3
+ },
+ "numbers": [
+  {
+   "value": 3000,
+   "label": "志愿时长"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "这个订阅源有几条新闻？",
+   "a": 3,
+   "match": "number",
+   "derived": true
+  },
+  {
+   "id": "q2",
+   "q": "志愿服务时长突破多少小时？",
+   "a": 3000,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "第二条新闻的标题是什么？",
+   "a": "新办公区将于下月启用",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 989,
+ "sha256": "ce3b748b150f1ddeb491de5c4d771d7d865d55ba5b35dda937e0d1dfea227a81",
+ "family": "rss"
+}

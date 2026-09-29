@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 99,
+  "kind": "ax-compatibility-matrix",
+  "spikeID": "SPIKE-INS-001",
+  "runID": "00000000-0000-4000-8000-000000000001",
+  "generatedAt": "2026-07-23T00:00:00Z",
+  "osVersion": "fixture",
+  "hardwareArchitecture": "arm64",
+  "conclusion": "conditional",
+  "requiredTargetClasses": ["terminal"],
+  "externalApplicationMatrixEvaluated": false,
+  "persistedTargetText": false,
+  "persistedWindowTitle": false,
+  "persistedClipboardContent": false,
+  "targets": [
+    {
+      "targetID": "fixture-editor",
+      "targetClasses": ["apple-editor"],
+      "bundleID": "com.example.fixture",
+      "applicationVersion": "1.0",
+      "accessibilityRole": "AXTextArea",
+      "status": "pass",
+      "standardTrialCount": 20,
+      "forcedFallbackTrialCount": 5,
+      "successfulTrialCount": 25,
+      "successRate": 1,
+      "accessibilitySelectionCount": 20,
+      "clipboardFallbackCount": 5,
+      "clipboardRestoreFailureCount": 0,
+      "elementRefreshCount": 0,
+      "wrongTargetWriteCount": 0,
+      "unexpectedSideEffectCount": 0,
+      "p50Milliseconds": 10,
+      "p95Milliseconds": 30,
+      "cleanupSucceeded": true,
+      "failureCategories": []
+    }
+  ],
+  "unmetCriteria": ["Missing passing target class: terminal."]
+}

@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "kind": "product-consistency-contract",
+  "invariants": [
+    {
+      "id": "four-inputs-one-person-space",
+      "description": "All four input modes share one speaker and global-person model.",
+      "sources": [
+        {
+          "path": "PRODUCT_REQUIREMENTS.md",
+          "requiredLiterals": [
+            "口述、线下录音、电脑内录和导入媒体都使用同一套会话说话人",
+            "单人内容只是该流程得到一个说话人簇的特例"
+          ],
+          "forbiddenLiterals": ["入口专用人物体系"]
+        },
+        {
+          "path": "docs/architecture/TECHNICAL_DESIGN.md",
+          "requiredLiterals": [
+            "口述、线下录音、系统音频和导入媒体都使用同一套会话说话人",
+            "来源只影响捕获和计算调度"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/decisions/ADR-0004-benchmark-gated-inference.md",
+          "requiredLiterals": [
+            "输出同一种 `SessionSpeaker`、`SpeakerOccurrence` 与全局 `Person` 语义",
+            "不得使用不同身份空间、置信门槛或纠错规则"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "Packages/BestASRCore/Sources/BestASRDomain/CoreRecords.swift",
+          "requiredLiterals": [
+            "case dictation",
+            "case importedMedia",
+            "case roomMicrophone",
+            "case systemAudio"
+          ],
+          "forbiddenLiterals": ["DictationPerson", "ImportPerson"]
+        }
+      ]
+    },
+    {
+      "id": "label-free-output-preserves-speaker-evidence",
+      "description": "Plain dictation insertion is presentation-only and does not discard internal speaker evidence.",
+      "sources": [
+        {
+          "path": "PRODUCT_REQUIREMENTS.md",
+          "requiredLiterals": [
+            "默认向当前目标应用插入一份不附带说话人标签的纯文字",
+            "bestASR 历史始终保留完整人物证据"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/TECHNICAL_DESIGN.md",
+          "requiredLiterals": [
+            "默认口述插入由独立 projection",
+            "每个来源范围一个 `SpeakerOccurrence`",
+            "后续人物结果只更新历史关系"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/decisions/ADR-0004-benchmark-gated-inference.md",
+          "requiredLiterals": [
+            "默认纯文字插入是独立呈现测试",
+            "不得用它省略内部人物证据"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "Packages/BestASRCore/Sources/BestASRSpeakerRouting/DictationInsertionProjection.swift",
+          "requiredLiterals": [
+            "speakerLabelsIncluded = false",
+            "waitsForSpeakerResolution = false",
+            "transcriptRevisionID: transcript.id"
+          ],
+          "forbiddenLiterals": []
+        }
+      ]
+    },
+    {
+      "id": "dictation-first-mvp-reuses-v1-core",
+      "description": "The dictation-first delivery slice reuses the complete V1 core boundaries.",
+      "sources": [
+        {
+          "path": "PRODUCT_REQUIREMENTS.md",
+          "requiredLiterals": [
+            "MVP 的首个用户可见闭环以口述为核心",
+            "不得建立 MVP 专用人物类型、一次性数据库结构"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/TECHNICAL_DESIGN.md",
+          "requiredLiterals": [
+            "MVP 先交付口述用户闭环，但不是独立架构分支",
+            "不替换核心领域或数据结构"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/decisions/ADR-0001-native-modular-runtime.md",
+          "requiredLiterals": [
+            "MVP 先交付口述用户闭环，但不建立独立运行时或领域分支",
+            "不允许用 MVP 专用人物类型、数据库 schema 或一次性任务队列"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "Packages/BestASRCore/Sources/BestASRDomain/RepositoryProtocols.swift",
+          "requiredLiterals": [
+            "public protocol SessionRepository",
+            "public protocol DurableJobRepository",
+            "public protocol ModelArtifactRepository",
+            "public protocol SyncAdapter"
+          ],
+          "forbiddenLiterals": ["MVPRepository", "DictationOnlyRepository"]
+        }
+      ]
+    },
+    {
+      "id": "v1-local-only-and-sync-ready",
+      "description": "V1 ships without online, cloud, or multi-user sync; the user's own organizing device is not a sync path; domain semantics stay sync-ready.",
+      "sources": [
+        {
+          "path": "PRODUCT_REQUIREMENTS.md",
+          "requiredLiterals": [
+            "iPhone 客户端、iPhone↔Mac 在线同步和多 Mac 同步不属于 V1 交付范围",
+            "未来同步边界从第一天就使用 V1 的协议与领域模型",
+            "唯一的跨设备路径是用户自有的整理设备"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/TECHNICAL_DESIGN.md",
+          "requiredLiterals": [
+            "V1 不实现在线同步",
+            "`SyncAdapter` 只读取/写入领域 change set",
+            "整理结果不是同步"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/decisions/ADR-0005-sync-ready-local-first.md",
+          "requiredLiterals": [
+            "V1 不实现在线跨设备同步",
+            "未来通过 `SyncAdapter` 接入 iPhone↔Mac 或多 Mac 同步"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "Packages/BestASRCore/Sources/BestASRDomain/RepositoryProtocols.swift",
+          "requiredLiterals": [
+            "Future sync implementations consume stable change sets",
+            "source of truth for local capture, inference, search, or history",
+            "public protocol SyncAdapter"
+          ],
+          "forbiddenLiterals": ["CloudKitContainer", "RemoteSourceOfTruth"]
+        }
+      ]
+    },
+    {
+      "id": "offline-and-recording-first",
+      "description": "Capture, recognition, insertion, and search are offline; organizing input leaves the Mac only to the user's own device over an explicit SSH link, never audio, voiceprints, or dictionaries; capture/journal durability outranks inference work.",
+      "sources": [
+        {
+          "path": "PRODUCT_REQUIREMENTS.md",
+          "requiredLiterals": [
+            "收集、识别、插入和搜索默认完全离线",
+            "该链路不可用时，收集、识别、插入和搜索照常工作",
+            "音频、声纹/说话人特征和词典永不离开 Mac",
+            "只经用户显式启用、可随时撤销的 SSH 加密链路"
+          ],
+          "forbiddenLiterals": [
+            "事件自动归类和整理完全本地运行，不能上传音频、文字、人物或来源元数据"
+          ]
+        },
+        {
+          "path": "docs/architecture/TECHNICAL_DESIGN.md",
+          "requiredLiterals": [
+            "capture > journal > live ASR > final ASR > speaker/local text",
+            "capture/journal 仍继续运行",
+            "永不发送：音频、声纹/说话人 embedding、词典、窗口标题",
+            "服务只绑定 `<spark-host>` 上的 `127.0.0.1:8765`",
+            "此时 Mac 继续捕获、落盘、识别、插入和搜索"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "docs/architecture/decisions/ADR-0001-native-modular-runtime.md",
+          "requiredLiterals": [
+            "捕获和持久化保留在可靠主进程",
+            "推理通过 `InferenceService` 协议隔离"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "Packages/BestASRCore/Sources/BestASRResourcePolicyProbe/ResourcePolicy.swift",
+          "requiredLiterals": [
+            "case .capture:",
+            "case .journal:",
+            "case .liveASR:",
+            "case .finalASR:"
+          ],
+          "forbiddenLiterals": []
+        },
+        {
+          "path": "config/permissions.json",
+          "requiredLiterals": [
+            "\"com.apple.security.network.client\"",
+            "\"networkEntitlements\": []"
+          ],
+          "forbiddenLiterals": []
+        }
+      ]
+    }
+  ]
+}

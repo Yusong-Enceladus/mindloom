@@ -1,0 +1,82 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8003/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.0.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.1.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.1.0"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  },
+  {
+   "name": "screenshot-read",
+   "version": "1.0.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "b97de8ce18f6abfd",
+  "event-brief": "5b98ecd440ee0de5",
+  "home-rank": "d7d4a2eb22021ed6",
+  "recall": "eeca2991c4184401",
+  "screenshot-read": "f64ffa03fbcf5abe"
+ },
+ "git": "",
+ "date": "2026-09-27T17:56:08+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8003/v1",
+  "--answer-questions",
+  "gold",
+  "--rank-gold",
+  "--keep-db",
+  "--out",
+  "../out/dev-skills-v4-gold"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "clock": "replay",
+ "answer_questions": "gold",
+ "replay_cache": null,
+ "handles": {
+  "E1": "af398a86-387a-40fb-97e8-827f437d8930",
+  "E2": "64b8d039-b128-4a79-b382-d8e1eb953221",
+  "E3": "14fde571-6eaf-488b-8c1d-e525938cb82d",
+  "E4": "a99b6228-5c38-4c8f-b18a-e6d8a768e128",
+  "E5": "6270c48b-47be-4a9a-9588-597879f05998",
+  "E6": "dff6ef52-4682-4715-b952-d51afe570922",
+  "E7": "80731979-8940-4fec-859f-064f71724c59",
+  "E8": "02915f03-f13b-4fd7-a1a6-4c9b15fc8dc8",
+  "E9": "068c41ff-08d8-488e-9f5d-7631f4a948cb",
+  "E10": "16672b08-08d7-4f8f-9f4f-a3c8ee2f361e",
+  "E11": "fb1348eb-85ec-4033-bdc1-d21de5cf5772",
+  "E12": "b11f8bf9-bba4-42fe-865b-b2b25b50f653",
+  "E13": "ccc6b29d-058c-47ea-ba63-c2d2fa50ea90",
+  "E14": "815be88e-21e9-466d-a59f-e84f1592fc7e"
+ },
+ "bare_max_tokens": null
+}

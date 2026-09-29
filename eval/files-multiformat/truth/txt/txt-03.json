@@ -1,0 +1,67 @@
+{
+ "file_id": "txt-03",
+ "path": "corpus/txt/txt-03.txt",
+ "type": "txt",
+ "ext": "txt",
+ "mime": "text/plain",
+ "filename": "产品组周报（5月9日—5月13日）.txt",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "产品组周报（5月9日—5月13日）\n填写人：蔡嘉怡\n整体进度：66%\n本周完成\n- 完成需求评审\n- 处理工单 34 个\n- 更新项目排期\n风险\n- 测试环境不稳定\n下周计划\n- 完成用户访谈 8 场\n- 周五前同步进度\n（合成数据）\n合成数据",
+ "key_lines": [
+  "填写人：蔡嘉怡",
+  "整体进度：66%",
+  "- 测试环境不稳定",
+  "- 完成用户访谈 8 场"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "填写人": "蔡嘉怡",
+  "进度": "66%",
+  "风险": "测试环境不稳定",
+  "下周": "完成用户访谈 8 场"
+ },
+ "numbers": [
+  {
+   "value": 66,
+   "label": "进度%"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "整体进度是多少？",
+   "a": 66,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "本周最大的风险是什么？",
+   "a": "测试环境不稳定",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "下周的主要计划是什么？",
+   "a": "完成用户访谈 8 场",
+   "match": "contains"
+  },
+  {
+   "id": "q4",
+   "q": "周报是谁写的？",
+   "a": "蔡嘉怡",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8",
+  "newline": "CRLF"
+ },
+ "notes": "CRLF 换行。",
+ "bytes": 301,
+ "sha256": "9f4f486114c44fe8508a445e7df8a81b29c820c3a54258a7df97d175db1b81b9",
+ "family": "weekly"
+}

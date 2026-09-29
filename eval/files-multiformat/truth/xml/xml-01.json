@@ -1,0 +1,80 @@
+{
+ "file_id": "xml-01",
+ "path": "corpus/xml/xml-01.xml",
+ "type": "xml",
+ "ext": "xml",
+ "mime": "application/xml",
+ "filename": "交付清单_v1.2.xml",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "84285412-8ABD-5AC7-B2D2-B339E0FB1D5F",
+  "ref": "col_xml",
+  "events": [
+   "ev_collab"
+  ]
+ },
+ "text_layer": "full",
+ "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- 合成数据 · synthetic data -->\n<delivery xmlns=\"urn:example:delivery:1\" project=\"CC-DEFECT-2026\" version=\"1.2\" date=\"2026-10-14\">\n  <client>澄川科技（苏州）有限公司</client>\n  <supplier>清屿大学视觉智能实验室</supplier>\n  <artifacts>\n    <artifact name=\"defect_det_v1.2.onnx\" type=\"model\" size_mb=\"87.4\" sha256=\"3f1c9a0d7e5b2c4a8f6e1d0b9c7a5e3f2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a\"/>\n    <artifact name=\"deploy_guide.pdf\" type=\"doc\" pages=\"14\"/>\n    <artifact name=\"test_report_v1.2.pdf\" type=\"doc\" pages=\"9\"/>\n  </artifacts>\n  <metrics dataset=\"澄川测试集 v3\" images=\"2400\">\n    <metric name=\"mAP@0.5\" value=\"0.873\"/>\n    <metric name=\"recall_scratch\" value=\"0.91\"/>\n    <metric name=\"latency_ms\" value=\"23\"/>\n  </metrics>\n  <classes>\n    <class id=\"1\">划痕</class>\n    <class id=\"2\">凹坑</class>\n    <class id=\"3\">污渍</class>\n  </classes>\n  <acceptance date=\"2026-10-20\" place=\"苏州工厂\"/>\n</delivery>",
+ "key_lines": [
+  "<artifact name=\"defect_det_v1.2.onnx\" type=\"model\" size_mb=\"87.4\" sha256=\"3f1c9a0d7e5b2c4a8f6e1d0b9c7a5e3f2d1c0b9a8f7e6d5c4b3a2f1e0d9c8b7a\"/>",
+  "<metrics dataset=\"澄川测试集 v3\" images=\"2400\">",
+  "<metric name=\"mAP@0.5\" value=\"0.873\"/>",
+  "<metric name=\"latency_ms\" value=\"23\"/>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "mAP": 0.873,
+  "测试集图片": 2400,
+  "延迟ms": 23,
+  "模型大小MB": 87.4
+ },
+ "numbers": [
+  {
+   "value": 0.873,
+   "label": "mAP"
+  },
+  {
+   "value": 2400,
+   "label": "images"
+  },
+  {
+   "value": 23,
+   "label": "latency"
+  },
+  {
+   "value": 87.4,
+   "label": "size_mb"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "v1.2 的 mAP 是多少？",
+   "a": 0.873,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "测试集有多少张图？",
+   "a": 2400,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "推理延迟多少毫秒？",
+   "a": 23,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "模型文件多大（MB）？",
+   "a": 87.4,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 987,
+ "sha256": "9703f1ad31e91ab04796d32e3b3afc482ac3caceb0fa2acf9e2ccc7f44eea422"
+}

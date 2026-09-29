@@ -1,0 +1,9 @@
+{"key": "qwen38-27b-fp8", "display": "Qwen3.8-27B FP8", "engine": "vLLM 0.30.0 · FP8 块量化（稠密 27.8B，原生 VLM）",
+ "served": "max-num-seqs 4，gpu-memory-utilization 0.45，fp8 KV，MTP×3 投机解码，131k ctx，qwen3 推理解析器",
+ "gpu_mem_gb": 50.6, "mem_note": "vLLM 按 0.45 预留：权重 29.05 GiB + KV 缓存 17.85 GiB；同机另有 embedding 服务 5.8 GiB（本测试不用）", "weights_gb": 28.8,
+ "quality_runs": ["qwen38.r1"],
+ "latency_runs": ["qwen38.r1"],
+ "c4_run": "qwen38.c4",
+ "runs": {
+  "qwen38.r1": {"where": "spark-A :30010（独占）", "load": "spark-A-qwen38.tsv", "port": "30010"},
+  "qwen38.c4": {"where": "spark-A :30010（独占）", "load": "spark-A-qwen38.tsv", "port": "30010"}}}

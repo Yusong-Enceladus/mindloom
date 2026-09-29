@@ -1,0 +1,58 @@
+{
+ "file_id": "xml-04",
+ "path": "corpus/xml/xml-04.xml",
+ "type": "xml",
+ "ext": "xml",
+ "mime": "application/xml",
+ "filename": "C区耗材库存表（8月盘点）.xml",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<inventory title=\"C区耗材库存表（8月盘点）\" note=\"合成数据\">\n  <item name=\"护目镜\" unit=\"副\" stock=\"34\" safety=\"5\" reorder=\"false\"/>\n  <item name=\"滤纸\" unit=\"包\" stock=\"3\" safety=\"5\" reorder=\"true\"/>\n  <item name=\"75%酒精\" unit=\"瓶\" stock=\"23\" safety=\"15\" reorder=\"false\"/>\n  <item name=\"移液枪头 200μL\" unit=\"包\" stock=\"6\" safety=\"15\" reorder=\"true\"/>\n  <item name=\"离心管 1.5mL\" unit=\"袋\" stock=\"29\" safety=\"5\" reorder=\"false\"/>\n  <item name=\"一次性手套\" unit=\"盒\" stock=\"17\" safety=\"10\" reorder=\"false\"/>\n</inventory>",
+ "key_lines": [
+  "<item name=\"护目镜\" unit=\"副\" stock=\"34\" safety=\"5\" reorder=\"false\"/>",
+  "<item name=\"滤纸\" unit=\"包\" stock=\"3\" safety=\"5\" reorder=\"true\"/>",
+  "<item name=\"移液枪头 200μL\" unit=\"包\" stock=\"6\" safety=\"15\" reorder=\"true\"/>",
+  "<item name=\"离心管 1.5mL\" unit=\"袋\" stock=\"29\" safety=\"5\" reorder=\"false\"/>"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "需补货": [
+   "滤纸",
+   "移液枪头 200μL"
+  ],
+  "移液枪头 200μL": 6
+ },
+ "numbers": [
+  {
+   "value": 6,
+   "label": "移液枪头 200μL"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "移液枪头 200μL的库存是多少？",
+   "a": 6,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "哪些需要补货？",
+   "a": "滤纸",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "护目镜的安全库存是多少？",
+   "a": 5,
+   "match": "number"
+  }
+ ],
+ "structure": {},
+ "bytes": 602,
+ "sha256": "a3739c5efb55c78f1184642910da76c6f76a8451166b3757d92a067ec60c07c0",
+ "family": "inventory"
+}

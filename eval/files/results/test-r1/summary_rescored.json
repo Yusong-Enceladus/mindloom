@@ -1,0 +1,40 @@
+{
+ "split": "test",
+ "condition": "skills",
+ "parse_only": false,
+ "prompt_hash": "5810c0096d0a5445",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "files": 40,
+ "type_ok": [
+  1.0,
+  40
+ ],
+ "text_recall": [
+  1.0,
+  34
+ ],
+ "image_recall": [
+  1.0,
+  12
+ ],
+ "summary_hit": [
+  0.988,
+  40
+ ],
+ "summary_model": [
+  0.95,
+  40
+ ],
+ "field_em": [
+  1.0,
+  6
+ ],
+ "det_field_em": [
+  1.0,
+  6
+ ],
+ "summary_first_try": 36,
+ "summary_calls": 38,
+ "latency_p50": 7.36,
+ "latency_p90": 25.04
+}

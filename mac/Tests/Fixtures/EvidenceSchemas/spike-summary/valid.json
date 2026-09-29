@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "kind": "spike-summary",
+  "spikeID": "SPIKE-JRN-001",
+  "runID": "11111111-1111-4111-8111-111111111111",
+  "question": "Can committed journal chunks survive a forced restart?",
+  "environmentRef": "fixture://environment/arm64-offline",
+  "criteria": {
+    "pass": [
+      "Every committed chunk remains readable."
+    ],
+    "fail": [
+      "A committed chunk is missing or corrupt."
+    ]
+  },
+  "commands": [
+    [
+      "BenchCLI",
+      "journal-smoke"
+    ]
+  ],
+  "matrix": [
+    {
+      "scenarioID": "restart-after-commit",
+      "status": "pass",
+      "evidenceRefs": [
+        "fixture://spike/journal-smoke"
+      ]
+    }
+  ],
+  "conclusion": "pass",
+  "unmetCriteria": []
+}

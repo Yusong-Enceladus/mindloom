@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "runID": "20260723T154048Z-11f2fb98-a18c-4264-81b4-545e98a13113",
+  "status": "pass",
+  "startedAt": "2026-07-23T15:40:48Z",
+  "finishedAt": "2026-07-23T15:41:03Z",
+  "freshDerivedDataAtStart": true,
+  "evidenceDirectory": "artifacts/evidence/environment/20260723T154048Z-11f2fb98-a18c-4264-81b4-545e98a13113",
+  "derivedData": ".build/EnvironmentGate/20260723T154048Z-11f2fb98-a18c-4264-81b4-545e98a13113/DerivedData",
+  "exitCode": 0,
+  "files": {
+    "toolchain": {
+      "path": "toolchain-summary.json",
+      "sha256": "66c08a4e5b3c1ea9f3883329612c41ffeceebfd84de5530bc84af659beb845d2"
+    },
+    "command": {
+      "path": "command-summary.json",
+      "sha256": "840188aaacee5d1f210a3854d014d15ff934e3f4f4d35f5413d967c821c348d3"
+    },
+    "tests": {
+      "path": "test-summary.json",
+      "sha256": "a0b21e859cd7e6507be7c590871ec31590e862f11e1d52cb78b9f96ca6c2d3cf"
+    },
+    "check": {
+      "path": "check-summary.json",
+      "sha256": "2f7dd1bafcc88939af283918aff604a65192c196aff0e430761fce7cece27781"
+    }
+  }
+}

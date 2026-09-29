@@ -1,0 +1,104 @@
+{
+ "id": "receipt-13",
+ "type": "receipt_invoice",
+ "split": "test",
+ "image": "images/receipt-13.jpg",
+ "lang": "en",
+ "hard": [
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "29531568861349b541d2939fd6e2800c6c22a9eb38df0a6513ab2102d1d4b138",
+ "gt": {
+  "doc_kind": "invoice",
+  "merchant": "Fernhollow Foods Inc.",
+  "date": "2026-09-30",
+  "date_text": "Sep 30, 2026",
+  "time": "",
+  "doc_no": "INV-2026-8323",
+  "currency": "USD",
+  "items": [
+   {
+    "name": "Paper cups 12 oz (50)",
+    "qty": 72,
+    "unit": "sleeve",
+    "unit_price": "3.90",
+    "amount": "280.80"
+   },
+   {
+    "name": "Oat milk 1 L",
+    "qty": 48,
+    "unit": "carton",
+    "unit_price": "2.35",
+    "amount": "112.80"
+   },
+   {
+    "name": "Coffee beans, natural, 1 kg",
+    "qty": 12,
+    "unit": "bag",
+    "unit_price": "19.80",
+    "amount": "237.60"
+   },
+   {
+    "name": "Coffee beans, washed, 1 kg",
+    "qty": 10,
+    "unit": "bag",
+    "unit_price": "21.40",
+    "amount": "214.00"
+   }
+  ],
+  "subtotal": "845.20",
+  "discount": "0.00",
+  "tax": "52.83",
+  "total": "898.03",
+  "payment_method": "Bank transfer",
+  "buyer": "Northwind Labs Ltd.",
+  "tax_rate": 6.25,
+  "due_date": "2026-10-30"
+ },
+ "text_lines": [
+  "INVOICE",
+  "Fernhollow Foods Inc.",
+  "Bill to: Northwind Labs Ltd. Invoice no.: INV-2026-8323",
+  "Date: Sep 30, 2026 Due: Oct 30, 2026",
+  "Paper cups 12 oz (50) 72 3.90 280.80",
+  "Oat milk 1 L 48 2.35 112.80",
+  "Coffee beans, natural, 1 kg 12 19.80 237.60",
+  "Coffee beans, washed, 1 kg 10 21.40 214.00",
+  "Subtotal $845.20",
+  "Tax (6.25%) $52.83",
+  "Total due $898.03",
+  "Payment terms: net 30 days by bank transfer. Please quote the invoice number."
+ ],
+ "qa": [
+  {
+   "q": "What is the total?",
+   "a": "$898.03",
+   "match": "number"
+  },
+  {
+   "q": "Which business issued it?",
+   "a": "Fernhollow Foods Inc.",
+   "match": "exact"
+  },
+  {
+   "q": "What is the date?",
+   "a": "2026-09-30",
+   "match": "date"
+  },
+  {
+   "q": "How much tax?",
+   "a": "$52.83",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "doc_kind": "invoice",
+  "faint": false,
+  "curl": false
+ },
+ "variant": {
+  "kind": "invoice",
+  "lang": "en"
+ }
+}

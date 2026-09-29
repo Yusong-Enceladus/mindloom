@@ -1,0 +1,115 @@
+{
+ "id": "label-01",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-01.jpg",
+ "lang": "en",
+ "hard": [
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "a9208294258cb437a83f428d49647f2977ff5a4a59ef5e38e2f31fef14702e3a",
+ "gt": {
+  "label_kind": "shipping_label",
+  "fields": [
+   {
+    "key": "carrier",
+    "label": "",
+    "value": "SAMPLE EXPRESS"
+   },
+   {
+    "key": "tracking_no",
+    "label": "TRACKING #",
+    "value": "7969 1179 9573"
+   },
+   {
+    "key": "recipient",
+    "label": "SHIP TO",
+    "value": "Sam Ortiz"
+   },
+   {
+    "key": "recipient_address",
+    "label": "",
+    "value": "801 Birch Lane, Apt 34, Fairview"
+   },
+   {
+    "key": "sender",
+    "label": "FROM",
+    "value": "Diego Ramos"
+   },
+   {
+    "key": "sender_address",
+    "label": "",
+    "value": "587 Orchard Road, Lakeside"
+   },
+   {
+    "key": "weight",
+    "label": "WEIGHT",
+    "value": "19.1 LB"
+   },
+   {
+    "key": "pieces",
+    "label": "PKG",
+    "value": "1 OF 1"
+   },
+   {
+    "key": "date",
+    "label": "SHIP DATE",
+    "value": "08/24/2026"
+   }
+  ],
+  "lines": [
+   "SAMPLE EXPRESS",
+   "GROUND",
+   "TRACKING # 7969 1179 9573",
+   "SHIP TO:",
+   "Sam Ortiz",
+   "801 Birch Lane, Apt 34, Fairview",
+   "FROM:",
+   "Diego Ramos",
+   "587 Orchard Road, Lakeside",
+   "WEIGHT: 19.1 LB",
+   "PKG 1 OF 1",
+   "SHIP DATE: 08/24/2026"
+  ]
+ },
+ "text_lines": [
+  "SAMPLE EXPRESS",
+  "GROUND",
+  "TRACKING # 7969 1179 9573",
+  "SHIP TO:",
+  "Sam Ortiz",
+  "801 Birch Lane, Apt 34, Fairview",
+  "FROM:",
+  "Diego Ramos",
+  "587 Orchard Road, Lakeside",
+  "WEIGHT: 19.1 LB",
+  "PKG 1 OF 1",
+  "SHIP DATE: 08/24/2026"
+ ],
+ "qa": [
+  {
+   "q": "Who is the recipient?",
+   "a": "Sam Ortiz",
+   "match": "exact"
+  },
+  {
+   "q": "What does the package weigh?",
+   "a": "19.1 lb",
+   "match": "number"
+  },
+  {
+   "q": "What is the tracking number?",
+   "a": "7969 1179 9573",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "shipping_label",
+  "background": "cardboard"
+ },
+ "variant": {
+  "kind": "shipping_label",
+  "lang": "en"
+ }
+}

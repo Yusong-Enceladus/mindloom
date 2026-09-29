@@ -1,0 +1,87 @@
+{
+ "id": "chat-10",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-10.png",
+ "lang": "en",
+ "hard": [],
+ "synthetic": true,
+ "image_sha256": "478d119cbe6b2edaa563d2ada66ded5918dcc4fcb7a61e4d486f7bc6a51ec390",
+ "gt": {
+  "chat_title": "Launch sync",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "Noah Grant",
+    "is_self": false,
+    "time": "9:25 PM",
+    "text": "Build 3.0.0-rc2 is up on staging, please test by Friday",
+    "kind": "text"
+   },
+   {
+    "sender": "Priya Nair",
+    "is_self": false,
+    "time": "",
+    "text": "Checkout still times out after 45 seconds",
+    "kind": "text"
+   },
+   {
+    "sender": "Me",
+    "is_self": true,
+    "time": "9:48 PM",
+    "text": "Let's ship ordering first and move payments to Aug 10",
+    "kind": "text"
+   },
+   {
+    "sender": "Noah Grant",
+    "is_self": false,
+    "time": "",
+    "text": "OK, I'll update the release notes",
+    "kind": "text"
+   },
+   {
+    "sender": "Lena Hoffmann",
+    "is_self": false,
+    "time": "",
+    "text": "I can pair on the timeout tomorrow morning",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "Launch sync",
+  "Noah Grant：Build 3.0.0-rc2 is up on staging, please test by Friday",
+  "Priya Nair：Checkout still times out after 45 seconds",
+  "Me：Let's ship ordering first and move payments to Aug 10",
+  "Noah Grant：OK, I'll update the release notes",
+  "Lena Hoffmann：I can pair on the timeout tomorrow morning"
+ ],
+ "qa": [
+  {
+   "q": "Which build is on staging?",
+   "a": "3.0.0-rc2",
+   "match": "exact"
+  },
+  {
+   "q": "After how many seconds does checkout time out?",
+   "a": "45 seconds",
+   "match": "number"
+  },
+  {
+   "q": "When do payments move to?",
+   "a": "Aug 10",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "light",
+  "fonts": [
+   "helv",
+   "helv_bold"
+  ]
+ },
+ "variant": {
+  "conv": "en_launch",
+  "theme": "light"
+ }
+}

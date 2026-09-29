@@ -1,0 +1,142 @@
+{
+ "id": "label-00",
+ "type": "form_label_sign",
+ "split": "test",
+ "image": "images/label-00.jpg",
+ "lang": "zh",
+ "hard": [
+  "similar_names",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "3d064b4a4828163ecb83f22b945d7303b303dcd640c5392f2367cb4bd9f53134",
+ "gt": {
+  "label_kind": "shipping_label",
+  "fields": [
+   {
+    "key": "carrier",
+    "label": "",
+    "value": "示例快运"
+   },
+   {
+    "key": "tracking_no",
+    "label": "运单号",
+    "value": "7309 9442 9466"
+   },
+   {
+    "key": "recipient",
+    "label": "收",
+    "value": "王晓林"
+   },
+   {
+    "key": "recipient_phone",
+    "label": "",
+    "value": "133****1790"
+   },
+   {
+    "key": "recipient_address",
+    "label": "",
+    "value": "溪桥市临溪区桂香路100号6栋405"
+   },
+   {
+    "key": "sender",
+    "label": "寄",
+    "value": "王晓琳"
+   },
+   {
+    "key": "sender_phone",
+    "label": "",
+    "value": "135****6557"
+   },
+   {
+    "key": "sender_address",
+    "label": "",
+    "value": "溪桥市东湖区望湖街255号"
+   },
+   {
+    "key": "goods",
+    "label": "物品",
+    "value": "服装"
+   },
+   {
+    "key": "weight",
+    "label": "重量",
+    "value": "2.14kg"
+   },
+   {
+    "key": "pieces",
+    "label": "件数",
+    "value": "1/1"
+   },
+   {
+    "key": "date",
+    "label": "寄件日期",
+    "value": "2026-08-27"
+   }
+  ],
+  "lines": [
+   "示例快运",
+   "标准快递",
+   "溪桥-临溪 B25",
+   "运单号 7309 9442 9466",
+   "收",
+   "王晓林  133****1790",
+   "溪桥市临溪区桂香路100号6栋405",
+   "寄",
+   "王晓琳  135****6557",
+   "溪桥市东湖区望湖街255号",
+   "物品：服装",
+   "重量：2.14kg",
+   "件数：1/1",
+   "寄件日期：2026-08-27",
+   "签收人："
+  ]
+ },
+ "text_lines": [
+  "示例快运",
+  "标准快递",
+  "溪桥-临溪 B25",
+  "运单号 7309 9442 9466",
+  "收",
+  "王晓林  133****1790",
+  "溪桥市临溪区桂香路100号6栋405",
+  "寄",
+  "王晓琳  135****6557",
+  "溪桥市东湖区望湖街255号",
+  "物品：服装",
+  "重量：2.14kg",
+  "件数：1/1",
+  "寄件日期：2026-08-27",
+  "签收人："
+ ],
+ "qa": [
+  {
+   "q": "收件人是谁？",
+   "a": "王晓林",
+   "match": "exact"
+  },
+  {
+   "q": "包裹多重？",
+   "a": "2.14kg",
+   "match": "number"
+  },
+  {
+   "q": "运单号是多少？",
+   "a": "7309 9442 9466",
+   "match": "exact"
+  },
+  {
+   "q": "寄件人是谁？",
+   "a": "王晓琳",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "kind": "shipping_label",
+  "background": "cardboard"
+ },
+ "variant": {
+  "kind": "shipping_label",
+  "similar": true
+ }
+}

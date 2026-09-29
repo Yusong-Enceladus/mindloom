@@ -1,0 +1,96 @@
+{
+ "id": "board-09",
+ "type": "whiteboard_handwriting",
+ "split": "test",
+ "image": "images/board-09.jpg",
+ "lang": "zh",
+ "hard": [
+  "handwriting",
+  "similar_names",
+  "units",
+  "perspective"
+ ],
+ "synthetic": true,
+ "image_sha256": "ef4863a25d24afc82784c5a4ad3550f30f14d9f4c45f3711bd14d34ab3125b04",
+ "gt": {
+  "surface": "notebook",
+  "lines": [
+   {
+    "text": "秋游方案",
+    "struck": false,
+    "checked": false,
+    "is_title": true
+   },
+   {
+    "text": "人数：6户，约18人",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "车程3小时，45座大巴",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "联系人：陈思远",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "备选：陈思源负责订餐",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   },
+   {
+    "text": "雨天顺延一周",
+    "struck": false,
+    "checked": false,
+    "is_title": false
+   }
+  ]
+ },
+ "text_lines": [
+  "秋游方案",
+  "人数：6户，约18人",
+  "车程3小时，45座大巴",
+  "联系人：陈思远",
+  "备选：陈思源负责订餐",
+  "雨天顺延一周"
+ ],
+ "qa": [
+  {
+   "q": "联系人是谁？",
+   "a": "陈思远",
+   "match": "exact"
+  },
+  {
+   "q": "谁负责订餐？",
+   "a": "陈思源",
+   "match": "exact"
+  },
+  {
+   "q": "车程多久？",
+   "a": "3小时",
+   "match": "number"
+  }
+ ],
+ "render": {
+  "surface": "notebook",
+  "font": "hand_note",
+  "size": 56,
+  "messy": 1.0,
+  "faint": false
+ },
+ "variant": {
+  "content": "plan",
+  "font": "hand_note",
+  "surface": "notebook",
+  "similar": true,
+  "shadow": true,
+  "size": 56
+ }
+}

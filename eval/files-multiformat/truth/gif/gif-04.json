@@ -1,0 +1,81 @@
+{
+ "file_id": "gif-04",
+ "path": "corpus/gif/gif-04.gif",
+ "type": "gif",
+ "ext": "gif",
+ "mime": "image/gif",
+ "filename": "蜂蜜烤鸡翅（6人份）.gif",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "none",
+ "text": "蜂蜜烤鸡翅（6人份）\n砂糖 60 克\n合成数据\n预热\n烤箱 200℃\n合成数据\n烘烤\n25分钟\n合成数据",
+ "key_lines": [
+  "蜂蜜烤鸡翅（6人份）",
+  "砂糖 60 克",
+  "烤箱 200℃",
+  "25分钟"
+ ],
+ "picture_only_lines": [
+  "蜂蜜烤鸡翅（6人份）",
+  "砂糖 60 克",
+  "烤箱 200℃",
+  "25分钟"
+ ],
+ "key_fields": {
+  "份数": 6,
+  "温度": "200℃",
+  "时长": "25分钟",
+  "砂糖": 60
+ },
+ "numbers": [
+  {
+   "value": 200,
+   "label": "温度"
+  },
+  {
+   "value": 25,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 200,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 25,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 60,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 6,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "frames": 3,
+  "frame_ms": 1500,
+  "frame_titles": [
+   "蜂蜜烤鸡翅（6人份）",
+   "预热",
+   "烘烤"
+  ]
+ },
+ "notes": "3 帧步骤动图。",
+ "bytes": 27089,
+ "sha256": "4bff832c6fe8a61fb8f56f16716e06b48c24ac3925bee63ae9014ef3e4ee7a13",
+ "family": "recipe"
+}

@@ -1,0 +1,69 @@
+{
+ "file_id": "doc-05",
+ "path": "corpus/doc/doc-05.doc",
+ "type": "doc",
+ "ext": "doc",
+ "mime": "application/msword",
+ "filename": "Purchase Order PO-2026670.doc",
+ "lang": "en",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "Purchase Order PO-2026670\nBuyer: Tidewater Analytics\nVendor: Harbor & Pine Consulting\nOrder date: September 1, 2026\nDeliver by: September 8, 2026\nContact: Maya Chen\nItem\tQty\tUnit price (USD)\tAmount (USD)\nWireless headset\t2\t74.90\t149.80\nLabel printer\t3\t89.50\t268.50\nPortable projector\t8\t420.00\t3,360.00\nSubtotal: USD 3,778.30\nShipping: USD 25.00\nTotal: USD 3,803.30\nPayment terms: net 30. Synthetic document for evaluation only.\nSYNTHETIC DATA · 合成数据",
+ "key_lines": [
+  "Purchase Order PO-2026670",
+  "Vendor: Harbor & Pine Consulting",
+  "Wireless headset\t2\t74.90\t149.80",
+  "Subtotal: USD 3,778.30",
+  "Total: USD 3,803.30"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "po_number": "PO-2026670",
+  "vendor": "Harbor & Pine Consulting",
+  "total_usd": 3803.3,
+  "deliver_by": "2026-09-08"
+ },
+ "numbers": [
+  {
+   "value": 3778.3,
+   "label": "subtotal"
+  },
+  {
+   "value": 3803.3,
+   "label": "total"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "What is the PO number?",
+   "a": "PO-2026670",
+   "match": "exact"
+  },
+  {
+   "id": "q2",
+   "q": "What is the order total in USD?",
+   "a": 3803.3,
+   "match": "number",
+   "tol": 0.01
+  },
+  {
+   "id": "q3",
+   "q": "How many units of 'Wireless headset' are ordered?",
+   "a": 2,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "Who is the vendor?",
+   "a": "Harbor & Pine Consulting",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 20480,
+ "sha256": "3eef20bbd386f6f14ff045e061c245008c4c91f5cc7b2791a75ab87a9d4cce5d",
+ "family": "po_en"
+}

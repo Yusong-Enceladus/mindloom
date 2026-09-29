@@ -1,0 +1,94 @@
+{
+ "file_id": "mov-01",
+ "path": "corpus/mov/mov-01.mov",
+ "type": "mov",
+ "ext": "mov",
+ "mime": "video/quicktime",
+ "filename": "答辩预演录屏.mov",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": {
+  "item_id": "7ACB4815-C7E1-5D1D-B3E7-1BFE54184658",
+  "ref": "def_mov",
+  "events": [
+   "ev_defense"
+  ]
+ },
+ "text_layer": "none",
+ "text": "开题预演（第2版）\n汇报时长：19分30秒（限20分钟）\n林晓棠 · 视觉智能实验室\n合成数据\n研究问题\n课堂视频平均时长 72 分钟\n目标：带时间戳的 5 分钟摘要\n合成数据\n修改记录\n根据预演意见：删去相关工作 2 页\n补充 ClassSum-120 标注规范\n答辩时间：10月15日 14:00（已改期）\n合成数据",
+ "key_lines": [
+  "开题预演（第2版）",
+  "汇报时长：19分30秒（限20分钟）",
+  "根据预演意见：删去相关工作 2 页",
+  "答辩时间：10月15日 14:00（已改期）"
+ ],
+ "picture_only_lines": [
+  "开题预演（第2版）",
+  "汇报时长：19分30秒（限20分钟）",
+  "根据预演意见：删去相关工作 2 页",
+  "答辩时间：10月15日 14:00（已改期）"
+ ],
+ "key_fields": {
+  "汇报时长": "19分30秒",
+  "删去页数": 2,
+  "答辩时间": "2026-10-15 14:00"
+ },
+ "numbers": [
+  {
+   "value": 2,
+   "label": "删去页数"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "预演汇报用了多长时间？",
+   "a": "19分30秒",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "删去了相关工作几页？",
+   "a": 2,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "改期后的答辩时间是？",
+   "a": "10月15日",
+   "match": "contains",
+   "accept": [
+    "10/15",
+    "2026-10-15"
+   ]
+  }
+ ],
+ "structure": {
+  "slides": 3,
+  "seconds": [
+   3,
+   3,
+   3
+  ],
+  "duration_s": 9,
+  "audio": "silent AAC",
+  "timeline": [
+   {
+    "start_s": 0,
+    "title": "开题预演（第2版）"
+   },
+   {
+    "start_s": 3,
+    "title": "研究问题"
+   },
+   {
+    "start_s": 6,
+    "title": "修改记录"
+   }
+  ]
+ },
+ "notes": "带静音 AAC 音轨的 QuickTime 录屏。",
+ "bytes": 42331,
+ "sha256": "7510c2bfa8ae0cd4e04bd455f291f5ae938c24a187bbdd26c2547d9984a2c34c"
+}

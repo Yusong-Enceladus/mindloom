@@ -1,0 +1,86 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 81,
+   "ok_first_attempt": 80,
+   "retried": 2,
+   "latency_median_s": 4.033,
+   "latency_p95_s": 5.213,
+   "latency_total_s": 340.2,
+   "prompt_tokens_mean": 5295.7,
+   "completion_tokens_mean": 188.6,
+   "prompt_tokens_total": 434251,
+   "completion_tokens_total": 15469,
+   "errors_sample": [
+    "decision=attach should target E1 (the best-ranked linked candidate)"
+   ]
+  },
+  "brief": {
+   "calls": 78,
+   "ok": 68,
+   "ok_first_attempt": 47,
+   "retried": 31,
+   "latency_median_s": 5.835,
+   "latency_p95_s": 12.045,
+   "latency_total_s": 506.0,
+   "prompt_tokens_mean": 4877.5,
+   "completion_tokens_mean": 348.1,
+   "prompt_tokens_total": 380445,
+   "completion_tokens_total": 27148,
+   "errors_sample": [
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「样品今天顺丰发出」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「我比较喜欢B」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 13.434,
+   "latency_p95_s": 16.651,
+   "latency_total_s": 50.0,
+   "prompt_tokens_mean": 6674,
+   "completion_tokens_mean": 673,
+   "prompt_tokens_total": 26696,
+   "completion_tokens_total": 2692,
+   "errors_sample": []
+  },
+  "screenshot_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 7.745,
+   "latency_p95_s": 9.177,
+   "latency_total_s": 21.9,
+   "prompt_tokens_mean": 2638,
+   "completion_tokens_mean": 435.3,
+   "prompt_tokens_total": 7914,
+   "completion_tokens_total": 1306,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 13,
+  "ask": 6,
+  "attach": 59,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 13,
+  "ask": 3,
+  "attach": 58,
+  "none": 4,
+  "ask_suppressed": 4
+ },
+ "final_live_events": 20,
+ "status_line_chars_mean": 13.8,
+ "title_chars_mean": 9.1,
+ "wall_s": 925.4,
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,73 @@
+{
+ "id": "chart-12",
+ "type": "chart_dashboard",
+ "split": "test",
+ "image": "images/chart-12.png",
+ "lang": "zh",
+ "hard": [
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "3c3d7eeb5a59bd36ffe47fab35bf46e97fb5cf296c25dc150079954df3ea2e72",
+ "gt": {
+  "chart_type": "hbar",
+  "title": "各部门 Q4 预算申请",
+  "x_label": "预算（万元）",
+  "y_label": "",
+  "unit": "万元",
+  "categories": [
+   "研发部",
+   "市场部",
+   "运营部",
+   "客服部",
+   "行政部"
+  ],
+  "series": [
+   {
+    "name": "预算",
+    "values": [
+     110.2,
+     37.2,
+     71.0,
+     134.2,
+     163.2
+    ],
+    "labels": [
+     "110.2",
+     "37.2",
+     "71.0",
+     "134.2",
+     "163.2"
+    ]
+   }
+  ],
+  "trend": {}
+ },
+ "text_lines": [
+  "各部门 Q4 预算申请",
+  "预算 研发部: 110.2",
+  "预算 市场部: 37.2",
+  "预算 运营部: 71.0",
+  "预算 客服部: 134.2",
+  "预算 行政部: 163.2"
+ ],
+ "qa": [
+  {
+   "q": "各部门 Q4 预算申请中，客服部的预算是多少？",
+   "a": "134.2万元",
+   "match": "number"
+  },
+  {
+   "q": "预算最高的是哪一项？",
+   "a": "行政部",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "hbar"
+ },
+ "variant": {
+  "chart": "hbar"
+ }
+}

@@ -1,0 +1,100 @@
+{
+ "id": "chart-05",
+ "type": "chart_dashboard",
+ "split": "dev",
+ "image": "images/chart-05.png",
+ "lang": "en",
+ "hard": [
+  "many_points",
+  "low_contrast",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "6f0ebf6b300b00e6780d2468dd9191281589ff360aae63f726622abe089e4771",
+ "gt": {
+  "chart_type": "bar",
+  "title": "Support tickets per week",
+  "x_label": "Week",
+  "y_label": "Tickets",
+  "unit": "tickets",
+  "categories": [
+   "W31",
+   "W32",
+   "W33",
+   "W34",
+   "W35",
+   "W36",
+   "W37",
+   "W38"
+  ],
+  "series": [
+   {
+    "name": "Tickets",
+    "values": [
+     73.0,
+     91.0,
+     115.0,
+     136.0,
+     161.0,
+     196.0,
+     215.0,
+     238.0
+    ],
+    "labels": [
+     "73",
+     "91",
+     "115",
+     "136",
+     "161",
+     "196",
+     "215",
+     "238"
+    ]
+   }
+  ],
+  "trend": {
+   "Tickets": "up"
+  }
+ },
+ "text_lines": [
+  "Support tickets per week",
+  "Tickets W31: 73",
+  "Tickets W32: 91",
+  "Tickets W33: 115",
+  "Tickets W34: 136",
+  "Tickets W35: 161",
+  "Tickets W36: 196",
+  "Tickets W37: 215",
+  "Tickets W38: 238"
+ ],
+ "qa": [
+  {
+   "q": "In 'Support tickets per week', what is the value for W32 (Tickets)?",
+   "a": "91",
+   "match": "number"
+  },
+  {
+   "q": "Which week has the highest Tickets?",
+   "a": "W38",
+   "match": "exact"
+  },
+  {
+   "q": "Overall trend of Tickets?",
+   "a": "upward",
+   "match": "trend"
+  }
+ ],
+ "render": {
+  "engine": "matplotlib",
+  "chart": "bar"
+ },
+ "variant": {
+  "chart": "bar",
+  "lang": "en",
+  "topic": "tickets",
+  "patterns": [
+   "up"
+  ],
+  "low_contrast": true
+ }
+}

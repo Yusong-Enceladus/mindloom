@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "product-synthetic-smoke",
+  "version": "1.0.0",
+  "tier": "product-synthetic",
+  "releaseHoldout": false,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "22222222-2222-4222-8222-222222222222",
+      "consentClass": "synthetic",
+      "assetReference": "fixture://synthetic/pulse-001",
+      "contentDigest": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "languages": [
+        "zh-CN",
+        "en-US"
+      ],
+      "tags": [
+        "smoke",
+        "code-switch"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1046 @@
+{
+ "scenario_id": "holdout-week-v2",
+ "split": "holdout",
+ "n_items": 46,
+ "summary": {
+  "bcubed_precision": 0.3538647342995169,
+  "bcubed_recall": 0.6689815531399039,
+  "bcubed_f1": 0.46288280548146543,
+  "link_precision": 0.34782608695652173,
+  "link_recall": 0.2711864406779661,
+  "link_f1": 0.3047619047619048,
+  "hard_decoy_leakage": 0.625,
+  "easy_decoy_leakage": null,
+  "noise_abstention": 0.0,
+  "noise_unfiled_rate": 0.0,
+  "noise_singleton_rate": 0.25,
+  "noise_in_real_event_rate": 0.75,
+  "false_unfiled": 0,
+  "unfiled_precision": null,
+  "decoy_seed_ok": "1/2",
+  "absorbed_matters": "ev_peggy_claim,ev_spring_fair",
+  "pred_event_count": 9,
+  "gold_event_count": 7,
+  "question_count": 0,
+  "asks_total": 0,
+  "asks_per_100_items": 0.0,
+  "max_asks_per_day": 0,
+  "ask_useful_rate": null,
+  "ask_true_yes_rate": null,
+  "asks_suppressed": 0,
+  "status_fact_recall": 0.0,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": null,
+  "home_rank_ran": "0/6",
+  "home_ndcg5": null,
+  "home_ndcg5_recency": 0.6973251639862577,
+  "home_top3_precision": null,
+  "home_g3_recall3": null,
+  "home_gross_inversions": null,
+  "home_clutter5": null,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "person_link_accuracy": 0.12790697674418605,
+  "person_link_accuracy_cross_source": 0.12790697674418605,
+  "checkpoints_scored": 6,
+  "checkpoints_total": 6
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.3538647342995169,
+    "recall": 0.6689815531399039,
+    "f1": 0.46288280548146543
+   },
+   "link": {
+    "precision": 0.34782608695652173,
+    "recall": 0.2711864406779661,
+    "f1": 0.3047619047619048,
+    "tp": 16,
+    "n_pred": 46,
+    "n_gold": 59
+   },
+   "decoy_leakage": {
+    "hard": 0.625,
+    "easy": null,
+    "per_decoy": {
+     "ev_wuqing_samples": {
+      "difficulty": "hard",
+      "decoy_of": "ev_nanan_po2611",
+      "pairs": 24,
+      "leakage": 0.5833333333333334,
+      "decoy_items": 3
+     },
+     "ev_peggy_claim": {
+      "difficulty": "hard",
+      "decoy_of": "ev_peggy_quote",
+      "pairs": 18,
+      "leakage": 0.6666666666666666,
+      "decoy_items": 6
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 1,
+    "total": 2,
+    "per_decoy": {
+     "ev_wuqing_samples": {
+      "seed": "ed033aed-4ab8-592e-9a13-5ba2dd10048e",
+      "ok": true
+     },
+     "ev_peggy_claim": {
+      "seed": "538ba357-588a-5835-8bf4-35dab69ce5eb",
+      "ok": false
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [
+     "ev_peggy_claim",
+     "ev_spring_fair"
+    ],
+    "rate": 0.7142857142857143
+   },
+   "noise_abstention": {
+    "noise_items": 4,
+    "abstained": 0,
+    "rate": 0.0,
+    "singleton_rate": 0.25,
+    "in_real_event_rate": 0.75,
+    "false_unfiled": 0,
+    "unfiled_precision": null,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 9,
+   "pred_event_count_multi_item": 2,
+   "gold_event_count": 7,
+   "unassigned_items": 0
+  },
+  "event_mapping": {
+   "65f05945-b8a8-423b-9ff7-2aefcef99915": "ev_dad_knee",
+   "d3754a79-13c6-48f1-9b87-4460ce1acf85": "ev_nanan_po2611",
+   "68e0ff1a-46dd-4367-8947-88e951e4ff35": "ev_peggy_quote",
+   "734aec61-4c1a-4cfc-b02d-53f5b3e8891d": "ev_q3_rebate",
+   "3368c5f0-7013-4e82-9009-8c22c9f3b32d": "ev_wuqing_samples"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.12790697674418605,
+   "pairs": 86,
+   "accuracy_cross_source": 0.12790697674418605,
+   "pairs_cross_source": 86,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 3.909090909090909,
+   "name_match": 0.2222222222222222,
+   "mapping": {
+    "0ba10acb-24bb-56f7-a2b5-c1d2241ecc1e": "p_bro",
+    "49c1624a-9b4b-50d1-af63-bf81d5a45974": "p_dad",
+    "8b910e15-7a9a-5e68-87f5-dbdeefe89779": "p_deng",
+    "2d3e762c-2269-5e40-811c-772ca391085d": "p_he",
+    "62e7c2be-5080-589a-8614-d744aa0d7a59": "p_meng",
+    "c8a507d8-7196-5d67-b9f4-de2e1fd30754": "p_mom",
+    "96fb4614-43fe-5320-9b4e-ce71d829bd8a": "p_owner",
+    "c39795f9-1328-5cb7-9cc9-b26151f58285": "p_peggy",
+    "2c40ee55-2f44-58de-b38a-bc15fc7e68a7": "p_wilson",
+    "d6b7781f-0a78-54bf-8923-bcf796c478c9": "p_xu"
+   }
+  },
+  "questions": {
+   "count": 0,
+   "asked_total": 0,
+   "by_kind": {},
+   "per_100_items": 0.0,
+   "resolvable": 0,
+   "true_yes_rate": null,
+   "unresolvable_merged": 0,
+   "asks_total": 0,
+   "asks_per_100_items": 0.0,
+   "max_asks_per_day": 0,
+   "ask_useful_rate": null,
+   "asks_suppressed": 0
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp1_mon_night",
+   "label": "周一晚",
+   "n_items": 8,
+   "bcubed_f1": 0.6962250712250714,
+   "link_f1": 0.7058823529411765,
+   "pred_event_count": 5,
+   "gold_event_count": 6,
+   "expected": 11,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 5,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 1.0890899097968358,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 0,
+    "clutter5": null,
+    "order": [
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "ev_dad_knee",
+      3,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "ev_wuqing_samples",
+      3,
+      0.5
+     ],
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      3,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      2,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qc_1112",
+      "f1_add200_pending",
+      "f1_etd_1120"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_request",
+      "f2_need_1120"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_request",
+      "f3_due_1113"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_discharge_1111"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_missing",
+      "f6_deadline_1113"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deadline_1116"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp2_tue_night",
+   "label": "周二晚",
+   "n_items": 17,
+   "bcubed_f1": 0.5345164434399383,
+   "link_f1": 0.5128205128205129,
+   "pred_event_count": 6,
+   "gold_event_count": 7,
+   "expected": 13,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 6,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.696950182728367,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 5,
+    "clutter5": null,
+    "order": [
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      2,
+      0.5
+     ],
+     [
+      "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "ev_dad_knee",
+      3,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "ev_wuqing_samples",
+      2,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      2,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      2,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qty_3200",
+      "f1_qc_1113",
+      "f1_etd_1120"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_request",
+      "f2_ready_1114",
+      "f2_need_1120"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_request",
+      "f3_due_1113"
+     ]
+    },
+    "ev_peggy_claim": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f4_claim"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_discharge_1111"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_missing",
+      "f6_deadline_1113"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deadline_1116"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp3_wed_night",
+   "label": "周三晚",
+   "n_items": 26,
+   "bcubed_f1": 0.4812144058406701,
+   "link_f1": 0.42857142857142855,
+   "pred_event_count": 7,
+   "gold_event_count": 7,
+   "expected": 13,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 7,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.46686507489093126,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 5,
+    "clutter5": null,
+    "order": [
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      2,
+      0.5
+     ],
+     [
+      "9e42dbbb-f46c-4848-b06e-9de18f317b57",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "ev_dad_knee",
+      3,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "ev_wuqing_samples",
+      2,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      3,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      2,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qty_3200",
+      "f1_qc_1113",
+      "f1_etd_1123",
+      "f1_loading_1121"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_ready_1114",
+      "f2_need_1120"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_request",
+      "f3_due_1113"
+     ]
+    },
+    "ev_peggy_claim": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f4_claim"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_discharge_1112"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_invoice_received",
+      "f6_deadline_1113"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deadline_1116"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp4_thu_night",
+   "label": "周四晚",
+   "n_items": 34,
+   "bcubed_f1": 0.42261798304410203,
+   "link_f1": 0.3287671232876712,
+   "pred_event_count": 7,
+   "gold_event_count": 7,
+   "expected": 16,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 7,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.6150386377826782,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 5,
+    "clutter5": null,
+    "order": [
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      3,
+      0.5
+     ],
+     [
+      "9e42dbbb-f46c-4848-b06e-9de18f317b57",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "ev_dad_knee",
+      2,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "ev_wuqing_samples",
+      2,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      2,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qty_3200",
+      "f1_qc_1113",
+      "f1_etd_1123",
+      "f1_loading_1121"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_ready_1114",
+      "f2_need_1120"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_quote_480"
+     ]
+    },
+    "ev_peggy_claim": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f4_claim",
+      "f4_cause",
+      "f4_reply_by_1113"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_discharged",
+      "f5_rehab_1117",
+      "f5_followup_1120"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_docs_sent",
+      "f6_deadline_1113"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deposit_plan"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp5_fri_evening",
+   "label": "周五傍晚",
+   "n_items": 40,
+   "bcubed_f1": 0.44066370327488336,
+   "link_f1": 0.3146067415730337,
+   "pred_event_count": 8,
+   "gold_event_count": 7,
+   "expected": 17,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 8,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.8183348189876488,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 5,
+    "clutter5": null,
+    "order": [
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      3,
+      0.5
+     ],
+     [
+      "3368c5f0-7013-4e82-9009-8c22c9f3b32d",
+      "ev_wuqing_samples",
+      3,
+      0.5
+     ],
+     [
+      "9e42dbbb-f46c-4848-b06e-9de18f317b57",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "ev_dad_knee",
+      2,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      2,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      3,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qc_passed",
+      "f1_etd_1123",
+      "f1_loading_1121",
+      "f1_balance_1116"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "3368c5f0-7013-4e82-9009-8c22c9f3b32d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_ready_1114",
+      "f2_need_1120"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_quote_480",
+      "f3_counter_430",
+      "f3_final_by_1116"
+     ]
+    },
+    "ev_peggy_claim": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f4_refund_1118",
+      "f4_cause"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_discharged",
+      "f5_rehab_1117",
+      "f5_followup_1120"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_filed"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deposit_paid",
+      "f7_balance_0228"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp6_sun_night",
+   "label": "周日晚（最终）",
+   "n_items": 46,
+   "bcubed_f1": 0.46288280548146543,
+   "link_f1": 0.3047619047619048,
+   "pred_event_count": 9,
+   "gold_event_count": 7,
+   "expected": 17,
+   "recalled": 0,
+   "fact_recall": 0.0,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 0,
+   "stale": 0,
+   "stale_rate": null,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ui_fit": {
+    "cards": 9,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": []
+   },
+   "home": {
+    "rank_ran": false,
+    "ndcg5": null,
+    "ndcg5_recency": 0.4976723597310853,
+    "top3_precision": null,
+    "g3_recall3": null,
+    "gross_inversions": null,
+    "gross_pairs": 5,
+    "clutter5": null,
+    "order": [
+     [
+      "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+      "ev_nanan_po2611",
+      2,
+      0.5
+     ],
+     [
+      "65f05945-b8a8-423b-9ff7-2aefcef99915",
+      "ev_dad_knee",
+      2,
+      0.5
+     ],
+     [
+      "3368c5f0-7013-4e82-9009-8c22c9f3b32d",
+      "ev_wuqing_samples",
+      2,
+      0.5
+     ],
+     [
+      "9e42dbbb-f46c-4848-b06e-9de18f317b57",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "e4d5a606-9a6b-44c1-a697-bea3a2e5c967",
+      "noise",
+      0,
+      0.5
+     ],
+     [
+      "7b7b112f-fbf7-44fd-9f61-facac6370a00",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "7ac7d63f-ebfe-46be-b18b-2ace1126b584",
+      "fragment",
+      0,
+      0.5
+     ],
+     [
+      "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+      "ev_peggy_quote",
+      3,
+      0.5
+     ],
+     [
+      "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+      "ev_q3_rebate",
+      2,
+      0.5
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_nanan_po2611": {
+     "pred_event": "d3754a79-13c6-48f1-9b87-4460ce1acf85",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f1_qc_passed",
+      "f1_etd_1123",
+      "f1_loading_1121",
+      "f1_balance_1116"
+     ]
+    },
+    "ev_wuqing_samples": {
+     "pred_event": "3368c5f0-7013-4e82-9009-8c22c9f3b32d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f2_shipped",
+      "f2_eta_1118"
+     ]
+    },
+    "ev_peggy_quote": {
+     "pred_event": "68e0ff1a-46dd-4367-8947-88e951e4ff35",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f3_counter_430",
+      "f3_final_455"
+     ]
+    },
+    "ev_peggy_claim": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f4_refund_1118",
+      "f4_list_received"
+     ]
+    },
+    "ev_dad_knee": {
+     "pred_event": "65f05945-b8a8-423b-9ff7-2aefcef99915",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f5_rehab_1117",
+      "f5_owner_1119",
+      "f5_followup_1120",
+      "f5_aids"
+     ]
+    },
+    "ev_q3_rebate": {
+     "pred_event": "734aec61-4c1a-4cfc-b02d-53f5b3e8891d",
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f6_filed"
+     ]
+    },
+    "ev_spring_fair": {
+     "pred_event": null,
+     "status_line": "",
+     "recalled": [],
+     "missing": [
+      "f7_deposit_paid",
+      "f7_balance_0228"
+     ]
+    }
+   }
+  }
+ ]
+}

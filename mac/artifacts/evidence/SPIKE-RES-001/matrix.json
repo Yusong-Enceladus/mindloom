@@ -1,0 +1,583 @@
+{
+  "attemptedCaptureChunkCount" : 16,
+  "committedCaptureChunkCount" : 16,
+  "conclusion" : "pass",
+  "gapCount" : 0,
+  "kind" : "resource-policy-matrix",
+  "priorityOrder" : [
+    "capture",
+    "journal",
+    "live-asr",
+    "final-asr",
+    "local-text",
+    "speaker"
+  ],
+  "recoveredReadableChunkCount" : 16,
+  "runID" : "6A000000-0000-4000-8000-000000000001",
+  "scenarios" : [
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+
+      ],
+      "scenarioID" : "nominal-priority-order",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "normal",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000001",
+        "thermalPressure" : "nominal"
+      },
+      "sourceAudioLost" : false,
+      "state" : "normal",
+      "status" : "pass",
+      "transition" : "no-change"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "throttle",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "memory-warning"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "memory-warning"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-warning"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-warning"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "memory-warning"
+      ],
+      "scenarioID" : "memory-warning-sheds-heavy-work",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "warning",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000002",
+        "thermalPressure" : "nominal"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "memory-critical"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "memory-critical"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-critical"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-critical"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "memory-critical"
+      ],
+      "scenarioID" : "memory-critical-preserves-capture-journal",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "critical",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000003",
+        "thermalPressure" : "nominal"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "throttle",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "thermal-serious"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "thermal-serious"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "thermal-serious"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "thermal-serious"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "thermal-serious"
+      ],
+      "scenarioID" : "thermal-serious-throttles-by-priority",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "normal",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000004",
+        "thermalPressure" : "serious"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "thermal-critical"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "thermal-critical"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "thermal-critical"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "thermal-critical"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "thermal-critical"
+      ],
+      "scenarioID" : "thermal-critical-defers-all-inference",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "normal",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000005",
+        "thermalPressure" : "critical"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "backlog-full"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "backlog-full"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "backlog-full"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "backlog-full"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "backlog-full"
+      ],
+      "scenarioID" : "backlog-cap-enters-observable-degraded-live",
+      "snapshot" : {
+        "inferenceBacklog" : 4,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "normal",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000006",
+        "thermalPressure" : "nominal"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+            "memory-critical",
+            "thermal-critical",
+            "backlog-full"
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "defer-durably",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+            "memory-critical",
+            "thermal-critical",
+            "backlog-full"
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-critical",
+            "thermal-critical",
+            "backlog-full"
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "unload-and-defer",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+            "memory-critical",
+            "thermal-critical",
+            "backlog-full"
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+        "memory-critical",
+        "thermal-critical",
+        "backlog-full"
+      ],
+      "scenarioID" : "combined-pressure-remains-bounded",
+      "snapshot" : {
+        "inferenceBacklog" : 4,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "critical",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000007",
+        "thermalPressure" : "critical"
+      },
+      "sourceAudioLost" : false,
+      "state" : "degraded-live",
+      "status" : "pass",
+      "transition" : "entered-degraded"
+    },
+    {
+      "committedChunksDuringScenario" : 2,
+      "directives" : [
+        {
+          "action" : "run",
+          "priorityRank" : 0,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "capture"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 1,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "journal"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 2,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "live-asr"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 3,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "final-asr"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "local-text"
+        },
+        {
+          "action" : "run",
+          "priorityRank" : 4,
+          "reasonCodes" : [
+
+          ],
+          "workClass" : "speaker"
+        }
+      ],
+      "observableReasonCodes" : [
+
+      ],
+      "scenarioID" : "normal-snapshot-recovers-deferred-work",
+      "snapshot" : {
+        "inferenceBacklog" : 0,
+        "inferenceBacklogCapacity" : 4,
+        "memoryPressure" : "normal",
+        "recordingActive" : true,
+        "snapshotID" : "6A000000-0000-4000-8000-000000000008",
+        "thermalPressure" : "nominal"
+      },
+      "sourceAudioLost" : false,
+      "state" : "normal",
+      "status" : "pass",
+      "transition" : "recovered"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-RES-001"
+}

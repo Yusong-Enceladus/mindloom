@@ -1,0 +1,7 @@
+vllm:prompt_tokens_total{engine="0",model_name="gpt-oss-120b"} 156725.0
+vllm:generation_tokens_total{engine="0",model_name="gpt-oss-120b"} 23655.0
+vllm:request_success_total{engine="0",finished_reason="stop",model_name="gpt-oss-120b"} 3.0
+vllm:request_success_total{engine="0",finished_reason="length",model_name="gpt-oss-120b"} 41.0
+vllm:request_success_total{engine="0",finished_reason="abort",model_name="gpt-oss-120b"} 0.0
+vllm:request_success_total{engine="0",finished_reason="error",model_name="gpt-oss-120b"} 0.0
+vllm:request_success_total{engine="0",finished_reason="repetition",model_name="gpt-oss-120b"} 0.0

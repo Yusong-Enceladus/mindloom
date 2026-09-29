@@ -1,0 +1,296 @@
+{
+  "generatedAt" : "2026-08-28T12:22:44Z",
+  "hardwareArchitecture" : "arm64",
+  "kind" : "process-tap-boundary-matrix",
+  "osVersion" : "Version 26.6.2 (Build 25G83)",
+  "runID" : "FCA6F286-660D-41FA-8EE8-EF477E0E1083",
+  "scenarios" : [
+    {
+      "evidenceMode" : "live-catalog",
+      "lifecycleEvents" : [
+
+      ],
+      "metrics" : {
+        "applicationGroupCount" : "31",
+        "audioProcessCount" : "41",
+        "rawIdentityPersisted" : "false"
+      },
+      "scenarioID" : "audio-processes-group-as-applications",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-watermark",
+      "lifecycleEvents" : [
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "tapCreated",
+          "monotonicNanoseconds" : 220206363128333,
+          "processID" : 66427
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "aggregateCreated",
+          "monotonicNanoseconds" : 220206363150083
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStarted",
+          "monotonicNanoseconds" : 220206387103083
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStopped",
+          "monotonicNanoseconds" : 220211529562750
+        }
+      ],
+      "metrics" : {
+        "callbackCount" : "480",
+        "droppedFrameCount" : "0",
+        "frameCount" : "245760",
+        "hostTimeMonotonic" : "true",
+        "nonselectedAmplitude" : "0.00000035",
+        "nonselectedDetected" : "false",
+        "sampleRate" : "48000.00000000",
+        "selectedAmplitude" : "0.01227620",
+        "selectedDetected" : "true"
+      },
+      "scenarioID" : "selected-app-captured-nonselected-app-excluded",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-watermark+lifecycle",
+      "lifecycleEvents" : [
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "tapCreated",
+          "monotonicNanoseconds" : 220211727925166,
+          "processID" : 66509
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "aggregateCreated",
+          "monotonicNanoseconds" : 220211727925750
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStarted",
+          "monotonicNanoseconds" : 220211744256625
+        },
+        {
+          "detail" : "synthetic-group-membership-change",
+          "kind" : "tapReconfigured",
+          "monotonicNanoseconds" : 220211768479875
+        },
+        {
+          "detail" : "synthetic-source-lifecycle",
+          "kind" : "processAdded",
+          "monotonicNanoseconds" : 220211768512333,
+          "processID" : 66426
+        },
+        {
+          "detail" : "synthetic-group-membership-change",
+          "kind" : "tapReconfigured",
+          "monotonicNanoseconds" : 220213353383333
+        },
+        {
+          "detail" : "synthetic-source-lifecycle",
+          "kind" : "processAdded",
+          "monotonicNanoseconds" : 220213353387541,
+          "processID" : 66523
+        },
+        {
+          "detail" : "synthetic-group-membership-change",
+          "kind" : "tapReconfigured",
+          "monotonicNanoseconds" : 220216576645875
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStopped",
+          "monotonicNanoseconds" : 220217439476250
+        }
+      ],
+      "metrics" : {
+        "callbackCount" : "531",
+        "droppedFrameCount" : "0",
+        "frameCount" : "271872",
+        "helperAmplitude" : "0.01075835",
+        "helperDetected" : "true",
+        "hostTimeMonotonic" : "true",
+        "relatedProcessCount" : "3",
+        "sampleRate" : "48000.00000000"
+      },
+      "scenarioID" : "helper-child-process-auto-joins-selected-app",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-watermark+lifecycle",
+      "lifecycleEvents" : [
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "tapCreated",
+          "monotonicNanoseconds" : 220217645959458,
+          "processID" : 66545
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "aggregateCreated",
+          "monotonicNanoseconds" : 220217645960166
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStarted",
+          "monotonicNanoseconds" : 220217676503875
+        },
+        {
+          "detail" : "synthetic-source-lifecycle",
+          "kind" : "processRemoved",
+          "monotonicNanoseconds" : 220220542876208,
+          "processID" : 66545
+        },
+        {
+          "detail" : "synthetic-source-lifecycle",
+          "kind" : "sourceRestarted",
+          "monotonicNanoseconds" : 220220883995208,
+          "processID" : 66580
+        },
+        {
+          "detail" : "synthetic-group-membership-change",
+          "kind" : "tapReconfigured",
+          "monotonicNanoseconds" : 220220884000541,
+          "processID" : 66580
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStopped",
+          "monotonicNanoseconds" : 220223781906375
+        }
+      ],
+      "metrics" : {
+        "callbackCount" : "570",
+        "droppedFrameCount" : "0",
+        "firstGenerationDetected" : "true",
+        "frameCount" : "291840",
+        "hostTimeMonotonic" : "true",
+        "sampleRate" : "48000.00000000",
+        "secondGenerationDetected" : "true",
+        "stableBundleIdentity" : "true"
+      },
+      "scenarioID" : "selected-app-exit-and-restart-preserves-capture",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-silent-output",
+      "lifecycleEvents" : [
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStarted",
+          "monotonicNanoseconds" : 220226101277000
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStopped",
+          "monotonicNanoseconds" : 220226101277416
+        }
+      ],
+      "metrics" : {
+        "callbackCount" : "192",
+        "captureEndedBecauseOfSilence" : "false",
+        "droppedFrameCount" : "0",
+        "frameCount" : "98304",
+        "hostTimeMonotonic" : "true",
+        "rootMeanSquare" : "0.00000000",
+        "sampleRate" : "48000.00000000"
+      },
+      "scenarioID" : "silent-selected-source-keeps-io-alive",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-watermark+opt-in-physical-route+deterministic-transition",
+      "lifecycleEvents" : [
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStarted",
+          "monotonicNanoseconds" : 220232600596666,
+          "processID" : 66614
+        },
+        {
+          "detail" : "default-output-object-changed",
+          "kind" : "deviceChanged",
+          "monotonicNanoseconds" : 220227429666708
+        },
+        {
+          "detail" : "default-output-object-changed",
+          "kind" : "deviceChanged",
+          "monotonicNanoseconds" : 220228236785166
+        },
+        {
+          "detail" : "probe-lifecycle",
+          "kind" : "captureStopped",
+          "monotonicNanoseconds" : 220232600597250,
+          "processID" : 66614
+        }
+      ],
+      "metrics" : {
+        "alternateOutputWatermarkDetected" : "true",
+        "callbackCount" : "593",
+        "defaultOutputRestored" : "true",
+        "droppedFrameCount" : "0",
+        "frameCount" : "303616",
+        "hostTimeMonotonic" : "true",
+        "listenerNotificationCount" : "2",
+        "liveOutputDeviceCount" : "4",
+        "physicalSwitchPerformed" : "true",
+        "preSwitchWatermarkDetected" : "true",
+        "rawDeviceIdentityPersisted" : "false",
+        "sampleRate" : "48000.00000000",
+        "transitionEventRecorded" : "true",
+        "watermarkDetectedAcrossSwitch" : "true"
+      },
+      "scenarioID" : "output-device-change-is-explicit",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "actual-tcc-denial+signed-synthetic-source",
+      "lifecycleEvents" : [
+        {
+          "detail" : "actual-tcc-denial-audio-content-suppressed",
+          "kind" : "permissionRejected",
+          "monotonicNanoseconds" : 220232604775458
+        }
+      ],
+      "metrics" : {
+        "actualTCCDenial" : "true",
+        "aggregateDeviceDelta" : "0",
+        "audioContentSuppressed" : "true",
+        "callbackCount" : "94",
+        "capturedRMS" : "0.00000000",
+        "capturedWatermarkAmplitude" : "0.00000000",
+        "createTapStatus" : "0",
+        "frameCount" : "48000",
+        "ioStartReturnedSuccessAfterDenial" : "true",
+        "startCaptureStatus" : "0",
+        "syntheticSourceOnly" : "true",
+        "tapCreatedBeforeDenial" : "true",
+        "tapDelta" : "0",
+        "watermarkDetected" : "false"
+      },
+      "scenarioID" : "permission-denial-blocks-audio-content",
+      "status" : "pass"
+    },
+    {
+      "evidenceMode" : "live-hal-inventory+process-resource",
+      "lifecycleEvents" : [
+
+      ],
+      "metrics" : {
+        "aggregateDeviceDelta" : "0",
+        "residentByteDelta" : "5652480",
+        "tapDelta" : "0"
+      },
+      "scenarioID" : "tap-and-aggregate-lifecycle-cleans-up",
+      "status" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "spikeID" : "SPIKE-CAP-001"
+}

@@ -1,0 +1,71 @@
+{
+ "file_id": "webarchive-05",
+ "path": "corpus/webarchive/webarchive-05.webarchive",
+ "type": "webarchive",
+ "ext": "webarchive",
+ "mime": "application/x-webarchive",
+ "filename": "抹茶磅蛋糕（8人份）.webarchive",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "partial",
+ "text": "城市生活网\n抹茶磅蛋糕（8人份）\n材料\t用量（克）\n主料\t250\n鸡蛋\t150\n砂糖\t50\n黄油\t70\n步骤\n- 材料室温回软后混合均匀\n- 烤箱预热至 165℃\n- 入炉烘烤 45 分钟，中途转盘一次\n- 出炉冷却 20 分钟后切块\n小贴士：糖可减少两成。（合成数据）\n合成数据\n城市生活网\n合成数据",
+ "key_lines": [
+  "抹茶磅蛋糕（8人份）",
+  "砂糖\t50",
+  "- 烤箱预热至 165℃",
+  "- 入炉烘烤 45 分钟，中途转盘一次"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "份数": 8,
+  "温度": "165℃",
+  "时长": "45分钟",
+  "砂糖": 50
+ },
+ "numbers": [
+  {
+   "value": 165,
+   "label": "温度"
+  },
+  {
+   "value": 45,
+   "label": "分钟"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "烤箱预热到多少度？",
+   "a": 165,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "烘烤多少分钟？",
+   "a": 45,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "砂糖用多少克？",
+   "a": 50,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "这是几人份？",
+   "a": 8,
+   "match": "number"
+  }
+ ],
+ "structure": {
+  "url": "https://www.food.example.com/page/8148",
+  "subresources": 1
+ },
+ "notes": "Safari 网页归档，含一个 PNG 子资源。",
+ "bytes": 8434,
+ "sha256": "79dea2e880ed26b793cb340ccacd4ac91fc5a34b571aef2b0126c3eb19349999",
+ "family": "recipe"
+}

@@ -1,0 +1,120 @@
+{
+  "kind" : "persistence-migration-summary",
+  "runID" : "88DC3649-3F2C-4F33-ABF0-0032E2766168",
+  "scenarios" : [
+    {
+      "attempt" : {
+        "backupFileName" : "success.sqlite.pre-v2.backup",
+        "backupMatchesPreMigration" : true,
+        "inspection" : {
+          "appliedMigrations" : [
+            "v1-foundation",
+            "v2-sync-identity"
+          ],
+          "foreignKeysEnabled" : true,
+          "journalMode" : "wal",
+          "schemaVersion" : 2,
+          "sessionCount" : 1,
+          "tableNames" : [
+            "audio_chunks",
+            "change_log",
+            "durable_jobs",
+            "grdb_migrations",
+            "model_artifacts",
+            "person_corrections",
+            "persons",
+            "session_speakers",
+            "sessions",
+            "speaker_occurrence_tracks",
+            "speaker_occurrences",
+            "timeline_events",
+            "tombstones",
+            "tracks",
+            "transcript_revisions"
+          ]
+        },
+        "recoveryInstructions" : "Retain success.sqlite.pre-v2.backup until the migrated database passes integrity checks.",
+        "schemaVersion" : 1,
+        "sourceFilePreserved" : true,
+        "status" : "pass"
+      },
+      "name" : "n-minus-one-to-current",
+      "result" : "pass"
+    },
+    {
+      "attempt" : {
+        "backupFileName" : "success.sqlite.pre-v2.backup",
+        "backupMatchesPreMigration" : true,
+        "inspection" : {
+          "appliedMigrations" : [
+            "v1-foundation",
+            "v2-sync-identity"
+          ],
+          "foreignKeysEnabled" : true,
+          "journalMode" : "wal",
+          "schemaVersion" : 2,
+          "sessionCount" : 1,
+          "tableNames" : [
+            "audio_chunks",
+            "change_log",
+            "durable_jobs",
+            "grdb_migrations",
+            "model_artifacts",
+            "person_corrections",
+            "persons",
+            "session_speakers",
+            "sessions",
+            "speaker_occurrence_tracks",
+            "speaker_occurrences",
+            "timeline_events",
+            "tombstones",
+            "tracks",
+            "transcript_revisions"
+          ]
+        },
+        "recoveryInstructions" : "Retain success.sqlite.pre-v2.backup until the migrated database passes integrity checks.",
+        "schemaVersion" : 1,
+        "sourceFilePreserved" : true,
+        "status" : "pass"
+      },
+      "name" : "repeat-current-migration",
+      "result" : "pass"
+    },
+    {
+      "attempt" : {
+        "backupFileName" : "interrupted.sqlite.pre-v2.backup",
+        "backupMatchesPreMigration" : true,
+        "failureCategory" : "injectedInterruption",
+        "inspection" : {
+          "appliedMigrations" : [
+            "v1-foundation"
+          ],
+          "foreignKeysEnabled" : true,
+          "journalMode" : "wal",
+          "schemaVersion" : 1,
+          "sessionCount" : 1,
+          "tableNames" : [
+            "audio_chunks",
+            "durable_jobs",
+            "grdb_migrations",
+            "model_artifacts",
+            "persons",
+            "session_speakers",
+            "sessions",
+            "timeline_events",
+            "tracks",
+            "transcript_revisions"
+          ]
+        },
+        "recoveryInstructions" : "Keep interrupted.sqlite unchanged; restore interrupted.sqlite.pre-v2.backup to a new file, verify integrity, then retry migration.",
+        "schemaVersion" : 1,
+        "sourceFilePreserved" : true,
+        "status" : "fail"
+      },
+      "name" : "interrupted-migration-rollback",
+      "result" : "pass"
+    }
+  ],
+  "schemaVersion" : 1,
+  "status" : "pass"
+}

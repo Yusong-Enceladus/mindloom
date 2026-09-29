@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Current deterministic Delivery XCTest contract",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "kind", "generatedAt", "sourceDigest", "scope", "liveCompatibilityEvaluated", "status", "testExitCode", "requiredCaseCount", "observedCaseCount", "passedCaseCount", "skippedCaseCount", "failedCaseCount", "tests", "issues"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "kind": {"const": "delivery-policy-test-contract"},
+    "generatedAt": {"type": "string", "format": "date-time"},
+    "sourceDigest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scope": {"const": "deterministic-delivery-tests"},
+    "liveCompatibilityEvaluated": {"const": false},
+    "status": {"enum": ["pass", "fail"]},
+    "testExitCode": {"type": "integer"},
+    "requiredCaseCount": {"type": "integer", "minimum": 1},
+    "observedCaseCount": {"type": "integer", "minimum": 0},
+    "passedCaseCount": {"type": "integer", "minimum": 0},
+    "skippedCaseCount": {"type": "integer", "minimum": 0},
+    "failedCaseCount": {"type": "integer", "minimum": 0},
+    "tests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "status"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[A-Za-z]+Tests/test[A-Za-z0-9_]+$"},
+          "status": {"enum": ["pass", "fail", "skipped"]}
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"enum": ["test-command-failed", "suite-failures", "suite-errors", "suite-skipped", "unexpected-test", "duplicate-test", "missing-or-invalid-xunit", "missing-required-test", "test-not-passed"]}
+    }
+  }
+}

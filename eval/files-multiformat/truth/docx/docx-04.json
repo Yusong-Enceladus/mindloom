@@ -1,0 +1,68 @@
+{
+ "file_id": "docx-04",
+ "path": "corpus/docx/docx-04.docx",
+ "type": "docx",
+ "ext": "docx",
+ "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+ "filename": "房屋租赁合同（摘要）.docx",
+ "lang": "zh",
+ "split": "test",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "房屋租赁合同（摘要）\n出租方：彭思远\n承租方：钱泽宇\n房屋地址：西安市临江路263号4栋594室\n租期：2年，自2026年1月1日起\n月租金：3,500元\n押金：3,500元\n付款日：每月15日前\n水电燃气费由承租方承担；提前退租需提前30日书面通知。\n（合成数据，非真实合同）\n合成数据",
+ "key_lines": [
+  "承租方：钱泽宇",
+  "月租金：3,500元",
+  "押金：3,500元",
+  "付款日：每月15日前"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "月租金": 3500,
+  "押金": 3500,
+  "付款日": "每月15日",
+  "租期": "2年",
+  "地址": "西安市临江路263号4栋594室"
+ },
+ "numbers": [
+  {
+   "value": 3500,
+   "label": "月租"
+  },
+  {
+   "value": 3500,
+   "label": "押金"
+  }
+ ],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "月租金多少元？",
+   "a": 3500,
+   "match": "number"
+  },
+  {
+   "id": "q2",
+   "q": "押金多少元？",
+   "a": 3500,
+   "match": "number"
+  },
+  {
+   "id": "q3",
+   "q": "每月几号前付租？",
+   "a": 15,
+   "match": "number"
+  },
+  {
+   "id": "q4",
+   "q": "承租方是谁？",
+   "a": "钱泽宇",
+   "match": "contains"
+  }
+ ],
+ "structure": {},
+ "bytes": 38193,
+ "sha256": "f5de286f9dfe390483678d5746d3fd0cbae1339feb40b245a572f3b74199c790",
+ "family": "lease"
+}

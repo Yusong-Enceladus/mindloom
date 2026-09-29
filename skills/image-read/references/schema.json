@@ -1,0 +1,22 @@
+{
+ "type": "object",
+ "properties": {
+  "type": {
+   "type": "string",
+   "enum": [
+    "chat_screenshot",
+    "chart_dashboard",
+    "slide",
+    "whiteboard_handwriting",
+    "receipt_invoice",
+    "scanned_document",
+    "form_label_sign",
+    "other"
+   ]
+  }
+ },
+ "required": [
+  "type"
+ ],
+ "additionalProperties": false
+}

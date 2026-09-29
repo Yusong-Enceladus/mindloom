@@ -1,0 +1,53 @@
+{
+ "file_id": "csv-03",
+ "path": "corpus/csv/csv-03.csv",
+ "type": "csv",
+ "ext": "csv",
+ "mime": "text/csv",
+ "filename": "禾木家居有限公司 值班表.csv",
+ "lang": "zh",
+ "split": "dev",
+ "synthetic": true,
+ "scenario": null,
+ "text_layer": "full",
+ "text": "# 禾木家居有限公司 值班表（合成数据）\n日期,时间,内容,负责人,地点\n4月6日,13:30–17:30,接待,夏佳宁,305\n4月7日,13:30–17:30,讲解,毛晨阳,201\n4月8日,18:00–21:00,培训,龙浩然,实训室\n4月9日,18:00–21:00,讲解,段静怡,305\n4月10日,08:30–12:00,接待,顾嘉怡,201",
+ "key_lines": [
+  "4月8日,18:00–21:00,培训,龙浩然,实训室",
+  "4月10日,08:30–12:00,接待,顾嘉怡,201"
+ ],
+ "picture_only_lines": [],
+ "key_fields": {
+  "条目数": 5,
+  "4月8日": "龙浩然 18:00–21:00 实训室"
+ },
+ "numbers": [],
+ "qa": [
+  {
+   "id": "q1",
+   "q": "4月8日由谁负责？",
+   "a": "龙浩然",
+   "match": "contains"
+  },
+  {
+   "id": "q2",
+   "q": "4月8日在哪里？",
+   "a": "实训室",
+   "match": "contains"
+  },
+  {
+   "id": "q3",
+   "q": "4月10日是什么时间段？",
+   "a": "08:30–12:00",
+   "match": "contains"
+  }
+ ],
+ "structure": {
+  "encoding": "utf-8",
+  "delimiter": "comma",
+  "rows": 5
+ },
+ "notes": "逗号分隔",
+ "bytes": 327,
+ "sha256": "50c1b4b1225e9a0ea82999578846c9cbed15378128b83354c3165ab9cecccf43",
+ "family": "schedule"
+}

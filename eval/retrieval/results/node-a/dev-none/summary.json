@@ -1,0 +1,339 @@
+{
+ "items_total": 82,
+ "items_scored": 69,
+ "items_first_mention": 9,
+ "items_noise": 4,
+ "mean_pool_size": 7.75,
+ "fused": {
+  "recall@1": 0.4638,
+  "recall@3": 0.6232,
+  "recall@5": 0.7826,
+  "mrr": 0.6049,
+  "hits@5": 54
+ },
+ "similarity_only": {
+  "recall@1": 0.1739,
+  "recall@3": 0.4638,
+  "recall@5": 0.6957,
+  "mrr": 0.3884,
+  "hits@5": 48
+ },
+ "random": {
+  "recall@1": 0.1974,
+  "recall@3": 0.4774,
+  "recall@5": 0.688
+ },
+ "fused_by_kind": {
+  "text": {
+   "n": 28,
+   "hit@1": 14,
+   "hit@3": 18,
+   "hit@5": 24
+  },
+  "dictation": {
+   "n": 34,
+   "hit@1": 16,
+   "hit@3": 22,
+   "hit@5": 25
+  },
+  "image": {
+   "n": 3,
+   "hit@1": 1,
+   "hit@3": 2,
+   "hit@5": 3
+  },
+  "meeting_online": {
+   "n": 2,
+   "hit@1": 0,
+   "hit@3": 0,
+   "hit@5": 1
+  },
+  "meeting_offline": {
+   "n": 1,
+   "hit@1": 1,
+   "hit@3": 1,
+   "hit@5": 1
+  },
+  "document": {
+   "n": 1,
+   "hit@1": 0,
+   "hit@3": 0,
+   "hit@5": 0
+  }
+ },
+ "misses@5": [
+  {
+   "ref": "d3-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_reno",
+    "ev_menu",
+    "ev_beans",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d3-10",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_menu",
+    "ev_lease",
+    "ev_sign",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d4-04",
+   "kind": "document",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_lease",
+    "ev_momflat",
+    "ev_member",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d4-10",
+   "kind": "meeting_online",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_reno",
+    "ev_anniv",
+    "ev_lease",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d5-01",
+   "kind": "dictation",
+   "gold": [
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_beans",
+    "ev_sign",
+    "ev_reno",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d5-08",
+   "kind": "dictation",
+   "gold": [
+    "ev_member"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_grinder",
+    "ev_lease",
+    "ev_beans",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d5-11",
+   "kind": "text",
+   "gold": [
+    "ev_momflat"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_beans",
+    "ev_reno",
+    "ev_anniv",
+    "ev_menu"
+   ]
+  },
+  {
+   "ref": "d5-12",
+   "kind": "text",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_member",
+    "ev_beans",
+    "ev_reno",
+    "ev_anniv"
+   ]
+  },
+  {
+   "ref": "d6-02",
+   "kind": "dictation",
+   "gold": [
+    "ev_sign"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_lease",
+    "ev_member",
+    "ev_beans",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d6-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_reno"
+   ],
+   "top5": [
+    "ev_momflat",
+    "ev_sign",
+    "ev_lease",
+    "ev_member",
+    "ev_beans"
+   ]
+  },
+  {
+   "ref": "d6-09",
+   "kind": "dictation",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_sign",
+    "ev_member",
+    "ev_reno",
+    "ev_momflat",
+    "ev_lease"
+   ]
+  },
+  {
+   "ref": "d7-01",
+   "kind": "dictation",
+   "gold": [
+    "ev_lease"
+   ],
+   "top5": [
+    "ev_anniv",
+    "ev_sign",
+    "ev_member",
+    "ev_reno",
+    "ev_momflat"
+   ]
+  },
+  {
+   "ref": "d7-04",
+   "kind": "dictation",
+   "gold": [
+    "ev_grinder"
+   ],
+   "top5": [
+    "ev_member",
+    "ev_lease",
+    "ev_anniv",
+    "ev_sign",
+    "ev_reno"
+   ]
+  },
+  {
+   "ref": "d7-05",
+   "kind": "dictation",
+   "gold": [
+    "ev_beans",
+    "ev_menu"
+   ],
+   "top5": [
+    "ev_grinder",
+    "ev_member",
+    "ev_lease",
+    "ev_anniv",
+    "ev_sign"
+   ]
+  },
+  {
+   "ref": "d7-09",
+   "kind": "text",
+   "gold": [
+    "ev_anniv"
+   ],
+   "top5": [
+    "ev_reno",
+    "ev_beans",
+    "ev_grinder",
+    "ev_member",
+    "ev_lease"
+   ]
+  }
+ ],
+ "label": "no-embedding",
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "embedder": "none",
+ "embed_model": null,
+ "embed_url": null,
+ "embed_dim": null,
+ "embed_calls": 0,
+ "embed_failures": 0,
+ "embed_latency_ms": {
+  "p50": null,
+  "p95": null,
+  "max": null,
+  "mean": null
+ },
+ "embed_chars": {
+  "p50": null,
+  "max": null
+ },
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "reading_cache": {
+  "hits": 3,
+  "misses": 0
+ },
+ "screenshot_readings": [
+  {
+   "ref": "d2-03",
+   "text_chars": 154,
+   "summary_chars": 59,
+   "messages": 5
+  },
+  {
+   "ref": "d4-03",
+   "text_chars": 84,
+   "summary_chars": 35,
+   "messages": 4
+  },
+  {
+   "ref": "d5-03",
+   "text_chars": 190,
+   "summary_chars": 66,
+   "messages": 6
+  }
+ ],
+ "replay_placement_errors": 0,
+ "items_not_retrieved": 0,
+ "wall_s": 0.6,
+ "date": "2026-09-29T01:06:26+08:00",
+ "argv": [
+  "repo/eval/retrieval/run_retrieval.py",
+  "--scenario",
+  "repo/eval/scenarios/dev-week-v1/scenario.json",
+  "--embedder",
+  "none",
+  "--reading-cache",
+  "readings/dev-week-v1",
+  "--label",
+  "no-embedding",
+  "--out",
+  "out/dev-none"
+ ]
+}

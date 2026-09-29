@@ -1,0 +1,41 @@
+{
+ "segments": [
+  {
+   "label": "nano-omni-vllm",
+   "backend": "openai",
+   "model": "nano-omni",
+   "url": "http://127.0.0.1:8130",
+   "concurrency": 1,
+   "max_tokens": 4096,
+   "prompt_version": "mm-prompt-v1",
+   "n_items": 7,
+   "start": {
+    "time": 1790664365.3109803,
+    "gpu_apps": [
+     "309047, /home/YOU/hack/vllm-venv/bin/python, 170 MiB",
+     "309282, VLLM::EngineCore, 54995 MiB"
+    ],
+    "gpu_util": "0 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          66           0           0          55          55\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"nano-omni\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"nano-omni\"} 0.0"
+    ]
+   },
+   "wall_s": 37.63,
+   "end": {
+    "time": 1790664403.0048165,
+    "gpu_apps": [
+     "309047, /home/YOU/hack/vllm-venv/bin/python, 170 MiB",
+     "309282, VLLM::EngineCore, 55311 MiB"
+    ],
+    "gpu_util": "96 %",
+    "free_g": "total        used        free      shared  buff/cache   available\n内存：           121          65           1           0          55          56\n交换：             0           0           0",
+    "metrics": [
+     "vllm:num_requests_running{engine=\"0\",model_name=\"nano-omni\"} 0.0",
+     "vllm:num_requests_waiting{engine=\"0\",model_name=\"nano-omni\"} 0.0"
+    ]
+   }
+  }
+ ]
+}

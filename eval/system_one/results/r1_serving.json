@@ -1,0 +1,19 @@
+{
+ "temperature": 1.19,
+ "tau": 0.8971643461769503,
+ "target_precision": 0.97,
+ "merge": {
+  "person": {
+   "temperature": 0.8732919310566004,
+   "bias": -0.5,
+   "same_threshold_97": 0.9783396147357927,
+   "apart_threshold_97": 0.04385687798016926
+  },
+  "event": {
+   "temperature": 1.0781748470507644,
+   "bias": -1.5499999999999998,
+   "same_threshold_97": 0.9636126231430128,
+   "apart_threshold_97": 0.018299124455818265
+  }
+ }
+}

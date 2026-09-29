@@ -1,0 +1,33 @@
+{
+ "label": "qwen3-embedding-0.6b@node-b",
+ "model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8024/v1",
+ "dim": 1024,
+ "texts": 121,
+ "chars_p50": 47,
+ "chars_max": 379,
+ "single_ms": {
+  "p50": 27.46,
+  "p95": 33.74,
+  "mean": 24.22,
+  "n": 363
+ },
+ "batch": {
+  "size": 16,
+  "texts_per_s": 214.7
+ },
+ "memory": {
+  "server_pid": 3100367,
+  "gpu_processes": [
+   {
+    "pid": 3100422,
+    "name": "VLLM::EngineCore",
+    "used_mib": 6162
+   }
+  ],
+  "gpu_used_mib": 6162,
+  "rss_mib": 3732,
+  "host_mem_available_gib": 30.5
+ },
+ "date": "2026-09-29T01:21:58+0800"
+}

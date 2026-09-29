@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "kind": "corpus-manifest",
+  "manifestID": "release-holdout-v1",
+  "version": "1.0.0",
+  "tier": "release-holdout",
+  "releaseHoldout": true,
+  "containsPrivateContent": false,
+  "samples": [
+    {
+      "sampleUUID": "60000000-0000-4000-8000-000000000001",
+      "consentClass": "synthetic",
+      "assetReference": "fixture://release-holdout/content-free-placeholder-001",
+      "contentDigest": "6666666666666666666666666666666666666666666666666666666666666666",
+      "languages": [
+        "zh-CN",
+        "en-US"
+      ],
+      "tags": [
+        "isolated",
+        "metadata-only"
+      ]
+    }
+  ]
+}

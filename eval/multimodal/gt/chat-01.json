@@ -1,0 +1,99 @@
+{
+ "id": "chat-01",
+ "type": "chat_screenshot",
+ "split": "test",
+ "image": "images/chat-01.png",
+ "lang": "zh",
+ "hard": [
+  "dated_time",
+  "units"
+ ],
+ "synthetic": true,
+ "image_sha256": "d7994cce395bddd001a02282cc57e02b0500fb39bb4d2147e7a7acf14421bcb0",
+ "gt": {
+  "chat_title": "点单小程序项目",
+  "is_group": true,
+  "messages": [
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "昨天 18:54",
+    "text": "测试版今晚21:30打包，明早发群里",
+    "kind": "text"
+   },
+   {
+    "sender": "林欣",
+    "is_self": false,
+    "time": "昨天 19:00",
+    "text": "支付那块还没过审，先上点单吧",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "同意，支付推迟到9月19日",
+    "kind": "text"
+   },
+   {
+    "sender": "冯晨",
+    "is_self": false,
+    "time": "昨天 19:06",
+    "text": "预算那边要改成4.5万吗？",
+    "kind": "text"
+   },
+   {
+    "sender": "我",
+    "is_self": true,
+    "time": "",
+    "text": "对，按4.5万走，下周一我发确认邮件",
+    "kind": "text"
+   },
+   {
+    "sender": "高远",
+    "is_self": false,
+    "time": "",
+    "text": "收到",
+    "kind": "text"
+   }
+  ]
+ },
+ "text_lines": [
+  "点单小程序项目",
+  "冯晨：测试版今晚21:30打包，明早发群里",
+  "林欣：支付那块还没过审，先上点单吧",
+  "我：同意，支付推迟到9月19日",
+  "冯晨：预算那边要改成4.5万吗？",
+  "我：对，按4.5万走，下周一我发确认邮件",
+  "高远：收到"
+ ],
+ "qa": [
+  {
+   "q": "支付功能推迟到哪天？",
+   "a": "9月19日",
+   "match": "exact"
+  },
+  {
+   "q": "预算改成多少？",
+   "a": "4.5万",
+   "match": "number"
+  },
+  {
+   "q": "测试版几点打包？",
+   "a": "21:30",
+   "match": "exact"
+  }
+ ],
+ "render": {
+  "theme": "mint",
+  "fonts": [
+   "hei",
+   "hei_bold"
+  ]
+ },
+ "variant": {
+  "conv": "launch",
+  "theme": "mint",
+  "time_style": "yesterday"
+ }
+}
