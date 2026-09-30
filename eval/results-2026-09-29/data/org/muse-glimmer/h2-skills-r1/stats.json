@@ -1,0 +1,125 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 51,
+   "ok_first_attempt": 51,
+   "retried": 1,
+   "latency_median_s": 12.405,
+   "latency_p95_s": 15.736,
+   "latency_total_s": 666.3,
+   "prompt_tokens_mean": 5177.6,
+   "completion_tokens_mean": 119.8,
+   "prompt_tokens_total": 269233,
+   "completion_tokens_total": 6231,
+   "errors_sample": [
+    "decision=attach should target E6 (the best-ranked linked candidate)"
+   ]
+  },
+  "brief": {
+   "calls": 50,
+   "ok": 15,
+   "ok_first_attempt": 5,
+   "retried": 45,
+   "latency_median_s": 32.109,
+   "latency_p95_s": 44.794,
+   "latency_total_s": 1532.3,
+   "prompt_tokens_mean": 8311.9,
+   "completion_tokens_mean": 350.9,
+   "prompt_tokens_total": 415593,
+   "completion_tokens_total": 17547,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] quote「三季度出口退税我这两天在整理」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「三季度出口退税我这两天在整理」只说做了决定，不能证明「冯姐在整理三季度出口退税」已办完（退）；写成「已决定/已同意…」，或摘录明确说已经办完的原话; [relative_d",
+    "[relative_date] status_facts[1] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_facts[1] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」; [relative_date] status_facts[2] 里的「周四」要写成绝对日期，"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 2.645,
+   "latency_p95_s": 2.786,
+   "latency_total_s": 10.6,
+   "prompt_tokens_mean": 4531,
+   "completion_tokens_mean": 8,
+   "prompt_tokens_total": 18124,
+   "completion_tokens_total": 32,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 18.974,
+   "latency_p95_s": 19.992,
+   "latency_total_s": 75.9,
+   "prompt_tokens_mean": 4554,
+   "completion_tokens_mean": 226.8,
+   "prompt_tokens_total": 18216,
+   "completion_tokens_total": 907,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 25.029,
+   "latency_p95_s": 32.008,
+   "latency_total_s": 155.8,
+   "prompt_tokens_mean": 3866,
+   "completion_tokens_mean": 279.7,
+   "prompt_tokens_total": 23196,
+   "completion_tokens_total": 1678,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 14,
+   "ok_first_attempt": 9,
+   "retried": 6,
+   "latency_median_s": 9.494,
+   "latency_p95_s": 19.818,
+   "latency_total_s": 161.4,
+   "prompt_tokens_mean": 3275.6,
+   "completion_tokens_mean": 124.3,
+   "prompt_tokens_total": 49134,
+   "completion_tokens_total": 1864,
+   "errors_sample": [
+    "segments[1]: overlaps or is out of order with the previous segment"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 8,
+  "ask": 1,
+  "attach": 41,
+  "none": 2
+ },
+ "assign_actions": {
+  "new": 8,
+  "ask": 2,
+  "attach": 40,
+  "none": 2
+ },
+ "final_live_events": 10,
+ "status_line_chars_mean": 14.1,
+ "title_chars_mean": 11.9,
+ "wall_s": 2605.7,
+ "items_per_min": 1.06,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 1
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

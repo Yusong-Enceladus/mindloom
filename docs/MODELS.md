@@ -19,15 +19,15 @@
 | 说话人 / 人物 | FluidAudio 0.15.5＋`fluid-speaker-diarization-coreml` | Mac | Argmax SpeakerKit、sherpa-onnx 只做过冒烟对比（[speaker-candidates.json][spk]）；公开 AMI 真人留出集只对 Fluid 跑过，并且通过 | 说话人混淆 2.07%，已知人误认 0，错误合并 0，已知查询 15/16，未知拒绝 16/16，RTF 0.0056，峰值 RSS 0.71 GB（2026-08-28 · [IMPLEMENTATION_STATUS][is]） | DER 24.93% / JER 31.78% 记为局限；声纹永不离开 Mac；16 GB 机型的发布门槛未测 |
 | 翻译（Fn+⇧） | macOS 系统翻译（Translation 框架，端上运行） | Mac | 本机 1.7B 改了四轮提示词，流畅和完整始终不能兼得（[§11][da]）；系统引擎不占 App 的磁盘和内存 | 质量和时延：未测（换系统引擎之前 1.7B 为 179–316 ms · [§9.3][da]） | 2026-09-22 起改用系统引擎（[AppleTranslation.swift][atr]）；语言包由用户通过系统提示下载 |
 | 语音指令（Fn+空格） | Qwen3-1.7B MLX 4-bit | Mac | 改写、翻译、代写这类"变换"任务又快又稳 | 10 条探针对 8 条，119–316 ms，首次加载 701 ms（2026-09-21 · [§9.3][da]） | 算术和单位换算会自信地答错；4B 已在代码里定义，但没有下载路径 |
-| 事件归类 event-assign 2.1.0 | Qwen3.6-35B-A3B NVFP4（vLLM）＋Qwen3-Embedding-0.6B 候选检索 | Spark | DeepSeek-V4-Flash 质量相当（dev B³ F1 0.741 对 0.733），但单次 p50 慢约 1.5 倍、要占两台 Spark、不能读图（[event-assign 历史 1.0.0](../skills/event-assign/BENCHMARK.md)） | 留出集 B³ F1 0.782（无技能正文 0.612，向量 / 词法基线 0.336 / 0.463），dev 0.748；单次 p50 4.4–4.6 s（2026-09-28 · [event-assign](../skills/event-assign/BENCHMARK.md)） | 难干扰事件仍会被并到一起（泄漏 0.25）；n = 2 |
+| 事件归类 event-assign 2.1.0 | Qwen3.6-35B-A3B NVFP4（vLLM）＋Qwen3-Embedding-0.6B 候选检索 | Spark | DeepSeek-V4-Flash 质量相当（dev B³ F1 0.741 对 0.733），但单次 p50 慢约 1.5 倍、要占两台 Spark、不能读图（[event-assign 历史 1.0.0](../skills/event-assign/BENCHMARK.md)） | 最终版本（13c3ae1，还没有 item-split）留出集 B³ F1 0.782（无技能正文 0.612，向量 / 词法基线 0.336 / 0.463），dev 0.748；单次 p50 4.4–4.6 s（2026-09-28 · [event-assign](../skills/event-assign/BENCHMARK.md)）。当前代码 2e532bc 上同一模型留出集两次 0.771 / 0.706，均值 0.738（2026-09-29 · [results-2026-09-29](../eval/results-2026-09-29/README.md)） | 难干扰事件仍会被并到一起；n = 2，同代码两次就差 0.065 |
 | 事件卡片 event-brief 1.4.0 | 同上 | Spark | 同上 | 留出集卡片事实召回 0.511（无技能正文 0.431），卡片里素材没给的日期 0；单次 p50 约 11 s（2026-09-28 · [event-brief](../skills/event-brief/BENCHMARK.md)） | 严格校验在重试后仍拒绝 26–37% 的调用，卡片因此会滞后 |
 | 首页排序 home-rank 1.3.0 | 同上 | Spark | 同上 | 留出集 NDCG@5 0.932 / 0.914，只按时间排为 0.886（2026-09-28 · [home-rank](../skills/home-rank/BENCHMARK.md)） | dev 上不稳定（0.597 / 0.705，只按时间 0.661 / 0.532） |
-| 多事拆分 item-split 1.1.1 | 同上 | Spark | 同上 | split-dev 上切不切的判断 1.000，段 F1 0.937（2026-09-28 · [item-split][isb]） | split-dev 是调参集，数字偏乐观；还没有在任何留出集上评过 |
+| 多事拆分 item-split（代码 1.2.0；评测的是 1.1.1） | 同上 | Spark | 同上 | 1.1.1 在 split-dev 上切不切的判断 1.000，段 F1 0.937（2026-09-28 · [item-split][isb]）；1.2.0 只在 split-dev 上和 1.1.1 比过。规模场景实际切出的段：只讲一件事的素材有 22.4–32.8% 被切开（[results-2026-09-29](../eval/results-2026-09-29/README.md)） | split-dev 是调参集，数字偏乐观；规模数据上明显过度拆分 |
 | 读图 image-read 1.0.0 | Qwen3.6-35B-A3B NVFP4（vLLM，同一个模型读图） | Spark | 四个本地 VLM 比过：Q8_0 同样准但慢一倍；Step3-VL-10B 读图表差（数据点 89.7%）且最慢；Qwen3-VL-8B 会给聊天补上图里没画的时间（85.9%） | mm-v1 test 98 张：类型判对 98% / 100%，关键字段 EM 96.2% / 98.8%（无技能正文 65.7% / 59.4%），p50 4.09 / 3.87 s（2026-09-28 · [image-read](../skills/image-read/BENCHMARK.md)，[VLM benchmark](../eval/multimodal/BENCHMARK.md)） | 合成图比真实照片干净；vLLM 在 temperature 0 下也不完全确定，边界图的类型判断会抖 |
 | 读文件 file-read 1.0.0 | 解析：确定性代码（沙箱子进程，无模型）；文件里的图片：Qwen3.6-35B-A3B NVFP4（image-read）；概要和关键字段：同一个 Qwen3.6 | Spark | 文字靠解析器逐字读出（不让模型转写），模型只写一句概要和票据类字段，校验器要求其中的数字和值都能在文字里找到；有技能 / 无技能正文比过 | files-v1 test 40 个文件（20 类模板）：类型 40/40，解析文字召回 100%，图片部分召回 100% / 100%（无技能正文 93.8% / 91.7%），概要首次合规 36/38（无技能正文 1–2/38），p50 7.4 / 7.8 s（共用服务）（2026-09-29 · [file-read](../skills/file-read/BENCHMARK.md)，[FILE_READ](FILE_READ.md)） | 合成文件比真实文件干净；.msg 没有真实样本；n = 2 |
 | 候选检索向量 | Qwen3-Embedding-0.6B（vLLM pooling） | Spark | 4B 的 R@5 只高 0–1.4 个点，代价是时延 1.6–3.2 倍、预留内存约 3 倍；词法基线在大候选池里只有 76.0% | R@5：dev 98.6%，留出集 100%，压力池 98.1%；单条 p50 25 ms（2026-09-28 · [eval/retrieval](../eval/retrieval/README.md)） | 嵌入服务挂掉时整理器退回不用向量的模式，压力池 R@5 掉到 59.6% |
 | 合成数据生成 | Qwen3.6-35B-A3B NVFP4（3–4 台 Spark）＋DeepSeek-V4-Flash（两台 Spark TP2） | Spark | 用手上所有已部署的服务并行写；金标准来自确定性计划，不来自模型 | 三个场景各约 1,500–1,600 条；scale-lab 里单节点忙时 140–250 tok/s（Qwen）、40–47 tok/s（DeepSeek）（2026-09-28 · `throughput.json`（生成运行记录，含大量合成素材，未放进公开快照），其余见"合成数据生成"） | 吞吐受计划依赖、校验重试和共享节点限制，不代表服务上限 |
-| 合成旁白 | Qwen3-TTS，预设音色 | Spark（spark-C :8200） | 原则是不克隆真人（团队内部记录，未公开） | 未测 | 模型规格和合成质量都没有入库记录 |
+| 演示视频旁白 | Cartesia 公开演示的 TTS，预设音色 | 云端（只合成视频旁白稿，不接触任何产品数据） | 不克隆真人 | 未测 | 只用于演示视频，不属于产品；Spark 上部署过 Qwen3-TTS，但成片没有用它，也没有测量 |
 
 下面按功能给细节。
 
@@ -149,8 +149,8 @@ event-assign 只在检索出的前 5 个候选里选，所以 R@5 是归事件�
 |---|---|---|---|
 | vLLM 0.30.0 · Qwen3.6-35B-A3B NVFP4＋MTP | spark-F（整理器主模型）、spark-B、spark-E；读图评测另在 spark-C 起了独占副本 | MTP×3 投机解码，fp8 KV，262k ctx；读图副本 max-num-seqs 4、util 0.45 | 单流约 100 tok/s，读入 5.7k–7.2k tok/s（2026-09-25 · 团队内部测量记录（未公开））；读图输出单路 124.3 tok/s，并发 4 时 240.5 tok/s，预留 49.9 GiB（2026-09-28 · [VLM benchmark](../eval/multimodal/BENCHMARK.md)） |
 | llama.cpp d834d44 · Qwen3.6-35B-A3B Q8_0＋MTP 草稿 | spark-A | -np 2，ctx 131072 | 约 70 tok/s（团队内部测量记录，未公开）；读图单路 60.2 tok/s，并发 4 为 73.3 tok/s（[VLM benchmark](../eval/multimodal/BENCHMARK.md)） |
-| llama.cpp · Step3-VL-10B / Qwen3-VL-8B Q8_0 | spark-A / spark-C | 预填空 `<think></think>`（Step3） | 读图并发 4：50.5 / 57.6 tok/s（[VLM benchmark](../eval/multimodal/BENCHMARK.md)）；只用于对照 |
-| vLLM 0.30.0 TP2 · DeepSeek-V4-Flash | spark-D＋spark-G | 必须关闭思考，否则输出预算全被推理用完 | 输出约 34 tok/s，读入 1.4k–2.3k tok/s，JSON 结构化输出约 2–3 s（团队内部测量记录（未公开）、[sessions/2026-09-25](sessions/2026-09-25-hackathon.md)） |
+| llama.cpp · Step3-VL-10B / Qwen3-VL-8B Q8_0 | spark-A / spark-C | 预填空 `<think></think>`（Step3） | 读图并发 4：50.5 / 57.6 tok/s（[VLM benchmark](../eval/multimodal/BENCHMARK.md)）；只用于对照。Step3-VL 改走 llama.cpp 原生 `/completion` 并预填空的思考块后，`eval/probe_models.py` 的四道小题从 2/4 到 4/4，同一张截图 70.17 s → 19.16 s（2026-09-26 首轮评测，报告未公开） |
+| vLLM 0.30.0 TP2 · DeepSeek-V4-Flash | spark-D＋spark-G | 必须关闭思考，否则输出预算全被推理用完 | 输出约 34 tok/s，读入 1.4k–2.3k tok/s，JSON 结构化输出约 2–3 s（团队内部测量记录，未公开） |
 | vLLM pooling · Qwen3-Embedding-0.6B | 与整理器同卡 | max-model-len 8192，max-num-seqs 16 | 16 条一批 224 条/秒，预留 5.9 GiB（[eval/retrieval](../eval/retrieval/README.md)） |
 
 单节点 8 路并发的聚合吞吐还没有入库文件，本文不引用，入库后再补。上面的数字大多是在共享节点上测的，只能粗比。
@@ -167,7 +167,7 @@ event-assign 只在检索出的前 5 个候选里选，所以 R@5 是归事件�
 
 scale-pm 首轮的单节点速率远低于 scale-lab，文件没有记录原因，所以这些数字不能当作服务速度。选 DeepSeek 作为第二个写手的理由也没有写进文件。
 
-**合成旁白**：计划用 Qwen3-TTS 的预设音色，不克隆真人（团队内部记录，未公开），服务驻留在 spark-C :8200（[VLM benchmark 测量条件](../eval/multimodal/BENCHMARK.md)）。模型规格、合成质量和速度：未测。
+**演示视频旁白**：成片用的是 Cartesia 公开演示的 TTS 和一个预设音色（不克隆真人），只合成视频旁白稿，不接触任何产品数据，也不属于产品。Spark 上部署过 Qwen3-TTS（[VLM benchmark 测量条件](../eval/multimodal/BENCHMARK.md)），但成片没有用它，模型规格、合成质量和速度都没有测量。
 
 ## 多模态支持范围
 
@@ -200,7 +200,7 @@ scale-pm 首轮的单节点速率远低于 scale-lab，文件没有记录原因�
 | 模型 | 系列 | 发布 | 规模 · 量化 | 怎么跑的 | 测了什么 | 结果 |
 |---|---|---|---|---|---|---|
 | Qwen3.8-27B-FP8 | Qwen | 2026-08-05（FP8 08-13） | 27.8B 稠密，原生 VLM | 一台 Spark | 读图＋整理 | 完成 |
-| Muse Glimmer-30B NVFP4 | Meta Muse | 2026-08-09（NVFP4 08-27） | 29.6B 稠密＋ViT | 一台 Spark，fp8 KV | 读图（整理见下注） | 读图完成 |
+| Muse Glimmer-30B NVFP4 | Meta Muse | 2026-08-09（NVFP4 08-27） | 29.6B 稠密＋ViT | 一台 Spark，fp8 KV | 读图＋整理 | 完成 |
 | Nemotron-3-Nano-Omni-30B-A3B NVFP4 | NVIDIA Nemotron VL | 2026-04-24 | 30B MoE，3B 激活 | 一台 Spark，fp8 KV，marlin | 读图＋整理 | 完成 |
 | MiniCPM-V-4.6 | OpenBMB | 2026-05-11 | 1.3B | 一台 Spark，util 0.3 | 读图 | 完成 |
 | GLM-OCR | 智谱 GLM | 2026-01-30 | 1.3B | 一台 Spark | 读图 | 完成 |
@@ -209,7 +209,9 @@ scale-pm 首轮的单节点速率远低于 scale-lab，文件没有记录原因�
 | Nemotron-3-Super-120B-A12B NVFP4 | NVIDIA Nemotron | 2026-03-10 | 120B Mamba/注意力混合 MoE，12B 激活 | 一台 Spark | 整理 | 完成 |
 | gpt-oss-120b | OpenAI gpt-oss | 2025-08-05 | 117B MoE，5.1B 激活，MXFP4 | 一台 Spark，reasoning low | 整理 | **中止**：671 s 只处理了 dev 82 条里的 10 条；44 个回答里 41 个撞到长度上限（[metrics-at-abort.txt](../eval/models-v2/gpt-oss-120b/metrics-at-abort.txt)） |
 | Gemma 4 31B-it QAT（w4a16） | Google Gemma | 2026-04-02（QAT 06-04） | 31B 稠密 | 一台 Spark，fp8 KV 和不开 fp8 KV 各试一次 | 读图 | **不可用**：服务能起来，但所有请求（包括纯文本）只输出 token 0，98 张全部 HTTP 500；判断是 W4A16 compressed-tensors 的 Gemma 4 路径在 SM121 / vLLM 0.30.0 上 logits 退化（[NOTE.txt](../eval/models-v2/gemma4-31b-qat/retry/NOTE.txt)） |
-| Mistral Small 4 119B NVFP4 | Mistral | 2026-03 | 119B MoE，6.5B 激活 | 一台 Spark | 读图＋整理 | **起不来**：`PixtralForConditionalGeneration` 导入失败，装的 transformers 里没有 `PixtralRotaryEmbedding`（[failstart.txt](../eval/models-v2/mistral-small4/failstart.txt)） |
+| Mistral Small 4 119B NVFP4 | Mistral | 2026-03 | 119B MoE，6.5B 激活 | 一台 Spark | 整理（图片交给 Qwen3.6） | 第一次**起不来**：`PixtralForConditionalGeneration` 导入失败，装的 transformers 里没有 `PixtralRotaryEmbedding`（[failstart.txt](../eval/models-v2/mistral-small4/failstart.txt)）；09-29 只在这个进程里补上两个改名的函数、去掉 `chat_template_kwargs` 后跑通，整理完成 |
+| Gemma 4 26B-A4B-it | Google Gemma | 未核对 | 26B MoE，4B 激活，bf16 | 一台 Spark | 整理（自己读图） | 完成（留出集两次） |
+| GLM-4.7-Flash | 智谱 GLM | 未核对 | 30B MoE，3B 激活，bf16 | 一台 Spark | 整理（图片交给 Qwen3.6） | 完成（留出集两次） |
 | Phi-4-reasoning-vision-15B | Microsoft Phi | 2026-01 | 15B 稠密 | 一台 Spark | 读图 | **起不来**：图像预处理配置读不了，装的 transformers 的 siglip2 里没有 `filter_out_non_signature_kwargs`（[failstart.txt](../eval/models-v2/phi4-rv-15b/failstart.txt)） |
 | DeepSeek-OCR-2 | DeepSeek | 2026-01-27 | 3.4B MoE | 一台 Spark；vLLM 和原生提示各试一次 | 读图 | **起不来**：启动时 Triton kernel 编译失败（`LOG2E` 不是 constexpr）（[failstart.txt](../eval/models-v2/deepseek-ocr-2/failstart.txt)） |
 | Keye-VL-2.0-30B-A3B | 快手 Keye | 2026-05-25 | 31B MoE，3B 激活 | 一台 Spark | 读图 | **起不来**：vLLM 0.30.0 不支持 `KeyeVL2MoeForConditionalGeneration`，模型代码还要 `fast_hadamard_transform` |
@@ -242,19 +244,24 @@ Keye、ERNIE、Nemotron-3.5-Lightning 的启动日志留在 Spark 上，没有�
 | 模型 | 怎么跑 | B³ F1 | Link F1 | 卡片事实召回 | 状态行事实召回 | 难干扰泄漏 ↓ | 首页 NDCG@5 | 卡片通过校验 | 事件数 预测/金标准 | 秒/条 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Qwen3.6-35B-A3B NVFP4（现用；旧代码 13c3ae1，r1 / r2） | 一台 Spark | 0.763 / 0.733；0.782 / 0.782 | 0.798 / 0.740；0.686 / 0.686 | 0.808 / 0.692；0.517 / 0.506 | 0.385 / 0.346；0.184 / 0.138 | —；0.25 | — | —；27/43、32/43 | — | 13.2 / 13.6；15.9 / 15.8 |
-| **Qwen3.8-27B-FP8** | 一台 Spark | **0.837 / 0.834** | **0.860 / 0.815** | **0.846 / 0.644** | 0.308 / 0.172 | **0 / 0** | 0.855 / 1.011* | 68/78 / 34/49 | 12/9 / 7/7 | 36.5 / 52.2 |
+| Qwen3.6-35B-A3B NVFP4（现用；同代码 2e532bc 重跑，r1 / r2） | 一台 Spark | 0.774 / 0.759；0.771 / 0.706 | 0.798 / 0.775；0.710 / 0.722 | 0.808 / 0.712；0.494 / 0.598 | 0.462 / 0.346；0.184 / 0.218 | 0 / 0；0.167 / 0 | 0.623 / 0.556；0.890 / 0.859 | 63/79、64/79；33/50、29/50 | 14/9、12/9；9/7、13/7 | 6.3 / 6.1；8.5 / 9.5 |
+| **Qwen3.8-27B-FP8** | 一台 Spark | **0.837 / 0.834** | **0.860 / 0.815** | **0.846 / 0.644** | 0.308 / 0.172 | **0 / 0** | 0.855 / —* | 68/78 / 34/49 | 12/9 / 7/7 | 36.5 / 52.2 |
+| Muse Glimmer-30B NVFP4 | 一台 Spark | 0.672 / 0.832 | 0.705 / 0.844 | 0.692 / 0.644 | 0.288 / 0.299 | 0.083 / 0 | 0.703 / 0.911 | 49/81 / 15/50 | 19/9 / 10/7 | 38.1 / 56.6 |
+| Gemma 4 26B-A4B-it（bf16，只跑了留出集，r1 / r2） | 一台 Spark | 0.786 / 0.786 | 0.826 / 0.826 | 0.690 / 0.678 | 0.368 / 0.368 | 0 / 0 | 0.966 / 0.983 | 32/50、32/50 | 10/7、10/7 | 37.3 / 37.4 |
+| GLM-4.7-Flash（bf16，只跑了留出集，r1 / r2） | 一台 Spark | 0.746 / 0.755 | 0.660 / 0.660 | 0.437 / 0.414 | 0.195 / 0.184 | 0.333 / 0.417 | 0.719 / 0.742 | 15/54、16/54 | 12/7、11/7 | 39.3 / 39.7 |
+| Mistral Small 4 119B NVFP4（只跑了留出集） | 一台 Spark | 0.480 | 0.453 | 0.310 | 0.218 | 0.215 | 0.723 | 13/53 | 19/7 | 32.8 |
 | DeepSeek-V4-Flash | 两台 Spark TP2 | 0.784 / 0.735 | 0.809 / 0.710 | 0.731 / 0.609 | 0.365 / 0.287 | 0 / 0.417 | 0.797 / 0.960 | 61/79 / 24/50 | 15/9 / 9/7 | 15.9 / 24.3 |
 | Nemotron-3-Super-120B NVFP4 | 一台 Spark | 0.764 / 0.728 | 0.821 / 0.623 | 0.788 / 0.322 | **0.423** / 0.126 | 0.071 / 0.778 | 0.692 / 0.762 | 47/81 / 12/51 | 12/9 / 7/7 | 31.5 / 44.0 |
 | Nemotron-3-Nano-Omni NVFP4 | 一台 Spark | 0.365 / 0.395 | 0.382 / 0.354 | 0.423 / 0.207 | 0.192 / 0.080 | 0.095 / 0 | 0.309 / 0.537 | 47/86 / 18/59 | 47/9 / 34/7 | 11.2 / 19.0 |
 | gpt-oss-120b | 一台 Spark | 中止，见上表 | | | | | | | | |
 
-\* NDCG@5 不应超过 1，1.011 说明留出集上的首页打分有缺陷，这一格先不要用。
+\* 这一格的 NDCG@5 超过了 1，说明留出集上那次首页打分有缺陷，已删去不用。
 
 出处：[qwen3.8-27b-fp8/summary.json](../eval/models-v2/qwen3.8-27b-fp8/summary.json)、[deepseek-v4-flash/result.md](../eval/models-v2/deepseek-v4-flash/result.md)（含 Qwen3.6 参考行，[scores.json](../eval/models-v2/deepseek-v4-flash/scores.json)）、[nemotron-3-super…/summary.json](../eval/models-v2/nemotron-3-super-120b-a12b-nvfp4/summary.json)、[nano-omni-org/org/*/score.json](../eval/models-v2/nano-omni-org/org/)。卡片通过校验 = event-brief 在一次重试后通过的调用数 / 总调用数。
 
-- Qwen3.6 参考行用的是较早的代码（没有 item-split，读图用旧的 screenshot-read），其余各行都在 2e532bc 上跑，所以它和别的行之间只能粗比。
+- 第一行 Qwen3.6 参考用的是较早的代码（没有 item-split，读图用旧的 screenshot-read），只能粗比；第二行是 2026-09-29 在 2e532bc 上的同代码重跑，和其余各行可以直接比。新加的 Muse Glimmer、Gemma 4、GLM-4.7-Flash、Mistral Small 4 的运行文件在 [eval/results-2026-09-29/data/org/](../eval/results-2026-09-29/data/org/)。Mistral Small 4 第三次才跑通：只在这个进程里补上 transformers 5 改名的两个 Pixtral 函数，再去掉请求里的 `chat_template_kwargs`（脚本在 [data/runner/](../eval/results-2026-09-29/data/runner/)）。gpt-oss-120b 用 reasoning low、每次调用多给 2048 token 输出额度重试，80 个请求都正常结束，但每条 125 秒，跑到留出集 24/46 条时停下（[gpt-oss-partial.txt](../eval/results-2026-09-29/data/gpt-oss-partial.txt)）。
 - Nano-Omni 读图还可以，但当整理器会把事情切得很碎（dev 47 个事件对金标准 9 个），分组分数只有其他模型的一半。
-- Muse Glimmer 的整理评测在截止时还在跑，结果没有赶上这份文档。
+- Muse Glimmer 的留出集结果和 Qwen3.8 一样高（0.832），但 dev 只有 0.672，留出集卡片只有 15/50 通过校验，不稳定。
 
 ### 向量（item 级检索，dev / 留出集）
 
@@ -269,19 +276,19 @@ Keye、ERNIE、Nemotron-3.5-Lightning 的启动日志留在 Spark 上，没有�
 ### 每个功能谁赢、为什么
 
 - **读图：Qwen3.8-27B-FP8 最准**（CER 0.4%、关键字段 EM 98.8%、QA 99.7%），但比现用的 Qwen3.6 NVFP4 只高 0.2 个点（98.8% 对 98.6%），单路 p50 慢约 4 倍（10.97 s 对 2.64 s），并发 4 吞吐不到一半（14.3 对 34.3 张/分）。Muse Glimmer 紧随其后，是唯一没有编造数字的高分模型，但更慢。Nano-Omni 是新模型里最快的（p50 4.68 s），关键字段 EM 87.8%，不够当默认。
-- **整理：Qwen3.8-27B-FP8 最好。** 两个场景的 B³ F1 都最高（0.837 / 0.834），难干扰泄漏都是 0，卡片事实召回也最高。代价是速度：每条 36.5 / 52.2 s，是现用 Qwen3.6 的约 2.7–3.3 倍。DeepSeek-V4-Flash 快一些，但要占两台 Spark，留出集泄漏 0.417。Nemotron-3-Super 状态行事实召回在 dev 最高，但留出集泄漏 0.778，卡片只有 12/51 通过校验。
+- **整理：Qwen3.8-27B-FP8 最好。** 两个场景的 B³ F1 都最高（0.837 / 0.834），难干扰泄漏都是 0。代价是速度：每条 36.5 / 52.2 s，是同代码上现用 Qwen3.6（6.1–9.5 s）的约 6 倍。Gemma 4 26B-A4B 留出集两次都是 0.786、卡片事实召回最高，每条 37 s，是最值得跟进的新模型。DeepSeek-V4-Flash 快一些，但要占两台 Spark，留出集泄漏 0.417。Nemotron-3-Super 状态行事实召回在 dev 最高，但留出集泄漏 0.778，卡片只有 12/51 通过校验。
 - **向量：Qwen3-VL-Embedding-8B 在 dev 上最好**（R@5 0.868），在留出集上三者接近（Nemotron 的 MRR 和 NDCG@10 在那里最高）。换成 4096 维要重建全部索引，预留内存也会从约 6 GiB 涨到一个 8B 模型的量级；而上面"候选检索向量"一节已经表明，归事件准确率的瓶颈在融合分数里的时间和来源项，不在向量本身。
 
 ### 默认用什么
 
-- **默认不变：Qwen3.6-35B-A3B NVFP4（读图＋整理）＋Qwen3-Embedding-0.6B。** 理由是速度：整理器是边收边整理的后台服务，三个 1,500–1,600 条的规模场景用 Qwen3.6 每分钟约 4 条、各要 6.3–7.2 h（[eval/scale/README.md](../eval/scale/README.md)），慢 2.7–3.3 倍就要拉长到约 17–24 h；读图的准确率差距只有 0.2 个点。一台 Spark 放一个模型就能同时做文字和读图，这点也保持不变。
-- **质量选项：Qwen3.8-27B-FP8。** 同一台 Spark 放得下（读图时单进程约 51 GiB），同一个模型既读图也整理，接口相同（OpenAI 兼容，关闭思考）。适合不在乎等待、只关心分组和卡片质量的用户，或者夜间重整理。它在留出集上的领先（B³ 0.834 对 0.782）来自单次运行，改成默认之前要在当前代码上各跑两次再确认。
+- **默认不变：Qwen3.6-35B-A3B NVFP4（读图＋整理）＋Qwen3-Embedding-0.6B。** 理由是速度：整理器是边收边整理的后台服务，三个 1,500–1,600 条的规模场景用 Qwen3.6 每分钟约 4 条、各要 6.3–7.2 h（[eval/scale/README.md](../eval/scale/README.md)），换成每条 52–57 s 的模型，串行处理 1,600 条要 23–25 h；读图的准确率差距只有 0.2 个点。一台 Spark 放一个模型就能同时做文字和读图，这点也保持不变。
+- **质量选项：Qwen3.8-27B-FP8。** 同一台 Spark 放得下（读图时单进程约 51 GiB），同一个模型既读图也整理，接口相同（OpenAI 兼容，关闭思考）。适合不在乎等待、只关心分组和卡片质量的用户，或者夜间重整理。同一代码上它在留出集领先默认模型（B³ 0.834 对两次均值 0.738），但只跑了一次；改成默认之前要再跑一次并在规模场景上验证。
 - **不采用**：DeepSeek-V4-Flash（两台 Spark，质量没有稳定优势）；Nemotron-3-Super、Nano-Omni、gpt-oss-120b（整理质量或完成度不够）；OCR 专用小模型（这套 JSON 读图任务不合格）；8B 向量模型（留出集差距小，成本高）。
 
 ## 未测和缺口
 
 - Mac：16 GB 最低配置上的识别、说话人和内存门槛；系统翻译的质量和时延；Apple Vision 本机读字的准确率。
-- Spark：item-split 还没有留出集；读图只有合成图；单节点 8 路并发吞吐还没入库；Qwen3-TTS 没有任何测量记录。
+- Spark：item-split 1.2.0 没有规模或留出结果（规模场景上较早的版本明显过度拆分）；读图只有合成图；单节点 8 路并发吞吐还没入库。
 - 所有 Spark 评测每个条件只有 n = 2，而且 vLLM 在 temperature 0 下也不完全可复现。
 
 [da]: ../mac/DICTATION_ARCHITECTURE.md

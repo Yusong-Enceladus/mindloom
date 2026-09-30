@@ -1,0 +1,128 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 54,
+   "ok": 54,
+   "ok_first_attempt": 44,
+   "retried": 10,
+   "latency_median_s": 5.778,
+   "latency_p95_s": 10.962,
+   "latency_total_s": 353.2,
+   "prompt_tokens_mean": 7030.5,
+   "completion_tokens_mean": 167.7,
+   "prompt_tokens_total": 379645,
+   "completion_tokens_total": 9054,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 53,
+   "ok": 13,
+   "ok_first_attempt": 12,
+   "retried": 41,
+   "latency_median_s": 16.509,
+   "latency_p95_s": 24.056,
+   "latency_total_s": 833.8,
+   "prompt_tokens_mean": 8195.2,
+   "completion_tokens_mean": 454.7,
+   "prompt_tokens_total": 434346,
+   "completion_tokens_total": 24099,
+   "errors_sample": [
+    "[relative_date] status_facts[1] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] 事实「三季度出口退税正在整理」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「三季度出口退税正在整理」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 1.015,
+   "latency_p95_s": 1.078,
+   "latency_total_s": 3.9,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 13.5,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 54,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 2.867,
+   "latency_p95_s": 3.139,
+   "latency_total_s": 11.4,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 332.8,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1331,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 5,
+   "ok_first_attempt": 5,
+   "retried": 1,
+   "latency_median_s": 15.169,
+   "latency_p95_s": 51.912,
+   "latency_total_s": 132.0,
+   "prompt_tokens_mean": 7517.3,
+   "completion_tokens_mean": 623.5,
+   "prompt_tokens_total": 45104,
+   "completion_tokens_total": 3741,
+   "errors_sample": [
+    "event ids ranked more than once: ['E6']; events missing from ranking: ['E16']"
+   ]
+  },
+  "split": {
+   "calls": 15,
+   "ok": 10,
+   "ok_first_attempt": 6,
+   "retried": 9,
+   "latency_median_s": 8.803,
+   "latency_p95_s": 25.544,
+   "latency_total_s": 169.1,
+   "prompt_tokens_mean": 4630.4,
+   "completion_tokens_mean": 327.7,
+   "prompt_tokens_total": 69456,
+   "completion_tokens_total": 4916,
+   "errors_sample": [
+    "segments[1]: overlaps or is out of order with the previous segment",
+    "segments[0].gist is wider than 20 (中文字算1)",
+    "matters[1] has no segment; drop it or give it its units"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 4,
+  "ask": 12,
+  "attach": 37,
+  "none": 1
+ },
+ "assign_actions": {
+  "new": 4,
+  "ask": 4,
+  "attach": 34,
+  "ask_suppressed": 11,
+  "none": 1
+ },
+ "final_live_events": 19,
+ "status_line_chars_mean": 18.5,
+ "title_chars_mean": 12.1,
+ "wall_s": 1506.5,
+ "items_per_min": 1.83,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 5,
+  "segments": 13,
+  "rejected": 4
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 5
+}

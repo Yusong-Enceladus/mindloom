@@ -1,0 +1,8 @@
+{"jobs_total_done": [29, 28], "items_done": 24, "wall_s_model_calls": 3001, "s_per_item": 125.0, "per_job": {"assign": {"calls": 27, "ok": 27, "retried": 0, "latency_p50_s": 35.3, "latency_max_s": 60.9, "prompt_tokens_mean": 4812, "completion_tokens_mean": 1200}, "brief": {"calls": 24, "ok": 19, "retried": 16, "latency_p50_s": 66.7, "latency_max_s": 114.7, "prompt_tokens_mean": 6800, "completion_tokens_mean": 2275}, "split": {"calls": 8, "ok": 8, "retried": 3, "latency_p50_s": 33.5, "latency_max_s": 55.3, "prompt_tokens_mean": 3618, "completion_tokens_mean": 1206}, "image_detect": {"calls": 3, "ok": 3, "retried": 0, "latency_p50_s": 1.1, "latency_max_s": 1.2, "prompt_tokens_mean": 4282, "completion_tokens_mean": 13}, "image_read": {"calls": 3, "ok": 3, "retried": 0, "latency_p50_s": 4.1, "latency_max_s": 4.1, "prompt_tokens_mean": 4307, "completion_tokens_mean": 317}, "rank": {"calls": 2, "ok": 2, "retried": 0, "latency_p50_s": 40.8, "latency_max_s": 45.6, "prompt_tokens_mean": 3617, "completion_tokens_mean": 1356}}, "checkpoints": []}
+vllm:prompt_tokens_total{engine="0",model_name="gpt-oss-120b"} 334668.0
+vllm:generation_tokens_total{engine="0",model_name="gpt-oss-120b"} 100794.0
+vllm:request_success_total{engine="0",finished_reason="stop",model_name="gpt-oss-120b"} 80.0
+vllm:request_success_total{engine="0",finished_reason="length",model_name="gpt-oss-120b"} 0.0
+vllm:request_success_total{engine="0",finished_reason="abort",model_name="gpt-oss-120b"} 0.0
+vllm:request_success_total{engine="0",finished_reason="error",model_name="gpt-oss-120b"} 0.0
+vllm:request_success_total{engine="0",finished_reason="repetition",model_name="gpt-oss-120b"} 0.0

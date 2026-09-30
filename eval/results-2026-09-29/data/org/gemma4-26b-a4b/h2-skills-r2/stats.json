@@ -1,0 +1,120 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 52,
+   "ok_first_attempt": 51,
+   "retried": 1,
+   "latency_median_s": 5.604,
+   "latency_p95_s": 6.49,
+   "latency_total_s": 299.3,
+   "prompt_tokens_mean": 6073.1,
+   "completion_tokens_mean": 113.7,
+   "prompt_tokens_total": 315803,
+   "completion_tokens_total": 5910,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 50,
+   "ok": 32,
+   "ok_first_attempt": 16,
+   "retried": 34,
+   "latency_median_s": 26.282,
+   "latency_p95_s": 34.259,
+   "latency_total_s": 1201.0,
+   "prompt_tokens_mean": 7683.1,
+   "completion_tokens_mean": 541.7,
+   "prompt_tokens_total": 384155,
+   "completion_tokens_total": 27085,
+   "errors_sample": [
+    "[unsupported_completion] quote「验货改周五13号上午」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] 事实「已决定验货改到11月13日上午」标为 done，但日期 2026-11-13 晚于证据素材的时间 2026-11-10；把已发生的部分和计划的部分拆成两条",
+    "[unsupported_completion] quote「数量：3200套（原3000套，2026-11-」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[relative_date] status_facts[2] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 1.3,
+   "latency_p95_s": 1.341,
+   "latency_total_s": 4.3,
+   "prompt_tokens_mean": 3705.2,
+   "completion_tokens_mean": 9,
+   "prompt_tokens_total": 14821,
+   "completion_tokens_total": 36,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 16.142,
+   "latency_p95_s": 17.573,
+   "latency_total_s": 62.5,
+   "prompt_tokens_mean": 3730.2,
+   "completion_tokens_mean": 353.5,
+   "prompt_tokens_total": 14921,
+   "completion_tokens_total": 1414,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 13.817,
+   "latency_p95_s": 15.68,
+   "latency_total_s": 83.4,
+   "prompt_tokens_mean": 5079.2,
+   "completion_tokens_mean": 300.7,
+   "prompt_tokens_total": 30475,
+   "completion_tokens_total": 1804,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 15,
+   "ok_first_attempt": 11,
+   "retried": 4,
+   "latency_median_s": 4.768,
+   "latency_p95_s": 6.18,
+   "latency_total_s": 67.5,
+   "prompt_tokens_mean": 3157.5,
+   "completion_tokens_mean": 97.5,
+   "prompt_tokens_total": 47363,
+   "completion_tokens_total": 1463,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 41,
+  "none": 2
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 40,
+  "none": 2,
+  "ask": 1
+ },
+ "final_live_events": 10,
+ "status_line_chars_mean": 14.9,
+ "title_chars_mean": 10.8,
+ "wall_s": 1721.3,
+ "items_per_min": 1.6,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

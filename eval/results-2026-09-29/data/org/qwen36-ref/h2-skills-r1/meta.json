@@ -1,0 +1,87 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-29T23:58:41+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "~/hack/claude-models/v5/out/qwen36-ref/h2-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "94788fcf-f1b7-4248-a37a-82f623efe892",
+  "E2": "1c933b3e-4c12-43a8-85f6-708d43793aa1",
+  "E3": "dee47e72-32aa-4eda-a10d-8c846202151c",
+  "E4": "30e40709-9c07-4f6e-ab79-fb0b81d88425",
+  "E5": "f4f0f4fa-c793-4153-aa34-068dbf0de37c",
+  "E6": "057590ad-384e-4758-b5d7-e29d9e28ab6e",
+  "E7": "c88bfc2d-845e-42b4-9599-fce7ccbe9664",
+  "E8": "30185961-2414-47cc-95fd-9615925f0177",
+  "E9": "83959a14-ad15-44b5-856a-d403001b0725"
+ },
+ "bare_max_tokens": null
+}

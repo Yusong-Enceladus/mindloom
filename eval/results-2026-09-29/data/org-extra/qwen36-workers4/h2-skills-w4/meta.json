@@ -1,0 +1,91 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-30T00:29:57+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--workers",
+  "4",
+  "--pipeline-lag",
+  "2",
+  "--out",
+  "../out/qwen36-ref/h2-skills-w4"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 4,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "97d039e6-77c6-4c44-8db3-a8655257fcdb",
+  "E2": "e4029dbe-31eb-46aa-8459-d21c5007af96",
+  "E3": "297abad7-c90c-4180-b336-2944b6b5110b",
+  "E4": "cd9e183a-acde-44fb-b432-e1382242dfe1",
+  "E5": "7e24c499-91f1-4086-bd85-345582063cb7",
+  "E6": "c0097ea1-e98e-4d8a-bcc0-524d9ba4822e",
+  "E7": "49039317-4019-412b-978b-004723fe7ba4",
+  "E8": "fa0b2052-57b9-4e30-9a4a-38603efa0da3",
+  "E9": "bae56c71-9270-456d-ada8-ae82c52e83da"
+ },
+ "bare_max_tokens": null
+}

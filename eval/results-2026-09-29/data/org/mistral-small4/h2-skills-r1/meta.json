@@ -1,0 +1,99 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8140/v1",
+ "model": "mistral-small4",
+ "vision_model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_llm_url": "http://127.0.0.1:18000/v1",
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-30T01:52:30+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8140/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--vision-llm-url",
+  "http://127.0.0.1:18000/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "~/hack/claude-models/v5/out/mistral-small4/h2-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "6f31ac3e-fbcb-4976-8733-9ed1e04bde1b",
+  "E2": "f1d67212-0b7a-4b60-b7f1-224108bdd3a4",
+  "E3": "f66a82d5-b322-4f9d-a7fe-c28b03ce6161",
+  "E4": "bcdad6b8-13d2-415d-990e-9cdca1973ce2",
+  "E5": "aa587c3a-1602-41a7-89af-5d1e6790d0a3",
+  "E6": "fd50f2f6-4195-4de6-b5de-16c94998b063",
+  "E7": "f5616850-5257-4eeb-acf8-3a23475fd450",
+  "E8": "1b555736-9c37-4119-bb36-3141f860e2d3",
+  "E9": "225cb306-bf7d-4a6a-94b4-20cda0589715",
+  "E10": "4d162e6d-8e4b-4818-b526-db325d7eacb9",
+  "E11": "1b48cd65-a77e-43df-a74a-9edc99e6b4eb",
+  "E12": "c2c63af8-87e5-4a2d-a0a0-f5846fcc1a1b",
+  "E13": "f51bb81a-8831-42b9-beb5-027c45a0a28f",
+  "E14": "22b4931b-0956-42a3-b2ef-c76dc5fc0fff",
+  "E15": "a2fa763a-4a83-42e7-962e-a04620b977ee",
+  "E16": "985c1218-8a40-415c-8f7e-5c5763ec156d",
+  "E17": "709b3a23-b9bf-4c37-8e9b-7558516c0760",
+  "E18": "eabb02ec-4f85-43ac-86ea-86711b9d4ec5",
+  "E19": "b17c343e-1a38-424f-946d-893907798fb9"
+ },
+ "bare_max_tokens": null
+}

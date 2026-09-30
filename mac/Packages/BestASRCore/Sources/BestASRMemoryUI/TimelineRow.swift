@@ -435,6 +435,9 @@ struct TranscriptPreview: View {
     var personID: String? = nil
     /// Where the turn starts in a recording.
     var offsetMilliseconds: Int64? = nil
+    /// Said aloud: a recording's speaker or a meeting transcript's turn,
+    /// not a line written in a chat.
+    var spoken = false
   }
 
   /// A recording's speakers, else a meeting App's exported transcript, else
@@ -460,7 +463,7 @@ struct TranscriptPreview: View {
       let said = turn.text.split(whereSeparator: \.isNewline).joined(separator: " ")
       return Turn(
         name: turn.speaker, colorIndex: color, text: said,
-        personID: Self.person(named: turn.speaker, in: people)?.personID)
+        personID: Self.person(named: turn.speaker, in: people)?.personID, spoken: true)
     }
   }
 
@@ -520,7 +523,7 @@ struct TranscriptPreview: View {
       result.append(
         Turn(
           name: name, colorIndex: color, text: trimmed, personID: key,
-          offsetMilliseconds: segment.startMilliseconds))
+          offsetMilliseconds: segment.startMilliseconds, spoken: true))
       lastKey = key
     }
     return result

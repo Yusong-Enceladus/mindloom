@@ -1,0 +1,90 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-30T00:23:13+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "~/hack/claude-models/v5/out/qwen36-ref/dev-skills-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "7f808ac8-38e7-454a-a1bb-5d30286f1344",
+  "E2": "b94728e9-cd6d-4b7b-a85d-a88a39fcdc8e",
+  "E3": "6effef43-5b80-4868-8441-bf70ffb797e6",
+  "E4": "d62dc4e3-3ec4-4e7f-a344-34bcc94ed721",
+  "E5": "aa6c1ef8-1d97-412e-905c-6ca4da37773a",
+  "E6": "92a8029d-2d6a-4615-ba27-55206442178c",
+  "E7": "1d2bb8d0-d6ca-449b-b938-af735f1bfdf2",
+  "E8": "9030429f-1748-4391-aade-bf03e8f0ddc6",
+  "E9": "413b2715-97c6-48da-9a24-f1ffc4d54972",
+  "E10": "fcde9acb-5981-4e6f-8e58-002e3d7ed5ea",
+  "E11": "0a5df5dc-09f4-46e9-95a3-e43d77d855da",
+  "E12": "1695cdcf-0705-4a8a-8f6a-4b6237dd9314"
+ },
+ "bare_max_tokens": null
+}

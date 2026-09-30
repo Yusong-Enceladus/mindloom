@@ -1,0 +1,88 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8130/v1",
+ "model": "muse-glimmer-org",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-29T19:13:55+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8130/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "~/hack/claude-models/v2/out/muse-glimmer-org/org/h2-skills-r1"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "d8e7b71e-e32c-416b-9bab-4523dd313e0a",
+  "E2": "eba844f5-91b6-43fb-b1cf-32cd6e6f4317",
+  "E3": "5d1a8cf4-4b10-41f7-9212-d5fb97d254d4",
+  "E4": "609f93f2-9789-491f-9ee0-b0e10fc2d446",
+  "E5": "a34e5508-a03b-45f6-bbcf-16106d177e7e",
+  "E6": "868311b7-1445-47b0-af1a-d0bd473c6aa3",
+  "E7": "57877c40-c365-4dda-9e76-1937ab5d867f",
+  "E8": "43fd5472-5a2e-4e28-ac46-0f0f3f8598fc",
+  "E9": "d3ca3045-3e74-45da-94e4-8e7cf78b0174",
+  "E10": "5d7a84c3-e52c-4c54-a973-3ff0177e788d"
+ },
+ "bare_max_tokens": null
+}

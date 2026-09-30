@@ -1,0 +1,121 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 81,
+   "retried": 2,
+   "latency_median_s": 2.088,
+   "latency_p95_s": 2.535,
+   "latency_total_s": 179.4,
+   "prompt_tokens_mean": 5257.6,
+   "completion_tokens_mean": 181.2,
+   "prompt_tokens_total": 436382,
+   "completion_tokens_total": 15041,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 79,
+   "ok": 64,
+   "ok_first_attempt": 36,
+   "retried": 43,
+   "latency_median_s": 3.488,
+   "latency_p95_s": 6.07,
+   "latency_total_s": 288.0,
+   "prompt_tokens_mean": 6461.4,
+   "completion_tokens_mean": 395.5,
+   "prompt_tokens_total": 510451,
+   "completion_tokens_total": 31246,
+   "errors_sample": [
+    "[ungrounded_date] status_facts[0] 的 date 2026-09-20 不在它引用的素材里；素材只给了一个范围（9月24日–9月30日）；写「9月24日那周」或「9月30日前」，或者不写日期，不要挑其中某一天（没有就留空 \"\"）",
+    "[ungrounded_date] status_facts[1] 的 date 2026-09-20 不在它引用的素材里；素材只给了一个范围（9月24日–9月30日）；写「9月24日那周」或「9月30日前」，或者不写日期，不要挑其中某一天（没有就留空 \"\"）",
+    "[relative_date] status_facts[1] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.508,
+   "latency_p95_s": 0.683,
+   "latency_total_s": 1.7,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 13.3,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 40,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 2.999,
+   "latency_p95_s": 3.41,
+   "latency_total_s": 9.0,
+   "prompt_tokens_mean": 4477,
+   "completion_tokens_mean": 361.3,
+   "prompt_tokens_total": 13431,
+   "completion_tokens_total": 1084,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 4.43,
+   "latency_p95_s": 5.142,
+   "latency_total_s": 17.1,
+   "prompt_tokens_mean": 5051,
+   "completion_tokens_mean": 468,
+   "prompt_tokens_total": 20204,
+   "completion_tokens_total": 1872,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 1.361,
+   "latency_p95_s": 2.029,
+   "latency_total_s": 4.5,
+   "prompt_tokens_mean": 3248.7,
+   "completion_tokens_mean": 129.7,
+   "prompt_tokens_total": 9746,
+   "completion_tokens_total": 389,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 68,
+  "none": 4,
+  "ask": 1
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 67,
+  "none": 4,
+  "ask_suppressed": 2
+ },
+ "final_live_events": 12,
+ "status_line_chars_mean": 14.9,
+ "title_chars_mean": 10.2,
+ "wall_s": 503.1,
+ "items_per_min": 9.78,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 1,
+  "segments": 2,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 1
+}

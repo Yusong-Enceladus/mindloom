@@ -1,0 +1,44 @@
+[
+ {
+  "model": "gpt-oss-120b（v5 重试：reasoning low，每次调用的输出上限 +2048 token）",
+  "family": "OpenAI gpt-oss",
+  "v5": true,
+  "chart_name": "gpt-oss-120b",
+  "result": "capped after 24 of 46 holdout items (run stopped at 09:50 PDT to free the node)",
+  "short": "推理关不掉，每条约 125 秒，跑到 24/46 条时停止",
+  "why": "With the extra budget every request finished normally (80/80 'stop', 0 hit the length cap; the 09-28 attempt had 41/44 length-capped). But reasoning cannot be turned off: event-assign averaged 1,200 completion tokens (Qwen3.6: ~200) and 35 s p50, event-brief 2,275 tokens and 67 s p50, so the run took 125 s per item (~14x Qwen3.6). On the items it did finish, grouping was on par: checkpoint cp1 (8 items) B³ F1 0.804 and cp2 (17 items) 0.790, Link F1 0.75 / 0.75, vs Qwen3.6 on the same checkpoints 0.905 / 0.821 and 0.774 / 0.675. event-brief accepted 19/24.",
+  "partial": {
+   "items_done": 24,
+   "s_per_item": 125.0,
+   "cp1_b3": 0.804,
+   "cp2_b3": 0.79,
+   "cp1_link": 0.75,
+   "cp2_link": 0.75,
+   "qwen36_cp1_b3": [
+    0.905,
+    0.821
+   ],
+   "qwen36_cp2_b3": [
+    0.774,
+    0.675
+   ],
+   "per_job_p50_s": {
+    "assign": 35.3,
+    "brief": 66.7,
+    "split": 33.5,
+    "rank": 40.8
+   },
+   "completion_tokens_mean": {
+    "assign": 1200,
+    "brief": 2275,
+    "split": 1206,
+    "rank": 1356
+   },
+   "finish_reason_length": 0,
+   "requests": 80
+  },
+  "src": "v5/data/gpt-oss-partial.txt; spark-n3 ~/hack/claude-models/v5/out/gpt-oss-120b/",
+  "result_zh": "跑到留出集 24/46 条时停止",
+  "why_zh": "加了输出额度后 80 个请求全部正常结束（0 个被截断；09-28 那次是 44 个里 41 个被截断）。但推理关不掉：event-assign 平均输出 1,200 token（Qwen3.6 约 200）、p50 35 秒，event-brief 2,275 token、p50 67 秒，每条素材 125 秒，约为 Qwen3.6 的 14 倍。已完成部分的分组不差：检查点 cp1（8 条）B³ F1 0.804、cp2（17 条）0.790，同检查点 Qwen3.6 两次为 0.905 / 0.821 和 0.774 / 0.675。"
+ }
+]

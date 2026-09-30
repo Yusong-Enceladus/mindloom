@@ -81,8 +81,8 @@ cd ..
   --out /tmp/memory-eval-new-run --embed-url http://127.0.0.1:8002/v1
 ```
 
-`eval/run_eval_overnight.py` 是 2026-09-26 夜间评测（`docs/FINAL_EVALUATION_20260927.md`）所用的驱动；`eval/run_eval.py` 是各 Skill `BENCHMARK.md` 所用的驱动（`--condition skills|bare|baseline`），用法见其文件头。评测目录必须不存在。每次运行使用独立数据库，黄金标签只用于事后评分，不传给模型。`--mode without-skills` 保持模型、输入、检索、schema 和校验器一致，仅移除技能说明，用来测量说明文本的影响；它不是纯向量基线。`eval/smoke_api.py` 会向**空的演示实例**写入四条虚构素材，验证归类、更新状态、重传和人工修改，不应用于个人数据库。
+`eval/run_eval_overnight.py` 是 2026-09-26 夜间评测（当时的内部报告，未公开）所用的驱动；`eval/run_eval.py` 是各 Skill `BENCHMARK.md` 所用的驱动（`--condition skills|bare|baseline`），用法见其文件头。评测目录必须不存在。每次运行使用独立数据库，黄金标签只用于事后评分，不传给模型。`--mode without-skills` 保持模型、输入、检索、schema 和校验器一致，仅移除技能说明，用来测量说明文本的影响；它不是纯向量基线。`eval/smoke_api.py` 会向**空的演示实例**写入四条虚构素材，验证归类、更新状态、重传和人工修改，不应用于个人数据库。
 
 ## 诚实标注
 
-Mac 端原有工作从 7 月开始；黑客松新增或完善的是 Spark 整理链路、Skills 和相应评测。代码来源、线上新增改动和本次接手修复应分开记录。服务可启动、模拟测试通过、真实模型评测通过、Mac 全链路完成，是不同的验收阶段。准确进度见各 Skill 的 `BENCHMARK.md` 和 `docs/FINAL_EVALUATION_20260927.md`，尚未完成的功能不放进演示成功清单。
+Mac 端原有工作从 7 月开始；黑客松新增或完善的是 Spark 整理链路、Skills 和相应评测。代码来源、线上新增改动和本次接手修复应分开记录。服务可启动、模拟测试通过、真实模型评测通过、Mac 全链路完成，是不同的验收阶段。准确进度见各 Skill 的 `BENCHMARK.md` 和 `docs/EVALUATION.md`，尚未完成的功能不放进演示成功清单。

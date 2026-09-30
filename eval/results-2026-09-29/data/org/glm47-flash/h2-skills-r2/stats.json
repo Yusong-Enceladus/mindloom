@@ -1,0 +1,128 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 58,
+   "ok": 57,
+   "ok_first_attempt": 56,
+   "retried": 2,
+   "latency_median_s": 6.393,
+   "latency_p95_s": 7.592,
+   "latency_total_s": 371.1,
+   "prompt_tokens_mean": 5165.3,
+   "completion_tokens_mean": 134.8,
+   "prompt_tokens_total": 299586,
+   "completion_tokens_total": 7818,
+   "errors_sample": [
+    "decision=attach should target E5 (the best-ranked linked candidate)"
+   ]
+  },
+  "brief": {
+   "calls": 54,
+   "ok": 16,
+   "ok_first_attempt": 6,
+   "retried": 48,
+   "latency_median_s": 23.402,
+   "latency_p95_s": 27.611,
+   "latency_total_s": 1205.6,
+   "prompt_tokens_mean": 7884.4,
+   "completion_tokens_mean": 520.2,
+   "prompt_tokens_total": 425755,
+   "completion_tokens_total": 28092,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「这周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[1] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」",
+    "[unsupported_completion] quote「想再订8寸燕麦白平盘，1800个」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「想再订8寸燕麦白平盘，1800个」只说做了决定，不能证明「Peggy 订购 1800 个 8 寸燕麦白平盘」已办完（下单）；写成「已决定/已同意…」，或摘录明确说已经办"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 1.013,
+   "latency_p95_s": 1.053,
+   "latency_total_s": 3.9,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 56,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 2.832,
+   "latency_p95_s": 3.173,
+   "latency_total_s": 11.5,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 333.5,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1334,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 13.478,
+   "latency_p95_s": 15.269,
+   "latency_total_s": 77.3,
+   "prompt_tokens_mean": 4115.3,
+   "completion_tokens_mean": 292.2,
+   "prompt_tokens_total": 24692,
+   "completion_tokens_total": 1753,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 11,
+   "ok_first_attempt": 5,
+   "retried": 10,
+   "latency_median_s": 8.321,
+   "latency_p95_s": 18.903,
+   "latency_total_s": 154.4,
+   "prompt_tokens_mean": 3840.2,
+   "completion_tokens_mean": 241.5,
+   "prompt_tokens_total": 57603,
+   "completion_tokens_total": 3622,
+   "errors_sample": [
+    "segments[2]: overlaps or is out of order with the previous segment",
+    "segments[1]: overlaps or is out of order with the previous segment",
+    "segments[0].gist is wider than 20 (中文字算1); segments[1].gist is wider than 20 (中文字算1)"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 7,
+  "attach": 45,
+  "ask": 2,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 7,
+  "attach": 43,
+  "ask": 3,
+  "none": 4,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 11,
+ "status_line_chars_mean": 15.8,
+ "title_chars_mean": 11.4,
+ "wall_s": 1827.3,
+ "items_per_min": 1.51,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 7,
+  "segments": 19,
+  "rejected": 3
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 7
+}

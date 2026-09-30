@@ -1,12 +1,40 @@
 # 评测使用说明
 
-`dev-week-v1` 含 82 条虚构素材、9 个标注事件、4 个检查点；`holdout-week-v1` 含 32 条素材、5 个事件、2 个检查点。截图已经随仓库提供，评测不需要生成真人声音或连接第三方模型服务。
+全部评测数字的汇总见仓库的 `docs/EVALUATION.md`（公开仓库）和本目录的 [`results-2026-09-29/`](results-2026-09-29/README.md)。本文件说明场景、驱动和评分指标。
 
-多格式文件读取评测集（33 种格式 165 个文件、595 道问答，以及 50 条素材的多格式场景）在 `eval/files-multiformat/`，说明见 [`eval/files-multiformat/README.md`](files-multiformat/README.md)。file-read 技能自己的 60 个文件评测集（files-v1）在 `eval/files/`，说明见 [`eval/files/README.md`](files/README.md)。
+## 现在用的场景
+
+| 场景 | 规模 | 用途 |
+|---|---|---|
+| `scenarios/holdout-week-v2` | 46 条、7 个事件（2 个难干扰）、6 个检查点 | 留出集：由没看过技能的代理盲写，`FROZEN.sha256` 冻结；各 Skill `BENCHMARK.md` 的「最终版本」和模型对比都用它 |
+| `scenarios/dev-week-v1` | 82 条、9 个事件、4 个检查点 | 开发集 |
+| `scale-lab` / `scale-startup` / `scale-pm` | 1,510 / 1,600 / 1,600 条 | 规模场景，结果见 [`scale/README.md`](scale/README.md)（场景素材没有放进公开快照） |
+| `scenarios/split-dev` | 51 条 | item-split 的调参集 |
+| `files/`（files-v1） | 60 个文件、20 类模板 | file-read 的评测集，说明见 [`files/README.md`](files/README.md) |
+| `files-multiformat/` | 33 种格式 165 个文件、595 道问答 | 多格式读取，说明见 [`files-multiformat/README.md`](files-multiformat/README.md)；测试集结果见 `results-2026-09-29/` |
+| `multimodal/`（mm-v1） | 98 张测试图 | 读图，见 [`multimodal/BENCHMARK.md`](multimodal/BENCHMARK.md) |
+| `scenarios/holdout-week-v1` | 32 条、5 个事件 | **已污染**，只作参考（见下文） |
+
+截图已经随仓库提供，评测不需要生成真人声音或连接第三方模型服务。
+
+## 驱动
+
+- **`run_eval.py`**（现在用的）：各 Skill `BENCHMARK.md`、模型对比和 `results-2026-09-29/` 的数字都来自它。`--condition skills | without-skills | bare | baseline`，用法见文件头。例如在留出集上：
+
+```bash
+H=eval/scenarios/holdout-week-v2/scenario.json
+python eval/run_eval.py --scenario $H --condition skills --out /tmp/h2-skills \
+  --llm-url http://127.0.0.1:8000/v1 --embed-url http://127.0.0.1:8002/v1
+python eval/run_eval.py --scenario $H --condition baseline --embed hash --out /tmp/h2-baseline   # 不调模型的词法基线
+```
+
+- **`run_skill_evals.py --n 3`**：跑 `skills/*/evals/evals.json` 里可执行的用例。
+- **`score.py`**：评分器；`--snapshots` 可以对已入库的快照重算分数。
+- **`run_eval_overnight.py`**（历史）：2026-09-26 第一次夜间评测用的驱动，消融口径和 `run_eval.py` 不同，数字不能混比。下面的「执行」一节保留它的用法。
 
 ## 执行
 
-以下是 2026-09-26 夜间评测（`docs/FINAL_EVALUATION_20260927.md`）所用的驱动 `run_eval_overnight.py`。各 Skill `BENCHMARK.md` 的数字来自另一个驱动 `run_eval.py`（`--condition skills|bare|baseline`、`--oracle-assign`），两者的消融口径不同，数字不能混比。
+以下是 2026-09-26 夜间评测（当时的内部报告，未公开）所用的驱动 `run_eval_overnight.py`。各 Skill `BENCHMARK.md` 的数字来自另一个驱动 `run_eval.py`（`--condition skills|bare|baseline`、`--oracle-assign`），两者的消融口径不同，数字不能混比。
 
 在仓库根目录、包含项目依赖和 Pillow 的 Python 环境中运行：
 
@@ -49,7 +77,7 @@ python eval/run_eval_overnight.py eval/scenarios/dev-week-v1/scenario.json \
 
 B³ F1 衡量事件分组，Link F1 通过一对一匹配事件再衡量素材关联。事实召回默认只看首页的一句话状态，因此它与“整个事件事实库是否保留全部事实”不同。过期事实率依据合成标注和关键词规则计算，不等于经过人工审阅的事实准确率。人物指标可能使用事件级姓名匹配退化口径，应在报告中注明。
 
-`without-skills` 保留全局规则、JSON schema、业务校验器、候选检索和同一模型，只替换技能说明。它隔离的是技能说明文本的作用，不能用来宣称完整 Skills 架构相对无约束大模型或纯向量系统的全面优势。纯向量基线目前未实现。
+`without-skills` 保留全局规则、JSON schema、业务校验器、候选检索和同一模型，只替换技能说明。它隔离的是技能说明文本的作用，不能用来宣称完整 Skills 架构相对无约束大模型或纯向量系统的全面优势。不调模型的检索基线由 `run_eval.py --condition baseline` 提供（`--embed url` 为向量、`--embed hash` 为词法）：留出集 B³ F1 分别是 0.336 和 0.463（见 `skills/event-assign/BENCHMARK.md`）。
 
 ## 已知能力边界
 

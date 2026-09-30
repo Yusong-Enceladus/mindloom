@@ -1,0 +1,122 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 52,
+   "ok_first_attempt": 47,
+   "retried": 5,
+   "latency_median_s": 2.343,
+   "latency_p95_s": 4.182,
+   "latency_total_s": 126.7,
+   "prompt_tokens_mean": 6120.7,
+   "completion_tokens_mean": 200.3,
+   "prompt_tokens_total": 318274,
+   "completion_tokens_total": 10415,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 50,
+   "ok": 29,
+   "ok_first_attempt": 12,
+   "retried": 38,
+   "latency_median_s": 4.546,
+   "latency_p95_s": 6.737,
+   "latency_total_s": 219.0,
+   "prompt_tokens_mean": 7453.4,
+   "completion_tokens_mean": 469.6,
+   "prompt_tokens_total": 372668,
+   "completion_tokens_total": 23481,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [relative_date] status_line 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[length] status_line 太长（27 字宽，上限 24，目标 18）：只写现在的状态或下一个有日期的步骤，金额、人名等细节放进 status_facts; [unsupported_completion] 事实「热电偶昨晚坏，最后一窑11月11日（周三）出」标为 done，但日期 2026-11-11 晚于证据素材的时间 2026-11-10；把已发生的部分和计划的部分拆成两条",
+    "[unsupported_completion] 事实「热电偶昨晚坏了，最后一窑11月11日（周三）出」标为 done，但日期 2026-11-11 晚于证据素材的时间 2026-11-10；把已发生的部分和计划的部分拆成两条"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 0.691,
+   "latency_p95_s": 0.695,
+   "latency_total_s": 2.5,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 56,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 2.66,
+   "latency_p95_s": 2.98,
+   "latency_total_s": 10.7,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 332.5,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1330,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 4.1,
+   "latency_p95_s": 5.355,
+   "latency_total_s": 25.2,
+   "prompt_tokens_mean": 5002.5,
+   "completion_tokens_mean": 456.2,
+   "prompt_tokens_total": 30015,
+   "completion_tokens_total": 2737,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 15,
+   "ok_first_attempt": 13,
+   "retried": 2,
+   "latency_median_s": 1.006,
+   "latency_p95_s": 2.131,
+   "latency_total_s": 19.5,
+   "prompt_tokens_mean": 2697.1,
+   "completion_tokens_mean": 118.4,
+   "prompt_tokens_total": 40456,
+   "completion_tokens_total": 1776,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 39,
+  "none": 2,
+  "ask": 2
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 37,
+  "none": 2,
+  "ask": 3,
+  "ask_suppressed": 1
+ },
+ "final_live_events": 13,
+ "status_line_chars_mean": 15.4,
+ "title_chars_mean": 13,
+ "wall_s": 437.9,
+ "items_per_min": 6.3,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

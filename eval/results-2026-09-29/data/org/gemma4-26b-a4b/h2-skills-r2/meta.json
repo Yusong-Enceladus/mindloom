@@ -1,0 +1,88 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8140/v1",
+ "model": "gemma4-26b-a4b",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8012/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.0"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.0"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.1.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.0"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "39382f7aa536988f",
+  "event-brief": "f266fbee7392a072",
+  "home-rank": "5b9631d010fb3265",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "116cc81338c06f19",
+  "recall": "53787149d58fb73a"
+ },
+ "git": "2e532bc",
+ "date": "2026-09-30T01:55:56+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8140/v1",
+  "--embed-url",
+  "http://127.0.0.1:8012/v1",
+  "--llm-timeout",
+  "600",
+  "--keep-db",
+  "--out",
+  "~/hack/claude-models/v5/out/gemma4-26b-a4b/h2-skills-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "975f759d-9f8b-4cd2-ae13-12cc0fc13ecd",
+  "E2": "b766c7b7-1a1d-45d1-aefa-2e198e71173d",
+  "E3": "bb572056-d51e-453a-8336-4d16c82c7781",
+  "E4": "6750bd8b-8fd6-4796-8d5b-c9e91665257c",
+  "E5": "d0f744d4-d37e-4d74-a295-7340def55cca",
+  "E6": "c37da641-10c9-4f09-a073-3bf474899b14",
+  "E7": "0960b85e-0322-4545-956e-d0006d73a670",
+  "E8": "1d5a9661-78bd-4929-8902-4ea424b22a73",
+  "E9": "831b145d-28a0-4c4c-b842-6fdd2095dc35",
+  "E10": "683fa518-6352-4b24-866d-e41206d67f1d"
+ },
+ "bare_max_tokens": null
+}

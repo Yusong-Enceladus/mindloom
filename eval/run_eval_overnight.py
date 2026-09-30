@@ -4,7 +4,7 @@
 Gold labels are used only by score.py after inference. No existing service or
 database is changed. Save checkpoints, failures, token usage and latency.
 
-This is the runner behind docs/EVALUATION_20260926.md and FINAL_EVALUATION_20260927.md
+This is the runner behind the first internal evaluation reports of 2026-09-26/27 (not published)
 (--mode with-skills|without-skills). eval/run_eval.py is the separate runner behind
 skills/*/BENCHMARK.md (--condition skills|bare|baseline); their ablations differ.
 

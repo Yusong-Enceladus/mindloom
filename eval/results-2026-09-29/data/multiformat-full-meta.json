@@ -1,0 +1,1157 @@
+{
+ "split": "test",
+ "parse_only": false,
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "files": [
+  {
+   "file_id": "txt-01",
+   "type": "txt",
+   "text_layer": "full",
+   "latency_s": 1.48,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "txt-04",
+   "type": "txt",
+   "text_layer": "full",
+   "latency_s": 1.45,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "txt-05",
+   "type": "txt",
+   "text_layer": "full",
+   "latency_s": 1.35,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "md-01",
+   "type": "md",
+   "text_layer": "full",
+   "latency_s": 1.44,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "md-03",
+   "type": "md",
+   "text_layer": "full",
+   "latency_s": 1.13,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "md-04",
+   "type": "md",
+   "text_layer": "full",
+   "latency_s": 1.29,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "md-05",
+   "type": "md",
+   "text_layer": "full",
+   "latency_s": 1.24,
+   "reading_type": "text",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "rtf-01",
+   "type": "rtf",
+   "text_layer": "full",
+   "latency_s": 6.51,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "rtf-04",
+   "type": "rtf",
+   "text_layer": "full",
+   "latency_s": 1.21,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "rtf-05",
+   "type": "rtf",
+   "text_layer": "full",
+   "latency_s": 5.43,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "html-01",
+   "type": "html",
+   "text_layer": "full",
+   "latency_s": 1.13,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "html-03",
+   "type": "html",
+   "text_layer": "full",
+   "latency_s": 2.28,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "html-04",
+   "type": "html",
+   "text_layer": "full",
+   "latency_s": 1.6,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "html-05",
+   "type": "html",
+   "text_layer": "full",
+   "latency_s": 1.23,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "csv-01",
+   "type": "csv",
+   "text_layer": "full",
+   "latency_s": 2.38,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "csv-04",
+   "type": "csv",
+   "text_layer": "full",
+   "latency_s": 1.22,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "csv-05",
+   "type": "csv",
+   "text_layer": "full",
+   "latency_s": 2.52,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "json-01",
+   "type": "json",
+   "text_layer": "full",
+   "latency_s": 1.46,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "json-03",
+   "type": "json",
+   "text_layer": "full",
+   "latency_s": 3.88,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "json-04",
+   "type": "json",
+   "text_layer": "full",
+   "latency_s": 1.11,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "json-05",
+   "type": "json",
+   "text_layer": "full",
+   "latency_s": 2.03,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xml-01",
+   "type": "xml",
+   "text_layer": "full",
+   "latency_s": 1.28,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xml-04",
+   "type": "xml",
+   "text_layer": "full",
+   "latency_s": 2.19,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xml-05",
+   "type": "xml",
+   "text_layer": "full",
+   "latency_s": 1.27,
+   "reading_type": "data",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "docx-01",
+   "type": "docx",
+   "text_layer": "full",
+   "latency_s": 7.99,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "docx-03",
+   "type": "docx",
+   "text_layer": "full",
+   "latency_s": 1.38,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "docx-04",
+   "type": "docx",
+   "text_layer": "full",
+   "latency_s": 2.21,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "docx-05",
+   "type": "docx",
+   "text_layer": "full",
+   "latency_s": 1.49,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "doc-01",
+   "type": "doc",
+   "text_layer": "full",
+   "latency_s": 1.08,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "doc-04",
+   "type": "doc",
+   "text_layer": "full",
+   "latency_s": 1.0,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "doc-05",
+   "type": "doc",
+   "text_layer": "full",
+   "latency_s": 3.97,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "odt-01",
+   "type": "odt",
+   "text_layer": "full",
+   "latency_s": 5.49,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "odt-03",
+   "type": "odt",
+   "text_layer": "full",
+   "latency_s": 3.17,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "odt-04",
+   "type": "odt",
+   "text_layer": "full",
+   "latency_s": 0.9,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "odt-05",
+   "type": "odt",
+   "text_layer": "full",
+   "latency_s": 1.38,
+   "reading_type": "document",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xlsx-01",
+   "type": "xlsx",
+   "text_layer": "full",
+   "latency_s": 1.27,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xlsx-04",
+   "type": "xlsx",
+   "text_layer": "full",
+   "latency_s": 3.21,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "xlsx-05",
+   "type": "xlsx",
+   "text_layer": "full",
+   "latency_s": 1.39,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ods-01",
+   "type": "ods",
+   "text_layer": "full",
+   "latency_s": 1.09,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ods-03",
+   "type": "ods",
+   "text_layer": "full",
+   "latency_s": 1.22,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ods-04",
+   "type": "ods",
+   "text_layer": "full",
+   "latency_s": 2.15,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ods-05",
+   "type": "ods",
+   "text_layer": "full",
+   "latency_s": 5.54,
+   "reading_type": "spreadsheet",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "pptx-01",
+   "type": "pptx",
+   "text_layer": "partial",
+   "latency_s": 8.65,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "pptx-04",
+   "type": "pptx",
+   "text_layer": "partial",
+   "latency_s": 15.94,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "pptx-05",
+   "type": "pptx",
+   "text_layer": "partial",
+   "latency_s": 6.1,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "odp-01",
+   "type": "odp",
+   "text_layer": "partial",
+   "latency_s": 8.55,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "odp-03",
+   "type": "odp",
+   "text_layer": "partial",
+   "latency_s": 10.35,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "odp-04",
+   "type": "odp",
+   "text_layer": "partial",
+   "latency_s": 3.71,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "odp-05",
+   "type": "odp",
+   "text_layer": "partial",
+   "latency_s": 7.46,
+   "reading_type": "slides",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "pdf-01",
+   "type": "pdf",
+   "text_layer": "full",
+   "latency_s": 1.33,
+   "reading_type": "pdf",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "pdf-03",
+   "type": "pdf",
+   "text_layer": "full",
+   "latency_s": 1.06,
+   "reading_type": "pdf",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "pdf-05",
+   "type": "pdf",
+   "text_layer": "full",
+   "latency_s": 1.45,
+   "reading_type": "pdf",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "pdf_scanned-01",
+   "type": "pdf_scanned",
+   "text_layer": "none",
+   "latency_s": 19.68,
+   "reading_type": "scanned_pdf",
+   "reading_error": null,
+   "image_parts": 2,
+   "crash": null
+  },
+  {
+   "file_id": "pdf_scanned-03",
+   "type": "pdf_scanned",
+   "text_layer": "none",
+   "latency_s": 11.67,
+   "reading_type": "scanned_pdf",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "pdf_scanned-04",
+   "type": "pdf_scanned",
+   "text_layer": "none",
+   "latency_s": 11.16,
+   "reading_type": "scanned_pdf",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "pdf_scanned-05",
+   "type": "pdf_scanned",
+   "text_layer": "none",
+   "latency_s": 9.38,
+   "reading_type": "scanned_pdf",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "epub-03",
+   "type": "epub",
+   "text_layer": "full",
+   "latency_s": 1.07,
+   "reading_type": "ebook",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "epub-04",
+   "type": "epub",
+   "text_layer": "full",
+   "latency_s": 0.96,
+   "reading_type": "ebook",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "epub-05",
+   "type": "epub",
+   "text_layer": "full",
+   "latency_s": 0.99,
+   "reading_type": "ebook",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "eml-01",
+   "type": "eml",
+   "text_layer": "full",
+   "latency_s": 2.61,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "eml-03",
+   "type": "eml",
+   "text_layer": "full",
+   "latency_s": 1.61,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "eml-04",
+   "type": "eml",
+   "text_layer": "full",
+   "latency_s": 1.39,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "eml-05",
+   "type": "eml",
+   "text_layer": "partial",
+   "latency_s": 5.41,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "mbox-01",
+   "type": "mbox",
+   "text_layer": "full",
+   "latency_s": 1.82,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mbox-04",
+   "type": "mbox",
+   "text_layer": "full",
+   "latency_s": 2.75,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mbox-05",
+   "type": "mbox",
+   "text_layer": "full",
+   "latency_s": 1.46,
+   "reading_type": "email",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ics-01",
+   "type": "ics",
+   "text_layer": "full",
+   "latency_s": 1.38,
+   "reading_type": "calendar",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ics-03",
+   "type": "ics",
+   "text_layer": "full",
+   "latency_s": 1.33,
+   "reading_type": "calendar",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ics-04",
+   "type": "ics",
+   "text_layer": "full",
+   "latency_s": 1.16,
+   "reading_type": "calendar",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "ics-05",
+   "type": "ics",
+   "text_layer": "full",
+   "latency_s": 8.93,
+   "reading_type": "calendar",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "vcf-01",
+   "type": "vcf",
+   "text_layer": "full",
+   "latency_s": 0.96,
+   "reading_type": "contact",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "vcf-04",
+   "type": "vcf",
+   "text_layer": "full",
+   "latency_s": 1.14,
+   "reading_type": "contact",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "vcf-05",
+   "type": "vcf",
+   "text_layer": "full",
+   "latency_s": 0.92,
+   "reading_type": "contact",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "zip-01",
+   "type": "zip",
+   "text_layer": "partial",
+   "latency_s": 4.61,
+   "reading_type": "archive",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "zip-03",
+   "type": "zip",
+   "text_layer": "full",
+   "latency_s": 2.77,
+   "reading_type": "archive",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "zip-04",
+   "type": "zip",
+   "text_layer": "partial",
+   "latency_s": 11.3,
+   "reading_type": "archive",
+   "reading_error": null,
+   "image_parts": 3,
+   "crash": null
+  },
+  {
+   "file_id": "zip-05",
+   "type": "zip",
+   "text_layer": "full",
+   "latency_s": 2.4,
+   "reading_type": "archive",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "webarchive-03",
+   "type": "webarchive",
+   "text_layer": "partial",
+   "latency_s": 1.21,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "webarchive-04",
+   "type": "webarchive",
+   "text_layer": "partial",
+   "latency_s": 1.25,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "webarchive-05",
+   "type": "webarchive",
+   "text_layer": "partial",
+   "latency_s": 1.22,
+   "reading_type": "web",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "png-01",
+   "type": "png",
+   "text_layer": "none",
+   "latency_s": 8.57,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "png-03",
+   "type": "png",
+   "text_layer": "none",
+   "latency_s": 7.79,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "png-04",
+   "type": "png",
+   "text_layer": "none",
+   "latency_s": 11.51,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "png-05",
+   "type": "png",
+   "text_layer": "none",
+   "latency_s": 6.22,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "jpg-01",
+   "type": "jpg",
+   "text_layer": "none",
+   "latency_s": 8.21,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "jpg-04",
+   "type": "jpg",
+   "text_layer": "none",
+   "latency_s": 11.18,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "jpg-05",
+   "type": "jpg",
+   "text_layer": "none",
+   "latency_s": 7.22,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "heic-01",
+   "type": "heic",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "image",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "heic-03",
+   "type": "heic",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "image",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "heic-04",
+   "type": "heic",
+   "text_layer": "none",
+   "latency_s": 0.04,
+   "reading_type": "image",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "heic-05",
+   "type": "heic",
+   "text_layer": "none",
+   "latency_s": 0.04,
+   "reading_type": "image",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "webp-03",
+   "type": "webp",
+   "text_layer": "none",
+   "latency_s": 5.93,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "webp-04",
+   "type": "webp",
+   "text_layer": "none",
+   "latency_s": 7.06,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "webp-05",
+   "type": "webp",
+   "text_layer": "none",
+   "latency_s": 11.57,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "gif-02",
+   "type": "gif",
+   "text_layer": "none",
+   "latency_s": 2.94,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "gif-03",
+   "type": "gif",
+   "text_layer": "none",
+   "latency_s": 3.38,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "gif-04",
+   "type": "gif",
+   "text_layer": "none",
+   "latency_s": 4.58,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "gif-05",
+   "type": "gif",
+   "text_layer": "none",
+   "latency_s": 4.83,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "tiff-01",
+   "type": "tiff",
+   "text_layer": "none",
+   "latency_s": 8.07,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "tiff-04",
+   "type": "tiff",
+   "text_layer": "none",
+   "latency_s": 7.4,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "tiff-05",
+   "type": "tiff",
+   "text_layer": "none",
+   "latency_s": 14.9,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "bmp-01",
+   "type": "bmp",
+   "text_layer": "none",
+   "latency_s": 4.13,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "bmp-03",
+   "type": "bmp",
+   "text_layer": "none",
+   "latency_s": 5.88,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "bmp-04",
+   "type": "bmp",
+   "text_layer": "none",
+   "latency_s": 5.49,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "bmp-05",
+   "type": "bmp",
+   "text_layer": "none",
+   "latency_s": 5.08,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 1,
+   "crash": null
+  },
+  {
+   "file_id": "svg-03",
+   "type": "svg",
+   "text_layer": "full",
+   "latency_s": 1.25,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "svg-04",
+   "type": "svg",
+   "text_layer": "full",
+   "latency_s": 1.21,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "svg-05",
+   "type": "svg",
+   "text_layer": "full",
+   "latency_s": 1.6,
+   "reading_type": "image",
+   "reading_error": null,
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mp4-01",
+   "type": "mp4",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mp4-03",
+   "type": "mp4",
+   "text_layer": "none",
+   "latency_s": 0.04,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mp4-04",
+   "type": "mp4",
+   "text_layer": "none",
+   "latency_s": 0.04,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mp4-05",
+   "type": "mp4",
+   "text_layer": "none",
+   "latency_s": 0.06,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mov-01",
+   "type": "mov",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mov-04",
+   "type": "mov",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  },
+  {
+   "file_id": "mov-05",
+   "type": "mov",
+   "text_layer": "none",
+   "latency_s": 0.05,
+   "reading_type": "data",
+   "reading_error": "unsupported",
+   "image_parts": 0,
+   "crash": null
+  }
+ ]
+}

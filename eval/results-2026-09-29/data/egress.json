@@ -1,0 +1,30 @@
+{
+ "method": "Aggregate-only census of each scale run's Spark organizer.db (read-only): rows the Mac sent (Spark-made segment children excluded), UTF-8 byte counts of the text / segments / persons columns, stored image blobs by MIME, a magic-byte scan of blobs for audio/video (RIFF, OggS, fLaC, ID3, audio/*, video/*), a scan of received segment/person fields for float vectors of length >= 32, and the EXIF tags present in received JPEGs. Script: data/egress.py and data/exiftags.py (copied to the Spark, printed aggregates only). Content was never printed.",
+ "runs": {
+  "lab": {"db": "spark-n2 ~/hack/zhiji-scale-lab/data/organizer.db", "items_received": 1508,
+   "by_kind": {"text": {"items": 1246, "text_bytes": 1308411}, "document": {"items": 210, "text_bytes": 1020943}, "image": {"items": 52, "blob_bytes": 7991094}},
+   "image_blobs": {"image/jpeg": 52}, "blob_max_bytes": 331227, "audio_or_video_blobs": 0, "segments_bytes": 0, "persons_bytes": 0,
+   "float_vectors_ge32": 0, "jpeg_exif_tags": {"ExifIFD": 52, "PixelXDimension": 52, "PixelYDimension": 52, "ColorSpace": 52}, "jpeg_with_gps": 0},
+  "startup": {"db": "spark-n4 ~/hack/zhiji-scale-startup/data/organizer.db", "items_received": 1600,
+   "by_kind": {"text": {"items": 1437, "text_bytes": 1186495}, "document": {"items": 108, "text_bytes": 912070}, "image": {"items": 55, "blob_bytes": 5469447}},
+   "image_blobs": {"image/jpeg": 55}, "blob_max_bytes": 342145, "audio_or_video_blobs": 0, "segments_bytes": 0, "persons_bytes": 0,
+   "float_vectors_ge32": 0, "jpeg_exif_tags": {"ExifIFD": 55, "PixelXDimension": 55, "PixelYDimension": 55, "ColorSpace": 55}, "jpeg_with_gps": 0},
+  "pm": {"db": "spark-n5 ~/hack/zhiji-scale-pm/data/organizer.db", "items_received": 1600,
+   "by_kind": {"text": {"items": 1437, "text_bytes": 1132157}, "document": {"items": 108, "text_bytes": 910286}, "image": {"items": 55, "blob_bytes": 10535488}},
+   "image_blobs": {"image/jpeg": 55}, "blob_max_bytes": 411671, "audio_or_video_blobs": 0, "segments_bytes": 0, "persons_bytes": 0,
+   "float_vectors_ge32": 0, "jpeg_exif_tags": {"ExifIFD": 55, "PixelXDimension": 55, "PixelYDimension": 55, "ColorSpace": 55}, "jpeg_with_gps": 0},
+  "lab-v2 (video re-run, adds 2 PDFs as kind=file)": {"db": "spark-n2 ~/hack/zhiji-scale-lab-v2/data/organizer.db", "items_received": 1510,
+   "extra": {"file": {"items": 2, "blob_bytes": 339050, "mime": "application/pdf"}}, "audio_or_video_blobs": 0, "float_vectors_ge32": 0, "jpeg_with_gps": 0}
+ },
+ "limits": [
+  "The scale harness pastes dictation as text (dictation_as_text) and meetings as transcript files, so these runs never had audio to leak; the census shows what arrived, it does not by itself prove the Mac app never sends audio.",
+  "segments_bytes = 0: in these runs no item carried speaker-turn segments; a live meeting item would carry turns (start/end ms, person id, user-given name, text) — never audio or voiceprints (enforced below)."
+ ],
+ "enforcement": [
+  "Mac wire type RemoteOrganizerItem (Packages/BestASRCore/Sources/BestASRDomain/RemoteOrganizer.swift): 'Audio, embeddings, dictionary entries, and window titles have no fields here.'",
+  "Test testPayloadCarriesOnlyAllowedFieldsAndNoPrivateSentinels (Packages/BestASRCore/Tests/BestASRPersistenceTests/RemoteOrganizerPersistenceTests.swift:190) plants sentinel audio tracks, audio chunks, person embeddings, session speaker embeddings and dictionary entries in a synthetic library and asserts none reaches the payload.",
+  "Tests testRealLibraryAndUnmarkedRootsNeverStartTheLink / testSeparateDataRootCanNeverPointAtTheRealLibrary / testLaunchArgumentsNeverFallBackToTheRealLibrary keep development runs off the real library.",
+  "Spark side (spark/organizer/schemas.py): item kind is a closed set (dictation, meeting_online, meeting_offline, imported_media, text, image, document, file) with no audio payload field; image_b64 only for kind=image, <= 12 MiB; file bytes <= 25 MiB; services bind 127.0.0.1 and are reached only through the user's SSH tunnel.",
+  "file-read never decodes audio/video inside archives or attachments (docs/FILE_READ.md §2); the parser subprocess has no network (test_the_parser_process_has_no_network)."
+ ]
+}
