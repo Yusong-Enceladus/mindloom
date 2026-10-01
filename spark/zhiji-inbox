@@ -1,10 +1,13 @@
 #!/bin/sh
-# zhiji-inbox: put a phone share (text on stdin, or --image) into the organizer inbox on this Spark.
-# See organizer/inbox_cli.py and docs/PHONE.md. Uses the organizer's venv and data directory
-# (ORGANIZER_VENV, ORGANIZER_DATA_DIR; the same defaults as ctl.sh).
+# zhiji-inbox: put a sealed phone entry (the 织机 iPhone app) into the organizer inbox on this
+# Spark, and pair/unpair phone keys. See organizer/inbox_cli.py and docs/PHONE.md. Uses the organizer's venv
+# and data directory (ORGANIZER_VENV, ORGANIZER_DATA_DIR; the same defaults as ctl.sh).
+# ZHIJI_INBOX_GATE is the program a phone key's forced command runs (authorize-phone writes it into
+# authorized_keys): this script, unless an instance wrapper (ctl.sh gate-wrapper) already set its own path.
 HERE=$(cd "$(dirname "$0")" && pwd)
 VENV=${ORGANIZER_VENV:-$HOME/hack/organizer-venv}
 PY="$VENV/bin/python"
 [ -x "$PY" ] || PY=python3
 export ORGANIZER_DATA_DIR="${ORGANIZER_DATA_DIR:-$HOME/hack/organizer-data}"
+export ZHIJI_INBOX_GATE="${ZHIJI_INBOX_GATE:-$HERE/$(basename "$0")}"
 cd "$HERE" && exec "$PY" -m organizer.inbox_cli "$@"

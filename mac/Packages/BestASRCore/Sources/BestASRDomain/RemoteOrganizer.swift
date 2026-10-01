@@ -131,6 +131,25 @@ public struct RemoteOrganizerItem: Codable, Equatable, Sendable {
     replacing(revision: revision)
   }
 
+  /// A copy whose text fields are the ones that cross the link (masked,
+  /// privacy contract §3) and whose digest describes that content.
+  public func withWireText(
+    text: String?, segments: [Segment]?, persons: [Person]?, sourceName: String,
+    filename: String?, localText: String?, sha256: String
+  ) -> RemoteOrganizerItem {
+    RemoteOrganizerItem(
+      itemID: itemID, revision: revision, kind: kind,
+      sourceApp: SourceApp(bundleID: sourceApp.bundleID, name: sourceName),
+      startedAt: startedAt, endedAt: endedAt, text: text, segments: segments,
+      persons: persons, imageBase64: imageBase64, imageAsset: imageAsset, sha256: sha256,
+      filename: filename, uniformType: uniformType, mediaType: mediaType,
+      sizeBytes: sizeBytes, fileBase64: fileBase64, fileAsset: fileAsset,
+      localText: localText, capturedAt: capturedAt, parentItemID: parentItemID,
+      frameMilliseconds: frameMilliseconds, extraImagesBase64: extraImagesBase64,
+      extraImageAssets: extraImageAssets
+    )
+  }
+
   /// What may cross the link: every local file reference replaced by the
   /// bytes it names; nothing else is added.
   public func wireItem(
@@ -224,6 +243,82 @@ public protocol RemoteOrganizerItemAssetReading: Sendable {
   func fileData(for asset: RemoteOrganizerImageAsset) throws -> Data
 }
 
+/// A send copy that could not be made for a reason that may pass: on-device
+/// text recognition failed outright (Vision refuses a request now and then,
+/// for example while another reading runs). The item is tried again later
+/// instead of staying parked until it changes. Any other failure parks it.
+public protocol RemoteOrganizerAssetErrorClassifying: Error {
+  var isTransient: Bool { get }
+}
+
+/// Makes the copy of a normalized screenshot that may leave the Mac (privacy
+/// contract §4): identifiers recognized on this Mac are painted over; the
+/// original stays untouched. Implementations must fail (the item then stays
+/// on the Mac) rather than return an unredacted copy they could not check.
+public protocol RemoteOrganizerImageRedacting: Sendable {
+  /// PNG or JPEG in, the same format out, no metadata. Returns the input
+  /// unchanged when nothing needs covering.
+  func redactedSendCopy(of data: Data, mediaType: String) throws -> Data
+}
+
+/// The copy of a file item's bytes that may leave the Mac (privacy review
+/// F3): pictures inside it redacted like screenshots, audio and video inside
+/// it emptied, embedded objects this Mac cannot inspect left out.
+public struct RemoteOrganizerFileSendCopy: Equatable, Sendable {
+  public let data: Data
+  /// True when every picture the organizing device could find in `data` was
+  /// redacted here; only then may it read them with a model. False for bytes
+  /// sent as they are (it then skips any picture in them).
+  public let picturesRedacted: Bool
+
+  public init(data: Data, picturesRedacted: Bool) {
+    self.data = data
+    self.picturesRedacted = picturesRedacted
+  }
+}
+
+/// Makes a file item's send copy. Implementations must fail (the item then
+/// stays on the Mac) rather than return bytes they could not check.
+public protocol RemoteOrganizerFileSanitizing: Sendable {
+  func sendCopy(of data: Data, filename: String) throws -> RemoteOrganizerFileSendCopy
+}
+
+/// What one masked send put in place of what (privacy contract §3): kept in
+/// the library (`remote_mask_map`, never sent) so what comes back can be
+/// shown with the originals. `ownerID` is the item or decision the text
+/// belonged to, so deleting it deletes its entries too.
+public struct RemoteOrganizerMaskRecord: Equatable, Sendable {
+  public struct Entry: Equatable, Hashable, Sendable {
+    public let placeholder: String
+    public let original: String
+    public let type: String
+
+    public init(placeholder: String, original: String, type: String) {
+      self.placeholder = placeholder
+      self.original = original
+      self.type = type
+    }
+  }
+
+  public let ownerID: String
+  public let entries: [Entry]
+  /// An item's `text` as sent: where each placeholder sits, so the
+  /// organizer's segment offsets can be read against the original text.
+  /// Nil for a decision.
+  public let textOffsets: [PrivacyMaskOffset]?
+  public let revision: Int64?
+
+  public init(
+    ownerID: String, entries: [Entry], textOffsets: [PrivacyMaskOffset]? = nil,
+    revision: Int64? = nil
+  ) {
+    self.ownerID = ownerID
+    self.entries = entries
+    self.textOffsets = textOffsets
+    self.revision = revision
+  }
+}
+
 /// The stable ID is a delivery receipt key. Replays cannot apply a correction twice.
 public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
   public let decisionID: UUID
@@ -284,6 +379,17 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
   public func reissued(as id: UUID = UUID()) -> RemoteOrganizerDecision {
     RemoteOrganizerDecision(
       decisionID: id, kind: kind, questionID: questionID, eventID: eventID,
+      itemID: itemID, toEventID: toEventID, title: title, a: a, b: b,
+      answer: answer, personID: personID, displayName: displayName, pinned: pinned,
+      newEventID: newEventID, segID: segID
+    )
+  }
+
+  /// The same decision with its free text (a title, a person's name) as it
+  /// crosses the link; the stored decision keeps what the user typed.
+  public func withWireText(title: String?, displayName: String?) -> RemoteOrganizerDecision {
+    RemoteOrganizerDecision(
+      decisionID: decisionID, kind: kind, questionID: questionID, eventID: eventID,
       itemID: itemID, toEventID: toEventID, title: title, a: a, b: b,
       answer: answer, personID: personID, displayName: displayName, pinned: pinned,
       newEventID: newEventID, segID: segID
@@ -579,14 +685,23 @@ public struct RemoteOrganizerPerson: Codable, Equatable, Identifiable, Sendable 
   public let aliases: [String]
   public let origin: String?
   public var mergedInto: String?
+  /// The organizer's people pass (2026-09-30): `not_person` (a label read as
+  /// a speaker: never shown as a person), `role` (a desk or role that speaks
+  /// in chats), or nil (a person). Absent from older organizers.
+  public let status: String?
 
   public var id: String { personID }
+
+  /// A label the organizer once read as a speaker; it is never shown.
+  public var isNotPerson: Bool { status == Self.notPersonStatus }
+  public static let notPersonStatus = "not_person"
 
   enum CodingKeys: String, CodingKey {
     case personID = "person_id"
     case displayName = "display_name"
     case aliases, origin
     case mergedInto = "merged_into"
+    case status
   }
 }
 
@@ -844,7 +959,8 @@ public struct RemoteOrganizerState: Codable, Equatable, Sendable {
       var fields: [RemoteOrganizerReadingFacts.Field] = []
       if let object = try? container.decode([String: FieldValue].self, forKey: .fields) {
         for (name, value) in object.sorted(by: {
-          RemoteOrganizerReadingFacts.fieldOrder($0.key) < RemoteOrganizerReadingFacts.fieldOrder($1.key)
+          RemoteOrganizerReadingFacts.fieldOrder($0.key)
+            < RemoteOrganizerReadingFacts.fieldOrder($1.key)
         }) {
           guard let text = value.text, !text.isEmpty, !name.isEmpty else { continue }
           fields.append(.init(name: clamp(name), value: clamp(text)))
@@ -1117,5 +1233,95 @@ public protocol RemoteOrganizerRepository: Sendable {
   /// Returns true when the pulled state showed a reset; the caller pulls again
   /// from cursor 0.
   func applyRemoteState(_ state: RemoteOrganizerState) async throws -> Bool
+  /// The pulled state with every placeholder put back (privacy contract §3):
+  /// what the Mac shows and exports never carries a tag.
   func remoteProjection() async throws -> RemoteOrganizerProjection
+
+  // Privacy (contract v6).
+  /// Replaces what an item or decision's latest send masked; recorded before
+  /// the send leaves.
+  func recordRemoteMasks(_ record: RemoteOrganizerMaskRecord) async throws
+  /// The oldest deletion of a delivered item that is due, if any. The queue
+  /// survives revocation and archive import; it is sent first after unlock.
+  func claimNextRemoteDeletion(now: Date) async throws -> String?
+  func markRemoteDeletionSent(itemID: String) async throws
+  func markRemoteDeletionFailed(itemID: String, retryAt: Date) async throws
+  /// After the organizing device forgot this library (`/v1/wipe`): nothing
+  /// counts as delivered any more (so nothing is sent again unless it
+  /// changes), the mirror, queued deletions and the placeholder map are
+  /// cleared, and pending corrections are cancelled.
+  func forgetRemoteStore() async throws
+}
+
+// MARK: - Putting originals back (privacy contract §3)
+
+extension RemoteOrganizerEvent {
+  /// Every text the organizing device wrote, through `text` (unmask), and
+  /// each part's character offsets read against the item's original text
+  /// (`offsets` gives where the placeholders sat in the text as sent).
+  public func unmasked(
+    _ text: (String) -> String, offsets: (String) -> [PrivacyMaskOffset]?
+  ) -> RemoteOrganizerEvent {
+    RemoteOrganizerEvent(
+      eventID: eventID, title: text(title), titleUserEdited: titleUserEdited,
+      statusLine: text(statusLine),
+      statusFacts: statusFacts.map {
+        StatusFact(
+          text: text($0.text), itemIDs: $0.itemIDs, state: $0.state, date: $0.date,
+          quote: $0.quote.map(text))
+      },
+      importance: importance, startedAt: startedAt, updatedAt: updatedAt, itemIDs: itemIDs,
+      personIDs: personIDs, pinned: pinned, deleted: deleted, provenance: provenance,
+      handle: handle, anchor: anchor.map(text),
+      segments: segments.map { segment in
+        guard let replacements = offsets(segment.itemID.uppercased()), !replacements.isEmpty
+        else {
+          return Segment(
+            itemID: segment.itemID, segID: segment.segID, start: segment.start,
+            end: segment.end, gist: text(segment.gist))
+        }
+        let start = PrivacyUnmask.originalOffset(
+          segment.start, replacements: replacements, isEnd: false)
+        let end = PrivacyUnmask.originalOffset(segment.end, replacements: replacements, isEnd: true)
+        return Segment(
+          itemID: segment.itemID, segID: segment.segID, start: start, end: max(end, start + 1),
+          gist: text(segment.gist))
+      })
+  }
+}
+
+extension RemoteOrganizerQuestion {
+  public func unmasked(_ text: (String) -> String) -> RemoteOrganizerQuestion {
+    RemoteOrganizerQuestion(
+      questionID: questionID, kind: kind, a: a, b: b, promptZH: text(promptZH),
+      createdAt: createdAt)
+  }
+}
+
+extension RemoteOrganizerPerson {
+  public func unmasked(_ text: (String) -> String) -> RemoteOrganizerPerson {
+    RemoteOrganizerPerson(
+      personID: personID, displayName: displayName.map(text), aliases: aliases.map(text),
+      origin: origin, mergedInto: mergedInto, status: status)
+  }
+}
+
+extension RemoteOrganizerItemReading {
+  public func unmasked(_ text: (String) -> String) -> RemoteOrganizerItemReading {
+    RemoteOrganizerItemReading(
+      itemID: itemID, revision: revision, text: text(self.text), summary: summary.map(text),
+      facts: facts?.unmasked(text))
+  }
+}
+
+extension RemoteOrganizerReadingFacts {
+  public func unmasked(_ text: (String) -> String) -> RemoteOrganizerReadingFacts {
+    RemoteOrganizerReadingFacts(
+      type: type, fields: fields.map { Field(name: text($0.name), value: text($0.value)) },
+      counts: counts,
+      attachments: attachments.map {
+        Attachment(filename: text($0.filename), type: $0.type, summary: $0.summary.map(text))
+      },
+      error: error, source: source)
+  }
 }

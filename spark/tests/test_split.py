@@ -66,9 +66,11 @@ def test_transcript_speakers_become_people_and_owner_aliases_are_excluded(settin
     people = {p["display_name"]: p for p in _state(org)["persons"]}
     assert "韩青禾" not in people  # the owner (an alias) never becomes a person
     assert people["杜远舟 Yuanzhou DU"]["origin"] == "transcript"
-    qs = [q for q in _state(org)["questions"] if q["kind"] == "same_person"]
-    assert qs and "会议记录里的「杜远舟 Yuanzhou DU」" in qs[0]["prompt_zh"]
-    assert "声音里的「杜远舟」" in qs[0]["prompt_zh"]
+    # A bilingual transcript name is kept under its Chinese name (persons.canonical_form); that name is exactly
+    # the voice person's, so the speaker joins the voice (the exact-name rule) and the full form stays an alias.
+    assert org.people.canonical(people["杜远舟 Yuanzhou DU"]["person_id"]) == "VOICE-DU"
+    assert "杜远舟 Yuanzhou DU" in org.people.aliases("VOICE-DU")
+    assert not [q for q in _state(org)["questions"] if q["kind"] == "same_person"]
 
 
 def test_owner_alias_matches_either_part_of_a_bilingual_name(org):

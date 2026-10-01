@@ -10,7 +10,7 @@ description: >-
   events.
 license: Apache-2.0
 metadata:
-  version: "1.3.0"
+  version: "1.3.1"
   author: mindloom
   max_output_tokens: "2500"
   language: zh-CN
@@ -30,6 +30,8 @@ pinned first, then this score; pinned events are handled by the app itself.
   `dates`（系统算好的：`upcoming` = 在 now 当天或之后的日期，`past` = 已过去的日期）,
   `started_at`, `updated_at`, `item_count`, `kinds`, `person_count`, `pinned`,
   `feature_less`（用户要求少展示）, `user_touches`（用户对它做过的操作次数）。
+
+占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。
 
 ## 打分规则 / Scoring
 

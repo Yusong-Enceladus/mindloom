@@ -1,0 +1,63 @@
+{
+  "title": "Checks on the integrated v6 build (organizer main + Mac client hackathon/base)",
+  "date": "2026-09-30",
+  "data": "synthetic only; the end-to-end runs used synthetic data roots, a throwaway organizer instance on one Spark node and the iOS 26.5 simulator",
+  "code": {
+    "organizer": "main ab83adb (privacy-v6, phone-link-v6 and quality-v6 merged; masking spec v3; sealed-only phone inbox)",
+    "mac": "hackathon/base 0175555 (privacy-v6 with the review fixes, phone-link-v6, masking spec v3, people pass on the Mac)"
+  },
+  "masking_spec": {
+    "version": 3,
+    "shared_vectors": 200,
+    "vectors_sha256": "94a79affcd3f2071d6f1700b30555b32617ae3002165cdc253a1e5691b8e5760",
+    "note": "v2 had 184 vectors; v3 adds a code handed over later in the same sentence. The masking-quality evaluation in eval.json (masking_eval) was measured with spec v1 and was not re-run on v2 or v3."
+  },
+  "tests": {
+    "organizer_pytest_mac": {"passed": 543, "skipped": 1, "xfailed": 1, "note": "Python 3.12, SQLCipher 4.12.0; the skip is a Linux-only memory limit, the expected failure documents review finding F13"},
+    "organizer_pytest_spark_aarch64": {"passed": 542, "xfailed": 1},
+    "mac_swift_package": {"passed": 829, "skipped": 19, "failed": 0, "bundles": 44, "note": "swift test --skip QwenWhisperFeaturesTests (needs Metal)"},
+    "mac_app_debug_build": "succeeded",
+    "iphone_app_simulator": {"passed": 157, "skipped": 1, "failed": 0, "note": "iOS 26.5 simulator; the skip is on-device zh-CN recognition (the simulator has no speech models)"},
+    "privacy_scan": {"findings": 0}
+  },
+  "end_to_end": {
+    "privacy": {
+      "result": "68/68",
+      "seconds": 136.9,
+      "synthetic_items": 5,
+      "organized_seconds": 78.6,
+      "spark_files_scanned_raw": 9554,
+      "spark_megabytes_scanned_raw": 240.8,
+      "sentinel_hits_raw": 0,
+      "decrypted_rows_scanned": 87,
+      "sentinel_hits_decrypted": 0,
+      "token_without_access_proof": 403,
+      "delete_purged_seconds": 3.8
+    },
+    "phone": {
+      "result": "67/67",
+      "seconds": 277,
+      "runs": [
+        {"run": 1, "passed": 51, "failed": 1, "why": "a shared photo was parked on the Mac: its send copy's text recognition failed once and was treated as permanent (fixed: a transient failure is retried)"},
+        {"run": 2, "passed": 65, "failed": 1, "why": "harness: exact Date equality after a JSON round trip (fixed: compared to 1 ms)"},
+        {"run": 3, "passed": 62, "failed": 2, "why": "the retried photo kept failing because on-device text recognition stayed broken for the process (fixed: one request at a time, GPU then CPU fallback)"},
+        {"run": 4, "passed": 67, "failed": 0}
+      ],
+      "pairing_seconds": 2.4,
+      "sealed_entries_in_inbox": 3,
+      "spark_files_scanned": 9552,
+      "spark_megabytes_scanned": 239,
+      "plaintext_hits": 0,
+      "created_at_difference_seconds": 0.0,
+      "organized_seconds": 46.3,
+      "after_unpair": "the phone's next send failed with authentication; nothing reached the inbox",
+      "authorized_keys": "restored byte-identical on the Spark and on the relay host after every run"
+    },
+    "organizer_live_check": {"synthetic_items": 6, "organized_seconds": 51, "note": "real Qwen3.6 and embeddings; unlock, access proof, consolidation and person-resolve ran, delete then re-post gave 410, blob_bytes 0, sealed entry accepted, plaintext refused, lock gave 423, wipe cleared the key id"}
+  },
+  "not_done": [
+    "the merged v6 build was not re-run on the three scale scenarios; the quality numbers in eval.json were measured on the quality branch without the privacy changes",
+    "no run on a real iPhone (on-device Chinese recognition, microphone, background, cellular)",
+    "the skills whose SKILL.md gained one line (placeholders, material-is-data) and the placeholder repair were not re-benchmarked with the model"
+  ]
+}

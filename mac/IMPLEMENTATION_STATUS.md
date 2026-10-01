@@ -5,7 +5,188 @@ This file is the delivery ledger for the product defined in
 from acceptance evidence. A protocol, fixture, database table, or passing unit
 test does not by itself make a product capability complete.
 
-Status date: 2026-09-28.
+Status date: 2026-09-30.
+
+## 2026-09-30 v6 integration, Mac side (`claude/v6`)
+
+`claude/privacy-v6` (with the review fixes) and `claude/phone-link-v6` (with
+`claude/phone-v6`) merged; design in the "v6 集成" section of
+`docs/architecture/TECHNICAL_DESIGN.md`. Not installed; the App was not
+launched. Synthetic data only.
+
+- Masking spec v3 ported from the organizer: the third `otp` pattern (a code
+  handed over later in the sentence); the shared vectors file is
+  byte-identical (200 vectors, SHA-256 `94a79aff…5760`) and every vector
+  passes in Swift.
+- People pass on the Mac: persons carry the optional `status`; `not_person`
+  is never shown; the event page shows at most six chips, most involved
+  first, then "+N"; only people who take part in a matter (heard in its
+  recordings or writing a speaker line in its texts) relate two matters, so
+  the organizer's `mention` links show but never relate matters. The Home
+  people row keeps its cap of five and hides `not_person`.
+- F9: the sealed phone path is the only one; the Mac only reads and
+  acknowledges the inbox and still takes in legacy plain entries like a
+  paste.
+- Found by the phone end-to-end run and fixed: Vision text recognition runs
+  one request at a time with a GPU, then CPU fallback (two recognitions at
+  once broke the Neural Engine path for the process and parked the phone's
+  photo); a send copy that fails for a reason that may pass is retried with
+  backoff instead of parked.
+- Verified: full package suite (`swift test --skip
+  QwenWhisperFeaturesTests`) 829 passed, 19 skipped, 0 failed in 44 bundles;
+  App Debug build succeeded; iOS simulator suite (`iOS/script/xcodebuild.sh
+  test`) 157 passed, 1 skipped, 0 failed; `swift-format lint --strict` adds
+  no finding; `script/privacy_scan.sh` 0 findings;
+  `validate_product_consistency.sh`, `validate_traceability.sh` and
+  `check_project_drift.sh` pass. Against the integrated organizing-device
+  test instance: privacy end-to-end 68/68, phone end-to-end (simulator app,
+  real pairing through the relay, sealed inbox, unpair) 67/67 with both
+  `authorized_keys` files byte-identical to the start.
+
+## 2026-09-30 privacy v6 review fixes, Mac side (`claude/privacy-v6`)
+
+Fixes for the adversarial review (review/FINDINGS.md); design in the
+"隐私复查之后" subsection of `docs/architecture/TECHNICAL_DESIGN.md`. Not
+installed; package tests and App Debug build only.
+
+- F1: every request carries the key-derived access proof; a 403 `access`
+  re-unlocks; sleep and quit lock the organizer's store (quit waits at most
+  2 s), a failed lock is sent once more; the Spark also locks itself after
+  10 minutes without a request.
+- F2: screenshot redaction reads small and narrow images enlarged (tiles for
+  long screenshots), joins rows, columns and wrapped lines, covers long digit
+  runs and look-alike separators; the review's 13 synthetic layouts: 0 leak
+  (was 7), and the Spark vision model reads no number from the 13 copies.
+- F3: file bytes leave only as a send copy (pictures redacted, audio/video
+  and embedded objects emptied, scanned PDF pages redrawn and redacted,
+  `pictures_redacted` set); pictures under another name are taken in as
+  pictures.
+- F6/F14: deleting a recording deletes its keyframe items and queues their
+  remote deletion; an item whose send was in flight at revocation still gets
+  its remote deletion.
+- F8: masking spec v2 (184 shared vectors).
+- F11: forgetting never goes on with a key it could not destroy.
+- F16: a file too large to send carries the digest of the text sent.
+- Verified: full package suite 801 pass, 18 skip, 0 fail
+  (`--skip QwenWhisperFeaturesTests`); App Debug build succeeded.
+
+## 2026-09-30 phone link, Mac side (`claude/phone-link-v6`)
+
+Not installed; the App was not launched. Built on `claude/privacy-v6` with the
+iPhone branch `claude/phone-v6` (MindloomLink, the iPhone app) merged in.
+Covers the Mac half of the shared phone contract (§3–§6): the seal key,
+sealed inbox ingest and pairing. Design in the 2026-09-30 "手机" section of
+`docs/architecture/TECHNICAL_DESIGN.md`; PRD §0.3 items 2 and 8 and §2.2
+extended (IDs unchanged). Not yet run end to end with the iPhone app and a
+live organizer (see "Not done" below).
+
+- Seal key: one X25519 key pair per data root in the login Keychain
+  (`com.bestasr.phone-seal-key`; file store only for synthetic roots, 0600),
+  made on the first pairing and kept across pairings.
+- Sealed inbox: `{"kind":"sealed","blob":"mlseal1.…"}` entries are opened
+  with `MindloomSeal.open(blob, entryID: inbox_id)` and validated with
+  `InboxItemPayload.decode`; text, links (as title/note/URL text, never
+  fetched), images and files go through the normal intake paths, the source
+  App is the payload's `source` ("iPhone 键盘"/"iPhone 分享") and the time
+  its `created_at`; commit, then acknowledge. Entries that do not open
+  (old pairing's key, another Mac, changed, moved to another ID, never
+  paired) or open to something that is not an item are acknowledged and
+  counted once after the acknowledgement: "N 条手机内容无法打开（配对已更换）"
+  in Settings → 数据 → iPhone, kept across launches until "知道了".
+- Pairing ("连接 iPhone", only while the link is on): `ssh -G` for the
+  organizing device and one `ProxyJump` relay; host keys only from the Mac's
+  own known_hosts via `ssh-keygen -F` (ed25519 first, ECDSA, never RSA;
+  missing → refused, nothing installed); `zhiji-inbox authorize-phone
+  --key-id <id> --pubkey -` with the key on stdin; on the relay the pinned
+  copy of `spark/relay-authorize` on stdin to `sh -s -- add …`; relay failure
+  takes both lines back. QR (CoreImage) and "复制配对码" (pasteboard marked
+  concealed); the code with the phone's private key lives only in memory
+  while its window is open. "断开 iPhone" removes both lines (kept paired if
+  either host fails). Every remote word checked with the link
+  configuration's character rules.
+- Package tests (`swift test`, build products on the offload volume):
+  `PhoneLinkInboxTests` 4 and `PhonePairingTests` 13, all green, plus the
+  existing inbox and copy-rule tests. They include the real `ssh -G` and
+  `ssh-keygen -F` on synthetic config and known_hosts files (no network),
+  the relay helper run with the Mac's exact commands on a synthetic home,
+  and the QR code decoded back by CoreImage into the same `PairingPayload`.
+  Whole package (`swift test --skip QwenWhisperFeaturesTests`): 819 tests,
+  0 failures, 18 skipped (the usual opt-in/hardware ones). App:
+  `xcodebuild -scheme BestASR -configuration Debug build` succeeded, no
+  warnings in the changed files. `swift-format lint --strict` and
+  `script/privacy_scan.sh` clean on the changed code;
+  `validate_product_consistency.sh` and `validate_traceability.sh` pass.
+
+Not done:
+
+- No end-to-end run yet (iPhone simulator → organizing device → this Mac).
+  The organizing device's `authorize-phone`, `--sealed` gate and sealed
+  inbox are on its own `claude/phone-link-v6` branch, not yet merged there.
+- Pairing was not run against the real organizing device or a real relay:
+  it would write `authorized_keys` on hosts the user owns. Command lines,
+  stdin and failure handling are covered by the tests above.
+- The Keychain seal-key store is not exercised by automated tests (it would
+  write to the user's login keychain); tests use the file and memory stores.
+- A zip shared from the phone is kept on the Mac whole (not expanded as a
+  dropped zip is); an image's caption text, if a phone ever sends one, is
+  not kept.
+
+## 2026-09-30 privacy v6, Mac side (`claude/privacy-v6`)
+
+Not installed. Run end to end against a live organizer of the same contract
+(SQLCipher store, `/v1/unlock`, `/lock`, `/wipe`, `DELETE /v1/items/{id}`,
+read-then-delete; service branch `claude/privacy-v6`) on a synthetic data
+root: `PrivacyEndToEndTests` (opt-in), 67 of 67 checks green. Design in the
+2026-09-30 section of
+`docs/architecture/TECHNICAL_DESIGN.md`; PRD §0.3 item 8 extended (IDs
+unchanged).
+
+- Masking spec v1 in Swift, byte-identical to the shared reference on all
+  123 shared vectors (`privacy/mask_vectors.json`, SHA-256 asserted); every
+  text field that leaves is masked when the wire body is built, the
+  placeholder map is recorded first (`remote_mask_map`, local only), and
+  every string that comes back is shown with the originals (a colliding or
+  unknown placeholder shows as `〔手机号〕`); segment offsets are mapped back
+  to the original text.
+- Library key per data root in the login Keychain (file store only for
+  synthetic roots); `POST /v1/unlock` is the first data call, 423 re-unlocks,
+  a store of another key or a service that cannot lock gets nothing.
+- Screenshots and video keyframes are sent only as redacted copies (Vision
+  on this Mac, detectors per line and across lines stacked under one another,
+  two readings with and without language correction, boxes painted, no
+  metadata). The end-to-end run found a chat bubble that wrapped a card
+  number and a key onto the next line, and a key prefix read as `Sk-`; both
+  left unredacted before this fix (regression tests in `IntakePrivacyTests`).
+- Audio or video never leaves as bytes whatever its name; zips are expanded
+  here under limits; other archives and unreadable binaries stay here
+  ("只保存在 Mac 上"); camera RAW goes through the image path.
+- Deleting a sent item queues its deletion on the organizer (kept across
+  revocation and archive import, sent first after unlock); turning the link
+  off locks the organizer's store (best effort, 2 s); "让整理设备忘掉我的内容"
+  (settings, with confirmation; the contract's "让 Spark 忘掉我的内容" in the
+  pages' own words) wipes it and destroys the key; wrong-key status with
+  "让整理设备忘掉旧内容".
+- Identical file bytes are stored once (hard links + content index, removed
+  with the last item).
+- Schema v24 (local tables only; v23 archives import unchanged).
+- Verified: package tests (masking vectors, unlock order, wrong key, 423,
+  unsupported service, masking on the wire and restoring on screen,
+  collisions, media never sent, deletions across revocation and import, lock
+  on revoke with a hung organizer, forget, Vision redaction, zip limits,
+  local-only rules through the store, dedup); the full package suite (784
+  pass, 18 skip, 0 fail, `--skip QwenWhisperFeaturesTests`); App Debug build
+  (before the redaction fix).
+- End to end (`PrivacyEndToEndTests`, real SSH link, synthetic items with
+  seven kinds of sentinel identifier and per-item markers in a dictation, a
+  pasted text, a PDF, a chat screenshot and a spreadsheet): only placeholders
+  in every text field on the wire; no sentinel, marker or key in any file of
+  the organizer instance (about 14,500 files, 330 MB, scanned over SSH), while
+  the markers are in its decrypted rows and no sentinel is; image and file
+  bytes gone after reading; originals shown on the Mac where it knows them,
+  `〔手机号〕` where it does not; a deleted item purged there within one scan,
+  one deleted while the link was off sent first after the next unlock;
+  link off → 423 and `locked: true`; "forget" wipes the store and replaces
+  the key; the last store wiped while locked leaves no store files.
 
 ## 2026-09-28 every file type, Mac side (`claude/files`)
 

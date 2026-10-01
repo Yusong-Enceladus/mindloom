@@ -226,5 +226,85 @@
     ]
    ]
   }
+ },
+ {
+  "id": "split-011-known-one-matter",
+  "question": "一段口述从头到尾在说志愿者积分系统（已在跟进的 E8）：兑换规则、签到报错、培训安排。",
+  "expected_skill": "item-split",
+  "ground_truth": "一件事，不切（都属于 E8）",
+  "expected_behavior": [
+   "不切分",
+   "known 写 E8"
+  ],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "kind": "dictation",
+   "source_app": "备忘录",
+   "known": [
+    {
+     "id": "E2",
+     "title": "社区图书角开放日"
+    },
+    {
+     "id": "E5",
+     "title": "楼道自行车棚改造"
+    },
+    {
+     "id": "E8",
+     "title": "志愿者积分系统上线"
+    }
+   ],
+   "text": "积分系统的兑换规则我改了一版，十个积分换一本旧书，二十个换一张电影票。昨天有三个志愿者说签到的时候页面报错，我截图发给小郝了，他说是定位权限的问题，今晚修。周六上午给新来的志愿者做培训，教他们怎么扫码签到和查积分，场地借居委会的会议室。"
+  },
+  "check": {
+   "unsplit": true
+  }
+ },
+ {
+  "id": "split-012-known-two-matters",
+  "question": "一段口述先说图书角开放日（E2）的布置和人手，再说自行车棚改造（E5）的报价。",
+  "expected_skill": "item-split",
+  "ground_truth": "两件事两段（E2 / E5）",
+  "expected_behavior": [
+   "两段"
+  ],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "kind": "dictation",
+   "source_app": "备忘录",
+   "known": [
+    {
+     "id": "E2",
+     "title": "社区图书角开放日"
+    },
+    {
+     "id": "E5",
+     "title": "楼道自行车棚改造"
+    },
+    {
+     "id": "E8",
+     "title": "志愿者积分系统上线"
+    }
+   ],
+   "text": "图书角开放日那天要摆六张桌子，绘本区放在靠窗那边，我已经约好四个志愿者早上八点到。签到表和横幅周五去打印店取。另外自行车棚的事，施工队报价出来了，换顶棚加装充电桩一共一万二，我明天拿去业委会讨论。"
+  },
+  "check": {
+   "n_segments": [
+    2,
+    2
+   ],
+   "apart": [
+    [
+     "U1",
+     "U3"
+    ]
+   ],
+   "together": [
+    [
+     "U1",
+     "U2"
+    ]
+   ]
+  }
  }
 ]

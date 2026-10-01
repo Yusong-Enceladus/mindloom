@@ -15,8 +15,8 @@ final class RemoteOrganizerRuntimeTests: XCTestCase {
     updates: @escaping (RemoteOrganizerRuntime.LinkState, RemoteOrganizerProjection?) -> Void
   ) -> RemoteOrganizerRuntime {
     RemoteOrganizerRuntime(
-      repository: repository, launcher: launcher, http: spark, timing: fastTiming,
-      onUpdate: updates
+      repository: repository, launcher: launcher, http: spark, keys: testOrganizerKeys,
+      timing: fastTiming, onUpdate: updates
     )
   }
 
@@ -262,7 +262,9 @@ final class RemoteOrganizerRuntimeTests: XCTestCase {
     try await waitUntil { spark.decisions.count == 3 }
     XCTAssertEqual(
       spark.decisions.map { $0["kind"] as? String }, ["pin_event", "rename_event", "same_event"])
-    let decisionPaths = spark.paths.filter { $0 != "/v1/health" && !$0.hasPrefix("/v1/state") }
+    let decisionPaths = spark.paths.filter {
+      $0 != "/v1/health" && $0 != "/v1/unlock" && !$0.hasPrefix("/v1/state")
+    }
     XCTAssertEqual(
       decisionPaths,
       ["/v1/decisions", "/v1/decisions", "/v1/questions/question-1/answer", "/v1/decisions"]
@@ -294,7 +296,9 @@ final class RemoteOrganizerRuntimeTests: XCTestCase {
     runtime.start()
     try await waitUntil { spark.decisions.count == 1 }
     runtime.stop()
-    let paths = spark.paths.filter { $0 != "/v1/health" && !$0.hasPrefix("/v1/state") }
+    let paths = spark.paths.filter {
+      $0 != "/v1/health" && $0 != "/v1/unlock" && !$0.hasPrefix("/v1/state")
+    }
     XCTAssertEqual(paths, ["/v1/questions/question-9/answer", "/v1/decisions"])
     XCTAssertEqual(spark.decisions.first?["decision_id"] as? String, answer.decisionID.uuidString)
     await library.close()
@@ -363,17 +367,18 @@ final class RemoteOrganizerLinkControllerTests: XCTestCase {
     _ repository: any RemoteOrganizerRepository, root: URL, realLibrary: URL,
     intent: RemoteOrganizerMemoryLinkIntent = RemoteOrganizerMemoryLinkIntent(),
     launcher: FakeTunnelLauncher = FakeTunnelLauncher(), spark: FakeSpark = FakeSpark(),
+    keyStore: any OrganizerKeyStore = MemoryOrganizerKeyStore(),
     cleanUps: @escaping @MainActor () -> Void = {},
     runtimesMade: @escaping @MainActor () -> Void = {}
   ) -> RemoteOrganizerLinkController {
     RemoteOrganizerLinkController(
       repository: repository, dataRoot: root, realLibraryRoot: realLibrary,
-      intent: intent, cleanUpStaleTunnels: cleanUps,
-      makeRuntime: { repository, onUpdate in
+      intent: intent, keyStore: keyStore, cleanUpStaleTunnels: cleanUps,
+      makeRuntime: { repository, keys, onUpdate in
         runtimesMade()
         return RemoteOrganizerRuntime(
-          repository: repository, launcher: launcher, http: spark, timing: fastTiming,
-          onUpdate: onUpdate
+          repository: repository, launcher: launcher, http: spark, keys: keys,
+          timing: fastTiming, onUpdate: onUpdate
         )
       }
     )
@@ -437,31 +442,37 @@ final class RemoteOrganizerLinkControllerTests: XCTestCase {
     try await waitUntil { controller.status == .connected }
 
     // One item is on its way to the Spark (the response is held) and one
-    // decision waits behind it.
+    // decision, recorded meanwhile, waits behind it.
     spark.holdItemPosts()
     let sessionID = UUID()
     try await library.seedCompletedSession(
       sessionID, createdAt: Date().timeIntervalSince1970, text: "开启期间的虚构口述"
     )
     try await controller.enqueueCompletedSession(SessionID(sessionID))
-    try await controller.record(.init(kind: "feature_less", eventID: "event-1"))
     try await waitUntil { spark.isHoldingItem }
+    try await controller.record(.init(kind: "feature_less", eventID: "event-1"))
     let requestsAtRevoke = spark.requests.count
     let statusesAtRevoke = statuses.count
 
-    // Revocation: the synchronous part alone already stops everything.
+    // Revocation: the synchronous part alone already stops all sending.
     controller.revokeNow()
     XCTAssertFalse(intent.onRecorded, "the on marker is gone before anything else")
     XCTAssertFalse(controller.isRuntimeRunning)
     XCTAssertFalse(controller.isEnabled)
     XCTAssertEqual(controller.status, .off)
     XCTAssertNil(controller.projection)
+    // Then only the lock goes out (contract v6), and the forward ends.
+    await controller.waitForRevocation()
     XCTAssertTrue(launcher.launched.allSatisfy(\.terminated))
     XCTAssertTrue(spark.cancelled)
+    XCTAssertEqual(spark.lockCount, 1)
+    XCTAssertTrue(spark.isLocked)
     spark.releaseHeldItem()
     await controller.revokeStorage()
     try await Task.sleep(for: .milliseconds(150))
-    XCTAssertEqual(spark.requests.count, requestsAtRevoke, "nothing is sent after revocation")
+    XCTAssertEqual(
+      Array(spark.paths.dropFirst(requestsAtRevoke)), ["/v1/lock"],
+      "nothing but the lock is sent after revocation")
     XCTAssertEqual(Array(statuses.dropFirst(statusesAtRevoke)), [.off], "no late status")
     let cleared = try await library.scalar(
       "SELECT state FROM remote_organizer_item_jobs WHERE item_id = ?", [sessionID.uuidString]
@@ -504,7 +515,7 @@ final class RemoteOrganizerLinkControllerTests: XCTestCase {
     try await Task.sleep(for: .milliseconds(120))
     XCTAssertEqual(Array(statuses.dropFirst(statusesAtToggle)), [.off])
     XCTAssertFalse(controller.isEnabled)
-    XCTAssertEqual(spark.requests.count, requestsAtToggle)
+    XCTAssertEqual(Array(spark.paths.dropFirst(requestsAtToggle)), ["/v1/lock"])
     await controller.revokeStorage()
     XCTAssertEqual(controller.status, .off)
     await library.close()

@@ -1,0 +1,214 @@
+#!/bin/sh
+# relay-authorize: add or remove a 织机 phone key on a RELAY (jump) host, for a Spark that the phone can only
+# reach through that host (phone contract section 4). Self-contained POSIX sh: nothing has to be installed
+# on the relay. The Mac pipes this file over its own SSH connection and passes the arguments as plain words:
+#
+#   ssh <relay> sh -s -- add <key-id> <spark-host> <spark-port> ssh-ed25519 <base64> < relay-authorize
+#   ssh <relay> sh -s -- remove <key-id> < relay-authorize
+#   ssh <relay> sh -s -- list < relay-authorize
+#
+# add writes one line to ~/.ssh/authorized_keys (idempotent; the same key id with a new key or target
+# replaces its line in place):
+#
+#   restrict,port-forwarding,permitopen="<spark-host>:<spark-port>",permitlisten="127.0.0.1:1",command="false" ssh-ed25519 <base64> mindloom-phone:<key-id>
+#
+# so the phone key can do exactly one thing on the relay: open a tunnel to the Spark's SSH port.
+#   restrict             no pty, no agent or X11 forwarding, no ~/.ssh/rc
+#   port-forwarding      re-enables forwarding, which permitopen limits to the Spark's host:port only
+#   permitlisten         remote (-R) forwarding may only listen on a privileged loopback port that a normal
+#                        user cannot bind, so the key cannot open listening ports on the relay
+#   command="false"      any shell or command the key asks for runs `false` instead (a tunnel is not a
+#                        command, so it is unaffected)
+# The spark-host must be written exactly as the phone asks for it (the pairing payload's spark host), since
+# sshd compares the tunnel target to permitopen as a string.
+#
+# remove deletes every line whose last word is mindloom-phone:<key-id>; list prints the phone key ids here.
+# Every other line of authorized_keys stays as it was. Changes go through a 0600 temporary file in ~/.ssh
+# and a rename, under a lock directory, so a concurrent run or a crash never leaves a half-written file.
+# Output: one JSON line. Exit status 0 = done, 1 = refused (bad input, key already used elsewhere),
+# 2 = could not read or write the file.
+
+ak_dir() { printf '%s\n' "$HOME/.ssh"; }
+
+say() { printf '%s\n' "$1"; }
+refuse() { say "{\"ok\":false,\"error\":\"$1\"}"; printf 'relay-authorize: %s\n' "$2" >&2; exit 1; }
+ioerr() { say '{"ok":false,"error":"io"}'; printf 'relay-authorize: %s\n' "$1" >&2; exit 2; }
+
+check_key_id() {
+  case $1 in
+    [A-Za-z0-9]*) ;;
+    *) refuse bad_key_id "the key id must start with a letter or digit" ;;
+  esac
+  case $1 in
+    *[!A-Za-z0-9._-]*) refuse bad_key_id "the key id may only use A-Z a-z 0-9 . _ -" ;;
+  esac
+  [ "${#1}" -le 64 ] || refuse bad_key_id "the key id is longer than 64 characters"
+}
+
+check_host() {
+  case $1 in
+    ''|-*|*[!A-Za-z0-9.:_-]*) refuse bad_host "the Spark host may only use A-Z a-z 0-9 . : _ - and not start with -" ;;
+  esac
+  [ "${#1}" -le 253 ] || refuse bad_host "the Spark host is too long"
+}
+
+check_port() {
+  case $1 in
+    ''|*[!0-9]*|0*) refuse bad_port "the port must be a number from 1 to 65535" ;;
+  esac
+  [ "${#1}" -le 5 ] && [ "$1" -le 65535 ] || refuse bad_port "the port must be a number from 1 to 65535"
+}
+
+check_key() {
+  [ "$1" = ssh-ed25519 ] || refuse bad_pubkey "only ssh-ed25519 phone keys are accepted"
+  # the SSH encoding of an ed25519 key is 51 bytes: 68 base64 characters with this fixed start
+  case $2 in
+    AAAAC3NzaC1lZDI1NTE5AAAAI*) ;;
+    *) refuse bad_pubkey "the key is not an ed25519 public key" ;;
+  esac
+  case $2 in
+    *[!A-Za-z0-9+/]*) refuse bad_pubkey "the key is not base64" ;;
+  esac
+  [ "${#2}" -eq 68 ] || refuse bad_pubkey "the key has the wrong length"
+}
+
+# A line belongs to key id <id> when it is not a comment and its last word is mindloom-phone:<id>.
+# Print the file without those lines (every other line exactly as it is).
+without_id() {
+  awk -v m="mindloom-phone:$2" '
+    /^[ \t]*#/ { print; next }
+    { last = $NF; sub(/\r$/, "", last) }
+    last == m { next }
+    { print }
+  ' "$1"
+}
+
+# The lines that belong to key id $2, as they are.
+with_id() {
+  awk -v m="mindloom-phone:$2" '
+    /^[ \t]*#/ { next }
+    { last = $NF; sub(/\r$/, "", last) }
+    last == m { print }
+  ' "$1"
+}
+
+lock() {
+  i=0
+  while ! mkdir "$DIR/.mindloom-relay.lock" 2>/dev/null; do
+    i=$((i + 1))
+    [ "$i" -le 50 ] || ioerr "another change to authorized_keys is in progress (lock $DIR/.mindloom-relay.lock)"
+    sleep 0.2 2>/dev/null || sleep 1
+  done
+  LOCKED=1
+}
+
+unlock() {
+  [ -n "${TMP:-}" ] && rm -f "$TMP"
+  [ "${LOCKED:-0}" = 1 ] && rmdir "$DIR/.mindloom-relay.lock" 2>/dev/null
+  LOCKED=0
+}
+
+# Replace the file with the prepared temporary file (same directory, so the rename is atomic).
+commit() {
+  chmod 600 "$TMP" || ioerr "cannot set the mode of the temporary file"
+  mv -f "$TMP" "$FILE" || ioerr "cannot replace $FILE"
+  TMP=
+}
+
+main() {
+  umask 077
+  DIR=$(ak_dir)
+  AK="$DIR/authorized_keys"
+  LC_ALL=C
+  export LC_ALL
+  [ -d "$DIR" ] || mkdir -p "$DIR" || ioerr "cannot create $DIR"
+  FILE=$AK
+  # write through a symlinked authorized_keys to the file it points at
+  if [ -L "$AK" ]; then
+    target=$(readlink "$AK") || ioerr "cannot read the link $AK"
+    case $target in /*) FILE=$target ;; *) FILE="$DIR/$target" ;; esac
+  fi
+  [ -e "$FILE" ] || : > "$FILE" || ioerr "cannot create $FILE"
+  [ -r "$FILE" ] || ioerr "cannot read $FILE"
+  FDIR=$(dirname "$FILE")
+  trap unlock EXIT
+  trap 'exit 2' HUP INT TERM
+
+  cmd=${1:-}
+  case $cmd in
+    add)
+      [ "$#" -eq 6 ] || refuse bad_args "usage: add <key-id> <spark-host> <spark-port> ssh-ed25519 <base64>"
+      id=$2 host=$3 port=$4 ktype=$5 blob=$6
+      check_key_id "$id"; check_host "$host"; check_port "$port"; check_key "$ktype" "$blob"
+      case $host in *:*) target="[$host]:$port" ;; *) target="$host:$port" ;; esac
+      line="restrict,port-forwarding,permitopen=\"$target\",permitlisten=\"127.0.0.1:1\",command=\"false\" $ktype $blob mindloom-phone:$id"
+      lock
+      mine=$(with_id "$FILE" "$id") || ioerr "cannot read $FILE"
+      # the same key on a line that is not this phone's would let it in without these limits
+      if without_id "$FILE" "$id" | awk -v b="$blob" '
+           /^[ \t]*#/ { next }
+           { for (i = 1; i <= NF; i++) { f = $i; sub(/\r$/, "", f); if (f == b) found = 1 } }
+           END { exit found ? 0 : 1 }'; then
+        refuse key_in_use "this key is already on another line of authorized_keys"
+      fi
+      if [ "$mine" = "$line" ]; then
+        say "{\"ok\":true,\"key_id\":\"$id\",\"changed\":false,\"replaced\":false}"
+        return 0
+      fi
+      TMP="$FDIR/.authorized_keys.mindloom.$$"
+      rm -f "$TMP"
+      if [ -n "$mine" ]; then
+        # replace this phone's line where it is (first occurrence), drop any duplicates
+        awk -v m="mindloom-phone:$id" -v new="$line" '
+          /^[ \t]*#/ { print; next }
+          { last = $NF; sub(/\r$/, "", last) }
+          last == m { if (!done) { print new; done = 1 }; next }
+          { print }
+        ' "$FILE" > "$TMP" || ioerr "cannot write $TMP"
+        replaced=true
+      else
+        # a file whose last line has no newline gets one before the new line ($(…) drops a final newline)
+        sep=
+        [ -s "$FILE" ] && [ -n "$(tail -c 1 "$FILE")" ] && sep='\n'
+        { cat "$FILE" && printf "$sep" && say "$line"; } > "$TMP" || ioerr "cannot write $TMP"
+        replaced=false
+      fi
+      commit
+      say "{\"ok\":true,\"key_id\":\"$id\",\"changed\":true,\"replaced\":$replaced}"
+      ;;
+    remove)
+      [ "$#" -eq 2 ] || refuse bad_args "usage: remove <key-id>"
+      id=$2
+      check_key_id "$id"
+      lock
+      mine=$(with_id "$FILE" "$id") || ioerr "cannot read $FILE"
+      if [ -z "$mine" ]; then
+        say "{\"ok\":true,\"key_id\":\"$id\",\"removed\":0}"
+        return 0
+      fi
+      removed=$(printf '%s\n' "$mine" | wc -l | tr -d ' ')
+      TMP="$FDIR/.authorized_keys.mindloom.$$"
+      rm -f "$TMP"
+      without_id "$FILE" "$id" > "$TMP" || ioerr "cannot write $TMP"
+      commit
+      say "{\"ok\":true,\"key_id\":\"$id\",\"removed\":$removed}"
+      ;;
+    list)
+      [ "$#" -eq 1 ] || refuse bad_args "usage: list"
+      ids=$(awk '
+        /^[ \t]*#/ { next }
+        { last = $NF; sub(/\r$/, "", last) }
+        last ~ /^mindloom-phone:[A-Za-z0-9][A-Za-z0-9._-]*$/ { sub(/^mindloom-phone:/, "", last); printf "%s\"%s\"", sep, last; sep = "," }
+      ' "$FILE") || ioerr "cannot read $FILE"
+      say "{\"ok\":true,\"phones\":[${ids}]}"
+      ;;
+    *)
+      refuse bad_args "usage: add <key-id> <spark-host> <spark-port> ssh-ed25519 <base64> | remove <key-id> | list"
+      ;;
+  esac
+}
+
+# Everything above is only definitions, so when this file arrives on stdin (sh -s) the shell has read all of
+# it before anything runs; the commands' stdin is /dev/null so nothing can read the rest of the script.
+main "$@" </dev/null
+exit $?

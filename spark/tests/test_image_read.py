@@ -9,7 +9,7 @@ import json
 
 import pytest
 
-from conftest import REPO, TINY_PNG_B64, FakeChat, chat_extraction, image_reader, ingest, is_detect_step, make_item
+from conftest import REPO, TEST_KEY, TINY_PNG_B64, FakeChat, chat_extraction, image_reader, ingest, is_detect_step, make_item
 from organizer.api import build_organizer
 from organizer.config import Settings
 from organizer.image_read import read_image
@@ -201,7 +201,7 @@ def test_image_routes_send_a_type_to_its_own_endpoint(tmp_path, monkeypatch):
 
     monkeypatch.setattr(api, "OpenAIChatClient", Recording)
     routes = {"form_label_sign": {"url": "http://127.0.0.1:30000/v1", "model": "qwen-q8"}}
-    settings = Settings(data_dir=tmp_path, start_worker=False, image_routes=json.dumps(routes))
+    settings = Settings(data_dir=tmp_path, start_worker=False, image_routes=json.dumps(routes), unlock_key=TEST_KEY)
     org = build_organizer(settings, embedder=None)
     label_client = org.image_clients["form_label_sign"]
     assert label_client.url == "http://127.0.0.1:30000/v1" and set(org.image_clients) == {"form_label_sign"}

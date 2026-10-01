@@ -9,10 +9,13 @@ per-call enums as the organizer, scripts/validate.py, one retry). Pass criteria:
                 decision_in, event_id, not_attach.
   event-brief   status_line_not (regex must not match), off_anchor_includes.
   home-rank     constraints: {"above": [a, b]} importance(a) > importance(b); {"max": {id: v}}; {"min": {id: v}}.
+  event-consolidate  check: verdict_in, target (for a merge), not_target.
+  person-resolve  check: kind_in, same_as ("" = merged with nobody), common_word.
   item-split    fixture {text, kind, source_app, started_at}: units are built exactly as the organizer
                 builds them; check on the segments the organizer derives (units.segments_from_output):
                 unsplit, n_segments [min, max], apart [[Ua, Ub]] (both covered, different segments),
-                together [[Ua, Ub]] (same segment), skip [U] (in no segment).
+                together [[Ua, Ub]] (same segment), skip [U] (in no segment). fixture.known (optional) is the
+                known_matters list [{"id", "title"}] the organizer would show.
 
 All fixtures are dev-week-v1 derived or invented; never add holdout material here.
 vLLM on a shared server is nondeterministic at temperature 0: judge by pass counts over n >= 3.
@@ -36,7 +39,8 @@ sys.path.insert(0, str(ROOT / "spark"))
 from organizer.skills import Harness, SkillRegistry  # noqa: E402
 from organizer.store import Store  # noqa: E402
 
-JOB = {"event-assign": "assign", "event-brief": "brief", "home-rank": "rank", "item-split": "split"}
+JOB = {"event-assign": "assign", "event-brief": "brief", "home-rank": "rank", "item-split": "split",
+       "event-consolidate": "consolidate", "person-resolve": "person"}
 
 
 def _enum(prop: dict, values: list[str]) -> None:
@@ -67,6 +71,25 @@ def build_request(registry: SkillRegistry, skill_name: str, case: dict) -> tuple
         else:
             ev_ids["maxItems"] = 0
         context = {"candidate_ids": handles, "candidate_item_ids": item_ids}
+    elif job == "consolidate":
+        # exactly organizer/consolidate.py _context: enums for target / verdict / quote item, validator context
+        targets = list(data["targets"])
+        _enum(props["target"], targets + [""])
+        if not data["can_unfile"]:
+            props["verdict"]["enum"] = ["merge", "own_matter"]
+        elif not targets:
+            props["verdict"]["enum"] = ["own_matter", "not_matter"]
+        texts = {i["item_id"]: i["text"] for i in data["small"]["items"]}
+        _enum(props["quote"]["properties"]["item_id"], list(texts))
+        views = {v["event_id"]: v for v in data["matters"] + data["more_matters"]}
+        context = {"targets": targets, "can_unfile": data["can_unfile"], "items": texts,
+                   "target_text": {h: " ".join(str(views[h].get(k) or "") for k in ("title", "anchor", "status_line", "sample"))
+                                   for h in targets if h in views}}
+    elif job == "person":
+        # exactly organizer/people_pass.py _judge: same_as may only name an offered candidate
+        handles = [c["handle"] for c in data["candidates"]]
+        props["same_as"] = {"type": "string", "enum": [""] + handles}
+        context = {"candidates": handles}
     elif job == "brief":
         handles = [i["item_id"] for i in data["items"]]
         _enum(props["status_facts"]["items"]["properties"]["item_ids"]["items"], handles)
@@ -92,15 +115,18 @@ def split_units(registry: SkillRegistry, case: dict) -> tuple[list[dict], str]:
 def split_request(registry: SkillRegistry, case: dict) -> tuple[dict, dict, dict]:
     fx = case["fixture"]
     units, fmt = split_units(registry, case)
+    known = fx.get("known") or []
     data = registry.script("item-split", "units").build_data(fx.get("kind", "dictation"), fx.get("source_app", "备忘录"),
                                                              fx.get("started_at", "2026-05-06T09:00:00+08:00"),
-                                                             units, fmt)
+                                                             units, fmt, known=known)
     schema = copy.deepcopy(registry.skills["item-split"].schema)
     ids = [u["u"] for u in units]
     seg = schema["properties"]["segments"]["items"]["properties"]
     _enum(seg["from"], ids)
     _enum(seg["to"], ids)
-    return data, schema, {"unit_ids": ids}
+    if "known" in schema["properties"]:
+        schema["properties"]["known"]["items"] = {"type": "string", "enum": [""] + [k["id"] for k in known]}
+    return data, schema, {"unit_ids": ids, "known": [k["id"] for k in known]}
 
 
 def check_split(registry: SkillRegistry, case: dict, out: dict) -> tuple[bool, str]:
@@ -147,6 +173,24 @@ def check(registry: SkillRegistry, skill_name: str, case: dict, out: dict) -> tu
         if d["action"] == "attach" and d["target"] in c.get("not_attach", []):
             return False, f"attached to {d['target']}"
         return True, f"{d['action']} {d['target']}".strip()
+    if skill_name == "event-consolidate":
+        got = f"{out['verdict']} {out['target']}".strip()
+        if out["verdict"] not in c.get("verdict_in", [out["verdict"]]):
+            return False, got
+        if "target" in c and out["verdict"] == "merge" and out["target"] != c["target"]:
+            return False, got
+        if out["verdict"] == "merge" and out["target"] == c.get("not_target"):
+            return False, got
+        return True, got
+    if skill_name == "person-resolve":
+        got = f"{out['kind']} same_as={out['same_as'] or '-'} common={out['common_word']}"
+        if out["kind"] not in c.get("kind_in", [out["kind"]]):
+            return False, got
+        if "same_as" in c and (out["same_as"] or "") != c["same_as"]:
+            return False, got
+        if "common_word" in c and bool(out["common_word"]) != c["common_word"]:
+            return False, got
+        return True, got
     if skill_name == "event-brief":
         if c.get("status_line_not") and re.search(c["status_line_not"], out["status_line"]):
             return False, out["status_line"]

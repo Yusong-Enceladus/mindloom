@@ -32,7 +32,8 @@ public enum BestASRPersistenceSchema {
     "v21-remote-organizer-eligibility"
   public static let userItemsMigrationID = "v22-user-items"
   public static let userItemFilesMigrationID = "v23-user-item-files"
-  public static let currentUserVersion = 23
+  public static let remotePrivacyMigrationID = "v24-remote-privacy"
+  public static let currentUserVersion = 24
   public static let minimumPortableImportUserVersion = 12
 
   public static func supportsPortableImport(userVersion: Int) -> Bool {
@@ -117,6 +118,9 @@ public enum BestASRPersistenceSchema {
     migrator.registerMigration(userItemFilesMigrationID) { database in
       try database.execute(sql: userItemFilesSQL)
     }
+    migrator.registerMigration(remotePrivacyMigrationID) { database in
+      try database.execute(sql: remotePrivacySQL)
+    }
     return migrator
   }
 
@@ -197,6 +201,40 @@ public enum BestASRPersistenceSchema {
     CREATE INDEX user_item_details_parent_index
       ON user_item_details(parent_session_id) WHERE parent_session_id IS NOT NULL;
     PRAGMA user_version = 23;
+    """
+
+  /// Privacy contract v6, all local and never portable or sent:
+  /// `remote_mask_map` holds what each placeholder the Mac sent stands for,
+  /// per item or decision (the owner), so what comes back can be shown with
+  /// the originals and a deletion takes its entries with it (same
+  /// sensitivity as the originals). `remote_mask_offsets` keeps where the
+  /// placeholders sit in an item's text as last sent, so the organizer's
+  /// character offsets are read against the original text.
+  /// `remote_pending_deletions` queues deletions of items the organizing
+  /// device may hold; a deletion carries no content, so the queue survives
+  /// revocation and archive import and is sent first after unlock.
+  public static let remotePrivacySQL = """
+    CREATE TABLE remote_mask_map (
+      owner_id TEXT NOT NULL,
+      placeholder TEXT NOT NULL,
+      original TEXT NOT NULL,
+      mask_type TEXT NOT NULL,
+      created_at REAL NOT NULL,
+      PRIMARY KEY (owner_id, placeholder, original)
+    );
+    CREATE INDEX remote_mask_map_placeholder ON remote_mask_map(placeholder);
+    CREATE TABLE remote_mask_offsets (
+      item_id TEXT PRIMARY KEY NOT NULL,
+      revision INTEGER NOT NULL,
+      offsets_json TEXT NOT NULL
+    );
+    CREATE TABLE remote_pending_deletions (
+      item_id TEXT PRIMARY KEY NOT NULL,
+      queued_at REAL NOT NULL,
+      not_before REAL NOT NULL DEFAULT 0,
+      retry_count INTEGER NOT NULL DEFAULT 0
+    );
+    PRAGMA user_version = 24;
     """
 
   /// Which sessions may ever be sent automatically is recorded explicitly when

@@ -620,7 +620,14 @@ final class DictationAppModel: ObservableObject {
   /// Mirrors the per-library link state held by `remoteOrganizer`; the
   /// enable watermark lives in the library, not in app preferences.
   @Published var remoteOrganizerEnabled = false
+  /// "让 Spark 忘掉" is offered (the link is on and the organizing device
+  /// answers), and whether its store belongs to another key.
+  @Published var remoteOrganizerCanForget = false
+  @Published var remoteOrganizerHoldsOtherKey = false
+  @Published var remoteOrganizerForgetting = false
   var remoteOrganizer: RemoteOrganizerLinkController?
+  /// The paired iPhone (PHONE-CONTRACT §4).
+  var phoneLink = PhoneLinkModel()
   var spoken = SpokenModel()
   var hotkeys = HotkeysModel()
   var onboarding = OnboardingModel()
@@ -648,6 +655,7 @@ final class DictationAppModel: ObservableObject {
       hotkeys.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
       onboarding.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
       intake.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
+      phoneLink.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
     ]
   }
   static let speechLicenseReceiptKey =
@@ -1212,6 +1220,9 @@ final class DictationAppModel: ObservableObject {
   }
 
   func pauseActiveWorkForSystemTransition() async {
+    // The organizing device locks its store while this Mac sleeps (privacy
+    // review F1); the link reconnects and unlocks again on wake.
+    await remoteOrganizer?.suspendForSleep()
     if snapshot.phase == .recording, let coordinator {
       stopDictationLifecycleMonitoring()
       snapshot = (try? await coordinator.pause()) ?? snapshot
@@ -1251,6 +1262,7 @@ final class DictationAppModel: ObservableObject {
   }
 
   func handleSystemResume() async {
+    remoteOrganizer?.resumeAfterSleep()
     await readPermissionStates()
     await closeSystemInterruptionEvents()
     if snapshot.phase == .paused {

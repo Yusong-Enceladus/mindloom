@@ -72,31 +72,47 @@ extension DictationAppModel {
       dataRoot: dataRoot,
       realLibraryRoot: realLibrary,
       intent: intent,
+      // The library's link key lives in the login Keychain, this Mac only
+      // (privacy contract §1); it reaches the organizing device only in
+      // memory, through the user's own SSH forward.
+      keyStore: KeychainOrganizerKeyStore(dataRoot: dataRoot),
       cleanUpStaleTunnels: {
         _ = RemoteOrganizerTunnelRecordStore(directory: stateDirectory).cleanUpStale()
       },
-      makeRuntime: { [weak self] repository, onUpdate in
+      makeRuntime: { [weak self] repository, keys, onUpdate in
         RemoteOrganizerRuntime(
           repository: repository,
           launcher: SSHRemoteOrganizerTunnelLauncher(
             configuration: configuration, stateDirectory: stateDirectory
           ),
           http: URLSessionRemoteOrganizerTransport(),
+          keys: keys,
           // Image items are read from this provenance-checked root only.
           itemAssetReader: RemoteOrganizerItemAssetReader(
             assetRoot: dataRoot.appendingPathComponent("assets", isDirectory: true)
           ),
+          // What leaves is the redacted copy: numbers read on this Mac are
+          // painted over first (contract §4).
+          imageRedactor: VisionSendCopyRedactor(),
+          // A file's bytes leave as a send copy: pictures in it redacted,
+          // recordings in it emptied (privacy review F3).
+          fileSanitizer: FileSendCopySanitizer(),
           // What the phone sent to the organizing device comes in through
-          // the same intake as a paste, with its source "iPhone".
-          inbox: self?.remoteInboxIngestor(store: repositoryForInbox),
+          // the same intake as a paste; sealed entries are opened here with
+          // this library's phone seal key (PHONE-CONTRACT §5).
+          inbox: self?.remoteInboxIngestor(store: repositoryForInbox, dataRoot: dataRoot),
           onUpdate: onUpdate
-        )
+        ).withInboxDiscardHandler { [weak self] reason in
+          self?.phoneInboxDiscarded(reason)
+        }
       }
     )
     controller.onChange = { [weak self] status, projection in
       self?.applyRemoteOrganizerChange(status: status, projection: projection)
     }
     remoteOrganizer = controller
+    RemoteOrganizerQuitLock.controller = controller
+    configurePhoneLink(host: host, dataRoot: dataRoot, stateDirectory: stateDirectory)
     Task { [weak self] in
       await controller.restoreOnLaunch()
       self?.remoteOrganizerEnabled = controller.isEnabled
@@ -132,13 +148,53 @@ extension DictationAppModel {
     }
   }
 
+  /// "让整理设备忘掉我的内容" (the contract's "让 Spark 忘掉我的内容"; pages
+  /// say 整理设备, never Spark) or, when the organizing device holds another
+  /// key's store, "让整理设备忘掉旧内容", after the user confirmed.
+  func forgetRemoteOrganizerContent() {
+    guard let controller = remoteOrganizer, controller.canForget else {
+      events.remoteStatusMessage = "只有在链路开启并连上整理设备时才能让它忘掉内容"
+      return
+    }
+    let target: RemoteOrganizerLinkController.ForgetTarget
+    if case .wrongKey(let other?) = controller.status {
+      target = .otherKey(other)
+    } else {
+      target = .mine
+    }
+    remoteOrganizerForgetting = true
+    Task { [weak self] in
+      let outcome = await controller.forgetOnOrganizer(target)
+      guard let self else { return }
+      remoteOrganizerForgetting = false
+      switch outcome {
+      case .forgotten:
+        events.remoteStatusMessage =
+          target == .mine
+          ? "整理设备已忘掉你的内容，旧钥匙已销毁；之后只发送新的或改过的记录"
+          : "整理设备已忘掉旧内容；现在用这台 Mac 的钥匙整理"
+      case .notConnected:
+        events.remoteStatusMessage = "链路没有连上，整理设备没有忘掉任何内容"
+      case .refused:
+        events.remoteStatusMessage = "整理设备没有确认忘掉；你的内容没有变化，请稍后再试"
+      case .storageUnavailable:
+        events.remoteStatusMessage = "整理设备已忘掉内容，但这台 Mac 未能记下；请重开链路"
+      case .keyNotDestroyed:
+        events.remoteStatusMessage = "整理设备已忘掉内容，但钥匙串没能销毁旧钥匙；链路已暂停，旧钥匙不会再用"
+      }
+    }
+  }
+
   /// The phone entry's inbox, taken in like a paste (nil until intake is
-  /// configured). After each new item the lists refresh.
-  func remoteInboxIngestor(store: GRDBDictationStore) -> IntakeInboxIngestor? {
+  /// configured). Sealed entries open with this library's phone seal key
+  /// from the Keychain. After each new item the lists refresh.
+  func remoteInboxIngestor(store: GRDBDictationStore, dataRoot: URL) -> IntakeInboxIngestor? {
     guard let processor = intakeProcessor else { return nil }
     let ready = intakeReady
+    let sealKeys = KeychainPhoneSealKeyStore(dataRoot: dataRoot)
     return IntakeInboxIngestor(
       processor: processor, store: store,
+      sealKey: { try sealKeys.load() },
       ready: { await ready?.value },
       committed: { [weak self] _ in
         await self?.refreshHistoryItems(preserveStatus: true, organizeEvents: true)
@@ -228,6 +284,13 @@ extension DictationAppModel {
     }
     let clock = status == .connected ? remoteOrganizer?.serviceClock : nil
     if events.remoteServiceClock != clock { events.remoteServiceClock = clock }
+    let canForget = remoteOrganizer?.canForget ?? false
+    if remoteOrganizerCanForget != canForget { remoteOrganizerCanForget = canForget }
+    let holdsOtherKey: Bool
+    if case .wrongKey = status { holdsOtherKey = true } else { holdsOtherKey = false }
+    if remoteOrganizerHoldsOtherKey != holdsOtherKey {
+      remoteOrganizerHoldsOtherKey = holdsOtherKey
+    }
     if let controller = remoteOrganizer, remoteOrganizerEnabled != controller.isEnabled {
       remoteOrganizerEnabled = controller.isEnabled
     }
@@ -242,6 +305,9 @@ extension DictationAppModel {
     case .connected: "已连接你的整理设备"
     case .unavailable: "整理设备暂时不可用；待发内容保存在 Mac，恢复后自动补发"
     case .storageUnavailable: "整理链路状态暂不可读；未发送任何内容"
+    case .wrongKey: "整理设备上的内容属于另一把钥匙；未发送任何内容"
+    case .unsupportedService: "整理设备不能上锁保存内容；未发送任何内容"
+    case .keyUnavailable: "钥匙串暂不可用；未发送任何内容"
     case .refused(.refusedRealLibrary):
       "开发阶段不从你的真实资料库发送；请用合成演示资料库启动（-BestASRDataRoot）"
     case .refused(.refusedNotSynthetic):

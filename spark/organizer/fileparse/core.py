@@ -62,6 +62,9 @@ class Budget:
     images: list = field(default_factory=list)      # [{"id", "data", "label"}]
     image_hashes: set = field(default_factory=set)
     notes: list = field(default_factory=list)       # what was skipped or capped, in plain words
+    # Audio / video members of a document, archive or e-mail: never decoded here, only counted (contract v6:
+    # "N 个媒体附件未读取（只在 Mac 上）").
+    media_skipped: int = 0
 
     def note(self, text: str) -> None:
         if text not in self.notes and len(self.notes) < 40:
@@ -114,6 +117,14 @@ ODF_MIME = {"application/vnd.oasis.opendocument.text": "odt",
             "application/vnd.oasis.opendocument.presentation": "odp",
             "application/vnd.oasis.opendocument.presentation-template": "odp",
             "application/epub+zip": "epub"}
+
+
+def is_media_name(name: str) -> bool:
+    """An audio / video member by its name (never read, only counted)."""
+    return ext_of(name) in AUDIO_EXT or ext_of(name) in VIDEO_EXT
+
+
+MEDIA_SKIPPED_FMT = "media_skipped"   # Parsed.fmt of a nested audio / video part that was skipped
 
 
 def ext_of(name: str) -> str:

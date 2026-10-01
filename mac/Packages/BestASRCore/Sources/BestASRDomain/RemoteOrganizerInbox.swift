@@ -1,19 +1,29 @@
 import CryptoKit
 import Foundation
 
-/// One thing the user sent to their own organizing device from another
-/// device (the phone entry: an iOS Shortcut running `zhiji-inbox add` over
-/// SSH), waiting there until this Mac takes it in. It stays on the organizing
-/// device only until the Mac acknowledges it after its local commit.
+/// One thing the user sent to their own organizing device from their phone,
+/// waiting there until this Mac takes it in. It stays on the organizing
+/// device only until the Mac acknowledges it after its local commit. This
+/// Mac only reads and acknowledges the inbox; it never adds to it.
 ///
-/// Wire shape (`GET /v1/inbox?since=<cursor>` returns
-/// `{"cursor": Int, "items": [entry]}`):
-/// `{"inbox_id", "source", "kind": "text"|"image", "text"?, "image_b64"?,
-/// "received_at"}`. `id` is read as `inbox_id` and `entries` as `items`.
+/// The phone path is sealed-only (PHONE-CONTRACT §5, privacy review F9): the
+/// iPhone app sends `{"inbox_id", "kind": "sealed", "blob": "mlseal1.…",
+/// "received_at"}`, which the organizing device cannot read; only this Mac's
+/// seal key opens them, and the payload inside carries the source and the
+/// time. The organizing device refuses any plain add.
+///
+/// Legacy plain entries (`{"inbox_id", "source", "kind": "text"|"image",
+/// "text"?, "image_b64"?, "received_at"}`, from the retired iOS Shortcut)
+/// that were still waiting are taken in like a paste, never trusted beyond
+/// that. Wire shape: `GET /v1/inbox?since=<cursor>` returns
+/// `{"cursor": Int, "items": [entry]}`; `id` is read as `inbox_id` and
+/// `entries` as `items`.
 public struct RemoteOrganizerInboxEntry: Equatable, Sendable {
   public enum Kind: String, Sendable {
     case text
     case image
+    /// An `mlseal1.` wire string sealed on the phone to this Mac's seal key.
+    case sealed
   }
 
   /// The organizing device's ID for the entry (acknowledged by it).
@@ -24,23 +34,34 @@ public struct RemoteOrganizerInboxEntry: Equatable, Sendable {
   public let text: String?
   /// An image entry's bytes (PNG/JPEG/HEIC), base64 on the wire.
   public let imageData: Data?
-  /// When the organizing device received it; the item's capture time.
+  /// A sealed entry's wire string (`mlseal1.` + base64url), exactly as the
+  /// phone sent it. Opened only on this Mac.
+  public let sealedBlob: String?
+  /// When the organizing device received it; the capture time of a plain
+  /// entry (a sealed entry carries its own time inside).
   public let receivedAt: Date
 
   public init(
     inboxID: String, source: String, kind: Kind, text: String?, imageData: Data?,
-    receivedAt: Date
+    sealedBlob: String? = nil, receivedAt: Date
   ) {
     self.inboxID = inboxID
     self.source = source
     self.kind = kind
     self.text = text
     self.imageData = imageData
+    self.sealedBlob = sealedBlob
     self.receivedAt = receivedAt
   }
 
   /// Longest inbox ID accepted; one longer is ignored.
   public static let maximumIDScalars = 128
+  /// The `mlseal1.` wire prefix.
+  public static let sealedPrefix = "mlseal1."
+  /// The longest sealed wire string a phone can send: the prefix plus
+  /// base64url of 36,000,000 sealed bytes (`MindloomSeal.maximumWireBytes`,
+  /// checked equal in the tests). A longer blob is not an entry.
+  public static let maximumSealedBlobBytes = 48_000_008
   /// The name used when an entry names no source.
   public static let defaultSource = "iPhone"
 
@@ -90,7 +111,7 @@ public struct RemoteOrganizerInboxPage: Decodable, Equatable, Sendable {
 
     enum Keys: String, CodingKey {
       case inboxID = "inbox_id"
-      case id, source, kind, text
+      case id, source, kind, text, blob
       case imageBase64 = "image_b64"
       case receivedAt = "received_at"
     }
@@ -117,6 +138,22 @@ public struct RemoteOrganizerInboxPage: Decodable, Equatable, Sendable {
         return
       }
       let source = string(.source)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+      if kind == .sealed {
+        // Kept byte for byte: the phone's bytes are authenticated as sent.
+        guard let blob = (try? container.decodeIfPresent(String.self, forKey: .blob)) ?? nil,
+          blob.hasPrefix(RemoteOrganizerInboxEntry.sealedPrefix),
+          blob.utf8.count <= RemoteOrganizerInboxEntry.maximumSealedBlobBytes
+        else {
+          entry = nil
+          return
+        }
+        entry = RemoteOrganizerInboxEntry(
+          inboxID: id,
+          source: source.isEmpty
+            ? RemoteOrganizerInboxEntry.defaultSource : String(source.prefix(64)),
+          kind: .sealed, text: nil, imageData: nil, sealedBlob: blob, receivedAt: received)
+        return
+      }
       let text = string(.text)
       let image = string(.imageBase64).flatMap {
         Data(base64Encoded: $0, options: .ignoreUnknownCharacters)
@@ -132,6 +169,9 @@ public struct RemoteOrganizerInboxPage: Decodable, Equatable, Sendable {
           entry = nil
           return
         }
+      case .sealed:
+        entry = nil
+        return
       }
       entry = RemoteOrganizerInboxEntry(
         inboxID: id,
@@ -154,6 +194,15 @@ public struct RemoteOrganizerInboxPage: Decodable, Equatable, Sendable {
   }
 }
 
+/// Why a sealed phone entry was dropped instead of taken in.
+public enum RemoteOrganizerInboxDiscard: String, Error, Equatable, Sendable {
+  /// It does not open with this Mac's seal key: sealed to an older pairing's
+  /// key, to another Mac, or changed on the way (PHONE-CONTRACT §5.4).
+  case cannotOpen
+  /// It opened, but what is inside is not an item this Mac takes in.
+  case unusable
+}
+
 /// What taking in one inbox entry came to.
 public enum RemoteOrganizerInboxOutcome: Equatable, Sendable {
   /// Committed locally now: acknowledge it.
@@ -163,10 +212,21 @@ public enum RemoteOrganizerInboxOutcome: Equatable, Sendable {
   /// Not taken (no usable text or image); it stays on the organizing device
   /// and is skipped until the next launch. The message is content-free.
   case refused(String)
+  /// A sealed phone entry that can never be taken in: acknowledged so the
+  /// organizing device deletes it, and counted in a visible status.
+  case discarded(RemoteOrganizerInboxDiscard)
 
   public var isCommitted: Bool {
     switch self {
     case .committed, .alreadyCommitted: true
+    case .refused, .discarded: false
+    }
+  }
+
+  /// Whether the organizing device is told to delete the entry.
+  public var acknowledges: Bool {
+    switch self {
+    case .committed, .alreadyCommitted, .discarded: true
     case .refused: false
     }
   }

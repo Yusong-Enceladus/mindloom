@@ -5,6 +5,12 @@ import Foundation
 import GRDB
 import XCTest
 
+/// The library key every test runtime unlocks with (synthetic).
+let testOrganizerKeys: OrganizerKeyMaterial = {
+  // swift-format-ignore: NeverUseForceTry
+  try! OrganizerKeyMaterial(libraryKey: Data(repeating: 0x42, count: 32))
+}()
+
 /// Fabricated library on a temporary SQLite file; never the owner's library.
 final class SyntheticOrganizerLibrary: @unchecked Sendable {
   let root: URL
@@ -182,6 +188,23 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
   private var _inboxAckFailures = 0
   private var _acked: [String] = []
   private var _inboxCursor = 0
+  // Contract v6: a store locked with a key that lives only on the Mac.
+  private var _supportsLocking = true
+  private var _locked = true
+  private var _storeKeyID: String?
+  private var _unlockedKeyID: String?
+  private var _locks = 0
+  private var _wipes: [String] = []
+  private var _deletedItems: [String] = []
+  private var _tombstones = Set<String>()
+  private var _failDeletes = 0
+  private var _stateExtras: [String: Any] = [:]
+  private var _holdLocks = false
+  // Privacy review F1: after an unlock, data routes need the key's access proof.
+  private var _accessProof: String?
+  private var _failLocks = 0
+  private var _lockAttempts = 0
+  private var _refuseAccess = 0
 
   /// `token` is the link token the service requires (nil: not checked).
   init(token: String? = String(repeating: "ab", count: 32)) {
@@ -203,7 +226,37 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
   var cancelled: Bool { locked { _cancelled } }
   var isHoldingState: Bool { locked { _held != nil } }
   var isHoldingItem: Bool { locked { _heldItem != nil } }
+  var isLocked: Bool { locked { _locked } }
+  var storeKeyID: String? { locked { _storeKeyID } }
+  var lockCount: Int { locked { _locks } }
+  /// Lock requests received (answered or failed).
+  var lockAttempts: Int { locked { _lockAttempts } }
+  /// The next `count` lock requests fail with 500.
+  func failLocks(_ count: Int) { locked { _failLocks = count } }
+  /// The next `count` data requests are refused with 403 `access` (the store
+  /// was locked and opened again).
+  func refuseAccess(_ count: Int) { locked { _refuseAccess = count } }
+  var wipes: [String] { locked { _wipes } }
+  var deletedItems: [String] { locked { _deletedItems } }
 
+  /// An older service without `/v1/unlock` (and no encryption at rest).
+  func dropLockingSupport() { locked { _supportsLocking = false } }
+  /// The store on disk belongs to this key ID (another library's key).
+  func setStoreKeyID(_ keyID: String?) { locked { _storeKeyID = keyID } }
+  /// A restart: the store is locked again, the key gone from memory.
+  func restart() {
+    locked {
+      _locked = true
+      _unlockedKeyID = nil
+    }
+  }
+  /// Lock requests never answer (a hung organizing device).
+  func holdLocks() { locked { _holdLocks = true } }
+  /// What `/v1/state` returns besides its cursor and store (events, persons,
+  /// questions, readings).
+  func setState(_ extras: [String: Any]) { locked { _stateExtras = extras } }
+  /// The next `count` deletions fail with 500.
+  func failDeletes(_ count: Int) { locked { _failDeletes = count } }
   /// A new store identity is a new, empty store.
   func setStoreID(_ value: String) {
     locked {
@@ -260,10 +313,102 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
       try? JSONSerialization.jsonObject(with: $0) as? [String: Any]
     }
     if request.path == "/v1/health" {
-      let (storeID, clock) = locked { (_storeID, _clock) }
-      var health: [String: Any] = ["ok": true, "store_id": storeID]
+      let (storeID, clock, supportsLocking, isLocked, keyID) = locked {
+        (_storeID, _clock, _supportsLocking, _locked, _storeKeyID)
+      }
+      var health: [String: Any] = ["ok": true]
       if let clock { health["clock"] = clock }
+      if supportsLocking {
+        health["locked"] = isLocked
+        health["key_id"] = keyID ?? NSNull()
+        if !isLocked { health["store_id"] = storeID }
+      } else {
+        health["store_id"] = storeID
+      }
       return try json(health)
+    }
+    let supportsLocking = locked { _supportsLocking }
+    if supportsLocking, request.path == "/v1/unlock" {
+      guard let hex = body?["key"] as? String, hex.count == 64,
+        let data = Self.bytes(hex), let keys = try? OrganizerKeyMaterial(libraryKey: data)
+      else { return try json(["error": "malformed key"], status: 400) }
+      let outcome = locked { () -> (Int, [String: Any]) in
+        if let onDisk = _storeKeyID, onDisk != keys.keyID {
+          return (409, ["error": "wrong_key", "key_id": onDisk])
+        }
+        let created = _storeKeyID == nil
+        _storeKeyID = keys.keyID
+        _unlockedKeyID = keys.keyID
+        _accessProof = keys.accessProof
+        _locked = false
+        return (200, ["locked": false, "key_id": keys.keyID, "created": created])
+      }
+      return try json(outcome.1, status: outcome.0)
+    }
+    if supportsLocking, request.path == "/v1/lock" {
+      if locked({ _holdLocks }) { try? await Task.sleep(for: .seconds(30)) }
+      let failed = locked { () -> Bool in
+        _lockAttempts += 1
+        if _failLocks > 0 {
+          _failLocks -= 1
+          return true
+        }
+        _locked = true
+        _unlockedKeyID = nil
+        _accessProof = nil
+        _locks += 1
+        return false
+      }
+      return failed ? try json(["detail": "busy"], status: 500) : try json(["locked": true])
+    }
+    if supportsLocking, request.path == "/v1/wipe" {
+      let keyID = body?["key_id"] as? String ?? ""
+      let outcome = locked { () -> Int in
+        guard _storeKeyID == nil || _storeKeyID == keyID else { return 409 }
+        _wipes.append(keyID)
+        _storeKeyID = nil
+        _unlockedKeyID = nil
+        _locked = true
+        _revisions = [:]
+        _items = []
+        _tombstones = []
+        return 200
+      }
+      return outcome == 200
+        ? try json(["wiped": true]) : try json(["error": "wrong_key"], status: 409)
+    }
+    // Every data route needs an unlocked store (the inbox excepted).
+    if supportsLocking, locked({ _locked }), !request.path.hasPrefix("/v1/inbox") {
+      return try json(["error": "locked"], status: 423)
+    }
+    // ... and, once unlocked, the key-derived access proof (review F1).
+    if supportsLocking, !request.path.hasPrefix("/v1/inbox") {
+      let refused = locked { () -> Bool in
+        if _refuseAccess > 0 {
+          _refuseAccess -= 1
+          _locked = true
+          _accessProof = nil
+          return true
+        }
+        return _accessProof != nil && request.accessProof != _accessProof
+      }
+      if refused { return try json(["error": "access"], status: 403) }
+    }
+    if request.method == "DELETE", request.path.hasPrefix("/v1/items/") {
+      let id =
+        String(request.path.dropFirst("/v1/items/".count)).removingPercentEncoding ?? ""
+      let failed = locked { () -> Bool in
+        if _failDeletes > 0 {
+          _failDeletes -= 1
+          return true
+        }
+        _deletedItems.append(id)
+        _tombstones.insert(id)
+        _items.removeAll { ($0["item_id"] as? String) == id }
+        _revisions[id] = nil
+        return false
+      }
+      return failed ? try json(["detail": "busy"], status: 500) : try json(["deleted": true])
     }
     if request.path == "/v1/items" {
       if locked({ _holdItems }) {
@@ -278,6 +423,7 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
         for item in received {
           let id = item["item_id"] as? String ?? ""
           let revision = item["revision"] as? Int ?? 0
+          if _tombstones.contains(id) { continue }
           if let known = _revisions[id], revision <= known {
             duplicates += 1
             _duplicates += 1
@@ -289,6 +435,9 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
         }
         return (accepted, duplicates)
       }
+      let ids = received.map { $0["item_id"] as? String ?? "" }
+      let tombstoned = locked { ids.contains { _tombstones.contains($0) } }
+      if tombstoned { return try json(["error": "deleted"], status: 410) }
       return try json(["accepted": accepted, "duplicates": duplicates])
     }
     if request.path == "/v1/decisions" {
@@ -338,20 +487,34 @@ final class FakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendable {
           locked { _held = continuation }
         }
       }
-      let (cursor, storeID) = locked {
+      let (cursor, storeID, extras) = locked {
         _cursor += 1
-        return (_cursor, _storeID)
+        return (_cursor, _storeID, _stateExtras)
       }
-      return try json([
+      var state: [String: Any] = [
         "cursor": cursor, "store_id": storeID, "events": [] as [Any],
         "questions": [] as [Any], "persons": [] as [Any],
-      ])
+      ]
+      state.merge(extras) { _, new in new }
+      return try json(state)
     }
     return try json(["detail": "not found"], status: 404)
   }
 
   func cancelAll() {
     locked { _cancelled = true }
+  }
+
+  static func bytes(_ hex: String) -> Data? {
+    var data = Data()
+    var index = hex.startIndex
+    while index < hex.endIndex {
+      let next = hex.index(index, offsetBy: 2)
+      guard let byte = UInt8(hex[index..<next], radix: 16) else { return nil }
+      data.append(byte)
+      index = next
+    }
+    return data
   }
 }
 
@@ -428,6 +591,19 @@ final class FlakyRecoveryRepository: RemoteOrganizerRepository, @unchecked Senda
   func remoteProjection() async throws -> RemoteOrganizerProjection {
     try await base.remoteProjection()
   }
+  func recordRemoteMasks(_ record: RemoteOrganizerMaskRecord) async throws {
+    try await base.recordRemoteMasks(record)
+  }
+  func claimNextRemoteDeletion(now: Date) async throws -> String? {
+    try await base.claimNextRemoteDeletion(now: now)
+  }
+  func markRemoteDeletionSent(itemID: String) async throws {
+    try await base.markRemoteDeletionSent(itemID: itemID)
+  }
+  func markRemoteDeletionFailed(itemID: String, retryAt: Date) async throws {
+    try await base.markRemoteDeletionFailed(itemID: itemID, retryAt: retryAt)
+  }
+  func forgetRemoteStore() async throws { try await base.forgetRemoteStore() }
 }
 
 /// A repository whose revocation write always fails (for example the disk is
@@ -490,6 +666,40 @@ final class FailingRevokeRepository: RemoteOrganizerRepository, @unchecked Senda
   }
   func remoteProjection() async throws -> RemoteOrganizerProjection {
     try await base.remoteProjection()
+  }
+  func recordRemoteMasks(_ record: RemoteOrganizerMaskRecord) async throws {
+    try await base.recordRemoteMasks(record)
+  }
+  func claimNextRemoteDeletion(now: Date) async throws -> String? {
+    try await base.claimNextRemoteDeletion(now: now)
+  }
+  func markRemoteDeletionSent(itemID: String) async throws {
+    try await base.markRemoteDeletionSent(itemID: itemID)
+  }
+  func markRemoteDeletionFailed(itemID: String, retryAt: Date) async throws {
+    try await base.markRemoteDeletionFailed(itemID: itemID, retryAt: retryAt)
+  }
+  func forgetRemoteStore() async throws { try await base.forgetRemoteStore() }
+}
+
+/// Sends a screenshot as it is (the runtime tests check byte identity; the
+/// Vision redactor has its own tests in the intake suite).
+struct IdentityRedactor: RemoteOrganizerImageRedacting {
+  func redactedSendCopy(of data: Data, mediaType: String) throws -> Data { data }
+}
+
+/// Sends a file's bytes as they are, pictures not redacted (the file
+/// sanitizer has its own tests in the intake suite).
+struct IdentitySanitizer: RemoteOrganizerFileSanitizing {
+  func sendCopy(of data: Data, filename: String) throws -> RemoteOrganizerFileSendCopy {
+    RemoteOrganizerFileSendCopy(data: data, picturesRedacted: false)
+  }
+}
+
+/// A send copy made here: the bytes replaced, pictures marked redacted.
+struct MarkingSanitizer: RemoteOrganizerFileSanitizing {
+  func sendCopy(of data: Data, filename: String) throws -> RemoteOrganizerFileSendCopy {
+    RemoteOrganizerFileSendCopy(data: Data("sanitized:".utf8) + data, picturesRedacted: true)
   }
 }
 

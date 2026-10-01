@@ -23,7 +23,7 @@ from typing import Any, Callable, Optional
 
 import yaml
 
-from . import jsonschema_lite
+from . import jsonschema_lite, masking
 from .clients import ChatClient, ModelUnavailable, image_data_uri
 from .store import Store, new_id
 
@@ -38,6 +38,10 @@ JOB_TO_SKILL: dict[str, str] = {
     "split": "item-split",
     # file-read: the summary / key-field step after the text of a file item was extracted (organizer/file_read.py).
     "file_read": "file-read",
+    # The scheduled consolidation pass (organizer/consolidate.py): merge fragment events, unfile non-matters.
+    "consolidate": "event-consolidate",
+    # The people pass (organizer/people_pass.py): is a record a person, is it another name of a listed person.
+    "person": "person-resolve",
 }
 
 GLOBAL_RULES = """\
@@ -92,6 +96,8 @@ class RunResult:
     candidate: Optional[dict] = None
     # The errors of each attempt that failed (the first attempt's errors when a retry fixed them).
     attempt_errors: list = field(default_factory=list)
+    # Placeholders the model broke and the harness rewrote to their canonical form (masking.repair_placeholders).
+    repaired_placeholders: int = 0
 
 
 def parse_skill_md(text: str) -> tuple[dict, str]:
@@ -242,6 +248,7 @@ class Harness:
         max_tokens: Optional[int] = None,
         no_retry: Optional[frozenset] = None,
         repairable: Optional[Callable[[dict], bool]] = None,
+        reads: Optional[list[str]] = None,
     ) -> RunResult:
         """`task` is the organizer's own instruction for this call (e.g. image-read's step), written after
         the data block; `client` sends this call to another endpoint (per-type image routing); `max_tokens`
@@ -249,7 +256,11 @@ class Harness:
         `no_retry`: validator error categories (the "[category]" tag an error starts with) that a second
         call does not fix and the caller repairs deterministically instead: when a schema-valid output
         fails only with these, the call is not repeated (ok=False, `candidate` holds the output) when
-        `repairable(output)` (default: always) says the caller's repair leaves something usable."""
+        `repairable(output)` (default: always) says the caller's repair leaves something usable.
+        `reads`: the ids of the items whose text the call's input holds (besides `subject`); stored with the
+        run, so deleting any of them clears the run and its proposals (privacy contract section 2).
+        Every parsed output first has its broken placeholders repaired against this call's input (a tag of an
+        input placeholder written as "验证码3feb18" becomes 〔验证码·3feb18〕), before it is validated or stored."""
         skill = self.registry.for_job(job_type)
         schema = schema or skill.schema
         context = context or {}
@@ -263,7 +274,8 @@ class Harness:
             content = user_text
         messages = [{"role": "system", "content": skill.system_prompt}, {"role": "user", "content": content}]
         digest_hex = input_digest(skill.prompt_hash, user_text, schema, budget, images)
-        audit = {"as_of": as_of, "input_text": user_text if self.record_inputs else None}
+        audit = {"as_of": as_of, "input_text": user_text if self.record_inputs else None,
+                 "reads": sorted(set(reads)) if reads else None}
         run_id = new_id()
         started = time.time()
         errors: list[str] = []
@@ -274,6 +286,7 @@ class Harness:
         raw = ""
         last_candidate: Optional[dict] = None
         attempt_errors: list[list[str]] = []
+        repaired = 0
         try:
             for attempt in range(2):
                 attempts = attempt + 1
@@ -288,6 +301,9 @@ class Harness:
                 except ValueError as exc:
                     errors = [f"not valid JSON: {exc}"]
                     candidate = None
+                if candidate is not None:
+                    candidate, fixed = masking.repair_placeholders(candidate, user_text)
+                    repaired += fixed
                 if not errors:
                     errors = jsonschema_lite.validate(candidate, schema)
                     if not errors and isinstance(candidate, dict):
@@ -327,7 +343,7 @@ class Harness:
             "run_id": run_id,
         }
         return RunResult(ok, copy.deepcopy(output), run_id, errors, provenance, time.time() - started, attempts,
-                         None if ok else copy.deepcopy(last_candidate), attempt_errors)
+                         None if ok else copy.deepcopy(last_candidate), attempt_errors, repaired)
 
     def _record(self, run_id, job_type, skill, model_id, input_digest, output, error, attempts, started, ok,
                 usage_in, usage_out, subject, audit: Optional[dict] = None) -> None:
@@ -335,6 +351,7 @@ class Harness:
         self.store.record_run({
             "as_of": audit.get("as_of"),
             "input_text": audit.get("input_text"),
+            "read_items": audit.get("reads"),
             "run_id": run_id,
             "job_type": job_type,
             "skill": skill.name,

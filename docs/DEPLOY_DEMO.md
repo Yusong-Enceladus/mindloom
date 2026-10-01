@@ -9,15 +9,23 @@ The demo lives in its own directory and never shares a venv, data directory, pid
 ```
 ~/hack/zhiji-demo/
   app/      code from `git archive origin/main spark skills LICENSE README.md` (+ REVISION)
-  venv/     organizer venv: fastapi, uvicorn, pydantic, httpx, pyyaml (+ pytest); file-read adds
-            defusedxml, openpyxl, xlrd, pypdfium2, pillow, olefile (docs/FILE_READ.md)
-  data/     0700: link_token (0600), organizer.db*, organizer.sock
+  venv/     organizer venv: fastapi, uvicorn, pydantic, httpx, pyyaml, sqlcipher3-wheels (+ pytest); file-read
+            adds defusedxml, openpyxl, xlrd, pypdfium2, pillow, olefile (docs/FILE_READ.md)
+  data/     0700: link_token (0600), organizer.db* (SQLCipher-encrypted), store.keyid (0600, the key id
+            only), inbox.db (the phone inbox), organizer.sock
   logs/     organizer.log, embed.log
   units/    zhiji-demo-organizer.service, zhiji-demo-embed.service
   ctl.sh    start | stop | restart | status | health | logs [organizer|embed] [N] | reset --yes
 ```
 
-`spark/ctl.sh` in this repository is not used for the demo. It keeps its pid files and logs under the shared `~/hack/run` and `~/hack/logs`, so it would collide with another instance.
+`spark/ctl.sh` in this repository is not used for the demo. By default it keeps its pid files and logs under the shared `~/hack/run` and `~/hack/logs`; set `ORGANIZER_RUN_DIR` and `ORGANIZER_LOG_DIR` (with `ORGANIZER_DATA_DIR` and `ORGANIZER_VENV`) to run a separate instance with it.
+
+## Privacy contract v6 (encrypted, locked at start)
+
+- The store is encrypted with SQLCipher and **starts locked** after every (re)start. The Mac app unlocks it with its library key (`POST /v1/unlock`) over the SSH tunnel, as its first data call; the key lives only in the organizer's memory. While locked, `/v1/health` answers (`locked: true`, `key_id` of the store on disk) and every data route answers 423.
+- A store from before v6 (plaintext `organizer.db`) is encrypted on its first unlock and the plaintext file is removed. The first key to unlock a store owns it: another key gets 409 until the store is wiped (`POST /v1/wipe`, the app's "让 Spark 忘掉我的内容").
+- Harnesses on synthetic data unlock with the fixed synthetic key: `ctl.sh unlock-synthetic` (repository `spark/ctl.sh`), `eval/smoke_api.py` does it by itself. Never unlock a store that holds a real library with it (it only works on a store that key created).
+- Install the new dependency into an existing venv: `venv/bin/pip install "sqlcipher3-wheels>=0.5.7"`.
 
 ## Services
 

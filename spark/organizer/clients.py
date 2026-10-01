@@ -14,6 +14,16 @@ from typing import Optional, Protocol
 import httpx
 
 
+def safe_error(exc: BaseException) -> str:
+    """What may be logged or shown about an error: its type, and an HTTP status if it names one. Never the
+    message itself, which can quote a model server's error body or the material being read."""
+    name = type(exc).__name__
+    text = str(exc)
+    if text.startswith("HTTP ") and text[5:8].isdigit():
+        return f"{name}: HTTP {text[5:8]}"
+    return name
+
+
 class ModelUnavailable(RuntimeError):
     """The endpoint could not be reached or returned a server error; retry later."""
 

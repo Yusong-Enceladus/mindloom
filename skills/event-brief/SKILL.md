@@ -11,7 +11,7 @@ description: >-
   chat replies, or to change a title the user has edited (title_locked).
 license: Apache-2.0
 metadata:
-  version: "1.4.0"
+  version: "1.4.1"
   author: mindloom
   max_output_tokens: "700"
   language: zh-CN
@@ -30,6 +30,8 @@ For one event write a short title, 1–4 cited facts with a progress state, and 
   只说了一段时间的写成范围，如 `{"said":"下周","from":"2026-03-09","to":"2026-03-15"}`）。
   截图素材还可能有 `reading_summary`：系统读图时写的一句概要，**不是原话**，只帮你看懂截图；不能当 `quote`，也不能当日期出处。
 - `as_of`: 本事件最新一条素材的时间。"现在到哪一步"指**截至 as_of**，不是今天。
+
+占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。
 
 ## 写法 / How to write
 

@@ -1,6 +1,6 @@
 # 评测使用说明
 
-全部评测数字的汇总见仓库的 `docs/EVALUATION.md`（公开仓库）和本目录的 [`results-2026-09-29/`](results-2026-09-29/README.md)。本文件说明场景、驱动和评分指标。
+全部评测数字的汇总见公开仓库的 `docs/EVALUATION.md`，机器可读的来源是本目录的 [`results-2026-09-30/`](results-2026-09-30/README.md)（v6：定期整理事件、人物整理、隐私、手机）和 [`results-2026-09-29/`](results-2026-09-29/README.md)（提交截止时）。本文件说明场景、驱动和评分指标。
 
 ## 现在用的场景
 
@@ -30,6 +30,8 @@ python eval/run_eval.py --scenario $H --condition baseline --embed hash --out /t
 
 - **`run_skill_evals.py --n 3`**：跑 `skills/*/evals/evals.json` 里可执行的用例。
 - **`score.py`**：评分器；`--snapshots` 可以对已入库的快照重算分数。
+- **`privacy/`**（遮号评测）：`mask_stress.py` 从留出集生成号码压力集和还原探针（合成号码），`run_mask_eval.py` 在遮号开 / 关两种条件下各跑一次整理（`--shadow` 另在同一上下文里成对重发遮号和原文请求），检查号码有没有进请求和库、占位符能不能还原、有没有被模型写坏；`summarize_mask_eval.py` 汇总，`mask_similarity.py` 比较遮号前后的向量相似度。
+- **`tools/split_scale.py`**、**`tools/consolidate_offline.py`**：在规模场景的合成库副本上只重切（item-split）或只跑定期整理（event-consolidate），两个 BENCHMARK 的数字来自它们和运行时路径。
 - **`run_eval_overnight.py`**（历史）：2026-09-26 第一次夜间评测用的驱动，消融口径和 `run_eval.py` 不同，数字不能混比。下面的「执行」一节保留它的用法。
 
 ## 执行
@@ -73,7 +75,7 @@ python eval/run_eval_overnight.py eval/scenarios/dev-week-v1/scenario.json \
 - `runs.json`：实际模型、输入摘要哈希、输出、校验失败和重试、耗时。用量是服务器报告值，不是云服务账单。
 - `snapshots/`：每个检查点的完整状态，不把最终状态冒充所有历史检查点。
 - `score.json` / `score.md`：原仓库评分器的输出，保留其口径；未修改指标来提高分数。
-- `data/`：该次独立 SQLite 数据库，不上传 GitHub。
+- `data/`：该次独立的整理库（SQLCipher 加密，用 `spark/organizer/keys.py` 里公开的合成钥匙开锁；要直接读库用 `organizer.db.connect(路径, 合成钥匙推出的库钥匙)`），不上传 GitHub。
 
 B³ F1 衡量事件分组，Link F1 通过一对一匹配事件再衡量素材关联。事实召回默认只看首页的一句话状态，因此它与“整个事件事实库是否保留全部事实”不同。过期事实率依据合成标注和关键词规则计算，不等于经过人工审阅的事实准确率。人物指标可能使用事件级姓名匹配退化口径，应在报告中注明。
 

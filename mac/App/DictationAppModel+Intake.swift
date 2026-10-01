@@ -34,6 +34,8 @@ extension DictationAppModel {
     // Intake waits for this sweep, so it can never remove the files of an
     // item that is being committed right now.
     intakeReady = Task {
+      // Bytes of items deleted before a crash leave the content index.
+      await Self.pruneContentIndex(assetRoot)
       let marked = await Self.markedIntakeSessions(store)
       guard !marked.isEmpty,
         let existing = try? await repository.existingSessionIDs(among: marked)
@@ -122,24 +124,27 @@ extension DictationAppModel {
       for (index, candidate) in candidates.enumerated() {
         // Input order is capture order.
         let capturedAt = base.addingTimeInterval(Double(index) * 0.001)
-        let outcome = await Self.prepare(
+        // A zip gives the archive (kept on this Mac) and each file in it.
+        let outcomes = await Self.prepare(
           processor, candidate, capturedAt: capturedAt, source: source, origin: origin
         )
-        switch outcome {
-        case .item(let draft):
-          do {
-            try await repository.createUserItem(draft)
-            await Self.commitIntakeStaging(processor.assetStore, draft.id)
-            stored += 1
-            lastStored = draft.id
-          } catch {
-            await Self.discardIntakeStaging(processor.assetStore, draft.id)
-            rejected.append("未能保存到资料库，未收进来")
+        for outcome in outcomes {
+          switch outcome {
+          case .item(let draft):
+            do {
+              try await repository.createUserItem(draft)
+              await Self.commitIntakeStaging(processor.assetStore, draft.id)
+              stored += 1
+              lastStored = draft.id
+            } catch {
+              await Self.discardIntakeStaging(processor.assetStore, draft.id)
+              rejected.append("未能保存到资料库，未收进来")
+            }
+          case .media(let url):
+            media.append(url)
+          case .rejected(let message):
+            rejected.append(message)
           }
-        case .media(let url):
-          media.append(url)
-        case .rejected(let message):
-          rejected.append(message)
         }
       }
       guard let self else { return }
@@ -239,8 +244,12 @@ extension DictationAppModel {
   private nonisolated static func prepare(
     _ processor: IntakeProcessor, _ candidate: IntakeCandidate, capturedAt: Date,
     source: ItemSourceApplication?, origin: ItemSourceOrigin
-  ) async -> IntakeOutcome {
-    processor.prepare(candidate, capturedAt: capturedAt, source: source, origin: origin)
+  ) async -> [IntakeOutcome] {
+    processor.prepareAll(candidate, capturedAt: capturedAt, source: source, origin: origin)
+  }
+
+  private nonisolated static func pruneContentIndex(_ assetRoot: URL) async {
+    ContentAddressedAssets.prune(assetRoot: assetRoot)
   }
 
   private nonisolated static func commitIntakeStaging(_ store: IntakeAssetStore, _ id: SessionID)

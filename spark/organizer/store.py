@@ -1,25 +1,38 @@
-"""SQLite store (stdlib only).
+"""The organizer's store: one SQLCipher database per library (organizer.db), encrypted at rest.
 
 Guarantees enforced here:
-- Source items are append-only per (item_id, revision); SQLite triggers reject UPDATE/DELETE.
-  The latest revision is the item's current content; a revision lower than the stored latest is
-  stale and ignored, so a late retry can never roll an item back.
+- Locked at rest (privacy contract section 2). The database is SQLCipher-encrypted with the store key
+  derived from the Mac's library key (organizer/keys.py). A Store starts locked: nothing can be read until
+  unlock(library_key) (POST /v1/unlock from the Mac over its SSH tunnel). lock() closes the connection and
+  drops the keys; wipe(key_id) deletes the store. The only key-related value on disk is the plaintext
+  sidecar store.keyid (the key_id, mode 0600), so /v1/health can say whose store this is while locked.
+  A plaintext organizer.db written before encryption is encrypted on the first unlock (sqlcipher_export),
+  then the plaintext file is deleted. ":memory:" stores (harness helpers) are never on disk and open unlocked.
+- Item content is never rewritten, only purged (replaces "append-only"). Items are stored per
+  (item_id, revision); the latest revision is the item's current content and a lower revision than the
+  stored latest is stale and ignored, so a late retry can never roll an item back. SQLite triggers abort
+  any UPDATE that changes an item's identity or time, or changes its content to anything but a purge
+  (every content column NULL and purged = 1), and every DELETE on items. Only two paths remove content:
+  the user's delete (purge_item: all revisions, children and derived rows; a content-free tombstone stays)
+  and read-then-delete (an image / file blob is deleted in the same transaction that stores its reading).
 - meta.store_id is a UUID created once with the database; clients use it to detect a reset store.
 - Every change that a client must see bumps a global sequence number; GET /v1/state?since=
   returns rows whose seq is greater than the client's cursor.
 - One connection shared across threads behind an RLock; transactions are short and never
-  span a model call.
+  span a model call. Locking waits for a running transaction to finish.
 - Semantic timestamps (events, links, questions, decisions, constraints, persons) come from the
   injected Clock (organizer/clock.py); audit timestamps (received_at, runs, jobs, proposals) stay on
   the wall clock. Orderings never depend on either: they use seq counters and stable short handles.
 - Every event gets a short handle (E1, E2, ...) and every item a handle (I1, I2, ...) at creation.
   Handles are what the model sees; they are never reused.
+- The phone inbox is not here: it lives in its own small inbox.db (organizer/inbox.py) because it must
+  accept phone shares while this store is locked.
 """
 
 from __future__ import annotations
 
 import json
-import sqlite3
+import os
 import threading
 import time
 import uuid
@@ -28,12 +41,27 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator, Optional
 
+from . import db, keys, masking
 from .clock import Clock, WallClock
 
-SCHEMA = """
-CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
-INSERT OR IGNORE INTO meta(key, value) VALUES ('seq', '0'), ('schema_version', '1');
 
+class StoreLocked(RuntimeError):
+    """The store is locked: its key is not in memory (POST /v1/unlock first)."""
+
+
+class WrongKey(RuntimeError):
+    """The library key does not belong to the store on disk. `key_id` is the store's own (or None)."""
+
+    def __init__(self, key_id: Optional[str]):
+        super().__init__("wrong_key")
+        self.key_id = key_id
+
+
+class ItemPurged(RuntimeError):
+    """The item was deleted by the user while it was being organized; nothing more is written for it."""
+
+
+ITEMS_DDL = """
 CREATE TABLE IF NOT EXISTS items(
   item_id TEXT NOT NULL,
   revision INTEGER NOT NULL,
@@ -46,26 +74,27 @@ CREATE TABLE IF NOT EXISTS items(
   text TEXT,
   segments TEXT,
   persons TEXT,
-  sha256 TEXT NOT NULL,
+  sha256 TEXT,
   has_image INTEGER NOT NULL DEFAULT 0,
   received_at TEXT NOT NULL,
+  meta TEXT,
+  purged INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (item_id, revision)
 );
-CREATE TRIGGER IF NOT EXISTS items_no_update BEFORE UPDATE ON items
-BEGIN SELECT RAISE(ABORT, 'items are append-only'); END;
-CREATE TRIGGER IF NOT EXISTS items_no_delete BEFORE DELETE ON items
-BEGIN SELECT RAISE(ABORT, 'items are append-only'); END;
+"""
 
-CREATE VIEW IF NOT EXISTS latest_items AS
-  SELECT i.* FROM items i
-  WHERE i.revision = (SELECT MAX(r.revision) FROM items r WHERE r.item_id = i.item_id);
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
+INSERT OR IGNORE INTO meta(key, value) VALUES ('seq', '0'), ('schema_version', '2');
 
+""" + ITEMS_DDL + """
 CREATE TABLE IF NOT EXISTS item_blobs(
   item_id TEXT NOT NULL, revision INTEGER NOT NULL, mime TEXT NOT NULL, data BLOB NOT NULL,
   PRIMARY KEY (item_id, revision)
 );
-CREATE TRIGGER IF NOT EXISTS item_blobs_no_update BEFORE UPDATE ON item_blobs
-BEGIN SELECT RAISE(ABORT, 'item blobs are append-only'); END;
+
+-- A user-deleted item id (no content): a later POST /v1/items for it is refused with 410.
+CREATE TABLE IF NOT EXISTS item_tombstones(item_id TEXT PRIMARY KEY, deleted_at TEXT NOT NULL);
 
 CREATE TABLE IF NOT EXISTS item_derived(
   item_id TEXT NOT NULL, revision INTEGER NOT NULL,
@@ -186,23 +215,216 @@ def dumps(value: Any) -> str:
     return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
 
 
+# Content of an item changes only by a purge: every content column NULL (source_app, NOT NULL, becomes '{}') and
+# purged = 1. Identity and times never change; items are never deleted (a purged row keeps its id, revision, kind
+# and times, which are not content).
+INTEGRITY = """
+DROP TRIGGER IF EXISTS items_no_update;
+DROP TRIGGER IF EXISTS items_no_rewrite;
+DROP TRIGGER IF EXISTS items_no_delete;
+DROP TRIGGER IF EXISTS item_blobs_no_update;
+CREATE TRIGGER items_no_rewrite BEFORE UPDATE ON items
+WHEN NEW.item_id IS NOT OLD.item_id OR NEW.revision IS NOT OLD.revision OR NEW.kind IS NOT OLD.kind
+  OR (NEW.source_app IS NOT OLD.source_app AND (NEW.purged = 0 OR NEW.source_app IS NOT '{}'))
+  OR NEW.started_at IS NOT OLD.started_at
+  OR NEW.started_ts IS NOT OLD.started_ts OR NEW.ended_at IS NOT OLD.ended_at OR NEW.ended_ts IS NOT OLD.ended_ts
+  OR NEW.received_at IS NOT OLD.received_at OR NEW.has_image IS NOT OLD.has_image OR NEW.purged < OLD.purged
+  OR ((NEW.text IS NOT OLD.text OR NEW.segments IS NOT OLD.segments OR NEW.persons IS NOT OLD.persons
+       OR NEW.sha256 IS NOT OLD.sha256 OR NEW.meta IS NOT OLD.meta)
+      AND (NEW.purged = 0 OR NEW.text IS NOT NULL OR NEW.segments IS NOT NULL OR NEW.persons IS NOT NULL
+           OR NEW.sha256 IS NOT NULL OR NEW.meta IS NOT NULL))
+BEGIN SELECT RAISE(ABORT, 'item content is never rewritten; only a purge (NULL) may change it'); END;
+CREATE TRIGGER items_no_delete BEFORE DELETE ON items
+BEGIN SELECT RAISE(ABORT, 'items are never deleted; a purge sets their content to NULL'); END;
+CREATE TRIGGER item_blobs_no_update BEFORE UPDATE ON item_blobs
+BEGIN SELECT RAISE(ABORT, 'item blobs are never rewritten; read-then-delete or a purge removes them'); END;
+CREATE VIEW IF NOT EXISTS latest_items AS
+  SELECT i.* FROM items i
+  WHERE i.revision = (SELECT MAX(r.revision) FROM items r WHERE r.item_id = i.item_id);
+"""
+
+ITEM_COLS = ("item_id", "revision", "kind", "source_app", "started_at", "started_ts", "ended_at", "ended_ts", "text",
+             "segments", "persons", "sha256", "has_image", "received_at", "meta", "purged")
+
+
+def _secure_zero(buf: Optional[bytearray]) -> None:
+    if buf is not None:
+        for i in range(len(buf)):
+            buf[i] = 0
+
+
 class Store:
-    def __init__(self, path: str | Path, clock: Optional[Clock] = None):
+    """The organizer store. Store(path) starts locked; Store(path, key=library_key) is unlocked at once
+    (harnesses on synthetic data); Store(":memory:") is an unencrypted, never-on-disk store (eval helpers)."""
+
+    def __init__(self, path: str | Path, clock: Optional[Clock] = None, key: Optional[bytes] = None):
         self.clock: Clock = clock or WallClock()
         self.path = str(path)
-        if self.path != ":memory:":
+        self.memory = self.path == ":memory:"
+        if not self.memory:
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._depth = 0
-        self.conn = sqlite3.connect(self.path, check_same_thread=False, isolation_level=None)
-        self.conn.row_factory = sqlite3.Row
-        self.conn.execute("PRAGMA journal_mode=WAL")
-        self.conn.execute("PRAGMA synchronous=NORMAL")
-        self.conn.executescript(SCHEMA)
-        self._migrate()
-        # Created exactly once per database file; a fresh database gets a fresh id.
-        self.conn.execute("INSERT OR IGNORE INTO meta(key, value) VALUES ('store_id', ?)", (new_id(),))
-        self.store_id: str = str(self.scalar("SELECT value FROM meta WHERE key = 'store_id'"))
+        self.conn: Optional[db.Connection] = None
+        self.store_id: Optional[str] = None
+        self.key_id: Optional[str] = None
+        self._mask_key: Optional[bytearray] = None
+        # Bumped on every unlock and lock, so the worker can tell a new session from the one it knew.
+        self.generation = 0
+        # The unlock session a worker thread's writes belong to (bind()); a write for an older session is refused.
+        self._bound = threading.local()
+        # Purges in this process (a model call that spans one re-checks what it writes) and the starts of the
+        # purged texts, kept in memory only while unlocked, so an audit record written by a call already in flight
+        # is cleared too.
+        self.purges = 0
+        self._purged_heads: set[str] = set()
+        if self.memory:
+            self._open(db.connect(":memory:", None, check_same_thread=False, isolation_level=None))
+        elif key is not None:
+            self.unlock(key)
+
+    # ---- locking (privacy contract section 2) --------------------------------------------
+
+    @property
+    def locked(self) -> bool:
+        return self.conn is None
+
+    @property
+    def keyid_path(self) -> Path:
+        p = Path(self.path)
+        return p.with_name("store.keyid") if p.name == "organizer.db" else Path(self.path + ".keyid")
+
+    def disk_key_id(self) -> Optional[str]:
+        """The key_id of the store on disk (plaintext sidecar), or None when there is no store yet."""
+        return None if self.memory else keys.read_key_id(self.keyid_path)
+
+    def unlock(self, library_key: bytes) -> dict:
+        """Open (or create) the encrypted store with the Mac's library key. Idempotent with the same key.
+        Raises WrongKey when the key belongs to another store; the store then stays locked."""
+        key_id, store_key, mask_key = keys.derive_keys(library_key)
+        with self._lock:
+            if self.conn is not None:
+                if self.memory or key_id == self.key_id:
+                    return {"locked": False, "key_id": self.key_id, "created": False, "store_id": self.store_id}
+                raise WrongKey(self.key_id)
+            on_disk = self.disk_key_id()
+            if on_disk is not None and on_disk != key_id:
+                raise WrongKey(on_disk)
+            path = Path(self.path)
+            created = not (path.exists() and path.stat().st_size > 0)
+            if not created and db.is_plaintext(path):
+                # A store written before encryption: encrypt it with this key, then drop the plaintext file.
+                db.encrypt_in_place(path, store_key)
+            try:
+                conn = db.connect(self.path, store_key, check_same_thread=False, isolation_level=None)
+            except db.DatabaseError:
+                raise WrongKey(on_disk) from None  # encrypted with another key (and no sidecar to say so)
+            self._open(conn)
+            if on_disk is None:
+                keys.write_key_id(self.keyid_path, key_id)
+            self.key_id = key_id
+            self._mask_key = bytearray(mask_key)
+            self.generation += 1
+            return {"locked": False, "key_id": key_id, "created": created, "store_id": self.store_id}
+
+    def _open(self, conn: db.Connection) -> None:
+        try:
+            conn.row_factory = db.Row
+            if not self.memory:
+                conn.execute("PRAGMA journal_mode=WAL")
+                conn.execute("PRAGMA synchronous=NORMAL")
+            # Freed pages are overwritten, so a purged item's old pages do not stay readable with the key.
+            conn.execute("PRAGMA secure_delete=ON")
+            self.conn = conn
+            self.conn.executescript(SCHEMA)
+            self._migrate()
+            # Created exactly once per database file; a fresh database gets a fresh id.
+            self.conn.execute("INSERT OR IGNORE INTO meta(key, value) VALUES ('store_id', ?)", (new_id(),))
+            self.store_id = str(self.conn.execute("SELECT value FROM meta WHERE key = 'store_id'").fetchone()[0])
+        except BaseException:
+            self.conn = None
+            conn.close()
+            raise
+        if not self.memory:
+            os.chmod(self.path, 0o600)
+
+    def lock(self) -> None:
+        """Close the database and drop every key from memory (best effort: Python may still hold copies of
+        request bytes until they are collected). Idempotent. Waits for a running transaction."""
+        with self._lock:
+            if self.memory:
+                return
+            if self.conn is not None:
+                try:
+                    self.conn.execute("PRAGMA wal_checkpoint(TRUNCATE)")
+                except db.DatabaseError:
+                    pass
+                self.conn.close()
+                self.conn = None
+                self.generation += 1
+            _secure_zero(self._mask_key)
+            self._mask_key = None
+            self.key_id = None
+            self.store_id = None
+            self._purged_heads = set()
+
+    def wipe(self, key_id: Optional[str]) -> None:
+        """Delete the store (database, WAL, shared memory, sidecar). Allowed when key_id matches the store on
+        disk or when no key-bound store exists; raises WrongKey otherwise. Works locked or unlocked."""
+        with self._lock:
+            on_disk = self.disk_key_id()
+            if on_disk is not None and key_id != on_disk:
+                raise WrongKey(on_disk)
+            self.lock()
+            path = Path(self.path)
+            for p in (path, *(Path(self.path + s) for s in db.SIDE_FILES), self.keyid_path,
+                      path.with_name(path.name + ".enc-tmp")):
+                try:
+                    p.unlink()
+                except FileNotFoundError:
+                    pass
+            db.remove_side_files(path.with_name(path.name + ".enc-tmp"))
+
+    def _c(self) -> db.Connection:
+        conn = self.conn
+        if conn is None:
+            raise StoreLocked("locked")
+        bound = getattr(self._bound, "generation", None)
+        if bound is not None and bound != self.generation:
+            # This thread works for an unlock session that has ended (a lock, or a wipe and a new key): what it
+            # read or computed there is never written into the store opened since.
+            raise StoreLocked("session ended")
+        return conn
+
+    def bind(self, generation: Optional[int]) -> None:
+        """Tie this thread's store access to one unlock session (None: unbound). The worker binds every step,
+        so a model call that returns after a lock, or after a wipe and an unlock with a new key, writes
+        nothing."""
+        self._bound.generation = generation
+
+    # ---- masking (privacy contract section 3) ---------------------------------------------
+
+    @property
+    def masking(self) -> bool:
+        return self._mask_key is not None
+
+    def mask_text(self, text: Optional[str]) -> Optional[str]:
+        """Mask with this library's mask key. An unencrypted in-memory store (eval helpers) has no key and
+        leaves text as it is."""
+        key = self._mask_key
+        if key is None:
+            if self.memory:
+                return text
+            raise StoreLocked("locked")
+        return masking.mask_text(text, bytes(key))
+
+    def mask_obj(self, value: Any) -> Any:
+        key = self._mask_key
+        if key is None:
+            if self.memory:
+                return value
+            raise StoreLocked("locked")
+        return masking.mask_obj(value, bytes(key))
 
     def _cols(self, table: str) -> set[str]:
         return {r["name"] for r in self.conn.execute(f"PRAGMA table_info({table})").fetchall()}
@@ -213,7 +435,32 @@ class Store:
         self.conn.execute(f"ALTER TABLE {table} ADD COLUMN {col} {decl}")
         return True
 
+    def _rebuild_items(self) -> None:
+        """Stores from before 2026-09-30 declared items.sha256 NOT NULL (a purged row sets it to NULL) and had
+        the append-only triggers: rebuild the table once, keeping every row."""
+        info = {r["name"]: dict(r) for r in self.conn.execute("PRAGMA table_info(items)").fetchall()}
+        if not info or not info.get("sha256", {}).get("notnull"):
+            return
+        cols = ",".join(c for c in ITEM_COLS if c in info)
+        self.conn.execute("BEGIN IMMEDIATE")
+        try:
+            for stmt in ("DROP VIEW IF EXISTS latest_items", "DROP TRIGGER IF EXISTS items_no_update",
+                         "DROP TRIGGER IF EXISTS items_no_delete", "DROP TRIGGER IF EXISTS items_no_rewrite",
+                         "ALTER TABLE items RENAME TO items_v1"):
+                self.conn.execute(stmt)
+            self.conn.execute(ITEMS_DDL)
+            self.conn.execute(f"INSERT INTO items({cols}) SELECT {cols} FROM items_v1")
+            self.conn.execute("DROP TABLE items_v1")
+            self.conn.execute("UPDATE meta SET value='2' WHERE key='schema_version'")
+            self.conn.execute("COMMIT")
+        except BaseException:
+            self.conn.execute("ROLLBACK")
+            raise
+        self.conn.execute("VACUUM")  # once: the old table's pages are not kept as free space
+
     def _migrate(self) -> None:
+        self._rebuild_items()
+        self._add_col("items", "purged", "INTEGER NOT NULL DEFAULT 0")
         if self._add_col("questions", "apply_note", "TEXT"):
             pass  # why an answered question's decision could not be applied (status 'failed')
         if self._add_col("event_items", "item_revision", "INTEGER"):
@@ -234,6 +481,8 @@ class Store:
         # rewrite it, only a user rename does.
         self._add_col("events", "anchor", "TEXT NOT NULL DEFAULT ''")
         self._add_col("events", "anchor_source", "TEXT NOT NULL DEFAULT ''")
+        # The item the event was created from (its anchor's seed): a purge of it clears the anchor.
+        self._add_col("events", "anchor_item", "TEXT")
         if self._add_col("event_items", "link_seq", "INTEGER NOT NULL DEFAULT 0"):
             self.conn.execute("UPDATE event_items SET link_seq=rowid")
         # 1 = event-brief said this model-placed item is about another object; hidden from matching.
@@ -245,6 +494,8 @@ class Store:
         self._add_col("questions", "b_items_at_ask", "TEXT")
         self._add_col("runs", "as_of", "TEXT")
         self._add_col("runs", "input_text", "TEXT")
+        # The items whose text a run's input held (JSON list): a purge of any of them clears the run.
+        self._add_col("runs", "read_items", "TEXT")
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS item_handles(item_id TEXT PRIMARY KEY, n INTEGER NOT NULL UNIQUE)")
         if not self.conn.execute("SELECT 1 FROM item_handles LIMIT 1").fetchone():
@@ -305,48 +556,72 @@ class Store:
         # item-split marked this segment as no matter at all (chit-chat, a notice read out): it stays
         # unfiled and is never assigned.
         self._add_col("item_segments", "no_matter", "INTEGER NOT NULL DEFAULT 0")
-        # --- phone inbox (contract C): held only until the Mac acks; acked rows keep no content ---
+        # --- consolidation pass (skill event-consolidate): one row per judged event, so an event is judged
+        # again only after it doubled, gained a new nearest neighbour or went stale (organizer/consolidate.py).
+        # outcome: merged / unfiled / kept / skipped / invalid / stale. No content. ---
         self.conn.execute(
-            "CREATE TABLE IF NOT EXISTS inbox(inbox_id TEXT PRIMARY KEY, source TEXT NOT NULL, kind TEXT NOT NULL,"
-            " text TEXT, image BLOB, received_at TEXT NOT NULL, created_at TEXT NOT NULL,"
-            " acked INTEGER NOT NULL DEFAULT 0, acked_at TEXT, seq INTEGER NOT NULL)")
+            "CREATE TABLE IF NOT EXISTS consolidate_checks(event_id TEXT PRIMARY KEY, n_items INTEGER NOT NULL,"
+            " near TEXT NOT NULL DEFAULT '[]', outcome TEXT NOT NULL, target TEXT, run_id TEXT,"
+            " n_checks INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL)")
+        # --- people pass (skill person-resolve, organizer/people_pass.py). persons.status: NULL (a person),
+        # 'role' (a role or desk that speaks in chats: 客服, 组委会) or 'not_person' (a label, heading, code key or
+        # phrase read as a speaker; it keeps no links). person_checks: one verdict per judged person record
+        # (name, kind, whether the name is also an ordinary word, the record it is the same as); no item
+        # content. person_scan: the speaker rules and the mention index each item was last read with. ---
+        self._add_col("persons", "status", "TEXT")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS person_checks(person_id TEXT PRIMARY KEY, name TEXT NOT NULL,"
+            " verdict TEXT NOT NULL, common_word INTEGER NOT NULL DEFAULT 0, same_as TEXT, outcome TEXT NOT NULL,"
+            " run_id TEXT, n_items INTEGER NOT NULL DEFAULT 0, created_at TEXT NOT NULL)")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS person_scan(item_id TEXT PRIMARY KEY, rules TEXT NOT NULL,"
+            " mentions TEXT NOT NULL DEFAULT '')")
+        # The phone inbox moved to its own inbox.db (organizer/inbox.py); an older store's inbox table is
+        # handed over once after unlock (legacy_inbox_rows / drop_legacy_inbox) and then dropped.
+        # Integrity triggers ("no rewrite, only purge") and the latest_items view, recreated on every open.
+        self.conn.executescript(INTEGRITY)
+        # Bytes of a revision that a later revision replaced are never read: a store written before
+        # insert_item deleted them keeps them no longer.
+        self.conn.execute("DELETE FROM item_blobs WHERE revision < (SELECT MAX(i.revision) FROM items i"
+                          " WHERE i.item_id = item_blobs.item_id)")
 
     # ---- primitives -------------------------------------------------------------
 
     @contextmanager
     def tx(self) -> Iterator["Store"]:
         with self._lock:
+            conn = self._c()
             outer = self._depth == 0
             if outer:
-                self.conn.execute("BEGIN IMMEDIATE")
+                conn.execute("BEGIN IMMEDIATE")
             self._depth += 1
             try:
                 yield self
             except BaseException:
                 self._depth -= 1
                 if outer:
-                    self.conn.execute("ROLLBACK")
+                    conn.execute("ROLLBACK")
                 raise
             self._depth -= 1
             if outer:
-                self.conn.execute("COMMIT")
+                conn.execute("COMMIT")
 
-    def x(self, sql: str, args: tuple | list = ()) -> sqlite3.Cursor:
+    def x(self, sql: str, args: tuple | list = ()) -> db.Cursor:
         with self._lock:
-            return self.conn.execute(sql, args)
+            return self._c().execute(sql, args)
 
     def all(self, sql: str, args: tuple | list = ()) -> list[dict]:
         with self._lock:
-            return [dict(r) for r in self.conn.execute(sql, args).fetchall()]
+            return [dict(r) for r in self._c().execute(sql, args).fetchall()]
 
     def one(self, sql: str, args: tuple | list = ()) -> Optional[dict]:
         with self._lock:
-            row = self.conn.execute(sql, args).fetchone()
+            row = self._c().execute(sql, args).fetchone()
             return dict(row) if row else None
 
     def scalar(self, sql: str, args: tuple | list = ()) -> Any:
         with self._lock:
-            row = self.conn.execute(sql, args).fetchone()
+            row = self._c().execute(sql, args).fetchone()
             return row[0] if row else None
 
     def now(self) -> str:
@@ -376,6 +651,8 @@ class Store:
         A higher revision becomes the item's current content and re-runs organizing for it.
         """
         with self.tx():
+            if self.is_tombstoned(item["item_id"]):
+                return False  # deleted by the user; the API answers 410 before it gets here
             latest = self.latest_revision(item["item_id"])
             if latest is not None and item["revision"] <= latest:
                 return False
@@ -406,6 +683,9 @@ class Store:
                        (item["item_id"], item["revision"], mime, image))
             self.x("UPDATE jobs SET state='superseded' WHERE item_id=? AND state IN ('queued','failed')",
                    (item["item_id"],))
+            # Read-then-delete covers superseded revisions too: only the latest revision is ever read, so the
+            # bytes of an older revision that was not read yet are deleted now instead of staying for good.
+            self.x("DELETE FROM item_blobs WHERE item_id=? AND revision < ?", (item["item_id"], item["revision"]))
             self.enqueue(item["item_id"], item["revision"], started_ts,
                          reason or ("ingest" if latest is None else "revision"))
             return True
@@ -423,8 +703,12 @@ class Store:
     def get_blob(self, item_id: str, revision: int) -> Optional[dict]:
         return self.one("SELECT mime, data FROM item_blobs WHERE item_id=? AND revision=?", (item_id, revision))
 
-    def save_derived(self, item_id: str, revision: int, **fields: Any) -> None:
+    def save_derived(self, item_id: str, revision: int, *, drop_blob: bool = False, **fields: Any) -> None:
+        """Store derived fields of an item revision. drop_blob=True is read-then-delete: the reading and the
+        deletion of the image / file bytes commit in one transaction."""
         with self.tx():
+            if self.is_tombstoned(item_id):
+                raise ItemPurged(item_id)
             cur = self.one("SELECT * FROM item_derived WHERE item_id=? AND revision=?", (item_id, revision))
             row = dict(cur) if cur else {"item_id": item_id, "revision": revision}
             for key, value in fields.items():
@@ -440,7 +724,29 @@ class Store:
                     "embed_model", "created_at", "reading_seq", "split", "reading"]
             self.x(f"INSERT OR REPLACE INTO item_derived({','.join(cols)}) VALUES ({','.join('?' * len(cols))})",
                    [row.get(c) for c in cols])
+            if drop_blob:
+                self.x("DELETE FROM item_blobs WHERE item_id=? AND revision=?", (item_id, revision))
 
+    def mark_unreadable(self, item_id: str, revision: int, kind: str, why: str = "unreadable") -> bool:
+        """A read that failed for good (retries exhausted, or the endpoint refused the image): the bytes are
+        deleted all the same and the item gets an empty reading marked `unreadable`, so it is organized by
+        what else is known. Returns False when there was nothing to do (already read, or no bytes)."""
+        with self.tx():
+            if self.is_tombstoned(item_id):
+                return False
+            derived = self.one("SELECT screenshot_run_id FROM item_derived WHERE item_id=? AND revision=?",
+                               (item_id, revision))
+            has_blob = self.one("SELECT 1 FROM item_blobs WHERE item_id=? AND revision=?", (item_id, revision))
+            if not has_blob and (derived or {}).get("screenshot_run_id"):
+                return False
+            if not has_blob and kind not in ("image", "file"):
+                return False
+            reading = {"type": "other" if kind == "image" else "data", "error": why, "fields": [], "numbers": []}
+            if kind == "file":
+                reading.update(source="file-read", counts={}, attachments=[], doc_kind="", notes=[])
+            self.save_derived(item_id, revision, drop_blob=True, derived_text="", summary="", messages=[],
+                              screenshot_run_id=f"unreadable:{revision}", reading=reading)
+            return True
     def get_derived(self, item_id: str, revision: int) -> dict:
         row = self.one("SELECT * FROM item_derived WHERE item_id=? AND revision=?", (item_id, revision)) or {}
         if row.get("messages"):
@@ -479,8 +785,195 @@ class Store:
 
     def count_items(self) -> int:
         """Items the Mac sent (internal segment children are not counted)."""
-        return int(self.scalar("SELECT COUNT(DISTINCT item_id) FROM items"
-                               " WHERE item_id NOT IN (SELECT child_id FROM item_segments)") or 0)
+        return int(self.scalar("SELECT COUNT(DISTINCT item_id) FROM items WHERE purged = 0"
+                               " AND item_id NOT IN (SELECT child_id FROM item_segments)") or 0)
+
+    # ---- user delete (privacy contract section 2) ------------------------------------------
+
+    def is_tombstoned(self, item_id: str) -> bool:
+        return self.one("SELECT 1 FROM item_tombstones WHERE item_id=?", ((item_id or "").lower(),)) is not None
+
+    def tombstoned(self, item_ids: list[str]) -> list[str]:
+        """The ids among item_ids that the user deleted."""
+        return [i for i in item_ids if self.is_tombstoned(i)]
+
+    def purge_item(self, item_id: str) -> dict:
+        """Delete an item on the user's request, across all revisions: its content columns become NULL, its
+        blobs, derived rows (readings, embeddings, splits), persons and segments go, and so do its segment
+        children (text slices of it) and a recording's keyframes (image items whose parent_item_id is it) the
+        same way. Its event links are removed (removed_by 'user-delete') and facts citing it are dropped.
+
+        Every event it was ever in (now, before a move or a merge, or in an event the user deleted) may quote
+        it, and a card is not left to a later brief that can fail: a live event keeps only its user-typed title
+        (or its anchor) until it is briefed again, and loses its status line and rank reason; a deleted event,
+        or one left empty, is blanked. An anchor seeded from the item is cleared (the next brief sets one).
+        Questions about it expire with their prompt blanked; run outputs and proposal payloads about it and about
+        those events (their briefs and ranks quote it) are cleared, and so are those of every run whose recorded
+        read set holds it (event-assign candidates, briefs, event-consolidate and person-resolve calls), as is any
+        other audit record carrying the start of its text. The scheduled passes' own tables follow: its
+        person_scan rows go, the person_checks of records it leaves with no item go, and the consolidate_checks
+        rows of the events it was in go. A content-free tombstone keeps a later POST of the id out (410).
+        Idempotent; an unknown id only gets its tombstone."""
+        key = (item_id or "").lower()
+        with self.tx():
+            stored = [r["item_id"] for r in self.all("SELECT DISTINCT item_id FROM items WHERE lower(item_id)=?",
+                                                     (key,))]
+            # A recording's keyframes (and a GIF's extra frames) are image items of their own that carry text read
+            # from it: they go with it.
+            frames = [r["item_id"] for r in self.all(
+                "SELECT DISTINCT item_id FROM items WHERE meta IS NOT NULL"
+                " AND lower(json_extract(meta, '$.parent_item_id'))=?", (key,))]
+            parents = [key] + [f.lower() for f in frames]
+            pmarks = ",".join("?" * len(parents))
+            children = [r["child_id"] for r in self.all(
+                f"SELECT child_id FROM item_segments WHERE lower(parent_id) IN ({pmarks})", parents)]
+            ids = list(dict.fromkeys(stored + frames + children))
+            now = now_iso()
+            for tomb in dict.fromkeys([key] + [i.lower() for i in frames + children]):
+                self.x("INSERT OR IGNORE INTO item_tombstones(item_id, deleted_at) VALUES (?,?)", (tomb, now))
+            self.purges += 1
+            touched: list[str] = []
+            if ids:
+                marks = ",".join("?" * len(ids))
+                # The start of each text of the item (its revisions, parts and readings): audit copies elsewhere
+                # (a 60-character excerpt in another item's assign proposal, a question prompt) are found by it.
+                heads = set()
+                for r in self.all(f"SELECT text FROM items WHERE item_id IN ({marks}) UNION ALL SELECT derived_text"
+                                  f" FROM item_derived WHERE item_id IN ({marks})", ids + ids):
+                    head = (r["text"] or "").strip().replace("\n", " ").replace('"', " ")[:12]
+                    if len(head) >= 8 and head.strip():
+                        heads.add(head)
+                self._purged_heads.update(heads)
+                self.x(f"UPDATE items SET text=NULL, segments=NULL, persons=NULL, sha256=NULL, meta=NULL,"
+                       f" source_app='{{}}', purged=1 WHERE item_id IN ({marks})", ids)
+                touched = [r["event_id"] for r in self.all(
+                    f"SELECT DISTINCT event_id FROM event_items WHERE item_id IN ({marks}) AND removed=0", ids)]
+                # Every event it was ever linked to, removed links included (moved out, merged, event deleted).
+                ever = list(dict.fromkeys(touched + [r["event_id"] for r in self.all(
+                    f"SELECT DISTINCT event_id FROM event_items WHERE item_id IN ({marks})", ids)]))
+                # The event whose anchor this item seeded; for events created before anchor_item was recorded,
+                # the item linked first.
+                seeded = {r["event_id"] for r in self.all(
+                    f"SELECT event_id FROM events WHERE anchor_item IN ({marks})", ids)}
+                for event_id in ever:
+                    first = self.one("SELECT item_id FROM event_items WHERE event_id=? ORDER BY link_seq, rowid"
+                                     " LIMIT 1", (event_id,))
+                    ev_row = self.one("SELECT anchor_item FROM events WHERE event_id=?", (event_id,))
+                    if ev_row and ev_row["anchor_item"] is None and first and first["item_id"] in ids:
+                        seeded.add(event_id)
+                self.x(f"UPDATE event_items SET removed=1, removed_by='user-delete' WHERE item_id IN ({marks})"
+                       f" AND removed=0", ids)
+                # People it named or who spoke in it (people pass): a record left with no item keeps no verdict.
+                linked = [r["person_id"] for r in self.all(
+                    f"SELECT DISTINCT person_id FROM item_persons WHERE item_id IN ({marks})", ids)]
+                for table in ("item_blobs", "item_derived", "item_persons", "person_scan"):
+                    self.x(f"DELETE FROM {table} WHERE item_id IN ({marks})", ids)
+                for pid in linked:
+                    if self.one("SELECT 1 FROM item_persons WHERE person_id=? LIMIT 1", (pid,)) is None:
+                        self.x("DELETE FROM person_checks WHERE person_id=?", (pid,))
+                self.x(f"DELETE FROM item_segments WHERE child_id IN ({marks}) OR parent_id IN ({marks})", ids + ids)
+                self.x(f"UPDATE jobs SET state='purged', error=NULL WHERE item_id IN ({marks})", ids)
+                self.x(f"DELETE FROM unfiled WHERE item_id IN ({marks})", ids)
+                # Runs and proposals about the item, and about the events it was ever in (their briefs quote it),
+                # keep no content; neither do ranks that listed those events, nor any other audit record or
+                # question prompt that carries the start of its text.
+                subjects = ids + ever
+                smarks = ",".join("?" * len(subjects))
+                self.x(f"UPDATE runs SET output=NULL, input_text=NULL WHERE subject IN ({smarks})", subjects)
+                self.x(f"UPDATE proposals SET payload='{{}}', reason='' WHERE target_id IN ({smarks})", subjects)
+                # Runs whose input held the item (a candidate in another item's assign, a member in a brief), by
+                # the recorded read set rather than by a text prefix; and their proposals.
+                read_by = [r["run_id"] for r in self.all(
+                    f"SELECT run_id FROM runs WHERE read_items IS NOT NULL AND EXISTS (SELECT 1 FROM"
+                    f" json_each(runs.read_items) j WHERE j.value IN ({marks}))", ids)]
+                for n in range(0, len(read_by), 500):
+                    chunk = read_by[n:n + 500]
+                    cmarks = ",".join("?" * len(chunk))
+                    self.x(f"UPDATE runs SET output=NULL, input_text=NULL WHERE run_id IN ({cmarks})", chunk)
+                    self.x(f"UPDATE proposals SET payload='{{}}', reason='' WHERE run_id IN ({cmarks})", chunk)
+                for event_id in ever:
+                    handle = '"' + self.event_handle(event_id) + '"'
+                    self.x("UPDATE runs SET output=NULL, input_text=NULL WHERE subject='home'"
+                           " AND (instr(output, ?) > 0 OR instr(input_text, ?) > 0)", (handle, handle))
+                    self.x("UPDATE proposals SET payload='{}', reason='' WHERE target_id='home'"
+                           " AND instr(payload, ?) > 0", (handle,))
+                for head in heads:
+                    self.x("UPDATE runs SET output=NULL, input_text=NULL WHERE instr(output, ?) > 0"
+                           " OR instr(input_text, ?) > 0", (head, head))
+                    self.x("UPDATE proposals SET payload='{}', reason='' WHERE instr(payload, ?) > 0", (head,))
+                    self.x("UPDATE questions SET prompt_zh='', status=CASE WHEN status='open' THEN 'expired'"
+                           " ELSE status END WHERE instr(prompt_zh, ?) > 0", (head,))
+                qs = self.all(f"SELECT question_id FROM questions WHERE a IN ({marks}) OR b IN ({marks})"
+                              f" OR item_id IN ({marks})", ids * 3)
+                for q in qs:
+                    self.x("UPDATE questions SET prompt_zh='', status=CASE WHEN status='open' THEN 'expired'"
+                           " ELSE status END WHERE question_id=?", (q["question_id"],))
+                if qs:
+                    self.bump()
+                gone = set(ids)
+                # The consolidation pass's record of these events (ids, counts, outcome; no content): they changed,
+                # so they are judged afresh.
+                emarks = ",".join("?" * len(ever))
+                if ever:
+                    self.x(f"DELETE FROM consolidate_checks WHERE event_id IN ({emarks})", ever)
+                for event_id in ever:
+                    ev = self.get_event(event_id)
+                    if ev is None:
+                        continue
+                    anchor, anchor_source = ev["anchor"], ev["anchor_source"]
+                    if event_id in seeded and anchor_source != "user":
+                        anchor, anchor_source = "", ""
+                    if ev["deleted"] or not self.event_item_ids(event_id):
+                        # Deleted (by the user, or merged away) or left empty: nothing written from the item stays.
+                        self.update_event(event_id, deleted=1, needs_brief=0, title="", status_line="",
+                                          status_facts=[], anchor="", anchor_source="", importance_reason="",
+                                          provenance={})
+                        continue
+                    facts = [f for f in ev["status_facts"] if not gone & set(f.get("item_ids") or [])]
+                    title = ev["title"] if ev["title_user_edited"] else anchor
+                    prov = {k: v for k, v in ev["provenance"].items() if k == "title" and ev["title_user_edited"]}
+                    self.recompute_event(event_id)  # needs_brief=1: the card is written again without it
+                    self.update_event(event_id, title=title, status_line="", status_facts=facts, anchor=anchor,
+                                      anchor_source=anchor_source, importance_reason="", provenance=prov)
+            return {"deleted": True, "revisions": len(stored), "children": len(children), "frames": len(frames),
+                    "events": len(touched)}
+
+    def checkpoint(self) -> None:
+        """Move the WAL into the database file and truncate it (after a purge: old page versions leave the WAL)."""
+        if self.memory:
+            return
+        with self._lock:
+            try:
+                self._c().execute("PRAGMA wal_checkpoint(TRUNCATE)")
+            except db.OperationalError:
+                pass
+
+    def stats(self) -> dict:
+        """Sizes, for the storage promise (contract section 2, GET /v1/stats). Unlocked only."""
+        blob = int(self.scalar("SELECT COALESCE(SUM(LENGTH(data)), 0) FROM item_blobs") or 0)
+        derived = int(self.scalar(
+            "SELECT COALESCE(SUM(COALESCE(LENGTH(CAST(derived_text AS BLOB)),0) + COALESCE(LENGTH(CAST(summary AS BLOB)),0)"
+            " + COALESCE(LENGTH(CAST(messages AS BLOB)),0) + COALESCE(LENGTH(CAST(embedding AS BLOB)),0)"
+            " + COALESCE(LENGTH(CAST(reading AS BLOB)),0) + COALESCE(LENGTH(CAST(split AS BLOB)),0)), 0)"
+            " FROM item_derived") or 0)
+        size = 0
+        if not self.memory:
+            for suffix in ("", *db.SIDE_FILES):
+                try:
+                    size += os.path.getsize(self.path + suffix)
+                except OSError:
+                    pass
+        return {"items": self.count_items(), "blob_bytes": blob, "db_bytes": size, "derived_bytes": derived}
+
+    def legacy_inbox_rows(self) -> list[dict]:
+        """Phone-inbox rows of a store from before inbox.db (handed over once, then dropped)."""
+        if not self.one("SELECT 1 FROM sqlite_master WHERE type='table' AND name='inbox'"):
+            return []
+        return self.all("SELECT * FROM inbox ORDER BY seq")
+
+    def drop_legacy_inbox(self) -> None:
+        with self.tx():
+            self.x("DROP TABLE IF EXISTS inbox")
 
     # ---- segments (item-split) -----------------------------------------------------
 
@@ -497,6 +990,8 @@ class Store:
 
     def upsert_segment(self, child_id: str, parent_id: str, parent_revision: int, seg: dict, index: int) -> None:
         with self.tx():
+            if self.is_tombstoned(parent_id):
+                raise ItemPurged(parent_id)
             cur = self.segment_of(child_id)
             no_matter = int(bool(seg.get("no_matter")))
             if cur and cur["active"] and (cur["parent_id"], cur["parent_revision"], cur["seg_index"], cur["start"],
@@ -515,41 +1010,6 @@ class Store:
         with self.tx():
             self.x("UPDATE item_segments SET active=0, seq=? WHERE child_id=? AND active=1", (self.bump(), child_id))
             self.x("UPDATE jobs SET state='superseded' WHERE item_id=? AND state IN ('queued','failed')", (child_id,))
-
-    # ---- phone inbox --------------------------------------------------------------
-
-    def inbox_add(self, entry: dict, image: Optional[bytes]) -> tuple[str, bool]:
-        """Store one phone share. Returns (inbox_id, created); a retry with the same inbox_id is not stored
-        again (also after it was acked)."""
-        inbox_id = (entry.get("inbox_id") or new_id()).lower()
-        with self.tx():
-            if self.one("SELECT 1 FROM inbox WHERE inbox_id=?", (inbox_id,)):
-                return inbox_id, False
-            self.x("INSERT INTO inbox(inbox_id, source, kind, text, image, received_at, created_at, acked, seq)"
-                   " VALUES (?,?,?,?,?,?,?,0,?)",
-                   (inbox_id, entry["source"], entry["kind"], entry.get("text"), image, entry["received_at"],
-                    now_iso(), self.bump()))
-        return inbox_id, True
-
-    def inbox_since(self, since: int, limit: int) -> list[dict]:
-        return self.all("SELECT inbox_id, source, kind, text, image, received_at, seq FROM inbox"
-                        " WHERE acked=0 AND seq > ? ORDER BY seq LIMIT ?", (since, limit))
-
-    def inbox_pending(self) -> int:
-        return int(self.scalar("SELECT COUNT(*) FROM inbox WHERE acked=0") or 0)
-
-    def inbox_ack(self, inbox_id: str) -> Optional[bool]:
-        """Drop the content once the Mac has it. Returns True (acked now), False (already acked) or None
-        (unknown id). The row stays as a content-free tombstone so a retried add is still a duplicate."""
-        with self.tx():
-            row = self.one("SELECT acked FROM inbox WHERE inbox_id=?", (inbox_id.lower(),))
-            if row is None:
-                return None
-            if row["acked"]:
-                return False
-            self.x("UPDATE inbox SET acked=1, acked_at=?, text=NULL, image=NULL WHERE inbox_id=?",
-                   (now_iso(), inbox_id.lower()))
-            return True
 
     # ---- jobs -------------------------------------------------------------------
 
@@ -601,12 +1061,14 @@ class Store:
     def create_event(self, item: dict, anchor: str = "", event_id: Optional[str] = None) -> str:
         event_id = event_id or new_id()
         with self.tx():
+            if item.get("item_id") and self.is_tombstoned(item["item_id"]):
+                raise ItemPurged(item["item_id"])  # never an event seeded from a deleted item
             self.x(
                 "INSERT INTO events(event_id, started_at, started_ts, updated_at, updated_ts, created_at, seq,"
-                " needs_brief, handle, anchor, anchor_source) VALUES (?,?,?,?,?,?,?,1,?,?,?)",
+                " needs_brief, handle, anchor, anchor_source, anchor_item) VALUES (?,?,?,?,?,?,?,1,?,?,?,?)",
                 (event_id, item["started_at"], item["started_ts"], item.get("ended_at") or item["started_at"],
                  item.get("ended_ts") or item["started_ts"], self.now(), self.bump(), self._next("event_handle_seq"),
-                 (anchor or "").strip()[:40], "model" if anchor else ""),
+                 (anchor or "").strip()[:40], "model" if anchor else "", item.get("item_id") or ""),
             )
         return event_id
 
@@ -641,6 +1103,8 @@ class Store:
                item_revision: Optional[int] = None) -> None:
         """Link an item to an event. item_revision records which revision the placement is based on."""
         with self.tx():
+            if self.is_tombstoned(item_id):
+                raise ItemPurged(item_id)
             if item_revision is None:
                 item_revision = self.latest_revision(item_id)
             self.x(
@@ -713,6 +1177,8 @@ class Store:
 
     def set_unfiled(self, item_id: str, reason: str, run_id: Optional[str] = None) -> None:
         with self.tx():
+            if self.is_tombstoned(item_id):
+                raise ItemPurged(item_id)
             self.x("INSERT INTO unfiled(item_id, reason, run_id, since, recheck_count, seq) VALUES (?,?,?,?,0,?)"
                    " ON CONFLICT(item_id) DO UPDATE SET reason=excluded.reason, run_id=excluded.run_id,"
                    " seq=excluded.seq",
@@ -799,6 +1265,8 @@ class Store:
         dry_run          only report whether the budget allows it (returns "ok" or None).
         """
         with self.tx():
+            if any(self.is_tombstoned(x) for x in (item_id, a, b) if x):
+                return None  # never a question about a deleted item
             if int(self.scalar("SELECT COUNT(*) FROM questions WHERE status='open' AND kind=?", (kind,))) >= limit:
                 return None
             if item_id and self.one("SELECT 1 FROM questions WHERE item_id=? AND kind=?", (item_id, kind)):
@@ -858,18 +1326,52 @@ class Store:
     def record_run(self, run: dict) -> None:
         cols = ["run_id", "job_type", "skill", "version", "model", "prompt_hash", "input_digest", "output",
                 "error", "attempts", "started_at", "ended_at", "ok", "prompt_tokens", "completion_tokens", "subject",
-                "as_of", "input_text"]
+                "as_of", "input_text", "read_items"]
         row = dict(run)
+        reads = row.get("read_items") or []
+        row["read_items"] = dumps(reads) if reads else None
+        if any(self.is_tombstoned(i) for i in reads):
+            row["output"] = row["input_text"] = None  # it read an item deleted while it ran
+        # A run's output is model text read from the material (and, for image-read, from an image): it is
+        # masked like any derived text before it is stored. A run about a deleted item keeps no content, nor does
+        # one that returned after a purge with the start of a deleted text in it.
+        if row.get("subject") and self.is_tombstoned(row["subject"]):
+            row["output"] = row["input_text"] = None
+        if row.get("output") is not None:
+            row["output"] = self.mask_obj(row["output"]) if not isinstance(row["output"], str) \
+                else self.mask_text(row["output"])
+        for key in ("error", "input_text"):
+            if row.get(key):
+                row[key] = self.mask_text(row[key])
+        if self._quotes_purged(row.get("output")) or self._quotes_purged(row.get("input_text")):
+            row["output"] = row["input_text"] = None
         if row.get("output") is not None and not isinstance(row["output"], str):
             row["output"] = dumps(row["output"])
         self.x(f"INSERT INTO runs({','.join(cols)}) VALUES ({','.join('?' * len(cols))})", [row.get(c) for c in cols])
 
     def record_proposal(self, run_id: Optional[str], kind: str, target_id: Optional[str], payload: dict,
                         status: str, reason: str = "") -> None:
+        if (target_id and self.is_tombstoned(target_id)) or self._quotes_purged(payload) \
+                or self._quotes_purged(reason) or self._run_read_purged(run_id):
+            payload, reason = {}, ""
         self.x(
             "INSERT INTO proposals(run_id, kind, target_id, payload, status, reason, created_at) VALUES (?,?,?,?,?,?,?)",
             (run_id, kind, target_id, dumps(payload), status, reason, now_iso()),
         )
+
+    def _run_read_purged(self, run_id: Optional[str]) -> bool:
+        """Whether the run read an item that has been deleted since (its proposal keeps no content)."""
+        if not run_id:
+            return False
+        row = self.one("SELECT read_items FROM runs WHERE run_id=?", (run_id,))
+        reads = json.loads(row["read_items"]) if row and row.get("read_items") else []
+        return any(self.is_tombstoned(i) for i in reads)
+
+    def _quotes_purged(self, value: Any) -> bool:
+        if not self._purged_heads or value is None:
+            return False
+        text = value if isinstance(value, str) else dumps(value)
+        return any(head in text for head in self._purged_heads)
 
     def recent_runs(self, limit: int = 50) -> list[dict]:
         rows = self.all("SELECT * FROM runs ORDER BY started_at DESC LIMIT ?", (limit,))
@@ -885,7 +1387,8 @@ class Store:
 
 
 # Item metadata kept per revision (see schemas.FILE_META_KEYS).
-META_KEYS = ("filename", "uti", "mime", "size", "local_text", "captured_at", "parent_item_id", "frame_ms")
+META_KEYS = ("filename", "uti", "mime", "size", "local_text", "captured_at", "parent_item_id", "frame_ms",
+             "pictures_redacted")
 
 
 def _decode_item(row: dict) -> dict:

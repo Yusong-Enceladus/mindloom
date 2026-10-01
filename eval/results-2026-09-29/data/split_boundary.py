@@ -11,11 +11,14 @@ that belong to its majority matter. Prints aggregates only.
 usage: python3 split_boundary.py ORGANIZER_DB SCENARIO_JSON MAC_ID_MAP_JSON
 """
 import json
-import sqlite3
 import sys
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[3] / "spark"))
+from organizer.db import open_for_analysis  # noqa: E402  (plaintext or synthetic-key encrypted store)
 
 db, scen, idmap = sys.argv[1:4]
-c = sqlite3.connect("file:" + db + "?mode=ro", uri=True)
+c = open_for_analysis(db)
 scenario = json.load(open(scen))
 mac_to_scn = json.load(open(idmap))
 scn_to_mac = {v: k for k, v in mac_to_scn.items()}

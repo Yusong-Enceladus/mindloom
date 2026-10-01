@@ -43,6 +43,7 @@ def main() -> int:
     parsed = parse_bytes(data, header.get("filename") or "", header.get("mime") or "", budget, 0)
     out = parsed.to_dict()
     out["notes"] = budget.notes
+    out["media_skipped"] = budget.media_skipped
     out["images"] = [{"id": im["id"], "label": im["label"], "page": im["page"],
                       "b64": base64.b64encode(im["data"]).decode("ascii")} for im in budget.images]
     sys.stdout.buffer.write(json.dumps(out, ensure_ascii=False).encode("utf-8"))

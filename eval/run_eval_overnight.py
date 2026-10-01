@@ -35,6 +35,7 @@ sys.path.insert(0, str(ROOT / "eval"))
 import eval_common
 from organizer.api import build_organizer
 from organizer.config import Settings
+from organizer.keys import synthetic_library_key
 from organizer.schemas import Item
 from to_items import build_items
 from score import score, markdown_report, validate_scenario
@@ -76,6 +77,7 @@ def run(args):
     settings.record_inputs = True  # synthetic data only
     if args.rank == "checkpoint":
         settings.rank_every_n_items = 10 ** 9
+    settings.unlock_key = synthetic_library_key()  # the store is encrypted; synthetic data, fixed synthetic key
     org = build_organizer(settings)
     org.rank_on_day_change = False  # keep the protocol's rank calls comparable across clocks
     answerer = eval_common.GoldAnswerer(scenario) if args.answer_questions == "gold" else None

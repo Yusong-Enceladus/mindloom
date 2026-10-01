@@ -17,5 +17,9 @@ def test_rejected_image_read_still_places_the_item(org, chat):
     assert event_of(org, shot["item_id"]) is not None
     job = org.store.one("SELECT state FROM jobs WHERE item_id=?", (shot["item_id"],))
     assert job["state"] == "done"
-    # nothing derived was saved, so a later reprocess with a vision model still reads the image
-    assert not org.store.get_derived(shot["item_id"], shot["revision"]).get("screenshot_run_id")
+    # contract v6 (read-then-delete): the image is not kept for a later try; the item is marked unreadable
+    # and its bytes are deleted, so nothing but the (empty) reading stays on the Spark
+    derived = org.store.get_derived(shot["item_id"], shot["revision"])
+    assert derived["screenshot_run_id"] == "unreadable:1" and derived["reading"]["error"] == "unreadable"
+    assert org.store.get_blob(shot["item_id"], shot["revision"]) is None
+    assert org.state(0)["readings"][shot["item_id"]]["error"] == "unreadable"

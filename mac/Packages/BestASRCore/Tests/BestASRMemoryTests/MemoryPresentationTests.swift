@@ -76,9 +76,9 @@ final class MemoryPresentationTests: XCTestCase {
     return MemoryProjection(
       events: events,
       records: [
-        record(1, at: 0, text: "下个月起房租想涨 300"),
+        record(1, at: 0, text: "王姐：下个月起房租想涨 300"),
         record(2, at: 86_400, text: "合同第 3 页\n押金一个月"),
-        record(3, at: 3_600, text: "师傅那段"),
+        record(3, at: 3_600, text: "[10:02] 王姐：师傅那段"),
         record(4, at: 7_200, text: "只是随手一记"),
         record(5, at: 60, text: "被移出的"),
       ],
@@ -291,6 +291,7 @@ final class MemoryPresentationTests: XCTestCase {
     XCTAssertEqual(unfiled.map(\.reason), ["none", "removed_by_user"])
   }
 
+  /// 王姐 writes in both matters (a speaker line in each), so they relate.
   func testRelatedEventsSharePeople() {
     let related = projection().related(to: "ev-rent")
     XCTAssertEqual(related.map(\.eventID), ["ev-net"])

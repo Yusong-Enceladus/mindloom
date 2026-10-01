@@ -80,6 +80,7 @@ def parse_inline(data: bytes, filename: str, mime: str = "") -> dict:
     budget = Budget()
     out = parse_bytes(data, filename, mime, budget, 0).to_dict()
     out["notes"] = budget.notes
+    out["media_skipped"] = budget.media_skipped
     out["images"] = [dict(im) for im in budget.images]
     return out
 

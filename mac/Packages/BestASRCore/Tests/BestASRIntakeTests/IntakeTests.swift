@@ -467,7 +467,7 @@ final class IntakeFileTests: XCTestCase {
     try Data([1, 2, 3]).write(to: audio)
     XCTAssertEqual(
       processor.prepare(.file(audio), capturedAt: at, source: nil, origin: .finder), .media(audio))
-    // Any other file is kept byte for byte for the organizing device.
+    // Any other binary is kept byte for byte, on this Mac only (contract v6).
     let unknown = root.appendingPathComponent("a.xyz")
     try Data([1]).write(to: unknown)
     guard
@@ -476,7 +476,7 @@ final class IntakeFileTests: XCTestCase {
     else { return XCTFail("unknown file") }
     XCTAssertEqual(file.kind, .file)
     XCTAssertEqual(file.text, "")
-    XCTAssertEqual(file.extractor, UserItemLimits.fileBytesExtractor)
+    XCTAssertEqual(file.extractor, UserItemLimits.localOnlyExtractor)
     XCTAssertEqual(file.attachments.map(\.mediaType), ["application/octet-stream"])
     XCTAssertEqual(file.automaticTitle, "a.xyz")
     XCTAssertTrue(FileManager.default.fileExists(atPath: unknown.path))

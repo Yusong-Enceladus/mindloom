@@ -71,8 +71,8 @@ def test_screenshot_is_read_and_chat_sender_links_to_named_voice_person(org, cha
     assert not any(p.startswith("chat-") for p in ev["person_ids"])
     chat_person = next(p for p in state["persons"] if p["origin"] == "chat")
     assert chat_person["merged_into"] == "voice-1"
-    # the image itself is stored unmodified next to the item
-    assert org.store.get_blob(shot["item_id"], 1)["data"].startswith(b"\x89PNG")
+    # read-then-delete (contract v6): the image was deleted in the transaction that stored its reading
+    assert org.store.get_blob(shot["item_id"], 1) is None and org.store.stats()["blob_bytes"] == 0
 
 
 def test_near_name_match_asks_instead_of_linking(org, chat):

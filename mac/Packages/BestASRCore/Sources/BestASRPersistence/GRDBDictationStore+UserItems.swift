@@ -263,6 +263,7 @@ extension GRDBDictationStore {
                  m.source_display_name, m.source_identifier,
                  m.updated_at AS metadata_updated_at,
                  d.item_kind, d.page_count, d.uniform_type, d.parent_session_id, d.frame_ms,
+                 d.extractor,
                  tr.id AS transcript_id, tr.content, tr.created_at AS text_updated_at,
                  -- The reading describes the image, so a later caption edit
                  -- of the item's text does not retire it.
@@ -348,6 +349,7 @@ extension GRDBDictationStore {
         record.parentSessionID = (row["parent_session_id"] as String?)
           .flatMap(UUID.init(uuidString:)).map(SessionID.init)
         record.frameMilliseconds = row["frame_ms"]
+        record.keptOnMac = (row["extractor"] as String?) == UserItemLimits.localOnlyExtractor
         if mode == .importedMedia {
           record.keyframes = try Self.memoryKeyframes(db, parentSessionID: id)
         }

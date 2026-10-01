@@ -5,9 +5,11 @@ from __future__ import annotations
 import base64
 import binascii
 import uuid
-from typing import Annotated, Literal, Optional, Union
+from typing import Annotated, Any, Literal, Optional, Union
 
 from pydantic import AliasChoices, AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from . import sealed
 
 ItemKind = Literal[
     "dictation",
@@ -25,7 +27,8 @@ MAX_IMAGE_BYTES = 12 * 1024 * 1024
 # kind=file (contract "file", 2026-09-29): raw bytes up to 25 MiB; a bigger file arrives as kind=text with the
 # Mac-extracted text and the same file metadata.
 MAX_FILE_BYTES = 25 * 1024 * 1024
-FILE_META_KEYS = ("filename", "uti", "mime", "size", "local_text", "captured_at", "parent_item_id", "frame_ms")
+FILE_META_KEYS = ("filename", "uti", "mime", "size", "local_text", "captured_at", "parent_item_id", "frame_ms",
+                  "pictures_redacted")
 
 
 class _Model(BaseModel):
@@ -76,6 +79,10 @@ class Item(_Model):
     # and its position. It is read like any image and filed with its parent.
     parent_item_id: Optional[str] = Field(default=None, max_length=64)
     frame_ms: Optional[int] = Field(default=None, ge=0)
+    # Privacy review F3: the Mac rebuilt this file's send copy with every picture in it redacted (and audio /
+    # video left out). Only then are pictures inside the file bytes read with the vision model; otherwise they
+    # are skipped (a picture that reaches a model must be the Mac's redacted copy, contract section 4).
+    pictures_redacted: Optional[bool] = None
 
     @model_validator(mode="before")
     @classmethod
@@ -273,36 +280,35 @@ class AnswerIn(_Model):
 
 
 class InboxIn(_Model):
-    """Something shared from the phone (an iOS Shortcut runs `zhiji-inbox add` over SSH). It waits on the
-    Spark only until the Mac acks it; the Mac then ingests it as a user item (source app = `source`,
-    captured_at = received_at) and sends it for organizing like any item."""
-    # Optional client id (UUID) so a retried add is not stored twice.
+    """Something from the phone, put here by `zhiji-inbox add --sealed` over SSH (the 织机 iPhone app, phone
+    contract section 5). It waits on the Spark only until the Mac acks it.
+
+    Only sealed entries are accepted: `blob` is an `mlseal1.` string sealed to the Mac's key on the phone. The
+    Spark checks its shape only and stores it as is; it cannot open it. `inbox_id` is required and must be the
+    lowercase entry id the phone sealed with (it is in the seal's AAD); `source` is "sealed" (the real source
+    is inside the seal). The plaintext kinds of the retired iOS Shortcut path ("text", "image") are refused:
+    that path could not seal, so its shares waited on the Spark in plaintext (privacy review F9)."""
     inbox_id: Optional[str] = Field(default=None, pattern=r"^[0-9a-fA-F-]{36}$")
     source: str = Field(min_length=1, max_length=64)
-    kind: Literal["text", "image"]
-    text: Optional[str] = Field(default=None, max_length=MAX_TEXT_CHARS)
-    image_b64: Optional[str] = None
+    kind: str = Field(min_length=1, max_length=16)
+    blob: Optional[str] = Field(default=None, max_length=sealed.MAX_WIRE_CHARS)
     received_at: AwareDatetime
+
+    @model_validator(mode="before")
+    @classmethod
+    def _no_plaintext(cls, data: Any) -> Any:
+        # Refused before any field is read: a plaintext share is never parsed, measured or echoed.
+        if isinstance(data, dict) and (data.get("kind") != "sealed" or "text" in data or "image_b64" in data):
+            raise ValueError("only sealed entries are accepted (the plaintext phone path is retired)")
+        return data
 
     @model_validator(mode="after")
     def _content(self) -> "InboxIn":
-        if self.kind == "text":
-            if not (self.text or "").strip():
-                raise ValueError("kind=text needs text")
-            if self.image_b64 is not None:
-                raise ValueError("image_b64 is only allowed for kind=image")
-        else:
-            if self.image_b64 is None:
-                raise ValueError("kind=image needs image_b64")
-            try:
-                raw = base64.b64decode(self.image_b64, validate=True)
-            except (binascii.Error, ValueError) as exc:
-                raise ValueError("image_b64 is not valid base64") from exc
-            if len(raw) > MAX_IMAGE_BYTES:
-                raise ValueError("image too large")
-            if not (raw.startswith(b"\x89PNG") or raw.startswith(b"\xff\xd8")):
-                raise ValueError("image_b64 must be PNG or JPEG")
+        if self.source != "sealed":
+            raise ValueError('a sealed entry\'s source is "sealed"')
+        if not sealed.is_entry_id(self.inbox_id):
+            raise ValueError("a sealed entry needs the lowercase entry id it was sealed with")
+        problem = sealed.wire_problem(self.blob)
+        if problem:
+            raise ValueError(f"blob: {problem}")
         return self
-
-    def image_bytes(self) -> Optional[bytes]:
-        return base64.b64decode(self.image_b64) if self.image_b64 else None

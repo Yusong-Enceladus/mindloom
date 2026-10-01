@@ -566,7 +566,11 @@ final class UserItemPersistenceTests: XCTestCase {
     try old.close()
     let store = try GRDBDictationStore(databaseURL: url)
     let inspection = try await store.inspection()
-    XCTAssertEqual(inspection.userVersion, 23)
+    XCTAssertEqual(inspection.userVersion, BestASRPersistenceSchema.currentUserVersion)
+    // v24 (privacy contract v6) adds only local tables.
+    for table in ["remote_mask_map", "remote_mask_offsets", "remote_pending_deletions"] {
+      XCTAssertTrue(inspection.tableNames.contains(table), table)
+    }
     let kept = try await store.userItemDetails(sessionID: SessionID(UUID(uuidString: id)!))
     XCTAssertEqual(kept?.kind, .document)
     XCTAssertEqual(kept?.pageCount, 2)

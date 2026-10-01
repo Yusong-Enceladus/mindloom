@@ -1,0 +1,840 @@
+{
+  "spec": "mindloom-mask-v3",
+  "mask_key_hex": "1111111111111111111111111111111111111111111111111111111111111111",
+  "placeholder_format": "〔<label>·<first 6 lowercase hex of HMAC-SHA256(mask_key, type + \":\" + normalized)>〕",
+  "labels": {
+    "secret": "密钥",
+    "password": "密码",
+    "otp": "验证码",
+    "id_card": "身份证号",
+    "bank_card": "银行卡号",
+    "phone": "手机号",
+    "landline": "电话",
+    "email": "邮箱",
+    "ip": "IP",
+    "plate": "车牌号"
+  },
+  "order": [
+    "secret",
+    "password",
+    "otp",
+    "id_card",
+    "bank_card",
+    "phone",
+    "landline",
+    "email",
+    "ip",
+    "plate"
+  ],
+  "derive": [
+    {
+      "library_key_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+      "key_id": "331fd689946af31e",
+      "store_key_hex": "53d5368776e20913df4fd12f874a87fa439d3166df11e2ce1045eaa09b973e93",
+      "mask_key_hex": "f4dcf249a7adf44bfd9bc0c1919ff833fe7507f0d2aec4779f5d54e7f6755544",
+      "sqlcipher_pragma": "PRAGMA key = \"x'53d5368776e20913df4fd12f874a87fa439d3166df11e2ce1045eaa09b973e93'\";"
+    }
+  ],
+  "vectors": [
+    {
+      "input": "OpenAI key: sk-proj-Ab3dEf6hIj9kLm2nOp5q 别外传",
+      "expected": "OpenAI key: 〔密钥·9de799〕 别外传"
+    },
+    {
+      "input": "旧 token ghp_A1b2C3d4E5f6G7h8I9j0K1l2 已吊销",
+      "expected": "旧 token 〔密钥·37c93c〕 已吊销"
+    },
+    {
+      "input": "fine-grained: github_pat_11ABCDEFG0123456789_abcdefXYZ",
+      "expected": "fine-grained: 〔密钥·f218bb〕"
+    },
+    {
+      "input": "Slack 机器人 xoxb-2026-0929-abcdefABCDEF 放在 .env",
+      "expected": "Slack 机器人 〔密钥·55c27f〕 放在 .env"
+    },
+    {
+      "input": "AWS AKIAIOSFODNN7EXAMPLE 放在 CI 里",
+      "expected": "AWS 〔密钥·c43728〕 放在 CI 里"
+    },
+    {
+      "input": "地图 key=AIzaSyA1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q 限额 1000/天",
+      "expected": "地图 key=〔密钥·1803f8〕 限额 1000/天"
+    },
+    {
+      "input": "Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.c2lnbmF0dXJl",
+      "expected": "Authorization: Bearer 〔密钥·9667d4〕"
+    },
+    {
+      "input": "回调 https://api.example.com/v1/cb?user=lin&token=a1B2c3D4e5&lang=zh",
+      "expected": "回调 https://api.example.com/v1/cb?user=lin&token=〔密钥·285b38〕&lang=zh"
+    },
+    {
+      "input": "下载链接 https://files.example.org/x.pdf?sig=ZmFrZS1zaWc%3D&expires=1790000000。",
+      "expected": "下载链接 https://files.example.org/x.pdf?sig=〔密钥·1b39e3〕&expires=1790000000。"
+    },
+    {
+      "input": "password: sk-proj-Abc123def456ghi789 先用着",
+      "expected": "password: 〔密钥·ac5810〕 先用着"
+    },
+    {
+      "input": "WiFi 密码：Lab@2026wifi，别发群里",
+      "expected": "WiFi 密码：〔密码·d8affa〕，别发群里"
+    },
+    {
+      "input": "登录密码 abc12345，支付密码 778899",
+      "expected": "登录密码 〔密码·8f861b〕，支付密码 〔密码·2e0097〕"
+    },
+    {
+      "input": "服务器 root 密码是 Tr0ub4dor&3",
+      "expected": "服务器 root 密码是 〔密码·79c0a7〕"
+    },
+    {
+      "input": "password: hunter2024!",
+      "expected": "password: 〔密码·a12511〕"
+    },
+    {
+      "input": "OK, the password is Blue-Sky-77.",
+      "expected": "OK, the password is 〔密码·8e8bf1〕."
+    },
+    {
+      "input": "口令 Xk9#mQ2z 只用一次",
+      "expected": "口令 〔密码·a40abf〕 只用一次"
+    },
+    {
+      "input": "新密码为 'Qimu@2026'，登录后改掉",
+      "expected": "新密码为 '〔密码·e8ce49〕'，登录后改掉"
+    },
+    {
+      "input": "密码：13812345678（就是我手机号）",
+      "expected": "密码：〔密码·101cc7〕（就是我手机号）"
+    },
+    {
+      "input": "【清川银行】验证码 482913，5 分钟内有效，请勿告知他人。",
+      "expected": "【清川银行】验证码 〔验证码·b189e2〕，5 分钟内有效，请勿告知他人。"
+    },
+    {
+      "input": "Your verification code is 0725.",
+      "expected": "Your verification code is 〔验证码·1dc418〕."
+    },
+    {
+      "input": "OTP: 90210388",
+      "expected": "OTP: 〔验证码·a6e591〕"
+    },
+    {
+      "input": "动态码：3391",
+      "expected": "动态码：〔验证码·f89be6〕"
+    },
+    {
+      "input": "验证码已发送至 13812345678，请查收",
+      "expected": "验证码已发送至 〔手机号·f02e0a〕，请查收"
+    },
+    {
+      "input": "身份证号 11010519491231002X",
+      "expected": "身份证号 〔身份证号·440ab9〕"
+    },
+    {
+      "input": "甲方 440305199901011235，乙方 510107200002293211",
+      "expected": "甲方 〔身份证号·6ccc35〕，乙方 〔身份证号·6443d1〕"
+    },
+    {
+      "input": "证件 11010519491231002x 与 11010519491231002X 是同一个人",
+      "expected": "证件 〔身份证号·440ab9〕 与 〔身份证号·440ab9〕 是同一个人"
+    },
+    {
+      "input": "银行卡号 6222 0212 3456 7890 128",
+      "expected": "银行卡号 〔银行卡号·a5ed44〕"
+    },
+    {
+      "input": "卡号：6217-0000-1234-5670",
+      "expected": "卡号：〔银行卡号·1c47d2〕"
+    },
+    {
+      "input": "测试卡 4111111111111111 已失效",
+      "expected": "测试卡 〔银行卡号·c69f03〕 已失效"
+    },
+    {
+      "input": "credit card 5500 0055 5555 5559",
+      "expected": "credit card 〔银行卡号·540616〕"
+    },
+    {
+      "input": "账号 1234567812345670",
+      "expected": "账号 〔银行卡号·833302〕"
+    },
+    {
+      "input": "JCB card 3530111333300000",
+      "expected": "JCB card 〔银行卡号·beee9d〕"
+    },
+    {
+      "input": "工资卡 6228480012345678903，报销也打到 6228 4800 1234 5678 903",
+      "expected": "工资卡 〔银行卡号·b8a36c〕，报销也打到 〔银行卡号·b8a36c〕"
+    },
+    {
+      "input": "手机：13812345678",
+      "expected": "手机：〔手机号·f02e0a〕"
+    },
+    {
+      "input": "电话 138 1234 5678，微信同号",
+      "expected": "电话 〔手机号·f02e0a〕，微信同号"
+    },
+    {
+      "input": "call +86 139-1234-5678 after 6pm",
+      "expected": "call 〔手机号·e1af84〕 after 6pm"
+    },
+    {
+      "input": "13712345678 / +86 137 1234 5678 / 86-137-1234-5678 是同一个号",
+      "expected": "〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 是同一个号"
+    },
+    {
+      "input": "快递到了（尾号见短信），联系 19912340000。",
+      "expected": "快递到了（尾号见短信），联系 〔手机号·592a87〕。"
+    },
+    {
+      "input": "办公室电话 010-62781234 转 801",
+      "expected": "办公室电话 〔电话·740c39〕 转 801"
+    },
+    {
+      "input": "前台 0755-8601-3388，分机另说",
+      "expected": "前台 〔电话·a25d3b〕，分机另说"
+    },
+    {
+      "input": "London office +44 2071838750",
+      "expected": "London office 〔电话·7b48d7〕"
+    },
+    {
+      "input": "酒店前台 +86-10-5550-0199，夜间不接",
+      "expected": "酒店前台 〔电话·8575b2〕，夜间不接"
+    },
+    {
+      "input": "总部 0755-86013388-8021",
+      "expected": "总部 〔电话·a25d3b〕-8021"
+    },
+    {
+      "input": "请发到 Lin.ZhiYuan@QingChuan-U.example 或 lin.zhiyuan@qingchuan-u.example",
+      "expected": "请发到 〔邮箱·f99963〕 或 〔邮箱·f99963〕"
+    },
+    {
+      "input": "Zane 的邮箱 zane_lin+nc27@mail.example.com，手机 15900001111",
+      "expected": "Zane 的邮箱 〔邮箱·4f86ce〕，手机 〔手机号·ec6d0a〕"
+    },
+    {
+      "input": "From: Robotics Weekly <digest@robotics-weekly.example>",
+      "expected": "From: Robotics Weekly <〔邮箱·3f4486〕>"
+    },
+    {
+      "input": "13812345678@163.com 是她的邮箱",
+      "expected": "〔手机号·f02e0a〕@163.com 是她的邮箱"
+    },
+    {
+      "input": "ssh lin@192.0.2.10 -p 2222",
+      "expected": "ssh lin@〔IP·60a4ab〕 -p 2222"
+    },
+    {
+      "input": "服务跑在 198.51.100.7:8080/v1，出口 IP 是 203.0.113.1。",
+      "expected": "服务跑在 〔IP·c2f43e〕:8080/v1，出口 IP 是 〔IP·84a4c7〕。"
+    },
+    {
+      "input": "车停在 B2，车牌京A12345",
+      "expected": "车停在 B2，车牌〔车牌号·dcc403〕"
+    },
+    {
+      "input": "新能源 沪AD12345 和 粤B·8K2Q7",
+      "expected": "新能源 〔车牌号·667b6a〕 和 〔车牌号·203f5f〕"
+    },
+    {
+      "input": "教练车 京A1234学",
+      "expected": "教练车 〔车牌号·982c0a〕"
+    },
+    {
+      "input": "Tel13812345678",
+      "expected": "Tel〔手机号·f02e0a〕"
+    },
+    {
+      "input": "姓名：张三\n手机：13812345678\n邮箱：zs@example.com\n",
+      "expected": "姓名：张三\n手机：〔手机号·f02e0a〕\n邮箱：〔邮箱·093704〕\n"
+    },
+    {
+      "input": "卡号🙂🙂🙂🙂🙂🙂🙂🙂🙂 1234567812345670",
+      "expected": "卡号🙂🙂🙂🙂🙂🙂🙂🙂🙂 〔银行卡号·833302〕"
+    },
+    {
+      "input": "验证码🙂🙂🙂🙂🙂🙂1234",
+      "expected": "验证码🙂🙂🙂🙂🙂🙂〔验证码·336e80〕"
+    },
+    {
+      "input": "Pls send the deck to anna.wu@startup.example, cc 李雷 (13900001111)；WiFi password: Qimu#2026",
+      "expected": "Pls send the deck to 〔邮箱·d4c20f〕, cc 李雷 (〔手机号·8bdcf0〕)；WiFi password: 〔密码·4619a0〕"
+    },
+    {
+      "input": "韩策：13800001111，再说一遍 138-0000-1111，别记错",
+      "expected": "韩策：〔手机号·4c4e1d〕，再说一遍 〔手机号·4c4e1d〕，别记错"
+    },
+    {
+      "input": "出租方 吴秀兰，身份证 11010519491231002X，电话 010-62781234，收款 6222 0212 3456 7890 128，邮箱 wu.xl@example.org，车 京A12345",
+      "expected": "出租方 吴秀兰，身份证 〔身份证号·440ab9〕，电话 〔电话·740c39〕，收款 〔银行卡号·a5ed44〕，邮箱 〔邮箱·76780b〕，车 〔车牌号·dcc403〕"
+    },
+    {
+      "input": "123456（登录验证码，5分钟内有效，请勿泄露）",
+      "expected": "〔验证码·532112〕（登录验证码，5分钟内有效，请勿泄露）"
+    },
+    {
+      "input": "482913 is your Microsoft verification code",
+      "expected": "〔验证码·b189e2〕 is your Microsoft verification code"
+    },
+    {
+      "input": "【招商银行】739146（动态验证码）请勿泄露",
+      "expected": "【招商银行】〔验证码·ba6ec3〕（动态验证码）请勿泄露"
+    },
+    {
+      "input": "宠物店积分兑换要短信验证码，刚收到的是 2802",
+      "expected": "宠物店积分兑换要短信验证码，刚收到的是 〔验证码·e70421〕"
+    },
+    {
+      "input": "短信校验码 739146，请在页面输入",
+      "expected": "短信校验码 〔验证码·ba6ec3〕，请在页面输入"
+    },
+    {
+      "input": "Your code is 551903",
+      "expected": "Your code is 〔验证码·5e43da〕"
+    },
+    {
+      "input": "请打 138 1234 5678 或发 a.b@Example.com，验证码 482913。",
+      "expected": "请打 〔手机号·f02e0a〕 或发 〔邮箱·96198f〕，验证码 〔验证码·b189e2〕。"
+    },
+    {
+      "input": "卡号 6222 0212 3456 7894 的动态验证码稍后发",
+      "expected": "卡号 〔银行卡号·dfbaa6〕 的动态验证码稍后发"
+    },
+    {
+      "input": "验证码🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂1234",
+      "expected": "验证码🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂〔验证码·336e80〕"
+    },
+    {
+      "input": "密码我私信你了：Kx9#mQ2v",
+      "expected": "密码我私信你了：〔密码·da75fc〕"
+    },
+    {
+      "input": "The password for the NAS is Hunter22!",
+      "expected": "The password for the NAS is 〔密码·0f5784〕"
+    },
+    {
+      "input": "银行卡取款 PIN 739146",
+      "expected": "银行卡取款 PIN 〔密码·e8d32e〕"
+    },
+    {
+      "input": "王师傅手机 138 1234\n5678",
+      "expected": "王师傅手机 〔手机号·f02e0a〕"
+    },
+    {
+      "input": "王师傅手机 138 1234 5678",
+      "expected": "王师傅手机 〔手机号·f02e0a〕"
+    },
+    {
+      "input": "王师傅 138.1234.5678，联系电话 138·1234·5678",
+      "expected": "王师傅 〔手机号·f02e0a〕，联系电话 〔手机号·f02e0a〕"
+    },
+    {
+      "input": "王师傅手机１３８１２３４５６７８",
+      "expected": "王师傅手机〔手机号·f02e0a〕"
+    },
+    {
+      "input": "我的手机号是一三八一二三四五六七八",
+      "expected": "我的手机号是〔手机号·f02e0a〕"
+    },
+    {
+      "input": "138.1234.5678 和 13812345678 是同一个号",
+      "expected": "〔手机号·f02e0a〕 和 〔手机号·f02e0a〕 是同一个号"
+    },
+    {
+      "input": "公司座机 010 6278 1234",
+      "expected": "公司座机 〔电话·740c39〕"
+    },
+    {
+      "input": "公司座机 (0755)86013388",
+      "expected": "公司座机 〔电话·a25d3b〕"
+    },
+    {
+      "input": "Call Peggy at +1 (415) 555-0100",
+      "expected": "Call Peggy at 〔电话·7b02c4〕"
+    },
+    {
+      "input": "香港同事 9123 4567（WhatsApp）",
+      "expected": "香港同事 〔电话·7c9ecb〕（WhatsApp）"
+    },
+    {
+      "input": "Amex card 3782 822463 10005 expires 09/28",
+      "expected": "Amex card 〔银行卡号·405eae〕 expires 09/28"
+    },
+    {
+      "input": "对公账号：755912345610801 开户行招商银行",
+      "expected": "对公账号：〔银行卡号·237d13〕 开户行招商银行"
+    },
+    {
+      "input": "卡号 6222 0212\n3456 7894",
+      "expected": "卡号 〔银行卡号·dfbaa6〕"
+    },
+    {
+      "input": "STRIPE_SECRET_KEY=sk_test_EXAMPLEKEY0000ABCD",
+      "expected": "STRIPE_SECRET_KEY=〔密钥·14dbe8〕"
+    },
+    {
+      "input": "token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.abcDEF123ghiJKL456",
+      "expected": "token 〔密钥·641ab9〕"
+    },
+    {
+      "input": "aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+      "expected": "aws_secret_access_key = 〔密钥·ca01c3〕"
+    },
+    {
+      "input": "阿里云 AccessKey LTAI5tQ2x8Zk9Ab3cD7eF1gH",
+      "expected": "阿里云 AccessKey 〔密钥·0d0662〕"
+    },
+    {
+      "input": "API_KEY: 9f8e7d6c5b4a39281706f5e4d3c2b1a0",
+      "expected": "API_KEY: 〔密钥·c0f17e〕"
+    },
+    {
+      "input": "postgres://admin:S3cretPw@dbhost:5432/prod",
+      "expected": "postgres://admin:〔密钥·33b51b〕@dbhost:5432/prod"
+    },
+    {
+      "input": "-----BEGIN OPENSSH PRIVATE KEY-----\nb3BlbnNzaC1rZXktdjEAAAAABG5vbmU\n-----END",
+      "expected": "-----BEGIN OPENSSH PRIVATE KEY-----\n〔密钥·139ccb〕\n-----END"
+    },
+    {
+      "input": "身份证 110101 19900307 1234",
+      "expected": "身份证 〔身份证号·14261f〕"
+    },
+    {
+      "input": "老身份证号 110101900307123",
+      "expected": "老身份证号 〔身份证号·ddc7b3〕"
+    },
+    {
+      "input": "邮箱 li.mu＠example.com",
+      "expected": "邮箱 〔邮箱·5a8bce〕"
+    },
+    {
+      "input": "宠物店会员积分兑换要短信验证码，刚收到的是 2802",
+      "expected": "宠物店会员积分兑换要短信验证码，刚收到的是 〔验证码·e70421〕"
+    },
+    {
+      "input": "短信验证码刚刚发过来了，我收到的是 2802",
+      "expected": "短信验证码刚刚发过来了，我收到的是 〔验证码·e70421〕"
+    },
+    {
+      "input": "验证码发你手机上了，收到之后告诉我是多少：4821",
+      "expected": "验证码发你手机上了，收到之后告诉我是多少：〔验证码·497a7d〕"
+    },
+    {
+      "input": "登录的验证码……稍等一下哈，我看看是多少，好像是 928371",
+      "expected": "登录的验证码……稍等一下哈，我看看是多少，好像是 〔验证码·ee38fa〕"
+    },
+    {
+      "input": "The verification code we just texted you, as requested, is 604918.",
+      "expected": "The verification code we just texted you, as requested, is 〔验证码·eeeb7a〕."
+    },
+    {
+      "input": "动态密码我这边显示的应该为 55120938",
+      "expected": "动态密码我这边显示的应该为 〔验证码·e788fd〕"
+    },
+    {
+      "input": "验证码刚刚到了，是 2802；再说一遍验证码 2802",
+      "expected": "验证码刚刚到了，是 〔验证码·e70421〕；再说一遍验证码 〔验证码·e70421〕"
+    },
+    {
+      "input": "验证码发到了，手机号是 13812345678",
+      "expected": "验证码发到了，手机号是 〔手机号·f02e0a〕"
+    },
+    {
+      "input": "组会改到 2026-09-29 14:30，地点 B203",
+      "expected": "组会改到 2026-09-29 14:30，地点 B203"
+    },
+    {
+      "input": "截止 20260929 23:59 AoE",
+      "expected": "截止 20260929 23:59 AoE"
+    },
+    {
+      "input": "预算 ¥12,800.00，已付 ¥3,200，余 ¥9,600.00",
+      "expected": "预算 ¥12,800.00，已付 ¥3,200，余 ¥9,600.00"
+    },
+    {
+      "input": "实验编号 EXP-20260912-003 已归档",
+      "expected": "实验编号 EXP-20260912-003 已归档"
+    },
+    {
+      "input": "Python 3.10.2 和 CUDA 12.4，驱动 550.54.15",
+      "expected": "Python 3.10.2 和 CUDA 12.4，驱动 550.54.15"
+    },
+    {
+      "input": "Twin-7 机器人今天标定，Twin-7 的夹爪换了",
+      "expected": "Twin-7 机器人今天标定，Twin-7 的夹爪换了"
+    },
+    {
+      "input": "卡号 6222021234567891（这串校验不对）",
+      "expected": "卡号 6222021234567891（这串校验不对）"
+    },
+    {
+      "input": "订单号 2026092912345678 已发货",
+      "expected": "订单号 2026092912345678 已发货"
+    },
+    {
+      "input": "编号 1234567812345670 只是批次号",
+      "expected": "编号 1234567812345670 只是批次号"
+    },
+    {
+      "input": "账号在备注里写过了，另外这是订单编号 1234567812345670",
+      "expected": "账号在备注里写过了，另外这是订单编号 1234567812345670"
+    },
+    {
+      "input": "会议室 A-1203，3 号楼 502 室，12F 茶水间",
+      "expected": "会议室 A-1203，3 号楼 502 室，12F 茶水间"
+    },
+    {
+      "input": "学号 2021013456，工号 88012",
+      "expected": "学号 2021013456，工号 88012"
+    },
+    {
+      "input": "10012345678 和 12012345678 都不是手机号",
+      "expected": "10012345678 和 12012345678 都不是手机号"
+    },
+    {
+      "input": "流水 20260929123 已入账",
+      "expected": "流水 20260929123 已入账"
+    },
+    {
+      "input": "时间 09:30-11:45，12:00 午饭",
+      "expected": "时间 09:30-11:45，12:00 午饭"
+    },
+    {
+      "input": "arXiv:2409.12345，DOI 10.1145/3544548.3581234",
+      "expected": "arXiv:2409.12345，DOI 10.1145/3544548.3581234"
+    },
+    {
+      "input": "NC27-4471 投稿号，页数 9",
+      "expected": "NC27-4471 投稿号，页数 9"
+    },
+    {
+      "input": "第3组做了12次实验，温度37.5度，成功率 83.3%",
+      "expected": "第3组做了12次实验，温度37.5度，成功率 83.3%"
+    },
+    {
+      "input": "坐标 31.2304,121.4737",
+      "expected": "坐标 31.2304,121.4737"
+    },
+    {
+      "input": "版本 v1.2.3.4，另一个是 1.2.3.4.5，还有 300.1.1.1",
+      "expected": "版本 v1.2.3.4，另一个是 1.2.3.4.5，还有 300.1.1.1"
+    },
+    {
+      "input": "loss 0.13812345678，lr 3e-4",
+      "expected": "loss 0.13812345678，lr 3e-4"
+    },
+    {
+      "input": "发票代码：144032000115，发票号码：88291044",
+      "expected": "发票代码：144032000115，发票号码：88291044"
+    },
+    {
+      "input": "快递单号 SF1357924680114",
+      "expected": "快递单号 SF1357924680114"
+    },
+    {
+      "input": "password reset link expires in 30 minutes",
+      "expected": "password reset link expires in 30 minutes"
+    },
+    {
+      "input": "密码长度至少 8 位，需要包含大小写",
+      "expected": "密码长度至少 8 位，需要包含大小写"
+    },
+    {
+      "input": "passwordless ssh 已配置，cd $(pwd)/build",
+      "expected": "passwordless ssh 已配置，cd $(pwd)/build"
+    },
+    {
+      "input": "验证码有效期 10 分钟",
+      "expected": "验证码有效期 10 分钟"
+    },
+    {
+      "input": "OTP 功能在 2026 年上线",
+      "expected": "OTP 功能在 2026 年上线"
+    },
+    {
+      "input": "task-management-pipeline-v2 和 sk-abcdefghijklmnopqrst 都不是密钥",
+      "expected": "task-management-pipeline-v2 和 sk-abcdefghijklmnopqrst 都不是密钥"
+    },
+    {
+      "input": "Bearer token 认证在 v2 里",
+      "expected": "Bearer token 认证在 v2 里"
+    },
+    {
+      "input": "身份证号 110105194912310021（校验位不对）",
+      "expected": "身份证号 110105194912310021（校验位不对）"
+    },
+    {
+      "input": "身份证号 510107200102293219（2001 年没有 2 月 29 日）",
+      "expected": "身份证号 510107200102293219（2001 年没有 2 月 29 日）"
+    },
+    {
+      "input": "新CUDA12 驱动，新H100 集群",
+      "expected": "新CUDA12 驱动，新H100 集群"
+    },
+    {
+      "input": "GPU 8 × H100，80GB，1,048,576 MB",
+      "expected": "GPU 8 × H100，80GB，1,048,576 MB"
+    },
+    {
+      "input": "林知远 9 月 30 日在北京海淀区中关村大街 1 号付了 ¥3,000",
+      "expected": "林知远 9 月 30 日在北京海淀区中关村大街 1 号付了 ¥3,000"
+    },
+    {
+      "input": "lin@devbox:~$ squeue -u lin",
+      "expected": "lin@devbox:~$ squeue -u lin"
+    },
+    {
+      "input": "@林知远 早，@韩策 下午见",
+      "expected": "@林知远 早，@韩策 下午见"
+    },
+    {
+      "input": "https://example.com/search?q=清川&page=2",
+      "expected": "https://example.com/search?q=清川&page=2"
+    },
+    {
+      "input": "客服 400-820-8820，工作日 9:00-18:00",
+      "expected": "客服 400-820-8820，工作日 9:00-18:00"
+    },
+    {
+      "input": "尾号3842的包裹已到达，取件码 5-2-7031",
+      "expected": "尾号3842的包裹已到达，取件码 5-2-7031"
+    },
+    {
+      "input": "编号 138123456789 共 12 位",
+      "expected": "编号 138123456789 共 12 位"
+    },
+    {
+      "input": "序列号 ABC4111111111111111",
+      "expected": "序列号 ABC4111111111111111"
+    },
+    {
+      "input": "密码是什么来着？口令也忘了",
+      "expected": "密码是什么来着？口令也忘了"
+    },
+    {
+      "input": "卡号🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂 1234567812345670",
+      "expected": "卡号🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂 1234567812345670"
+    },
+    {
+      "input": "验证码🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂1234",
+      "expected": "验证码🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂🙂1234"
+    },
+    {
+      "input": "我今天写了 1234 行 code，明天提交",
+      "expected": "我今天写了 1234 行 code，明天提交"
+    },
+    {
+      "input": "error code 5003 已修复",
+      "expected": "error code 5003 已修复"
+    },
+    {
+      "input": "密码学课程：周三 14:00 上课",
+      "expected": "密码学课程：周三 14:00 上课"
+    },
+    {
+      "input": "PIN 码在卡背面",
+      "expected": "PIN 码在卡背面"
+    },
+    {
+      "input": "第 2024 期验证码活动",
+      "expected": "第 2024 期验证码活动"
+    },
+    {
+      "input": "共发送 5000 条验证码短信",
+      "expected": "共发送 5000 条验证码短信"
+    },
+    {
+      "input": "2026-09-30 的验证码已作废",
+      "expected": "2026-09-30 的验证码已作废"
+    },
+    {
+      "input": "打印 2 份，编号 2026 0930",
+      "expected": "打印 2 份，编号 2026 0930"
+    },
+    {
+      "input": "账号 123456（6 位）",
+      "expected": "账号 123456（6 位）"
+    },
+    {
+      "input": "对公账号：7559 1234 待补全",
+      "expected": "对公账号：7559 1234 待补全"
+    },
+    {
+      "input": "我的 token: abc123",
+      "expected": "我的 token: abc123"
+    },
+    {
+      "input": "https://example.com:8443/path?q=1",
+      "expected": "https://example.com:8443/path?q=1"
+    },
+    {
+      "input": "邮箱写成 a＠b 不完整",
+      "expected": "邮箱写成 a＠b 不完整"
+    },
+    {
+      "input": "一三五七九是奇数",
+      "expected": "一三五七九是奇数"
+    },
+    {
+      "input": "１２３４５ 是全角数字",
+      "expected": "１２３４５ 是全角数字"
+    },
+    {
+      "input": "订单 110101900307123 已发货",
+      "expected": "订单 110101900307123 已发货"
+    },
+    {
+      "input": "版本号 1.3.8 已发布，下载 1234.5678 次",
+      "expected": "版本号 1.3.8 已发布，下载 1234.5678 次"
+    },
+    {
+      "input": "验证码的事情已经解决了，谢谢大家。下午的会议室是 3021",
+      "expected": "验证码的事情已经解决了，谢谢大家。下午的会议室是 3021"
+    },
+    {
+      "input": "验证码这件事我们回头再说，先把明天上午开会要用的材料、投影仪和签到表都准备好，另外打印机的纸也要补上，房间号是 4021",
+      "expected": "验证码这件事我们回头再说，先把明天上午开会要用的材料、投影仪和签到表都准备好，另外打印机的纸也要补上，房间号是 4021"
+    },
+    {
+      "input": "验证码有效期为 1800 秒，过期重发",
+      "expected": "验证码有效期为 1800 秒，过期重发"
+    },
+    {
+      "input": "验证码登录那个需求，排期是 2026 年 10 月",
+      "expected": "验证码登录那个需求，排期是 2026 年 10 月"
+    },
+    {
+      "input": "验证码短信的单价是 0.045 元",
+      "expected": "验证码短信的单价是 0.045 元"
+    },
+    {
+      "input": "OTP sent; the balance is 4521",
+      "expected": "OTP sent; the balance is 4521"
+    },
+    {
+      "input": "OpenAI key: 〔密钥·9de799〕 别外传",
+      "expected": "OpenAI key: 〔密钥·9de799〕 别外传"
+    },
+    {
+      "input": "AWS 〔密钥·c43728〕 放在 CI 里",
+      "expected": "AWS 〔密钥·c43728〕 放在 CI 里"
+    },
+    {
+      "input": "下载链接 https://files.example.org/x.pdf?sig=〔密钥·1b39e3〕&expires=1790000000。",
+      "expected": "下载链接 https://files.example.org/x.pdf?sig=〔密钥·1b39e3〕&expires=1790000000。"
+    },
+    {
+      "input": "服务器 root 密码是 〔密码·79c0a7〕",
+      "expected": "服务器 root 密码是 〔密码·79c0a7〕"
+    },
+    {
+      "input": "新密码为 '〔密码·e8ce49〕'，登录后改掉",
+      "expected": "新密码为 '〔密码·e8ce49〕'，登录后改掉"
+    },
+    {
+      "input": "OTP: 〔验证码·a6e591〕",
+      "expected": "OTP: 〔验证码·a6e591〕"
+    },
+    {
+      "input": "甲方 〔身份证号·6ccc35〕，乙方 〔身份证号·6443d1〕",
+      "expected": "甲方 〔身份证号·6ccc35〕，乙方 〔身份证号·6443d1〕"
+    },
+    {
+      "input": "测试卡 〔银行卡号·c69f03〕 已失效",
+      "expected": "测试卡 〔银行卡号·c69f03〕 已失效"
+    },
+    {
+      "input": "工资卡 〔银行卡号·b8a36c〕，报销也打到 〔银行卡号·b8a36c〕",
+      "expected": "工资卡 〔银行卡号·b8a36c〕，报销也打到 〔银行卡号·b8a36c〕"
+    },
+    {
+      "input": "〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 是同一个号",
+      "expected": "〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 / 〔手机号·6d84ab〕 是同一个号"
+    },
+    {
+      "input": "London office 〔电话·7b48d7〕",
+      "expected": "London office 〔电话·7b48d7〕"
+    },
+    {
+      "input": "Zane 的邮箱 〔邮箱·4f86ce〕，手机 〔手机号·ec6d0a〕",
+      "expected": "Zane 的邮箱 〔邮箱·4f86ce〕，手机 〔手机号·ec6d0a〕"
+    },
+    {
+      "input": "服务跑在 〔IP·c2f43e〕:8080/v1，出口 IP 是 〔IP·84a4c7〕。",
+      "expected": "服务跑在 〔IP·c2f43e〕:8080/v1，出口 IP 是 〔IP·84a4c7〕。"
+    },
+    {
+      "input": "Tel〔手机号·f02e0a〕",
+      "expected": "Tel〔手机号·f02e0a〕"
+    },
+    {
+      "input": "Pls send the deck to 〔邮箱·d4c20f〕, cc 李雷 (〔手机号·8bdcf0〕)；WiFi password: 〔密码·4619a0〕",
+      "expected": "Pls send the deck to 〔邮箱·d4c20f〕, cc 李雷 (〔手机号·8bdcf0〕)；WiFi password: 〔密码·4619a0〕"
+    },
+    {
+      "input": "〔验证码·b189e2〕 is your Microsoft verification code",
+      "expected": "〔验证码·b189e2〕 is your Microsoft verification code"
+    },
+    {
+      "input": "Your code is 〔验证码·5e43da〕",
+      "expected": "Your code is 〔验证码·5e43da〕"
+    },
+    {
+      "input": "密码我私信你了：〔密码·da75fc〕",
+      "expected": "密码我私信你了：〔密码·da75fc〕"
+    },
+    {
+      "input": "王师傅手机 〔手机号·f02e0a〕",
+      "expected": "王师傅手机 〔手机号·f02e0a〕"
+    },
+    {
+      "input": "〔手机号·f02e0a〕 和 〔手机号·f02e0a〕 是同一个号",
+      "expected": "〔手机号·f02e0a〕 和 〔手机号·f02e0a〕 是同一个号"
+    },
+    {
+      "input": "香港同事 〔电话·7c9ecb〕（WhatsApp）",
+      "expected": "香港同事 〔电话·7c9ecb〕（WhatsApp）"
+    },
+    {
+      "input": "STRIPE_SECRET_KEY=〔密钥·14dbe8〕",
+      "expected": "STRIPE_SECRET_KEY=〔密钥·14dbe8〕"
+    },
+    {
+      "input": "API_KEY: 〔密钥·c0f17e〕",
+      "expected": "API_KEY: 〔密钥·c0f17e〕"
+    },
+    {
+      "input": "老身份证号 〔身份证号·ddc7b3〕",
+      "expected": "老身份证号 〔身份证号·ddc7b3〕"
+    },
+    {
+      "input": "验证码发你手机上了，收到之后告诉我是多少：〔验证码·497a7d〕",
+      "expected": "验证码发你手机上了，收到之后告诉我是多少：〔验证码·497a7d〕"
+    },
+    {
+      "input": "验证码刚刚到了，是 〔验证码·e70421〕；再说一遍验证码 〔验证码·e70421〕",
+      "expected": "验证码刚刚到了，是 〔验证码·e70421〕；再说一遍验证码 〔验证码·e70421〕"
+    },
+    {
+      "input": "〔手机号〕 已隐藏，〔邮箱〕 也是",
+      "expected": "〔手机号〕 已隐藏，〔邮箱〕 也是"
+    },
+    {
+      "input": "〔验证码〕1234 是占位符后面的数字",
+      "expected": "〔验证码〕1234 是占位符后面的数字"
+    },
+    {
+      "input": "〔密码·abc123〕 和 〔验证码·123456〕",
+      "expected": "〔密码·abc123〕 和 〔验证码·123456〕"
+    },
+    {
+      "input": "〔手机号·f02e0a〕 和 13900001111",
+      "expected": "〔手机号·f02e0a〕 和 〔手机号·8bdcf0〕"
+    }
+  ]
+}

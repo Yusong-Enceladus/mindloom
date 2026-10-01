@@ -22,9 +22,25 @@ final class PeopleChipsTests: XCTestCase {
     }
   }
 
-  func testChipCountsTryAllThenFewer() {
+  func testChipCountsTryAllUpToTheCapThenFewer() {
     XCTAssertEqual(PeopleChips.counts(3), [3, 2, 1, 0])
-    XCTAssertEqual(PeopleChips.counts(15), [15, 8, 6, 5, 4, 3, 2, 1, 0])
+    XCTAssertEqual(PeopleChips.counts(6), [6, 5, 4, 3, 2, 1, 0])
+    XCTAssertEqual(PeopleChips.counts(15), [6, 5, 4, 3, 2, 1, 0])
     XCTAssertEqual(PeopleChips.counts(0), [0])
+  }
+
+  /// However wide the page, a cast of 15 shows at most six chips and "+9".
+  func testAWidePageStillShowsAtMostTheCap() {
+    let chips = PeopleChips(people: people(15), actions: .inert, open: { _ in })
+    let host = NSHostingController(rootView: chips.environment(\.zhijiSnapshot, true))
+    let wide = host.sizeThatFits(in: CGSize(width: 4_000, height: 200))
+    let six = NSHostingController(
+      rootView: PeopleChips(people: people(6), actions: .inert, open: { _ in })
+        .environment(\.zhijiSnapshot, true)
+    ).sizeThatFits(in: CGSize(width: 4_000, height: 200))
+    // Six chips plus the "+9" capsule: wider than six alone, far narrower
+    // than fifteen chips would be.
+    XCTAssertGreaterThan(wide.width, six.width)
+    XCTAssertLessThan(wide.width, six.width * 1.5)
   }
 }

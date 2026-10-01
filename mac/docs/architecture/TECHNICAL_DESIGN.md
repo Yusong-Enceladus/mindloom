@@ -5,6 +5,99 @@
 > 状态：可进入风险验证；尚不可冻结模型、加密实现与发布配置  
 > 产品依据：[PRODUCT_REQUIREMENTS.md](../../PRODUCT_REQUIREMENTS.md) V1.7，范围以 §0.1–§0.3 用户裁决为准
 
+## 2026-09-30 v6 集成（Mac 侧，`claude/v6`）
+
+`claude/privacy-v6`（含复查修复）与 `claude/phone-link-v6`（含 `claude/phone-v6`）合并后，与整理设备 v6 集成对齐的 Mac 改动，以及手机端到端运行里发现并修好的两处：
+
+- **遮挡规范 v3。** 见下文“遮挡规范 v3”一条：`otpSources` 第三条（值为第 1 组，无校验），`PrivacyMasker.spec = "mindloom-mask-v3"`，共享向量 200 条、SHA-256 `94a79aff…5760`，与整理设备逐字节相同。整理设备对模型输出的占位符修补只在整理设备上做，Mac 不变。
+- **手机只有封存这一条路（F9）。** Mac 只读取和确认收件箱，从不往里加；旧快捷指令留下的明文项仍按粘贴收进来。见“手机入口（收件箱）”。
+- **人物整理的结果怎么显示。** 整理设备的人物带 `status`（`not_person` / `role` / 空），`RemoteOrganizerPerson.status` 可缺省。`not_person`（被读成说话人的标签）不出现在事件人物、首页人物行、卡片头像、人物页列表和相关事件里。事件的 `person_ids` 已按参与度排好（说话算 2、被提到算 1），事件页照这个顺序；本机事件按在几条录音里说话排序。事件页人物 chip 最多 6 个（`PeopleChips.maximumChips`），放不下时更少，其余是“+N”（无障碍标签里列出名字，所有人都在人物页）。整理设备按名字连上的“提及”不单独发给 Mac，所以 Mac 用自己的证据判断谁参与一件事（`MemoryHomeEntry.participantIDs`）：在它的录音里被听到，或在它的文字里写了说话行（“名：…”、“[时间] 名：…”、单独一行的“名 10:05”，规则同 `spark/organizer/persons.py`，由 `MemorySpeakerLines` 读出，按名字或别名、也按去掉备注后的名字比较）。只有参与者让两件事成为“相关的事”；只被提到的人照样显示在事件和人物页上，但不牵连事件。首页“看某个人”仍按显示规则（`isShownPerson`）取人，最多 5 个加“+N”。
+- **识字一次只跑一个（端到端运行发现）。** 同一进程里两次 Vision 文字识别同时跑时，神经网络引擎那条路会报错（TextRecognition E5RT，code 13），之后这个进程里一直失败，手机送来的照片因此做不出发送副本、停在 Mac 上。现在本机读图（`VisionImageTextReader`）和发送副本涂抹（`VisionSendCopyRedactor`）共用 `VisionTextRecognition`：请求一次一个；默认设备失败时同一请求换 GPU、再换 CPU，全都失败才算失败。
+- **可恢复的失败会重试。** 发送副本做不出时，原来一律“停到它下次改动”（`asset`）。现在错误可以声明自己是暂时的（`RemoteOrganizerAssetErrorClassifying.isTransient`，Vision 的 `recognitionFailed` 是），这类失败按链路退避重新排队；图片读不了、写不出、太大、音视频等仍然停住。
+
+## 2026-09-30 手机：织机键盘与收进织机（Mac 侧：封存收件与配对，`claude/phone-link-v6`）
+
+依据 PRD §0.3 第 2、8 条的手机补充，以及 iPhone、Spark、Mac 三方共用的手机契约（PHONE-CONTRACT §3–§6）。iPhone App、共用包 `Packages/MindloomLink`、SSH 依赖见 ADR-0007；Spark 的收件箱、`gate` 与 `authorize-phone` 由服务分支实现。本节只写 Mac 这一半。
+
+**一句话。** 手机上的内容在手机上用这台 Mac 的公钥封好，经用户自己的 Spark 转交；Spark 只存、只转交它读不出的字节，Mac 打开、收进来、提交后确认，Spark 随即删除。手机的 SSH 钥匙在 Spark 上只能往收件箱里放东西，在中转主机上只能转发到 Spark 的 SSH 端口。
+
+**封存钥匙（`PhoneSealKeyStore`）。**
+- 每个数据根一对 X25519 钥匙。私钥存登录钥匙串的通用密码（service `com.bestasr.phone-seal-key`，account 与链路钥匙相同，即数据根身份 hash），只存本机、不同步；测试与端到端运行用文件实现，规则与链路钥匙一样（只允许带 `SYNTHETIC_DATA_ROOT` 标记且不在真实资料库内的根，0600，拒绝链接）。
+- 第一次“连接 iPhone”时生成，之后跨配对保留：重新配对后，手机发件箱里还没送出的旧封存项照样能打开。公钥进配对码（`mac_seal_pub`）。
+
+**收件（`IntakeInboxIngestor`）。**
+- `GET /v1/inbox` 里 `{"inbox_id","kind":"sealed","blob","received_at"}` 解析为 `RemoteOrganizerInboxEntry.Kind.sealed`：`blob` 必须以 `mlseal1.` 开头、不超过 48,000,008 字符（= `MindloomSeal.maximumWireBytes`，测试断言相等），原样保留，`inbox_id` 不改大小写（它是封存的附加认证数据）。
+- 打开：`MindloomSeal.open(blob, entryID: inbox_id, with: 封存私钥)`，再 `InboxItemPayload.decode`（版本、时间、各类型字段和大小、音视频拒收都在这里校验）。来源 App = 载荷里的 `source`（“iPhone 键盘”/“iPhone 分享”），采集时间 = 载荷的 `created_at`（手机上说出或分享的时刻，不是到达 Spark 的时刻）。
+- 各类型走的路：文字按文字；链接成为“标题、附言、URL 各占一行”的文字（从不打开链接）；图片按粘贴图片的路径（Mac 再归一化一次，发送时照常涂掉号码）；文件以净化后的文件名写进用户临时目录下的私有文件夹（0700/0600），交给拖入文件的同一套规则分类（能读的文档读出文字，读不了的按字节，压缩包和读不了的二进制只保存在 Mac），暂存复制后立即删除该文件夹。手机来的 zip 不展开，整个只保存在 Mac。
+- 然后与粘贴相同：`createUserItem` → 暂存文件提交 → `POST /v1/inbox/{id}/ack`。条目 ID 仍由收件 ID 派生，确认失败后再次拉取会找到已有条目，不重复收入。之后与其它条目一样：遮挡后在链路开启时送去整理。
+- 打不开（封给旧配对的钥匙、封给别的 Mac、途中被改、换了 `inbox_id`、本库从未配对）或打开后不是条目的：结果为 `.discarded`，运行时照样确认（Spark 删除），确认成功后才计数一次（`onInboxDiscarded`），设置页显示“N 条手机内容无法打开（配对已更换）”或“N 条手机内容无法收进来”，计数存在链路状态目录，用户点“知道了”清零。钥匙串暂时读不了、临时文件写不了属于本机故障：不确认、不计数，下一轮再试。打开后的载荷被收进流程拒绝（例如本机写入失败）也不确认，与旧收件项的规则一致。
+
+**配对（`PhonePairingService`，设置 → 数据 → iPhone）。**
+- “连接 iPhone”只在链路开启时可用。步骤：`ssh -G <链路主机别名>` 读出 Spark 的 `hostname`/`port`/`user`/`ProxyJump`/`HostKeyAlias`/known_hosts 文件；有一层 `ProxyJump` 时解析它（`[user@]host[:port]` 或 `ssh://…`）并同样 `ssh -G`。多层跳板、`ProxyCommand`、跳板后面还有跳板都拒绝（手机做不到同样的路由）。
+- 主机钥匙只从 Mac 自己的 known_hosts 读：按 ssh 自己查找的名字（有 `HostKeyAlias` 用别名，端口不是 22 时为 `[host]:port`）在 ssh 查的文件里 `ssh-keygen -F`，跳过 `@cert-authority` 与 `@revoked` 的钥匙，只取 ed25519（优先）或 ECDSA；手机的 SSH 库不能验证 `ssh-rsa`。任一跳找不到就拒绝配对，不接受首次连接时对方出示的钥匙，也不在远端装任何东西，连封存钥匙都还没生成。
+- 生成手机的 ed25519 钥匙，`key_id` = `iphone-` + 公钥 SHA-256 前 12 位十六进制；用 `PairingPayload` 生成 `mlpair1.` 配对码（标签 = 这台 Mac 在系统设置里的名字，去掉控制字符，最多 64 字）。
+- 安装，全部走 Mac 自己的 ssh，带链路同样的加固（`BatchMode=yes`、`StrictHostKeyChecking=yes`、不复用连接、不转发 agent/X11/端口）：Spark 上 `zhiji-inbox authorize-phone --key-id <id> --pubkey -`，公钥行 `ssh-ed25519 <base64> mindloom-phone:<id>` 从 stdin 给；有中转主机时，`sh -s -- add <id> <spark host> <port> ssh-ed25519 <base64>`，stdin 是 `relay-authorize` 脚本本身（中转主机上什么都不装）。`<spark host>` 就是配对码里的 `spark.host`，因为 sshd 按字符串比较隧道目标与 `permitopen`。中转那一步失败（包括超时）时，中转和 Spark 上刚写的行都撤回。
+- `relay-authorize` 是 Spark 仓库 `spark/relay-authorize` 的逐字节副本，嵌在 App 里（`PhoneRelayScript`，测试钉住 SHA-256），Mac 只在中转主机上运行自己带的字节，从不运行从别的主机取来的脚本。它写的行是契约 2026-09-30 修订后的 `restrict,port-forwarding,permitopen="<host>:<port>",permitlisten="127.0.0.1:1",command="false" <pub> mindloom-phone:<id>`。
+- 防注入：进入远端 shell 的每个词都先按链路配置同样的字符规则检查——路径 `[A-Za-z0-9._/~-]`、无 `..`、不以 `-` 开头（`zhiji-inbox` 路径来自偏好 `preferences.spark-organizer-inbox-command`，默认 `~/hack/organizer/spark/zhiji-inbox`），主机按链路主机规则，登录名按 POSIX，`key_id` 按 `[A-Za-z0-9._-]{1,64}`，公钥只允许 base64 字符；ssh 目的地前总有 `--`。手机私钥从不进入任何命令、参数或 stdin，只存在于显示给用户的配对码里。
+- 装好后先把配对状态（`key_id`、Spark 与中转的 ssh 目的地、`zhiji-inbox` 路径、时间；不含任何秘密）写进链路状态目录的 `phone-<数据根身份>.json`（0600），写不进就立即撤回再报错；然后弹出二维码（CoreImage `CIQRCodeGenerator`，纠错 M，四模块静区）和“复制配对码”。配对码只在这个窗口打开期间留在内存；复制到剪贴板时标为 concealed（剪贴板管理器不保存）和织机自己的内容（⌘V 不会把它收进来）。关掉窗口，Mac 就不再持有手机私钥。
+- 再次“连接 iPhone”先撤掉旧手机（两台主机），撤不掉就不装新的；新的装不上时旧的已经撤掉，状态随之清空。
+- “断开 iPhone”只要有配对就可用（链路关着也行，丢了手机随时能断）：Spark 上 `zhiji-inbox revoke-phone --key-id <id>`，中转主机上 `sh -s -- remove <id>`（同一脚本）；两边都试，任何一边失败就保留配对并提示稍后再试，全部成功才忘掉 `key_id`。封存钥匙保留。
+- 本地命令（ssh、ssh-keygen）由 `ProcessPhoneLinkCommandRunner` 运行：stdin 写入不触发 SIGPIPE，stdout/stderr 各最多读 64 KiB 且不写日志，超时先 SIGTERM 再 SIGKILL。
+
+**文案。** 页面按文案规则称“整理设备”“中转主机”，不写“Spark”；新文件 `App/DictationAppModel+PhoneLink.swift` 已加入文案规则测试的检查列表。
+
+**依赖。** Mac 包 `BestASRCore` 新增本仓库内的本地包 `Packages/MindloomLink`（只用 CryptoKit 与 Foundation，无第三方依赖；许可、系统版本与隐私行为见 ADR-0007）。Mac 不链接手机的 SSH 库。
+
+## 2026-09-30 隐私 v6：Mac 是保险箱，Spark 是工作台（Mac 侧，`claude/privacy-v6`）
+
+依据 PRD §0.3 第 8 条与 Mac/Spark 共用的隐私契约 v6。本节优先于下面“远程整理器”一节里与之冲突的旧表述（“v1 没有远程删除接口”“关闭时直接断开”等）。Spark 端按同一契约另行实现。
+
+**一句话。** Mac 是唯一真源和保险箱；Spark 只拿到整理需要的东西，用一把只存在 Mac 上的钥匙锁住，读完原件就删，用户要求时全部忘掉。
+
+**钥匙（`OrganizerKeyStore`）。**
+- 每个数据根一把 32 字节随机 `library_key`，第一次开启链路时生成，存入登录钥匙串的通用密码（service `com.bestasr.organizer-key`，account 为数据根的身份 hash，与“开启标记”用的是同一个），只存本机、不同步。测试与端到端运行用文件实现：只允许带 `SYNTHETIC_DATA_ROOT` 标记、且不在真实资料库内的数据根，文件权限 0600，拒绝链接。
+- 派生：`key_id` = `SHA-256("mindloom-key-id-v1" ‖ key)` 前 16 位十六进制；`store_key` = `HMAC-SHA256(key, "mindloom-store-v1")`（Spark 的 SQLCipher 原始密钥）；`mask_key` = `HMAC-SHA256(key, "mindloom-mask-v1")`（只用于占位符标签）。越过链路的只有 `library_key`，而且只在 `POST /v1/unlock` 里，进入 Spark 进程内存；描述与日志只出现 `key_id`。
+
+**连接顺序。** 隧道建好、令牌读入后：`GET /v1/health`（锁着也能答，返回 `locked` 与盘上存储的 `key_id`）→ `POST /v1/unlock`（第一个数据请求）→ 待删除 → 决定 → 条目 → 手机收件箱 → `/v1/state`。
+- health 已经说明盘上是另一把钥匙的存储时，本机钥匙不发出去，直接显示“整理设备上的内容属于另一把钥匙”；unlock 返回 409 `wrong_key` 时同样处理。此时只提供“让整理设备忘掉旧内容”（按对方 `key_id` 调 `/v1/wipe`，本机钥匙保留）。页面文案按文案规则称“整理设备”、不写“Spark”“加密”，与契约里的“让 Spark 忘掉……”“Spark 上的内容……”是同一句话。
+- unlock 返回 404/405（不能加密保存的旧服务）时什么都不发送，状态为“整理设备不能上锁保存内容”。
+- 任何数据请求返回 423（Spark 重启后存储又锁上）按链路级故障处理：重连、先解锁再继续；因此失败的发送立即重排，不退避。
+
+**遮挡（masking spec v1，与 Spark 逐字节一致）。**
+- `PrivacyMasker` 是参考实现的 Swift 移植：十类检测器（密钥、密码、验证码、身份证号、银行卡号、手机号、电话、邮箱、IP、车牌号）按固定顺序、最左最长、不重叠，重复扫描直到不变，所以已遮挡的文本再遮挡不变；占位符为 `〔<标签>·<HMAC 前 6 位>〕`。共享向量文件 `privacy/mask_vectors.json`（123 条 + 派生向量）逐字节复制进测试资源，测试断言其 SHA-256，Swift 实现全部通过。
+- 在构造线上报文时（`RemoteOrganizerRuntime.wireBody`）遮挡每个离开 Mac 的文字字段：条目文字、分段文字、用户条目文字、文档提取文字、文件的本机文字、人物显示名、来源名称、文件名；决定里用户输入的标题与人名也遮挡（本地存的决定保持用户原文）。文字类条目的 `sha256` 改为遮挡后文字的摘要；每个字段按服务端上限截断时不会切断占位符。
+- 发送前先把“占位符 → 原文”写入资料库的 `remote_mask_map`（按条目或决定分行，删除条目时一起删除；与原文同等敏感，永不发送），以及条目文字里各占位符的位置（`remote_mask_offsets`）。
+- 回来的每个字符串在 `remoteProjection()` 里还原：事件标题、进度行、事实与引文、分段摘要、锚点、问题、人物显示名与别名、读图文字、摘要与字段。一个占位符在本库对应不止一个原文（24 位标签碰撞）或没有对应时，只显示不带标签的 `〔手机号〕`，不猜。Spark 按遮挡后文字给出的分段偏移，按记录的位置换算回原文偏移，页面切片仍然对齐。
+- 保留不遮：人名、日期时间、金额、地点地址、链接（链接里的密钥参数值除外）、不符合规则的单号与实验编号。
+
+**截图。** 发送时（不是收进来时）对归一化副本做本机读图（Apple Vision，与本机搜索同一识别器），对每一行跑同一套检测器，用 `VNRecognizedText.boundingBox(for:)` 把命中的字符范围涂成不透明矩形（外扩 2 px）。聊天气泡和窄栏会把卡号、密钥折到下一行：上下紧挨、水平重叠的几行也拼起来（行间不加字符、加一个空格各试一次）再检测，跨行的命中在它碰到的每一行都涂掉。读图做两遍（开、关语言校正），两遍的区域都涂：语言校正会把 `sk-` 读成 `Sk-`、把数字读成字母；密钥固定前缀大小写读错时按原大小写检测（等长替换，偏移不变），重新编码为同格式、不带元数据；`sha256` 按涂后副本计算。原件和归一化副本都不改。视频关键帧与动图额外帧也是图片条目，走同一条路。读图或编码失败时条目停在 Mac（fail closed）。
+
+**音视频、压缩包与文件。**
+- 类型声明为音频/视频（`UTType` 符合 `audiovisualContent`，如 `.avi`、`.wma`），或文件头是音视频（`MediaContentSniffer`：ftyp 非图片品牌、RIFF WAVE/AVI、ID3、Ogg、FLAC、Matroska、ASF、MPEG 帧等），无论扩展名：AVFoundation 能读就作为录音导入、在 Mac 上转写；否则作为“只保存在 Mac 上”的文件条目（提取器 `local-only-v1`）保存，永不生成发送内容。运行时发送前再按声明类型和字节头检查一次。
+- `.zip` 在进程内展开（Compression 框架 raw DEFLATE 与 stored 条目，校验 CRC；≤2000 个条目、解压后 ≤200 MB、压缩比 ≤100、嵌套 ≤2 层；成员名只用于显示）。压缩包本身作为只保存在 Mac 的条目保留，每个成员按拖入文件的同一规则收进来，标题为“压缩包 › 路径”；音视频成员留在 Mac；超出限制的压缩包不展开。tar/tgz/7z/rar 等其他压缩包和读不了的二进制文件只保存在 Mac。Mac 读不出文字、但 Spark 能读的文档（xlsx、pptx、key、numbers、pages、epub 等）照旧按字节发送。
+- 相机 RAW、PSD 等系统声明为图片的格式走图片路径（ImageIO 归一化、不带元数据、发送时涂掉）。
+
+**删除、关闭与忘掉。**
+- 显式删除一条曾经发出过的条目（有已送达或已尝试的版本）时，同一事务写入 `remote_pending_deletions`；这张表不随撤销或归档导入清空，链路下次解锁后最先发送 `DELETE /v1/items/{id}`，Spark 清除该条目所有版本并留下不含内容的墓碑。
+- 关闭链路（`revokeNow`）先同步停下 worker（此后不再有数据请求，也不再发布状态），再经仍属于自己的隧道尽力发送 `POST /v1/lock`（2 秒硬上限，Spark 不答也不等），然后按原流程断开并清理资料库。退出 App 不发送 lock。
+- “让整理设备忘掉我的内容”（契约里的“让 Spark 忘掉我的内容”）只在链路开启且连上时可用，需要确认：`POST /v1/wipe`（带本库 `key_id`）返回 200 后，删除钥匙串里的钥匙，把所有条目标为未送达（之后只有变化的记录才会再发，Spark 重置也不会把旧条目重排）、清空投影、待删除队列与占位符表，待发的决定取消；链路继续开着，下一次连接生成新钥匙并在 Spark 上建新的空存储。
+- 设置页按状态显示“整理设备上的内容属于另一把钥匙”“整理设备不能上锁保存内容”“钥匙串暂不可用”，以上情况都不发送任何内容。
+
+**存储。** 收进来的文件按 SHA-256 内容寻址：已在库里的相同字节不再复制，而是在新条目的目录里硬链接到同一文件，通过 `assets/content/<aa>/<sha256>` 索引找到（先逐字节比对）。每条条目仍有自己的路径，发送前的逐字节校验不变；删除条目只去掉一个链接，最后一个条目删除后清理索引（按链接数，删除提交与启动时各做一次）。
+
+### 2026-09-30 隐私复查之后（review/FINDINGS.md，Mac 侧）
+
+本小节优先于上面 v6 一节里相冲突的表述。
+
+- **访问凭证与租约（F1）。** `OrganizerKeyMaterial.accessProof` = `HMAC-SHA256(library_key, "mindloom-access-v1")` 的十六进制；每个请求带 `X-Mindloom-Access`（`RemoteOrganizerHTTPRequest.accessProof`）。Spark 开锁后没有它的数据请求回答 403 `access`，Mac 按“存储已锁”处理：重连、重新解锁。Spark 超过 10 分钟（`ORGANIZER_UNLOCK_LEASE_S`）收不到数据请求就自己上锁；Mac 每 4 秒轮询一次，所以链路开着时不会过期。Mac 睡眠或切走用户会话时 `suspendForSleep()`：停下 worker、尽力上锁、拆隧道，链路保持开启，唤醒后 `resumeAfterSleep()` 重连；退出时 App 代理先 `shutdownLocking()`（最多 2 秒）再退出。上锁失败会在同一时限内再发一次。
+- **截图涂抹（F2）。** `VisionSendCopyRedactor` 除整图两遍识别外，对短边小于 1,000 px 的图做放大识别：竖长图按长度切块、两种倍数放大，其他放大整图。拼读方式：单个识别框、上下相邻的行、阅读顺序上的下一行（不要求水平重叠）、同一基线的框从左到右（表格单元格、方格里的数字）、单字的列从上到下（竖排）。覆盖：遮挡规范 v2 的每类命中，以及连续 7 位以上数字（忽略空格、点、中点、连字符；日期、时间、两位小数金额除外；同一行只在方格单字之间拼数字）；同一行或列跨多个框的命中，从第一个框涂到最后一个框。形近分隔符（・•‧∙⋅．）读作中点。探针 `script/privacy_review/run.sh`：13 种合成截图全部涂净（复查时 7/13 泄漏），Spark 读图模型对涂后的 13 张也读不出号码。
+- **文件发送副本（F3）。** `RemoteOrganizerRuntime` 不再按原样发送文件字节，改为 `RemoteOrganizerFileSanitizing`（App 用 `FileSendCopySanitizer`）做的发送副本：按内容而不是扩展名判断——图片归一化并涂抹；zip（OOXML、OpenDocument、EPUB、iWork 与任意 zip）逐成员重建：图片涂抹，音视频、OLE 嵌入对象、画不出的图片格式清空，嵌套 zip 与 PDF 同样处理，读不了的条目去掉；PDF 有文字层且无图片的页原样复制，其余页渲染（长边 2,560 px）、涂抹后作为图片放回，加密的 PDF 原样；其他字节原样。重建的副本带 `pictures_redacted: true`，`sha256` 与 `size` 描述副本；没有 sanitizer 或副本做不出时，条目留在 Mac。收进来时，内容是图片而名字不是（改了后缀的截图）按图片收。
+- **删除（F6、F14）。** 删除一段录音连同它的关键帧条目（`user_item_details.parent_session_id`）一起删，文件与记录同一流程暂存、提交，并各自排队远程删除。撤销或归档导入丢弃“已尝试未确认”的作业时，在 `remote_organizer_meta` 记下 `maybe_on_organizer:<id>`（不含内容），之后删除它照样排队远程删除；“忘掉我的内容”时清除这些记号。
+- **遮挡规范 v2（F8）。** 规则与 Spark 的 `spark/organizer/masking.py` 逐字相同（源码由它生成），每条规则有自己的校验；共享向量 184 条，SHA-256 `ba1ce47c…c249`。归一化：全角与口述数字转 ASCII，全角 @ 转 @，号码里的点、中点、不换行空格、换行、括号都去掉。
+- **遮挡规范 v3（遮挡评测之后，v6 集成）。** 验证码加第三条规则：关键词之后同一句话里（最多 40 个字，中间没有数字、换行、占位符括号和句末标点 `。！？!?；;`），经 `是`、`为`、冒号或 `is` 交出的 4–8 位数字。共享向量 200 条，SHA-256 `94a79aff…5760`，与 Spark 的 `privacy/mask_vectors.json` 逐字节相同。已知代价：一句提到验证码的话里，`是 / 为 / ：` 之后的 4–8 位数字即使不是验证码（房间号）也会被遮挡。
+- **忘掉时的钥匙（F11）。** 钥匙串删不掉旧钥匙时改写成一把新钥匙并读回核对；两样都做不到，结果为 `keyNotDestroyed`，状态“钥匙串暂不可用”，链路不再启动，旧钥匙不再使用。
+- **太大的文件（F16）。** 以文字发送时，`sha256` 是发出文字的摘要，不再是原文件字节的摘要。
+
 ## 2026-09-26 远程整理器：用户自有 DGX Spark（Remote organizer on the user's own DGX Spark）
 
 依据 PRD §0.3。本节优先于下文 §12、§14 中与之冲突的“只有模型/App 更新可以联网”“内容不离开本机”的表述。状态：接口 v1 已冻结；Mac 端桥接代码与 Spark 端服务已通过合成数据联调，产品验收状态见 `IMPLEMENTATION_STATUS.md`。
@@ -21,16 +114,17 @@
   - 来源 App 的 bundle ID 与名称，以及起止时间。
   - 用户的纠正决定与二选一问题的回答。
 - 永不发送：音频、声纹/说话人 embedding、词典、窗口标题、会议标题与参会者上下文。
+- 2026-09-30 起（隐私 v6，见上节）：以上文字字段发送前先遮挡，截图只发涂过的副本，音视频无论扩展名都不按字节发送。
 - 日志只记录 item/事件 ID、数量、状态码和耗时，不记录正文、标题、人名或链路令牌。
 
 **开关与撤销（按资料库保存）。**
 - 链路默认关闭。开启时间作为“水位线”写入当前资料库的 `remote_organizer_meta.link_enabled_at`，不写 App 偏好设置。
 - 可发送资格在采集开始时显式授予：`GRDBDictationStore.create` 本身从不授予资格（历史导入等批量写入也走它）；只有实时采集路径在建会话后调用 `markLiveCaptureRemoteEligible(sessionID:)`（`DictationCaptureCoordinator` 经 `LiveCaptureRemoteEligibilityPort`，以及 App 内用户发起的媒体导入），链路开启时写入 `remote_organizer_eligible`；这一步失败只让该会话留在本机，不影响录音。收进来的条目在 `createUserItem` 的同一事务里授予。不再按 `created_at` 与水位线比较推断。归档导入的会话、Typeless 历史导入的会话、链路关闭时开始的会话永远没有资格；`TypelessImportCLI` 遇到链路开启的资料库直接拒绝运行。
 - 开启期间：只有有资格且已完成的会话会被自动发送（设置页文案为“开启后开始的记录”）。已被跟踪的会话在链路开启时发生逐字稿修改、版本恢复、重新识别、说话人更正、人物改名或退役、来源 App 字段变化时，发送新版本。
-- 关闭（撤销）在界面边界是同步的：开关的回调先调用控制器的 `revokeNow()`（删除“开启标记”、停止运行时——取消 worker 与 HTTP、终止 ssh 子进程并等待退出——并显示已关闭），之后才异步写资料库：删除水位线并清空待发队列。从未送达的条目任务及其资格被删除；已送达条目的待发更新被取消；排队的决定标为“未发送”（`cancelled/revoked`），正在发送或已尝试过的决定标为“可能已送达”（`cancelled/in_flight`）。
+- 关闭（撤销）在界面边界是同步的：开关的回调先调用控制器的 `revokeNow()`（删除“开启标记”、同步停下 worker 并显示已关闭；2026-09-30 起随后尽力发送一次 `POST /v1/lock`，最多 2 秒，再取消 HTTP、终止 ssh 子进程并等待退出），之后才异步写资料库：删除水位线并清空待发队列。从未送达的条目任务及其资格被删除；已送达条目的待发更新被取消；排队的决定标为“未发送”（`cancelled/revoked`），正在发送或已尝试过的决定标为“可能已送达”（`cancelled/in_flight`）。
 - 开启标记按数据根保存在资料库之外（`~/Library/Application Support/bestASR-organizer-link/link-on-<hash>`，hash 取数据根的内核规范路径 `F_GETPATH`，符号链接、`/tmp` 与 `/private/tmp`、大小写不同的写法得到同一个标记）。资料库的开启提交之后才创建标记；启动时只有标记与水位线同时存在才恢复链路。关闭只需删除标记（磁盘满也能删除），删除失败时状态显示“存储不可用”而不是“已关闭”。只有水位线没有标记（撤销的资料库写入失败，或开启没做完）时，下次启动先重试撤销，成功前不启动任何运行时（fail closed）；只有标记没有水位线时保持关闭并删除标记。链路配置无效或状态目录不可用时同样撤销。旧版本的 `link-off-<hash>` 文件不再使用：升级后没有开启标记的资料库按关闭处理，需要重新开启一次。
 - 重新开启只写新的水位线，不补发任何东西：关闭前未发出的内容与修改、关闭期间的记录与修改都不会因重新开启而发送。重新开启后某条已送达记录再次变化时，发送它当时的完整内容（其中自然包含之前的修改）。
-- 已送达 Spark 的内容仍保留在 Spark 上；v1 没有远程删除接口。显式删除 Mac 会话会同时删除该会话的条目任务与资格。
+- 显式删除 Mac 会话会同时删除该会话的条目任务与资格；2026-09-30 起，曾经发出过的条目另外排入待删除队列，链路解锁后最先在 Spark 上删除（见上节）。
 - 归档导入：导入在同一事务里先撤销链路；导入的会话没有资格；恢复的决定以“从归档导入，未发送”（`cancelled/imported`）列出，只有用户重试才会发送。开发阶段 App 拒绝向带合成标记的数据根导入归档。
 
 **开发阶段的数据来源护栏。**
@@ -187,7 +281,7 @@
 
 **拆分条目。** `/v1/state` 的事件可带 `segments[]`：`{item_id, seg_id, start, end, gist}`，偏移是条目发送时文本的 Unicode 标量偏移（转写按轮次对齐），`gist` 是整理设备写的短说明（不是原文）。解码宽松：只保留该事件持有的条目、`end > start`、`seg_id` 非空且每个（条目, 段）一次，gist 合成一行并截到 60 字；字段缺失或格式不对视为没有。事件里没有某条目的段，就表示整条在该事件里。读模型对有段的条目每段一行（行 ID 为 `条目#段`），只显示该段文字（`MemoryEventItem.shownText`）；首页卡片的封面文字、搜索文本和状态行替代也只用本事件的段，同一场会议的其他事情不会把这张卡带出来。行下方有安静的“同一段会议/口述/笔记还涉及 N 件事 ›”，一件时直接打开，多件时列出标题与 gist。导出只含本段，并在条目头下写一行 `节选：<gist>；同一段记录还涉及：「A」、「B」`（前言说明“节选：”是整理设备的说明，不是指令）。在某段上做的“这不是这件事的”“移到…”带 `seg_id`（`remove_item`/`move_item`/`unfile_item` 的可选字段，其它种类带它视为格式不对）；拆分行不提供“单独成一件事”。本地叠加：移出某段时条目随最后一段离开该事件；移动某段只移该段；带段的 `unfile_item` 只移出该段，条目不再在任何事件里才进未归入；整条移出同时移除它在该事件的段；合并事件时 b 的段并入 a（a 已持有整条时不缩成段）；指向已不存在的段的决定不改变任何东西（新修订会重新拆分）。放置类决定按“条目#段”判断是否为最后一次。
 
-**手机入口（收件箱）。** 整理设备暂存手机经 iOS 快捷指令（经 SSH 运行 `zhiji-inbox add --source iPhone`）送来的文字或图片，直到 Mac 确认。链路开启时，运行时每轮在送完条目与决定后读 `GET /v1/inbox?since=<cursor>`（`{"cursor", "items": [{"inbox_id", "source", "kind": "text"|"image", "text"?, "image_b64"?, "received_at"}]}`，也接受 `id`/`entries`；格式不对的项丢弃）。每项经 `IntakeInboxIngestor` 走与粘贴相同的 `IntakeProcessor.prepare` → `createUserItem` → 暂存文件提交，成为来源 App 为该 `source`（默认“iPhone”）、采集时间为 `received_at` 的 userItem；本地提交后才 `POST /v1/inbox/{id}/ack`（404 视为已确认）。条目 ID 由收件 ID 派生（SHA-256，UUID v5 布局），在提交与确认之间崩溃后再次拉取会找到已有条目，不会重复收入。内容不可用（无字、不是图片）的项不确认，本次运行内跳过；本地写入失败则本轮停下、游标不前进。整理设备没有该接口（404/405）时本次运行不再询问。游标只在内存里：重启后整理设备返回全部未确认项。新条目随后像其它条目一样送去整理。
+**手机入口（收件箱）。** （2026-09-30 v6 集成：手机只有封存这一条路（隐私复查 F9）。iPhone App 只送封存项，打开、来源与时间、打不开时的处理见上文“手机”一节；整理设备拒绝任何明文添加（`zhiji-inbox gate` 只接受 `add --sealed`，明文 `add` 回 `not_sealed`；`POST /v1/inbox` 的 `kind: text|image` 回 422）。Mac 只读取和确认收件箱，从不往里加东西。下面描述的是旧 iOS 快捷指令留下的明文项：还在等的仍按原样收进来，当作一次粘贴，发出时照常遮挡与涂抹，不会有新的。）整理设备暂存手机经 iOS 快捷指令（经 SSH 运行 `zhiji-inbox add --source iPhone`，已停用）送来的文字或图片，直到 Mac 确认。链路开启时，运行时每轮在送完条目与决定后读 `GET /v1/inbox?since=<cursor>`（`{"cursor", "items": [{"inbox_id", "source", "kind": "text"|"image", "text"?, "image_b64"?, "received_at"}]}`，也接受 `id`/`entries`；格式不对的项丢弃）。每项经 `IntakeInboxIngestor` 走与粘贴相同的 `IntakeProcessor.prepare` → `createUserItem` → 暂存文件提交，成为来源 App 为该 `source`（默认“iPhone”）、采集时间为 `received_at` 的 userItem；本地提交后才 `POST /v1/inbox/{id}/ack`（404 视为已确认）。条目 ID 由收件 ID 派生（SHA-256，UUID v5 布局），在提交与确认之间崩溃后再次拉取会找到已有条目，不会重复收入。内容不可用（无字、不是图片）的项不确认，本次运行内跳过；本地写入失败则本轮停下、游标不前进。整理设备没有该接口（404/405）时本次运行不再询问。游标只在内存里：重启后整理设备返回全部未确认项。新条目随后像其它条目一样送去整理。
 
 **规模。** `MemoryProjection` 在构造时建好人物索引、本机人名表、条目段索引与首页（原来每次调用都重算、按人物线性查找并对全部记录排序）；`MemoryReadModel` 一次得出首页、人物、最近人物、未归入与横幅问题。App 的 `MemoryScreenModel` 在主线程取输入（记录由存储异步读），在分离任务里构建读模型，再回主线程赋值；2000 条/60 件在调试构建下约 30 ms（`testReadModelFor2000ItemsAnd60Events`）。首页仍是按排序的卡片网格，先显示 24 张，“显示更多”每次再加 24（搜索时显示全部匹配）；人物行显示最近的 8 人，其后“全部人物 ›”打开人物页；事件页每天的条目与未归入页用 `LazyVStack`。
 

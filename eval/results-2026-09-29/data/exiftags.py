@@ -1,5 +1,9 @@
-import sqlite3, sys, struct, collections, json
-c = sqlite3.connect("file:" + sys.argv[1] + "?mode=ro", uri=True)
+import sys, struct, collections, json
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[3] / "spark"))
+from organizer.db import open_for_analysis  # noqa: E402  (plaintext or synthetic-key encrypted store)
+c = open_for_analysis(sys.argv[1])
 tags = collections.Counter(); gps = 0; n = 0
 names = {0x010F: "Make", 0x0110: "Model", 0x0112: "Orientation", 0x011A: "XResolution", 0x011B: "YResolution",
          0x0128: "ResolutionUnit", 0x0131: "Software", 0x0132: "DateTime", 0x8769: "ExifIFD", 0x8825: "GPSIFD",

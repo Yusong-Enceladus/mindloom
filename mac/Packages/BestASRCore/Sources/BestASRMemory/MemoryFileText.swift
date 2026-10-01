@@ -176,6 +176,7 @@ public enum MemoryFileText {
   /// Why a file item stays on this Mac, when it does: larger than the
   /// organizer's limit with no text read here.
   public static func notSentReason(_ record: MemoryItemRecord) -> String? {
+    if record.keptOnMac { return "只保存在 Mac 上" }
     guard record.itemKind == .file, let size = record.fileSizeBytes,
       size > UserItemLimits.maximumSendableFileBytes
     else { return nil }

@@ -27,6 +27,7 @@ import uvicorn
 
 from .api import create_app
 from .config import Settings
+from .hardening import harden_process
 
 
 class UnsafeSocketPath(RuntimeError):
@@ -87,7 +88,10 @@ async def run_servers(servers: list[uvicorn.Server], uds: Optional[Path]) -> Non
 
 
 def main() -> int:
+    # Before anything holds a key: no core dumps, not dumpable (privacy review F10; organizer/hardening.py).
+    hardened = harden_process()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    logging.getLogger("organizer").info("process hardening: %s", hardened)
     settings = Settings()
     tcp: Optional[tuple[str, int]] = None
     if settings.tcp:

@@ -2,7 +2,6 @@
 
 import json
 import re
-import sqlite3
 from pathlib import Path
 
 from organizer.api import build_organizer
@@ -10,7 +9,7 @@ from organizer.clients import HashEmbedClient
 from organizer.clock import FixedClock, ReplayClock, from_setting
 from organizer.store import Store
 
-from conftest import REPO, FakeChat, assign_out, event_of, ingest, make_item
+from conftest import REPO, TEST_KEY, FakeChat, assign_out, event_of, ingest, make_item, raw_connect
 
 ISO = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2})?(?:[+-]\d{2}:\d{2})?")
 UUID = re.compile(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-")
@@ -53,6 +52,7 @@ def _run_once(tmp_path, name):
     s.start_worker = False
     s.embed_base_url = ""
     s.clock = "replay"
+    s.unlock_key = TEST_KEY
     chat = FakeChat()
     org = build_organizer(s, chat=chat, embedder=HashEmbedClient())
     ids = ["0A000000-0000-4000-8000-00000000000%d" % i for i in range(6)]
@@ -142,20 +142,20 @@ def test_record_inputs_is_eval_only_and_never_served(settings, chat):
 
 def test_old_database_gets_handles_in_creation_order(tmp_path):
     path = tmp_path / "old.db"
-    store = Store(path)
+    store = Store(path, key=TEST_KEY)
     for n in range(3):
         store.x("INSERT INTO events(event_id, created_at, seq, handle) VALUES (?,?,?,NULL)", (f"ev{n}", "x", 10 - n))
     store.conn.execute("DROP INDEX events_handle")
-    store.conn.close()
+    store.lock()
     # simulate a pre-handle database: drop the column by rebuilding the table without it
-    conn = sqlite3.connect(path)
+    conn = raw_connect(path)
     cols = [r[1] for r in conn.execute("PRAGMA table_info(events)") if r[1] not in ("handle", "anchor", "anchor_source")]
     conn.execute(f"CREATE TABLE ev2 AS SELECT {','.join(cols)} FROM events")
     conn.execute("DROP TABLE events")
     conn.execute("ALTER TABLE ev2 RENAME TO events")
     conn.commit()
     conn.close()
-    store = Store(path)
+    store = Store(path, key=TEST_KEY)
     handles = {r["event_id"]: r["handle"] for r in store.all("SELECT event_id, handle FROM events")}
     assert handles == {"ev2": 1, "ev1": 2, "ev0": 3}  # by seq
     assert store.event_handle("ev2") == "E1"

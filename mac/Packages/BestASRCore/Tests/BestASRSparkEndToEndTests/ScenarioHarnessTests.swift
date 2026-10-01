@@ -269,10 +269,11 @@ final class ScenarioHarnessTests: XCTestCase {
       repository: store, dataRoot: root, realLibraryRoot: realLibrary,
       intent: RemoteOrganizerLinkIntentFile(
         stateDirectory: work.appendingPathComponent("link-state"), dataRoot: root),
+      keyStore: try FileOrganizerKeyStore(dataRoot: root, realLibraryRoot: realLibrary),
       cleanUpStaleTunnels: {},
-      makeRuntime: { repository, onUpdate in
+      makeRuntime: { repository, keys, onUpdate in
         RemoteOrganizerRuntime(
-          repository: repository, launcher: runtimeLauncher, http: spark,
+          repository: repository, launcher: runtimeLauncher, http: spark, keys: keys,
           timing: RemoteOrganizerRuntime.Timing(
             pollInterval: .milliseconds(100), reconnectDelay: .milliseconds(200)),
           onUpdate: onUpdate)
@@ -459,6 +460,10 @@ final class OrganizingFakeSpark: RemoteOrganizerHTTPTransport, @unchecked Sendab
       return (items, _jobListings <= busyListings)
     }
     switch path {
+    case "/v1/unlock":
+      return try json(["locked": false, "key_id": NSNull(), "created": false])
+    case "/v1/lock":
+      return try json(["locked": true])
     case "/v1/health":
       return try json([
         "ok": true, "store_id": "fake-store", "clock": "wall", "queue": busy ? 1 : 0,

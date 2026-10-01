@@ -1,4 +1,5 @@
 import BestASRDomain
+import BestASRIntake
 import BestASRPersistence
 import BestASRRemoteOrganizer
 import CryptoKit
@@ -127,7 +128,9 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
     let spark = FakeSpark()
     let runtime = RemoteOrganizerRuntime(
       repository: library.store, launcher: launcher, http: spark,
-      itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets), timing: fastTiming
+      keys: testOrganizerKeys,
+      itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets),
+      imageRedactor: IdentityRedactor(), timing: fastTiming
     ) { _, _ in }
     runtime.start()
     try await waitUntil { spark.items.count == 2 }
@@ -162,6 +165,77 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
       [missing.rawValue.uuidString])
     XCTAssertEqual(parked, "failed/asset")
     await library.close()
+  }
+
+  /// v6 integration: on-device recognition refusing a request (two readings
+  /// at once) must not park a phone photo for good. A failure that may pass
+  /// is tried again with backoff; any other failure still parks the item.
+  func testATransientRedactionFailureIsRetriedAndAPermanentOneParks() async throws {
+    final class FlakyRedactor: RemoteOrganizerImageRedacting, @unchecked Sendable {
+      struct Refused: RemoteOrganizerAssetErrorClassifying { let isTransient: Bool }
+      private let lock = NSLock()
+      private var failuresLeft: Int
+      private let transient: Bool
+      private(set) var calls = 0
+      init(failures: Int, transient: Bool) {
+        failuresLeft = failures
+        self.transient = transient
+      }
+      func redactedSendCopy(of data: Data, mediaType: String) throws -> Data {
+        try lock.withLock {
+          calls += 1
+          guard failuresLeft > 0 else { return data }
+          failuresLeft -= 1
+          throw Refused(isTransient: transient)
+        }
+      }
+    }
+    // The Vision redactor's own classification.
+    XCTAssertTrue(VisionSendCopyRedactor.RedactionError.recognitionFailed.isTransient)
+    XCTAssertFalse(VisionSendCopyRedactor.RedactionError.unreadableImage.isTransient)
+    XCTAssertFalse(VisionSendCopyRedactor.RedactionError.encodingFailed.isTransient)
+    for transient in [true, false] {
+      let library = try SyntheticOrganizerLibrary()
+      let assets = library.root.appendingPathComponent("assets", isDirectory: true)
+      try await library.store.enableRemoteLink(at: enabledAt)
+      let id = SessionID()
+      try write(
+        jpeg, root: assets,
+        relative: "sessions/\(id.rawValue.uuidString.lowercased())/source/normalized.jpg")
+      try await library.store.createUserItem(
+        imageDraft(
+          id, digest: sha(jpeg), size: jpeg.count, capturedAt: Date(timeIntervalSince1970: 1_000)))
+      let spark = FakeSpark()
+      let redactor = FlakyRedactor(failures: 1, transient: transient)
+      let runtime = RemoteOrganizerRuntime(
+        repository: library.store, launcher: FakeTunnelLauncher(), http: spark,
+        keys: testOrganizerKeys,
+        itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets),
+        imageRedactor: redactor, timing: fastTiming
+      ) { _, _ in }
+      runtime.start()
+      if transient {
+        // The first retry comes after the shortest backoff (3 s).
+        try await waitUntil(timeout: 12) { spark.items.count == 1 }
+        runtime.stop()
+        XCTAssertEqual(redactor.calls, 2)
+        let state = try await library.scalar(
+          "SELECT state FROM remote_organizer_item_jobs WHERE item_id = ?",
+          [id.rawValue.uuidString])
+        XCTAssertEqual(state, "delivered")
+      } else {
+        try await waitUntil {
+          try await library.scalar(
+            "SELECT state || '/' || error_category FROM remote_organizer_item_jobs WHERE item_id = ?",
+            [id.rawValue.uuidString]) == "failed/asset"
+        }
+        try await Task.sleep(for: .milliseconds(200))
+        runtime.stop()
+        XCTAssertEqual(redactor.calls, 1, "a permanent failure is not tried again")
+        XCTAssertTrue(spark.items.isEmpty)
+      }
+      await library.close()
+    }
   }
 
   private func fileDraft(
@@ -278,7 +352,9 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
     let spark = FakeSpark()
     let runtime = RemoteOrganizerRuntime(
       repository: library.store, launcher: FakeTunnelLauncher(), http: spark,
-      itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets), timing: fastTiming
+      keys: testOrganizerKeys,
+      itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets),
+      imageRedactor: IdentityRedactor(), fileSanitizer: IdentitySanitizer(), timing: fastTiming
     ) { _, _ in }
     runtime.start()
     try await waitUntil { spark.items.count == 5 }
@@ -318,6 +394,10 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
     XCTAssertEqual(large["filename"] as? String, "大文件.docx")
     XCTAssertEqual(large["size"] as? Int, 30 * 1_024 * 1_024)
     XCTAssertNil(large["bytes_b64"])
+    // Privacy review F16: it carries the digest of the text that is sent,
+    // never of the file's bytes (which would let the organizing device
+    // recognize the file).
+    XCTAssertEqual(large["sha256"] as? String, sha(Data("虚构的长报告正文".utf8)))
 
     let keyframe = try sent(frame)
     XCTAssertEqual(keyframe["kind"] as? String, "image")
@@ -332,7 +412,8 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
       [second, third])
 
     // Over 25 MiB with no text read here: never sent, parked as unsendable.
-    XCTAssertFalse(spark.items.contains { $0["item_id"] as? String == bigSilent.rawValue.uuidString })
+    XCTAssertFalse(
+      spark.items.contains { $0["item_id"] as? String == bigSilent.rawValue.uuidString })
     let parked = try await library.scalar(
       "SELECT state || '/' || error_category FROM remote_organizer_item_jobs WHERE item_id = ?",
       [bigSilent.rawValue.uuidString])
@@ -341,8 +422,9 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
     for body in spark.requests.compactMap({ $0.body }).compactMap({
       String(data: $0, encoding: .utf8)
     }) {
-      for sentinel in ["local_file_asset", "local_extra_image_assets", "local_image_asset", "sessions/"]
-      {
+      for sentinel in [
+        "local_file_asset", "local_extra_image_assets", "local_image_asset", "sessions/",
+      ] {
         XCTAssertFalse(body.contains(sentinel), sentinel)
       }
     }
@@ -404,5 +486,62 @@ final class RemoteOrganizerItemAssetTests: XCTestCase {
     // Unknown values are dropped, the reading kept.
     XCTAssertEqual(readings["3"]?.text, "x")
     XCTAssertNil(readings["3"]?.facts)
+  }
+
+  /// Privacy review F6: deleting a recording deletes the keyframe items
+  /// taken from it too, on this Mac and, through a queued deletion each, on
+  /// the organizing device.
+  func testDeletingARecordingDeletesItsKeyframesHereAndThere() async throws {
+    let library = try SyntheticOrganizerLibrary()
+    let assets = library.root.appendingPathComponent("assets", isDirectory: true)
+    try await library.store.enableRemoteLink(at: enabledAt)
+    let recording = UUID()
+    try await library.seedCompletedSession(recording, createdAt: 1_000, text: "会议录音的虚构逐字稿")
+    let frame = SessionID()
+    let frameBase = "sessions/\(frame.rawValue.uuidString.lowercased())/source/"
+    try write(jpeg, root: assets, relative: frameBase + "normalized.jpg")
+    try write(jpeg, root: assets, relative: frameBase + "original.jpg")
+    try await library.store.createUserItem(
+      UserItemDraft(
+        id: frame, kind: .image, capturedAt: Date(timeIntervalSince1970: 1_400),
+        source: nil, sourceOrigin: .unknown, text: "",
+        extractor: UserItemLimits.videoKeyframeExtractor,
+        originalFilename: "录像.mov · 0:12",
+        attachments: [
+          UserItemAttachment(
+            role: .original, relativePath: frameBase + "original.jpg",
+            originalFilename: "keyframe-12000.jpg", mediaType: "image/jpeg",
+            digest: try SHA256Digest(sha(jpeg)), sizeBytes: UInt64(jpeg.count)),
+          UserItemAttachment(
+            role: .normalizedImage, relativePath: frameBase + "normalized.jpg",
+            originalFilename: "normalized.jpg", mediaType: "image/jpeg",
+            digest: try SHA256Digest(sha(jpeg)), sizeBytes: UInt64(jpeg.count)),
+        ], parentSessionID: SessionID(recording), frameMilliseconds: 12_000))
+    let spark = FakeSpark()
+    let runtime = RemoteOrganizerRuntime(
+      repository: library.store, launcher: FakeTunnelLauncher(), http: spark,
+      keys: testOrganizerKeys,
+      itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets),
+      imageRedactor: IdentityRedactor(), timing: fastTiming
+    ) { _, _ in }
+    runtime.start()
+    try await waitUntil { spark.items.count == 2 }
+    try await waitUntil {
+      try await library.scalar(
+        "SELECT CAST(COUNT(*) AS TEXT) FROM remote_organizer_item_jobs WHERE delivered_revision IS NOT NULL",
+        []) == "2"
+    }
+    runtime.stop()
+    let frames = try await library.store.keyframeSessionIDs(of: [SessionID(recording)])
+    XCTAssertEqual(frames, [frame])
+
+    try await library.store.deleteSessionRecordsExplicitly(sessionID: SessionID(recording))
+    let pending = try await library.store.pendingRemoteDeletions()
+    XCTAssertEqual(Set(pending), [recording.uuidString, frame.rawValue.uuidString])
+    let left = try await library.scalar(
+      "SELECT CAST(COUNT(*) AS TEXT) FROM sessions WHERE id IN (?, ?)",
+      [recording.uuidString, frame.rawValue.uuidString])
+    XCTAssertEqual(left, "0")
+    await library.close()
   }
 }

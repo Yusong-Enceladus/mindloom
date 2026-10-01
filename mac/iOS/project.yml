@@ -1,0 +1,231 @@
+# 织机 (Mindloom) for iPhone: the app, the 织机键盘 keyboard and the 收进织机
+# share extension (PHONE-CONTRACT §1). Separate from the Mac project, which it
+# leaves untouched. Generate with iOS/script/generate_project.sh.
+name: MindloomPhone
+
+options:
+  bundleIdPrefix: com.bestasr
+  createIntermediateGroups: true
+  defaultConfig: Debug
+  deploymentTarget:
+    iOS: "26.0"
+  minimumXcodeGenVersion: 2.45.3
+  xcodeVersion: "27.0"
+
+configs:
+  Debug: debug
+  Release: release
+
+settings:
+  base:
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+    IPHONEOS_DEPLOYMENT_TARGET: "26.0"
+    TARGETED_DEVICE_FAMILY: "1"
+    SWIFT_VERSION: "6.0"
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    CODE_SIGN_STYLE: Automatic
+    # Simulator builds sign locally; device builds need the user's team.
+    "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]": "-"
+    DEVELOPMENT_TEAM: ""
+
+packages:
+  MindloomLink:
+    path: ../Packages/MindloomLink
+  MindloomPhoneKit:
+    path: ../Packages/MindloomPhoneKit
+
+targets:
+  MindloomPhone:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone
+        PRODUCT_NAME: MindloomPhone
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: App/MindloomPhone.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: 织机
+        # Chinese first, so system controls (paste, share sheet) speak Chinese.
+        CFBundleDevelopmentRegion: zh-Hans
+        CFBundleLocalizations: [zh-Hans]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        LSRequiresIPhoneOS: true
+        UILaunchScreen: {}
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        # The voice session keeps the mic open for the keyboard (§2); outbox
+        # delivery also runs from BGAppRefreshTask (§5).
+        UIBackgroundModes: [audio, fetch]
+        BGTaskSchedulerPermittedIdentifiers: [com.bestasr.phone.outbox-refresh]
+        NSMicrophoneUsageDescription: 只在你按住织机键盘的麦克风键时听写。声音只在这台手机上识别，不保存、不上传。
+        NSSpeechRecognitionUsageDescription: 语音在这台手机上识别，不经过任何网络服务。
+        NSCameraUsageDescription: 用来扫描 Mac 上「连接 iPhone」显示的配对二维码。
+        NSLocalNetworkUsageDescription: 把收进织机的内容送到你自己的 Spark（它在同一局域网时）。
+        # 织机键盘's "打开织机开始语音" opens mindloom://voice/start (§2).
+        CFBundleURLTypes:
+          - CFBundleURLName: com.bestasr.phone
+            CFBundleURLSchemes: [mindloom]
+    entitlements:
+      path: App/MindloomPhone.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.bestasr.phone]
+    dependencies:
+      - package: MindloomLink
+        product: MindloomLink
+      - package: MindloomPhoneKit
+        product: MindloomPhoneKit
+      - package: MindloomPhoneKit
+        product: MindloomInboxSSH
+      - target: MindloomKeyboard
+        embed: true
+      - target: MindloomShare
+        embed: true
+
+  MindloomKeyboard:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Keyboard
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.keyboard
+        PRODUCT_NAME: MindloomKeyboard
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Keyboard/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Keyboard/MindloomKeyboard.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: Keyboard/Info.plist
+      properties:
+        CFBundleDisplayName: 织机键盘
+        # Chinese first, so system controls (paste, share sheet) speak Chinese.
+        CFBundleDevelopmentRegion: zh-Hans
+        CFBundleLocalizations: [zh-Hans]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.keyboard-service
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).KeyboardViewController
+          NSExtensionAttributes:
+            # Needed for the App Group (voice files and the outbox), §1.
+            RequestsOpenAccess: true
+            PrimaryLanguage: zh-Hans
+            IsASCIICapable: false
+            PrefersRightToLeft: false
+    entitlements:
+      path: Keyboard/MindloomKeyboard.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.bestasr.phone]
+    dependencies:
+      # No networking code in the keyboard: it only writes the outbox.
+      - package: MindloomLink
+        product: MindloomLink
+      - package: MindloomPhoneKit
+        product: MindloomPhoneKit
+
+  MindloomShare:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Share
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.share
+        PRODUCT_NAME: MindloomShare
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Share/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Share/MindloomShare.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: Share/Info.plist
+      properties:
+        CFBundleDisplayName: 收进织机
+        # Chinese first, so system controls (paste, share sheet) speak Chinese.
+        CFBundleDevelopmentRegion: zh-Hans
+        CFBundleLocalizations: [zh-Hans]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.share-services
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          NSExtensionAttributes:
+            # Text, links, images and documents. Audio and video are refused
+            # inside the extension with "音视频请在 Mac 上导入" (§0.5); movies
+            # activate it only so it can say so.
+            NSExtensionActivationRule:
+              NSExtensionActivationSupportsText: true
+              NSExtensionActivationSupportsWebURLWithMaxCount: 1
+              NSExtensionActivationSupportsImageWithMaxCount: 10
+              NSExtensionActivationSupportsMovieWithMaxCount: 10
+              NSExtensionActivationSupportsFileWithMaxCount: 10
+              NSExtensionActivationSupportsAttachmentsWithMaxCount: 10
+    entitlements:
+      path: Share/MindloomShare.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.bestasr.phone]
+    dependencies:
+      - package: MindloomLink
+        product: MindloomLink
+      - package: MindloomPhoneKit
+        product: MindloomPhoneKit
+      - package: MindloomPhoneKit
+        product: MindloomPhoneIntake
+
+  MindloomPhoneTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests/MindloomPhoneTests
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: $(BUILT_PRODUCTS_DIR)/MindloomPhone.app/MindloomPhone
+        BUNDLE_LOADER: $(TEST_HOST)
+    dependencies:
+      - target: MindloomPhone
+      - package: MindloomLink
+        product: MindloomLink
+      - package: MindloomPhoneKit
+        product: MindloomPhoneKit
+      - package: MindloomPhoneKit
+        product: MindloomPhoneIntake
+
+schemes:
+  MindloomPhone:
+    build:
+      targets:
+        MindloomPhone: all
+        MindloomKeyboard: all
+        MindloomShare: all
+    test:
+      config: Debug
+      gatherCoverageData: false
+      targets:
+        - MindloomPhoneTests
+        - package: MindloomLink/MindloomLinkTests
+        - package: MindloomPhoneKit/MindloomPhoneKitTests
+        - package: MindloomPhoneKit/MindloomPhoneIntakeTests
+        - package: MindloomPhoneKit/MindloomInboxSSHTests
+    run:
+      config: Debug
+      executable: MindloomPhone
+    profile:
+      config: Release
+      executable: MindloomPhone

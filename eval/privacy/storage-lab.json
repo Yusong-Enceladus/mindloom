@@ -1,0 +1,72 @@
+{
+ "source_bytes": 98004992,
+ "before": {
+  "items": 1510,
+  "item_revisions": 3246,
+  "blob_count": 54,
+  "blob_bytes": 8330144,
+  "blobs_by_kind": {
+   "file": {
+    "count": 2,
+    "bytes": 339050
+   },
+   "image": {
+    "count": 52,
+    "bytes": 7991094
+   }
+  },
+  "blobs_with_reading": 54,
+  "derived_bytes": 58746022,
+  "embedding_bytes": 58349491,
+  "text_bytes": 3443343,
+  "runs_output_bytes": 4362868,
+  "runs_input_text_bytes": 0,
+  "db_bytes": 98037760
+ },
+ "after_read_then_delete_plaintext": {
+  "items": 1510,
+  "item_revisions": 3246,
+  "blob_count": 0,
+  "blob_bytes": 0,
+  "blobs_by_kind": {},
+  "blobs_with_reading": 0,
+  "derived_bytes": 58746022,
+  "embedding_bytes": 58349491,
+  "text_bytes": 3443343,
+  "runs_output_bytes": 4362868,
+  "runs_input_text_bytes": 0,
+  "db_bytes": 89329664
+ },
+ "after_encryption": {
+  "items": 1510,
+  "item_revisions": 3246,
+  "blob_count": 0,
+  "blob_bytes": 0,
+  "blobs_by_kind": {},
+  "blobs_with_reading": 0,
+  "derived_bytes": 58746022,
+  "embedding_bytes": 58349491,
+  "text_bytes": 3443343,
+  "runs_output_bytes": 4362868,
+  "runs_input_text_bytes": 0,
+  "db_bytes": 91238400,
+  "plaintext_header": false
+ },
+ "bytes_per_1000_items": {
+  "before": 64925669,
+  "after": 60422781
+ },
+ "reduction_pct": 6.9,
+ "summary_mb": {
+  "db_before": 98.0,
+  "db_after": 91.2,
+  "blobs_before": 8.3,
+  "embeddings": 58.3,
+  "per_1000_items_before": 64.9,
+  "per_1000_items_after": 60.4,
+  "embedding_share_pct": 64.0,
+  "encryption_overhead_pct": 2.1
+ },
+ "key_id": "10660eeb1d7f16b3",
+ "seconds": 3.0
+}

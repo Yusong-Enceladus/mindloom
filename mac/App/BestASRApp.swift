@@ -22,6 +22,20 @@ enum BestASRProcessEnvironment {
 
 @MainActor
 private final class BestASRApplicationDelegate: NSObject, NSApplicationDelegate {
+  /// With the organizing link on, quitting first asks the organizing device
+  /// to lock its store (at most two seconds; privacy review F1). Without a
+  /// running link the app quits at once.
+  func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+    guard let controller = RemoteOrganizerQuitLock.controller, controller.isRuntimeRunning else {
+      return .terminateNow
+    }
+    Task { @MainActor in
+      await controller.shutdownLocking()
+      sender.reply(toApplicationShouldTerminate: true)
+    }
+    return .terminateLater
+  }
+
   func applicationWillTerminate(_ notification: Notification) {
     // Ends the organizer ssh child synchronously; a crash leaves a durable
     // record that the next launch uses to end the orphan.

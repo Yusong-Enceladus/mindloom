@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from .core import MAX_ARCHIVE_DEPTH, Budget, ParseError, Parsed, ext_of, sniff
+from .core import MAX_ARCHIVE_DEPTH, MEDIA_SKIPPED_FMT, Budget, ParseError, Parsed, ext_of, is_media_name, sniff
 
 FMT_TYPE = {
     "pdf": "pdf", "docx": "document", "odt": "document", "doc": "document", "rtf": "document", "iwork": "document",
@@ -58,6 +58,10 @@ def _parse(fmt: str, data: bytes, name: str, mime: str, budget: Budget, depth: i
         from .pkg import Package
         pkg = Package(data)
         kind = detect_package(pkg, ext)
+        if kind != "zip":
+            # Audio / video embedded in a document package (a pptx's movie, a docx's recording) are never
+            # read; only their number is recorded. A plain archive counts its media entries itself.
+            budget.media_skipped += sum(1 for n in pkg.names() if is_media_name(n))
         if kind == "docx":
             return _fmt(parse_docx(pkg, budget), kind)
         if kind == "xlsx":
@@ -119,6 +123,10 @@ def _parse(fmt: str, data: bytes, name: str, mime: str, budget: Budget, depth: i
     if fmt == "heic":
         raise ParseError("unsupported", "HEIC 图片需要在 Mac 上转换")
     if fmt == "media":
+        if depth > 0:
+            # Inside an archive or an e-mail: skipped, counted, never decoded or transcribed here.
+            budget.media_skipped += 1
+            return Parsed("data", fmt=MEDIA_SKIPPED_FMT)
         raise ParseError("unsupported", "音视频只在 Mac 上处理")
     if fmt == "rtf":
         from .textish import parse_rtf

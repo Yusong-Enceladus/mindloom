@@ -1,0 +1,11 @@
+{
+ "type": "object",
+ "properties": {
+  "kind": {"type": "string", "enum": ["person", "role", "not_person"]},
+  "same_as": {"type": "string", "pattern": "^(P[0-9]+)?$"},
+  "common_word": {"type": "boolean"},
+  "reason": {"type": "string", "minLength": 2, "maxLength": 40}
+ },
+ "required": ["kind", "same_as", "common_word", "reason"],
+ "additionalProperties": false
+}

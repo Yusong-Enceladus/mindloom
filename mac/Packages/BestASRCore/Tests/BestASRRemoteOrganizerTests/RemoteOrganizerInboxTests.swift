@@ -6,10 +6,13 @@ import BestASRRemoteOrganizer
 import Foundation
 import XCTest
 
-/// The phone entry: what an iOS Shortcut left in the organizing device's
-/// inbox is pulled, taken in through the real intake into a real store as a
-/// user item from "iPhone", acknowledged only after the local commit, and
-/// then sent for organizing like any item. Fake Spark, synthetic data only.
+/// The legacy plain phone entry: what an iOS Shortcut left in the organizing
+/// device's inbox before the phone path became sealed-only (privacy review
+/// F9) is still pulled, taken in through the real intake into a real store
+/// as a user item from "iPhone", acknowledged only after the local commit,
+/// and then sent for organizing (masked) like any item. The Mac only reads
+/// and acknowledges the inbox; it never adds to it. Fake Spark, synthetic
+/// data only.
 @MainActor
 final class RemoteOrganizerInboxTests: XCTestCase {
   private let enabledAt = Date(timeIntervalSince1970: 500)
@@ -56,14 +59,25 @@ final class RemoteOrganizerInboxTests: XCTestCase {
 
     let runtime = RemoteOrganizerRuntime(
       repository: library.store, launcher: FakeTunnelLauncher(), http: spark,
+      keys: testOrganizerKeys,
       itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assets),
-      inbox: ingestor, timing: fastTiming, onUpdate: { _, _ in })
+      imageRedactor: IdentityRedactor(), inbox: ingestor, timing: fastTiming, onUpdate: { _, _ in })
     runtime.start()
     try await waitUntil(timeout: 10) { spark.items.count == 2 && spark.acked.count == 2 }
     runtime.stop()
 
     XCTAssertEqual(Set(spark.acked), ["ib-1", "ib-2"])
     XCTAssertEqual(spark.inboxLeft, 1, "a refused entry is never acknowledged")
+    // F9: the sealed phone path is the only way into the inbox; this Mac
+    // reads it and acknowledges entries, and never creates one.
+    let inboxCalls = spark.requests.filter { $0.path.hasPrefix("/v1/inbox") }
+    XCTAssertFalse(inboxCalls.isEmpty)
+    for call in inboxCalls {
+      let read = call.method == "GET" && call.path.hasPrefix("/v1/inbox?since=")
+      let ack =
+        call.method == "POST" && call.path.hasPrefix("/v1/inbox/") && call.path.hasSuffix("/ack")
+      XCTAssertTrue(read || ack, "\(call.method) \(call.path)")
+    }
     let text = RemoteOrganizerInboxEntry(
       inboxID: "ib-1", source: "iPhone", kind: .text, text: nil, imageData: nil,
       receivedAt: Date()
@@ -110,7 +124,8 @@ final class RemoteOrganizerInboxTests: XCTestCase {
     // A service without the endpoint: 404 for /v1/inbox.
     let spark = OldSpark()
     let runtime = RemoteOrganizerRuntime(
-      repository: library.store, launcher: FakeTunnelLauncher(), http: spark, inbox: NoIngest(),
+      repository: library.store, launcher: FakeTunnelLauncher(), http: spark,
+      keys: testOrganizerKeys, inbox: NoIngest(),
       timing: fastTiming, onUpdate: { _, _ in })
     runtime.start()
     try await waitUntil { spark.statePulls >= 3 }

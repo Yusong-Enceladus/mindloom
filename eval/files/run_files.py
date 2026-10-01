@@ -54,6 +54,8 @@ def build(args):
     s.record_inputs = True
     s.llm_base_url = args.llm_url
     s.llm_timeout_s = 300
+    from organizer.keys import synthetic_library_key
+    s.unlock_key = synthetic_library_key()  # encrypted store, fixed synthetic key (synthetic data only)
     if args.parse_only:
 
         class NoModel:

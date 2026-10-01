@@ -91,6 +91,9 @@ public struct MemoryItemRecord: Equatable, Identifiable, Sendable {
   /// A video keyframe item: its recording and where in it.
   public var parentSessionID: SessionID? = nil
   public var frameMilliseconds: Int64? = nil
+  /// Kept only on this Mac and never sent (audio or video, an archive, a
+  /// binary the organizing device cannot read; privacy contract §5).
+  public var keptOnMac = false
   /// A video recording: the keyframes taken from it, in time order.
   public var keyframes: [Keyframe] = []
 

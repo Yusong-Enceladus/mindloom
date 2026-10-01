@@ -42,6 +42,7 @@ final class TypelessDictationMigrationTests: XCTestCase {
         BestASRPersistenceSchema.remoteOrganizerEligibilityMigrationID,
         BestASRPersistenceSchema.userItemsMigrationID,
         BestASRPersistenceSchema.userItemFilesMigrationID,
+        BestASRPersistenceSchema.remotePrivacyMigrationID,
       ]
     )
     XCTAssertEqual(inspection.journalMode, "wal")
@@ -63,7 +64,7 @@ final class TypelessDictationMigrationTests: XCTestCase {
       "remote_organizer_decisions", "remote_organizer_item_jobs",
       "remote_organizer_decision_jobs", "remote_organizer_events", "remote_organizer_persons",
       "remote_organizer_questions", "remote_organizer_meta", "remote_organizer_eligible",
-      "user_item_details",
+      "user_item_details", "remote_mask_map", "remote_mask_offsets", "remote_pending_deletions",
     ] {
       XCTAssertTrue(inspection.tableNames.contains(table), table)
     }

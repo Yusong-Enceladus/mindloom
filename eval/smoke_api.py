@@ -8,7 +8,12 @@ import uuid
 from pathlib import Path
 from urllib.parse import urlparse
 
+import sys
+
 import httpx
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "spark"))
+from organizer.keys import synthetic_library_key  # noqa: E402
 
 
 def main():
@@ -31,6 +36,14 @@ def main():
     with httpx.Client(base_url=base_url, transport=transport, timeout=15, trust_env=False,
                       headers=headers) as c:
         health = c.get("/v1/health").raise_for_status().json()
+        if health.get("locked"):
+            # The store opens only with a library key (privacy contract v6). This fictional-data smoke test uses
+            # the fixed synthetic key; an instance that holds another key's store is refused (409), never wiped.
+            r = c.post("/v1/unlock", json={"key": synthetic_library_key().hex()})
+            if r.status_code == 409:
+                raise RuntimeError("the instance's store belongs to another key; use a fresh demo instance")
+            r.raise_for_status()
+            health = c.get("/v1/health").raise_for_status().json()
         if not health["ok"] or health["items"]:
             raise RuntimeError("requires a ready, empty demo instance; refusing existing data")
         started = time.monotonic()

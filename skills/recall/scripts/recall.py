@@ -40,6 +40,12 @@ def fetch_state(url: str | None, uds: str | None, token: str | None) -> dict:
         try:
             conn.request("GET", "/v1/state", headers=headers)
             resp = conn.getresponse()
+            if resp.status == 423:
+                raise RuntimeError("the organizer's store is locked until the user's Mac connects")
+            if resp.status == 403:
+                # A store the Mac unlocked is read only with its key-derived access proof: the link token that
+                # anyone on the Spark account can read is not enough (docs/PRIVACY.md).
+                raise RuntimeError("the organizer's store can only be read by the user's Mac")
             if resp.status != 200:
                 raise RuntimeError(f"organizer answered HTTP {resp.status}")
             return json.load(resp)

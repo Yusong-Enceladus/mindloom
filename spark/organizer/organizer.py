@@ -36,11 +36,18 @@ re-assign twice.
 
 Model output is applied as a proposal: it is re-checked against the current decisions under the
 store lock right before it is written, so a user decision that arrived during a model call wins.
+
+Privacy (docs/PRIVACY.md): the store is locked until the Mac unlocks it (unlock / lock / wipe below; the
+worker waits while it is locked). Incoming text is masked again on intake (defence in depth, idempotent);
+every text read from bytes (image-read, file-read) is masked before it is stored or put in a prompt; an
+image's or file's bytes are deleted in the transaction that stores its reading (read-then-delete); and
+delete_item purges an item the user deleted on the Mac.
 """
 
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import logging
 import math
@@ -50,14 +57,15 @@ import uuid
 from datetime import datetime, timedelta
 from typing import Any, Optional
 
-from .clients import EmbedClient, ModelUnavailable
+from .clients import EmbedClient, ModelUnavailable, safe_error
 from .clock import Clock
 from . import transcripts
 from .persons import People, speakers_in_text
 from .file_read import read_file
 from .image_read import read_image
 from .skills import Harness, SkillRegistry
-from .store import Store
+from .store import ItemPurged, Store, StoreLocked
+from . import keys
 
 log = logging.getLogger("organizer")
 
@@ -75,6 +83,12 @@ EMBED_TEXT_CHARS = 2000
 RANK_FACTS = 4
 
 
+def _zero(buf: Optional[bytearray]) -> None:
+    if buf is not None:
+        for i in range(len(buf)):
+            buf[i] = 0
+
+
 def excerpt(text: str, limit: int) -> str:
     text = (text or "").strip()
     return text if len(text) <= limit else text[: limit - 1] + "…"
@@ -88,8 +102,11 @@ class Organizer:
                  question_ttl_h: float = 72.0, recheck_threshold: float = 0.70, recheck_window_days: float = 7.0,
                  recheck_max: int = 2, owner_ids: tuple[str, ...] | list[str] = (),
                  owner_aliases: tuple[str, ...] | list[str] = ("我",), workers: int = 1, pipeline_lag: int = 2,
-                 image_clients: Optional[dict] = None):
+                 image_clients: Optional[dict] = None, inbox=None, unlock_lease_s: float = 0.0,
+                 log_file=None, consolidate: Optional[dict] = None, people: Optional[dict] = None):
         self.store = store
+        # The phone inbox (organizer/inbox.py): its own small database, usable while the store is locked.
+        self.inbox = inbox
         self.registry = registry
         self.harness = harness
         self.embedder = embedder
@@ -97,6 +114,7 @@ class Organizer:
         # Open questions allowed per kind (same_event and same_person have separate budgets).
         self.max_open_questions = max_open_questions
         self.people = People(store, max_open_questions, owner_ids, owner_aliases)
+        self.owner_aliases = tuple(owner_aliases)
         self.candidates_k = candidates_k
         self.rank_max_events = rank_max_events
         self.rank_every_n_items = rank_every_n_items
@@ -126,6 +144,16 @@ class Organizer:
         if self.workers > 1:
             from .pipeline import Pipeline
             self.pipeline = Pipeline(self, self.workers, pipeline_lag)
+        # (g) the scheduled consolidation pass (organizer/consolidate.py, skill event-consolidate): every N
+        # processed items and when the queue drains, within a call budget. consolidate={"enabled": False}
+        # turns it off (tests of the item pipeline alone).
+        from .consolidate import Consolidator
+        self.consolidator = Consolidator(self, **(consolidate or {}))
+        # (h) the scheduled people pass (organizer/people_pass.py, skill person-resolve): drop labels read as
+        # speakers, join name variants, link people to the items that mention them. people={"enabled": False}
+        # turns it off.
+        from .people_pass import PeoplePass
+        self.people_pass = PeoplePass(self, **(people or {}))
         self._wake = threading.Event()
         self._feat_cache: dict[str, tuple] = {}
         self._items_since_rank = 0
@@ -133,7 +161,168 @@ class Organizer:
         self._last_rank_day: Optional[str] = None
         self.last_error: Optional[str] = None
         self.clock_warning: Optional[str] = None
-        self._restore_replay_clock()
+        self._session = self.store.generation  # the unlock session the worker last prepared for
+        # Privacy review F1: a store the Mac unlocked over the link locks itself when the Mac stops asking
+        # (lease), and its data routes need the key-derived access proof, not only the link token.
+        self.unlock_lease_s = float(unlock_lease_s or 0)
+        self._lease_deadline: Optional[float] = None
+        self._access: Optional[bytearray] = None
+        self._access_lock = threading.Lock()
+        self.log_file = log_file
+        if not self.store.locked:
+            self._restore_replay_clock()
+
+    # ---- lock / unlock / wipe / delete (privacy contract section 2) ----------------------------
+
+    def unlock(self, library_key: bytes, *, via_link: bool = False) -> dict:
+        """Open the store with the Mac's library key (raises store.WrongKey). A pre-inbox.db store hands its
+        phone inbox over once. via_link: the Mac's POST /v1/unlock; the store then keeps a lease (it locks
+        itself after unlock_lease_s without a data request) and its data routes need the access proof derived
+        from the key, unless the key is the public synthetic one (harnesses), for which a proof proves nothing."""
+        before = self.store.generation
+        res = self.store.unlock(library_key)
+        if via_link:
+            with self._access_lock:
+                _zero(self._access)
+                self._access = None if bytes(library_key) == keys.synthetic_library_key() \
+                    else bytearray(keys.access_proof(library_key).encode("ascii"))
+                self._lease_deadline = (time.monotonic() + self.unlock_lease_s) if self.unlock_lease_s > 0 else None
+        if self.store.generation != before:  # a new session (a repeated unlock with the same key changes nothing)
+            if self.inbox is not None:
+                rows = self.store.legacy_inbox_rows()
+                if rows:
+                    self.inbox.import_legacy(rows)
+                    self.store.drop_legacy_inbox()
+            # Nothing ran while the store was locked: a job left "running" by the lock runs again, and a replay
+            # clock restarts from the store. Pipeline state is reset by the worker itself (_prepare_session).
+            self.store.reset_running_jobs()
+            self._feat_cache = {}
+            self._restore_replay_clock()
+        self.wake()
+        return res
+
+    def lock(self) -> dict:
+        """Close the store and drop its keys; the worker pauses until the next unlock. Organizing state held
+        in memory (retrieval caches) is dropped too."""
+        self._drop_access()
+        self.store.lock()
+        self._drop_memory()
+        self.wake()
+        return {"locked": True}
+
+    def _drop_memory(self) -> None:
+        """What organizing holds in memory about the store (retrieval features, the consolidation pass's event
+        views, the people pass's name index) goes with a lock, a wipe or the end of an unlock session."""
+        self._feat_cache = {}
+        self.consolidator.reset()
+        self.people_pass.reset()
+
+    def in_session(self, fn):
+        """fn bound, on whatever thread runs it (a model-pool thread), to the unlock session current now: a model
+        call that returns after a lock, or after a wipe and an unlock with a new key, writes nothing into the
+        store (Store.bind raises StoreLocked). The worker's own step is bound in step(); the pipeline and the
+        scheduled passes (consolidation, people) wrap what they run on the pool with this."""
+        session, store = self._session, self.store
+
+        def run(*args, **kwargs):
+            store.bind(session)
+            try:
+                return fn(*args, **kwargs)
+            finally:
+                store.bind(None)
+        return run
+
+    def _drop_access(self) -> None:
+        with self._access_lock:
+            _zero(self._access)
+            self._access = None
+            self._lease_deadline = None
+
+    # ---- lease and access proof (privacy review F1) ------------------------------------------
+
+    @property
+    def access_required(self) -> bool:
+        return self._access is not None
+
+    def check_access(self, header: Optional[str]) -> bool:
+        """Whether a data request may read or write the store: always for a harness store; for a store the
+        Mac unlocked, only with X-Mindloom-Access = HMAC(library_key, "mindloom-access-v1") in hex."""
+        with self._access_lock:
+            expected = bytes(self._access) if self._access is not None else None
+        if expected is None:
+            return True
+        return isinstance(header, str) and hmac.compare_digest(header.strip().lower().encode("ascii", "replace"),
+                                                               expected)
+
+    def renew_lease(self) -> None:
+        """A data request from the Mac: the store stays open for another unlock_lease_s."""
+        with self._access_lock:
+            if self._lease_deadline is not None:
+                self._lease_deadline = time.monotonic() + self.unlock_lease_s
+
+    def expire_lease(self, now: Optional[float] = None) -> bool:
+        """Lock the store when the Mac's lease ran out (no data request for unlock_lease_s). True if locked."""
+        with self._access_lock:
+            due = self._lease_deadline is not None and (now if now is not None else time.monotonic()) \
+                > self._lease_deadline
+        if due and not self.store.locked:
+            log.info("no request from the Mac for %.0f s: store locked", self.unlock_lease_s)
+            self.lock()
+            return True
+        return False
+
+    def wipe(self, key_id: Optional[str]) -> dict:
+        """Forget everything on this Spark: the store (raises store.WrongKey on a key_id mismatch), what waits
+        in the phone inbox, and any log file in the data directory."""
+        self.store.wipe(key_id)
+        self._drop_access()
+        self._drop_memory()
+        self.last_error = None
+        if self.inbox is not None:
+            self.inbox.wipe()
+        if not self.store.memory:
+            import os
+            import stat
+            from pathlib import Path
+            # The service logs ids, counts and error types only, never content; its logs are emptied anyway
+            # (truncated, not unlinked: a running process may still append to them): any *.log in the data
+            # directory, the configured log file (ctl.sh: ORGANIZER_LOG_FILE), and this process's own stdout /
+            # stderr when they are regular files (a log opened by whatever started it).
+            logs = [p for p in Path(self.store.path).parent.glob("*.log")]
+            if self.log_file:
+                logs.append(Path(self.log_file))
+            for p in logs:
+                if p.is_file() and not p.is_symlink():
+                    with open(p, "r+b") as fh:
+                        fh.truncate(0)
+            for fd in (1, 2):
+                try:
+                    if stat.S_ISREG(os.fstat(fd).st_mode):
+                        os.ftruncate(fd, 0)
+                except OSError:
+                    pass
+        self.wake()
+        return {"wiped": True}
+
+    def delete_item(self, item_id: str) -> dict:
+        """The user deleted the item on the Mac: purge it here (all revisions); touched events are briefed
+        again by the worker, and the home ranking (its reasons were cleared) runs again."""
+        res = self.store.purge_item(item_id)
+        self.store.checkpoint()
+        self._feat_cache = {}
+        self.consolidator.reset()  # its cached event views may quote the deleted item
+        self._rank_dirty = True
+        self.wake()
+        return res
+
+    def _prepare_session(self) -> None:
+        """The worker's first step in a new unlock session: pipeline work from the previous session (whose model
+        calls may have failed on the lock) is dropped; events keep needs_brief, so their briefs run again."""
+        self._session = self.store.generation
+        self._drop_memory()
+        if self.pipeline is not None:
+            self.pipeline.reset()
+        self._rank_dirty = True
 
     def _restore_replay_clock(self) -> None:
         """A replay clock restarts at the latest item already processed, so decisions and answers
@@ -149,8 +338,26 @@ class Organizer:
 
     # ---- intake -------------------------------------------------------------------
 
+    def mask_incoming(self, item: dict) -> dict:
+        """Defence in depth: text fields from the Mac are masked again (idempotent on text the Mac masked)."""
+        m = self.store.mask_text
+        item = dict(item)
+        for key in ("text", "local_text", "filename"):
+            if item.get(key):
+                item[key] = m(item[key])
+        if item.get("segments"):
+            item["segments"] = [dict(seg, text=m(seg.get("text") or "")) for seg in item["segments"]]
+        if item.get("persons"):
+            item["persons"] = [dict(p, display_name=m(p["display_name"])) if p.get("display_name") else p
+                               for p in item["persons"]]
+        if isinstance(item.get("source_app"), dict):
+            # The source name can be a window or chat title ("微信 - 王师傅 138…"): free text like any other.
+            item["source_app"] = {k: m(v) if isinstance(v, str) and v else v for k, v in item["source_app"].items()}
+        return item
+
     def ingest(self, items: list[dict], images: list[Optional[bytes]]) -> tuple[int, int]:
         accepted = duplicates = 0
+        items = [self.mask_incoming(it) for it in items]
         for item, image in zip(items, images):
             if self.store.insert_item(item, image):
                 accepted += 1
@@ -166,18 +373,30 @@ class Organizer:
     # ---- worker -------------------------------------------------------------------
 
     def run_worker(self, stop: threading.Event) -> None:
-        self.store.reset_running_jobs()
+        if not self.store.locked:
+            self.store.reset_running_jobs()
         while not stop.is_set():
+            self.expire_lease()
+            if self.store.locked:
+                # Nothing can be read until the Mac unlocks the store again.
+                self._wake.wait(1.0)
+                self._wake.clear()
+                continue
             try:
+                if self._session != self.store.generation:
+                    self._prepare_session()
                 did = self.step()
+            except StoreLocked:
+                continue  # locked while this step ran; its job runs again after the next unlock
             except ModelUnavailable as exc:
-                self.last_error = f"model_unavailable: {exc}"
-                log.warning("model unavailable: %s", exc)
+                self.last_error = f"model_unavailable: {safe_error(exc)}"
+                log.warning("model unavailable: %s", safe_error(exc))
                 stop.wait(5.0)
                 continue
             except Exception as exc:  # keep the worker alive; the error is recorded on the job
-                self.last_error = repr(exc)
-                log.exception("worker step failed")
+                # Logs and /v1/health get the error's type only: a message can quote what was being read.
+                self.last_error = safe_error(exc)
+                log.warning("worker step failed: %s", safe_error(exc))
                 stop.wait(1.0)
                 continue
             if not did:
@@ -185,7 +404,18 @@ class Organizer:
                 self._wake.clear()
 
     def step(self) -> bool:
-        """Do one unit of work. Returns False when there is nothing to do."""
+        """Do one unit of work. Returns False when there is nothing to do. Every store access of the step is
+        bound to the unlock session it started in: after a lock, or a wipe and an unlock with a new key while a
+        model call was in flight, the step writes nothing and raises StoreLocked."""
+        if not self.store.locked and self._session != self.store.generation:
+            self._prepare_session()
+        self.store.bind(self._session)
+        try:
+            return self._step()
+        finally:
+            self.store.bind(None)
+
+    def _step(self) -> bool:
         if self.pipeline is not None:
             return self.pipeline.step()
         job = self.store.claim_next_job()
@@ -196,6 +426,12 @@ class Organizer:
                             " ORDER BY updated_ts, handle LIMIT 1")
         if ev:
             self.brief(ev["event_id"])
+            return True
+        if self.consolidator.idle_due():
+            self.consolidator.run()
+            return True
+        if self.people_pass.idle_due():
+            self.people_pass.run()
             return True
         if self._rank_dirty or self._day_changed():
             self.rank()
@@ -218,7 +454,14 @@ class Organizer:
 
     def drain(self, max_steps: int = 10_000) -> int:
         steps = 0
-        while steps < max_steps and self.step():
+        while steps < max_steps and not self.store.locked:
+            if self._session != self.store.generation:
+                self._prepare_session()
+            try:
+                if not self.step():
+                    break
+            except StoreLocked:
+                continue  # the session ended during the step (lock, or wipe + new key): nothing of it was written
             steps += 1
         return steps
 
@@ -226,18 +469,29 @@ class Organizer:
         item_id, revision = job["item_id"], job["revision"]
         try:
             self.process_item(item_id, revision, reason=job.get("reason"))
+        except ItemPurged:
+            return  # the user deleted it meanwhile; purge_item already retired its job
+        except StoreLocked:
+            raise
         except ModelUnavailable as exc:
             self.store.finish_job(item_id, revision, "queued", str(exc), "model_unavailable", delay_s=10)
             self.store.x("UPDATE jobs SET attempts=MAX(attempts-1,0) WHERE item_id=? AND revision=?", (item_id, revision))
             raise
         except Exception as exc:
-            log.exception("job %s/%s failed", item_id, revision)
+            log.warning("job %s/%s failed: %s", item_id, revision, safe_error(exc))
             if job["attempts"] >= self.job_max_attempts:
+                # Retries exhausted: an image's or file's bytes are deleted all the same (read-then-delete).
+                item = self.store.get_item(item_id, revision)
+                if item and item["kind"] in ("image", "file") and self.store.mark_unreadable(item_id, revision,
+                                                                                             item["kind"]):
+                    log.warning("item %s/%s marked unreadable; its bytes were deleted", item_id, revision)
                 self.store.finish_job(item_id, revision, "failed", repr(exc), "internal")
             else:
                 self.store.finish_job(item_id, revision, "queued", repr(exc), "internal", delay_s=2)
             return
         self.store.finish_job(item_id, revision, "done")
+        self.consolidator.note_job()
+        self.people_pass.note_job()
         self._items_since_rank += 1
         self._rank_dirty = True
         if self._items_since_rank >= self.rank_every_n_items:
@@ -246,6 +500,10 @@ class Organizer:
                 self.pipeline.launch_rank()
             else:
                 self.rank()
+        if self.pipeline is None and self.consolidator.due():
+            self.consolidator.run()  # pipeline mode runs it at the next item barrier (pipeline.py)
+        if self.pipeline is None and self.people_pass.due():
+            self.people_pass.run()
 
     # ---- item pipeline --------------------------------------------------------------
 
@@ -376,7 +634,7 @@ class Organizer:
                 # it is embedded there, in order.
                 self.embed_item(item, self.match_body(item, derived), derived)
         except Exception as exc:  # noqa: BLE001 - redone inline by process_item
-            log.info("prefetch of %s/%s left to the serial stage: %r", item_id, revision, exc)
+            log.info("prefetch of %s/%s left to the serial stage: %s", item_id, revision, safe_error(exc))
 
     def _after_placement(self, touched: list[str]) -> None:
         """Brief the touched events now (serial mode). In pipeline mode they stay needs_brief=1 and the
@@ -405,17 +663,20 @@ class Organizer:
             if meta.get("error"):
                 out["error"] = meta["error"]
             return out
-        return {"revision": r["revision"], "source": "image-read" if meta else "screenshot-read",
-                "type": meta.get("type") or _legacy_reading_type(r),
-                "text": r["derived_text"] or "",
-                "summary": r.get("summary") or "",
-                "messages": [{k: m.get(k) for k in ("sender", "is_self", "time", "text")}
-                             for m in r["messages"] if isinstance(m, dict)],
-                "fields": [{k: f.get(k, "") for k in ("key", "label", "value")}
-                           for f in meta.get("fields") or [] if isinstance(f, dict)],
-                "numbers": [{k: n.get(k, "") for k in ("label", "value")}
-                            for n in meta.get("numbers") or [] if isinstance(n, dict)],
-                "run_id": r["screenshot_run_id"]}
+        entry = {"revision": r["revision"], "source": "image-read" if meta else "screenshot-read",
+                 "type": meta.get("type") or _legacy_reading_type(r),
+                 "text": r["derived_text"] or "",
+                 "summary": r.get("summary") or "",
+                 "messages": [{k: m.get(k) for k in ("sender", "is_self", "time", "text")}
+                              for m in r["messages"] if isinstance(m, dict)],
+                 "fields": [{k: f.get(k, "") for k in ("key", "label", "value")}
+                            for f in meta.get("fields") or [] if isinstance(f, dict)],
+                 "numbers": [{k: n.get(k, "") for k in ("label", "value")}
+                             for n in meta.get("numbers") or [] if isinstance(n, dict)],
+                 "run_id": r["screenshot_run_id"]}
+        if meta.get("error"):
+            entry["error"] = meta["error"]  # "unreadable": the image could not be read; its bytes are deleted
+        return entry
 
     def read_item(self, item: dict) -> dict:
         """The item's reading for this revision (image-read or file-read), made once. Returns derived."""
@@ -437,12 +698,13 @@ class Organizer:
         if not meta.get("local_text") and item.get("text"):
             meta["local_text"] = item["text"]
         res = read_file(self.harness, blob["data"] if blob else None, meta, subject=item_id,
-                        clients=self.image_clients)
+                        clients=self.image_clients, mask=self.store.mask_text)
         # screenshot_run_id marks "read" (and publishes the reading); a reading made without a model call
-        # gets a stable local id.
-        run_id = res.run_id or f"file-read:{item['sha256'][:24]}:{revision}"
-        self.store.save_derived(item_id, revision, derived_text=res.text, summary=res.summary, messages=[],
-                                screenshot_run_id=run_id, reading=res.reading())
+        # gets a stable local id. Read-then-delete: the file's bytes go in the same transaction.
+        run_id = res.run_id or f"file-read:{(item['sha256'] or '')[:24]}:{revision}"
+        self.store.save_derived(item_id, revision, drop_blob=True, derived_text=self.store.mask_text(res.text),
+                                summary=self.store.mask_text(res.summary), messages=[], screenshot_run_id=run_id,
+                                reading=self.store.mask_obj(res.reading()))
         return self.store.get_derived(item_id, revision)
 
     def _follow_parent(self, item: dict) -> list[str]:
@@ -494,27 +756,30 @@ class Organizer:
         derived = self.store.get_derived(item_id, revision)
         if item["kind"] == "image" and item["has_image"] and not derived.get("screenshot_run_id"):
             blob = self.store.get_blob(item_id, revision)
+            if blob is None:
+                return derived
             try:
                 res = read_image(self.harness, blob["data"],
                                  {"source_app": item["source_app"].get("name", ""), "captured_at": item["started_at"]},
                                  subject=item_id, clients=self.image_clients)
             except ValueError as exc:
                 # The endpoint rejected the request (HTTP 4xx, e.g. a text-only model). Retrying cannot help;
-                # organize the item without its text instead of failing the job and never placing it.
-                # Nothing is saved, so a later reprocess with a vision model reads it.
-                log.warning("image-read rejected for %s: %s", item_id, exc)
-                res = None
-            if res is not None:
-                # The transcription (what the image shows) and the model's own one-line gist are kept apart:
-                # only the transcription is source text (quotes, dates, the Mac's export).
-                r = res.reading
-                self.store.save_derived(
-                    item_id, revision, derived_text=r["text"], summary=r["gist"], messages=r["messages"],
-                    screenshot_run_id=res.run_id,
-                    reading={"type": res.image_type, "fields": r["fields"], "numbers": r["numbers"],
-                             "detected": res.detected, "detect_run_id": res.detect_run_id,
-                             "sanitized": res.sanitized, "ok": res.ok})
-                derived = self.store.get_derived(item_id, revision)
+                # organize the item without its text instead of failing the job and never placing it. The
+                # bytes are not kept for a later try: the item is marked unreadable and its image deleted.
+                log.warning("image-read rejected for %s: %s", item_id, safe_error(exc))
+                self.store.mark_unreadable(item_id, revision, "image")
+                return self.store.get_derived(item_id, revision)
+            # The transcription (what the image shows) and the model's own one-line gist are kept apart:
+            # only the transcription is source text (quotes, dates, the Mac's export). Everything read from
+            # the image is masked before it is stored; the image itself is deleted in the same transaction.
+            r = self.store.mask_obj(res.reading)
+            self.store.save_derived(
+                item_id, revision, drop_blob=True, derived_text=r["text"], summary=r["gist"], messages=r["messages"],
+                screenshot_run_id=res.run_id,
+                reading={"type": res.image_type, "fields": r["fields"], "numbers": r["numbers"],
+                         "detected": res.detected, "detect_run_id": res.detect_run_id,
+                         "sanitized": res.sanitized, "ok": res.ok})
+            derived = self.store.get_derived(item_id, revision)
         return derived
 
     def embed_item(self, item: dict, body: str, derived: Optional[dict] = None) -> Optional[list[float]]:
@@ -527,7 +792,7 @@ class Organizer:
                 self.store.save_derived(item["item_id"], item["revision"], embedding=embedding,
                                         embed_model=self.embedder.model_id)
             except ModelUnavailable as exc:
-                log.warning("embedding unavailable, retrieval uses time/persons/source only: %s", exc)
+                log.warning("embedding unavailable, retrieval uses time/persons/source only: %s", safe_error(exc))
                 embedding = None
         return embedding
 
@@ -564,37 +829,71 @@ class Organizer:
         stored = derived.get("split")
         if isinstance(stored, dict):
             return list(stored.get("segments") or [])
+        plan = self.decide_split(item, derived)
+        if plan["status"] == "prefilter":
+            self.store.save_derived(item_id, revision, split={"segments": [], "skipped": "prefilter"})
+            return []
+        if plan["status"] == "endpoint_rejected":
+            return []
+        segments = plan["segments"]
+        self.store.save_derived(item_id, revision, split={
+            "segments": segments, "run_id": plan["run_id"], "ok": plan["ok"], "matters": plan["matters"],
+            **({"known": plan["known"]} if plan.get("known") else {})})
+        self.store.record_proposal(plan["run_id"], "split", item_id,
+                                   {"segments": segments, "units": plan["units"], "errors": plan["errors"],
+                                    **({"known": plan["known"]} if plan.get("known") else {})}, plan["status"],
+                                   f"{len(segments)} segments" if segments else "whole")
+        return segments
+
+    def split_directory(self) -> list[dict]:
+        """The user's current matters item-split sees beside an item (known_matters): the largest live events
+        (skills/item-split/scripts/units.py known_matters), by handle and title."""
+        rows = self.store.all(
+            "SELECT e.event_id, e.handle, e.title, e.anchor, COUNT(DISTINCT ei.item_id) AS n FROM events e"
+            " JOIN event_items ei ON ei.event_id = e.event_id AND ei.removed = 0"
+            " WHERE e.deleted = 0 AND e.handle IS NOT NULL GROUP BY e.event_id")
+        return self._units.known_matters([{"id": f"E{r['handle']}", "title": r["title"] or r["anchor"] or "",
+                                           "n": r["n"], "order": r["handle"]} for r in rows])
+
+    def decide_split(self, item: dict, derived: Optional[dict] = None, known: Optional[list[dict]] = None) -> dict:
+        """The split decision for one item revision, without storing it (split_plan stores it; the split
+        benchmark eval/tools/split_scale.py calls this directly with its own `known`). Returns {"segments",
+        "matters", "known", "run_id", "ok", "status", "errors", "units"}; status is "prefilter" (never sent to
+        the model), "endpoint_rejected", "applied", "salvaged" or "rejected"."""
+        item_id = item["item_id"]
+        derived = derived if derived is not None else self.store.get_derived(item_id, item["revision"])
         text = self.organizing_text(item, derived)
         transcript = self.transcript_of(item)
         units = self._units.build_units(text, transcript["turns"] if transcript else None) if text else []
         split_kind = "document" if item["kind"] == "file" else item["kind"]
+        plan = {"segments": [], "matters": [], "run_id": None, "ok": False, "errors": [], "units": len(units)}
         if not text or not self._units.prefilter(text, len(units), split_kind, transcript is not None):
-            self.store.save_derived(item_id, revision, split={"segments": [], "skipped": "prefilter"})
-            return []
+            return dict(plan, status="prefilter")
         ids = [u["u"] for u in units]
+        known = self.split_directory() if known is None else known
+        known_ids = [k["id"] for k in known]
         data = self._units.build_data(split_kind, item["source_app"].get("name", ""), self._local(item["started_at"]),
-                                      units, transcript["format"] if transcript else "")
+                                      units, transcript["format"] if transcript else "", known=known)
         schema = _deepcopy(self.registry.for_job("split").schema)
         seg_props = schema["properties"]["segments"]["items"]["properties"]
         _enum(seg_props["from"], ids)
         _enum(seg_props["to"], ids)
+        if "known" in schema["properties"]:
+            schema["properties"]["known"]["items"] = {"type": "string", "enum": [""] + known_ids}
+        context = {"unit_ids": ids, "known": known_ids}
         try:
-            res = self.harness.run("split", data, context={"unit_ids": ids}, schema=schema, subject=item_id)
+            res = self.harness.run("split", data, context=context, schema=schema, subject=item_id)
         except ValueError as exc:  # the endpoint rejected the request: organize the item whole
-            log.warning("item-split rejected for %s: %s", item_id, exc)
-            return []
+            log.warning("item-split rejected for %s: %s", item_id, safe_error(exc))
+            return dict(plan, status="endpoint_rejected")
         out, status = (res.output, "applied") if res.ok else (None, "rejected")
         if out is None:
             validator = self.registry.for_job("split").validator
-            out = self._units.salvage(res.candidate, res.errors, lambda o: validator(o, {"unit_ids": ids}))
+            out = self._units.salvage(res.candidate, res.errors, lambda o: validator(o, context))
             status = "salvaged" if out else status
         segments = self._units.segments_from_output(out, units) if out else []
-        self.store.save_derived(item_id, revision, split={
-            "segments": segments, "run_id": res.run_id, "ok": res.ok, "matters": (out or {}).get("matters") or []})
-        self.store.record_proposal(res.run_id, "split", item_id,
-                                   {"segments": segments, "units": len(units), "errors": res.errors}, status,
-                                   f"{len(segments)} segments" if segments else "whole")
-        return segments
+        return dict(plan, segments=segments, matters=(out or {}).get("matters") or [], known=(out or {}).get("known") or [],
+                    run_id=res.run_id, ok=res.ok, errors=res.errors, status=status)
 
     def _apply_split(self, item: dict, segments: list[dict]) -> list[str]:
         """Make one child item per segment (revision = the parent's), retire segments the new split no
@@ -688,8 +987,12 @@ class Organizer:
             if is_self or not sender or sender == "对方" or self.people.is_owner_name(sender):
                 continue
             pid = self.people.upsert_chat(sender, source)
+            if self.people.status(pid) == "not_person":
+                continue  # the people pass found this "speaker" is a label or a phrase
             self.people.add_item_person(item["item_id"], pid, roles[source])
             self.people.link_chat_person(pid)
+        # People the text names (people_pass.py): shown on events and person pages, never used for matching.
+        self.people_pass.link_mentions(item, self.match_body(item))
 
     def item_body(self, item: dict, derived: Optional[dict] = None) -> str:
         if item.get("text") and item.get("kind") != "file":
@@ -731,7 +1034,7 @@ class Organizer:
         pasted text are left out: they are the item's own words, which the model already reads, and a
         shared name there says who was talking, not which matter it is (the same contractor, two jobs)."""
         return self.people.others(self.people.item_person_ids(
-            item_id, exclude_roles=("text_speaker", "transcript_speaker") if for_matching else ()))
+            item_id, exclude_roles=("text_speaker", "transcript_speaker", "mention") if for_matching else ("mention",)))
 
     def item_view(self, item: dict, limit: int) -> dict:
         """The item as event-assign sees it (matching persons only)."""
@@ -846,6 +1149,7 @@ class Organizer:
         cands = self._candidates.rank_candidates(query, feats.values(), forbidden, self.candidates_k)
         handle_to_event: dict[str, str] = {}
         cand_views, cand_item_handles, cand_meta = [], [], []
+        read_ids: list[str] = []  # the candidate items whose text the call reads
         for rank_i, c in enumerate(cands):
             ev = self.store.get_event(c["event_id"])
             h = self.store.event_handle(c["event_id"])
@@ -859,6 +1163,7 @@ class Organizer:
                     continue
                 view = self.item_view(it, ASSIGN_CAND_TEXT_CHARS)
                 cand_item_handles.append(view["item_id"])
+                read_ids.append(iid)
                 if n == 0:
                     first_view = view
                 else:
@@ -898,7 +1203,8 @@ class Organizer:
         else:
             ev_ids["maxItems"] = 0
         context = {"candidate_ids": handles, "candidate_item_ids": cand_item_handles}
-        res = self.harness.run("assign", data, context=context, schema=schema, subject=item_id)
+        res = self.harness.run("assign", data, context=context, schema=schema, subject=item_id,
+                               reads=[item_id] + read_ids)
         if not res.ok and res.candidate:
             # Invalid twice, but the last output was schema-valid: its per-candidate judgements still
             # decide the action through derive() (never an attach on doubt, none for a non-matter).
@@ -1154,10 +1460,22 @@ class Organizer:
         return {"event_id": event_id, "data": data, "schema": schema, "context": context, "as_of": as_of,
                 "source_versions": source_versions, "handle_to_item": handle_to_item}
 
+    def _overtaken_by_purge(self, run_id: Optional[str], item_ids: list[str], kind: str, target: str) -> bool:
+        """A model call whose input held an item the user deleted while it ran: its output (which may quote or
+        paraphrase that item) is dropped, its run record keeps no content, and nothing of it is applied."""
+        if not self.store.tombstoned(item_ids):
+            return False
+        with self.store.tx():
+            if run_id:
+                self.store.x("UPDATE runs SET output=NULL, input_text=NULL WHERE run_id=?", (run_id,))
+            self.store.record_proposal(run_id, kind, target, {}, "superseded", "an item was deleted during generation")
+        return True
+
     def brief_call(self, ctx: dict):
         """The model call (no store writes besides the run record): safe to run on a pool thread."""
         return self.harness.run("brief", ctx["data"], context=ctx["context"], schema=ctx["schema"],
                                 subject=ctx["event_id"], as_of=ctx["as_of"], no_retry=BRIEF_NO_RETRY,
+                                reads=list(ctx["handle_to_item"].values()),
                                 repairable=lambda out: self._brief_repair_usable(out, ctx["context"]))
 
     def _brief_repair_usable(self, out: dict, context: dict) -> bool:
@@ -1175,6 +1493,8 @@ class Organizer:
         revised) is kept, and the event stays marked for a fresh brief."""
         event_id, context, source_versions = ctx["event_id"], ctx["context"], ctx["source_versions"]
         handle_to_item = ctx["handle_to_item"]
+        if self._overtaken_by_purge(res.run_id, [i for i, _ in source_versions], "brief", event_id):
+            return  # the purge left needs_brief=1: the card is written again without the deleted item
         partial = False
         if res.ok:
             out = res.output
@@ -1375,13 +1695,23 @@ class Organizer:
         less = [h for h, eid in handle_to_event.items() if self.store.get_event(eid)["feature_less"]]
         return {"data": {"now": now_iso, "events": views}, "context": {"event_ids": ids, "feature_less": less},
                 "schema": schema, "now_iso": now_iso, "today": today, "handle_to_event": handle_to_event,
-                "floor_input": floor_input}
+                "floor_input": floor_input, "purges": self.store.purges}
 
     def rank_call(self, ctx: dict):
         return self.harness.run("rank", ctx["data"], context=ctx["context"], schema=ctx["schema"], subject="home",
                                 as_of=ctx["now_iso"])
 
     def rank_apply(self, ctx: dict, res) -> None:
+        if ctx.get("purges") is not None and ctx["purges"] != self.store.purges:
+            # An item was deleted while the ranking was written: its reasons may quote a card from before the
+            # purge. Dropped; the next rank runs on the cleared cards.
+            with self.store.tx():
+                if res.run_id:
+                    self.store.x("UPDATE runs SET output=NULL, input_text=NULL WHERE run_id=?", (res.run_id,))
+                self.store.record_proposal(res.run_id, "rank", "home", {}, "superseded",
+                                           "an item was deleted during generation")
+            self._rank_dirty = True
+            return
         if not res.ok:
             self.store.record_proposal(res.run_id, "rank", "home", {"errors": res.errors}, "rejected", "invalid twice")
             return
@@ -1427,11 +1757,19 @@ class Organizer:
             for row in self.store.all("SELECT event_id FROM events WHERE seq > ? ORDER BY seq", (since,)):
                 ev = self.store.get_event(row["event_id"])
                 ids = self.store.event_item_ids(ev["event_id"])
-                person_ids: list[str] = []
+                # The event's people, most involved first: speaking in an item counts 2, being named in it 1
+                # (people_pass.py mentions), ties in first-appearance order. A client that shows only a few
+                # chips shows the people who matter most to this event.
+                weight: dict[str, int] = {}
                 for iid in ids:
-                    for p in self.people.item_person_ids(iid):
-                        if p not in person_ids:
-                            person_ids.append(p)
+                    roles: dict[str, int] = {}
+                    for r in self.store.all("SELECT person_id, role FROM item_persons WHERE item_id=?", (iid,)):
+                        pid = self.people.canonical(r["person_id"])
+                        roles[pid] = max(roles.get(pid, 0), 1 if r["role"] == "mention" else 2)
+                    for pid, w in roles.items():
+                        weight[pid] = weight.get(pid, 0) + w
+                order = {pid: n for n, pid in enumerate(weight)}
+                person_ids = sorted(weight, key=lambda pid: (-weight[pid], order[pid]))
                 facts = []
                 for f in ev["status_facts"]:
                     f = dict(f)
@@ -1471,6 +1809,9 @@ class Organizer:
                     "aliases": self.people.aliases(p["person_id"]) if not p["merged_into"] else [],
                     "origin": p["origin"],
                     "merged_into": p["merged_into"],
+                    # Added with the people pass (2026-09-30): "not_person" (a label read as a speaker; it has
+                    # no links), "role" (a desk or role that speaks in chats), or null.
+                    "status": p["status"] if "status" in p.keys() else None,
                 })
             questions = []
             for q in self.store.open_questions():

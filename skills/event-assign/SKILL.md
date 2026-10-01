@@ -12,7 +12,7 @@ description: >-
   recall).
 license: Apache-2.0
 metadata:
-  version: "2.1.0"
+  version: "2.1.1"
   author: mindloom
   max_output_tokens: "400"
   language: zh-CN
@@ -31,6 +31,8 @@ Assign one new item to a candidate event, start a new event, leave it unfiled, o
 - `candidates`: 0–5 个候选事件，按检索分数排好序（只是提示）。每个候选有：
   `event_id`（短编号如 `E3`）、`anchor`（这个事件**固定的对象**，最重要）、`title`、`status_line`、`persons`、
   `first_item`（最早一条素材）、`recent_items`（最近几条），素材带 `item_id`（短编号如 `I12`）。
+
+占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。
 
 ## 三步判断 / Procedure
 

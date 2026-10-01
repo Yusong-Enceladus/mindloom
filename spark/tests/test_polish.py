@@ -4,12 +4,11 @@ text, the Home-card status line and fact dates, and the follow-up floor on the h
 Every name and text here is invented for the tests.
 """
 
-import sqlite3
 import sys
 
 import pytest
 
-from conftest import REPO, TINY_PNG_B64, auth_headers, chat_extraction, event_of, image_reader, ingest, make_item
+from conftest import REPO, TEST_KEY, TINY_PNG_B64, auth_headers, raw_connect, chat_extraction, event_of, image_reader, ingest, make_item
 from organizer.api import build_organizer, create_app
 from organizer.clients import HashEmbedClient
 from organizer.clock import FixedClock
@@ -66,18 +65,18 @@ def test_state_endpoint_keeps_old_fields_and_adds_readings(settings, org):
 
 def test_readings_stored_before_the_upgrade_reach_clients_with_an_old_cursor(tmp_path):
     db = tmp_path / "o.db"
-    store = Store(db)
+    store = Store(db, key=TEST_KEY)
     store.insert_item({"item_id": "A", "revision": 1, "kind": "image", "source_app": {"name": "微信"},
                        "started_at": "2026-09-20T09:00:00+08:00", "sha256": "0" * 64}, b"\x89PNG....")
     store.save_derived("A", 1, derived_text="旧读图", messages=[], screenshot_run_id="run-old")
-    store.conn.close()
+    store.lock()
     # Simulate a database written by the previous version (no reading_seq column).
-    conn = sqlite3.connect(db)
+    conn = raw_connect(db)
     conn.execute("ALTER TABLE item_derived DROP COLUMN reading_seq")
     conn.commit()
     old_cursor = int(conn.execute("SELECT value FROM meta WHERE key='seq'").fetchone()[0])
     conn.close()
-    reopened = Store(db)
+    reopened = Store(db, key=TEST_KEY)
     rows = reopened.readings_since(old_cursor)
     assert [(r["item_id"], r["revision"], r["derived_text"]) for r in rows] == [("A", 1, "旧读图")]
 
@@ -109,7 +108,9 @@ def test_text_speakers_become_persons_through_the_screenshot_sender_path(org, ch
     assert org.people.get(chat_person_id("顾一舟"))["name_source"] == "text"
     # the screenshot sender with the same name is the same person, not a duplicate
     assert org.people.item_person_ids(shot["item_id"]) == [chat_person_id("顾一舟")]
-    assert org.people.item_person_ids(dictated["item_id"]) == []  # only kind=text is parsed
+    # only kind=text is parsed for speakers; the dictation only *names* 顾一舟 (a mention, people_pass.py)
+    assert org.people.item_person_ids(dictated["item_id"], exclude_roles=("mention",)) == []
+    assert org.people.item_person_ids(dictated["item_id"]) == [chat_person_id("顾一舟")]
     persons = {p["display_name"] for p in org.state(0)["persons"]}
     assert {"顾一舟", "小蒋"} <= persons and "我" not in persons
     ev = event_of(org, pasted["item_id"])

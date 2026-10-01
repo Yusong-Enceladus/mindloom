@@ -110,18 +110,22 @@ final class ScenarioEndToEndTests: XCTestCase {
     let stateDirectory = work.appendingPathComponent("link-state", isDirectory: true)
     let intent = RemoteOrganizerLinkIntentFile(stateDirectory: stateDirectory, dataRoot: root)
     let link = settings.link
+    // Synthetic roots keep the link key in a 0600 file inside the root.
     let controller = RemoteOrganizerLinkController(
       repository: store, dataRoot: root, realLibraryRoot: realLibrary, intent: intent,
+      keyStore: try FileOrganizerKeyStore(dataRoot: root, realLibraryRoot: realLibrary),
       cleanUpStaleTunnels: {
         _ = RemoteOrganizerTunnelRecordStore(directory: stateDirectory).cleanUpStale()
       },
-      makeRuntime: { repository, onUpdate in
+      makeRuntime: { repository, keys, onUpdate in
         RemoteOrganizerRuntime(
           repository: repository,
           launcher: SSHRemoteOrganizerTunnelLauncher(
             configuration: link, stateDirectory: stateDirectory),
-          http: URLSessionRemoteOrganizerTransport(),
+          http: URLSessionRemoteOrganizerTransport(), keys: keys,
           itemAssetReader: RemoteOrganizerItemAssetReader(assetRoot: assetRoot),
+          imageRedactor: VisionSendCopyRedactor(),
+          fileSanitizer: FileSendCopySanitizer(),
           timing: RemoteOrganizerRuntime.Timing(pollInterval: .seconds(2)),
           onUpdate: onUpdate)
       })

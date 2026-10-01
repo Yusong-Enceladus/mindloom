@@ -32,7 +32,7 @@
 
 ## Spark 端整理服务依赖
 
-在 `spark/pyproject.toml` 中声明，安装时从 PyPI 获取，不随仓库分发：FastAPI（MIT）、Uvicorn（BSD-3-Clause）、Pydantic（MIT）、HTTPX（BSD-3-Clause）、PyYAML（MIT）、pytest（MIT，仅测试）、Pillow（MIT-CMU / HPND，仅评测截图工具）。
+在 `spark/pyproject.toml` 中声明，安装时从 PyPI 获取，不随仓库分发：FastAPI（MIT）、Uvicorn（BSD-3-Clause）、Pydantic（MIT）、HTTPX（BSD-3-Clause）、PyYAML（MIT）、sqlcipher3-wheels 0.5.7（zlib/libpng，Python 绑定；轮子内含 SQLCipher 4.12 社区版，BSD-3-Clause，及其自带的 SQLite，公有领域；不联网）、pytest（MIT，仅测试）、Pillow（MIT-CMU / HPND，仅评测截图工具）。
 
 推理引擎单独运行、不随仓库分发：vLLM（Apache-2.0）、llama.cpp（MIT）。
 

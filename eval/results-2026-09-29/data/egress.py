@@ -1,7 +1,11 @@
 # Aggregate-only egress census of an organizer.db (what the Spark actually received from the Mac). Prints no content.
-import sqlite3, sys, json, collections, re
+import sys, json, collections, re
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parents[3] / "spark"))
+from organizer.db import open_for_analysis  # noqa: E402  (plaintext or synthetic-key encrypted store)
 p = sys.argv[1]
-c = sqlite3.connect("file:" + p + "?mode=ro", uri=True)
+c = open_for_analysis(p)
 children = {r[0] for r in c.execute("select child_id from item_segments")}
 seg_cols = [r[1] for r in c.execute("pragma table_info(items)")]
 out = {"db": p.split("/hack/")[-1], "items_total_rows": 0, "received": {}, "blobs": {}, "spark_created_segments": len(children)}
@@ -61,5 +65,7 @@ vec = 0
 for (s,) in c.execute("select coalesce(segments,'') || coalesce(persons,'') from items"):
     if re.search(r"\[(-?\d+\.\d+,\s*){32,}", s or ""): vec += 1
 out["received_rows_with_float_vectors_ge32"] = vec
-out["inbox_rows"] = c.execute("select count(*) from inbox").fetchone()[0]
+# the phone inbox lives in inbox.db since privacy v6 (None: not in this store)
+out["inbox_rows"] = (c.execute("select count(*) from inbox").fetchone()[0]
+                     if c.execute("select count(*) from sqlite_master where name='inbox'").fetchone()[0] else None)
 print(json.dumps(out, ensure_ascii=False))

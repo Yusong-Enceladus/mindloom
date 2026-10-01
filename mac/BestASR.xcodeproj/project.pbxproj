@@ -61,6 +61,7 @@
 		4F3BC2F09A522898FD5F47FB /* inference-candidates.json in Resources */ = {isa = PBXBuildFile; fileRef = 02790AA3E4D5B57D9F567034 /* inference-candidates.json */; };
 		4F632D0184873A964DD9F5B9 /* UsageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08932AD748852A9E0900B170 /* UsageModel.swift */; };
 		51EDA95FC4064BE83F1FB95E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E3FD0F03A10F6042871D3E /* ContentView.swift */; };
+		5267E5E58370FE6CC21B0B0D /* DictationAppModel+PhoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6417393CE8235158F842A14 /* DictationAppModel+PhoneLink.swift */; };
 		56BE704660527502C5E75229 /* BestASRRemoteOrganizer in Frameworks */ = {isa = PBXBuildFile; productRef = 376591A28E96685CE6ADB248 /* BestASRRemoteOrganizer */; };
 		5777CDD7F3C98FC2A6FC4703 /* BestASRBenchmark in Frameworks */ = {isa = PBXBuildFile; productRef = 56E3280DCEA2416269F4752E /* BestASRBenchmark */; };
 		58721155CEE64BFFBFFC53FB /* HotkeyRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D7D8DF30CC855B98B64468 /* HotkeyRecorderField.swift */; };
@@ -361,6 +362,7 @@
 		EDA2460C1A7C6FC705C7161A /* CaptureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModel.swift; sourceTree = "<group>"; };
 		F00BAAD23244019726890ABA /* swift-nio-NOTICE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-nio-NOTICE.txt"; sourceTree = "<group>"; };
 		F3A7B1048F0F051DEAD6C94F /* ContentView+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+History.swift"; sourceTree = "<group>"; };
+		F6417393CE8235158F842A14 /* DictationAppModel+PhoneLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+PhoneLink.swift"; sourceTree = "<group>"; };
 		F66BD1ADFC62985AC8E86DA2 /* SpokenAnswerPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenAnswerPanelTests.swift; sourceTree = "<group>"; };
 		F6F45CBD8A53F4C260CDA945 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F8738A1A82A2C719451DDF44 /* DictationAppModel+Playback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Playback.swift"; sourceTree = "<group>"; };
@@ -593,6 +595,7 @@
 				C7B91B6815E03D83263F6DB4 /* DictationAppModel+Models.swift */,
 				A01CFDBBFC9A51BC070B6E08 /* DictationAppModel+Onboarding.swift */,
 				94E64A4A4909BA850168208F /* DictationAppModel+People.swift */,
+				F6417393CE8235158F842A14 /* DictationAppModel+PhoneLink.swift */,
 				F8738A1A82A2C719451DDF44 /* DictationAppModel+Playback.swift */,
 				CEE5DD745330909C90EBC4E7 /* DictationAppModel+Recording.swift */,
 				2A3B24AC195FDC191C77249D /* DictationAppModel+RemoteOrganizer.swift */,
@@ -1207,6 +1210,7 @@
 				C352A6382517E96287D53470 /* DictationAppModel+Models.swift in Sources */,
 				9C39F9086D9DADC73B839945 /* DictationAppModel+Onboarding.swift in Sources */,
 				19CDB3B08112BE72DEAB0A44 /* DictationAppModel+People.swift in Sources */,
+				5267E5E58370FE6CC21B0B0D /* DictationAppModel+PhoneLink.swift in Sources */,
 				2373A36541CA7605FEB1959D /* DictationAppModel+Playback.swift in Sources */,
 				2C34B56703A06CA637079713 /* DictationAppModel+Recording.swift in Sources */,
 				E68BC950BB7CBFED58EDEEA2 /* DictationAppModel+RemoteOrganizer.swift in Sources */,

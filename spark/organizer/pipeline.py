@@ -37,7 +37,7 @@ from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass
 from typing import Any, Optional
 
-from .clients import ModelUnavailable
+from .clients import ModelUnavailable, safe_error
 
 log = logging.getLogger("organizer.pipeline")
 
@@ -78,13 +78,24 @@ class Pipeline:
             if fut is not None:
                 fut.result()  # never raises: prefetch failures are redone inline by process_item
             org._run_job(job)
+            if org.consolidator.due():
+                # Every N items, at this barrier: its calls run on the pool, results are applied in order.
+                org.consolidator.run(pool=self.pool)
+            if org.people_pass.due():
+                org.people_pass.run(pool=self.pool)
             return True
-        # Idle: settle everything, then brief what is left (concurrently) and rank.
+        # Idle: settle everything, then brief what is left (concurrently), consolidate, and rank.
         if self.pending:
             self._apply_due(None)
             return True
         if self._launch_briefs():
             self._apply_due(None)
+            return True
+        if org.consolidator.idle_due():
+            org.consolidator.run(pool=self.pool)
+            return True
+        if org.people_pass.idle_due():
+            org.people_pass.run(pool=self.pool)
             return True
         if org._rank_dirty or org._day_changed():
             org.rank()
@@ -102,12 +113,25 @@ class Pipeline:
         if ctx is None:
             return
         self.rank_inflight = True
-        self.pending.append(_Pending("rank", self.n, "home", ctx, self.pool.submit(self.org.rank_call, ctx)))
+        self.pending.append(_Pending("rank", self.n, "home", ctx, self.pool.submit(self._in_session(self.org.rank_call), ctx)))
+
+    def reset(self) -> None:
+        """Forget the work of a previous unlock session (after a lock). Results still being computed are
+        dropped when they finish; events keep needs_brief=1 in the store, so their briefs run again."""
+        self.pending.clear()
+        self.inflight.clear()
+        self.prefetched.clear()
+        self.rank_inflight = False
 
     def shutdown(self) -> None:
         self.pool.shutdown(wait=False, cancel_futures=True)
 
     # ---- internals ------------------------------------------------------------------
+
+    def _in_session(self, fn):
+        """fn bound, on its pool thread, to the unlock session it was launched in: a call that returns after a
+        lock or a wipe writes nothing into the store (Organizer.in_session, Store.bind)."""
+        return self.org.in_session(fn)
 
     def _prefetch(self, current: dict) -> None:
         store = self.org.store
@@ -116,7 +140,7 @@ class Pipeline:
         wanted = [(current["item_id"], current["revision"])] + [(r["item_id"], r["revision"]) for r in queued]
         for key in wanted:
             if key not in self.prefetched:
-                self.prefetched[key] = self.pool.submit(self.org.prefetch, *key)
+                self.prefetched[key] = self.pool.submit(self._in_session(self.org.prefetch), *key)
         if len(self.prefetched) > 4 * self.prefetch_ahead + 8:
             keep = set(wanted)
             for key in [k for k, f in self.prefetched.items() if k not in keep and f.done()]:
@@ -134,7 +158,7 @@ class Pipeline:
             if ctx is None:
                 continue
             self.inflight[event_id] = self.n
-            self.pending.append(_Pending("brief", self.n, event_id, ctx, self.pool.submit(self.org.brief_call, ctx)))
+            self.pending.append(_Pending("brief", self.n, event_id, ctx, self.pool.submit(self._in_session(self.org.brief_call), ctx)))
             launched += 1
         return launched
 
@@ -147,7 +171,7 @@ class Pipeline:
                 self._settled(p)
                 raise  # the event keeps needs_brief=1 (or the rank stays dirty); the worker backs off
             except Exception as exc:  # recorded in runs by the harness; do not retry forever
-                log.warning("%s for %s failed: %r", p.kind, p.key, exc)
+                log.warning("%s for %s failed: %s", p.kind, p.key, safe_error(exc))
                 self._settled(p)
                 if p.kind == "brief":
                     self.org.store.update_event(p.key, needs_brief=0)

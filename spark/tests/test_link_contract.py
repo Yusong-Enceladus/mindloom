@@ -7,7 +7,7 @@ import stat
 import pytest
 from fastapi.testclient import TestClient
 
-from conftest import auth_headers, event_of, ingest, make_item
+from conftest import TEST_KEY, auth_headers, event_of, ingest, make_item
 from organizer.api import build_organizer, create_app
 from organizer.auth import LinkTokenError, ensure_link_token
 from organizer.clients import HashEmbedClient
@@ -99,19 +99,19 @@ def test_store_id_is_stable_across_restarts_and_new_for_a_fresh_db(settings, cha
         assert c.get(f"/v1/state?since={state['cursor']}").json()["store_id"] == health_id
     import uuid
     uuid.UUID(health_id)
-    app.state.organizer.store.conn.close()
-    assert Store(settings.db_path).store_id == health_id
+    app.state.organizer.store.lock()
+    assert Store(settings.db_path, key=TEST_KEY).store_id == health_id
     app2 = _app(settings, chat)
     with TestClient(app2, headers=auth_headers(app2)) as c:
         assert c.get("/v1/health").json()["store_id"] == health_id
-    app2.state.organizer.store.conn.close()
+    app2.state.organizer.store.lock()
     # the Spark was reset: a new database file means a new store_id
     for suffix in ("", "-wal", "-shm"):
         p = settings.data_dir / f"organizer.db{suffix}"
         if p.exists():
             p.unlink()
-    assert Store(settings.db_path).store_id != health_id
-    assert Store(tmp_path / "another.db").store_id != health_id
+    assert Store(settings.db_path, key=TEST_KEY).store_id != health_id
+    assert Store(tmp_path / "another.db", key=TEST_KEY).store_id != health_id
 
 
 def test_old_database_gains_link_revisions(tmp_path):
@@ -123,7 +123,7 @@ def test_old_database_gains_link_revisions(tmp_path):
     conn.execute("INSERT INTO event_items VALUES ('e', 'i', 'model', NULL, 'now', 0, NULL)")
     conn.commit()
     conn.close()
-    store = Store(path)
+    store = Store(path, key=TEST_KEY)  # a plaintext store from before encryption: encrypted on unlock
     assert store.one("SELECT item_revision FROM event_items WHERE item_id='i'") == {"item_revision": None}
     assert store.store_id
 
@@ -285,7 +285,7 @@ def test_old_database_backfills_link_revisions_from_items(tmp_path):
     conn.execute("INSERT INTO event_items VALUES ('e', 'i', 'model', NULL, 'now', 0, NULL)")
     conn.commit()
     conn.close()
-    store = Store(path)
+    store = Store(path, key=TEST_KEY)  # a plaintext store from before encryption: encrypted on unlock
     # Links made before revision tracking count as placed at the item's latest revision.
     assert store.one("SELECT item_revision FROM event_items WHERE item_id='i'") == {"item_revision": 2}
 
@@ -394,7 +394,7 @@ def test_unix_socket_serves_the_same_app_only_from_a_private_directory(settings,
         thread.join(timeout=10)
     assert not thread.is_alive()
     assert not uds.exists()
-    app.state.organizer.store.conn.close()
+    app.state.organizer.store.lock()
     os.rmdir(private)
 
 

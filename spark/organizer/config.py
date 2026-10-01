@@ -68,6 +68,28 @@ class Settings:
     # lag; assignments stay in queue order and the outcome does not depend on the pool size.
     workers: int = field(default_factory=lambda: int(_env("ORGANIZER_WORKERS", "1")))
     pipeline_lag: int = field(default_factory=lambda: int(_env("ORGANIZER_PIPELINE_LAG", "2")))
+    # Consolidation pass (organizer/consolidate.py, skill event-consolidate): merges fragment events into the
+    # matter they belong to and puts non-matters back into Unfiled, every ORGANIZER_CONSOLIDATE_EVERY processed
+    # items and when the queue drains, at most ORGANIZER_CONSOLIDATE_MAX_CALLS model calls per pass.
+    # ORGANIZER_CONSOLIDATE=0 turns it off.
+    consolidate: bool = field(default_factory=lambda: _env("ORGANIZER_CONSOLIDATE", "1") != "0")
+    consolidate_every: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_EVERY", "25")))
+    consolidate_max_calls: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_MAX_CALLS", "40")))
+    # While idle: a pass after this many new items (or 5 minutes without a new item, or right after a pass that
+    # changed something).
+    consolidate_idle_items: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_IDLE_ITEMS", "5")))
+    # Events up to this many items are judged; only events up to consolidate_unfile_max can go back to Unfiled.
+    consolidate_subject_max: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_SUBJECT_MAX", "120")))
+    consolidate_unfile_max: int = 9
+    # The matter directory the model sees: the largest events (at least consolidate_directory_min items).
+    consolidate_directory_size: int = 32
+    consolidate_directory_min: int = 3
+    # People pass (organizer/people_pass.py, skill person-resolve): re-reads speakers with today's rules, judges
+    # new person records (person / role / not a person, name variants) and links people to the items that
+    # name them. ORGANIZER_PEOPLE=0 turns it off.
+    people_pass: bool = field(default_factory=lambda: _env("ORGANIZER_PEOPLE", "1") != "0")
+    people_every: int = field(default_factory=lambda: int(_env("ORGANIZER_PEOPLE_EVERY", "25")))
+    people_max_calls: int = field(default_factory=lambda: int(_env("ORGANIZER_PEOPLE_MAX_CALLS", "40")))
     start_worker: bool = True
     # Link token: <data_dir>/link_token is created on first start. While it exists, every /v1/* route
     # needs "Authorization: Bearer <token>". ORGANIZER_REQUIRE_TOKEN=0 turns the check off (tests, eval).
@@ -80,6 +102,16 @@ class Settings:
     # Loopback TCP on host:port only with ORGANIZER_TCP=1 (explicit opt-in). Any local user can bind a
     # free loopback port while the organizer is down, and a client sending the token there leaks it.
     tcp: bool = field(default_factory=lambda: _env("ORGANIZER_TCP", "0") == "1")
+    # A library key to open the store with at start: harnesses on synthetic data only (tests, eval runs; see
+    # keys.synthetic_library_key). Never read from the environment: the service's store stays locked until the
+    # Mac sends its key in POST /v1/unlock, and the key is never written to disk.
+    unlock_key: Optional[bytes] = None
+    # A store the Mac unlocked (POST /v1/unlock) locks itself after this many seconds without a data request
+    # from it (the Mac polls every few seconds while its link is on): a Mac that quits, sleeps, crashes or
+    # loses the network does not leave the store open. 0 turns the lease off (harness use only).
+    unlock_lease_s: float = field(default_factory=lambda: float(_env("ORGANIZER_UNLOCK_LEASE_S", "600")))
+    # The service's own log file (ctl.sh sets it): emptied by POST /v1/wipe like the data directory's logs.
+    log_file: Optional[Path] = field(default_factory=lambda: Path(v) if (v := _env("ORGANIZER_LOG_FILE", "")) else None)
 
     @property
     def socket_path(self) -> Path:
@@ -92,3 +124,8 @@ class Settings:
     @property
     def token_path(self) -> Path:
         return self.data_dir / "link_token"
+
+    @property
+    def inbox_path(self) -> Path:
+        """The phone inbox (organizer/inbox.py): sealed entries only, transient, usable while the store is locked."""
+        return self.data_dir / "inbox.db"

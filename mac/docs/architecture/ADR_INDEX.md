@@ -8,5 +8,6 @@
 | [ADR-0004](decisions/ADR-0004-benchmark-gated-inference.md) | Accepted | 模型适配层、四入口统一人物语义与基准门槛先于具体模型冻结 |
 | [ADR-0005](decisions/ADR-0005-sync-ready-local-first.md) | Accepted | V1 本地优先，未来同步通过稳定变更协议接入 |
 | [ADR-0006](decisions/ADR-0006-export-and-portable-archive.md) | Accepted（参数待 Spike） | 原始音频导出、完整加密迁移归档与未来云同步分离 |
+| [ADR-0007](decisions/ADR-0007-phone-ssh-delivery.md) | Accepted | 手机端经 apple/swift-nio-ssh + Network.framework 投递封好的收件箱条目；跳板机用 direct-tcpip 自行嵌套，主机密钥只认配对码 |
 
 状态含义：`Accepted` 冻结原则；`Proposed` 仍需 Spike 证据；具体模型、版本、阈值和编码不会因为原则 ADR 被提前冻结。

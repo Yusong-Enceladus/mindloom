@@ -7,10 +7,13 @@ public struct RemoteOrganizerHTTPRequest: Sendable, Equatable {
   public let body: Data?
   public let token: String
   public let timeout: TimeInterval
+  /// `X-Mindloom-Access`: the key-derived proof a store the Mac unlocked
+  /// needs on every data request (privacy review F1). Never logged.
+  public let accessProof: String?
 
   public init(
     method: String, port: Int, path: String, body: Data?, token: String,
-    timeout: TimeInterval
+    timeout: TimeInterval, accessProof: String? = nil
   ) {
     self.method = method
     self.port = port
@@ -18,6 +21,7 @@ public struct RemoteOrganizerHTTPRequest: Sendable, Equatable {
     self.body = body
     self.token = token
     self.timeout = timeout
+    self.accessProof = accessProof
   }
 }
 
@@ -96,6 +100,9 @@ public final class URLSessionRemoteOrganizerTransport: RemoteOrganizerHTTPTransp
     urlRequest.httpBody = request.body
     urlRequest.timeoutInterval = request.timeout
     urlRequest.setValue("Bearer \(request.token)", forHTTPHeaderField: "Authorization")
+    if let proof = request.accessProof {
+      urlRequest.setValue(proof, forHTTPHeaderField: "X-Mindloom-Access")
+    }
     if request.body != nil {
       urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
     }

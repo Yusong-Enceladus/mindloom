@@ -70,6 +70,7 @@ import to_items  # noqa: E402
 from organizer.api import build_organizer, create_app  # noqa: E402
 from organizer.clients import HashEmbedClient, ModelUnavailable, OpenAIChatClient, OpenAIEmbedClient  # noqa: E402
 from organizer.config import Settings  # noqa: E402
+from organizer.keys import synthetic_library_key  # noqa: E402
 from organizer.skills import RunResult  # noqa: E402
 from organizer.store import new_id  # noqa: E402
 
@@ -255,6 +256,7 @@ def main(argv=None) -> int:
     settings.rank_every_n_items = 10 ** 9
     settings.embed_base_url = ""
     settings.clock = "replay"
+    settings.unlock_key = synthetic_library_key()  # encrypted store, fixed synthetic key (synthetic data only)
     chat = eval_common.CachedChat(OpenAIChatClient(args.vision_url, args.vision_model, 300.0), args.reading_cache)
     org = build_organizer(settings, chat=chat, embedder=embedder)
     org.rank_on_day_change = False

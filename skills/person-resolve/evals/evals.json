@@ -1,0 +1,625 @@
+[
+ {
+  "id": "pr-001",
+  "question": "文档里的字段名「终稿」被当成了说话人。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "not_person",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "终稿",
+     "sources": [
+      "text"
+     ],
+     "items": 2,
+     "lines": [
+      "终稿：10月8日 23:59（AoE）",
+      "终稿：已提交，编号 R-2231"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "not_person"
+   ]
+  }
+ },
+ {
+  "id": "pr-002",
+  "question": "活动须知里的小标题「报名须知」。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "not_person",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "报名须知",
+     "sources": [
+      "text"
+     ],
+     "items": 1,
+     "lines": [
+      "报名须知：每组不超过4人，需携带学生证"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "not_person"
+   ]
+  }
+ },
+ {
+  "id": "pr-003",
+  "question": "一句口头禅「顺便说一句」被读成了名字。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "not_person",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "顺便说一句",
+     "sources": [
+      "text"
+     ],
+     "items": 1,
+     "lines": [
+      "顺便说一句：下周三的例会改到线上"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "not_person"
+   ]
+  }
+ },
+ {
+  "id": "pr-004",
+  "question": "考勤群里的机器人。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "not_person",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "打卡机器人",
+     "sources": [
+      "screenshot"
+     ],
+     "items": 3,
+     "lines": [
+      "打卡机器人：今日未打卡 3 人",
+      "打卡机器人：本周迟到统计已生成"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "not_person",
+    "role"
+   ]
+  }
+ },
+ {
+  "id": "pr-005",
+  "question": "小区物业的前台在群里发通知。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "role",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "物业前台",
+     "sources": [
+      "screenshot"
+     ],
+     "items": 2,
+     "lines": [
+      "物业前台：明天上午9点到12点停水",
+      "物业前台：快递柜维修，请到门岗取件"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "role"
+   ]
+  }
+ },
+ {
+  "id": "pr-006",
+  "question": "一个具体的装修工长，聊天里安排工期。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "郝一川",
+     "sources": [
+      "text"
+     ],
+     "items": 5,
+     "lines": [
+      "郝一川：周四水电进场，材料我让人先送",
+      "郝一川：吧台的尺寸你再量一次"
+     ],
+     "elsewhere": [
+      "让郝一川周四来量吧台",
+      "郝一川说电工下周进场"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": ""
+  }
+ },
+ {
+  "id": "pr-007",
+  "question": "会议转写里的拼音名，候选里有中文全名和一个姓加称呼。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, same as 邵一然",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "Yiran SHAO",
+     "sources": [
+      "transcript"
+     ],
+     "items": 3,
+     "lines": [
+      "Yiran SHAO(00:03:10): 我这边接口周三能联调"
+     ]
+    },
+    "candidates": [
+     {
+      "handle": "P2",
+      "name": "邵一然",
+      "items": 11,
+      "lines": [
+       "邵一然：好的我来跟"
+      ]
+     },
+     {
+      "handle": "P3",
+      "name": "邵总",
+      "items": 4,
+      "lines": [
+       "邵总：预算再压一压"
+      ]
+     }
+    ],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": "P2"
+  }
+ },
+ {
+  "id": "pr-008",
+  "question": "「周总」，而候选里有两个姓周的人。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, not merged",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "周总",
+     "sources": [
+      "text"
+     ],
+     "items": 5,
+     "lines": [
+      "周总：下周把方案发我"
+     ]
+    },
+    "candidates": [
+     {
+      "handle": "P2",
+      "name": "周启航",
+      "items": 20,
+      "lines": [
+       "周启航：合同我看过了"
+      ]
+     },
+     {
+      "handle": "P3",
+      "name": "周嘉",
+      "items": 6,
+      "lines": [
+       "周嘉：样品明天寄"
+      ]
+     }
+    ],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": ""
+  }
+ },
+ {
+  "id": "pr-009",
+  "question": "只写了名的昵称，候选里只有一个人的全名对得上。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, same as 纪明舒",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "明舒",
+     "sources": [
+      "text"
+     ],
+     "items": 4,
+     "lines": [
+      "明舒：海报初稿发群里了"
+     ]
+    },
+    "candidates": [
+     {
+      "handle": "P2",
+      "name": "纪明舒",
+      "items": 15,
+      "lines": [
+       "纪明舒：嘉宾名单我再核一遍"
+      ]
+     },
+     {
+      "handle": "P3",
+      "name": "郝一川",
+      "items": 5,
+      "lines": [
+       "郝一川：电工周四进场"
+      ]
+     }
+    ],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": "P2"
+  }
+ },
+ {
+  "id": "pr-010",
+  "question": "一个名字恰好也是常用词的人：别的素材里这个词是普通意思。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, common word",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "江山",
+     "sources": [
+      "text"
+     ],
+     "items": 3,
+     "lines": [
+      "江山：摊位的遮阳棚我借到了",
+      "江山：押金先转我"
+     ],
+     "elsewhere": [
+      "纪录片讲的是一个人守了三十年的江山",
+      "这一片江山都是他们家的果园"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "common_word": true
+  }
+ },
+ {
+  "id": "pr-011",
+  "question": "只有英文名，候选里的中文名和它没有写法上的对应。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, not merged",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "Leo",
+     "sources": [
+      "text"
+     ],
+     "items": 2,
+     "lines": [
+      "Leo：报价单我明天发"
+     ]
+    },
+    "candidates": [
+     {
+      "handle": "P2",
+      "name": "梁嘉树",
+      "items": 9,
+      "lines": [
+       "梁嘉树：设备清单我整理好了"
+      ]
+     }
+    ],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": ""
+  }
+ },
+ {
+  "id": "pr-012",
+  "question": "亲属称呼。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, common word",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "二姨",
+     "sources": [
+      "text"
+     ],
+     "items": 2,
+     "lines": [
+      "二姨：周末来家里吃饭吗",
+      "二姨：给你带了腊肉"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "common_word": true
+  }
+ },
+ {
+  "id": "pr-013",
+  "question": "带公司备注的联系人名和它的全名。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, same as 庞序",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "庞序（青禾）",
+     "sources": [
+      "screenshot"
+     ],
+     "items": 2,
+     "lines": [
+      "庞序（青禾）：样品已经寄出"
+     ]
+    },
+    "candidates": [
+     {
+      "handle": "P2",
+      "name": "庞序",
+      "items": 7,
+      "lines": [
+       "庞序：报价我改好了"
+      ]
+     }
+    ],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "same_as": "P2"
+  }
+ },
+ {
+  "id": "pr-014",
+  "question": "一个名字恰好是常用词，但别的素材里说的都是这个人。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "person, not a common word",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "安宁",
+     "sources": [
+      "text"
+     ],
+     "items": 6,
+     "lines": [
+      "安宁：海报我改好了"
+     ],
+     "elsewhere": [
+      "让安宁把海报发给印刷厂",
+      "安宁说嘉宾名单周五定"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "person"
+   ],
+   "common_word": false
+  }
+ },
+ {
+  "id": "pr-015",
+  "question": "一个像昵称的产品名：团队自己做的 AI 客服，在对话里也\"说过话\"。",
+  "expected_skill": "person-resolve",
+  "ground_truth": "not_person (a product)",
+  "expected_behavior": [],
+  "source": "invented (never scale or holdout material)",
+  "fixture": {
+   "data": {
+    "person": {
+     "handle": "P1",
+     "name": "小禾",
+     "sources": [
+      "text"
+     ],
+     "items": 2,
+     "lines": [
+      "小禾：您好，请问有什么可以帮您？"
+     ],
+     "elsewhere": [
+      "小禾v2.0下周灰度 10%，先看投诉率",
+      "首页加一个问问小禾的入口，等设计稿",
+      "小禾智能客服上线后退款咨询少了三成"
+     ]
+    },
+    "candidates": [],
+    "owner": [
+     "许念",
+     "念念",
+     "许老板"
+    ]
+   }
+  },
+  "check": {
+   "kind_in": [
+    "not_person",
+    "role"
+   ]
+  }
+ },
+ {
+  "id": "pr-neg-001",
+  "question": "把「店面翻新」和「吧台改造」两个事件合成一个。",
+  "expected_skill": null,
+  "ground_truth": "not person-resolve (event-consolidate / a user merge)",
+  "expected_behavior": [
+   "不处理事件"
+  ],
+  "source": "invented (never scale or holdout material)"
+ }
+]

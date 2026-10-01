@@ -28,6 +28,7 @@ sys.path.insert(0, str(REPO / "spark"))
 from organizer.api import build_organizer  # noqa: E402
 from organizer.clients import OpenAIChatClient, OpenAIEmbedClient  # noqa: E402
 from organizer.config import Settings  # noqa: E402
+from organizer.keys import synthetic_library_key  # noqa: E402
 
 TZ = timezone(timedelta(hours=8))
 BASE = datetime(2031, 4, 7, 8, 30, tzinfo=TZ)
@@ -103,6 +104,7 @@ def run(args, workers: int, items: list[dict], out: Path) -> dict:
     settings.clock = "replay"
     settings.workers = workers
     settings.pipeline_lag = args.pipeline_lag
+    settings.unlock_key = synthetic_library_key()  # encrypted store, fixed synthetic key (synthetic data only)
     chat = OpenAIChatClient(args.llm_url, "auto", 300)
     embed = OpenAIEmbedClient(args.embed_url, "auto") if args.embed_url else None
     org = build_organizer(settings, chat=chat, embedder=embed)

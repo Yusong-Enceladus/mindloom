@@ -34,7 +34,7 @@ final class RemoteOrganizerLiveSmokeTests: XCTestCase {
     )
     let runtime = RemoteOrganizerRuntime(
       repository: library.store, launcher: launcher,
-      http: URLSessionRemoteOrganizerTransport()
+      http: URLSessionRemoteOrganizerTransport(), keys: testOrganizerKeys
     ) { _, _ in }
     runtime.start()
     var found = false

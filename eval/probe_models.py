@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "spark"))
 from organizer.clients import OpenAIChatClient, Step3LlamaNativeClient
 from organizer.skills import Harness, SkillRegistry
+from organizer.keys import synthetic_library_key
 from organizer.store import Store
 
 
@@ -35,7 +36,7 @@ def main():
     ]
     rows = []
     with tempfile.TemporaryDirectory(prefix="memory-model-probe-") as tmp:
-        store = Store(Path(tmp) / "probe.db")
+        store = Store(Path(tmp) / "probe.db", key=synthetic_library_key())  # synthetic probe cases only
         cls = Step3LlamaNativeClient if a.backend == "step3-llama-native" else OpenAIChatClient
         client = cls(a.url, timeout_s=90)
         harness = Harness(SkillRegistry(ROOT / "skills"), client, store)

@@ -268,6 +268,10 @@ let package = Package(
       url: "https://github.com/Blaizzy/mlx-audio-swift.git",
       revision: "cae704f53bc32a3d0b606823828fbc5bedaaf388"
     ),
+    // In-repo, CryptoKit + Foundation only: the phone's sealed inbox entries
+    // (`mlseal1`) and the pairing payload (`mlpair1`), shared with the iPhone
+    // app (PHONE-CONTRACT §3–§4, ADR-0007).
+    .package(path: "../MindloomLink"),
   ],
   targets: [
     .target(name: "BestASRCore"),
@@ -431,7 +435,10 @@ let package = Package(
     // loopback HTTP, provenance guard. Apple frameworks only.
     .target(
       name: "BestASRRemoteOrganizer",
-      dependencies: ["BestASRDomain"]
+      dependencies: [
+        "BestASRDomain",
+        .product(name: "MindloomLink", package: "MindloomLink"),
+      ]
     ),
     // Paste/drag intake (PRD §0.3.2): pasteboard and file reading, local text
     // extraction (PDFKit, NSAttributedString, XMLDocument), image
@@ -440,7 +447,10 @@ let package = Package(
     // model.
     .target(
       name: "BestASRIntake",
-      dependencies: ["BestASRDomain"],
+      dependencies: [
+        "BestASRDomain",
+        .product(name: "MindloomLink", package: "MindloomLink"),
+      ],
       linkerSettings: [
         .linkedFramework("AppKit"),
         .linkedFramework("ImageIO"),
@@ -733,6 +743,7 @@ let package = Package(
         "BestASRPersistence",
         "BestASRRemoteOrganizer",
         .product(name: "GRDB", package: "GRDB.swift"),
+        .product(name: "MindloomLink", package: "MindloomLink"),
       ]
     ),
     .testTarget(
@@ -862,7 +873,10 @@ let package = Package(
     ),
     .testTarget(
       name: "BestASRDomainTests",
-      dependencies: ["BestASRDomain"]
+      dependencies: ["BestASRDomain"],
+      // The shared masking vectors (privacy contract §3), byte-identical to
+      // `privacy/mask_vectors.json` and to the organizing device's copy.
+      resources: [.copy("Resources/privacy")]
     ),
     .testTarget(
       name: "BestASRSpeakerRoutingTests",
@@ -870,7 +884,9 @@ let package = Package(
     ),
     .testTarget(
       name: "BestASRIntakeTests",
-      dependencies: ["BestASRDomain", "BestASRIntake", "BestASRRemoteOrganizer"]
+      dependencies: [
+        "BestASRDomain", "BestASRIntake", "BestASRPersistence", "BestASRRemoteOrganizer",
+      ]
     ),
     .testTarget(
       name: "BestASRMemoryTests",
@@ -893,6 +909,7 @@ let package = Package(
         "BestASRPersistence",
         "BestASRRemoteOrganizer",
         .product(name: "GRDB", package: "GRDB.swift"),
+        .product(name: "MindloomLink", package: "MindloomLink"),
       ]
     ),
     .testTarget(

@@ -32,7 +32,8 @@ def test_job_routing_is_a_fixed_table():
     registry = SkillRegistry(REPO / "skills")
     assert {job: registry.for_job(job).name for job in JOB_TO_SKILL} == {
         "image_detect": "image-read", "image_read": "image-read", "assign": "event-assign", "brief": "event-brief", "rank": "home-rank",
-        "split": "item-split", "file_read": "file-read"}
+        "split": "item-split", "file_read": "file-read",
+        "consolidate": "event-consolidate", "person": "person-resolve"}
     with pytest.raises(KeyError):
         registry.for_job("recall")  # P1 stub is never auto-selected
 

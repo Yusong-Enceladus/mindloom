@@ -83,6 +83,7 @@ import to_items  # noqa: E402
 from organizer.api import build_organizer, create_app  # noqa: E402
 from organizer.clients import ChatResult, HashEmbedClient, ModelUnavailable, OpenAIChatClient, image_data_uri  # noqa: E402
 from organizer.config import Settings  # noqa: E402
+from organizer.keys import synthetic_library_key  # noqa: E402
 from organizer.skills import Harness, RunResult  # noqa: E402
 from organizer.store import new_id  # noqa: E402
 
@@ -498,8 +499,10 @@ def run_one(args, scenario_path: Path, scenario: dict, items: list[dict], out: P
         # Every live event is a candidate, so the gold event is always reachable (no model sees this list).
         org.candidates_k = 10 ** 6
     app = create_app(settings, organizer=org)
-    # Same path as the Mac: every request carries the link token created in this run's data dir.
+    # Same path as the Mac: every request carries the link token created in this run's data dir, and the first
+    # data call unlocks the (encrypted) store, here with the fixed synthetic key (synthetic data only).
     client = TestClient(app, headers={"Authorization": f"Bearer {app.state.link_token}"})
+    client.post("/v1/unlock", json={"key": synthetic_library_key().hex()}).raise_for_status()
     checkpoints = {cp["after_item_id"].lower(): cp for cp in scenario["checkpoints"]}
     seen: list[str] = []
     snaps: dict[str, dict] = {}

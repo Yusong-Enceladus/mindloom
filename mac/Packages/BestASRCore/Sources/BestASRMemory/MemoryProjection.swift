@@ -156,6 +156,12 @@ public struct MemoryHomeEntry: Equatable, Identifiable, Sendable {
   /// `MemoryProjection.isShownPerson`); they stay in `people` for search,
   /// transcripts and their own pages.
   public var hiddenPersonIDs: Set<String> = []
+  /// People of `people` who take part in the matter by this Mac's own
+  /// evidence: heard in one of its recordings, or writing a speaker line
+  /// ("名：…") in one of its texts. Only they relate two matters
+  /// (`MemoryProjection.related`); someone the organizer linked because a
+  /// text names them (its `mention` links) is shown but never relates them.
+  public var participantIDs: Set<String> = []
 
   public var id: String { eventID }
 
@@ -564,6 +570,7 @@ public struct MemoryProjection: Sendable {
       statusIsFallback: status.isFallback
     )
     if image == nil { entry.coverText = coverText(shown) }
+    entry.participantIDs = participants(of: event, people: entry.people, shown: shown)
     // Only the parts this event holds: a meeting's other matters do not
     // make this card match.
     entry.searchText = shown.flatMap { record, text -> [String] in
@@ -804,18 +811,19 @@ public struct MemoryProjection: Sendable {
 
   // MARK: - Related and Unfiled
 
-  /// Other events with at least one of this event's people, most shared first,
-  /// then in Home order.
+  /// Other events sharing at least one person who takes part in both
+  /// (`MemoryHomeEntry.participantIDs`), most shared first, then in Home
+  /// order. Someone a text only names relates nothing.
   public func related(
     to eventID: String, limit: Int = 4, home precomputed: [MemoryHomeEntry]? = nil
   ) -> [MemoryHomeEntry] {
     let home = precomputed ?? home()
     guard let own = home.first(where: { $0.eventID == eventID }) else { return [] }
-    let people = Set(own.people.map(\.personID))
+    let people = own.participantIDs
     guard !people.isEmpty else { return [] }
     let scored = home.enumerated().compactMap { index, entry -> (Int, Int, MemoryHomeEntry)? in
       guard entry.eventID != eventID else { return nil }
-      let shared = entry.people.filter { people.contains($0.personID) }.count
+      let shared = entry.participantIDs.intersection(people).count
       return shared > 0 ? (shared, index, entry) : nil
     }
     return scored.sorted { ($0.0, -$0.1) > ($1.0, -$1.1) }.prefix(limit).map(\.2)
@@ -853,7 +861,7 @@ public struct MemoryProjection: Sendable {
     }
     var entries: [MemoryPersonEntry] = []
     var listed = Set<String>()
-    for person in persons where person.mergedInto == nil {
+    for person in persons where person.mergedInto == nil && !person.isNotPerson {
       guard !isOwner(person.personID, name: person.displayName),
         listed.insert(person.personID).inserted
       else { continue }
@@ -929,6 +937,7 @@ public struct MemoryProjection: Sendable {
   /// label parsed from one pasted text ("全文：", "Archive:") is neither.
   /// A display rule only: the person, their page and their items stay.
   public func isShownPerson(_ person: MemoryPersonEntry) -> Bool {
+    if isNotPerson(person.personID) { return false }
     if heardPersonIDs.contains(person.personID.uppercased()) { return true }
     guard person.isNamed, Self.looksLikePersonName(person.name) else { return false }
     return person.events.count >= Self.mattersToShowPerson
@@ -1034,7 +1043,11 @@ public struct MemoryProjection: Sendable {
   }
 
   /// Event people first (canonical, merged ones followed), then people who
-  /// speak in its local recordings; each once, in first-seen order.
+  /// speak in its local recordings; each once. Most involved first: the
+  /// organizer already lists a Spark event's people that way (speaking in an
+  /// item counts more than being named in it); a local event's people are
+  /// ordered by how many of its recordings they speak in, then first seen.
+  /// A label the organizer found is not a person (`not_person`) is left out.
   private func people(of event: MemoryEventSource) -> [MemoryPersonRef] {
     var result: [MemoryPersonRef] = []
     var seen = Set<String>()
@@ -1042,18 +1055,66 @@ public struct MemoryProjection: Sendable {
       let canonical = canonicalID(id)
       if seen.insert(canonical).inserted {
         let name = name(of: canonical)
-        guard !isOwner(canonical, name: name) else { continue }
+        guard !isOwner(canonical, name: name), !isNotPerson(canonical) else { continue }
         result.append(
           colored(
             MemoryPersonRef(personID: canonical, name: name, isNamed: name != Self.unnamed)))
       }
     }
+    var spokenIn: [String: Int] = [:]
     for record in orderedRecords(event) {
+      var here = Set<String>()
       for person in record.people {
         let ref = resolved(localID: person.id.rawValue.uuidString, fallbackName: person.name)
-        guard seen.insert(ref.personID).inserted, !isOwner(ref.personID, name: ref.name)
+        if here.insert(ref.personID).inserted { spokenIn[ref.personID, default: 0] += 1 }
+        guard seen.insert(ref.personID).inserted, !isOwner(ref.personID, name: ref.name),
+          !isNotPerson(ref.personID)
         else { continue }
         result.append(colored(ref))
+      }
+    }
+    guard event.origin == .local, result.count > 1 else { return result }
+    return result.enumerated().sorted {
+      let (left, right) = (spokenIn[$0.element.personID] ?? 0, spokenIn[$1.element.personID] ?? 0)
+      return left != right ? left > right : $0.offset < $1.offset
+    }.map(\.element)
+  }
+
+  /// Whether the organizer found this person to be a label, not a person.
+  private func isNotPerson(_ personID: String) -> Bool {
+    personsByID[personID]?.isNotPerson ?? false
+  }
+
+  /// The people of `people` who take part in the event (see
+  /// `MemoryHomeEntry.participantIDs`).
+  private func participants(
+    of event: MemoryEventSource, people: [MemoryPersonRef],
+    shown: [(record: MemoryItemRecord, text: String?)]
+  ) -> Set<String> {
+    guard !people.isEmpty else { return [] }
+    // Upper-case key → the ID as `people` has it.
+    let listed = Dictionary(
+      people.map { ($0.personID.uppercased(), $0.personID) }, uniquingKeysWith: { a, _ in a })
+    var result = Set<String>()
+    var labels = Set<String>()
+    for (record, text) in shown {
+      let ids = record.people.map(\.id) + record.segments.compactMap(\.personID)
+      for id in ids {
+        if let listedID = listed[canonicalID(id.rawValue.uuidString).uppercased()] {
+          result.insert(listedID)
+        }
+      }
+      let key = Self.key(record.sessionID)
+      for source in [text, remoteReadings[key]] {
+        if let source, !source.isEmpty { labels.formUnion(MemorySpeakerLines.labels(in: source)) }
+      }
+    }
+    guard !labels.isEmpty else { return result }
+    for person in people where !result.contains(person.personID) {
+      let remote = personsByID[person.personID]
+      let names = [person.name, remote?.displayName ?? ""] + (remote?.aliases ?? [])
+      if names.contains(where: { labels.contains(MemorySpeakerLines.normalized($0)) }) {
+        result.insert(person.personID)
       }
     }
     return result

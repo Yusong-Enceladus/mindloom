@@ -79,6 +79,14 @@ extension DictationAppModel {
             staged.append(deletion)
           }
         }
+        // Keyframe items of deleted recordings go with them (privacy review F6).
+        let listed = Set(items.map(\.sessionID))
+        for frame in try await repository.keyframeSessionIDs(of: items.map(\.sessionID))
+        where !listed.contains(frame) {
+          if let deletion = try await journal.stageExplicitDeletion(sessionID: frame) {
+            staged.append(deletion)
+          }
+        }
         try await repository.deleteSessionRecordsExplicitly(
           sessionIDs: items.map(\.sessionID)
         )
@@ -587,27 +595,33 @@ extension DictationAppModel {
     Task { [weak self] in
       guard let self else { return }
       do {
-        if item.sourceAudioRetained {
-          let staged = try await journal.stageExplicitDeletion(
-            sessionID: item.sessionID
-          )
-          do {
-            try await repository.deleteSessionRecordsExplicitly(
-              sessionID: item.sessionID
-            )
-          } catch {
-            if let staged {
-              try? await journal.rollbackExplicitDeletion(staged)
+        // A recording's keyframe items go with it (privacy review F6): their
+        // files are staged with the recording's, and the store deletes their
+        // records in the same transaction and queues their remote deletion.
+        let frames = (try? await repository.keyframeSessionIDs(of: [item.sessionID])) ?? []
+        var staged: [StagedSessionDeletion] = []
+        do {
+          if item.sourceAudioRetained,
+            let deletion = try await journal.stageExplicitDeletion(sessionID: item.sessionID)
+          {
+            staged.append(deletion)
+          }
+          for frame in frames {
+            if let deletion = try await journal.stageExplicitDeletion(sessionID: frame) {
+              staged.append(deletion)
             }
-            throw error
           }
-          if let staged {
-            try await journal.commitExplicitDeletion(staged)
-          }
-        } else {
           try await repository.deleteSessionRecordsExplicitly(
             sessionID: item.sessionID
           )
+        } catch {
+          for deletion in staged.reversed() {
+            try? await journal.rollbackExplicitDeletion(deletion)
+          }
+          throw error
+        }
+        for deletion in staged {
+          try await journal.commitExplicitDeletion(deletion)
         }
         if history.selectedHistorySessionID == item.sessionID {
           history.selectedHistorySessionID = nil

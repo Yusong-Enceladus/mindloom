@@ -1,0 +1,73 @@
+{
+ "type": "object",
+ "properties": {
+  "small_object": {
+   "type": "string",
+   "minLength": 1,
+   "maxLength": 24
+  },
+  "small_is_matter": {
+   "type": "boolean"
+  },
+  "candidate": {
+   "type": "string",
+   "pattern": "^(E[0-9]+)?$"
+  },
+  "relation": {
+   "type": "string",
+   "enum": [
+    "same",
+    "part",
+    "related",
+    "none"
+   ]
+  },
+  "reason": {
+   "type": "string",
+   "minLength": 2,
+   "maxLength": 40
+  },
+  "verdict": {
+   "type": "string",
+   "enum": [
+    "merge",
+    "own_matter",
+    "not_matter"
+   ]
+  },
+  "target": {
+   "type": "string",
+   "pattern": "^(E[0-9]+)?$"
+  },
+  "quote": {
+   "type": "object",
+   "properties": {
+    "item_id": {
+     "type": "string",
+     "pattern": "^I[0-9]+$"
+    },
+    "text": {
+     "type": "string",
+     "minLength": 2,
+     "maxLength": 60
+    }
+   },
+   "required": [
+    "item_id",
+    "text"
+   ],
+   "additionalProperties": false
+  }
+ },
+ "required": [
+  "small_object",
+  "small_is_matter",
+  "candidate",
+  "relation",
+  "reason",
+  "verdict",
+  "target",
+  "quote"
+ ],
+ "additionalProperties": false
+}

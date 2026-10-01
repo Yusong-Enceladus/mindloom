@@ -1,7 +1,9 @@
 import AVFoundation
 import AppKit
 import BestASRDomain
+import Darwin
 import Foundation
+import ImageIO
 import UniformTypeIdentifiers
 
 /// What one candidate became.
@@ -153,21 +155,38 @@ public struct IntakeProcessor: Sendable {
       return try iWorkPackage(url, context: context)
     }
     guard values?.isRegularFile == true else { return .rejected("无法读取这个文件，未收进来") }
-    if fileClass.isMedia {
-      // Decoded on this Mac only; a format AVFoundation cannot read is
-      // refused here instead of failing later in the import.
-      guard Self.canDecodeMedia(url) else {
-        return .rejected("这台 Mac 无法解码 .\(url.pathExtension.lowercased()) 音视频，未收进来")
-      }
-      return .media(url)
-    }
-    guard UInt64(values?.fileSize ?? 0) <= assetStore.maximumBytes else {
-      return .rejected("文件超过 200 MB，未收进来")
-    }
     let filename = url.lastPathComponent
     let ext = url.pathExtension.lowercased()
     let uniformType = IntakeFileClass.uniformType(url)
     let mediaType = IntakeFileClass.mediaType(url)
+    // Audio or video by its type or by its first bytes, whatever its name:
+    // never sent. What AVFoundation reads is imported and recognized here;
+    // anything else is kept only on this Mac (privacy contract §5).
+    let sniffedMedia = fileClass.isMedia ? false : Self.sniffsAsMedia(url)
+    if fileClass.isMedia || sniffedMedia {
+      if fileClass.isMedia, Self.canDecodeMedia(url) { return .media(url) }
+      guard UInt64(values?.fileSize ?? 0) <= assetStore.maximumBytes else {
+        return .rejected("文件超过 200 MB，未收进来")
+      }
+      return try localOnlyItem(
+        original: .file(url), filename: filename, uniformType: uniformType,
+        mediaType: mediaType, context: context)
+    }
+    guard UInt64(values?.fileSize ?? 0) <= assetStore.maximumBytes else {
+      return .rejected("文件超过 200 MB，未收进来")
+    }
+    // A picture under another name (a screenshot renamed `.xlsx`) is taken in
+    // as the picture it is: normalized, read here, and redacted when sent
+    // (privacy review F3).
+    if fileClass != .image, fileClass != .svg,
+      let pictureExtension = Self.sniffedImageExtension(url)
+    {
+      let normalized = try normalizer.normalize(fileURL: url)
+      return try image(
+        original: .file(url), normalized: normalized, frames: [],
+        originalFilename: filename, ext: pictureExtension, userFilename: filename,
+        context: context)
+    }
     let extracted: IntakeTextExtractor.Extracted
     switch fileClass {
     case .image:
@@ -219,12 +238,24 @@ public struct IntakeProcessor: Sendable {
         fileURL: url, type: format.documentType, extractor: format.extractor)
       return try fileItem(
         original: .file(url), filename: filename, uniformType: uniformType,
-        mediaType: mediaType, localText: local.flatMap { Self.exceedsTextLimit($0.text) ? nil : $0 },
+        mediaType: mediaType,
+        localText: local.flatMap { Self.exceedsTextLimit($0.text) ? nil : $0 },
         context: context)
     case .iWork, .file:
+      let local = declared(url)
+      // An archive (a zip's files are taken in one by one by `prepareAll`),
+      // or a binary that is neither text nor a document the organizing
+      // device reads: kept here only (privacy contract §5).
+      if fileClass == .file,
+        IntakeFileClass.isArchive(url) || (local == nil && !IntakeFileClass.isSendableFile(url))
+      {
+        return try localOnlyItem(
+          original: .file(url), filename: filename, uniformType: uniformType,
+          mediaType: mediaType, context: context)
+      }
       return try fileItem(
         original: .file(url), filename: filename, uniformType: uniformType,
-        mediaType: mediaType, localText: declared(url), context: context)
+        mediaType: mediaType, localText: local, context: context)
     case .audio, .video:
       return .rejected("无法读取这个文件，未收进来")
     }
@@ -241,6 +272,45 @@ public struct IntakeProcessor: Sendable {
     IntakeTextExtractor.declaredText(fileURL: url).flatMap {
       Self.exceedsTextLimit($0) ? nil : .init(text: $0, extractor: "declared-text-v1")
     }
+  }
+
+  /// A file kept only on this Mac: stored byte for byte, never sent, shown
+  /// as "只保存在 Mac 上".
+  private func localOnlyItem(
+    original: IntakeAssetStore.Source, filename: String, uniformType: String?,
+    mediaType: String, context: Context
+  ) throws -> IntakeOutcome {
+    let ext = (filename as NSString).pathExtension.lowercased()
+    let attachments = try assetStore.stage(
+      sessionID: context.id,
+      requests: [
+        .init(
+          role: .original, source: original, originalFilename: filename, mediaType: mediaType,
+          fileExtension: ext)
+      ]
+    )
+    return context.item(
+      kind: .file, text: "", extractor: UserItemLimits.localOnlyExtractor, filename: filename,
+      attachments: attachments, uniformType: uniformType)
+  }
+
+  /// The extension of the picture format the bytes are, whatever the file is
+  /// called (nil for anything that is not a picture ImageIO draws; a PDF is
+  /// not taken for a picture).
+  static func sniffedImageExtension(_ url: URL) -> String? {
+    guard let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+      let type = FileSendCopySanitizer.pictureType(of: source)
+    else { return nil }
+    return type.preferredFilenameExtension ?? "png"
+  }
+
+  /// Audio or video by its first bytes (`MediaContentSniffer`).
+  static func sniffsAsMedia(_ url: URL) -> Bool {
+    let descriptor = open(url.path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+    guard descriptor >= 0 else { return false }
+    let handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
+    let prefix = (try? handle.read(upToCount: MediaContentSniffer.prefixLength)) ?? nil
+    return prefix.map(MediaContentSniffer.isAudioOrVideo) ?? false
   }
 
   /// A file item: the exact bytes, with the text this Mac read (maybe none).

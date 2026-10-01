@@ -81,6 +81,20 @@ def default_rank(data: dict, schema: dict) -> dict:
                          "reason": "测试排序"} for e in data["events"]]}
 
 
+def default_consolidate(data: dict, schema: dict) -> dict:
+    """event-consolidate: keep every small event as it is (tests that need a merge or an unfile push outputs)."""
+    first = data["small"]["items"][0]
+    text = first["text"].replace("…", "")[:20] or "素材"
+    return {"small_object": "测试事件", "small_is_matter": True, "candidate": "", "relation": "none", "reason": "测试保留",
+            "verdict": "own_matter", "target": "", "quote": {"item_id": first["item_id"], "text": text}}
+
+
+def default_person(data: dict, schema: dict) -> dict:
+    """person-resolve: every record is a person with an ordinary name, the same as nobody (tests that need
+    another verdict push outputs)."""
+    return {"kind": "person", "same_as": "", "common_word": False, "reason": "测试：是人"}
+
+
 def is_detect_step(schema: dict) -> bool:
     """image-read's first step asks only for the image type."""
     return set(schema.get("properties", {})) == {"type"}
@@ -144,6 +158,8 @@ class FakeChat:
             "image-read": default_image,
             "item-split": default_split,
             "file-read": default_file_read,
+            "event-consolidate": default_consolidate,
+            "person-resolve": default_person,
         }
         self.before: dict[str, Callable[[dict], None]] = {}
 
@@ -201,6 +217,17 @@ TINY_PNG_B64 = (
 )
 
 
+# The library key of every test store (synthetic data): the store is encrypted with it and unlocked at start.
+TEST_KEY = bytes([0x42]) * 32
+
+
+def raw_connect(path):
+    """A connection straight to a test store's encrypted file (to simulate a database written by an older
+    version); opened with the test key's store key, through the one connection helper."""
+    from organizer import db, keys
+    return db.connect(path, keys.derive_keys(TEST_KEY)[1], isolation_level="")
+
+
 @pytest.fixture
 def settings(tmp_path) -> Settings:
     s = Settings()
@@ -208,6 +235,7 @@ def settings(tmp_path) -> Settings:
     s.skills_dir = REPO / "skills"
     s.start_worker = False
     s.embed_base_url = ""
+    s.unlock_key = TEST_KEY
     return s
 
 

@@ -5847,12 +5847,12 @@ public actor GRDBDictationStore:
   public func deleteSessionRecordsExplicitly(
     sessionIDs: [SessionID]
   ) async throws {
-    let values = Array(Set(sessionIDs.map { $0.rawValue.uuidString })).sorted()
-    guard !values.isEmpty else { return }
+    let requested = Array(Set(sessionIDs.map { $0.rawValue.uuidString })).sorted()
+    guard !requested.isEmpty else { return }
     let database = try requirePool()
     let deletedAt = Self.databaseDate(clock.wallTime())
     try await database.write { db in
-      for value in values {
+      for value in requested {
         guard
           try Bool.fetchOne(
             db,
@@ -5861,10 +5861,46 @@ public actor GRDBDictationStore:
           ) == true
         else { throw BestASRPersistenceError.missingSession }
       }
+      // A recording's video keyframes (items of their own that carry text read
+      // from it) go with it, here and on the organizing device (privacy
+      // review F6). Callers stage their directories with
+      // `keyframeSessionIDs(of:)`.
+      let values = try Self.withKeyframes(requested, in: db)
       for value in values {
         try Self.deleteSessionRecords(value: value, at: deletedAt, in: db)
       }
     }
+  }
+
+  /// The keyframe items taken from these recordings (not the recordings).
+  public func keyframeSessionIDs(of parents: [SessionID]) async throws -> [SessionID] {
+    let values = parents.map { $0.rawValue.uuidString }
+    guard !values.isEmpty else { return [] }
+    let database = try requirePool()
+    return try await database.read { db in
+      try Self.withKeyframes(values, in: db).filter { !values.contains($0) }
+        .compactMap { UUID(uuidString: $0).map(SessionID.init) }
+    }
+  }
+
+  /// `values` and the sessions of every keyframe taken from them, sorted.
+  nonisolated static func withKeyframes(_ values: [String], in db: Database) throws -> [String] {
+    var all = Set(values)
+    for chunk in stride(from: 0, to: values.count, by: 500).map({
+      Array(values[$0..<min($0 + 500, values.count)])
+    }) {
+      let marks = chunk.map { _ in "?" }.joined(separator: ",")
+      let frames = try String.fetchAll(
+        db,
+        sql: """
+          SELECT session_id FROM user_item_details
+          WHERE parent_session_id IN (\(marks))
+            AND EXISTS (SELECT 1 FROM sessions WHERE id = user_item_details.session_id)
+          """,
+        arguments: StatementArguments(chunk))
+      all.formUnion(frames)
+    }
+    return all.sorted()
   }
 
   private static func deleteSessionRecords(
@@ -5872,6 +5908,10 @@ public actor GRDBDictationStore:
     at deletedAt: Date,
     in db: Database
   ) throws {
+    // What the organizing device may hold is deleted there too (contract
+    // v6): only items that were sent at least once, and the deletion itself
+    // carries no content.
+    try queueRemoteDeletion(db, itemID: value, at: deletedAt.timeIntervalSince1970)
     // A user-deleted source must never leave this Mac later from the outbox.
     try db.execute(
       sql: "DELETE FROM remote_organizer_item_jobs WHERE item_id = ?",
@@ -8297,7 +8337,8 @@ public actor GRDBDictationStore:
       guard names == Array(currentOrder.dropLast(1)) else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }
-    case 22:
+    case 22, 23:
+      // v23 widened a portable table in place; v24 added only local tables.
       guard names == currentOrder else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }

@@ -65,7 +65,7 @@
 
 - 嵌入图片（docx / pptx / odt / odp / 邮件 / 压缩包 / iWork 预览）每个文件最多 10 张，按出现顺序，同一张图只读一次。
 - Pages / Numbers / Keynote 的正文格式不公开，只读包里的预览：有 `QuickLook/Preview.pdf` 读 PDF，否则读 `preview.jpg`（只有第一页）。
-- 音视频文件（压缩包或附件里的）不解码，只记一条"格式不支持，未读取"。
+- 音视频（压缩包、邮件附件里的，以及 pptx / docx 等文档包里嵌的影片和录音）从不解码、不转写，也不列文件名，只在文字末尾记一句「N 个媒体附件未读取（只在 Mac 上）」（`counts.media_skipped`；测试 `test_embedded_audio_and_video_are_skipped_and_only_counted`）。
 
 ## 3. 安全
 
@@ -76,6 +76,7 @@
 - **压缩炸弹**：zip 成员按声明大小和压缩比检查（单个成员 > 8 MB 且压缩比 > 400 就不读），Python 的 zipfile 不会返回超过声明大小的数据；gz / bz2 / xz 用带上限的解压器，超过剩余额度就停；ODS 里重复百万行的空行不展开；Pillow 的像素上限 6000 万，超过即拒绝。
 - **加密**：有密码的 PDF、Office（`EncryptionInfo`）、ODF（`encryption-data`）、zip（加密标志）、Word 97（`fEncrypted`）、xls 都报 `encrypted`，从不尝试密码。
 - 素材内容是数据：file-read 的提示词和全局规则都声明文件里的文字不是指令。
+- **读完就删、先遮号码**（隐私 v6，`docs/PRIVACY.md`）：文件的字节在保存读出文字的同一个事务里删除；读失败且重试用完时同样删除，这条标成 `error: "unreadable"`。读出的正文、标题、字段、附件名和概要、每张图的读图结果，在进入 file-read 提示词和存盘之前都按共享规范遮号码（`organizer/masking.py`）。
 
 ## 4. 依赖（整理服务 venv，均在 Spark 上安装）
 

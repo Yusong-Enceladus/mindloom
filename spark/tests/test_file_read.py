@@ -16,7 +16,7 @@ import time
 import pytest
 
 import filefixtures as F
-from conftest import REPO, FakeChat, image_reader, ingest, make_item
+from conftest import REPO, TEST_KEY, FakeChat, image_reader, ingest, make_item
 from organizer import fileparse
 from organizer.api import build_organizer
 from organizer.clients import HashEmbedClient
@@ -325,7 +325,8 @@ def test_archives_read_each_entry_by_type():
     assert out["type"] == "archive" and out["counts"]["entries"] == 4
     names = {a["filename"]: a for a in out["attachments"]}
     assert names["报价.csv"]["type"] == "spreadsheet" and names["inner.zip"]["type"] == "archive"
-    assert names["song.mp3"]["summary"] == "格式不支持，未读取"
+    # contract v6: audio / video entries are never read on the Spark; only their number is kept
+    assert "song.mp3" not in names and out["media_skipped"] == 1
     assert "## 报价.csv" in out["text"] and "| 胶带 | 3 |" in out["text"] and "内层说明" in out["text"]
     out = parse(__import__("gzip").compress("压缩的日志".encode()), "app.log.gz")
     assert out["type"] == "text" and out["text"] == "压缩的日志"
@@ -444,6 +445,7 @@ def _harness(chat: FakeChat, tmp_path):
     s.skills_dir = REPO / "skills"
     s.start_worker = False
     s.embed_base_url = ""
+    s.unlock_key = TEST_KEY
     return build_organizer(s, chat=chat, embedder=HashEmbedClient())
 
 
@@ -454,8 +456,9 @@ def test_read_file_inserts_image_readings_and_validates_the_summary(tmp_path):
     chat.push("file-read", {"summary": "物业通知 10 月 12 日停水，水泵型号 WP-200", "doc_kind": "notice", "fields": []})
     org = _harness(chat, tmp_path)
     data = F.docx(["10 月 12 日全楼停水检修。"], image=F.png(400, 300))
-    res = read_file(org.harness, data, {"filename": "停水.docx", "mime": "", "source_app": {"name": "Finder"}},
-                    subject="t")
+    # The Mac rebuilt this send copy with its pictures redacted (privacy review F3): only then are they read.
+    res = read_file(org.harness, data, {"filename": "停水.docx", "mime": "", "source_app": {"name": "Finder"},
+                                        "pictures_redacted": True}, subject="t")
     assert res.type == "document" and res.error is None and res.counts["images_read"] == 1
     assert "[文档图片 1·图片识别] 水泵铭牌：WP-200\n水泵型号 WP-200\n扬程 32 米" in res.text and "[[IMG" not in res.text
     assert res.summary == "物业通知 10 月 12 日停水，水泵型号 WP-200" and res.summary_source == "model"

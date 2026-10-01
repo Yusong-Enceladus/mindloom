@@ -11,6 +11,10 @@ import Foundation
 /// If the rows never commit, `discard` removes the directory, and the startup
 /// sweep removes any marked directory that has no session row. The user's
 /// own file is only read, never moved or deleted.
+///
+/// Identical bytes are stored once (privacy contract §7): a file already in
+/// the library under the same SHA-256 is hard-linked into the new item's
+/// folder instead of copied (`ContentAddressedAssets`).
 public struct IntakeAssetStore: Sendable {
   public static let stagingMarkerName = ".intake-staging"
 
@@ -96,8 +100,13 @@ public struct IntakeAssetStore: Sendable {
         }
         guard !data.isEmpty else { throw StoreError.notARegularFile }
         guard UInt64(data.count) <= maximumBytes else { throw StoreError.tooLarge }
-        try Self.writeSynchronized(data, to: destination)
         let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+        if !ContentAddressedAssets.linkExisting(
+          assetRoot: assetRoot, digest: digest, data: data, to: destination)
+        {
+          try Self.writeSynchronized(data, to: destination)
+          ContentAddressedAssets.register(assetRoot: assetRoot, digest: digest, file: destination)
+        }
         result.append(
           UserItemAttachment(
             role: request.role,
@@ -111,6 +120,7 @@ public struct IntakeAssetStore: Sendable {
       return result
     } catch {
       try? fileManager.removeItem(at: directory)
+      ContentAddressedAssets.prune(assetRoot: assetRoot)
       throw error
     }
   }
@@ -132,6 +142,7 @@ public struct IntakeAssetStore: Sendable {
       )
     else { return }
     try? FileManager.default.removeItem(at: directory)
+    ContentAddressedAssets.prune(assetRoot: assetRoot)
   }
 
   /// Session IDs whose directory still carries the staging marker.
@@ -163,6 +174,8 @@ public struct IntakeAssetStore: Sendable {
         removed += 1
       }
     }
+    // Index entries of items deleted before a crash.
+    ContentAddressedAssets.prune(assetRoot: assetRoot)
     return removed
   }
 

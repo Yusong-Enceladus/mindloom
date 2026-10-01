@@ -64,7 +64,8 @@ def _event(org: Organizer, event_id: str):
 
 
 def _item_exists(org: Organizer, item_id: str) -> bool:
-    return org.store.latest_revision(item_id) is not None
+    # An item the user deleted (purged) is gone for every decision.
+    return org.store.latest_revision(item_id) is not None and not org.store.is_tombstoned(item_id)
 
 
 def _move_item(org: Organizer, item_id: str, to_event: str, decision_id: int, how: str) -> None:

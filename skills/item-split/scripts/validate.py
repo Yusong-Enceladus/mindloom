@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Semantic validator for item-split output.
 
-validate(output, context) -> list of error strings (empty = valid). context: {"unit_ids": ["U1", ...]}.
+validate(output, context) -> list of error strings (empty = valid). context: {"unit_ids": ["U1", ...],
+"known": ["E3", ...]} (the known matters shown, if any).
 
 Rules: ranges use this call's unit ids, from <= to, segments are in text order and never overlap,
 every segment's matter is one of `matters` (1-based) or 0 (a stretch that is no matter at all), every listed matter has a segment, and a gist
-fits in 20 display columns (CJK 1, ASCII 0.5).
+fits in 20 display columns (CJK 1, ASCII 0.5), and `known` (optional) has one entry per matter, each "" or a
+known matter that was shown.
 
 CLI: python validate.py output.json context.json
 """
@@ -58,6 +60,14 @@ def validate(output: dict, context: dict) -> list[str]:
             errors.append(f"matters[{n - 1}] has no segment; drop it or give it its units")
     if matters and not segments:
         errors.append("matters listed but no segments")
+    known = output.get("known")
+    if known is not None:
+        shown = set(context.get("known") or [])
+        if len(known) != len(matters):
+            errors.append(f"known must have one entry per matter ({len(matters)}); use \"\" for a matter not in known_matters")
+        for i, k in enumerate(known):
+            if k and k not in shown:
+                errors.append(f"known[{i}] {k} is not in known_matters; use \"\"")
     return errors
 
 

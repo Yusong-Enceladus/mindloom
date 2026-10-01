@@ -5,16 +5,18 @@ usage: python3 partial_run.py RUN_DIR REPO_DIR SCENARIO_JSON
 """
 import glob
 import json
-import sqlite3
 import statistics
 import subprocess
 import sys
 import tempfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "spark"))
+from organizer.db import open_for_analysis  # noqa: E402
+
 run, repo, scen = map(Path, sys.argv[1:4])
 db = glob.glob(str(run / "data" / "*.db"))[0]
-c = sqlite3.connect("file:" + db + "?mode=ro", uri=True)
+c = open_for_analysis(db)  # plaintext, or encrypted with the synthetic key
 jobs = c.execute("select count(*), sum(state='done') from jobs").fetchone()
 items_done = c.execute("select count(*) from jobs where state='done' and reason='ingest'").fetchone()[0]
 per = {}

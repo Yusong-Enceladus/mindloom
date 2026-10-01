@@ -163,6 +163,20 @@ public struct UserItemDraft: Equatable, Sendable {
     self.frameMilliseconds = frameMilliseconds
   }
 
+  /// The same draft under another shown file name (a member of a zip is
+  /// named after the archive and its path inside it).
+  public func renamed(_ filename: String) -> UserItemDraft {
+    UserItemDraft(
+      id: id, kind: kind, capturedAt: capturedAt, source: source, sourceOrigin: sourceOrigin,
+      text: text, extractor: extractor, pageCount: pageCount, pixelWidth: pixelWidth,
+      pixelHeight: pixelHeight, originalFilename: filename, attachments: attachments,
+      reading: reading, uniformType: uniformType, parentSessionID: parentSessionID,
+      frameMilliseconds: frameMilliseconds)
+  }
+
+  /// Kept only on this Mac (`UserItemLimits.localOnlyExtractor`).
+  public var isLocalOnly: Bool { extractor == UserItemLimits.localOnlyExtractor }
+
   /// A PDF whose pages have no text layer (a scan): kept with empty text,
   /// titled by its filename, and never sent.
   public var isScanWithoutTextLayer: Bool {
@@ -242,6 +256,11 @@ public enum UserItemLimits {
   public static let fileBytesExtractor = "file-bytes-v1"
   /// Extractor of a video keyframe image item.
   public static let videoKeyframeExtractor = "avfoundation-keyframe-v1"
+  /// Extractor of a file kept only on this Mac and never sent (privacy
+  /// contract §5): audio or video this Mac cannot import, an archive other
+  /// than a zip (and a zip itself, whose files are taken in one by one), or
+  /// a binary the organizing device cannot read. Shown as "只保存在 Mac 上".
+  public static let localOnlyExtractor = "local-only-v1"
 }
 
 /// Audio and video formats the media import can take (decoded on this Mac;

@@ -164,8 +164,11 @@ struct EventHeader: View {
   }
 }
 
-/// People as capsules; "?" asks for a name in place. A long cast never widens
-/// the page: as many whole chips as fit, then "+N" for the rest.
+/// People as capsules; "?" asks for a name in place. `people` comes most
+/// involved first. A long cast never widens the page: at most
+/// `maximumChips` chips, fewer when they do not fit the width offered, then
+/// "+N" for the rest (named in its accessibility label; everyone is on the
+/// people page).
 struct PeopleChips: View {
   @Environment(\.zhiji) private var palette
   let people: [MemoryPersonRef]
@@ -180,10 +183,17 @@ struct PeopleChips: View {
     }
   }
 
-  /// Chip counts to try, most first: all, then fewer down to none.
+  /// The most chips the row shows however wide the page is: people the
+  /// organizer links because a text names them made casts of 15 and more
+  /// common.
+  static let maximumChips = 6
+
+  /// Chip counts to try, most first: all up to `maximumChips`, then fewer
+  /// down to none.
   static func counts(_ total: Int) -> [Int] {
-    var out = [total]
-    for n in [8, 6, 5, 4, 3, 2, 1, 0] where n < total { out.append(n) }
+    let most = min(total, maximumChips)
+    var out = [most]
+    for n in [5, 4, 3, 2, 1, 0] where n < most { out.append(n) }
     return out
   }
 

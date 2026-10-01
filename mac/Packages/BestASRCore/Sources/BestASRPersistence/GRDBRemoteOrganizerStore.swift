@@ -52,6 +52,17 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
   /// Revocation in the caller's transaction (also used by portable import).
   nonisolated static func revokeRemoteLinkRows(_ db: Database) throws {
     try db.execute(sql: "DELETE FROM remote_organizer_meta WHERE key = 'link_enabled_at'")
+    // An item whose send was attempted but never confirmed may be on the
+    // organizing device: remember that (content-free), so deleting it later
+    // still sends the deletion (privacy review F14).
+    try db.execute(
+      sql: """
+        INSERT INTO remote_organizer_meta (key, value)
+        SELECT ? || item_id, CAST(? AS TEXT) FROM remote_organizer_item_jobs
+        WHERE delivered_revision IS NULL AND attempted_revision IS NOT NULL
+        ON CONFLICT(key) DO NOTHING
+        """,
+      arguments: [maybeOnOrganizerMetaPrefix, Date().timeIntervalSince1970])
     // Never-delivered items are forgotten together with their eligibility, so
     // they are never sent automatically, not even after re-enabling.
     try db.execute(
@@ -629,6 +640,8 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
         sql: "DELETE FROM remote_organizer_decisions WHERE id = ?",
         arguments: [id.uuidString]
       )
+      try db.execute(
+        sql: "DELETE FROM remote_mask_map WHERE owner_id = ?", arguments: [id.uuidString])
     }
   }
 
@@ -730,14 +743,19 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
           """
       )
       let personScopedKinds: Set<String> = ["name_person", "same_person"]
+      // What the organizing device wrote carries placeholders; the Mac shows
+      // and exports the originals (contract §3).
+      let unmask = try Self.remoteUnmasker(db)
+      let offsets = try Self.remoteMaskOffsets(db)
       var events = try eventData.map {
         try JSONDecoder().decode(RemoteOrganizerEvent.self, from: $0)
+          .unmasked(unmask, offsets: { offsets[$0] })
       }
       var persons = try personData.map {
-        try JSONDecoder().decode(RemoteOrganizerPerson.self, from: $0)
+        try JSONDecoder().decode(RemoteOrganizerPerson.self, from: $0).unmasked(unmask)
       }
       var questions = try questionData.map {
-        try JSONDecoder().decode(RemoteOrganizerQuestion.self, from: $0)
+        try JSONDecoder().decode(RemoteOrganizerQuestion.self, from: $0).unmasked(unmask)
       }
       var decisions: [RemoteOrganizerDecision] = []
       var issues: [RemoteOrganizerDecisionIssue] = []
@@ -797,7 +815,7 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
         if $0.importance != $1.importance { return $0.importance > $1.importance }
         return ($0.updatedAt ?? "") > ($1.updatedAt ?? "")
       }
-      let current = try Self.currentRemoteReadings(db)
+      let current = try Self.currentRemoteReadings(db).mapValues { $0.unmasked(unmask) }
       return RemoteOrganizerProjection(
         cursor: cursor, events: events, questions: questions,
         persons: persons.sorted { $0.personID < $1.personID },
@@ -807,6 +825,208 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
         readingFacts: current.compactMapValues(\.facts)
       )
     }
+  }
+
+  // MARK: - Privacy (contract v6)
+
+  public func recordRemoteMasks(_ record: RemoteOrganizerMaskRecord) async throws {
+    let database = try requirePool()
+    let now = Date().timeIntervalSince1970
+    let offsets = try record.textOffsets.map { try Self.remoteJSON($0) }
+    try await database.write { db in
+      // The latest send of this item or decision replaces what it masked.
+      try db.execute(
+        sql: "DELETE FROM remote_mask_map WHERE owner_id = ?", arguments: [record.ownerID])
+      for entry in record.entries {
+        try db.execute(
+          sql: """
+            INSERT OR IGNORE INTO remote_mask_map
+              (owner_id, placeholder, original, mask_type, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+          arguments: [record.ownerID, entry.placeholder, entry.original, entry.type, now])
+      }
+      guard let offsets else { return }
+      if record.textOffsets?.isEmpty == false {
+        try db.execute(
+          sql: """
+            INSERT INTO remote_mask_offsets (item_id, revision, offsets_json) VALUES (?, ?, ?)
+            ON CONFLICT(item_id) DO UPDATE SET
+              revision = excluded.revision, offsets_json = excluded.offsets_json
+            """,
+          arguments: [
+            record.ownerID.uppercased(), record.revision ?? 0,
+            String(decoding: offsets, as: UTF8.self),
+          ])
+      } else {
+        try db.execute(
+          sql: "DELETE FROM remote_mask_offsets WHERE item_id = ?",
+          arguments: [record.ownerID.uppercased()])
+      }
+    }
+  }
+
+  public func claimNextRemoteDeletion(now: Date = Date()) async throws -> String? {
+    let database = try requirePool()
+    return try await database.read { db in
+      guard try Self.remoteLinkEnabledAt(db) != nil else { return nil }
+      return try String.fetchOne(
+        db,
+        sql: """
+          SELECT item_id FROM remote_pending_deletions WHERE not_before <= ?
+          ORDER BY queued_at, item_id LIMIT 1
+          """,
+        arguments: [now.timeIntervalSince1970])
+    }
+  }
+
+  public func markRemoteDeletionSent(itemID: String) async throws {
+    let database = try requirePool()
+    try await database.write { db in
+      try db.execute(
+        sql: "DELETE FROM remote_pending_deletions WHERE item_id = ?", arguments: [itemID])
+    }
+  }
+
+  public func markRemoteDeletionFailed(itemID: String, retryAt: Date) async throws {
+    let database = try requirePool()
+    try await database.write { db in
+      try db.execute(
+        sql: """
+          UPDATE remote_pending_deletions
+          SET not_before = ?, retry_count = retry_count + 1 WHERE item_id = ?
+          """,
+        arguments: [retryAt.timeIntervalSince1970, itemID])
+    }
+  }
+
+  /// Deletions still waiting to be sent (for status and tests).
+  public func pendingRemoteDeletions() async throws -> [String] {
+    let database = try requirePool()
+    return try await database.read { db in
+      try String.fetchAll(
+        db, sql: "SELECT item_id FROM remote_pending_deletions ORDER BY queued_at, item_id")
+    }
+  }
+
+  public func forgetRemoteStore() async throws {
+    let database = try requirePool()
+    let now = Date().timeIntervalSince1970
+    try await database.write { db in
+      // The organizing device holds nothing of this library any more.
+      try db.execute(sql: "DELETE FROM remote_organizer_events")
+      try db.execute(sql: "DELETE FROM remote_organizer_persons")
+      try db.execute(sql: "DELETE FROM remote_organizer_questions")
+      try db.execute(
+        sql: "DELETE FROM remote_organizer_meta WHERE key IN (?, ?, 'store_id')",
+        arguments: [Self.unfiledMetaKey, Self.readingsMetaKey])
+      try Self.setRemoteMeta(db, "cursor", "0")
+      // Nothing counts as delivered, so a store reset does not queue it again
+      // and no deletion is sent for it; a later change sends it anew. A job
+      // parked or waiting stays so.
+      try db.execute(
+        sql: """
+          UPDATE remote_organizer_item_jobs
+          SET delivered_revision = NULL, delivered_sha256 = NULL, delivered_at = NULL,
+              attempted_revision = NULL, attempted_sha256 = NULL,
+              state = CASE state WHEN 'running' THEN 'queued' ELSE state END,
+              lease_expires_at = NULL, updated_at = ?
+          """,
+        arguments: [now])
+      try db.execute(sql: "DELETE FROM remote_pending_deletions")
+      try db.execute(
+        sql: "DELETE FROM remote_organizer_meta WHERE key LIKE ? || '%'",
+        arguments: [Self.maybeOnOrganizerMetaPrefix])
+      try db.execute(sql: "DELETE FROM remote_mask_map")
+      try db.execute(sql: "DELETE FROM remote_mask_offsets")
+      // Corrections were about the forgotten content: pending ones are not
+      // sent, and those about its events and items leave the local overlay.
+      // A person's name stays in effect here (person IDs are the same in
+      // every store) but is not sent again by itself.
+      let rows = try Row.fetchAll(
+        db,
+        sql: """
+          SELECT j.decision_id, j.state, d.payload_json
+          FROM remote_organizer_decision_jobs j
+          JOIN remote_organizer_decisions d ON d.id = j.decision_id
+          """)
+      for row in rows {
+        let state: String = row["state"]
+        let payload: Data = row["payload_json"]
+        let personScoped =
+          (try? JSONDecoder().decode(RemoteOrganizerDecision.self, from: payload))?
+          .isPersonScoped ?? false
+        guard !personScoped || ["queued", "running"].contains(state) else { continue }
+        try db.execute(
+          sql: """
+            UPDATE remote_organizer_decision_jobs
+            SET state = CASE WHEN state IN ('queued', 'running') THEN 'cancelled' ELSE state END,
+                error_category = 'store_reset', lease_expires_at = NULL, error_reason = NULL
+            WHERE decision_id = ?
+            """,
+          arguments: [row["decision_id"] as String])
+      }
+    }
+  }
+
+  /// A user deletion in the caller's transaction: queues the deletion on the
+  /// organizing device when the item may be there (it was sent at least
+  /// once), and drops what its sends masked.
+  nonisolated static func queueRemoteDeletion(_ db: Database, itemID: String, at date: Double)
+    throws
+  {
+    try db.execute(
+      sql: """
+        INSERT OR IGNORE INTO remote_pending_deletions (item_id, queued_at)
+        SELECT item_id, ? FROM remote_organizer_item_jobs
+        WHERE item_id = ? AND (delivered_revision IS NOT NULL OR attempted_revision IS NOT NULL)
+        """,
+      arguments: [date, itemID])
+    // An item whose unconfirmed send was dropped by a revocation or an archive
+    // import (privacy review F14).
+    let maybeKey = maybeOnOrganizerMetaPrefix + itemID
+    if try Bool.fetchOne(
+      db, sql: "SELECT 1 FROM remote_organizer_meta WHERE key = ?", arguments: [maybeKey]) == true
+    {
+      try db.execute(
+        sql: "INSERT OR IGNORE INTO remote_pending_deletions (item_id, queued_at) VALUES (?, ?)",
+        arguments: [itemID, date])
+      try db.execute(sql: "DELETE FROM remote_organizer_meta WHERE key = ?", arguments: [maybeKey])
+    }
+    try db.execute(sql: "DELETE FROM remote_mask_map WHERE owner_id = ?", arguments: [itemID])
+    try db.execute(
+      sql: "DELETE FROM remote_mask_offsets WHERE item_id = ?", arguments: [itemID.uppercased()])
+  }
+
+  /// Resolves a placeholder to the one original it stands for in this
+  /// library; one that stands for none, or (a 24-bit tag collision) for
+  /// several, is shown without its tag.
+  private nonisolated static func remoteUnmasker(_ db: Database) throws -> (String) -> String {
+    var originals: [String: Set<String>] = [:]
+    for row in try Row.fetchAll(
+      db, sql: "SELECT DISTINCT placeholder, original FROM remote_mask_map")
+    {
+      originals[row["placeholder"], default: []].insert(row["original"])
+    }
+    return { text in
+      PrivacyUnmask.unmask(text) { placeholder in
+        guard let values = originals[placeholder], values.count == 1 else { return nil }
+        return values.first
+      }
+    }
+  }
+
+  private nonisolated static func remoteMaskOffsets(_ db: Database) throws
+    -> [String: [PrivacyMaskOffset]]
+  {
+    var result: [String: [PrivacyMaskOffset]] = [:]
+    for row in try Row.fetchAll(db, sql: "SELECT item_id, offsets_json FROM remote_mask_offsets") {
+      let json: String = row["offsets_json"]
+      if let offsets = try? JSONDecoder().decode([PrivacyMaskOffset].self, from: Data(json.utf8)) {
+        result[(row["item_id"] as String).uppercased()] = offsets
+      }
+    }
+    return result
   }
 
   // MARK: - Helpers
@@ -825,7 +1045,7 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
                  m.source_bundle_id, m.source_display_name, m.source_identifier,
                  tr.id AS transcript_id, tr.content, uid.item_kind,
                  uid.uniform_type, uid.parent_session_id, uid.frame_ms,
-                 uid.original_asset_id, uid.normalized_asset_id
+                 uid.original_asset_id, uid.normalized_asset_id, uid.extractor
           FROM sessions s
           JOIN dictation_snapshots ds ON ds.session_id = s.id
           LEFT JOIN session_metadata m ON m.session_id = s.id
@@ -979,7 +1199,10 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
     timeZone: TimeZone
   ) throws -> RemoteOrganizerItem? {
     guard let kindValue: String = row["item_kind"],
-      let kind = UserItemKind(rawValue: kindValue)
+      let kind = UserItemKind(rawValue: kindValue),
+      // Kept only on this Mac (audio or video, archives, unreadable
+      // binaries; contract §5): never sent, whatever else it has.
+      (row["extractor"] as String?) != UserItemLimits.localOnlyExtractor
     else { return nil }
     var imageAsset: RemoteOrganizerImageAsset?
     var extraImageAssets: [RemoteOrganizerImageAsset]?
@@ -1015,8 +1238,10 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
         clampedScalars(row["source_identifier"], to: remoteFilenameScalars)
         ?? clampedScalars(asset["original_filename"], to: remoteFilenameScalars) ?? "file"
       let uti: String? = row["uniform_type"]
-      file = (filename, uti.flatMap { $0.unicodeScalars.count <= 256 ? $0 : nil },
-        asset["media_type"], size)
+      file = (
+        filename, uti.flatMap { $0.unicodeScalars.count <= 256 ? $0 : nil },
+        asset["media_type"], size
+      )
       if size > 0, size <= UserItemLimits.maximumSendableFileBytes {
         fileAsset = RemoteOrganizerImageAsset(
           assetID: asset["id"], relativePath: asset["asset_reference"], sha256: fileDigest,
@@ -1054,7 +1279,8 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
       let normalizedID: String? = row["normalized_asset_id"]
       let normalized = assets.filter { ($0["kind"] as String) == "normalizedImage" }
       guard
-        let main = (normalized.first { ($0["id"] as String) == normalizedID }
+        let main =
+          (normalized.first { ($0["id"] as String) == normalizedID }
           ?? normalized.first).flatMap(sendable)
       else { return nil }
       imageAsset = main
@@ -1325,6 +1551,11 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
       db, sql: "SELECT value FROM remote_organizer_meta WHERE key = ?", arguments: [key]
     )
   }
+
+  /// `remote_organizer_meta` key prefix of an item whose send was attempted
+  /// but never confirmed when a revocation or an archive import dropped its
+  /// job (the item may be on the organizing device).
+  nonisolated static let maybeOnOrganizerMetaPrefix = "maybe_on_organizer:"
 
   private nonisolated static func setRemoteMeta(
     _ db: Database, _ key: String, _ value: String

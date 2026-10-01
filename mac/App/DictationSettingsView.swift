@@ -1,6 +1,7 @@
 import BestASRDictation
 import BestASRDomain
 import BestASRMacUI
+import BestASRRemoteOrganizer
 import SwiftUI
 
 private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hashable {
@@ -58,6 +59,8 @@ struct DictationSettingsView: View {
   let scope: DictationSettingsScope
   @State private var selectedCategory = DictationSettingsCategory.general
   @State private var confirmSpeakerMemoryDeletion = false
+  @State private var confirmSparkForget = false
+  @State private var confirmPhoneDisconnect = false
   @State private var confirmRebuildableCacheDeletion = false
   @State private var pendingHistoryClearMode: SessionInputMode?
   @State private var pendingAppPolicyDeletion: AppTextPolicy?
@@ -74,6 +77,87 @@ struct DictationSettingsView: View {
     self.model = model
     self.scope = scope
     _selectedCategory = State(initialValue: scope == .advanced ? .models : .general)
+  }
+
+  /// "连接 iPhone" / "断开 iPhone" (PHONE-CONTRACT §4). Connecting is offered
+  /// only while the link above is on; disconnecting whenever a phone is
+  /// paired, so a lost phone can always be cut off.
+  @ViewBuilder private var phoneLinkSection: some View {
+    let phone = model.phoneLink
+    if let paired = phone.paired {
+      Text("已连接 iPhone · \(paired.pairedAt.formatted(date: .abbreviated, time: .shortened))")
+        .accessibilityIdentifier("bestASR.settings.phonePaired")
+    } else {
+      Text("没有连接 iPhone")
+    }
+    Text(
+      "iPhone 上用织机键盘说的话、用「收进织机」分享的文字、链接、图片和文件，会在手机上锁好，只有这台 Mac 打得开；经你的整理设备转交，这台 Mac 取走后整理设备就删掉。手机的钥匙只能往收件箱里放东西。"
+    )
+    .font(.caption)
+    .foregroundStyle(.secondary)
+    HStack {
+      Button(phone.paired == nil ? "连接 iPhone" : "重新连接 iPhone") {
+        model.connectIPhone()
+      }
+      .disabled(!model.canConnectIPhone)
+      .accessibilityIdentifier("bestASR.settings.phoneConnect")
+      if phone.paired != nil {
+        Button("断开 iPhone", role: .destructive) {
+          confirmPhoneDisconnect = true
+        }
+        .disabled(phone.working || phone.service == nil)
+        .accessibilityIdentifier("bestASR.settings.phoneDisconnect")
+      }
+      if phone.working {
+        ProgressView().controlSize(.small)
+      }
+    }
+    .sheet(
+      isPresented: Binding(
+        get: { model.phoneLink.pairingCode != nil },
+        set: { if !$0 { model.finishPhonePairingCode() } }
+      )
+    ) {
+      if let code = model.phoneLink.pairingCode {
+        PhonePairingCodeSheet(
+          code: code, copy: { model.copyPhonePairingCode() },
+          done: { model.finishPhonePairingCode() })
+      }
+    }
+    .confirmationDialog(
+      "断开 iPhone？", isPresented: $confirmPhoneDisconnect, titleVisibility: .visible
+    ) {
+      Button("断开", role: .destructive) { model.disconnectIPhone() }
+      Button("取消", role: .cancel) {}
+    } message: {
+      Text("这台 iPhone 的钥匙会从整理设备和中转主机上删除，之后它送出的内容不再被接收。已经收进这台 Mac 的内容不受影响。")
+    }
+    if !model.remoteOrganizerEnabled, phone.paired == nil {
+      Text("先打开上面的整理设备链路，再连接 iPhone。")
+        .font(.caption)
+        .foregroundStyle(.secondary)
+    }
+    if let status = phone.statusMessage {
+      Text(status)
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .accessibilityIdentifier("bestASR.settings.phoneStatus")
+    }
+    if !phone.droppedNotices.isEmpty {
+      HStack(alignment: .firstTextBaseline) {
+        VStack(alignment: .leading, spacing: 2) {
+          ForEach(phone.droppedNotices, id: \.self) { notice in
+            Text(notice)
+          }
+        }
+        .font(.caption)
+        .foregroundStyle(.orange)
+        Spacer()
+        Button("知道了") { model.dismissPhoneDropNotices() }
+          .controlSize(.small)
+      }
+      .accessibilityIdentifier("bestASR.settings.phoneDropped")
+    }
   }
 
   var body: some View {
@@ -730,10 +814,39 @@ struct DictationSettingsView: View {
                 .accessibilityIdentifier("bestASR.settings.organizerTestClock")
             }
             Text(
-              "开启后只发送开启后开始的记录的最终逐字稿、分段、人物名称和来源 App，以及你在事件页做的整理决定；已发往整理设备的记录在链路开启时被你修改，会发送修改后的新版本。音频、声纹、词典和窗口标题始终留在 Mac。关闭会立即停止一切发送、断开 SSH 隧道并清空待发队列：关闭前还没发出的内容和修改都不再发送，关闭期间的记录和修改也不会在重新开启后自动补发（重新开启后再次修改的记录，会发送它当时的完整内容）。从归档导入会关闭链路，导入的内容不会自动发送。已送达整理设备的内容仍保留在你的整理设备上。"
+              "开启后只发送开启后开始的记录的文字、分段、人物名称和来源 App，以及你在事件页做的整理决定；发送前，手机号、邮箱、证件号、银行卡号、验证码、密码和密钥会先换成占位符，截图里的这些号码会被涂掉，结果回到 Mac 时再换回原文。录音、声纹、词典、原始文件和音视频始终留在 Mac。整理设备上的内容用只存在这台 Mac 钥匙串里的钥匙锁住，图片和文件读完即删；你在 Mac 上删除的记录，整理设备上也会删除。关闭会先让整理设备锁上，再停止一切发送、断开 SSH 隧道并清空待发队列；关闭期间的记录和修改不会在重新开启后自动补发。从归档导入会关闭链路，导入的内容不会自动发送。"
             )
             .font(.caption)
             .foregroundStyle(.secondary)
+            Button(
+              model.remoteOrganizerHoldsOtherKey ? "让整理设备忘掉旧内容" : "让整理设备忘掉我的内容",
+              role: .destructive
+            ) {
+              confirmSparkForget = true
+            }
+            .disabled(!model.remoteOrganizerCanForget || model.remoteOrganizerForgetting)
+            .accessibilityIdentifier("bestASR.settings.sparkForget")
+            .confirmationDialog(
+              model.remoteOrganizerHoldsOtherKey ? "让整理设备忘掉旧内容？" : "让整理设备忘掉你的内容？",
+              isPresented: $confirmSparkForget,
+              titleVisibility: .visible
+            ) {
+              Button(
+                model.remoteOrganizerHoldsOtherKey ? "忘掉旧内容" : "忘掉并销毁钥匙", role: .destructive
+              ) {
+                model.forgetRemoteOrganizerContent()
+              }
+              Button("取消", role: .cancel) {}
+            } message: {
+              Text(
+                model.remoteOrganizerHoldsOtherKey
+                  ? "整理设备会删除用另一把钥匙保存的全部内容；这台 Mac 上的记录不受影响。"
+                  : "整理设备会删除它为你保存的全部内容，这台 Mac 上的钥匙也会销毁；Mac 上的记录和整理结果都保留，之后只发送新的或改过的记录。"
+              )
+            }
+          }
+          Section("iPhone") {
+            phoneLinkSection
           }
           Section("人物与声纹隐私") {
             Toggle(
@@ -1009,5 +1122,54 @@ struct DictationSettingsView: View {
     case .revoked: "权限已关闭"
     case .restartRequired: "已允许，重新打开 App 后生效"
     }
+  }
+}
+
+/// The pairing code for the phone right after "连接 iPhone": a QR code to scan
+/// with 织机 on the iPhone, and "复制配对码" to paste there instead. The code
+/// holds the phone's private key; closing this window forgets it.
+private struct PhonePairingCodeSheet: View {
+  let code: String
+  let copy: () -> Void
+  let done: () -> Void
+  @State private var image: CGImage?
+  @State private var copied = false
+
+  var body: some View {
+    VStack(spacing: 14) {
+      Text("用 iPhone 上的织机扫这个码")
+        .font(.title3.bold())
+      Group {
+        if let image {
+          Image(decorative: image, scale: 1)
+            .interpolation(.none)
+            .resizable()
+            .scaledToFit()
+        } else {
+          ProgressView()
+        }
+      }
+      .frame(width: 280, height: 280)
+      .accessibilityLabel("配对二维码")
+      .accessibilityIdentifier("bestASR.settings.phonePairingCode")
+      Text(
+        "也可以复制配对码，在 iPhone 的织机里粘贴。配对码里有这台 iPhone 的钥匙，只给你自己的 iPhone 用；关掉这个窗口后，这台 Mac 不再保留它。"
+      )
+      .font(.caption)
+      .foregroundStyle(.secondary)
+      .multilineTextAlignment(.center)
+      .frame(maxWidth: 320)
+      HStack {
+        Button(copied ? "已复制" : "复制配对码") {
+          copy()
+          copied = true
+        }
+        .accessibilityIdentifier("bestASR.settings.phoneCopyPairingCode")
+        Button("完成", action: done)
+          .keyboardShortcut(.defaultAction)
+      }
+    }
+    .padding(24)
+    .task { image = PhonePairingQRCode.image(for: code) }
   }
 }

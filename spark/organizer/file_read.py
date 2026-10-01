@@ -11,6 +11,14 @@
 
 The reading (contract "file", 2026-09-29) is {type, text, summary, fields, counts, attachments, error?,
 source: "file-read"}; the text used for organizing is the reading text (+ summary).
+
+Pictures inside the bytes are read (step 2) only when the Mac says it redacted every one of them in the send copy
+(`meta["pictures_redacted"]`, privacy review F3); otherwise they are skipped and counted.
+
+Privacy (contract v6): with `mask` (the store's mask function, organizer/masking.py) every text read from the
+bytes (the extracted text, title, fields, attachment names and summaries, each image part's reading) is masked
+before it goes into the summary prompt or the returned reading. Audio and video inside a document or archive
+are never decoded here: the parser skips them and the text records only "N 个媒体附件未读取（只在 Mac 上）".
 An encrypted / corrupt / unsupported / too large file gets a reading with `error` set, the Mac's
 local_text (if any) as its text and a plain summary, so the item is still organized by what is known.
 """
@@ -26,7 +34,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Optional
 
 from . import fileparse
-from .clients import ChatClient, ModelUnavailable
+from .clients import ChatClient, ModelUnavailable, safe_error
 from .image_read import read_image
 from .skills import Harness
 
@@ -108,11 +116,22 @@ def excerpt(text: str, limit: int = EXCERPT_CHARS) -> str:
     return f"{head}\n……（中间省略 {len(text) - len(head) - len(tail)} 字）……\n{tail}"
 
 
+def media_note(n: int) -> str:
+    return f"{n} 个媒体附件未读取（只在 Mac 上）"
+
+
+def pictures_note(n: int) -> str:
+    return f"{n} 张图片未读取（未经 Mac 遮盖）"
+
+
 def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: Optional[str] = None,
               clients: Optional[dict[str, ChatClient]] = None, as_of: Optional[str] = None,
-              parse: Callable[..., dict] = fileparse.parse_file, image_workers: int = IMAGE_WORKERS) -> FileReading:
+              parse: Callable[..., dict] = fileparse.parse_file, image_workers: int = IMAGE_WORKERS,
+              mask: Optional[Callable[[str], str]] = None) -> FileReading:
     """Read one file. `meta` is the item's file metadata (filename, mime, sha256, local_text, source_app,
-    captured_at). Raises ModelUnavailable when the model is down (the job is retried later)."""
+    captured_at). Raises ModelUnavailable when the model is down (the job is retried later). `mask` masks
+    every text read from the bytes before it is used (the organizer passes the store's mask function)."""
+    m: Callable[[str], str] = mask or (lambda t: t)
     started = time.time()
     filename = str(meta.get("filename") or "文件")
     local_text = str(meta.get("local_text") or "").strip()
@@ -132,11 +151,26 @@ def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: O
     typ = parsed.get("type") or EXT_TYPE.get(_ext(filename), "data")
     notes += parsed.get("notes") or []
     error = parsed.get("error")
+    # Everything below the parse is masked text: the prompt and the stored reading never see raw identifiers.
+    parsed["text"] = m(parsed.get("text") or "")
+    parsed["title"] = m(parsed.get("title") or "")
+    parsed["fields"] = [dict(f, value=m(str(f.get("value") or "")), label=m(str(f.get("label") or "")))
+                        for f in parsed.get("fields") or [] if isinstance(f, dict)]
+    parsed["attachments"] = [dict(a, filename=m(str(a.get("filename") or "")), summary=m(str(a.get("summary") or "")))
+                             for a in parsed.get("attachments") or [] if isinstance(a, dict)]
+    notes = [m(str(n)) for n in notes]
+    media_skipped = int(parsed.get("media_skipped") or 0)
 
-    # (2) image parts
+    # (2) image parts. Only a picture the Mac redacted may reach a model (contract section 4): pictures inside the
+    # file bytes (scanned PDF pages, pictures in a document, an image or a zip of images under a document's name)
+    # are read only when the Mac rebuilt the send copy with every picture redacted (`pictures_redacted`); else
+    # they are skipped and counted (privacy review F3).
     readings: dict[int, str] = {}
     image_run_ids: list[str] = []
     images = parsed.get("images") or []
+    pictures_skipped = 0
+    if images and not meta.get("pictures_redacted"):
+        pictures_skipped, images = len(images), []
     if images:
         ctx = {"source_app": (meta.get("source_app") or {}).get("name", "") if isinstance(meta.get("source_app"), dict)
                else str(meta.get("source_app") or ""), "captured_at": meta.get("captured_at") or ""}
@@ -145,7 +179,7 @@ def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: O
             try:
                 return im, read_image(harness, im["data"], ctx, subject=subject, clients=clients, as_of=as_of)
             except ValueError as exc:  # the endpoint cannot take images: keep the text without this part
-                log.warning("image part %s of %s not read: %s", im["id"], subject, exc)
+                log.warning("image part %s of %s not read: %s", im["id"], subject, safe_error(exc))
                 return im, None
 
         with ThreadPoolExecutor(max_workers=max(1, min(image_workers, len(images)))) as pool:
@@ -158,20 +192,29 @@ def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: O
             gist = (r.get("gist") or "").strip()
             if not body and not gist:
                 continue
-            readings[im["id"]] = f"[{im['label']}·图片识别] {gist}".rstrip() + (f"\n{body}" if body else "")
+            readings[im["id"]] = m(f"[{im['label']}·图片识别] {gist}".rstrip() + (f"\n{body}" if body else ""))
             if res.run_id:
                 image_run_ids.append(res.run_id)
-    text = MARKER.sub(lambda m: readings.get(int(m.group(1)), ""), parsed.get("text") or "")
+    text = MARKER.sub(lambda mt: readings.get(int(mt.group(1)), ""), parsed.get("text") or "")
     text = re.sub(r"\n{3,}", "\n\n", text).strip()
     counts = dict(parsed.get("counts") or {})
     if images:
         counts["images_read"] = len(readings)
+    if pictures_skipped:
+        counts["pictures_skipped"] = pictures_skipped
+        text = (text + "\n\n" if text else "") + pictures_note(pictures_skipped)
+        notes.append(pictures_note(pictures_skipped))
+    if media_skipped:
+        # Audio / video inside the file stay unread here; only their number is recorded.
+        counts["media_skipped"] = media_skipped
+        text = (text + "\n\n" if text else "") + media_note(media_skipped)
+        notes.append(media_note(media_skipped))
     if typ == "image" and not readings and not error and not text:
         error = "unsupported"
 
     # Mac-side text: used when the Spark could not read the file or got (almost) nothing out of it.
     if local_text and len(text.replace(" ", "")) < 20 and len(local_text) > len(text):
-        text = local_text
+        text = m(local_text)
         notes.append("正文来自 Mac 端提取的文字")
     text, cut = clip(text, TEXT_CAP)
     if cut:
@@ -187,7 +230,9 @@ def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: O
                                                               subject=subject, as_of=as_of)
         fields = fields + extra
     if not summary:
-        summary, source = plain_summary(typ, filename, title, error), "plain"
+        summary, source = plain_summary(typ, m(filename), title, error), "plain"
+    summary = m(summary)
+    fields = [dict(f, value=m(str(f.get("value") or ""))) for f in fields]
     return FileReading(type=typ, text=text, summary=summary, fields=fields, counts=counts, attachments=attachments,
                        error=error, doc_kind=doc_kind, notes=notes, run_id=run_id, image_run_ids=image_run_ids,
                        summary_source=source, latency_s=time.time() - started)
@@ -205,7 +250,7 @@ def _summarize(harness: Harness, filename: str, typ: str, title: str, counts: di
     try:
         res = harness.run("file_read", data, context=context, subject=subject, as_of=as_of)
     except ValueError as exc:  # the endpoint rejected the request
-        log.warning("file-read summary rejected for %s: %s", subject, exc)
+        log.warning("file-read summary rejected for %s: %s", subject, safe_error(exc))
         return "", "", "plain", None, []
     except ModelUnavailable:
         raise

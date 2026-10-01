@@ -89,11 +89,17 @@ final class IntakeFileTypesTests: XCTestCase {
       ("旧.ppt", "application/vnd.ms-powerpoint"), ("信.msg", "application/vnd.ms-outlook"),
       ("数据.zzqq", "application/octet-stream"), ("文稿.pages", "application/vnd.apple.pages"),
     ]
+    // Privacy contract v6 §5: archives and binaries the organizing device
+    // cannot read are kept on this Mac only; documents go as their bytes.
+    let keptHere: Set<String> = ["包.zip", "数据.zzqq"]
     for (name, mime) in cases {
       let item = try draft(try write(zipBytes, name))
       XCTAssertEqual(item.kind, .file, name)
       XCTAssertEqual(item.text, "", name)
-      XCTAssertEqual(item.extractor, UserItemLimits.fileBytesExtractor, name)
+      XCTAssertEqual(
+        item.extractor,
+        keptHere.contains(name)
+          ? UserItemLimits.localOnlyExtractor : UserItemLimits.fileBytesExtractor, name)
       XCTAssertEqual(item.attachments.first?.mediaType, mime, name)
       XCTAssertEqual(item.attachments.first?.sizeBytes, UInt64(zipBytes.count), name)
     }
@@ -309,15 +315,17 @@ final class IntakeFileTypesTests: XCTestCase {
         processor.prepare(.file(url), capturedAt: at, source: nil, origin: .finder), .media(url),
         name)
     }
-    for name in ["a.mkv", "a.webm"] where !IntakeProcessor.canDecodeMedia(
+    // What this Mac cannot decode is kept here only, never sent (contract
+    // v6 §5), whatever it is called.
+    for name in ["a.mkv", "a.webm", "a.avi", "a.wma"] where !IntakeProcessor.canDecodeMedia(
       URL(fileURLWithPath: "/tmp/\(name)"))
     {
       let url = try write(Data([1, 2, 3]), name)
       guard
-        case .rejected(let message) = processor.prepare(
+        case .item(let item) = processor.prepare(
           .file(url), capturedAt: at, source: nil, origin: .finder)
       else { return XCTFail(name) }
-      XCTAssertTrue(message.contains("无法解码"), message)
+      XCTAssertTrue(item.isLocalOnly, name)
     }
   }
 

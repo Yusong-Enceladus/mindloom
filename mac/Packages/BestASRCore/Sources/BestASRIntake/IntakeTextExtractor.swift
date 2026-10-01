@@ -322,8 +322,52 @@ public enum IntakeFileClass: Equatable, Sendable {
       if iWorkExtensions.contains(ext) { return .iWork }
       if structuredTextExtensions.contains(ext) { return .file }
       if isOtherPlainText(ext) { return .plainText }
+      // What the system declares audio or video is media whatever its name
+      // (`.avi`, `.wma`, `.3gp`, …; privacy contract §5), and any declared
+      // image — camera RAW, PSD — goes through the image path.
+      if !ext.isEmpty, let type = UTType(filenameExtension: ext), !type.isDynamic {
+        if type.conforms(to: .audio) { return .audio }
+        if type.conforms(to: .audiovisualContent) { return .video }
+        if type.conforms(to: .image) { return .image }
+      }
       return .file
     }
+  }
+
+  /// Documents the organizing device reads from their bytes (Office,
+  /// iWork, OpenDocument, e-books, mail, calendars, contacts, tables, PDF,
+  /// SVG). Any other file this Mac cannot read as text is kept here.
+  public static let sendableFileExtensions: Set<String> = [
+    "xlsx", "xlsm", "xltx", "xls", "pptx", "ppsx", "potx", "ppt", "pps", "key", "numbers",
+    "pages", "epub", "odt", "ods", "odp", "odg", "docx", "dotx", "doc", "rtfd", "pdf", "svg",
+    "csv", "tsv", "tab", "ics", "ical", "ifb", "vcf", "vcard", "eml", "emlx", "mbox", "msg",
+  ]
+
+  /// Archives other than zip: never expanded or sent; kept on this Mac.
+  public static let archiveExtensions: Set<String> = [
+    "tar", "tgz", "gz", "gzip", "bz2", "tbz", "tbz2", "xz", "txz", "lz", "lzma", "z", "7z",
+    "rar", "zipx", "cab", "arj", "lzh", "zst", "dmg", "iso", "pkg", "xip", "sit", "sitx",
+  ]
+
+  /// A zip or any other archive: never sent (a zip's files are taken in
+  /// one by one).
+  public static func isArchive(_ url: URL) -> Bool {
+    let ext = url.pathExtension.lowercased()
+    return ext == "zip" || archiveExtensions.contains(ext)
+  }
+
+  /// Whether a `.file` item may be sent as bytes: a document the organizing
+  /// device reads, or a file the system declares as text. (A file whose
+  /// bytes this Mac reads as text is sent too, with that text.)
+  public static func isSendableFile(_ url: URL) -> Bool {
+    let ext = url.pathExtension.lowercased()
+    if isArchive(url) { return false }
+    if sendableFileExtensions.contains(ext) { return true }
+    if !ext.isEmpty, let type = UTType(filenameExtension: ext), !type.isDynamic {
+      return type.conforms(to: .text) || type.conforms(to: .spreadsheet)
+        || type.conforms(to: .presentation)
+    }
+    return false
   }
 
   /// Any other extension the system declares as text (json, log, yaml,

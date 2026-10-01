@@ -1,18 +1,42 @@
-import sqlite3
-
 import pytest
 
 from conftest import ingest, make_item
+from organizer.db import DatabaseError
 
 
-def test_items_are_append_only(org):
+def test_item_content_is_never_rewritten_only_purged(org):
+    """The integrity rule that replaced "append-only" (privacy contract v6): model output and organizer code
+    can never rewrite an item; the only mutation is a purge (every content column NULL, purged = 1)."""
     item = make_item("咖啡馆菜单周五前定下来")
     ingest(org, item)
-    with pytest.raises(sqlite3.DatabaseError):
-        org.store.x("UPDATE items SET text='改掉' WHERE item_id=?", (item["item_id"],))
-    with pytest.raises(sqlite3.DatabaseError):
-        org.store.x("DELETE FROM items WHERE item_id=?", (item["item_id"],))
-    assert org.store.get_item(item["item_id"])["text"] == "咖啡馆菜单周五前定下来"
+    iid = item["item_id"]
+    for sql in ("UPDATE items SET text='改掉' WHERE item_id=?",                   # rewrite the content
+                "UPDATE items SET text=NULL WHERE item_id=?",                    # blank it without a purge
+                "UPDATE items SET sha256='x' WHERE item_id=?",
+                "UPDATE items SET revision=revision+1 WHERE item_id=?",          # identity and time never change
+                "UPDATE items SET started_at='2020-01-01T00:00:00+08:00' WHERE item_id=?",
+                "UPDATE items SET text=NULL, segments=NULL, persons=NULL, sha256=NULL, meta=NULL, purged=1,"
+                " kind='text' WHERE item_id=?",                                   # a purge that also changes kind
+                "DELETE FROM items WHERE item_id=?"):                             # never deleted
+        with pytest.raises(DatabaseError):
+            org.store.x(sql, (iid,))
+    assert org.store.get_item(iid)["text"] == "咖啡馆菜单周五前定下来"
+    # the purge path is allowed, and a purged row cannot be un-purged or refilled
+    org.store.x("UPDATE items SET text=NULL, segments=NULL, persons=NULL, sha256=NULL, meta=NULL, purged=1"
+                " WHERE item_id=?", (iid,))
+    row = org.store.one("SELECT text, sha256, purged, kind FROM items WHERE item_id=?", (iid,))
+    assert row == {"text": None, "sha256": None, "purged": 1, "kind": "dictation"}
+    for sql in ("UPDATE items SET purged=0 WHERE item_id=?", "UPDATE items SET text='回来了' WHERE item_id=?"):
+        with pytest.raises(DatabaseError):
+            org.store.x(sql, (iid,))
+
+
+def test_item_blobs_are_never_rewritten(org):
+    from conftest import TINY_PNG_B64
+    shot = make_item(kind="image", image_b64=TINY_PNG_B64)
+    ingest(org, shot)
+    with pytest.raises(DatabaseError):
+        org.store.x("UPDATE item_blobs SET data=X'00' WHERE item_id=?", (shot["item_id"],))
 
 
 def test_ingest_is_idempotent_by_item_and_revision(org):

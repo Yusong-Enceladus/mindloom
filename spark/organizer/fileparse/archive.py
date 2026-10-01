@@ -12,7 +12,7 @@ import tarfile
 import zlib
 from typing import Callable
 
-from .core import TEXT_CAP, Budget, ParseError, Parsed, clip, ext_of
+from .core import MEDIA_SKIPPED_FMT, TEXT_CAP, Budget, ParseError, Parsed, clip, ext_of, is_media_name
 from .pkg import Package, is_bomb
 
 JUNK = ("__MACOSX/", ".DS_Store", "Thumbs.db", "desktop.ini", "._")
@@ -29,6 +29,8 @@ def _summary(p: Parsed) -> str:
 
 
 def _render(entries: list[tuple[str, Parsed]], skipped: list[dict], total: int, kind: str) -> Parsed:
+    # Audio / video entries are not listed: only their number is recorded (file_read adds the line).
+    entries = [e for e in entries if e[1].fmt != MEDIA_SKIPPED_FMT]
     readable = [e for e in entries if e[1].text]
     per = max(1500, TEXT_CAP // max(1, len(readable)))
     blocks = [f"{kind}，共 {total} 个文件"]
@@ -49,6 +51,9 @@ def parse_zip(pkg: Package, budget: Budget, sub: Callable[[bytes, str, int], Par
     entries, skipped = [], []
     for info in infos:
         name = info.filename
+        if is_media_name(name):
+            budget.media_skipped += 1  # never read: audio and video stay on the Mac
+            continue
         if budget.archive_entries_left <= 0:
             budget.note("压缩包内文件超过 200 个，其余未读")
             skipped.append({"filename": name, "type": "data", "summary": "超过数量上限，未读取"})
@@ -81,6 +86,9 @@ def parse_tar(data: bytes, budget: Budget, sub: Callable[[bytes, str, int], Pars
         if not member.isfile() or _junk(member.name):
             continue
         total += 1
+        if is_media_name(member.name):
+            budget.media_skipped += 1  # never read: audio and video stay on the Mac
+            continue
         if budget.archive_entries_left <= 0:
             skipped.append({"filename": member.name, "type": "data", "summary": "超过数量上限，未读取"})
             continue

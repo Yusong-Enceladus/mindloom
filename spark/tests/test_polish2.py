@@ -4,10 +4,9 @@ that are not completions, and the screenshot summary kept apart from the transcr
 Every name and text here is invented for the tests.
 """
 
-import sqlite3
 import sys
 
-from conftest import REPO, TINY_PNG_B64, chat_extraction, event_of, image_reader, ingest, make_item
+from conftest import REPO, TEST_KEY, TINY_PNG_B64, chat_extraction, raw_connect, event_of, image_reader, ingest, make_item
 from organizer.skills import SkillRegistry
 from organizer.store import Store
 
@@ -187,22 +186,22 @@ def test_a_quote_taken_from_the_summary_is_not_evidence(org, chat):
 
 def test_readings_stored_with_the_summary_inline_are_split_and_republished(tmp_path):
     db = tmp_path / "o.db"
-    store = Store(db)
+    store = Store(db, key=TEST_KEY)
     store.insert_item({"item_id": "A", "revision": 1, "kind": "image", "source_app": {"name": "微信"},
                        "started_at": "2026-09-20T09:00:00+08:00", "sha256": "0" * 64}, b"\x89PNG....")
     store.save_derived("A", 1, derived_text="对方问聚餐\n[10:02] 许言：周六来吗", messages=[],
                        screenshot_run_id="run-old")
-    store.conn.close()
-    conn = sqlite3.connect(db)                       # a database written before the summary column
+    store.lock()
+    conn = raw_connect(db)                       # a database written before the summary column
     conn.execute("ALTER TABLE item_derived DROP COLUMN summary")
     conn.commit()
     old_cursor = int(conn.execute("SELECT value FROM meta WHERE key='seq'").fetchone()[0])
     conn.close()
-    reopened = Store(db)
+    reopened = Store(db, key=TEST_KEY)
     rows = reopened.readings_since(old_cursor)
     assert [(r["summary"], r["derived_text"]) for r in rows] == [("对方问聚餐", "[10:02] 许言：周六来吗")]
-    reopened.conn.close()
-    assert Store(db).readings_since(old_cursor)[0]["summary"] == "对方问聚餐"   # split once, not again
+    reopened.lock()
+    assert Store(db, key=TEST_KEY).readings_since(old_cursor)[0]["summary"] == "对方问聚餐"   # split once, not again
 
 
 # ---- metric --------------------------------------------------------------------------------------

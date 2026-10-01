@@ -11,8 +11,8 @@ from email import policy
 from email.utils import getaddresses
 from typing import Callable
 
-from .core import (MAX_MAILS, PART_TEXT_CAP, Budget, Parsed, clean_text, clip, decode_text,
-                   first_line, html_to_text)
+from .core import (MAX_MAILS, MEDIA_SKIPPED_FMT, PART_TEXT_CAP, Budget, Parsed, clean_text, clip, decode_text,
+                   first_line, html_to_text, is_media_name)
 
 HEADER_LABELS = (("subject", "主题"), ("from", "发件人"), ("to", "收件人"), ("cc", "抄送"), ("date", "时间"))
 
@@ -38,10 +38,15 @@ def render_mail(headers: dict, body: str, attachments: list[tuple[str, bytes]], 
     blocks = ["\n".join(lines), body + ("\n（正文较长，已截断）" if cut else "")]
     listed = []
     for name, data in attachments:
+        if is_media_name(name):
+            budget.media_skipped += 1  # audio / video attachments are never read here
+            continue
         if not read_attachments or not data:
             listed.append({"filename": name, "type": "data", "summary": "未读取"})
             continue
         inner = sub(data, name)
+        if inner.fmt == MEDIA_SKIPPED_FMT:
+            continue
         summary = _attachment_summary(inner)
         listed.append({"filename": name, "type": inner.type, "summary": summary})
         if inner.text:
@@ -151,6 +156,8 @@ def parse_mbox(data: bytes, budget: Budget) -> Parsed:
         body, attachments = _message_parts(msg)
         body, _ = clip(body, 3000)
         head = "\n".join(f"{label}：{headers[k]}" for k, label in HEADER_LABELS if headers.get(k))
+        budget.media_skipped += sum(1 for n, _ in attachments if is_media_name(n))
+        attachments = [(n, d) for n, d in attachments if not is_media_name(n)]
         names = "、".join(n for n, _ in attachments)
         blocks.append(f"## 邮件 {i + 1}\n{head}\n\n{body}" + (f"\n附件：{names}" if names else ""))
         listed += [{"filename": n, "type": "data", "summary": f"邮件 {i + 1} 的附件，未读取"} for n, _ in attachments]

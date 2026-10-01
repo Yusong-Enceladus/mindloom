@@ -9,7 +9,7 @@ description: >-
   transcripts, for chit-chat, or for anything that would leave the user's own devices.
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.1.1"
   author: mindloom
   status: P1-stub
   language: zh-CN
@@ -22,6 +22,8 @@ metadata:
 
 给**本机其它 Agent** 一个只读的"回忆"入口：输入一句关键词或问题，返回最相关的几个事件的标题、"现在到哪一步"、带出处的事实。
 Read-only recall for other local agents.
+
+占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。
 
 ## 用法 / Usage
 

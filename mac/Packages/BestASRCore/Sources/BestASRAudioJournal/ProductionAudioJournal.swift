@@ -775,6 +775,8 @@ public actor ProductionAudioJournal: DictationJournalPort,
   public func commitExplicitDeletion(_ deletion: StagedSessionDeletion) throws {
     guard fileManager.fileExists(atPath: deletion.stagedURL.path) else { return }
     try fileManager.removeItem(at: deletion.stagedURL)
+    // Bytes shared with no other item any more leave with this one.
+    ContentAddressedAssets.prune(assetRoot: assetRootURL)
   }
 
   private func context(for sessionID: SessionID) throws -> OpenContext {
