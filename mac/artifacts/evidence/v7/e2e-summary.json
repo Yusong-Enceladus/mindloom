@@ -1,0 +1,1185 @@
+{
+ "schemaVersion": 1,
+ "kind": "v7-integration-e2e",
+ "date": "2026-10-01",
+ "note": "Synthetic data only. Counts and check names; no content, key, code, host or path.",
+ "privacy_e2e": {
+  "passed": 68,
+  "failed": 0,
+  "checks": [
+   {
+    "name": "every item organized on the Spark",
+    "passed": true
+   },
+   {
+    "name": "no sentinel in any request's text fields",
+    "passed": true
+   },
+   {
+    "name": "the key crosses only in /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "every item was posted",
+    "passed": true
+   },
+   {
+    "name": "dictation: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "dictation: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "pasted: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "pasted: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "document: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "document: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "the first data call is /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "screenshot send copy: no identifier readable",
+    "passed": true
+   },
+   {
+    "name": "screenshot send copy: the rest of the text survives",
+    "passed": true
+   },
+   {
+    "name": "spreadsheet goes as bytes (read on the Spark)",
+    "passed": true
+   },
+   {
+    "name": "Spark holds the 5 items and no image/file bytes (read, then deleted)",
+    "passed": true
+   },
+   {
+    "name": "the link token without the key's access proof gets 403",
+    "passed": true
+   },
+   {
+    "name": "no sentinel, marker or key in any Spark file",
+    "passed": true
+   },
+   {
+    "name": "store is not a plaintext SQLite file",
+    "passed": true
+   },
+   {
+    "name": "even decrypted, no sentinel is stored on the Spark",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_dictation is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_pasted is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_document is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_sheet is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "rename delivered",
+    "passed": true
+   },
+   {
+    "name": "the Spark returned placeholders the Mac knows",
+    "passed": true
+   },
+   {
+    "name": "no tagged placeholder is shown or exported on the Mac",
+    "passed": true
+   },
+   {
+    "name": "every known placeholder the Spark returned is shown as its original",
+    "passed": true
+   },
+   {
+    "name": "a number the Mac never saw is not guessed",
+    "passed": true
+   },
+   {
+    "name": "the renamed title is shown as typed",
+    "passed": true
+   },
+   {
+    "name": "the Spark holds the renamed title masked",
+    "passed": true
+   },
+   {
+    "name": "spreadsheet reading: the known number is restored, the unknown one is untagged",
+    "passed": true
+   },
+   {
+    "name": "deletion sent as DELETE /v1/items/{id} → 200",
+    "passed": true
+   },
+   {
+    "name": "the deletion carries no content",
+    "passed": true
+   },
+   {
+    "name": "deleted item's text is gone from the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "the other items stay",
+    "passed": true
+   },
+   {
+    "name": "still no plaintext in any Spark file after the delete",
+    "passed": true
+   },
+   {
+    "name": "Spark stats count one item fewer",
+    "passed": true
+   },
+   {
+    "name": "turning the link off sends POST /v1/lock → 200",
+    "passed": true
+   },
+   {
+    "name": "health says locked with this library's key",
+    "passed": true
+   },
+   {
+    "name": "data routes answer 423 while locked",
+    "passed": true
+   },
+   {
+    "name": "locked store: no plaintext in any file",
+    "passed": true
+   },
+   {
+    "name": "a deletion made while off is queued on the Mac",
+    "passed": true
+   },
+   {
+    "name": "link reconnects and unlocks the same store",
+    "passed": true
+   },
+   {
+    "name": "the first data call after reconnecting is /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "the queued deletion is the first call after the unlock",
+    "passed": true
+   },
+   {
+    "name": "nothing is sent again after reconnecting",
+    "passed": true
+   },
+   {
+    "name": "no deletion left queued after reconnecting",
+    "passed": true
+   },
+   {
+    "name": "the item deleted while off is gone from the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "the remaining items stay",
+    "passed": true
+   },
+   {
+    "name": "no plaintext in any file",
+    "passed": true
+   },
+   {
+    "name": "Spark stats count two items fewer",
+    "passed": true
+   },
+   {
+    "name": "forget answers forgotten",
+    "passed": true
+   },
+   {
+    "name": "forget sends POST /v1/wipe → 200",
+    "passed": true
+   },
+   {
+    "name": "the old key is destroyed; a new one replaces it",
+    "passed": true
+   },
+   {
+    "name": "the link goes on with the new key",
+    "passed": true
+   },
+   {
+    "name": "the Spark now holds only the new key's store",
+    "passed": true
+   },
+   {
+    "name": "the new store is empty",
+    "passed": true
+   },
+   {
+    "name": "nothing re-sent after forgetting",
+    "passed": true
+   },
+   {
+    "name": "after forgetting: no plaintext, marker or key in any file",
+    "passed": true
+   },
+   {
+    "name": "no deletion left queued",
+    "passed": true
+   },
+   {
+    "name": "final link off: locked",
+    "passed": true
+   },
+   {
+    "name": "final lock is on the current key",
+    "passed": true
+   },
+   {
+    "name": "wipe while locked → 200",
+    "passed": true
+   },
+   {
+    "name": "store files are gone (organizer.db, -wal, -shm, store.keyid)",
+    "passed": true
+   },
+   {
+    "name": "health after wipe: locked, no key",
+    "passed": true
+   },
+   {
+    "name": "no marker in any file after the wipe",
+    "passed": true
+   },
+   {
+    "name": "the link never dropped to unavailable",
+    "passed": true
+   },
+   {
+    "name": "each of the 3 link runtimes unlocked before any other call",
+    "passed": true
+   }
+  ],
+  "elapsed_seconds": 131.4,
+  "organize_seconds": 72.5,
+  "files_scanned": 9638,
+  "plaintext_hits": 0
+ },
+ "phone_e2e": {
+  "passed": 67,
+  "failed": 0,
+  "checks": [
+   {
+    "name": "the link connects and unlocks the Spark store",
+    "passed": true
+   },
+   {
+    "name": "pairing code decodes (mlpair1.) with this Mac's seal key and the installed key id",
+    "passed": true
+   },
+   {
+    "name": "the Spark's host key is pinned from known_hosts as ed25519 (never RSA)",
+    "passed": true
+   },
+   {
+    "name": "the relay is in the code exactly when the Mac's ssh uses a ProxyJump",
+    "passed": true
+   },
+   {
+    "name": "the relay's host key is pinned as ed25519 or ECDSA",
+    "passed": true
+   },
+   {
+    "name": "the gate word is zhiji-inbox",
+    "passed": true
+   },
+   {
+    "name": "the Mac remembers the inbox command it installed with",
+    "passed": true
+   },
+   {
+    "name": "the phone's private key is in no file on the Mac (root, link state, pairing state)",
+    "passed": true
+   },
+   {
+    "name": "the Mac remembers the pairing (key id, hosts, inbox command, time)",
+    "passed": true
+   },
+   {
+    "name": "Spark: exactly one line for this phone",
+    "passed": true
+   },
+   {
+    "name": "Spark: the line forces zhiji-inbox gate and restricts everything else",
+    "passed": true
+   },
+   {
+    "name": "Spark: the line holds the phone's ed25519 public key and its marker",
+    "passed": true
+   },
+   {
+    "name": "Spark: every other line is unchanged",
+    "passed": true
+   },
+   {
+    "name": "relay: exactly one line for this phone",
+    "passed": true
+   },
+   {
+    "name": "relay: the line allows only a forward to the Spark's ssh port (no shell, no -R)",
+    "passed": true
+   },
+   {
+    "name": "relay: the line holds the phone's ed25519 public key and its marker",
+    "passed": true
+   },
+   {
+    "name": "relay: every other line is unchanged",
+    "passed": true
+   },
+   {
+    "name": "list-phones on the Spark shows the phone as restricted to the gate",
+    "passed": true
+   },
+   {
+    "name": "turning the link off sends POST /v1/lock → 200",
+    "passed": true
+   },
+   {
+    "name": "the Spark inbox holds exactly the 3 entries the phone sent",
+    "passed": true
+   },
+   {
+    "name": "every waiting entry is kind sealed, source sealed, with no text or image column",
+    "passed": true
+   },
+   {
+    "name": "every waiting blob is an mlseal1. wire string",
+    "passed": true
+   },
+   {
+    "name": "every inbox id is the phone's lowercase UUID, stored as sent",
+    "passed": true
+   },
+   {
+    "name": "every blob opens with this Mac's seal key (test side)",
+    "passed": true
+   },
+   {
+    "name": "the phone sent one keyboard dictation, one shared text and one shared image",
+    "passed": true
+   },
+   {
+    "name": "no marker is readable in the sealed blobs",
+    "passed": true
+   },
+   {
+    "name": "a waiting blob does not open with another key or under another id",
+    "passed": true
+   },
+   {
+    "name": "each entry was made on the phone after pairing and before the Spark received it",
+    "passed": true
+   },
+   {
+    "name": "the shared image was re-encoded on the phone: no GPS, no description, no metadata marker",
+    "passed": true
+   },
+   {
+    "name": "while waiting: no marker or phone number in any file of the Spark instance",
+    "passed": true
+   },
+   {
+    "name": "while waiting: the Spark store stays locked and encrypted (no plaintext header)",
+    "passed": true
+   },
+   {
+    "name": "the Mac takes every phone entry in and the Spark inbox is empty",
+    "passed": true
+   },
+   {
+    "name": "each entry acknowledged once the item was committed (POST /v1/inbox/{id}/ack → 200)",
+    "passed": true
+   },
+   {
+    "name": "no entry was dropped as unopenable or unusable",
+    "passed": true
+   },
+   {
+    "name": "share_text: a user item whose source is iPhone 分享",
+    "passed": true
+   },
+   {
+    "name": "share_text: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "share_text: the item's text is what the phone sealed (marker included)",
+    "passed": true
+   },
+   {
+    "name": "image: a user item whose source is iPhone 分享",
+    "passed": true
+   },
+   {
+    "name": "image: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "image: stored on the Mac through the image path, without location or metadata marker",
+    "passed": true
+   },
+   {
+    "name": "image: the Mac's own on-device reading sees the pixels (marker readable)",
+    "passed": true
+   },
+   {
+    "name": "keyboard: a user item whose source is iPhone 键盘",
+    "passed": true
+   },
+   {
+    "name": "keyboard: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "keyboard: the item's text is what the phone sealed (marker included)",
+    "passed": true
+   },
+   {
+    "name": "after the ack the Spark keeps only content-free rows (blob gone) for these entries",
+    "passed": true
+   },
+   {
+    "name": "every phone item is organized on the Spark",
+    "passed": true
+   },
+   {
+    "name": "no request carries an mlseal1. blob (opened on the Mac only)",
+    "passed": true
+   },
+   {
+    "name": "the phone number never crosses the link in a text field",
+    "passed": true
+   },
+   {
+    "name": "share_text: sent for organizing as iPhone 分享 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "share_text: masked on the wire (placeholder, marker kept)",
+    "passed": true
+   },
+   {
+    "name": "image: sent for organizing as iPhone 分享 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "image: the send copy has the number painted over, the rest survives",
+    "passed": true
+   },
+   {
+    "name": "keyboard: sent for organizing as iPhone 键盘 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "keyboard: masked on the wire (placeholder, marker kept)",
+    "passed": true
+   },
+   {
+    "name": "after organizing: no marker, phone number or key in any Spark file",
+    "passed": true
+   },
+   {
+    "name": "the store is not a plaintext SQLite file",
+    "passed": true
+   },
+   {
+    "name": "even decrypted, the phone number is not stored on the Spark (masked)",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_keyboard is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_share_text is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "the image's metadata marker never reached the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "final: store wiped while locked; health locked, no key, inbox empty",
+    "passed": true
+   },
+   {
+    "name": "unpair: no mindloom-phone line left on the Spark; file byte-identical to the start",
+    "passed": true
+   },
+   {
+    "name": "unpair: no mindloom-phone line left on the relay; file byte-identical to the start",
+    "passed": true
+   },
+   {
+    "name": "unpair: list-phones no longer shows the phone",
+    "passed": true
+   },
+   {
+    "name": "unpair: the Mac forgets the phone",
+    "passed": true
+   },
+   {
+    "name": "after unpair the phone's next send is refused (its key no longer opens the relay)",
+    "passed": true
+   },
+   {
+    "name": "after unpair nothing new reached the Spark inbox",
+    "passed": true
+   }
+  ],
+  "elapsed_seconds": 331.2,
+  "organize_seconds": 48.3,
+  "pairing_seconds": 2.4,
+  "files_scanned": 9644,
+  "plaintext_hits": 0,
+  "after_unpair_refusal": "authentication"
+ },
+ "spaces_e2e": {
+  "passed": 57,
+  "failed": 0,
+  "checks": [
+   {
+    "name": "org space: owned by the lab, 24 h withdraw window, contributions kept",
+    "passed": true
+   },
+   {
+    "name": "the invite pins the Spark's host key",
+    "passed": true
+   },
+   {
+    "name": "B's sealed name opens on A and the fingerprints match",
+    "passed": true
+   },
+   {
+    "name": "B joined as a contributor (贡献)",
+    "passed": true
+   },
+   {
+    "name": "review list: exactly the dictations, the items with numbers and the recording parts start unticked",
+    "passed": true
+   },
+   {
+    "name": "review list: A's two Fn dictations start unticked",
+    "passed": true
+   },
+   {
+    "name": "review list: B's note with a phone number starts unticked (手机号)",
+    "passed": true
+   },
+   {
+    "name": "one part per recording is ticked (B filed two parts of one meeting)",
+    "passed": true
+   },
+   {
+    "name": "recordings go as parts only (A 1 part, B 2 filed parts), each at most 15 min",
+    "passed": true
+   },
+   {
+    "name": "B's unfiled meeting lines are in no outgoing item",
+    "passed": true
+   },
+   {
+    "name": "both shared everything they ticked (no refusal)",
+    "passed": true
+   },
+   {
+    "name": "each member opens the other's screenshot original, byte for byte",
+    "passed": true
+   },
+   {
+    "name": "B reads A's dictations and A reads B's number as they are",
+    "passed": true
+   },
+   {
+    "name": "one shared matter holds the union of both members' items",
+    "passed": true
+   },
+   {
+    "name": "the shared matter links back to A's E2 and B's E5 (同一件事)",
+    "passed": true
+   },
+   {
+    "name": "the Spark's organizer state has placeholders, never the number",
+    "passed": true
+   },
+   {
+    "name": "A's badge: 共享版更完整 · +N 条，来自 韩策 (N = B's items in the shared matter)",
+    "passed": true
+   },
+   {
+    "name": "no placeholder left in what A sees",
+    "passed": true
+   },
+   {
+    "name": "B's badge names A's items (来自 林知远)",
+    "passed": true
+   },
+   {
+    "name": "B's view holds every shared item, numbers as they are",
+    "passed": true
+   },
+   {
+    "name": "B's withdrawal within the window shows on A",
+    "passed": true
+   },
+   {
+    "name": "crypto-shredding: the withdrawn item's data key is gone from the Spark",
+    "passed": true
+   },
+   {
+    "name": "the withdrawn item left the shared matter",
+    "passed": true
+   },
+   {
+    "name": "the space key rotated to epoch 2",
+    "passed": true
+   },
+   {
+    "name": "the item shared after the removal is at epoch 2",
+    "passed": true
+   },
+   {
+    "name": "B's epoch-1 key cannot open it",
+    "passed": true
+   },
+   {
+    "name": "B is refused after the removal",
+    "passed": true
+   },
+   {
+    "name": "B's copy of the space and its keys are deleted",
+    "passed": true
+   },
+   {
+    "name": "B's fork copy is handed back for deletion",
+    "passed": true
+   },
+   {
+    "name": "B's device gets no new key, no item key and no original (403 not_member)",
+    "passed": true
+   },
+   {
+    "name": "lazy re-wrap: old item keys move to epoch 2, out of reach of B's old key",
+    "passed": true
+   },
+   {
+    "name": "the organizer store is re-keyed at the next lease",
+    "passed": true
+   },
+   {
+    "name": "B's other contributions stay in the space, attributed to B (org asset)",
+    "passed": true
+   },
+   {
+    "name": "the item shared after the removal joins the same shared matter",
+    "passed": true
+   },
+   {
+    "name": "no voiceprint in any request either Mac sent",
+    "passed": true
+   },
+   {
+    "name": "no voiceprint in anything a member decrypts",
+    "passed": true
+   },
+   {
+    "name": "no dictionary entry in any request either Mac sent",
+    "passed": true
+   },
+   {
+    "name": "no dictionary entry in anything a member decrypts",
+    "passed": true
+   },
+   {
+    "name": "no window title in any request either Mac sent",
+    "passed": true
+   },
+   {
+    "name": "no window title in anything a member decrypts",
+    "passed": true
+   },
+   {
+    "name": "the phone number never crosses the link in plain text",
+    "passed": true
+   },
+   {
+    "name": "the organizer received the number as a placeholder",
+    "passed": true
+   },
+   {
+    "name": "B's unfiled meeting lines are in no request and nothing a member reads",
+    "passed": true
+   },
+   {
+    "name": "every uploaded original is MLB1 ciphertext, never the image",
+    "passed": true
+   },
+   {
+    "name": "no marker on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no number on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no dictionary on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no voiceprint on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no window on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no space-name on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no name-a on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no name-b on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no lab-words on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no lab-sheet on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no supplier on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "no unfiled-words on the Spark (data and logs)",
+    "passed": true
+   },
+   {
+    "name": "every blob the Spark keeps for the space is MLB1 ciphertext",
+    "passed": true
+   }
+  ],
+  "seconds_total": 269,
+  "counts": {
+   "union_items": 23,
+   "assembled_items": 23,
+   "shared_a": 12,
+   "shared_b": 11,
+   "rewrapped_item_keys": 22,
+   "requests": 268
+  },
+  "organizing_device_plaintext_hits": {
+   "dictionary": 0,
+   "lab-sheet": 0,
+   "lab-words": 0,
+   "marker": 0,
+   "name-a": 0,
+   "name-b": 0,
+   "number": 0,
+   "space-name": 0,
+   "supplier": 0,
+   "unfiled-words": 0,
+   "voiceprint": 0,
+   "window": 0
+  }
+ },
+ "agent_mcp_e2e": {
+  "swiftpm_helper": {
+   "passed": 43,
+   "failed": 0,
+   "seconds": 5.9,
+   "checks": [
+    {
+     "name": "offline: initialize answers",
+     "passed": true
+    },
+    {
+     "name": "offline: tools/list has the six tools",
+     "passed": true
+    },
+    {
+     "name": "offline: tool call says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "offline: resources/read is an error",
+     "passed": true
+    },
+    {
+     "name": "socket is 0600 in a 0700 folder",
+     "passed": true
+    },
+    {
+     "name": "unknown client: consent requested",
+     "passed": true
+    },
+    {
+     "name": "consent names the client's executable",
+     "passed": true
+    },
+    {
+     "name": "unknown client: call waits for the owner",
+     "passed": true
+    },
+    {
+     "name": "granted: search finds the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "search output starts with the data header",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside is invisible to search",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside the rope is invisible",
+     "passed": true
+    },
+    {
+     "name": "scope: get_matter outside the grant is not found",
+     "passed": true
+    },
+    {
+     "name": "get_matter: text lens with the data header and quoted items",
+     "passed": true
+    },
+    {
+     "name": "masking default: no phone or email in the output",
+     "passed": true
+    },
+    {
+     "name": "masking default: placeholders instead",
+     "passed": true
+    },
+    {
+     "name": "get_matter json: items carry their ids",
+     "passed": true
+    },
+    {
+     "name": "list_deadlines: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "list_recent: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "get_person: matters within scope only",
+     "passed": true
+    },
+    {
+     "name": "get_person: quotes from the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "resources/list: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "resources/read: same text as get_matter",
+     "passed": true
+    },
+    {
+     "name": "resources/read outside the grant is an error",
+     "passed": true
+    },
+    {
+     "name": "read-only grant: add_to_inbox refused",
+     "passed": true
+    },
+    {
+     "name": "revoked: the next call asks the owner again",
+     "passed": true
+    },
+    {
+     "name": "denied: a clear error",
+     "passed": true
+    },
+    {
+     "name": "once: allowed in this connection (我的 only: the lab matter stays out)",
+     "passed": true
+    },
+    {
+     "name": "once: a new connection asks again",
+     "passed": true
+    },
+    {
+     "name": "ask first: a new matter is approved one by one",
+     "passed": true
+    },
+    {
+     "name": "numbers as they are when granted",
+     "passed": true
+    },
+    {
+     "name": "ask first: a refused matter stays closed",
+     "passed": true
+    },
+    {
+     "name": "ask first: an approved matter is not asked again",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox: a proposal waits in the inbox",
+     "passed": true
+    },
+    {
+     "name": "inbox holds one pending proposal",
+     "passed": true
+    },
+    {
+     "name": "App quit: the helper says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "App back: the grant (today) still holds, the helper reconnects",
+     "passed": true
+    },
+    {
+     "name": "audit: every call written",
+     "passed": true
+    },
+    {
+     "name": "audit: outcomes recorded",
+     "passed": true
+    },
+    {
+     "name": "audit: no content (numbers, text, queries, titles)",
+     "passed": true
+    },
+    {
+     "name": "grant record holds no content",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox never files an item",
+     "passed": true
+    },
+    {
+     "name": "grant secret stored 0600 (synthetic root's key file)",
+     "passed": true
+    }
+   ]
+  },
+  "app_bundle_helper": {
+   "passed": 43,
+   "failed": 0,
+   "seconds": 5.8,
+   "checks": [
+    {
+     "name": "offline: initialize answers",
+     "passed": true
+    },
+    {
+     "name": "offline: tools/list has the six tools",
+     "passed": true
+    },
+    {
+     "name": "offline: tool call says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "offline: resources/read is an error",
+     "passed": true
+    },
+    {
+     "name": "socket is 0600 in a 0700 folder",
+     "passed": true
+    },
+    {
+     "name": "unknown client: consent requested",
+     "passed": true
+    },
+    {
+     "name": "consent names the client's executable",
+     "passed": true
+    },
+    {
+     "name": "unknown client: call waits for the owner",
+     "passed": true
+    },
+    {
+     "name": "granted: search finds the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "search output starts with the data header",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside is invisible to search",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside the rope is invisible",
+     "passed": true
+    },
+    {
+     "name": "scope: get_matter outside the grant is not found",
+     "passed": true
+    },
+    {
+     "name": "get_matter: text lens with the data header and quoted items",
+     "passed": true
+    },
+    {
+     "name": "masking default: no phone or email in the output",
+     "passed": true
+    },
+    {
+     "name": "masking default: placeholders instead",
+     "passed": true
+    },
+    {
+     "name": "get_matter json: items carry their ids",
+     "passed": true
+    },
+    {
+     "name": "list_deadlines: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "list_recent: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "get_person: matters within scope only",
+     "passed": true
+    },
+    {
+     "name": "get_person: quotes from the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "resources/list: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "resources/read: same text as get_matter",
+     "passed": true
+    },
+    {
+     "name": "resources/read outside the grant is an error",
+     "passed": true
+    },
+    {
+     "name": "read-only grant: add_to_inbox refused",
+     "passed": true
+    },
+    {
+     "name": "revoked: the next call asks the owner again",
+     "passed": true
+    },
+    {
+     "name": "denied: a clear error",
+     "passed": true
+    },
+    {
+     "name": "once: allowed in this connection (我的 only: the lab matter stays out)",
+     "passed": true
+    },
+    {
+     "name": "once: a new connection asks again",
+     "passed": true
+    },
+    {
+     "name": "ask first: a new matter is approved one by one",
+     "passed": true
+    },
+    {
+     "name": "numbers as they are when granted",
+     "passed": true
+    },
+    {
+     "name": "ask first: a refused matter stays closed",
+     "passed": true
+    },
+    {
+     "name": "ask first: an approved matter is not asked again",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox: a proposal waits in the inbox",
+     "passed": true
+    },
+    {
+     "name": "inbox holds one pending proposal",
+     "passed": true
+    },
+    {
+     "name": "App quit: the helper says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "App back: the grant (today) still holds, the helper reconnects",
+     "passed": true
+    },
+    {
+     "name": "audit: every call written",
+     "passed": true
+    },
+    {
+     "name": "audit: outcomes recorded",
+     "passed": true
+    },
+    {
+     "name": "audit: no content (numbers, text, queries, titles)",
+     "passed": true
+    },
+    {
+     "name": "grant record holds no content",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox never files an item",
+     "passed": true
+    },
+    {
+     "name": "grant secret stored 0600 (synthetic root's key file)",
+     "passed": true
+    }
+   ]
+  }
+ }
+}

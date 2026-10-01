@@ -251,9 +251,52 @@ class FileItemNewEvent(_Decision):
     seg_id: SegId = Field(default=None, min_length=1, max_length=32)
 
 
+# ---- v7 (MAP-CONTRACT section 2): ropes and relations. User decisions win; a rejected proposal is never proposed
+# again.
+
+
+class ConfirmRope(_Decision):
+    kind: Literal["confirm_rope"]
+    rope_id: str = Field(min_length=1, max_length=64)
+
+
+class RejectRope(_Decision):
+    """The rope goes (its matters are released; ropes inside it move up one level) and is never proposed again."""
+    kind: Literal["reject_rope"]
+    rope_id: str = Field(min_length=1, max_length=64)
+
+
+class MoveToRope(_Decision):
+    """Put a matter on another rope (rope_id null: on no rope). The grouping pass never moves it again."""
+    kind: Literal["move_to_rope"]
+    event_id: str
+    rope_id: Optional[str] = Field(default=None, min_length=1, max_length=64)
+
+
+class RenameRope(_Decision):
+    kind: Literal["rename_rope"]
+    rope_id: str = Field(min_length=1, max_length=64)
+    title: str = Field(min_length=1, max_length=40)
+
+
+class RejectRelation(_Decision):
+    """A blocks edge a blocks b (b waits on a) is wrong: it goes and is never proposed again."""
+    kind: Literal["reject_relation"]
+    relation: Literal["blocks"] = "blocks"
+    a: str
+    b: str
+
+
+class HideCrossing(_Decision):
+    """Do not show the crossing between two matters (it is computed, so it is hidden, not deleted)."""
+    kind: Literal["hide_crossing"]
+    a: str
+    b: str
+
+
 Decision = Annotated[
     Union[RenameEvent, RemoveItem, MoveItem, SameEvent, SamePerson, NamePerson, PinEvent, FeatureLess, DeleteEvent,
-          UnfileItem, FileItemNewEvent],
+          UnfileItem, FileItemNewEvent, ConfirmRope, RejectRope, MoveToRope, RenameRope, RejectRelation, HideCrossing],
     Field(discriminator="kind"),
 ]
 

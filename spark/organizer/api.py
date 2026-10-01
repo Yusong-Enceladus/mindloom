@@ -35,6 +35,9 @@ import base64
 
 from .schemas import AnswerIn, DecisionsIn, DecisionsOut, InboxIn, ItemsIn, ItemsOut, Rejected
 from .skills import Harness, SkillRegistry
+from .space_organizer import SpaceOrganizers
+from .spaces import Spaces
+from .spaces_api import register as register_spaces
 from .store import Store, StoreLocked, WrongKey
 
 log = logging.getLogger("organizer.api")
@@ -46,6 +49,9 @@ INBOX_PAGE_BYTES = 6 * 1024 * 1024
 # the phone's inbox add (its status comes from /v1/health).
 # The key-derived access proof (keys.access_proof) of every data request after the Mac's unlock.
 ACCESS_HEADER = "x-mindloom-access"
+
+# Shared spaces and organizations: member-signed routes with their own lease (organizer/spaces_api.py).
+SPACE_PREFIXES = ("/v1/spaces", "/v1/orgs")
 
 OPEN_WHILE_LOCKED = {("GET", "/v1/health"), ("POST", "/v1/unlock"), ("POST", "/v1/lock"), ("POST", "/v1/wipe"),
                      ("POST", "/v1/inbox")}
@@ -94,11 +100,12 @@ def image_route_clients(settings: Settings, registry: SkillRegistry) -> dict[str
 
 def build_organizer(settings: Settings, chat: Optional[ChatClient] = None,
                     embedder: Optional[EmbedClient] = None, store: Optional[Store] = None,
-                    clock: Optional[Clock] = None) -> Organizer:
+                    clock: Optional[Clock] = None, *, with_inbox: bool = True) -> Organizer:
     clock = clock or (store.clock if store is not None else from_setting(settings.clock))
     # Locked until the Mac unlocks it, unless a harness on synthetic data passes its key (settings.unlock_key).
     store = store or Store(settings.db_path, clock, key=settings.unlock_key)
-    inbox = InboxStore(":memory:" if store.memory else settings.inbox_path)
+    # A shared space's organizer (space_organizer.py) has no phone inbox: that is the personal store's.
+    inbox = InboxStore(":memory:" if store.memory else settings.inbox_path) if with_inbox else None
     registry = SkillRegistry(settings.skills_dir)
     if chat is None:
         if settings.chat_backend not in chat_clients():
@@ -125,28 +132,43 @@ def build_organizer(settings: Settings, chat: Optional[ChatClient] = None,
                                   "directory_size": settings.consolidate_directory_size,
                                   "directory_min_items": settings.consolidate_directory_min},
                      people={"enabled": settings.people_pass, "every_items": settings.people_every,
-                             "max_calls": settings.people_max_calls})
+                             "max_calls": settings.people_max_calls},
+                     maps={"enabled": settings.maps, "min_items": settings.map_min_items,
+                           "max_calls": settings.map_max_calls},
+                     grouping={"enabled": settings.grouping, "every_items": settings.group_every,
+                               "max_calls": settings.group_max_calls})
 
 
-def create_app(settings: Optional[Settings] = None, organizer: Optional[Organizer] = None) -> FastAPI:
+def create_app(settings: Optional[Settings] = None, organizer: Optional[Organizer] = None,
+               spaces: Optional[Spaces] = None) -> FastAPI:
     settings = settings or Settings()
     org = organizer or build_organizer(settings)
     stop = threading.Event()
+    # Shared spaces (docs/SPACES.md): their own op logs, keys and ciphertext in <data_dir>/spaces, and one organizer
+    # store per space, opened by a member Mac's lease. Independent of the personal store's lock.
+    spaces = spaces or Spaces(settings.data_dir)
+    space_orgs = SpaceOrganizers(spaces, settings, org.harness.client, org.embedder)
     # Created on first start and kept; while it exists (and ORGANIZER_REQUIRE_TOKEN != "0") every
     # request needs "Authorization: Bearer <token>". Held in memory only; never logged.
     token = ensure_link_token(settings.token_path)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        worker = None
+        worker = sweeper = None
         if settings.start_worker:
             worker = threading.Thread(target=org.run_worker, args=(stop,), name="organizer-worker", daemon=True)
             worker.start()
+            sweeper = threading.Thread(target=_sweep_spaces, args=(stop, spaces, space_orgs), name="spaces-sweep",
+                                       daemon=True)
+            sweeper.start()
         yield
         stop.set()
         org.wake()
         if worker:
             worker.join(timeout=10)
+        if sweeper:
+            sweeper.join(timeout=10)
+        space_orgs.shutdown()
         if org.pipeline is not None:
             org.pipeline.shutdown()
 
@@ -154,6 +176,8 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
                   docs_url=None, redoc_url=None, openapi_url=None)
     app.state.organizer = org
     app.state.link_token = token
+    app.state.spaces = spaces
+    app.state.space_organizers = space_orgs
     if org.inbox is None:
         org.inbox = InboxStore(settings.inbox_path)
 
@@ -163,6 +187,10 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
     async def locked_gate(request: Request, call_next):
         path = request.url.path.rstrip("/") or "/"
         org.expire_lease()  # the Mac stopped asking: the store locks before anything is read
+        if path.startswith(SPACE_PREFIXES):
+            # Shared spaces authenticate members by device signatures and have their own organizer lease; the
+            # personal store's lock, access proof and lease do not apply (and are not renewed by them).
+            return await call_next(request)
         if path.startswith("/v1/") and (request.method, path) not in OPEN_WHILE_LOCKED:
             if org.store.locked:
                 return locked_response()
@@ -212,7 +240,7 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             except ModelUnavailable:
                 embed_model = None
         required_skills = {"event-assign", "event-brief", "home-rank", "image-read", "item-split", "file-read",
-                           "event-consolidate", "person-resolve"}
+                           "event-consolidate", "person-resolve", "matter-map", "matter-group"}
         available_skills = {skill["name"] for skill in org.registry.summary()}
         store = org.store
         locked = store.locked
@@ -247,8 +275,13 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             "consolidation": dict(org.consolidator.stats, enabled=org.consolidator.enabled),
             # The people pass since this process started (counts only, no names).
             "people": dict(org.people_pass.stats, enabled=org.people_pass.enabled),
+            # v7: maps drawn and the grouping pass since this process started (counts only, no content).
+            "maps": dict(org.mapper.stats, enabled=org.mapper.enabled),
+            "grouping": dict(org.grouper.stats, enabled=org.grouper.enabled),
             # kind=file: None when every parser library is installed, else the missing module.
             "file_parsers_missing": fileparse.available(),
+            # Shared spaces (docs/SPACES.md): counts only.
+            "spaces": dict(spaces.stats(), organizers_unlocked=space_orgs.unlocked_count()),
         }
 
     # ---- keys (privacy contract section 2) ----------------------------------------------------
@@ -299,6 +332,18 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             raise HTTPException(status_code=400, detail="bad item id")
         org.delete_item(item_id)
         return {"deleted": True}
+
+    @app.post("/v1/events/{event_id}/map")
+    def request_map(event_id: str):
+        """v7 (MAP-CONTRACT section 1): the Mac opened a matter with no (current) map. Queued; the worker draws it
+        at its next step. 202 {"queued": true, "position"}; 200 {"queued": false, "reason": "current" |
+        "too_small" | "failed"}; 404 for an unknown or deleted event."""
+        if not event_id or len(event_id) > 128:
+            raise HTTPException(status_code=400, detail="bad event id")
+        res = org.mapper.request(event_id)
+        if res is None:
+            raise HTTPException(status_code=404, detail="unknown event")
+        return JSONResponse(res, status_code=202 if res["queued"] else 200)
 
     @app.post("/v1/items", response_model=ItemsOut)
     def post_items(body: ItemsIn):
@@ -383,4 +428,15 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             "SELECT item_id, revision, state, attempts, reason, error_category, enqueued_at, run_started, run_ended"
             " FROM jobs ORDER BY started_ts")}
 
+    register_spaces(app, spaces, space_orgs)
     return app
+
+
+def _sweep_spaces(stop: threading.Event, spaces: Spaces, space_orgs: SpaceOrganizers) -> None:
+    """Once a minute: overdue privacy takedowns are carried out, stale uploads deleted, space leases expired."""
+    while not stop.wait(60.0):
+        try:
+            spaces.sweep()
+            space_orgs.expire()
+        except Exception as exc:  # keep sweeping; the error's type only
+            log.warning("spaces sweep failed: %s", type(exc).__name__)

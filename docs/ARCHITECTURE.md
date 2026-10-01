@@ -2,7 +2,7 @@
 
 织机 Mindloom 分三端：Mac 负责记录、识别、存储和展示；你自己的 DGX Spark 负责组织；手机上的 iPhone App「织机」（织机键盘和分享扩展「收进织机」）把每一条在手机上封好（只有你的 Mac 能打开），经你自己的 SSH 密钥放进 Spark 上的收件箱（见 [PHONE.md](PHONE.md)）。Mac 和 Spark 之间只有一条你显式开启、随时可以撤销的 SSH 链路；发出去的文字先遮住号码、截图先涂掉号码，Spark 上的库用一把只在你 Mac 钥匙串里的钥匙加密（[PRIVACY.md](PRIVACY.md)）。详细设计见 Mac 端的 [TECHNICAL_DESIGN.md](../mac/docs/architecture/TECHNICAL_DESIGN.md)、[PRD §0.3](../mac/PRODUCT_REQUIREMENTS.md) 和 Spark 端的 [spark/README.md](../spark/README.md)。Mac 客户端的代码、工程名和 Bundle ID 沿用开发代号 bestASR。
 
-一句话结构：多个入口汇到 Mac → 过一道边界 → Spark 按素材类型分路 → 长素材拆段扇出 → 一条串行主干判断归属 → 受影响的几件事各自重写卡片 → 排首页 → 回到 Mac → 你的决定回流并永远优先。主干之外，Spark 定期自己收拾：把碎片事件并回它所属的事（event-consolidate），整理人物（person-resolve）。
+一句话结构：多个入口汇到 Mac → 过一道边界 → Spark 按素材类型分路 → 长素材拆段扇出 → 一条串行主干判断归属 → 受影响的几件事各自重写卡片 → 排首页 → 回到 Mac → 你的决定回流并永远优先。主干之外，Spark 定期自己收拾：把碎片事件并回它所属的事（event-consolidate），整理人物（person-resolve），把事搓成绳（matter-group）；一件事的卡片重写后，或者你打开一件还没有线索图的事时，画它的线索图（matter-map）。
 
 ```mermaid
 flowchart TB
@@ -109,7 +109,7 @@ flowchart TB
 
 ## Spark（`spark/` + `skills/`）：组织
 
-整理服务是 Python 3.12、FastAPI、SQLCipher 加密的 SQLite；后台一次领一条任务交给 `process_item`。库在服务启动时是锁着的，Mac 连上后用只在它钥匙串里的钥匙开锁，关掉链路就上锁；图片和文件读完即删字节，读出的文字先遮号码再存（[PRIVACY.md](PRIVACY.md)）。Mac 开锁以后，每个数据请求还要带从钥匙推出的访问凭证，Mac 超过 10 分钟不来 Spark 就自己上锁；所有后台任务（整理素材、定期整理事件、人物整理）只在开着锁时运行，写入绑定这一次开锁，上锁或「忘掉我」之后还在路上的模型调用什么都写不进去。走哪个 Skill 由固定路由表 `JOB_TO_SKILL`（`spark/organizer/skills.py`）决定，八个 Skill 在路由里（image-read、file-read、item-split、event-assign、event-brief、event-consolidate、person-resolve、home-rank），模型从不自己挑 Skill，也没有工具调用。
+整理服务是 Python 3.12、FastAPI、SQLCipher 加密的 SQLite；后台一次领一条任务交给 `process_item`。库在服务启动时是锁着的，Mac 连上后用只在它钥匙串里的钥匙开锁，关掉链路就上锁；图片和文件读完即删字节，读出的文字先遮号码再存（[PRIVACY.md](PRIVACY.md)）。Mac 开锁以后，每个数据请求还要带从钥匙推出的访问凭证，Mac 超过 10 分钟不来 Spark 就自己上锁；所有后台任务（整理素材、定期整理事件、人物整理）只在开着锁时运行，写入绑定这一次开锁，上锁或「忘掉我」之后还在路上的模型调用什么都写不进去。走哪个 Skill 由固定路由表 `JOB_TO_SKILL`（`spark/organizer/skills.py`）决定，十个 Skill 在路由里（image-read、file-read、item-split、event-assign、event-brief、event-consolidate、person-resolve、home-rank、matter-map、matter-group），模型从不自己挑 Skill，也没有工具调用。
 
 ### 按类型分路
 
@@ -182,11 +182,26 @@ flowchart TB
 - **向量服务挂了**：只按时间、人物和来源找候选，健康接口会明确显示。
 - **Mac 发送失败**：退避后重发；本机原件变了或丢了，这条就留在 Mac 上，不发。
 
+### 线索图与绳（v7）
+
+- **matter-map**：一件事的卡片重写后（至少 8 条素材、图已过时），或你在 Mac 上打开一件还没有图的事时，画它的线索图：1–6 股线、线上的结（进展、决定、问题、承诺、截止）和健康。确定性校验：出处都在输入里，原话逐字出现在出处里，一条素材最多在一股线上，问题是未解决，承诺写明是谁；不合格重问一次，再不合格只去掉不合格的结。素材里明确写了先后依赖、又点名了另一件事时，提出一条牵制。
+- **matter-group**：定期把事搓成绳（永远不会结束的领域，或更大的项目），树形，每件事最多挂一根绳，附理由和出处，同时给每件事一个类型。被你否定的绳不再提出，你放好的事不再被挪。
+- **交叉**：两件事共用同一条素材的不同段（或同一段录像的关键帧），程序直接算，不经模型。
+- 删一条素材时，图上以它为出处的结、列过它的线、引它原话的牵制一起去掉，重画失败就把整张图删掉。
+
+### 共享空间（v7）
+
+每个共享空间在 Spark 上有一份按服务器顺序记下的签名操作日志、只有成员打得开的密文原件，和一个自己的加密整理库（只在某位成员的 Mac 借出钥匙时打开，用同样的 Skills 把所有成员共享的素材拼成共享的事，也画线索图、搓绳）。成员的 Mac 只按签名日志重建成员和设备名单，换钥匙只封给这份名单；成员离开或被移除时换一代钥匙。细节见 [SPACES.md](SPACES.md)。
+
 ### 其它
 
 - **模型服务**：OpenAI 兼容的 `/v1/chat/completions`（默认 vLLM 上的 Qwen3.6-35B-A3B NVFP4 + MTP，同一个模型做文字和读图）和 `/v1/embeddings`（Qwen3-Embedding-0.6B），都只监听 `127.0.0.1`。
 - **收件箱**：`POST/GET /v1/inbox` 与 `/ack` 只做手机条目的中转，而且只收在手机上封好的条目（Spark 打不开），Mac 确认取走后删掉；整理只发生在 Mac 打开它、作为素材送回之后。
 - **时钟**：`ORGANIZER_CLOCK=wall | replay | fixed:<ISO>`。评测用回放时钟：历史素材以最新素材的时间为「现在」。
+
+## Agent 读取（v7，Mac 端）
+
+Agent（Claude Code、Claude Desktop、Codex、Cursor…）启动 App 自带的 `mindloom-mcp`，它只经数据目录里本用户私有的 Unix socket 把 MCP 消息转给正在运行的 App；App 每次调用都当场查授权（空间、范围、期限、号码遮挡，第一次要你同意），在范围内作答，默认遮号，写一行不含内容的记录。共享空间里的事单独标着空间，只给授权了那个空间的 Agent，读到时往那个空间的日志写一条只有数量的 `agent.access`。Spark 不参与。
 
 ## 设计了但没实现或没接入
 
@@ -199,3 +214,5 @@ flowchart TB
 | 两端对不上 | **GIF 的后几帧**：Mac 发了最多 3 帧，Spark 的素材定义里没有这个字段，只读了第一帧 |
 | 开发期关闭 | **真实资料库上链路**：`productReleaseAllowsOwnLibrary = false` |
 | 默认关闭 | **按图片类型换模型**（`ORGANIZER_IMAGE_ROUTES`）已实现但没配置，所有类型都用同一个 Qwen3.6 |
+| 待决定 | **共享空间里录音片段的原音**：引擎和 Spark 都支持把不超过 15 分钟的片段加密给成员，但「音频不离开 Mac」要先由用户改了才开，现在只共享片段的文字和说话人 |
+| 还没做 | **队友的受限 SSH 密钥**：成员现在经 Spark 主人的 SSH 账户连进来；**组织的钥匙托管**：组织里唯一的空间管理员被移出组织后，没人能替他换钥匙 |

@@ -10,13 +10,14 @@ extension ContentView {
   var memoryShell: some View {
     ZhijiShell(
       navigation: $memoryNavigation,
-      state: memoryScreen.state(app: model, capture: memoryCaptureIndicator),
-      actions: memoryActions,
+      state: spacesScopedState(memoryScreen.state(app: model, capture: memoryCaptureIndicator)),
+      actions: spacesScopedActions(memoryActions),
       slots: MemoryShellSlots(
         allItems: { AnyView(historyView) },
         dictionary: { AnyView(dictionaryView) },
         capture: { AnyView(memoryCapturePage) },
-        homeAccessory: { memoryHomeAccessory }
+        homeAccessory: { spacesHomeAccessory(memoryHomeAccessory) },
+        eventAccessory: { spacesEventAccessory($0) }
       )
     )
   }
@@ -50,7 +51,9 @@ extension ContentView {
         model.refreshPeople()
       },
       retryIssue: { model.memoryRetryIssue($0) },
-      discardIssue: { model.memoryDiscardIssue($0) }
+      discardIssue: { model.memoryDiscardIssue($0) },
+      relation: { model.memoryRelationDecision($0) },
+      requestMap: { model.memoryRequestMap($0) }
     )
   }
 

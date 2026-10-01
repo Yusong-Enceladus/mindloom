@@ -104,7 +104,10 @@ public struct RemoteOrganizerWireMasking: Sendable {
       return Self.clamp(text, to: limit)
     }
     let wire = decision.withWireText(
-      title: masked(decision.title, limit: Self.titleLimit),
+      title: masked(
+        decision.title,
+        limit: decision.kind == "rename_rope"
+          ? RemoteOrganizerDecision.maximumRopeTitleScalars : Self.titleLimit),
       displayName: masked(decision.displayName, limit: Self.displayNameLimit))
     return (
       wire,

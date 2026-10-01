@@ -98,3 +98,96 @@ def test_split_fixture_with_known_matters_builds_like_the_organizer(skill, case)
     assert jsonschema_lite.validate(one, schema) == [] and REG.for_job("split").validator(one, context) == []
     bad = dict(one, known=["E99"])
     assert REG.for_job("split").validator(bad, context)
+
+
+MAP = run_skill_evals.cases(["matter-map"])
+
+
+def _map_answer(data: dict, chk: dict) -> dict:
+    """An answer that meets the case's check: strands from the together / apart pairs, the required knot kinds and
+    blocks, each quoting its item verbatim."""
+    import re
+    items = {i["id"]: i for i in data["items"]}
+    groups: list[set] = []
+    for a, b in chk.get("together", []):
+        g = next((g for g in groups if a in g or b in g), None)
+        if g is None:
+            groups.append({a, b})
+        else:
+            g |= {a, b}
+    for a, b in chk.get("apart", []):
+        for x in (a, b):
+            if not any(x in g for g in groups):
+                groups.append({x})
+    rest = [i for i in items if not any(i in g for g in groups)]
+    while len(groups) < chk.get("n_strands", [1, 6])[0] and rest:
+        groups.append({rest.pop(0)})
+    strands = [{"id": f"s{n}", "name": f"线{n}", "summary": "测试", "item_ids": sorted(g), "fact_ids": [], "state": "open"}
+               for n, g in enumerate(groups, 1)]
+    first = data["items"][0]
+    knots = []
+    for n, kind in enumerate(chk.get("kinds_include", []) or ["progress"], 1):
+        it = data["items"][n % len(data["items"])]
+        knots.append({"id": f"k{n}", "strand": "", "kind": kind, "text": "测试的结", "date": it["t"][:10],
+                      "state": "open" if kind == "question" else "planned" if kind in ("commitment", "deadline") else "done",
+                      "who": (it["who"][:1] or ["我"]) if kind == "commitment" else [], "evidence": [it["id"]],
+                      "quote": it["text"].replace("…", "")[:6]})
+    blocks = []
+    for want in chk.get("blocks", []):
+        it = next(i for i in data["items"] if re.search(r"等[^，。]+", i["text"]))
+        blocks.append({"other": want["other"], "direction": want["direction"], "item_id": it["id"],
+                       "quote": re.search(r"等[^，。]+", it["text"]).group(0)})
+    level = (chk.get("health_in") or ["ok"])[0]
+    return {"strands": strands, "knots": knots, "blocks": blocks,
+            "health": {"level": level, "reason": "测试理由", "evidence": [] if level == "ok" else [first["id"]]}}
+
+
+@pytest.mark.parametrize("skill,case", MAP, ids=[c["id"] for _, c in MAP])
+def test_map_fixture_builds_like_the_organizer_and_an_answer_meeting_its_check_validates(skill, case):
+    job, data, schema, context = run_skill_evals.build_request(REG, skill, case)
+    assert job == "map" and case["source"].startswith("invented")
+    ids = {i["id"] for i in data["items"]}
+    assert set(context["items"]) == ids and len(data["items"]) >= 8
+    chk = case["check"]
+    for a, b in chk.get("apart", []) + chk.get("together", []):
+        assert {a, b} <= ids
+    assert {b["other"] for b in chk.get("blocks", [])} <= {o["id"] for o in data["other_matters"]}
+    answer = _map_answer(data, chk)
+    assert jsonschema_lite.validate(answer, schema) == [], case["id"]
+    assert REG.for_job("map").validator(answer, context) == [], case["id"]
+    assert run_skill_evals.check(REG, skill, case, answer)[0], case["id"]
+
+
+GROUP = run_skill_evals.cases(["matter-group"])
+
+
+def _group_answer(data: dict, chk: dict) -> dict:
+    samples = {m["id"]: m["sample_id"] for m in data["matters"]}
+    placements = {m["id"]: "" for m in data["matters"]}
+    new = []
+    for e, r in chk.get("rope_of", {}).items():
+        placements[e] = r
+    for a, b in chk.get("together", []):
+        key = placements.get(a) or placements.get(b)
+        if not key:
+            key = f"N{len(new) + 1}"
+            parent = chk.get("under", {}).get(a, "")
+            new.append({"key": key, "title": f"绳{len(new) + 1}", "kind": "project", "parent": parent, "reason": "测试理由",
+                        "evidence": [samples[a]]})
+        placements[a] = placements[b] = key
+    for e, r in chk.get("under", {}).items():
+        if not placements.get(e):
+            placements[e] = r
+    types = {e: allowed[0] for e, allowed in chk.get("type_in", {}).items()}
+    return {"new_ropes": new, "nest": [], "placements": [{"matter": e, "rope": r, "type": types.get(e, "其他")}
+                                                         for e, r in placements.items()]}
+
+
+@pytest.mark.parametrize("skill,case", GROUP, ids=[c["id"] for _, c in GROUP])
+def test_group_fixture_builds_like_the_organizer_and_an_answer_meeting_its_check_validates(skill, case):
+    job, data, schema, context = run_skill_evals.build_request(REG, skill, case)
+    assert job == "group" and case["source"].startswith("invented")
+    answer = _group_answer(data, case["check"])
+    assert jsonschema_lite.validate(answer, schema) == [], case["id"]
+    assert REG.for_job("group").validator(answer, context) == [], case["id"]
+    assert run_skill_evals.check(REG, skill, case, answer)[0], case["id"]

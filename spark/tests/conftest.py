@@ -95,6 +95,25 @@ def default_person(data: dict, schema: dict) -> dict:
     return {"kind": "person", "same_as": "", "common_word": False, "reason": "测试：是人"}
 
 
+def default_map(data: dict, schema: dict) -> dict:
+    """matter-map: one strand with every item, one progress knot quoting the latest item, health ok (tests that
+    need more push outputs)."""
+    items = data["items"]
+    last = items[-1]
+    quote = last["text"].replace("…", "")[:10] or "素材"
+    return {"strands": [{"id": "s1", "name": "主线", "summary": "测试的一股线", "item_ids": [i["id"] for i in items],
+                         "fact_ids": [], "state": "open"}],
+            "knots": [{"id": "k1", "strand": "s1", "kind": "progress", "text": "最新进展", "date": last["t"][:10],
+                       "state": "done", "who": [], "evidence": [last["id"]], "quote": quote}],
+            "health": {"level": "ok", "reason": "测试：正常推进", "evidence": []}, "blocks": []}
+
+
+def default_group(data: dict, schema: dict) -> dict:
+    """matter-group: every matter on no rope, type 其他 (tests that need ropes push outputs)."""
+    return {"new_ropes": [], "nest": [], "placements": [{"matter": m["id"], "rope": "", "type": "其他"}
+                                                        for m in data["matters"]]}
+
+
 def is_detect_step(schema: dict) -> bool:
     """image-read's first step asks only for the image type."""
     return set(schema.get("properties", {})) == {"type"}
@@ -160,6 +179,8 @@ class FakeChat:
             "file-read": default_file_read,
             "event-consolidate": default_consolidate,
             "person-resolve": default_person,
+            "matter-map": default_map,
+            "matter-group": default_group,
         }
         self.before: dict[str, Callable[[dict], None]] = {}
 

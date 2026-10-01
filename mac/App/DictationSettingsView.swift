@@ -11,6 +11,7 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   case models
   case language
   case data
+  case agents
 
   var id: String { rawValue }
 
@@ -18,7 +19,7 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   /// deployment, verification and rollback, per-App text policies — is
   /// operator tooling, kept whole but reached from 更多 → 高级 instead of
   /// sitting beside the microphone picker.
-  static let primary: [Self] = [.general, .shortcuts, .recording, .data]
+  static let primary: [Self] = [.general, .shortcuts, .recording, .data, .agents]
   static let advanced: [Self] = [.models, .language]
 
   var title: String {
@@ -29,6 +30,7 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
     case .models: "识别组件"
     case .language: "文字格式"
     case .data: "数据"
+    case .agents: "Agent"
     }
   }
 
@@ -40,6 +42,7 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
     case .models: "shippingbox"
     case .language: "character.book.closed"
     case .data: "lock.shield"
+    case .agents: "person.badge.key"
     }
   }
 }
@@ -1049,6 +1052,9 @@ struct DictationSettingsView: View {
             }
           }
         }
+        if selectedCategory == .agents {
+          AgentSettingsSections(model: model)
+        }
       }
       .formStyle(.grouped)
       .scrollContentBackground(.hidden)
@@ -1058,6 +1064,12 @@ struct DictationSettingsView: View {
       .padding(.bottom, 12)
     }
     .frame(width: 920, height: 720)
+    // A proposal's notification opens this page.
+    .onReceive(model.agentAccess.$showAgentSettings) { show in
+      guard show, categories.contains(.agents) else { return }
+      selectedCategory = .agents
+      model.agentAccess.showAgentSettings = false
+    }
     .confirmationDialog(
       "清理可重新下载的缓存？",
       isPresented: $confirmRebuildableCacheDeletion,

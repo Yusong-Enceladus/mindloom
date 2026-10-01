@@ -52,6 +52,20 @@ extension DictationAppModel {
     }
   }
 
+  /// v7: a rope or relation decision (MAP-CONTRACT §2). Ropes and relations
+  /// come only from the organizing device, so there is nothing to do while
+  /// Home shows this Mac's own events.
+  func memoryRelationDecision(_ decision: MemoryRelationDecision) {
+    guard memoryUsesRemote else { return }
+    recordRemoteDecision(MemoryDecisions.relation(decision))
+  }
+
+  /// v7: a matter page with no map yet asks the organizing device to draw one.
+  func memoryRequestMap(_ eventID: String) {
+    guard memoryUsesRemote else { return }
+    remoteOrganizer?.requestMap(eventID: eventID)
+  }
+
   func memoryPin(_ eventID: String, pinned: Bool) {
     guard memoryUsesRemote else { return }
     recordRemoteDecision(MemoryDecisions.pin(eventID: eventID, pinned: pinned))

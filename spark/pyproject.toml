@@ -19,6 +19,9 @@ dependencies = [
   "pypdfium2>=4.30",
   "pillow>=10.0",
   "olefile>=0.46",
+  # shared spaces (docs/SPACES.md): Ed25519 verification of member ops and requests (Apache-2.0 OR BSD-3-Clause;
+  # wheels for macOS and Linux aarch64; no network access, no telemetry)
+  "cryptography>=42",
 ]
 
 [project.scripts]

@@ -43,6 +43,7 @@ final class TypelessDictationMigrationTests: XCTestCase {
         BestASRPersistenceSchema.userItemsMigrationID,
         BestASRPersistenceSchema.userItemFilesMigrationID,
         BestASRPersistenceSchema.remotePrivacyMigrationID,
+        BestASRPersistenceSchema.agentAccessMigrationID,
       ]
     )
     XCTAssertEqual(inspection.journalMode, "wal")
@@ -65,6 +66,7 @@ final class TypelessDictationMigrationTests: XCTestCase {
       "remote_organizer_decision_jobs", "remote_organizer_events", "remote_organizer_persons",
       "remote_organizer_questions", "remote_organizer_meta", "remote_organizer_eligible",
       "user_item_details", "remote_mask_map", "remote_mask_offsets", "remote_pending_deletions",
+      "agent_grants", "agent_grant_matters", "agent_audit", "agent_inbox",
     ] {
       XCTAssertTrue(inspection.tableNames.contains(table), table)
     }
@@ -328,6 +330,9 @@ final class TypelessDictationMigrationTests: XCTestCase {
       (20, BestASRPersistenceSchema.remoteOrganizerRevisionOutboxMigrationID),
       (21, BestASRPersistenceSchema.remoteOrganizerEligibilityMigrationID),
       (22, BestASRPersistenceSchema.userItemsMigrationID),
+      (23, BestASRPersistenceSchema.userItemFilesMigrationID),
+      // v25 (agent access) added only local tables: a v24 archive imports.
+      (24, BestASRPersistenceSchema.remotePrivacyMigrationID),
     ]
     for (version, migrationID) in priorMigrations {
       let sessionID = UUID().uuidString
@@ -364,7 +369,7 @@ final class TypelessDictationMigrationTests: XCTestCase {
       }
       try old.close()
       let detailColumns = prior.tables.first { $0.name == "user_item_details" }?.columns ?? []
-      XCTAssertFalse(detailColumns.contains("frame_ms"), "v\(version)")
+      XCTAssertEqual(detailColumns.contains("frame_ms"), version >= 23, "v\(version)")
       let sessionColumns = prior.tables.first { $0.name == "sessions" }?.columns ?? []
       XCTAssertEqual(sessionColumns.contains("spoken_mode"), version >= 18, "v\(version)")
       let assetColumns =

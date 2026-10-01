@@ -1,0 +1,563 @@
+import Foundation
+import MindloomLink
+
+// The Spark's answers on the space routes (its `spaces_api.py`). Decoding is
+// tolerant where a newer service may add fields; ids are compared lowercase.
+
+public enum SpaceRole: String, Codable, CaseIterable, Comparable, Sendable {
+  case read, write, maintain, admin
+
+  var rank: Int {
+    switch self {
+    case .read: 1
+    case .write: 2
+    case .maintain: 3
+    case .admin: 4
+    }
+  }
+
+  public static func < (lhs: SpaceRole, rhs: SpaceRole) -> Bool { lhs.rank < rhs.rank }
+
+  /// 只读 / 贡献 / 维护 / 管理.
+  public var title: String {
+    switch self {
+    case .read: "只读"
+    case .write: "贡献"
+    case .maintain: "维护"
+    case .admin: "管理"
+    }
+  }
+}
+
+/// A space's policy; every field optional on the wire (`space.policy` may be partial).
+public struct SpacePolicy: Codable, Equatable, Sendable {
+  /// Hours after the first share during which the contributor may withdraw;
+  /// nil = any time (group spaces).
+  public var withdrawWindowHours: Int?
+  public var takedownWindowHours: Int
+  public var forksAllowed: Bool
+  /// `members` (originals readable by members) or `text_only`.
+  public var originals: String
+  /// `keep` (org spaces) or `contributor_choice` (group spaces).
+  public var onLeave: String
+
+  public init(
+    withdrawWindowHours: Int?, takedownWindowHours: Int = 72, forksAllowed: Bool,
+    originals: String = "members", onLeave: String
+  ) {
+    self.withdrawWindowHours = withdrawWindowHours
+    self.takedownWindowHours = takedownWindowHours
+    self.forksAllowed = forksAllowed
+    self.originals = originals
+    self.onLeave = onLeave
+  }
+
+  /// The Spark's defaults: an org space keeps contributions (a 24 h withdraw
+  /// window, no forks); a group space follows shared-album rules.
+  public static let org = SpacePolicy(
+    withdrawWindowHours: 24, forksAllowed: false, onLeave: "keep")
+  public static let group = SpacePolicy(
+    withdrawWindowHours: nil, forksAllowed: true, onLeave: "contributor_choice")
+
+  public var originalsForMembers: Bool { originals != "text_only" }
+
+  enum CodingKeys: String, CodingKey {
+    case withdrawWindowHours = "withdraw_window_h"
+    case takedownWindowHours = "takedown_window_h"
+    case forksAllowed = "forks_allowed"
+    case originals
+    case onLeave = "on_leave"
+  }
+
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    withdrawWindowHours = try c.decodeIfPresent(Int.self, forKey: .withdrawWindowHours)
+    takedownWindowHours = try c.decodeIfPresent(Int.self, forKey: .takedownWindowHours) ?? 72
+    forksAllowed = try c.decodeIfPresent(Bool.self, forKey: .forksAllowed) ?? false
+    originals = try c.decodeIfPresent(String.self, forKey: .originals) ?? "members"
+    onLeave = try c.decodeIfPresent(String.self, forKey: .onLeave) ?? "keep"
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var c = encoder.container(keyedBy: CodingKeys.self)
+    // `null` is meaningful for the window (no window).
+    try c.encode(withdrawWindowHours, forKey: .withdrawWindowHours)
+    try c.encode(takedownWindowHours, forKey: .takedownWindowHours)
+    try c.encode(forksAllowed, forKey: .forksAllowed)
+    try c.encode(originals, forKey: .originals)
+    try c.encode(onLeave, forKey: .onLeave)
+  }
+
+  public var json: SpaceJSON { (try? SpaceJSON.from(self)) ?? [:] }
+}
+
+/// One op's answer in a batch.
+public struct SpaceOpResult: Decodable, Equatable, Sendable {
+  public let ok: Bool
+  public let opID: String?
+  public let duplicate: Bool?
+  public let seq: Int?
+  public let effects: SpaceJSON?
+  public let status: Int?
+  public let error: String?
+  public let detail: String?
+
+  enum CodingKeys: String, CodingKey {
+    case ok
+    case opID = "op_id"
+    case duplicate, seq, effects, status, error, detail
+  }
+}
+
+public struct SpaceOpsAnswer: Decodable, Sendable {
+  public let results: [SpaceOpResult]
+  public let head: Int?
+}
+
+public struct SpaceListEntry: Decodable, Equatable, Sendable {
+  public let spaceID: String
+  public let ownerKind: String
+  public let orgID: String?
+  public let memberID: String
+  public let status: String
+  public let role: String?
+  public let epoch: Int
+  public let archived: Bool
+  public let head: Int
+
+  enum CodingKeys: String, CodingKey {
+    case spaceID = "space_id"
+    case ownerKind = "owner_kind"
+    case orgID = "org_id"
+    case memberID = "member_id"
+    case status, role, epoch, archived, head
+  }
+}
+
+public struct SpaceList: Decodable, Sendable {
+  public struct Org: Decodable, Equatable, Sendable {
+    public let orgID: String
+    public let memberID: String
+    public let admin: Bool
+    enum CodingKeys: String, CodingKey {
+      case orgID = "org_id"
+      case memberID = "member_id"
+      case admin
+    }
+  }
+
+  public struct PendingJoin: Decodable, Equatable, Sendable {
+    public let spaceID: String
+    public let requestID: String
+    public let status: String
+    enum CodingKeys: String, CodingKey {
+      case spaceID = "space_id"
+      case requestID = "request_id"
+      case status
+    }
+  }
+
+  public let deviceID: String
+  public let spaces: [SpaceListEntry]
+  public let orgs: [Org]
+  public let pendingJoins: [PendingJoin]
+
+  enum CodingKeys: String, CodingKey {
+    case deviceID = "device_id"
+    case spaces, orgs
+    case pendingJoins = "pending_joins"
+  }
+}
+
+public struct SpaceMemberRecord: Codable, Equatable, Sendable {
+  public let memberID: String
+  public let role: String
+  public let effectiveRole: String?
+  public let outside: Bool
+  public let status: String
+  public let owner: Bool
+  public let orgAdmin: Bool
+  public let joinedAt: String?
+  public let endedAt: String?
+  public let devices: [SpaceDevicePublic]
+
+  enum CodingKeys: String, CodingKey {
+    case memberID = "member_id"
+    case role
+    case effectiveRole = "effective_role"
+    case outside, status, owner
+    case orgAdmin = "org_admin"
+    case joinedAt = "joined_at"
+    case endedAt = "ended_at"
+    case devices
+  }
+
+  public var isActive: Bool { status == "active" }
+  public var effective: SpaceRole { SpaceRole(rawValue: effectiveRole ?? role) ?? .read }
+}
+
+public struct SpaceSummary: Decodable, Sendable {
+  public struct Owner: Decodable, Equatable, Sendable {
+    public let kind: String
+    public let memberID: String?
+    public let orgID: String?
+    enum CodingKeys: String, CodingKey {
+      case kind
+      case memberID = "member_id"
+      case orgID = "org_id"
+    }
+  }
+
+  public struct Me: Decodable, Equatable, Sendable {
+    public let memberID: String
+    public let deviceID: String
+    public let role: String
+    public let rights: [String]
+    public let hidden: [String]
+    public let forks: [String]
+    enum CodingKeys: String, CodingKey {
+      case memberID = "member_id"
+      case deviceID = "device_id"
+      case role, rights, hidden, forks
+    }
+  }
+
+  public struct Counts: Decodable, Equatable, Sendable {
+    public let items: Int
+    public let openTakedowns: Int
+    public let openProposals: Int
+    public let pendingJoins: Int
+    enum CodingKeys: String, CodingKey {
+      case items
+      case openTakedowns = "open_takedowns"
+      case openProposals = "open_proposals"
+      case pendingJoins = "pending_joins"
+    }
+  }
+
+  public struct Organizer: Decodable, Equatable, Sendable {
+    public let locked: Bool?
+    public let keyID: String?
+    public let epoch: Int?
+    public let leaseHolder: SpaceJSON?
+    public let leaseS: Int?
+    enum CodingKeys: String, CodingKey {
+      case locked
+      case keyID = "key_id"
+      case epoch
+      case leaseHolder = "lease_holder"
+      case leaseS = "lease_s"
+    }
+  }
+
+  public let spaceID: String
+  public let owner: Owner
+  public let policy: SpacePolicy
+  public let epoch: Int
+  public let rotationPending: Bool
+  public let archived: Bool
+  public let head: Int
+  public let createdAt: String?
+  public let members: [SpaceMemberRecord]
+  public let me: Me
+  public let counts: Counts?
+  public let organizer: Organizer?
+
+  enum CodingKeys: String, CodingKey {
+    case spaceID = "space_id"
+    case owner, policy, epoch
+    case rotationPending = "rotation_pending"
+    case archived, head
+    case createdAt = "created_at"
+    case members, me, counts, organizer
+  }
+}
+
+/// One entry of `GET …/ops`.
+public struct SpaceLogEntry: Decodable, Equatable, Sendable {
+  public struct ItemKey: Decodable, Equatable, Sendable {
+    public let epoch: Int
+    public let wrappedDK: String
+    enum CodingKeys: String, CodingKey {
+      case epoch
+      case wrappedDK = "wrapped_dk"
+    }
+  }
+
+  public let seq: Int
+  public let type: String
+  public let appliedAt: String?
+  /// base64url of the op's exact JSON bytes.
+  public let op: String
+  /// nil only for a Spark-written `system.remove`.
+  public let sig: String?
+  public let enc: String?
+  public let purged: Bool
+  public let itemKey: ItemKey?
+  /// The Spark left `enc` out for this member (a privacy takedown's reason is
+  /// for the requester and the maintainers); the op still verifies.
+  public let withheld: Bool?
+
+  enum CodingKeys: String, CodingKey {
+    case seq, type
+    case appliedAt = "applied_at"
+    case op, sig, enc, purged
+    case itemKey = "item_key"
+    case withheld
+  }
+
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    seq = try c.decode(Int.self, forKey: .seq)
+    type = try c.decode(String.self, forKey: .type)
+    appliedAt = try c.decodeIfPresent(String.self, forKey: .appliedAt)
+    op = try c.decode(String.self, forKey: .op)
+    sig = try c.decodeIfPresent(String.self, forKey: .sig)
+    enc = try c.decodeIfPresent(String.self, forKey: .enc)
+    purged = try c.decodeIfPresent(Bool.self, forKey: .purged) ?? false
+    itemKey = try c.decodeIfPresent(ItemKey.self, forKey: .itemKey)
+    withheld = try c.decodeIfPresent(Bool.self, forKey: .withheld)
+  }
+
+  /// The op's JSON bytes and value, or nil when they do not decode.
+  public var opBytes: Data? { Base64URL.decode(op, allowPadding: true) }
+}
+
+public struct SpaceOpsPage: Decodable, Sendable {
+  public let ops: [SpaceLogEntry]
+  public let cursor: Int
+  public let more: Bool
+  public let head: Int
+}
+
+public struct SpaceKeys: Decodable, Sendable {
+  public struct Wrap: Decodable, Equatable, Sendable {
+    public let epoch: Int
+    public let wrap: String
+  }
+
+  public struct Link: Decodable, Equatable, Sendable {
+    public let epoch: Int
+    public let prevWrap: String
+    enum CodingKeys: String, CodingKey {
+      case epoch
+      case prevWrap = "prev_wrap"
+    }
+  }
+
+  public let epoch: Int
+  public let rotationPending: Bool
+  public let wraps: [Wrap]
+  public let epochLinks: [Link]
+
+  enum CodingKeys: String, CodingKey {
+    case epoch
+    case rotationPending = "rotation_pending"
+    case wraps
+    case epochLinks = "epoch_links"
+  }
+}
+
+public struct SpaceItemKeys: Decodable, Sendable {
+  public struct Entry: Decodable, Equatable, Sendable {
+    public let itemID: String
+    public let revision: Int
+    public let epoch: Int
+    public let wrappedDK: String
+    enum CodingKeys: String, CodingKey {
+      case itemID = "item_id"
+      case revision, epoch
+      case wrappedDK = "wrapped_dk"
+    }
+  }
+
+  public let epoch: Int
+  public let items: [Entry]
+}
+
+public struct SpaceJoinRequestRecord: Decodable, Equatable, Sendable {
+  public let requestID: String
+  public let inviteID: String?
+  public let memberID: String
+  public let device: SpaceDevicePublic
+  public let profile: String?
+  public let status: String
+  public let createdAt: String?
+  public let role: String?
+  public let outside: Bool?
+  /// The signed request bytes (base64url) and their signature, and the HMAC
+  /// binding only an invite holder can make (checked by the inviter's Mac).
+  public let request: String?
+  public let sig: String?
+  public let binding: String?
+
+  enum CodingKeys: String, CodingKey {
+    case requestID = "request_id"
+    case inviteID = "invite_id"
+    case memberID = "member_id"
+    case device, profile, status
+    case createdAt = "created_at"
+    case role, outside, request, sig, binding
+  }
+}
+
+public struct SpaceJoinStatus: Decodable, Equatable, Sendable {
+  public let requestID: String
+  public let status: String
+  public let memberID: String?
+  public let role: String?
+  public let epoch: Int?
+
+  enum CodingKeys: String, CodingKey {
+    case requestID = "request_id"
+    case status
+    case memberID = "member_id"
+    case role, epoch
+  }
+}
+
+public struct SpaceInviteRecord: Decodable, Equatable, Sendable {
+  public let inviteID: String
+  public let role: String
+  public let outside: Bool?
+  public let hostKey: String?
+  public let expiresAt: String?
+  public let status: String
+  public let requestID: String?
+
+  enum CodingKeys: String, CodingKey {
+    case inviteID = "invite_id"
+    case role, outside
+    case hostKey = "host_key"
+    case expiresAt = "expires_at"
+    case status
+    case requestID = "request_id"
+  }
+}
+
+public struct SpaceTakedownRecord: Decodable, Equatable, Sendable {
+  public let takedownID: String
+  public let itemID: String
+  public let kind: String
+  public let requester: String?
+  public let status: String
+  public let createdAt: String?
+  public let dueAt: String?
+  public let overdue: Bool?
+
+  enum CodingKeys: String, CodingKey {
+    case takedownID = "takedown_id"
+    case itemID = "item_id"
+    case kind, requester, status
+    case createdAt = "created_at"
+    case dueAt = "due_at"
+    case overdue
+  }
+}
+
+public struct SpaceProposalRecord: Decodable, Equatable, Sendable {
+  public let proposalID: String
+  public let author: String?
+  public let kind: String
+  public let targets: SpaceJSON?
+  public let status: String?
+  public let opSeq: Int?
+  public let resolvedBy: String?
+  /// The organizer's own proposals carry its v6 question.
+  public let question: SpaceJSON?
+
+  enum CodingKeys: String, CodingKey {
+    case proposalID = "proposal_id"
+    case author, kind, targets, status
+    case opSeq = "op_seq"
+    case resolvedBy = "resolved_by"
+    case question
+  }
+}
+
+public struct SpaceProposals: Decodable, Sendable {
+  public let proposals: [SpaceProposalRecord]
+  public let organizer: [SpaceProposalRecord]
+}
+
+/// One audit record: ids, counts and codes only, never content.
+public struct SpaceAuditRecord: Codable, Equatable, Identifiable, Sendable {
+  public let id: Int
+  public let spaceID: String?
+  public let orgID: String?
+  public let seq: Int?
+  public let at: String
+  public let actorMember: String?
+  public let actorDevice: String?
+  public let action: String
+  public let target: SpaceJSON?
+
+  enum CodingKeys: String, CodingKey {
+    case id
+    case spaceID = "space_id"
+    case orgID = "org_id"
+    case seq, at
+    case actorMember = "actor_member"
+    case actorDevice = "actor_device"
+    case action, target
+  }
+}
+
+public struct SpaceAuditPage: Decodable, Sendable {
+  public let records: [SpaceAuditRecord]
+  public let cursor: Int?
+}
+
+public struct SpaceLease: Decodable, Equatable, Sendable {
+  public let locked: Bool
+  public let keyID: String?
+  public let created: Bool?
+  public let storeID: String?
+  public let epoch: Int?
+  public let leaseS: Int?
+  public let purged: Int?
+
+  enum CodingKeys: String, CodingKey {
+    case locked
+    case keyID = "key_id"
+    case created
+    case storeID = "store_id"
+    case epoch
+    case leaseS = "lease_s"
+    case purged
+  }
+}
+
+public struct SpacePendingItem: Decodable, Equatable, Sendable {
+  public let itemID: String
+  public let revision: Int
+  public let contributor: String?
+  public let kind: String?
+
+  enum CodingKeys: String, CodingKey {
+    case itemID = "item_id"
+    case revision, contributor, kind
+  }
+}
+
+/// "同一件事": which personal matter of which member a shared matter holds items from.
+public struct SpaceSameAs: Codable, Equatable, Sendable {
+  public let eventID: String
+  public let memberID: String
+  public let matterID: String
+  public let items: Int
+
+  public init(eventID: String, memberID: String, matterID: String, items: Int) {
+    self.eventID = eventID
+    self.memberID = memberID
+    self.matterID = matterID
+    self.items = items
+  }
+
+  enum CodingKeys: String, CodingKey {
+    case eventID = "event_id"
+    case memberID = "member_id"
+    case matterID = "matter_id"
+    case items
+  }
+}

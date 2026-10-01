@@ -14,6 +14,9 @@ all its active segments (remove_item: those in the named event; file_item_new_ev
 all of them). same_event / same_person answers from questions carry internal ids and apply directly.
 rename_event locks the title; the user's title is compared with new items next to the event's fixed
 anchor (and becomes the anchor if the event had none).
+v7 (MAP-CONTRACT section 2): confirm_rope / reject_rope / move_to_rope / rename_rope, reject_relation (a blocks edge)
+and hide_crossing. A rejected rope or edge is never proposed again; a matter the user placed is never moved by
+the grouping pass; a renamed rope keeps the user's title.
 """
 
 from __future__ import annotations
@@ -271,6 +274,84 @@ def delete_event(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
     return True, ""
 
 
+# ---- v7: ropes and relations (MAP-CONTRACT section 2) ----------------------------------------------
+
+
+def _rope(org: Organizer, rope_id: str):
+    r = org.store.one("SELECT * FROM ropes WHERE rope_id=?", ((rope_id or "").lower(),)) or \
+        org.store.one("SELECT * FROM ropes WHERE rope_id=?", (rope_id,))
+    return r if r and r["state"] != "rejected" else None
+
+
+def confirm_rope(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    r = _rope(org, d["rope_id"])
+    if not r:
+        return False, "unknown or rejected rope"
+    org.store.x("UPDATE ropes SET state='confirmed', seq=? WHERE rope_id=?", (org.store.bump(), r["rope_id"]))
+    return True, ""
+
+
+def reject_rope(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    """Its matters are released (and not placed again until they change), ropes inside it move up to its parent;
+    the title stays on record so the grouping pass never proposes it again."""
+    store = org.store
+    r = _rope(org, d["rope_id"])
+    if not r:
+        return False, "unknown or already rejected rope"
+    released = [m["event_id"] for m in store.all("SELECT event_id FROM rope_members WHERE rope_id=?", (r["rope_id"],))]
+    store.x("DELETE FROM rope_members WHERE rope_id=?", (r["rope_id"],))
+    for event_id in released:
+        store.touch_event(event_id)  # facets.rope changed
+    store.x("UPDATE ropes SET parent=? WHERE parent=?", (r["parent"], r["rope_id"]))
+    store.x("UPDATE ropes SET state='rejected', parent=NULL, reason='', evidence='[]', seq=? WHERE rope_id=?",
+            (store.bump(), r["rope_id"]))
+    return True, f"released {len(released)} matters"
+
+
+def move_to_rope(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    store = org.store
+    ev = _event(org, d["event_id"])
+    if not ev:
+        return False, "unknown or deleted event"
+    rope_id = None
+    if d.get("rope_id"):
+        r = _rope(org, d["rope_id"])
+        if not r:
+            return False, "unknown or rejected rope"
+        rope_id = r["rope_id"]
+    store.x("INSERT OR REPLACE INTO rope_members(event_id, rope_id, source, run_id, created_at) VALUES (?,?,'user',NULL,?)",
+            (d["event_id"], rope_id, store.now()))
+    store.touch_event(d["event_id"])
+    return True, "moved" if rope_id else "on no rope"
+
+
+def rename_rope(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    """The user's title stays (the pass never renames); naming a rope also accepts it."""
+    r = _rope(org, d["rope_id"])
+    if not r:
+        return False, "unknown or rejected rope"
+    org.store.x("UPDATE ropes SET title=?, title_user_edited=1, state='confirmed', seq=? WHERE rope_id=?",
+                (d["title"].strip(), org.store.bump(), r["rope_id"]))
+    return True, ""
+
+
+def reject_relation(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    store = org.store
+    store.add_constraint("reject_blocks", d["a"], d["b"], did)
+    n = store.x("DELETE FROM relations WHERE kind='blocks' AND a=? AND b=?", (d["a"], d["b"])).rowcount
+    store.bump()
+    return True, "removed" if n else "recorded"
+
+
+def hide_crossing(org: Organizer, d: dict, did: int) -> tuple[bool, str]:
+    if d["a"] == d["b"]:
+        return False, "a matter does not cross itself"
+    org.store.add_constraint("hide_crossing", *sorted((d["a"], d["b"])), did)
+    org.store.bump()
+    org.graph.reset()
+    return True, ""
+
+
 HANDLERS: dict[str, Handler] = {
     "rename_event": rename_event,
     "remove_item": remove_item,
@@ -283,6 +364,12 @@ HANDLERS: dict[str, Handler] = {
     "delete_event": delete_event,
     "unfile_item": unfile_item,
     "file_item_new_event": file_item_new_event,
+    "confirm_rope": confirm_rope,
+    "reject_rope": reject_rope,
+    "move_to_rope": move_to_rope,
+    "rename_rope": rename_rope,
+    "reject_relation": reject_relation,
+    "hide_crossing": hide_crossing,
 }
 
 

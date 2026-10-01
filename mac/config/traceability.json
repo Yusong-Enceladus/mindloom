@@ -256,6 +256,74 @@
         "artifacts/evidence/SPIKE-MIG-001/summary.json",
         "artifacts/evidence/SPIKE-MIG-001/matrix.json"
       ]
+    },
+    {
+      "requirementIDs": [
+        "MAP-001",
+        "MAP-002",
+        "MAP-003",
+        "MAP-004",
+        "MAP-005",
+        "MAP-006",
+        "LINK-001",
+        "LINK-002",
+        "LINK-003",
+        "LINK-004",
+        "LINK-005",
+        "AGENT-001",
+        "AGENT-002",
+        "AGENT-003",
+        "AGENT-004",
+        "AGENT-005",
+        "AGENT-006",
+        "AGENT-007",
+        "AGENT-008",
+        "AGENT-009",
+        "SPACE-001",
+        "SPACE-002",
+        "SPACE-003",
+        "SPACE-004",
+        "SPACE-005",
+        "SPACE-006",
+        "SPACE-007",
+        "SPACE-008",
+        "SPACE-009",
+        "SPACE-010",
+        "SPACE-011",
+        "SPACE-012"
+      ],
+      "threatIDs": [
+        "TM-05",
+        "TM-09",
+        "TM-10",
+        "TM-12",
+        "TM-14"
+      ],
+      "scenarioIDs": [
+        "Matter map decoded, unmasked, laid out and drawn in four lenses",
+        "Agent reads within its grant only; shared-space matters labelled; audit without content",
+        "Two synthetic Macs share one matter on a real organizing device; rotation; no plaintext",
+        "Privacy and phone end-to-end rerun on the integrated build"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/RemoteOrganizerMapTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMemoryTests/MemoryMatterMapTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMemoryUITests/MemoryLensTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentAccessServiceTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentSocketTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentReviewFixTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentSpacesIntegrationTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/SpaceEngineTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/SpaceVectorTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/ReviewFixTests.swift",
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/SpaceMacTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMemoryUITests/SpaceUITests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/SpacesEndToEndTests.swift",
+        "script/agent_e2e/mcp_e2e.py"
+      ],
+      "evidence": [
+        "artifacts/evidence/v7/e2e-summary.json"
+      ]
     }
   ]
 }

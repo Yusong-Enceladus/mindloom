@@ -34,6 +34,16 @@ import XCTest
 ///   status lines are left out because they may tell what came later);
 /// - `BESTASR_E2E_RENDER_SCALE` (default 1, at most 3): pixels per point of
 ///   every rendered page (2 gives 2560 pixels wide);
+/// - `BESTASR_E2E_RENDER_LENSES=1` (v7): Home in each lens as
+///   `home-<lens>-{light,dark}.png`, and each matter of
+///   `BESTASR_E2E_RENDER_EVENTS` in each lens as
+///   `matter-<id>-<lens>-{light,dark}.png` (plus `-strands-knot` with the
+///   evidence panel open on its latest knot with a quote), and the first Home
+///   matter without a map as `matter-nomap-strands-…`; written to
+///   `BESTASR_E2E_LENS_DIR` (default `<output>/lenses`), with
+///   `lens-summary.json` (counts only) and the organizer's map, rope and
+///   relation counts; `BESTASR_E2E_LENS_HEIGHT` (default 1100) is those
+///   pages' height;
 /// - `BESTASR_E2E_WORK_DIR`: keep the synthetic library and a ledger there;
 ///   a rerun with the same directory takes in only what is not there yet and
 ///   waits for the rest instead of sending new copies.
@@ -415,6 +425,125 @@ final class ScenarioEndToEndTests: XCTestCase {
         summary.threads.append(thread)
       }
 
+      // 4b. v7: Home and the matters asked for, in every lens.
+      if value("BESTASR_E2E_RENDER_LENSES") == "1" {
+        let lensDirectory =
+          value("BESTASR_E2E_LENS_DIR").map { URL(fileURLWithPath: $0, isDirectory: true) }
+          ?? settings.output.appendingPathComponent("lenses", isDirectory: true)
+        try fileManager.createDirectory(at: lensDirectory, withIntermediateDirectories: true)
+        let lensHeight = value("BESTASR_E2E_LENS_HEIGHT").flatMap(Double.init) ?? 1_100
+        var pages: [(String, MemoryNavigation, CGFloat)] = MemoryHomeLens.allCases.map {
+          ("home-\($0.rawValue)", MemoryNavigation(homeLens: $0), lensHeight)
+        }
+        var matters: [String: String] = [:]
+        for truth in renderEvents {
+          let members = tracked.filter { $0.expectedEvents.contains(truth) }.map { entry in
+            ScenarioThreads.Member(
+              ref: entry.ref, id: entry.id, text: texts[entry.id] ?? nil,
+              quotes: itemsByRef[entry.ref].map {
+                scenario.truthParts($0).filter { $0.event == truth }.map(\.quote)
+              } ?? [])
+          }
+          let choice = ScenarioThreads.choose(
+            truthEvent: truth, members: members, events: live, rank: homeRank)
+          guard let eventID = choice.eventID else { continue }
+          let name = ScenarioThreads.fileSafe(truth)
+          matters[name] = eventID
+          for lens in MemoryEventLens.allCases {
+            pages.append(
+              (
+                "matter-\(name)-\(lens.rawValue)",
+                MemoryNavigation(path: [.event(eventID)], eventLens: lens), lensHeight
+              ))
+          }
+          let knot = live.first { $0.eventID == eventID }?.map?.knots
+            .filter { !$0.quote.isEmpty }.max { ($0.date ?? "") < ($1.date ?? "") }
+          if let knot {
+            pages.append(
+              (
+                "matter-\(name)-strands-knot",
+                MemoryNavigation(
+                  path: [.event(eventID)], eventLens: .strands, focusedKnot: knot.id),
+                lensHeight
+              ))
+          }
+        }
+        if let plain = model.home.first(where: { entry in
+          live.first { $0.eventID == entry.eventID }?.map == nil && entry.itemCount >= 2
+        }) {
+          pages.append(
+            (
+              "matter-nomap-strands",
+              MemoryNavigation(path: [.event(plain.eventID)], eventLens: .strands), 900
+            ))
+        }
+        var lensFiles: [String] = []
+        // Milliseconds, on this data: deriving the read model with and without
+        // the v7 fields, and each light page drawn (at the render scale,
+        // PNG encoding included), and Home without the v7 fields.
+        var timings: [String: Double] = [:]
+        func ms(_ body: () throws -> Void) rethrows -> Double {
+          let start = Date()
+          try body()
+          return (Date().timeIntervalSince(start) * 10_000).rounded() / 10
+        }
+        let stripped = RemoteOrganizerProjection(
+          cursor: remote.cursor,
+          events: remote.events.map { event in
+            var event = event
+            event.map = nil
+            event.facets = nil
+            return event
+          }, questions: remote.questions, persons: remote.persons, unfiled: remote.unfiled,
+          readings: remote.readings, readingSummaries: remote.readingSummaries,
+          readingFacts: remote.readingFacts)
+        timings["derive_ms"] = ms {
+          _ = MemoryReadModel(MemoryProjection(remote: remote, records: records, now: Date()))
+        }
+        var plainModel: MemoryReadModel?
+        timings["derive_without_v7_ms"] = ms {
+          plainModel = MemoryReadModel(
+            MemoryProjection(remote: stripped, records: records, now: Date()))
+        }
+        if let plainModel {
+          let plainScreen = MemoryScreenState(
+            mode: .spark, readModel: plainModel, now: Date(), calendar: Self.calendar(zone),
+            thumbnail: screen.thumbnail)
+          timings["render_home-time-without-v7_ms"] = try ms {
+            _ = try SparkEndToEndTests.render(
+              plainScreen, navigation: MemoryNavigation(), dark: false, height: lensHeight)
+          }
+        }
+        for (base, navigation, height) in pages {
+          for dark in [false, true] {
+            let file = "\(base)-\(dark ? "dark" : "light").png"
+            var png = Data()
+            let elapsed = try ms {
+              png = try SparkEndToEndTests.render(
+                screen, navigation: navigation, dark: dark, height: height)
+            }
+            if !dark { timings["render_\(base)_ms"] = elapsed }
+            try png.write(to: lensDirectory.appendingPathComponent(file), options: .atomic)
+            lensFiles.append(file)
+          }
+        }
+        let lensSummary: [String: Any] = [
+          "files": lensFiles, "matters": matters,
+          "events_live": live.count, "maps": live.filter { $0.map != nil }.count,
+          "ropes": remote.ropes.count, "crossings": remote.relations.filter(\.isCross).count,
+          "blocks": remote.relations.filter(\.isBlocks).count,
+          "home_bands": model.lenses.bands.count,
+          "home_unroped": model.lenses.unroped.count,
+          "ladder": Dictionary(
+            uniqueKeysWithValues: model.lenses.rungs.map { ($0.kind.rawValue, $0.deadlines.count) }),
+          "timings_ms": timings, "render_scale": Double(SparkEndToEndTests.renderScale),
+        ]
+        try JSONSerialization.data(
+          withJSONObject: lensSummary, options: [.prettyPrinted, .sortedKeys]
+        ).write(to: lensDirectory.appendingPathComponent("lens-summary.json"), options: .atomic)
+        summary.snapshots.append(contentsOf: lensFiles.map { "lenses/\($0)" })
+      }
+
       // 5. Home as it would have looked at the end of each day asked for:
       // only items captured by then, today's grouping and titles.
       if !homeCutoffs.isEmpty {
@@ -459,6 +588,9 @@ final class ScenarioEndToEndTests: XCTestCase {
 
     probe.close()
     controller.revokeNow()
+    // The lock and the end of the forward run after revokeNow returns; the
+    // revocation check below must not race them (it saw a live tunnel).
+    await controller.waitForRevocation()
     await controller.revokeStorage()
     do {
       summary.revocation = try await SparkEndToEndTests.revocationCheck(

@@ -76,6 +76,12 @@ let package = Package(
       targets: ["BestASRRemoteOrganizer"]
     ),
     .library(name: "BestASRIntake", targets: ["BestASRIntake"]),
+    .library(name: "BestASRAgentAccess", targets: ["BestASRAgentAccess"]),
+    .library(name: "MindloomAgentProtocol", targets: ["MindloomAgentProtocol"]),
+    // The MCP helper bundled in the App (Contents/Helpers/mindloom-mcp) and a
+    // synthetic-root harness for its end-to-end test (AGENT-CONTRACT §1, §4).
+    .executable(name: "mindloom-mcp", targets: ["MindloomMCPHelper"]),
+    .executable(name: "MindloomAgentTestHost", targets: ["MindloomAgentTestHost"]),
     .library(name: "BestASRMemory", targets: ["BestASRMemory"]),
     .library(name: "BestASRMemoryUI", targets: ["BestASRMemoryUI"]),
     .library(
@@ -437,7 +443,9 @@ let package = Package(
       name: "BestASRRemoteOrganizer",
       dependencies: [
         "BestASRDomain",
+        "BestASRMemory",
         .product(name: "MindloomLink", package: "MindloomLink"),
+        .product(name: "MindloomSpaces", package: "MindloomLink"),
       ]
     ),
     // Paste/drag intake (PRD §0.3.2): pasteboard and file reading, local text
@@ -461,6 +469,26 @@ let package = Package(
     ),
     // UI-framework-agnostic read model for the Home, Event, and People pages
     // and the plain-text event export. Foundation only.
+    // Agents reading 织机 (AGENT-CONTRACT): hand-rolled MCP (JSON-RPC 2.0 over
+    // newline-delimited stdio / a Unix socket), Foundation only (ADR-0008).
+    .target(name: "MindloomAgentProtocol"),
+    .target(
+      name: "BestASRAgentAccess",
+      dependencies: [
+        "BestASRDomain", "BestASRMemory", "BestASRRemoteOrganizer", "MindloomAgentProtocol",
+      ]
+    ),
+    .executableTarget(
+      name: "MindloomMCPHelper",
+      dependencies: ["MindloomAgentProtocol"]
+    ),
+    .executableTarget(
+      name: "MindloomAgentTestHost",
+      dependencies: [
+        "BestASRAgentAccess", "BestASRDomain", "BestASRMemory", "BestASRPersistence",
+        "MindloomAgentProtocol",
+      ]
+    ),
     .target(
       name: "BestASRMemory",
       dependencies: ["BestASRDomain"]
@@ -470,7 +498,10 @@ let package = Package(
     // `MemoryActions`; no persistence, link, or model SDK is imported.
     .target(
       name: "BestASRMemoryUI",
-      dependencies: ["BestASRDomain", "BestASRMemory"]
+      dependencies: [
+        "BestASRDomain", "BestASRMemory",
+        .product(name: "MindloomSpaces", package: "MindloomLink"),
+      ]
     ),
     .target(
       name: "BestASRSpeakerRouting",
@@ -740,10 +771,13 @@ let package = Package(
       dependencies: [
         "BestASRDomain",
         "BestASRIntake",
+        "BestASRMemory",
         "BestASRPersistence",
         "BestASRRemoteOrganizer",
         .product(name: "GRDB", package: "GRDB.swift"),
         .product(name: "MindloomLink", package: "MindloomLink"),
+        .product(name: "MindloomSpaces", package: "MindloomLink"),
+        .product(name: "MindloomSpacesTestSupport", package: "MindloomLink"),
       ]
     ),
     .testTarget(
@@ -889,12 +923,23 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "BestASRAgentAccessTests",
+      dependencies: [
+        "BestASRAgentAccess", "BestASRDomain", "BestASRMemory", "BestASRPersistence",
+        "MindloomAgentProtocol", "MindloomMCPHelper",
+        .product(name: "GRDB", package: "GRDB.swift"),
+      ]
+    ),
+    .testTarget(
       name: "BestASRMemoryTests",
       dependencies: ["BestASRDomain", "BestASRMemory"]
     ),
     .testTarget(
       name: "BestASRMemoryUITests",
-      dependencies: ["BestASRDomain", "BestASRMemory", "BestASRMemoryUI"]
+      dependencies: [
+        "BestASRDomain", "BestASRMemory", "BestASRMemoryUI",
+        .product(name: "MindloomSpaces", package: "MindloomLink"),
+      ]
     ),
     // Opt-in end-to-end run on the owner's own Spark: a fresh synthetic data
     // root, the real intake, link, projection, pages and export. Skipped
@@ -910,6 +955,7 @@ let package = Package(
         "BestASRRemoteOrganizer",
         .product(name: "GRDB", package: "GRDB.swift"),
         .product(name: "MindloomLink", package: "MindloomLink"),
+        .product(name: "MindloomSpaces", package: "MindloomLink"),
       ]
     ),
     .testTarget(

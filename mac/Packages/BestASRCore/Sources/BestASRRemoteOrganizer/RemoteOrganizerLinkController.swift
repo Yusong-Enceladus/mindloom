@@ -206,6 +206,13 @@ public final class RemoteOrganizerLinkController {
 
   public var isRuntimeRunning: Bool { runtime?.isRunning == true }
 
+  /// The space routes' endpoint over this link's forward (nil while the link
+  /// is off or not connected).
+  public func spaceEndpoint() throws -> (port: Int, token: String) {
+    guard let runtime else { throw RemoteOrganizerRuntime.LinkError.tunnelNotReady }
+    return try runtime.spaceEndpoint()
+  }
+
   /// The organizer's clock mode while the link runs (`wall` in production).
   public var serviceClock: String? { runtime?.serviceClock }
 
@@ -502,6 +509,13 @@ public final class RemoteOrganizerLinkController {
     guard isEnabled else { return }
     try await repository.enqueueRemoteDecision(decision)
     await refreshProjection()
+  }
+
+  /// v7: asks the organizing device to draw a matter's map (optional; see
+  /// `RemoteOrganizerRuntime.requestMap`).
+  public func requestMap(eventID: String) {
+    guard isEnabled else { return }
+    runtime?.requestMap(eventID: eventID)
   }
 
   public func retryDecision(_ id: UUID) async throws {

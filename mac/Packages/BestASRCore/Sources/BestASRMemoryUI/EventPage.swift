@@ -19,23 +19,54 @@ struct EventPage: View {
   let back: () -> Void
   let open: (MemoryRoute) -> Void
   @Binding var expanded: Set<String>
+  /// 线索 / 结构 / 网 / 文本 (v7).
+  @Binding var lens: MemoryEventLens
+  /// The knot whose evidence the 线索 panel shows.
+  @Binding var focusedKnot: String?
+  /// A row the 文本 lens scrolls to once.
+  @Binding var revealRow: String?
+  /// Home, on its 按绳 lens (the rope breadcrumb).
+  var showRopes: () -> Void = {}
   @State private var display = Display.summary
 
   var body: some View {
     VStack(spacing: 0) {
       BackBar(title: ZhijiCopy.back, action: back) { primaryAction }
       if let detail = state.projection?.event(id: eventID) {
-        ZhijiScroll {
-          HStack {
-            Spacer(minLength: 24)
-            content(detail).frame(maxWidth: ZhijiMetrics.column)
-            Spacer(minLength: 24)
+        ScrollViewReader { proxy in
+          ZhijiScroll {
+            HStack {
+              Spacer(minLength: 24)
+              content(detail)
+                .frame(maxWidth: isWide ? ZhijiMetrics.wideColumn : ZhijiMetrics.column)
+              Spacer(minLength: 24)
+            }
           }
+          .onChange(of: revealRow) { _, row in reveal(row, proxy) }
+          .onAppear { reveal(revealRow, proxy) }
         }
       } else {
         Spacer()
       }
     }
+  }
+
+  /// 线索 and 网 take the page's width; 文本 and 结构 read as a column.
+  private var isWide: Bool { lens == .strands || lens == .net }
+
+  private func reveal(_ row: String?, _ proxy: ScrollViewProxy) {
+    guard let row, lens == .text else { return }
+    DispatchQueue.main.async {
+      proxy.scrollTo(row, anchor: .top)
+      revealRow = nil
+    }
+  }
+
+  /// "打开原文": the item open in the 文本 lens, scrolled to.
+  private func openRow(_ row: String) {
+    expanded.insert(row)
+    lens = .text
+    revealRow = row
   }
 
   // MARK: - Header action
@@ -98,33 +129,120 @@ struct EventPage: View {
 
   private func content(_ detail: MemoryEventDetail) -> some View {
     VStack(alignment: .leading, spacing: 18) {
-      EventHeader(detail: detail, state: state, morph: morph) { title in
-        actions.renameEvent(eventID, title)
+      VStack(alignment: .leading, spacing: 8) {
+        RopeCrumb(eventID: eventID, state: state, actions: actions, showRopes: showRopes)
+        EventHeader(detail: detail, state: state, morph: morph) { title in
+          actions.renameEvent(eventID, title)
+        }
       }
-      HStack(spacing: 10) {
-        PeopleChips(people: detail.shownPeople, actions: actions, open: open)
-        Spacer(minLength: 8)
-        ZhijiSegmented(
-          options: [(Display.summary, ZhijiCopy.summary), (.all, ZhijiCopy.showAll)],
-          selection: $display, height: 24, fontSize: 12, horizontalPadding: 12)
-      }
-      Rectangle().fill(palette.separator.opacity(0.8)).frame(height: 1)
-      if display == .summary, !detail.statusFacts.isEmpty {
-        StatusFactList(facts: detail.statusFacts, state: state)
-      }
-      DayTimeline(
-        detail: detail, state: state, actions: actions,
-        isExpanded: { display == .all || expanded.contains($0) },
-        toggle: { id in
-          if expanded.contains(id) { expanded.remove(id) } else { expanded.insert(id) }
-        }, open: open)
-      let related = state.projection?.related(to: eventID, home: state.home) ?? []
-      if !related.isEmpty {
-        RelatedEvents(entries: related, state: state, open: open)
+      MatterLensBar(lens: $lens)
+      switch lens {
+      case .text:
+        textLens(detail)
+      case .strands:
+        StrandLens(
+          eventID: eventID, detail: detail, state: state, actions: actions, morph: morph,
+          focused: $focusedKnot, openRow: openRow, open: open)
+      case .structure:
+        StructureLens(eventID: eventID, detail: detail, state: state) { knot in
+          focusedKnot = knot
+          lens = .strands
+        }
+      case .net:
+        NetLens(eventID: eventID, state: state, actions: actions, open: open)
       }
     }
     .padding(.top, 28)
     .padding(.bottom, 40)
+  }
+
+  /// 文本: the page as it was (and what 复制为文本 copies).
+  @ViewBuilder
+  private func textLens(_ detail: MemoryEventDetail) -> some View {
+    HStack(spacing: 10) {
+      PeopleChips(people: detail.shownPeople, actions: actions, open: open)
+      Spacer(minLength: 8)
+      ZhijiSegmented(
+        options: [(Display.summary, ZhijiCopy.summary), (.all, ZhijiCopy.showAll)],
+        selection: $display, height: 24, fontSize: 12, horizontalPadding: 12)
+    }
+    Rectangle().fill(palette.separator.opacity(0.8)).frame(height: 1)
+    if display == .summary, !detail.statusFacts.isEmpty {
+      StatusFactList(facts: detail.statusFacts, state: state)
+    }
+    DayTimeline(
+      detail: detail, state: state, actions: actions,
+      isExpanded: { display == .all || expanded.contains($0) },
+      toggle: { id in
+        if expanded.contains(id) { expanded.remove(id) } else { expanded.insert(id) }
+      }, open: open)
+    let related = state.projection?.related(to: eventID, home: state.home) ?? []
+    if !related.isEmpty {
+      RelatedEvents(entries: related, state: state, open: open)
+    }
+  }
+}
+
+/// Above the title: the rope the matter is on (a proposal says so), with the
+/// ways to move it, confirm the rope or say it is wrong.
+struct RopeCrumb: View {
+  @Environment(\.zhiji) private var palette
+  @Environment(\.zhijiSnapshot) private var snapshot
+  let eventID: String
+  let state: MemoryScreenState
+  let actions: MemoryActions
+  let showRopes: () -> Void
+
+  var body: some View {
+    if let ropes = state.projection?.ropes,
+      let rope = MemoryMatterNet.ropeIndex(ropes)[eventID]
+    {
+      let parent = rope.parent.flatMap { id in ropes.first { $0.id == id } }
+      let label = HStack(spacing: 5) {
+        Image(systemName: "point.3.connected.trianglepath.dotted")
+          .font(.system(size: 11, weight: .medium))
+        if let parent {
+          Text(parent.title).font(.zhiji(12))
+          Text("›").font(.zhiji(12))
+        }
+        Text(ZhijiCopy.ropeLabel(rope.title, proposed: rope.proposed)).font(.zhiji(12, .medium))
+        Image(systemName: "chevron.down").font(.system(size: 8, weight: .semibold))
+      }
+      .foregroundStyle(palette.accent)
+      .padding(.horizontal, 8)
+      .frame(height: 24)
+      .background(palette.accent.opacity(palette.isDark ? 0.16 : 0.08), in: Capsule())
+      if snapshot {
+        label
+      } else {
+        Menu {
+          Button(ZhijiCopy.byRope, action: showRopes)
+          Menu(ZhijiCopy.moveToRope) {
+            ForEach(ropes.filter { $0.id != rope.id }, id: \.id) { other in
+              Button(ZhijiCopy.ropeLabel(other.title, proposed: other.proposed)) {
+                actions.relation(.moveToRope(eventID: eventID, ropeID: other.id))
+              }
+            }
+          }
+          Button(ZhijiCopy.offRope) {
+            actions.relation(.moveToRope(eventID: eventID, ropeID: nil))
+          }
+          if rope.proposed {
+            Divider()
+            Button(ZhijiCopy.confirmRope) { actions.relation(.confirmRope(rope.id)) }
+            Button(ZhijiCopy.rejectRope) { actions.relation(.rejectRope(rope.id)) }
+          }
+        } label: {
+          label
+        }
+        .menuStyle(.button)
+        .buttonStyle(.plain)
+        .menuIndicator(.hidden)
+        .fixedSize()
+        .accessibilityLabel("\(ZhijiCopy.ropeBreadcrumb)，\(rope.title)")
+        .accessibilityIdentifier("bestASR.memory.ropeCrumb")
+      }
+    }
   }
 }
 

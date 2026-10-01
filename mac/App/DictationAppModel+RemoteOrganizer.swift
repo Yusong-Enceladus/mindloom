@@ -214,9 +214,11 @@ extension DictationAppModel {
     guard let controller = remoteOrganizer, controller.isEnabled else { return }
     guard decision.isWellFormed else {
       events.remoteStatusMessage =
-        decision.kind == "rename_event"
-        ? "标题需为 1–\(RemoteOrganizerDecision.maximumTitleScalars) 个字"
-        : "这次整理修改不完整，未保存"
+        switch decision.kind {
+        case "rename_event": "标题需为 1–\(RemoteOrganizerDecision.maximumTitleScalars) 个字"
+        case "rename_rope": "绳的名字需为 1–\(RemoteOrganizerDecision.maximumRopeTitleScalars) 个字"
+        default: "这次整理修改不完整，未保存"
+        }
       return
     }
     Task { [weak self] in
@@ -329,6 +331,12 @@ extension DictationAppModel {
     case "pin_event": "置顶"
     case "feature_less": "减少推荐"
     case "delete_event": "删除事件"
+    case "confirm_rope": "确认绳"
+    case "reject_rope": "去掉绳"
+    case "rename_rope": "给绳改名"
+    case "move_to_rope": "把事移到别的绳"
+    case "reject_relation": "去掉在等"
+    case "hide_crossing": "隐藏交叉"
     default: "整理修改"
     }
   }

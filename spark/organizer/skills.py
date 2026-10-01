@@ -42,6 +42,10 @@ JOB_TO_SKILL: dict[str, str] = {
     "consolidate": "event-consolidate",
     # The people pass (organizer/people_pass.py): is a record a person, is it another name of a listed person.
     "person": "person-resolve",
+    # v7: one matter's map (organizer/matter_map.py): strands, knots, health, explicit blocks edges.
+    "map": "matter-map",
+    # v7: the grouping pass (organizer/matter_group.py): ropes (areas / projects) and each matter's type.
+    "group": "matter-group",
 }
 
 GLOBAL_RULES = """\

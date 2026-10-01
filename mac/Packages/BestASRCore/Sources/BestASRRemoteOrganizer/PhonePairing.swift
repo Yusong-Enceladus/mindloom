@@ -291,6 +291,18 @@ public struct PhonePairingService: Sendable {
     guard result.status == 0 else { throw PhoneLinkCommandError.exited(result.status) }
   }
 
+  /// The organizing device as an invite to a shared space pins it
+  /// (SPACES-CONTRACT §4): the address ssh resolves for the configured host
+  /// and its host key from this Mac's known_hosts (ed25519 preferred). An
+  /// unknown host key refuses, never trust-on-first-use.
+  public func sparkEndpoint() async throws -> (
+    host: String, port: Int, user: String, hostKey: SSHHostKey
+  ) {
+    let host = try await resolve(settings.spark, hop: .spark)
+    let key = try await hostKey(for: host, hop: .spark)
+    return (host.hostname, host.port, host.user, key)
+  }
+
   func resolve(_ destination: SSHDestination, hop: PhonePairingHop) async throws
     -> SSHResolvedHost
   {

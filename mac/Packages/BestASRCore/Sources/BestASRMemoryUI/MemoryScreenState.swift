@@ -32,6 +32,8 @@ public struct MemoryScreenState {
   public private(set) var questionCount = 0
   /// Home's 「最近在动的事」, for each span.
   public private(set) var looms: [MemoryLoom.Span: MemoryLoom] = [:]
+  /// Home's 按绳 / 按截止 / 按人 (v7); nil before the first load.
+  public private(set) var lenses: MemoryHomeLenses?
   /// Review rows for the Person page, keyed by upper-case person ID.
   public var personReviews: [String: [MemoryPersonReview]]
   public var toast: MemoryToast?
@@ -41,6 +43,9 @@ public struct MemoryScreenState {
   public var issues: [MemoryIssue]
   /// The item whose audio is playing, if any.
   public var playingItemID: String?
+  /// Items other members shared (upper-case IDs): Home draws them in the
+  /// second tone, so a thread holding them is two-tone (全部).
+  public var sharedItemIDs: Set<String> = []
   public var now: Date
   public var calendar: Calendar
   /// Loads a thumbnail by its path relative to the asset root.
@@ -100,6 +105,7 @@ public struct MemoryScreenState {
       bannerQuestion = nil
       questionCount = 0
       looms = [:]
+      lenses = nil
       return
     }
     apply(MemoryReadModel(projection, calendar: calendar))
@@ -114,7 +120,12 @@ public struct MemoryScreenState {
     bannerQuestion = model.bannerQuestion
     questionCount = model.questionCount
     looms = model.looms
+    lenses = model.lenses
   }
+
+  /// "Now" on Home and on a matter's map: the library's newest item, so a
+  /// replayed library draws as it did then.
+  public var libraryNow: Date { looms[.twoWeeks]?.now ?? lenses?.now ?? now }
 
   public var canPin: Bool { mode == .spark }
 
@@ -245,6 +256,30 @@ public enum MemoryTab: Hashable, Sendable {
   case dictionary
 }
 
+/// How Home lays out the matters (MAP-CONTRACT §3).
+public enum MemoryHomeLens: String, CaseIterable, Hashable, Sendable {
+  /// Today's time axis (「最近在动的事」) and the other matters.
+  case time
+  /// Rope bands, collapsible, ropes inside ropes indented.
+  case ropes
+  /// A ladder: 刚过去, 今天, 明天, 这周, 以后.
+  case deadlines
+  /// The people who matter and their matters.
+  case people
+}
+
+/// How a matter's page shows it (MAP-CONTRACT §3).
+public enum MemoryEventLens: String, CaseIterable, Hashable, Sendable {
+  /// The strand map, with the status bar and the evidence panel.
+  case strands
+  /// The tree: strands and knots; 决定 / 下一步 / 问题 / 人 / 材料.
+  case structure
+  /// The matter's neighbourhood: crossings, ropes, waiting.
+  case net
+  /// The page as it was: facts and the items by day (also what is copied).
+  case text
+}
+
 public enum MemoryHomeMode: Hashable, Sendable {
   /// Events (事件).
   case events
@@ -260,15 +295,28 @@ public struct MemoryNavigation: Equatable, Sendable {
   public var search: String
   /// Items expanded in place on the Event and Unfiled pages.
   public var expandedItems: Set<String>
+  /// Home's lens (按时间 by default).
+  public var homeLens: MemoryHomeLens
+  /// A matter page's lens (线索 by default); kept from matter to matter.
+  public var eventLens: MemoryEventLens
+  /// The knot whose evidence the 线索 panel shows (a map knot ID).
+  public var focusedKnot: String?
+  /// A row the 文本 lens scrolls to once (after "打开原文").
+  public var revealRow: String?
 
   public init(
     tab: MemoryTab = .home, homeMode: MemoryHomeMode = .events, path: [MemoryRoute] = [],
-    search: String = "", expandedItems: Set<String> = []
+    search: String = "", expandedItems: Set<String> = [], homeLens: MemoryHomeLens = .time,
+    eventLens: MemoryEventLens = .strands, focusedKnot: String? = nil, revealRow: String? = nil
   ) {
     self.tab = tab
     self.homeMode = homeMode
     self.path = path
     self.search = search
     self.expandedItems = expandedItems
+    self.homeLens = homeLens
+    self.eventLens = eventLens
+    self.focusedKnot = focusedKnot
+    self.revealRow = revealRow
   }
 }

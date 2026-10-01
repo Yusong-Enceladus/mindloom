@@ -31,6 +31,8 @@ final class CopyRulesTests: XCTestCase {
       "App/LocalHistoryExporter.swift", "App/EventExportModel.swift",
       "App/MemoryScreenModel.swift", "App/DictationAppModel+Memory.swift",
       "App/DictationAppModel+RemoteOrganizer.swift", "App/DictationAppModel+PhoneLink.swift",
+      "App/AgentSettingsSection.swift", "App/AgentConsentPanel.swift", "App/AgentAccessModel.swift",
+      "App/DictationAppModel+AgentAccess.swift",
     ]
     let literal = try NSRegularExpression(pattern: #""(?:[^"\\]|\\.)*""#)
     var found: [String] = []

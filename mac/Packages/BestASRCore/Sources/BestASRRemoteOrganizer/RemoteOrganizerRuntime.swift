@@ -165,6 +165,11 @@ public final class RemoteOrganizerRuntime {
       let reason: String?
     }
   }
+  /// `POST /v1/events/{id}/map` (v7): queued, or why not.
+  private struct MapReceipt: Decodable {
+    let queued: Bool?
+    let reason: String?
+  }
   private struct QuestionReceipt: Decodable {
     let ok: Bool
     /// Present on current services: 200 means the answer's decision applied.
@@ -212,6 +217,10 @@ public final class RemoteOrganizerRuntime {
   /// Called on the main actor after a sealed phone entry that can never be
   /// taken in was acknowledged (so it is counted once, not per pull).
   public var onInboxDiscarded: ((RemoteOrganizerInboxDiscard) -> Void)?
+  /// v7: matters whose page asked for a map (in memory only, each asked at
+  /// most once per runtime). Content-free: event IDs only.
+  private var mapRequests: [String] = []
+  private var mapsAsked = Set<String>()
   private let timing: Timing
   private var onUpdate: ((LinkState, RemoteOrganizerProjection?) -> Void)?
   private var worker: Task<Void, Never>?
@@ -255,6 +264,16 @@ public final class RemoteOrganizerRuntime {
   }
 
   public var isRunning: Bool { worker != nil && !stopped }
+
+  /// Asks the organizing device to draw a matter's map (MAP-CONTRACT §1,
+  /// `POST /v1/events/{id}/map`): sent after the queued deletions and
+  /// decisions, once per matter per runtime. Optional: a matter with no map
+  /// still shows its facts on one thread.
+  public func requestMap(eventID: String) {
+    let id = eventID.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard !id.isEmpty, id.count <= 128, !stopped, mapsAsked.insert(id).inserted else { return }
+    mapRequests.append(id)
+  }
 
   public func start() {
     guard worker == nil, !stopped else { return }
@@ -355,6 +374,19 @@ public final class RemoteOrganizerRuntime {
     return response
   }
 
+  /// The loopback port and the link token for the shared-space routes
+  /// (SPACES-CONTRACT): they share this link's forward, and are handed out
+  /// only while the forward is up and its port is still held by this
+  /// runtime's own ssh child. Space routes do not use the personal store's
+  /// unlock; members sign their own requests.
+  public func spaceEndpoint() throws -> (port: Int, token: String) {
+    guard !stopped, let tunnel, tunnel.isRunning,
+      launcher.listenerIsOwned(by: tunnel.processIdentifier, port: tunnel.localPort)
+    else { throw LinkError.tunnelNotReady }
+    guard let token else { throw LinkError.tokenUnavailable }
+    return (tunnel.localPort, token)
+  }
+
   // MARK: - Worker
 
   private func isCurrent(_ generation: Int) -> Bool {
@@ -421,6 +453,7 @@ public final class RemoteOrganizerRuntime {
           // Contract v6 order: deletions, then decisions, then items.
           if try await deliverNextDeletion(generation: generation) { continue }
           if try await deliverNextDecision(generation: generation) { continue }
+          if try await requestNextMap(generation: generation) { continue }
           if try await deliverNextItem(generation: generation) { continue }
           // What the phone left on the organizing device becomes a local
           // item first; it is then sent like any item (next pass).
@@ -787,6 +820,33 @@ public final class RemoteOrganizerRuntime {
         retryAt: Self.retryDate(for: error, retryCount: job.retryCount))
       if error.isLinkLevel { throw error }
     }
+    return true
+  }
+
+  /// One map request. An unknown event (404), a matter too small, or any
+  /// answer that is not a link failure ends the request; a link failure
+  /// keeps it for the next connection.
+  private func requestNextMap(generation: Int) async throws -> Bool {
+    guard let eventID = mapRequests.first else { return false }
+    try ensureCurrent(generation)
+    guard
+      let escaped = eventID.addingPercentEncoding(
+        withAllowedCharacters: .urlPathAllowed.subtracting(CharacterSet(charactersIn: "/?#")))
+    else {
+      mapRequests.removeFirst()
+      return true
+    }
+    do {
+      let _: MapReceipt = try await call(
+        "POST", "/v1/events/\(escaped)/map", body: Data("{}".utf8), generation: generation)
+    } catch let error as LinkError where error.isLinkLevel {
+      throw error
+    } catch {
+      // Not drawn on request (unknown, too small, failed before, or an
+      // older service without the route): the page keeps the facts.
+    }
+    try ensureCurrent(generation)
+    if mapRequests.first == eventID { mapRequests.removeFirst() }
     return true
   }
 

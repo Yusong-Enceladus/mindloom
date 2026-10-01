@@ -38,6 +38,11 @@ public struct MemoryActions {
   /// drop it (`MemoryIssue.id`).
   public var retryIssue: @MainActor (_ issueID: String) -> Void
   public var discardIssue: @MainActor (_ issueID: String) -> Void
+  /// v7: confirm / reject / rename a rope, move a matter to another rope,
+  /// reject a blocks edge, hide a crossing.
+  public var relation: @MainActor (MemoryRelationDecision) -> Void
+  /// v7: a matter page with no map yet asks for one (optional).
+  public var requestMap: @MainActor (_ eventID: String) -> Void
 
   public init(
     answer: @escaping @MainActor (MemoryQuestion, Bool) -> Void = { _, _ in },
@@ -58,7 +63,9 @@ public struct MemoryActions {
     changeSource: @escaping @MainActor (String, String) -> Void = { _, _ in },
     refresh: @escaping @MainActor () -> Void = {},
     retryIssue: @escaping @MainActor (String) -> Void = { _ in },
-    discardIssue: @escaping @MainActor (String) -> Void = { _ in }
+    discardIssue: @escaping @MainActor (String) -> Void = { _ in },
+    relation: @escaping @MainActor (MemoryRelationDecision) -> Void = { _ in },
+    requestMap: @escaping @MainActor (String) -> Void = { _ in }
   ) {
     self.answer = answer
     self.answerReview = answerReview
@@ -79,6 +86,8 @@ public struct MemoryActions {
     self.refresh = refresh
     self.retryIssue = retryIssue
     self.discardIssue = discardIssue
+    self.relation = relation
+    self.requestMap = requestMap
   }
 
   /// Does nothing; for snapshots and previews.

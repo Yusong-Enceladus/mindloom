@@ -5,7 +5,202 @@ This file is the delivery ledger for the product defined in
 from acceptance evidence. A protocol, fixture, database table, or passing unit
 test does not by itself make a product capability complete.
 
-Status date: 2026-09-30.
+Status date: 2026-10-01.
+
+## 2026-10-01 v7 integration, Mac side (`claude/v7`)
+
+`claude/v7-agents`, `claude/v7-map` and `claude/v7-spaces` (with the review
+fixes) merged into `hackathon/base`, plus the connections that need all
+three; design in the "v7 集成" section of `docs/architecture/TECHNICAL_DESIGN.md`.
+New requirement IDs (PRD V1.8 §12.9–§12.11; no existing ID changed):
+MAP-001–006, LINK-001–005, AGENT-001–009, SPACE-001–012, traced in
+`config/traceability.json` with `artifacts/evidence/v7/e2e-summary.json`.
+Not installed; the App was not launched. Synthetic data only.
+
+- Delivered by the integration: agents see each shared space's matters
+  labelled `space:<space>:<event>` and never folded into 我的 (a grant for
+  我的 cannot reach a space); ropes and strands in the agent's view; agent
+  reads and refusals of a space go to that space's log as `agent.access`
+  (counts only); 整根绳 offers the matter's rope and the rope rule is followed
+  for every matter on the rope and the ropes inside it (自动 sends only on a
+  rope the owner confirmed); 全部 keeps the matter maps.
+- Verified on the merged code: BestASRCore package suite **922 executed, 21
+  skipped, 0 failed, 45 bundles** (`swift test --skip
+  QwenWhisperFeaturesTests`; v6 829); MindloomLink 86 (1 skipped: the opt-in
+  live test); iOS simulator 158 (157 passed, 1 skipped: on-device zh-CN
+  recognition); App Debug build succeeded; `swift-format lint --strict` adds no
+  finding in the files this integration changed; `privacy_scan.sh` 0 findings
+  (two synthetic `…/Downloads/…` script paths in the agent tests were
+  renamed); `validate_product_consistency.sh`, `validate_traceability.sh` (10
+  entries), `check_project_drift.sh` pass.
+- End to end against one fresh integrated organizing-device instance: privacy
+  **68/68**, phone (simulator, real relay and SSH) **67/67** (`authorized_keys`
+  on both hosts byte-identical afterwards), shared spaces (two synthetic
+  libraries, lab Twin-7 matter) **57/57**, agent MCP **43/43** with the
+  SwiftPM helper and with the helper inside the built App.
+
+| requirement | state |
+|---|---|
+| MAP-001, MAP-002 | delivered (organizer); measured on the lab and pm demo copies, see the organizer's `skills/matter-map/BENCHMARK.md` |
+| MAP-003, MAP-004, MAP-005 | delivered; checked by tests, renders and the App build, not in the running App; continuous zoom not seen moving; no VoiceOver pass by hand |
+| MAP-006 | delivered on the organizer (tests with a fake model); in the live spaces run the grouping pass ran in the space, a drawn map was not inspected |
+| LINK-001–005 | delivered; the lab data has no blocks edge, so 在等 / 被它等 is covered by tests and the synthetic fixture only |
+| AGENT-001–009 | delivered; consent panel, notifications and Settings → Agent checked by build and service tests, not on screen; no real vendor agent driven (the MCP exchange is verified with an independent client) |
+| SPACE-001–012 | delivered except: segment audio is not shared (text and speaker names only; user decision pending), 快照 is not offered in the share sheet, no UI for a member's second Mac or for adding org admins, a sole org admin removed from the org keeps the space (no key escrow), teammates still reach the organizing device through the owner's SSH account, shares made while the link is down fail with a message (no durable outbox) |
+
+## 2026-10-01 v7 matter map and relations, Mac side (`claude/v7-map`)
+
+The 线索 view and the Home lenses of the shared v7 contract A (matter map
+and relations v2, §3); design in the "v7 线索与关系" section of
+`docs/architecture/TECHNICAL_DESIGN.md`. The organizer side (the
+`matter-map` and `matter-group` skills, `POST /v1/events/{id}/map`, the new
+decisions) is the service branch. Not installed; the App was not launched.
+Synthetic data only.
+
+- `/v1/state` maps, facets, ropes and relations are decoded, stored and
+  unmasked; all additive (an older service omits them; a malformed field or
+  entry is dropped, never the pull). The six rope and relation decisions
+  (confirm, reject, rename a rope; move a matter to a rope or none; reject a
+  blocks edge; hide a crossing) are checked against the service limits,
+  masked on the wire and applied at once by the local overlay. A matter page
+  with no map asks for one once per link session.
+- The matter page has four lenses: 线索 (default: status bar, strand map
+  drawn natively with focusable knots and source tiles, evidence panel with
+  the quote in its item, continuous zoom from the Home lane, facts on one
+  thread under 正在整理线索… while there is no map), 结构, 网 (1–2 hop graph
+  with its relations and their corrections) and 文本 (the page as it was).
+  Home has 按时间 (as it was), 按绳, 按截止 and 按人. Light and dark; every
+  knot, tile, pill and row has a spoken label.
+- Verified: `BestASRMemoryTests` 73, `BestASRMemoryUITests` 38 (4 skipped:
+  snapshot renders without an output directory), `BestASRRemoteOrganizerTests`
+  85 (1 skipped: live smoke), `BestASRPersistenceTests` 100, all passed; App
+  Debug build succeeded; `swift-format lint --strict` adds no finding;
+  `script/privacy_scan.sh` 0 findings; `validate_product_consistency.sh`,
+  `validate_traceability.sh`, `check_project_drift.sh` pass. The scenario
+  harness rendered Home in each lens and three lab matters in each lens
+  against an organizing-device instance serving the lab demo copy (27 maps,
+  6 ropes, 231 crossings; nothing taken in or sent; the store locked again
+  after the run). On that data the read model derives in 421 ms with the v7
+  fields and 421 ms without; Home 按时间 draws in 66 ms (75 ms without them);
+  the 277-row Twin-7 matter draws its 线索 lens in 95 ms (2×, PNG included).
+- Not done here: the full package suite and the check gate (only the four
+  affected suites ran); the App's own UI tests.
+
+## 2026-09-30 v7 agents read 织机, Mac side (`claude/v7-agents`)
+
+**Review fixes (2026-09-30, `v7/review/FINDINGS.md`).** V7-A1: a split recording names only
+in-scope matters (none under "ask first"). V7-A2: with numbers masked, search matches the masked
+text and refuses a query holding a number. V7-A3: the client identity adds the parent's code
+signature and an interpreter's script; version folders fold only for a signed parent. V7-A4: no
+counts or person answers that hint at refused matters. V7-A5: a grant revoked while a call waited
+for approval wins. Tests: `AgentReviewFixTests` (7), updated identity test.
+
+AGENT-CONTRACT on the Mac; design in the "v7 Agent 读取织机" section of
+`docs/architecture/TECHNICAL_DESIGN.md`, dependency choice in ADR-0008,
+user guide in `docs/AGENTS.md`, PRD §0.3 item 11. Not installed; the App was
+not launched. Synthetic data only.
+
+- `mindloom-mcp` (stdio MCP) is bundled at `Contents/Helpers/`; it forwards
+  to the App over `<data root>/agent/mindloom.sock` (folder 0700, socket
+  0600, peer-owner check both ways) and answers "织机没有在运行，请先打开织机"
+  when the App is not running.
+- Tools `search_matters`, `get_matter` (text lens under the data header,
+  item ids, or JSON), `list_deadlines`, `list_recent`, `get_person`,
+  `add_to_inbox`; resource `mindloom://matter/<id>`.
+- Consent for unknown clients (notification + panel: spaces, range,
+  permission, duration, numbers, per-new-matter approval); grants in the
+  Keychain + a MAC'd scope row; expiry and revocation on the next call;
+  numbers masked by default with per-grant placeholders; audit rows without
+  content; the Agent 收件箱 (accept makes an `agent:<name>` item); Settings ->
+  Agent page. Library schema v25 (local tables).
+- Claude Code plugin (`integrations/claude-code-plugin`, validated with
+  `claude plugin validate`), Claude Desktop manifest, Codex/Cursor snippets.
+- Not yet: spaces, ropes and strands are carried by the snapshot type but
+  every matter is in 我的 until the spaces/map work lands; the consent panel,
+  notifications and Settings page were checked by the App build only, not by
+  running the App.
+
+## 2026-09-30 v7 shared spaces, Mac side (`claude/v7-spaces`)
+
+**Review fixes (2026-09-30, findings in `v7/review/FINDINGS.md`).** Members
+and devices come only from the signed op log (`SpaceRoster`; `join.approve`
+names the joiner's member id and both keys), so a device the Spark lists
+gets no rotation key and signs for no one (V7-S1); the epoch in use is the
+log's newest and this device's keys come only from wraps inside signed ops
+(V7-S10); joins send a gate token and an HMAC binding the inviter checks,
+never the secret (V7-S9), and a request under a known member id with another
+key cannot be approved (V7-S2); the invite's host key must be this Mac's own
+known_hosts key (V7-S14); one recording goes at most 15 minutes per space,
+parts start unticked, one per recording, never by a rule (V7-S5); a local
+delete queues `item.delete` in every space, durably (V7-S12); decrypted
+originals live in a per-launch folder purged at launch, quit, and when the
+item leaves (V7-S11); fork copies to delete are persisted and privacy
+removals take them (V7-S15); only a signed removal deletes local data
+(V7-S16); maintainers' titles are masked before the organizer (V7-S13);
+another member's rule clear is ignored (V7-S17). Tests: `ReviewFixTests`
+(16) in `MindloomSpacesTests`, two more in `SpaceMacTests`.
+
+The member side of shared spaces (PRD §0.3 item 8 "共享空间", the shared
+SPACES-CONTRACT; wire formats from the organizer's `docs/SPACES.md`). Design
+in the "v7 共享空间" section of `docs/architecture/TECHNICAL_DESIGN.md`. Not
+installed; the App was not launched. Synthetic data only.
+
+- `MindloomSpaces` (new target of `Packages/MindloomLink`, CryptoKit only):
+  device signing keys, signed ops / joins / requests, every ciphertext format
+  (byte for byte the shared `space_vectors.json`, SHA-256 `4c1c1a18…7d1a`
+  asserted), the space routes, invite codes that pin the organizing device's
+  host key, rights per role and space type, the share review list, and the
+  member flows: create (group or org), invite, join, approve with the key
+  wrapped to the new device, verified sync (an op that fails verification is
+  never applied), share with per-item data keys and sealed originals,
+  withdraw / delete (a takedown request past an org space's window) /
+  remove / hide / fork, privacy and other takedowns, proposals, leave and
+  remove with key rotation, lazy re-wrap, the organizer lease (re-keys a
+  store an older epoch still locks), audit, and access loss (the space's
+  content, keys and fork copies leave this Mac).
+- Mac integration: device and space keys in the Keychain (0600 files only in
+  a synthetic root), space organizing payloads masked with the space's own
+  mask key (screenshots only as the redacted copy), shareable content read
+  the way the organizing link reads it (never a voiceprint, the dictionary
+  or a window title; recordings only as their filed parts, at most 15
+  minutes each, text only), the space read model with numbers put back for
+  members, the "共享版更完整 · +N 条，来自 …" badge, the 全部 overlay with
+  others' items in a second tone, and the link's own forward for the space
+  routes.
+- UI: 我的 / each space / 全部 / ＋ above Home; the bar under a matter
+  (badge, 共享这件事…, 素材和权限…, 提议修改…); sheets for a new space, joining,
+  invites and members (QR and code, approvals with fingerprints, roles,
+  remove and leave, policy, archive), sharing (three scales, the review
+  list), items and rights, the maintainers' review queue, and the audit
+  records. A space's matters are edited through proposals (or directly by
+  maintainers), never through the personal organizer.
+- Not done: segment audio (blocked by "audio never leaves the Mac" until the
+  user decides); the 整根绳 scale needs the matter map's ropes
+  (`SpacesModel.ropeOf`); a second device of the same member (`device.add`);
+  org admin management beyond the first admin; the restricted SSH key for
+  teammates (Spark side).
+- Verified: package suite (`swift test --skip QwenWhisperFeaturesTests`) 856
+  tests, 20 skipped, 0 failed in 44 bundles (v6: 848 with 19 skipped); `MindloomLink` package 70
+  tests (MindloomSpaces 23, one opt-in skipped); App Debug build succeeded;
+  `swift-format lint --strict` clean on every new file;
+  `script/privacy_scan.sh`, `validate_product_consistency.sh`,
+  `validate_traceability.sh` and `check_project_drift.sh` pass. Against the
+  spaces test instance with the real model: the two-device protocol run
+  19/19 and the two-synthetic-library end-to-end run 22/22 (one matter
+  assembled from both members' items, rotation, no plaintext on the Spark).
+- Two-member end-to-end run on the lab demo's Twin-7 matter
+  (`SpacesEndToEndTests`, SPACES-CONTRACT §5; synthetic scale-lab items split
+  between 林知远 and 韩策, each Mac's own library with Fn dictations, a
+  recorded meeting with voiceprints, a dictionary entry and screenshots;
+  every request either Mac sends is scanned): 56 checks, green on the
+  spaces test instance with the real model. It found two defects, both
+  fixed: a recording part was titled with the recording's first words
+  (words from a line never filed into the matter reached members) and dated
+  at the recording's start — a part is now named and timed by its own
+  lines, and a whole-text edit sends only the filed characters
+  (`testAPartIsNamedAndTimedByItsOwnLinesOnly`); and one of 24 items
+  sometimes landed in another shared matter, now kept with its package by
+  the organizer's package step (organizer branch `claude/v7-spaces`).
 
 ## 2026-09-30 v6 integration, Mac side (`claude/v6`)
 

@@ -28,12 +28,21 @@ public struct MemoryEventSource: Equatable, Sendable {
   /// The parts of items this event holds when an item covers several
   /// matters; an item with none here is held whole.
   public let segments: [MemoryItemSegment]
+  /// v7: the organizer's map of the matter (strands and knots); nil until it
+  /// is drawn, and always for the local organizer.
+  public let map: RemoteOrganizerMatterMap?
+  /// v7: type, rope, nearest planned day and health.
+  public let facets: RemoteOrganizerFacets?
+  /// The organizer's facts as it listed them (`fN` in a map is the N-th of
+  /// these); `statusFacts` is the same set in display order.
+  public let listedFacts: [MemoryStatusFact]
 
   public init(
     eventID: String, origin: Origin, title: String, statusLine: String, pinned: Bool,
     startedAt: Date? = nil, updatedAt: Date?, itemIDs: [String], personIDs: [String],
     statusFacts: [MemoryStatusFact] = [], handle: String? = nil,
-    segments: [MemoryItemSegment] = []
+    segments: [MemoryItemSegment] = [], map: RemoteOrganizerMatterMap? = nil,
+    facets: RemoteOrganizerFacets? = nil, listedFacts: [MemoryStatusFact]? = nil
   ) {
     self.eventID = eventID
     self.origin = origin
@@ -47,6 +56,9 @@ public struct MemoryEventSource: Equatable, Sendable {
     self.statusFacts = statusFacts
     self.handle = handle
     self.segments = segments
+    self.map = map
+    self.facets = facets
+    self.listedFacts = listedFacts ?? statusFacts
   }
 }
 
@@ -367,6 +379,11 @@ public struct MemoryProjection: Sendable {
   public let remoteReadingFacts: [String: RemoteOrganizerReadingFacts]
   /// Items in no event (`itemID`, `reason`), in no particular order.
   public let unfiled: [RemoteOrganizerUnfiledItem]
+  /// v7: ropes (with the user's decisions applied), each child a shown
+  /// event; a rope left with no child and no child rope is left out.
+  public let ropes: [RemoteOrganizerRope]
+  /// v7: crossings and blocks edges between shown events.
+  public let relations: [RemoteOrganizerRelation]
   /// Questions made on this Mac (the local fallback organizer's candidates).
   public let localQuestions: [MemoryQuestion]
   /// The moment "now" for question expiry; injected for determinism.
@@ -406,9 +423,13 @@ public struct MemoryProjection: Sendable {
     remoteReadingFacts: [String: RemoteOrganizerReadingFacts] = [:],
     unfiled: [RemoteOrganizerUnfiledItem] = [],
     localQuestions: [MemoryQuestion] = [], now: Date = Date(),
-    ownerPersonIDs: Set<String> = []
+    ownerPersonIDs: Set<String> = [], ropes: [RemoteOrganizerRope] = [],
+    relations: [RemoteOrganizerRelation] = []
   ) {
     self.events = events
+    let shown = Set(events.map(\.eventID))
+    self.relations = relations.filter { shown.contains($0.a) && shown.contains($0.b) }
+    self.ropes = Self.shownRopes(ropes, events: shown)
     var byID: [String: MemoryItemRecord] = [:]
     for record in records { byID[Self.key(record.sessionID)] = record }
     self.records = byID
@@ -477,8 +498,47 @@ public struct MemoryProjection: Sendable {
         ?? (remoteReadings == nil ? remote.readingSummaries : [:]),
       remoteReadingFacts: remoteReadings == nil ? remote.readingFacts : [:],
       unfiled: remote.unfiled, now: now,
-      ownerPersonIDs: ownerPersonIDs
+      ownerPersonIDs: ownerPersonIDs, ropes: remote.ropes, relations: remote.relations
     )
+  }
+
+  /// Ropes whose children are shown events (each event on one rope, the
+  /// first that lists it), without cycles, and without a rope left with no
+  /// child and no child rope.
+  static func shownRopes(_ ropes: [RemoteOrganizerRope], events: Set<String>)
+    -> [RemoteOrganizerRope]
+  {
+    var placed = Set<String>()
+    var kept = ropes.map { rope -> RemoteOrganizerRope in
+      var rope = rope
+      rope.children = rope.children.filter { events.contains($0) && placed.insert($0).inserted }
+      return rope
+    }
+    let ids = Set(kept.map(\.id))
+    // A parent that is not listed, or a loop, puts the rope at the top.
+    for index in kept.indices {
+      guard let parent = kept[index].parent else { continue }
+      var seen: Set<String> = [kept[index].id]
+      var current: String? = parent
+      var cyclic = false
+      while let id = current {
+        guard ids.contains(id) else { break }
+        if !seen.insert(id).inserted {
+          cyclic = true
+          break
+        }
+        current = kept.first { $0.id == id }?.parent
+      }
+      if !ids.contains(parent) || cyclic { kept[index].parent = nil }
+    }
+    // Drop ropes with nothing under them, from the leaves up.
+    while true {
+      let parents = Set(kept.compactMap(\.parent))
+      let before = kept.count
+      kept.removeAll { $0.children.isEmpty && !parents.contains($0.id) }
+      if kept.count == before { break }
+    }
+    return kept
   }
 
   /// All item IDs the events reference, for loading their local records.
@@ -497,18 +557,20 @@ public struct MemoryProjection: Sendable {
   }
 
   public static func source(_ event: RemoteOrganizerEvent) -> MemoryEventSource {
-    MemoryEventSource(
+    let facts = event.statusFacts.map(MemoryStatusFact.init(remote:))
+    return MemoryEventSource(
       eventID: event.eventID, origin: .spark, title: event.title,
       statusLine: event.statusLine, pinned: event.pinned,
       startedAt: event.startedAt.flatMap(parseDate),
       updatedAt: event.updatedAt.flatMap(parseDate), itemIDs: event.itemIDs,
       personIDs: event.personIDs,
-      statusFacts: MemoryStatusFact.ordered(event.statusFacts.map(MemoryStatusFact.init(remote:))),
+      statusFacts: MemoryStatusFact.ordered(facts),
       handle: event.handle,
       segments: event.segments.map {
         MemoryItemSegment(
           itemID: $0.itemID, segID: $0.segID, start: $0.start, end: $0.end, gist: $0.gist)
-      }
+      },
+      map: event.map, facets: event.facets, listedFacts: facts
     )
   }
 
@@ -1244,19 +1306,26 @@ public struct MemoryReadModel: Sendable {
   public let questionCount: Int
   /// Home's 「最近在动的事」, for each span the page offers.
   public let looms: [MemoryLoom.Span: MemoryLoom]
+  /// Home's other lenses: 按绳, 按截止, 按人 (v7).
+  public let lenses: MemoryHomeLenses
 
   public init(_ projection: MemoryProjection, calendar: Calendar = .current) {
     self.projection = projection
     let home = projection.home()
     self.home = home
-    looms = Dictionary(
+    let looms = Dictionary(
       uniqueKeysWithValues: MemoryLoom.Span.allCases.map {
         ($0, MemoryLoom(projection: projection, home: home, span: $0, calendar: calendar))
       })
+    self.looms = looms
     let people = projection.people()
     self.people = people
     recentPeople = projection.recentPeople(from: people)
-    featuredPeople = projection.featuredPeople(from: people)
+    let featured = projection.featuredPeople(from: people)
+    featuredPeople = featured
+    lenses = MemoryHomeLenses(
+      projection: projection, home: home, featuredPeople: featured,
+      now: looms[.twoWeeks]?.now ?? projection.now, calendar: calendar)
     unfiled = projection.unfiledItems()
     let questions = projection.memoryQuestions()
     questionCount = questions.count

@@ -302,25 +302,52 @@ class Store:
         """Open (or create) the encrypted store with the Mac's library key. Idempotent with the same key.
         Raises WrongKey when the key belongs to another store; the store then stays locked."""
         key_id, store_key, mask_key = keys.derive_keys(library_key)
+        return self.unlock_keys(key_id, store_key, mask_key)
+
+    def unlock_keys(self, key_id: str, store_key: bytes, mask_key: bytes,
+                    previous: Optional[tuple[str, bytes]] = None) -> dict:
+        """Open (or create) the store with already-derived keys: the personal store derives them from the library
+        key (unlock); a shared space's organizer store gets them from a member Mac's lease (space_organizer.py),
+        since the Spark never holds a space key. `previous` = (key_id, store_key) of the key the file is encrypted
+        with after the space's key rotated: the store is opened with it and re-keyed to `store_key` at once
+        (SQLCipher PRAGMA rekey), so a removed member's old key no longer opens it."""
         with self._lock:
             if self.conn is not None:
                 if self.memory or key_id == self.key_id:
                     return {"locked": False, "key_id": self.key_id, "created": False, "store_id": self.store_id}
                 raise WrongKey(self.key_id)
             on_disk = self.disk_key_id()
+            open_key, rekeyed = store_key, False
             if on_disk is not None and on_disk != key_id:
-                raise WrongKey(on_disk)
+                if previous is not None and previous[0] == on_disk:
+                    open_key, rekeyed = previous[1], True
+                else:
+                    raise WrongKey(on_disk)
             path = Path(self.path)
             created = not (path.exists() and path.stat().st_size > 0)
             if not created and db.is_plaintext(path):
                 # A store written before encryption: encrypt it with this key, then drop the plaintext file.
                 db.encrypt_in_place(path, store_key)
             try:
-                conn = db.connect(self.path, store_key, check_same_thread=False, isolation_level=None)
+                conn = db.connect(self.path, open_key, check_same_thread=False, isolation_level=None)
             except db.DatabaseError:
-                raise WrongKey(on_disk) from None  # encrypted with another key (and no sidecar to say so)
+                if not rekeyed:
+                    raise WrongKey(on_disk) from None  # encrypted with another key (and no sidecar to say so)
+                # A re-key that finished before its sidecar was written (a crash in between): the new key opens it.
+                try:
+                    conn = db.connect(self.path, store_key, check_same_thread=False, isolation_level=None)
+                except db.DatabaseError:
+                    raise WrongKey(on_disk) from None
+                rekeyed, open_key = False, store_key
+                keys.write_key_id(self.keyid_path, key_id)
+            if rekeyed:
+                try:
+                    conn.execute(db._key_pragma(store_key).replace("PRAGMA key", "PRAGMA rekey", 1))
+                except BaseException:
+                    conn.close()
+                    raise
             self._open(conn)
-            if on_disk is None:
+            if on_disk is None or rekeyed:
                 keys.write_key_id(self.keyid_path, key_id)
             self.key_id = key_id
             self._mask_key = bytearray(mask_key)
@@ -576,6 +603,45 @@ class Store:
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS person_scan(item_id TEXT PRIMARY KEY, rules TEXT NOT NULL,"
             " mentions TEXT NOT NULL DEFAULT '')")
+        # --- v7: the matter map and relations v2 (MAP-CONTRACT sections 1-2) ---
+        # event_maps: one map per event (skill matter-map): strands, knots, health and the blocks it proposed, with
+        # the internal ids of the items it cites (map, JSON), the item set it was drawn from (item_set: ids, no
+        # content) and the digest of the card facts its fact_ids index. outcome 'dropped' (map NULL) records a
+        # call whose output stayed invalid, so the event is tried again only when its items change.
+        # map_queue: events waiting for a map (priority 2 = the Mac asked for it, 1 = its card was rewritten).
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS event_maps(event_id TEXT PRIMARY KEY, map TEXT, outcome TEXT NOT NULL,"
+            " skill_version TEXT NOT NULL DEFAULT '', run_id TEXT, item_set TEXT NOT NULL DEFAULT '[]',"
+            " facts_digest TEXT NOT NULL DEFAULT '', tries INTEGER NOT NULL DEFAULT 0, stale INTEGER NOT NULL DEFAULT 0,"
+            " updated_at TEXT NOT NULL)")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS map_queue(event_id TEXT PRIMARY KEY, priority INTEGER NOT NULL,"
+            " reason TEXT NOT NULL, queued_at REAL NOT NULL)")
+        # relations: the proposed 'blocks' edges (a blocks b: b waits on a), each with the item and the verbatim
+        # quote that states it; a user's rejection is a constraint 'reject_blocks' (ids only) and the row goes.
+        # Crossings are computed from event_items, never stored; a hidden one is a constraint 'hide_crossing'.
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS relations(kind TEXT NOT NULL, a TEXT NOT NULL, b TEXT NOT NULL, item_id TEXT,"
+            " quote TEXT NOT NULL DEFAULT '', source_event TEXT, run_id TEXT, created_at TEXT NOT NULL,"
+            " PRIMARY KEY (kind, a, b))")
+        # ropes (skill matter-group): a tree of long-lived areas and bigger projects; rope_members: each event's one
+        # parent rope (source 'model' or 'user'; rope_id NULL = the user said "no rope"); event_facets: the type
+        # facet; group_checks: which events the grouping pass judged (a hash of the title then, never the title).
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS ropes(rope_id TEXT PRIMARY KEY, handle INTEGER NOT NULL UNIQUE,"
+            " title TEXT NOT NULL, kind TEXT NOT NULL DEFAULT 'area', parent TEXT, state TEXT NOT NULL DEFAULT 'proposed',"
+            " title_user_edited INTEGER NOT NULL DEFAULT 0, reason TEXT NOT NULL DEFAULT '', evidence TEXT NOT NULL"
+            " DEFAULT '[]', run_id TEXT, created_at TEXT NOT NULL, seq INTEGER NOT NULL DEFAULT 0)")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS rope_members(event_id TEXT PRIMARY KEY, rope_id TEXT, source TEXT NOT NULL,"
+            " run_id TEXT, created_at TEXT NOT NULL)")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS event_facets(event_id TEXT PRIMARY KEY, type TEXT, source TEXT NOT NULL,"
+            " run_id TEXT, updated_at TEXT NOT NULL)")
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS group_checks(event_id TEXT PRIMARY KEY, title_hash TEXT NOT NULL DEFAULT '',"
+            " outcome TEXT NOT NULL, n_checks INTEGER NOT NULL DEFAULT 1, run_id TEXT, created_at TEXT NOT NULL)")
+        self.conn.execute("INSERT OR IGNORE INTO meta(key, value) VALUES ('rope_handle_seq', '0')")
         # The phone inbox moved to its own inbox.db (organizer/inbox.py); an older store's inbox table is
         # handed over once after unlock (legacy_inbox_rows / drop_legacy_inbox) and then dropped.
         # Integrity triggers ("no rewrite, only purge") and the latest_items view, recreated on every open.
@@ -935,8 +1001,104 @@ class Store:
                     self.recompute_event(event_id)  # needs_brief=1: the card is written again without it
                     self.update_event(event_id, title=title, status_line="", status_facts=facts, anchor=anchor,
                                       anchor_source=anchor_source, importance_reason="", provenance=prov)
+                self.purge_graph(ids)
             return {"deleted": True, "revisions": len(stored), "children": len(children), "frames": len(frames),
                     "events": len(touched)}
+
+    def purge_graph(self, ids: list[str]) -> None:
+        """The v7 derived records of deleted items (inside purge_item's transaction). Nothing the map wrote from the
+        item stays (as in v6, where a fact citing a deleted item goes even with other evidence; review finding
+        V7-M1): every knot that cites it goes, whatever else it cites; every strand that listed it goes (its name
+        and summary may paraphrase it; its remaining knots fall back to the main thread); the health verdict that
+        cited it loses its reason; a blocks edge quoting it goes. The map is marked 'purged' and queued: if the
+        redraw fails, the map is dropped rather than kept. A matter left empty or deleted keeps no map and no
+        queue row (V7-M2). A rope the model proposed from it goes (members released, judged again); a rope the
+        user confirmed or renamed keeps its title (the user's decision) and loses that evidence and its reason."""
+        if not ids:
+            return
+        gone = set(ids)
+        for row in self.all("SELECT event_id, map FROM event_maps"):
+            ev_row = self.one("SELECT deleted FROM events WHERE event_id=?", (row["event_id"],))
+            if ev_row is None or ev_row["deleted"]:
+                self.drop_map(row["event_id"])
+                continue
+            if not row["map"] or not any(i in row["map"] for i in gone):
+                continue
+            m = json.loads(row["map"])
+            dropped = {s.get("id") for s in m.get("strands") or [] if gone & set(s.get("item_ids") or [])}
+            m["strands"] = [s for s in m.get("strands") or [] if s.get("id") not in dropped]
+            knots = []
+            for k in m.get("knots") or []:
+                if gone & set(k.get("evidence") or []) or k.get("quote_item") in gone:
+                    continue
+                if k.get("strand") in dropped:
+                    k["strand"] = None
+                knots.append(k)
+            m["knots"] = knots
+            h = m.get("health")
+            if h and gone & set(h.get("evidence") or []):
+                h["evidence"] = [i for i in h["evidence"] if i not in gone]
+                h["reason"] = ""
+                if not h["evidence"] and h.get("level") != "ok":
+                    m["health"] = None
+            m["blocks"] = [b for b in m.get("blocks") or [] if b.get("item_id") not in gone]
+            self.x("UPDATE event_maps SET map=?, stale=1, outcome='purged' WHERE event_id=?",
+                   (dumps(m), row["event_id"]))
+            self.touch_event(row["event_id"])
+            self.queue_map(row["event_id"], 1, "purge")
+        marks = ",".join("?" * len(ids))
+        self.x(f"DELETE FROM relations WHERE item_id IN ({marks})", list(ids))
+        for r in self.all("SELECT * FROM ropes WHERE state != 'rejected'"):
+            ev = json.loads(r["evidence"] or "[]")
+            if not gone & set(ev):
+                continue
+            if r["state"] == "proposed" and not r["title_user_edited"]:
+                self.drop_rope(r)
+            else:
+                self.x("UPDATE ropes SET evidence=?, reason='', seq=? WHERE rope_id=?",
+                       (dumps([i for i in ev if i not in gone]), self.bump(), r["rope_id"]))
+
+    def drop_map(self, event_id: str) -> None:
+        """A matter that is gone (deleted, merged away, left empty) keeps no map and waits for none."""
+        self.x("DELETE FROM event_maps WHERE event_id=?", (event_id,))
+        self.x("DELETE FROM map_queue WHERE event_id=?", (event_id,))
+        self.x("DELETE FROM relations WHERE kind='blocks' AND (a=? OR b=? OR source_event=?)",
+               (event_id, event_id, event_id))
+
+    def drop_rope(self, rope: dict) -> None:
+        """A proposed rope written from a deleted item goes with its title: its matters are released (and judged
+        again), ropes inside it move up to its parent."""
+        released = [m["event_id"] for m in self.all("SELECT event_id FROM rope_members WHERE rope_id=?",
+                                                    (rope["rope_id"],))]
+        self.x("DELETE FROM rope_members WHERE rope_id=?", (rope["rope_id"],))
+        for event_id in released:
+            self.x("DELETE FROM group_checks WHERE event_id=?", (event_id,))
+            self.touch_event(event_id)
+        self.x("UPDATE ropes SET parent=?, seq=? WHERE parent=?", (rope["parent"], self.bump(), rope["rope_id"]))
+        self.x("DELETE FROM ropes WHERE rope_id=?", (rope["rope_id"],))
+        self.bump()
+
+    # ---- v7: maps, relations, ropes ------------------------------------------------------
+
+    def touch_event(self, event_id: str) -> None:
+        """A derived record of the event changed (its map): clients pull the event again."""
+        self.x("UPDATE events SET seq=? WHERE event_id=?", (self.bump(), event_id))
+
+    def queue_map(self, event_id: str, priority: int, reason: str) -> None:
+        """Ask for a map of the event; a higher priority (2: the Mac asked) is never lowered by a later request."""
+        self.x("INSERT INTO map_queue(event_id, priority, reason, queued_at) VALUES (?,?,?,?) ON CONFLICT(event_id)"
+               " DO UPDATE SET priority=MAX(priority, excluded.priority), reason=CASE WHEN excluded.priority > priority"
+               " THEN excluded.reason ELSE reason END", (event_id, priority, reason, time.time()))
+
+    def map_row(self, event_id: str) -> Optional[dict]:
+        row = self.one("SELECT * FROM event_maps WHERE event_id=?", (event_id,))
+        if row:
+            row["map"] = json.loads(row["map"]) if row.get("map") else None
+            row["item_set"] = json.loads(row["item_set"] or "[]")
+        return row
+
+    def next_rope_handle(self) -> int:
+        return self._next("rope_handle_seq")
 
     def checkpoint(self) -> None:
         """Move the WAL into the database file and truncate it (after a purge: old page versions leave the WAL)."""
@@ -1098,6 +1260,9 @@ class Store:
             sets.append("seq=?")
             args.append(self.bump())
             self.x(f"UPDATE events SET {', '.join(sets)} WHERE event_id=?", [*args, event_id])
+            if fields.get("deleted"):
+                # a deleted or merged-away matter keeps no map (review finding V7-M2)
+                self.drop_map(event_id)
 
     def attach(self, event_id: str, item_id: str, attached_by: str, run_id: Optional[str] = None,
                item_revision: Optional[int] = None) -> None:

@@ -127,10 +127,12 @@ public struct EventPlainTextFormatter: Sendable {
   }
 
   /// "节选：<gist>；同一段记录还涉及：「A」、「B」" for a part of an item.
-  private func segmentNote(_ item: MemoryEventItem) -> String? {
+  private func segmentNote(
+    _ item: MemoryEventItem, showSibling: (MemorySegmentSibling) -> Bool = { _ in true }
+  ) -> String? {
     guard let segment = item.segment else { return nil }
     var note = Self.segmentLabel + (oneLine(segment.gist).isEmpty ? "其中一部分" : oneLine(segment.gist))
-    let others = item.siblings.map { "「\(oneLine($0.title))」" }
+    let others = item.siblings.filter(showSibling).map { "「\(oneLine($0.title))」" }
     if !others.isEmpty { note += "；同一段记录还涉及：" + others.joined(separator: "、") }
     return note
   }
@@ -307,4 +309,31 @@ public struct EventPlainTextFormatter: Sendable {
   private func compact(_ value: String) -> String {
     String(value.unicodeScalars.filter { !CharacterSet.whitespacesAndNewlines.contains($0) })
   }
+}
+
+extension EventPlainTextFormatter {
+  /// One item of `event` as `format` writes it, before quoting, for a caller
+  /// that frames items itself (the agent text lens, AGENT-CONTRACT §1): the
+  /// `HH:mm · 来源：…` header, the formatter's own notes (节选、文件、读图概要、
+  /// 文件概要) and the body. `format` itself is unchanged. `showSibling`
+  /// decides which other matters a split recording may name in its note
+  /// ("同一段记录还涉及") — an agent's reader passes its grant's scope, so a
+  /// matter outside the grant is never named (review V7-A1).
+  public func parts(
+    of item: MemoryEventItem, in event: MemoryEventDetail,
+    showSibling: (MemorySegmentSibling) -> Bool = { _ in true }
+  ) -> (header: String, notes: [String], body: String) {
+    let spansDays = Set(event.items.compactMap(\.startedAt).map(dayKey)).count > 1
+    var notes: [String] = []
+    if let note = segmentNote(item, showSibling: showSibling) { notes.append(note) }
+    if let record = item.record, record.itemKind == .file {
+      notes.append(Self.fileFactsLabel + MemoryFileText.facts(record, reading: item.fileReading))
+    }
+    if let summary = readingSummary(item) { notes.append(Self.summaryLabel + summary) }
+    if let summary = fileSummary(item) { notes.append(Self.fileSummaryLabel + summary) }
+    return (header(item, withDate: spansDays), notes, body(item))
+  }
+
+  /// "2026年9月27日（周日）" or a range, as `format` writes the date line.
+  public func dateLine(_ span: MemoryEventSpan) -> String { spanText(span) }
 }

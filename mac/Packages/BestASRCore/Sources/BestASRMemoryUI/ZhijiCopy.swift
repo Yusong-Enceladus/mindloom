@@ -178,6 +178,125 @@ public enum ZhijiCopy {
   }
   public static func loomNextStep(_ day: String) -> String { "下一步 \(day)" }
 
+  // v7: a matter's lenses (线索 / 结构 / 网 / 文本)
+  public static let lensStrands = "线索"
+  public static let lensStructure = "结构"
+  public static let lensNet = "网"
+  public static let lensText = "文本"
+  public static let lensStrandsCaption = "主线分出子线索，了结后并回来；点一个结看原话"
+  public static let lensStructureCaption = "一眼看这件事里有什么，时间和进度在「线索」里"
+  public static let lensNetCaption = "虚线是一起出现过，箭头是在等"
+  public static let lensTextCaption = "和复制出去的文本一样。"
+  public static let drafting = "正在整理线索…"
+  public static let draftingDetail = "先把已经知道的进展放在一条线上。"
+  public static let redrawing = "有内容删掉了，线索正在重画"
+  public static let mainThread = "主线"
+  public static let closedStrand = "已了结"
+  public static func nowHeader(_ day: String) -> String { "现在 · \(day)" }
+  public static let nowLabel = "现在"
+  public static let healthOK = "顺利"
+  public static let healthRisk = "有风险"
+  public static let healthStuck = "卡住了"
+  public static let dueTodayWord = "今天到期"
+  public static let dueTomorrowWord = "明天到期"
+  public static func dueIn(_ days: Int) -> String { "还有 \(days) 天" }
+  public static func overdue(_ days: Int) -> String { "过期 \(days) 天" }
+  public static func promises(_ count: Int) -> String { "答应的事 \(count) 件" }
+  public static func openQuestions(_ count: Int) -> String { "还没解决 \(count) 个" }
+  public static let waitsOn = "在等"
+  public static let waitedBy = "被它等"
+  public static let nextStep = "下一步"
+  public static let stillOpen = "还没解决"
+  public static let decided = "定下来的"
+  public static let promised = "答应的事"
+  public static let pickAKnot = "点一个结，看它依据的原话"
+  public static func evidenceCount(_ count: Int) -> String { "\(count) 条素材作证" }
+  public static let theWords = "原话"
+  public static let openSource = "打开原文"
+  public static let dateFromEvidence = "日期按素材推算"
+  public static func knotState(_ glyph: String) -> String {
+    switch glyph {
+    case "done": "完成"
+    case "doing": "进行中"
+    case "planned": "计划、截止"
+    case "decision": "决定"
+    default: "还没解决"
+    }
+  }
+  public static func knotKind(_ kind: String) -> String {
+    switch kind {
+    case "decision": "决定"
+    case "question": "问题"
+    case "commitment": "答应"
+    case "deadline": "截止"
+    default: "进展"
+    }
+  }
+  public static let legendDone = "完成"
+  public static let legendDoing = "进行中"
+  public static let legendPlanned = "计划、截止"
+  public static let legendDecision = "决定"
+  public static let legendQuestion = "还没解决"
+  public static let legendSources = "来源：会议 聊天 手机 口述 截图 文件"
+  public static func strandItems(_ count: Int) -> String { "\(count) 条" }
+  public static func crossed(_ count: Int) -> String { "交叉 \(count) 次" }
+  public static func crossedDetail(_ count: Int) -> String {
+    "在同一场会或同一条消息里出现过 \(count) 次"
+  }
+  public static let touchingMatters = "接触到的事"
+  public static let hideCrossing = "不相关，隐藏"
+  public static let notWaiting = "不是在等它"
+  public static let branchProgress = "进展"
+  public static let branchProgressDetail = "按线索"
+  public static let branchDecisions = "决定"
+  public static let branchNext = "下一步"
+  public static let branchQuestions = "问题"
+  public static let branchPeople = "人"
+  public static let branchPeopleDetail = "说到的人"
+  public static let branchMaterials = "材料"
+  public static let branchMaterialsDetail = "按来源"
+  public static func strandCount(_ count: Int) -> String { "\(count) 条线索" }
+  public static let noRelations = "还没有和别的事交叉、也没有在等别的事"
+  public static let ropeWord = "绳"
+  public static let sameRope = "同一根绳"
+  public static let blocksLegend = "在等"
+  public static let crossLegend = "一起出现过"
+
+  // v7: Home lenses (按时间 / 按绳 / 按截止 / 按人)
+  public static let byTime = "按时间"
+  public static let byRope = "按绳"
+  public static let byDeadline = "按截止"
+  public static let byPerson = "按人"
+  public static let ropesCaption = "一件事只在一根绳上，缩进的是绳里的绳"
+  public static let noRopesYet = "还没有归好的绳，事多起来以后会拧成股"
+  public static let ropeArea = "领域"
+  public static let ropeProject = "项目"
+  public static let proposedRope = "建议"
+  public static let confirmRope = "确认"
+  public static let rejectRope = "不对"
+  public static let renameRope = "改名"
+  public static let moveToRope = "移到另一根绳…"
+  public static let offRope = "不放在任何绳上"
+  public static let unroped = "还没归到绳上的事"
+  public static func mattersCount(_ count: Int) -> String { "\(count) 件" }
+  /// Steps on the 按截止 ladder (a matter can have several).
+  public static func stepsCount(_ count: Int) -> String { "\(count) 项" }
+  public static func moreMatters(_ count: Int) -> String { "还有 \(count) 件" }
+  public static let collapse = "收起"
+  public static let rungJustPassed = "刚过去"
+  public static let rungToday = "今天"
+  public static let rungTomorrow = "明天"
+  public static let rungThisWeek = "这周"
+  public static let rungLater = "以后"
+  public static let notMarkedDone = "还没标成完成"
+  public static let afterAWeek = "一周以后"
+  public static let nothing = "没有"
+  public static func personMatters(_ count: Int) -> String { "\(count) 件事" }
+  public static let ropeBreadcrumb = "在绳上"
+  public static func ropeLabel(_ title: String, proposed: Bool) -> String {
+    proposed ? "\(title)（建议）" : title
+  }
+
   /// Everything above that is fixed text, for the copy-rule test.
   public static var allFixedText: [String] {
     [
@@ -205,6 +324,30 @@ public enum ZhijiCopy {
       loomNextWeek, openThisDay, homeSummary(weeks: 2, moved: 11, shown: 5),
       homeSummary(weeks: 5, moved: 0, shown: 0), dueToday(3), dueTomorrow(2),
       questionsWaiting(1),
+    ] + v7FixedText
+  }
+
+  static var v7FixedText: [String] {
+    [
+      lensStrands, lensStructure, lensNet, lensText, lensStrandsCaption, lensStructureCaption,
+      lensNetCaption, lensTextCaption, drafting, draftingDetail, redrawing, mainThread,
+      closedStrand, nowHeader("9月20日 周日"), nowLabel, healthOK, healthRisk, healthStuck,
+      dueTodayWord, dueTomorrowWord, dueIn(3), overdue(1), promises(2), openQuestions(1),
+      waitsOn, waitedBy, nextStep, stillOpen, decided, promised, pickAKnot, evidenceCount(3),
+      theWords, openSource, dateFromEvidence, knotState("done"), knotState("doing"),
+      knotState("planned"), knotState("decision"), knotState("question"), knotKind("progress"),
+      knotKind("decision"), knotKind("question"), knotKind("commitment"), knotKind("deadline"),
+      legendDone, legendDoing, legendPlanned, legendDecision, legendQuestion, legendSources,
+      strandItems(4), crossed(3), crossedDetail(3), touchingMatters, hideCrossing, notWaiting,
+      branchProgress, branchProgressDetail, branchDecisions, branchNext, branchQuestions,
+      branchPeople, branchPeopleDetail, branchMaterials, branchMaterialsDetail, strandCount(2),
+      noRelations, ropeWord, sameRope, blocksLegend, crossLegend, byTime, byRope, byDeadline,
+      byPerson, ropesCaption, noRopesYet, ropeArea, ropeProject, proposedRope, confirmRope,
+      rejectRope, renameRope, moveToRope, offRope, unroped, mattersCount(3), stepsCount(5),
+      moreMatters(2),
+      collapse, rungJustPassed, rungToday, rungTomorrow, rungThisWeek, rungLater, notMarkedDone,
+      afterAWeek, nothing, personMatters(4), ropeBreadcrumb,
+      ropeLabel("Twin-7真机实验", proposed: true),
     ]
   }
 

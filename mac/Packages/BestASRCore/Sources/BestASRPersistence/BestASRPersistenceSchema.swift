@@ -33,7 +33,8 @@ public enum BestASRPersistenceSchema {
   public static let userItemsMigrationID = "v22-user-items"
   public static let userItemFilesMigrationID = "v23-user-item-files"
   public static let remotePrivacyMigrationID = "v24-remote-privacy"
-  public static let currentUserVersion = 24
+  public static let agentAccessMigrationID = "v25-agent-access"
+  public static let currentUserVersion = 25
   public static let minimumPortableImportUserVersion = 12
 
   public static func supportsPortableImport(userVersion: Int) -> Bool {
@@ -121,6 +122,9 @@ public enum BestASRPersistenceSchema {
     migrator.registerMigration(remotePrivacyMigrationID) { database in
       try database.execute(sql: remotePrivacySQL)
     }
+    migrator.registerMigration(agentAccessMigrationID) { database in
+      try database.execute(sql: agentAccessSQL)
+    }
     return migrator
   }
 
@@ -201,6 +205,70 @@ public enum BestASRPersistenceSchema {
     CREATE INDEX user_item_details_parent_index
       ON user_item_details(parent_session_id) WHERE parent_session_id IS NOT NULL;
     PRAGMA user_version = 23;
+    """
+
+  /// Agents reading 织机 (AGENT-CONTRACT §2), all local and never portable
+  /// or sent. `agent_grants` holds each grant's scope (spaces, range,
+  /// permission, duration, numbers, per-matter approval) and a MAC made with
+  /// the grant's secret, which lives only in the Keychain; no content.
+  /// `agent_grant_matters` remembers the owner's answer per matter when the
+  /// grant asks first. `agent_audit` is 谁读过什么: client, time, tool, the
+  /// matter IDs returned, byte count and outcome; never a query or any text.
+  /// `agent_inbox` holds proposals from `add_to_inbox` until the owner
+  /// decides; the text is dropped once decided (an accepted proposal lives
+  /// on as a user item).
+  public static let agentAccessSQL = """
+    CREATE TABLE agent_grants (
+      grant_id TEXT PRIMARY KEY NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      client_path TEXT NOT NULL,
+      spaces_json TEXT NOT NULL,
+      range_kind TEXT NOT NULL CHECK (range_kind IN ('all', 'ropes', 'matters')),
+      range_ids_json TEXT NOT NULL,
+      can_propose INTEGER NOT NULL CHECK (can_propose IN (0, 1)),
+      duration TEXT NOT NULL CHECK (duration IN ('today', 'always')),
+      show_numbers INTEGER NOT NULL CHECK (show_numbers IN (0, 1)),
+      ask_new_matters INTEGER NOT NULL CHECK (ask_new_matters IN (0, 1)),
+      created_at REAL NOT NULL,
+      expires_at REAL,
+      mac TEXT NOT NULL
+    );
+    CREATE INDEX agent_grants_client ON agent_grants(client_key);
+    CREATE TABLE agent_grant_matters (
+      grant_id TEXT NOT NULL REFERENCES agent_grants(grant_id) ON DELETE CASCADE,
+      matter_id TEXT NOT NULL,
+      allowed INTEGER NOT NULL CHECK (allowed IN (0, 1)),
+      decided_at REAL NOT NULL,
+      PRIMARY KEY (grant_id, matter_id)
+    );
+    CREATE TABLE agent_audit (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      at REAL NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      grant_id TEXT,
+      tool TEXT NOT NULL,
+      outcome TEXT NOT NULL CHECK (
+        outcome IN ('allowed', 'denied', 'pending', 'not_found', 'invalid', 'failed')
+      ),
+      matter_ids_json TEXT NOT NULL,
+      byte_count INTEGER NOT NULL CHECK (byte_count >= 0)
+    );
+    CREATE INDEX agent_audit_client ON agent_audit(client_key, at);
+    CREATE TABLE agent_inbox (
+      proposal_id TEXT PRIMARY KEY NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      created_at REAL NOT NULL,
+      title TEXT NOT NULL,
+      body TEXT NOT NULL,
+      matter_hint TEXT NOT NULL,
+      state TEXT NOT NULL CHECK (state IN ('pending', 'accepted', 'rejected')),
+      resolved_at REAL,
+      item_id TEXT
+    );
+    PRAGMA user_version = 25;
     """
 
   /// Privacy contract v6, all local and never portable or sent:

@@ -186,6 +186,22 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
     }
   }
 
+  /// One item's content as a shared space may receive it (SPACES-CONTRACT):
+  /// the same read as an organizing send — committed text, segments with
+  /// person IDs, person display names, the App source — and never a capture
+  /// asset, the dictionary, a speaker embedding or a window title. Not
+  /// masked: members see the numbers; the space's organizing payload is
+  /// masked separately with the space's own key. Nil for an item that may
+  /// not leave the Mac (kept only here, empty, or too large).
+  public func spaceShareContent(sessionID: SessionID) async throws -> RemoteOrganizerItem? {
+    let database = try requirePool()
+    let timeZone = remoteItemTimeZone
+    let itemID = sessionID.rawValue.uuidString
+    return try await database.read { db in
+      try Self.remoteItemContent(db, itemID: itemID, timeZone: timeZone)
+    }
+  }
+
   public func claimNextRemoteItem(now: Date = Date()) async throws
     -> RemoteOrganizerItemDelivery?
   {
@@ -712,6 +728,15 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
       if let readings = state.readings, !readings.isEmpty {
         try Self.mergeRemoteReadings(db, readings)
       }
+      // v7: ropes and relations are complete sets too (an older service
+      // omits both, read as none). Written only when they changed: the pull
+      // runs every few seconds and the crossings are the larger part.
+      try Self.setRemoteMetaIfChanged(
+        db, Self.ropesMetaKey,
+        String(decoding: try Self.remoteJSON(state.ropes ?? []), as: UTF8.self))
+      try Self.setRemoteMetaIfChanged(
+        db, Self.relationsMetaKey,
+        String(decoding: try Self.remoteJSON(state.relations ?? []), as: UTF8.self))
       try Self.setRemoteMeta(db, "cursor", String(state.cursor))
       return false
     }
@@ -806,6 +831,16 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
       Self.applyLocalRemoteDecisions(
         decisions, events: &events, persons: &persons, unfiled: &unfiled,
         provisionalEvents: provisional)
+      var ropes =
+        try Self.remoteMeta(db, Self.ropesMetaKey).flatMap {
+          try? JSONDecoder().decode([RemoteOrganizerRope].self, from: Data($0.utf8))
+        }?.map { $0.unmasked(unmask) } ?? []
+      var relations =
+        try Self.remoteMeta(db, Self.relationsMetaKey).flatMap {
+          try? JSONDecoder().decode([RemoteOrganizerRelation].self, from: Data($0.utf8))
+        }?.map { $0.unmasked(unmask) } ?? []
+      Self.applyLocalRelationDecisions(
+        decisions, ropes: &ropes, relations: &relations, events: &events)
       // An event the user's own corrections emptied is gone for them now;
       // the Spark retires it on its next brief.
       events = events.filter {
@@ -822,7 +857,8 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
         unacceptedDecisions: issues, unfiled: unfiled,
         readings: current.mapValues(\.text),
         readingSummaries: current.compactMapValues(\.summary),
-        readingFacts: current.compactMapValues(\.facts)
+        readingFacts: current.compactMapValues(\.facts),
+        ropes: ropes, relations: relations
       )
     }
   }
@@ -918,8 +954,10 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
       try db.execute(sql: "DELETE FROM remote_organizer_persons")
       try db.execute(sql: "DELETE FROM remote_organizer_questions")
       try db.execute(
-        sql: "DELETE FROM remote_organizer_meta WHERE key IN (?, ?, 'store_id')",
-        arguments: [Self.unfiledMetaKey, Self.readingsMetaKey])
+        sql: "DELETE FROM remote_organizer_meta WHERE key IN (?, ?, ?, ?, 'store_id')",
+        arguments: [
+          Self.unfiledMetaKey, Self.readingsMetaKey, Self.ropesMetaKey, Self.relationsMetaKey,
+        ])
       try Self.setRemoteMeta(db, "cursor", "0")
       // Nothing counts as delivered, so a store reset does not queue it again
       // and no deletion is sent for it; a later change sends it anew. A job
@@ -1472,8 +1510,8 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
     try db.execute(sql: "DELETE FROM remote_organizer_persons")
     try db.execute(sql: "DELETE FROM remote_organizer_questions")
     try db.execute(
-      sql: "DELETE FROM remote_organizer_meta WHERE key IN (?, ?)",
-      arguments: [unfiledMetaKey, readingsMetaKey])
+      sql: "DELETE FROM remote_organizer_meta WHERE key IN (?, ?, ?, ?)",
+      arguments: [unfiledMetaKey, readingsMetaKey, ropesMetaKey, relationsMetaKey])
     try setRemoteMeta(db, "cursor", "0")
     try db.execute(
       sql: """
@@ -1571,6 +1609,16 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
 
   nonisolated static let unfiledMetaKey = "unfiled_json"
   nonisolated static let readingsMetaKey = "readings_json"
+  /// v7 (MAP-CONTRACT §2): the ropes and relations of the last pull.
+  nonisolated static let ropesMetaKey = "ropes_json"
+  nonisolated static let relationsMetaKey = "relations_json"
+
+  private nonisolated static func setRemoteMetaIfChanged(
+    _ db: Database, _ key: String, _ value: String
+  ) throws {
+    guard try remoteMeta(db, key) != value else { return }
+    try setRemoteMeta(db, key, value)
+  }
 
   private nonisolated static func storedRemoteReadings(
     _ db: Database
@@ -1689,6 +1737,78 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
 
   /// Replays the user's decisions, in commit order, over the pulled state.
   /// Item IDs compare case-insensitively (the Spark may lower-case them).
+  /// The user's rope and relation decisions (MAP-CONTRACT §2), applied at
+  /// once to what the last pull said, in commit order, so the pages show
+  /// them before the organizing device answers. Replaying one it already
+  /// took changes nothing.
+  /// - `confirm_rope`: no longer a proposal. `rename_rope`: the user's title
+  ///   (which also confirms it).
+  /// - `reject_rope`: the rope goes; its matters are on no rope, and ropes
+  ///   inside it move up one level.
+  /// - `move_to_rope`: the matter leaves every rope and joins the one asked
+  ///   for (none for nil).
+  /// - `reject_relation` (blocks) and `hide_crossing`: the edge goes.
+  nonisolated static func applyLocalRelationDecisions(
+    _ decisions: [RemoteOrganizerDecision],
+    ropes: inout [RemoteOrganizerRope],
+    relations: inout [RemoteOrganizerRelation],
+    events: inout [RemoteOrganizerEvent]
+  ) {
+    func same(_ a: String?, _ b: String?) -> Bool {
+      guard let a, let b else { return false }
+      return a.caseInsensitiveCompare(b) == .orderedSame
+    }
+    func setRope(of eventID: String, to ropeID: String?) {
+      for index in events.indices where events[index].eventID == eventID {
+        var facets = events[index].facets ?? RemoteOrganizerFacets()
+        facets.rope = ropeID
+        events[index].facets = facets
+      }
+    }
+    for decision in decisions where RemoteOrganizerDecision.relationKinds.contains(decision.kind) {
+      switch decision.kind {
+      case "confirm_rope":
+        for index in ropes.indices where same(ropes[index].id, decision.ropeID) {
+          ropes[index].proposed = false
+        }
+      case "rename_rope":
+        guard let title = decision.title else { continue }
+        for index in ropes.indices where same(ropes[index].id, decision.ropeID) {
+          ropes[index].title = title
+          ropes[index].titleUserEdited = true
+          ropes[index].proposed = false
+        }
+      case "reject_rope":
+        guard let gone = ropes.first(where: { same($0.id, decision.ropeID) }) else { continue }
+        ropes.removeAll { $0.id == gone.id }
+        for index in ropes.indices where same(ropes[index].parent, gone.id) {
+          ropes[index].parent = gone.parent
+        }
+        for eventID in gone.children { setRope(of: eventID, to: nil) }
+        for index in events.indices where same(events[index].facets?.rope, gone.id) {
+          events[index].facets?.rope = nil
+        }
+      case "move_to_rope":
+        guard let eventID = decision.eventID else { continue }
+        let target = decision.ropeID.flatMap { id in ropes.first { same($0.id, id) }?.id }
+        // A rope the user moved it to that is not there any more: on no rope.
+        for index in ropes.indices {
+          ropes[index].children.removeAll { $0 == eventID }
+          if ropes[index].id == target { ropes[index].children.append(eventID) }
+        }
+        setRope(of: eventID, to: target)
+      case "reject_relation":
+        guard let a = decision.a, let b = decision.b else { continue }
+        relations.removeAll { $0.isBlocks && $0.a == a && $0.b == b }
+      case "hide_crossing":
+        guard let a = decision.a, let b = decision.b else { continue }
+        relations.removeAll { $0.isCross && $0.joins(a, b) }
+      default:
+        continue
+      }
+    }
+  }
+
   nonisolated static func applyLocalRemoteDecisions(
     _ decisions: [RemoteOrganizerDecision],
     events: inout [RemoteOrganizerEvent],

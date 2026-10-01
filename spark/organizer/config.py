@@ -90,6 +90,18 @@ class Settings:
     people_pass: bool = field(default_factory=lambda: _env("ORGANIZER_PEOPLE", "1") != "0")
     people_every: int = field(default_factory=lambda: int(_env("ORGANIZER_PEOPLE_EVERY", "25")))
     people_max_calls: int = field(default_factory=lambda: int(_env("ORGANIZER_PEOPLE_MAX_CALLS", "40")))
+    # v7 matter map (organizer/matter_map.py, skill matter-map): drawn for a matter of >= ORGANIZER_MAP_MIN_ITEMS items
+    # after its card is rewritten (when the map is missing or outdated) and when idle, and for any matter the Mac
+    # asks for (POST /v1/events/{id}/map); at most ORGANIZER_MAP_MAX_CALLS maps per pass. ORGANIZER_MAP=0 turns it off.
+    maps: bool = field(default_factory=lambda: _env("ORGANIZER_MAP", "1") != "0")
+    map_min_items: int = field(default_factory=lambda: int(_env("ORGANIZER_MAP_MIN_ITEMS", "8")))
+    map_max_calls: int = field(default_factory=lambda: int(_env("ORGANIZER_MAP_MAX_CALLS", "4")))
+    # v7 grouping pass (organizer/matter_group.py, skill matter-group): ropes and the type facet, every
+    # ORGANIZER_GROUP_EVERY processed items and when idle, at most ORGANIZER_GROUP_MAX_CALLS calls per pass.
+    # ORGANIZER_GROUP=0 turns it off.
+    grouping: bool = field(default_factory=lambda: _env("ORGANIZER_GROUP", "1") != "0")
+    group_every: int = field(default_factory=lambda: int(_env("ORGANIZER_GROUP_EVERY", "50")))
+    group_max_calls: int = field(default_factory=lambda: int(_env("ORGANIZER_GROUP_MAX_CALLS", "3")))
     start_worker: bool = True
     # Link token: <data_dir>/link_token is created on first start. While it exists, every /v1/* route
     # needs "Authorization: Bearer <token>". ORGANIZER_REQUIRE_TOKEN=0 turns the check off (tests, eval).

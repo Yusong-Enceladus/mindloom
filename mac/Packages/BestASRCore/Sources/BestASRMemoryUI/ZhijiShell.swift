@@ -8,17 +8,22 @@ public struct MemoryShellSlots {
   public var dictionary: () -> AnyView
   public var capture: () -> AnyView
   public var homeAccessory: () -> AnyView?
+  /// A bar under a matter page (shared spaces: the badge, 共享这件事…, the
+  /// items' rights), by event ID; nil for none.
+  public var eventAccessory: (String) -> AnyView?
 
   public init(
     allItems: @escaping () -> AnyView = { AnyView(EmptyView()) },
     dictionary: @escaping () -> AnyView = { AnyView(EmptyView()) },
     capture: @escaping () -> AnyView = { AnyView(EmptyView()) },
-    homeAccessory: @escaping () -> AnyView? = { nil }
+    homeAccessory: @escaping () -> AnyView? = { nil },
+    eventAccessory: @escaping (String) -> AnyView? = { _ in nil }
   ) {
     self.allItems = allItems
     self.dictionary = dictionary
     self.capture = capture
     self.homeAccessory = homeAccessory
+    self.eventAccessory = eventAccessory
   }
 }
 
@@ -87,8 +92,15 @@ private struct ShellBody: View {
     case .event(let id)?:
       EventPage(
         eventID: id, state: state, actions: actions, morph: morph, back: back, open: open,
-        expanded: $navigation.expandedItems
+        expanded: $navigation.expandedItems, lens: $navigation.eventLens,
+        focusedKnot: $navigation.focusedKnot, revealRow: $navigation.revealRow,
+        showRopes: {
+          navigation.homeLens = .ropes
+          navigation.tab = .home
+          navigation.path = []
+        }
       )
+      .safeAreaInset(edge: .bottom, spacing: 0) { slots.eventAccessory(id) }
       .transition(eventTransition)
     case .person(let id)?:
       PersonPage(
@@ -130,6 +142,8 @@ private struct ShellBody: View {
   }
 
   private func open(_ route: MemoryRoute) {
+    // Another matter starts with no knot picked.
+    if case .event = route { navigation.focusedKnot = nil }
     push(route, animated: { if case .event = route { true } else { false } }())
   }
 

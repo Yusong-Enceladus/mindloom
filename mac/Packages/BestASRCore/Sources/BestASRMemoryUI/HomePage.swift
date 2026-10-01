@@ -100,46 +100,13 @@ struct HomePage: View {
             }
           }
         }
-        if let loom {
-          LoomPanel(
-            loom: loom, span: $loomSpan, state: state, person: $person,
-            people: Array(chipPeople.prefix(LoomPanel.peopleChips)),
-            morePeople: max(chipPeople.count - LoomPanel.peopleChips, 0),
-            showAllPeople: { navigation.tab = .people },
-            open: openAt)
+        if !searching {
+          HomeLensBar(lens: $navigation.homeLens)
         }
-        if !entries.isEmpty {
-          VStack(alignment: .leading, spacing: 6) {
-            if loom != nil {
-              HStack(alignment: .firstTextBaseline) {
-                Text(ZhijiCopy.otherEvents)
-                  .font(.zhiji(16, .semibold))
-                  .foregroundStyle(palette.label)
-                  .accessibilityAddTraits(.isHeader)
-                Spacer()
-                Text(ZhijiCopy.byRecent)
-                  .font(.zhiji(12))
-                  .foregroundStyle(palette.tertiary)
-              }
-            }
-            OtherMatters(
-              entries: visibleEntries, facts: facts, state: state,
-              open: { open(.event($0)) })
-          }
-          if !searching, entries.count > visibleEntries.count {
-            ShowMoreButton(remaining: entries.count - visibleEntries.count) {
-              shownCards += Self.pageSize
-            }
-          }
-        } else if searching {
-          Text(ZhijiCopy.noMatches)
-            .font(.zhiji(13))
-            .foregroundStyle(palette.secondary)
-        } else if loom == nil {
-          // Items wait in Unfiled and no event exists yet.
-          Text(ZhijiCopy.noEventsYet)
-            .font(.zhiji(13))
-            .foregroundStyle(palette.tertiary)
+        if !searching, navigation.homeLens != .time, let lenses = state.lenses {
+          lensContent(lenses)
+        } else {
+          timeLens
         }
       }
     }
@@ -147,6 +114,68 @@ struct HomePage: View {
     .padding(.top, 24)
     .padding(.bottom, 40)
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  /// 按绳 / 按截止 / 按人.
+  @ViewBuilder
+  private func lensContent(_ lenses: MemoryHomeLenses) -> some View {
+    switch navigation.homeLens {
+    case .ropes:
+      RopeBandsView(
+        lenses: lenses, state: state, actions: actions, open: { open(.event($0)) })
+    case .deadlines:
+      DeadlineLadderView(lenses: lenses, state: state, open: { open(.event($0)) })
+    case .people:
+      PeopleLensView(lenses: lenses, state: state, open: open)
+    case .time:
+      EmptyView()
+    }
+  }
+
+  /// 按时间: the time axis and the other matters (the page as it was).
+  @ViewBuilder
+  private var timeLens: some View {
+    if let loom {
+      LoomPanel(
+        loom: loom, span: $loomSpan, state: state, person: $person,
+        people: Array(chipPeople.prefix(LoomPanel.peopleChips)),
+        morePeople: max(chipPeople.count - LoomPanel.peopleChips, 0),
+        showAllPeople: { navigation.tab = .people },
+        morph: morph, open: openAt)
+    }
+    if !entries.isEmpty {
+      VStack(alignment: .leading, spacing: 6) {
+        if loom != nil {
+          HStack(alignment: .firstTextBaseline) {
+            Text(ZhijiCopy.otherEvents)
+              .font(.zhiji(16, .semibold))
+              .foregroundStyle(palette.label)
+              .accessibilityAddTraits(.isHeader)
+            Spacer()
+            Text(ZhijiCopy.byRecent)
+              .font(.zhiji(12))
+              .foregroundStyle(palette.tertiary)
+          }
+        }
+        OtherMatters(
+          entries: visibleEntries, facts: facts, state: state,
+          open: { open(.event($0)) })
+      }
+      if !searching, entries.count > visibleEntries.count {
+        ShowMoreButton(remaining: entries.count - visibleEntries.count) {
+          shownCards += Self.pageSize
+        }
+      }
+    } else if searching {
+      Text(ZhijiCopy.noMatches)
+        .font(.zhiji(13))
+        .foregroundStyle(palette.secondary)
+    } else if loom == nil {
+      // Items wait in Unfiled and no event exists yet.
+      Text(ZhijiCopy.noEventsYet)
+        .font(.zhiji(13))
+        .foregroundStyle(palette.tertiary)
+    }
   }
 
   /// "9月20日 周日": the axis's today (the newest item's day).

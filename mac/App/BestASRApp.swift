@@ -40,6 +40,8 @@ private final class BestASRApplicationDelegate: NSObject, NSApplicationDelegate 
     // Ends the organizer ssh child synchronously; a crash leaves a durable
     // record that the next launch uses to end the orphan.
     RemoteOrganizerProcessRegistry.terminateAll()
+    // The agent socket goes with the App (the helper then says 织机没有在运行).
+    AgentAccessQuit.server?.stop()
   }
 
   func applicationDidFinishLaunching(_ notification: Notification) {

@@ -1,0 +1,190 @@
+{
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "找事"
+      },
+      "description": "在织机里按关键词找事（标题、现在到哪一步、人名和原始资料都会搜）。返回事的 id、标题、现在到哪一步、最近的截止日期和所属的绳。只会看到主人允许的范围。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "limit": {
+            "default": 10,
+            "maximum": 20,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "query": {
+            "description": "关键词，例如“真机实验”或一个人名",
+            "maxLength": 200,
+            "minLength": 1,
+            "type": "string"
+          },
+          "space": {
+            "description": "只在这个空间里找：“我的”或共享空间的 id；不填就是所有允许的空间",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "search_matters",
+      "title": "找事"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "读一件事"
+      },
+      "description": "读一件事：现在到哪一步、已经定下的事实、分线（如果有）、人物，以及原始资料的摘录（每条带条目 id，正文以“> ”开头）。format 为 json 时返回同样内容的结构化数据。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "format": {
+            "default": "text",
+            "enum": [
+              "text",
+              "json"
+            ],
+            "type": "string"
+          },
+          "id": {
+            "description": "事的 id（search_matters 返回的）",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "get_matter",
+      "title": "读一件事"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "近期截止"
+      },
+      "description": "列出接下来若干天（最多 30 天）内有日期的计划，按日期排序；最近 7 天内已过期还没完成的也会列出，标为已过期。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "default": 14,
+            "maximum": 30,
+            "minimum": 1,
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "name": "list_deadlines",
+      "title": "近期截止"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "最近有动静的事"
+      },
+      "description": "列出最近若干天（最多 14 天）内有新进展或新资料的事，最近的在前。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "days": {
+            "default": 7,
+            "maximum": 14,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "space": {
+            "description": "“我的”或共享空间的 id；不填就是所有允许的空间",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "list_recent",
+      "title": "最近有动静的事"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true,
+        "title": "找人"
+      },
+      "description": "按名字找一个人：他参与的事，以及他最近说过的几句话（只来自允许范围内的事）。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "get_person",
+      "title": "找人"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false,
+        "title": "提一条建议"
+      },
+      "description": "向织机的 Agent 收件箱提一条建议（例如交接说明、整理好的结论）。主人收下之前什么都不会归档；收下后来源标为这个 Agent，不算主人自己说的话。",
+      "inputSchema": {
+        "additionalProperties": false,
+        "properties": {
+          "matter_hint": {
+            "description": "它可能属于哪件事：事的 id 或标题（只是提示，归到哪里由织机和主人决定）",
+            "maxLength": 200,
+            "type": "string"
+          },
+          "text": {
+            "description": "建议的正文，纯文字",
+            "maxLength": 20000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "title": {
+            "description": "一句话标题，让主人一眼看懂这是什么",
+            "maxLength": 80,
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      },
+      "name": "add_to_inbox",
+      "title": "提一条建议"
+    }
+  ]
+}

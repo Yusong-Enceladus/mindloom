@@ -341,6 +341,11 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
   /// (`RemoteOrganizerEvent.Segment.segID`) the correction is about. Absent
   /// means the whole item, as before.
   public let segID: String?
+  /// v7 rope decisions (`confirm_rope`, `reject_rope`, `rename_rope`,
+  /// `move_to_rope`): the rope. For `move_to_rope`, nil means on no rope.
+  public let ropeID: String?
+  /// `reject_relation` only: the relation kind (`blocks`).
+  public let relation: String?
 
   public init(
     decisionID: UUID = UUID(), kind: String, questionID: String? = nil,
@@ -348,7 +353,8 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
     itemID: String? = nil, toEventID: String? = nil, title: String? = nil,
     a: String? = nil, b: String? = nil, answer: Bool? = nil,
     personID: String? = nil, displayName: String? = nil, pinned: Bool? = nil,
-    newEventID: String? = nil, segID: String? = nil
+    newEventID: String? = nil, segID: String? = nil, ropeID: String? = nil,
+    relation: String? = nil
   ) {
     self.decisionID = decisionID
     self.questionID = questionID
@@ -365,9 +371,14 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
     self.pinned = pinned
     self.newEventID = newEventID
     self.segID = segID
+    self.ropeID = ropeID
+    self.relation = relation
   }
 
   public static let maximumTitleScalars = 80
+  /// A rope's title is shorter than a matter's (the service's limit).
+  public static let maximumRopeTitleScalars = 40
+  public static let maximumRopeIDScalars = 64
   public static let maximumSegmentIDScalars = 64
   public static let maximumDisplayNameScalars = 128
 
@@ -381,7 +392,7 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
       decisionID: id, kind: kind, questionID: questionID, eventID: eventID,
       itemID: itemID, toEventID: toEventID, title: title, a: a, b: b,
       answer: answer, personID: personID, displayName: displayName, pinned: pinned,
-      newEventID: newEventID, segID: segID
+      newEventID: newEventID, segID: segID, ropeID: ropeID, relation: relation
     )
   }
 
@@ -392,7 +403,7 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
       decisionID: decisionID, kind: kind, questionID: questionID, eventID: eventID,
       itemID: itemID, toEventID: toEventID, title: title, a: a, b: b,
       answer: answer, personID: personID, displayName: displayName, pinned: pinned,
-      newEventID: newEventID, segID: segID
+      newEventID: newEventID, segID: segID, ropeID: ropeID, relation: relation
     )
   }
 
@@ -407,6 +418,10 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
     func present(_ value: String?) -> Bool {
       guard let value else { return false }
       return !value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+    func rope(required: Bool) -> Bool {
+      guard let ropeID else { return !required }
+      return present(ropeID) && ropeID.unicodeScalars.count <= Self.maximumRopeIDScalars
     }
     if let segID {
       guard ["remove_item", "move_item", "unfile_item"].contains(kind), present(segID),
@@ -430,9 +445,24 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
       return displayName.unicodeScalars.count <= Self.maximumDisplayNameScalars
     case "pin_event": return present(eventID) && pinned != nil
     case "feature_less", "delete_event": return present(eventID)
+    // v7 ropes and relations (MAP-CONTRACT §2).
+    case "confirm_rope", "reject_rope": return rope(required: true)
+    case "move_to_rope": return present(eventID) && rope(required: false)
+    case "rename_rope":
+      guard rope(required: true), let title else { return false }
+      let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+      return !trimmed.isEmpty && title.unicodeScalars.count <= Self.maximumRopeTitleScalars
+    case "reject_relation": return relation == "blocks" && present(a) && present(b) && a != b
+    case "hide_crossing": return present(a) && present(b) && a != b
     default: return false
     }
   }
+
+  /// The kinds of the v7 rope and relation decisions.
+  public static let relationKinds: Set<String> = [
+    "confirm_rope", "reject_rope", "move_to_rope", "rename_rope", "reject_relation",
+    "hide_crossing",
+  ]
 
   enum CodingKeys: String, CodingKey {
     case decisionID = "decision_id"
@@ -447,6 +477,8 @@ public struct RemoteOrganizerDecision: Codable, Equatable, Sendable {
     case pinned
     case newEventID = "new_event_id"
     case segID = "seg_id"
+    case ropeID = "rope_id"
+    case relation
   }
 }
 
@@ -547,6 +579,10 @@ public struct RemoteOrganizerEvent: Codable, Equatable, Identifiable, Sendable {
   /// The parts of items this event holds when an item covers several
   /// matters; absent from older services (every item is held whole).
   public var segments: [Segment]
+  /// v7: the matter's map; nil until one is drawn, and from older services.
+  public var map: RemoteOrganizerMatterMap?
+  /// v7: type, rope, nearest planned day and health; nil from older services.
+  public var facets: RemoteOrganizerFacets?
 
   public var id: String { eventID }
 
@@ -556,7 +592,8 @@ public struct RemoteOrganizerEvent: Codable, Equatable, Identifiable, Sendable {
     updatedAt: String? = nil, itemIDs: [String] = [], personIDs: [String] = [],
     pinned: Bool = false, deleted: Bool = false,
     provenance: [String: RemoteOrganizerFieldProvenance] = [:], handle: String? = nil,
-    anchor: String? = nil, segments: [Segment] = []
+    anchor: String? = nil, segments: [Segment] = [], map: RemoteOrganizerMatterMap? = nil,
+    facets: RemoteOrganizerFacets? = nil
   ) {
     self.eventID = eventID
     self.title = title
@@ -574,6 +611,8 @@ public struct RemoteOrganizerEvent: Codable, Equatable, Identifiable, Sendable {
     self.handle = handle
     self.anchor = anchor
     self.segments = segments
+    self.map = map
+    self.facets = facets
   }
 
   enum CodingKeys: String, CodingKey {
@@ -587,7 +626,7 @@ public struct RemoteOrganizerEvent: Codable, Equatable, Identifiable, Sendable {
     case updatedAt = "updated_at"
     case itemIDs = "item_ids"
     case personIDs = "person_ids"
-    case pinned, deleted, provenance, handle, anchor, segments
+    case pinned, deleted, provenance, handle, anchor, segments, map, facets
   }
 
   public init(from decoder: Decoder) throws {
@@ -612,6 +651,11 @@ public struct RemoteOrganizerEvent: Codable, Equatable, Identifiable, Sendable {
     let entries =
       (try? container.decodeIfPresent([LenientSegment].self, forKey: .segments)) ?? nil
     segments = Self.validSegments(entries?.compactMap(\.value) ?? [], itemIDs: itemIDs)
+    // v7, additive: a malformed map or facets object is dropped, never the event.
+    let decodedMap =
+      (try? container.decodeIfPresent(RemoteOrganizerMatterMap.self, forKey: .map)) ?? nil
+    map = decodedMap?.isEmpty == false ? decodedMap : nil
+    facets = (try? container.decodeIfPresent(RemoteOrganizerFacets.self, forKey: .facets)) ?? nil
   }
 
   /// Segments of items this event holds, with a non-empty range and ID,
@@ -842,12 +886,18 @@ public struct RemoteOrganizerState: Codable, Equatable, Sendable {
   /// rather than failing the pull. Merged into what the Mac holds (newest
   /// revision per item wins), whether the service sends all or only changes.
   public let readings: [RemoteOrganizerItemReading]?
+  /// v7: the complete rope set (not a delta); older services omit it.
+  public let ropes: [RemoteOrganizerRope]?
+  /// v7: the complete relation set (crossings and blocks edges); older
+  /// services omit it.
+  public let relations: [RemoteOrganizerRelation]?
 
   public init(
     cursor: Int64, events: [RemoteOrganizerEvent],
     questions: [RemoteOrganizerQuestion], persons: [RemoteOrganizerPerson],
     storeID: String? = nil, unfiled: [RemoteOrganizerUnfiledItem]? = nil,
-    readings: [RemoteOrganizerItemReading]? = nil
+    readings: [RemoteOrganizerItemReading]? = nil, ropes: [RemoteOrganizerRope]? = nil,
+    relations: [RemoteOrganizerRelation]? = nil
   ) {
     self.cursor = cursor
     self.events = events
@@ -856,6 +906,8 @@ public struct RemoteOrganizerState: Codable, Equatable, Sendable {
     self.storeID = storeID
     self.unfiled = unfiled
     self.readings = readings
+    self.ropes = ropes
+    self.relations = relations
   }
 
   public init(from decoder: Decoder) throws {
@@ -867,10 +919,17 @@ public struct RemoteOrganizerState: Codable, Equatable, Sendable {
     storeID = try container.decodeIfPresent(String.self, forKey: .storeID)
     unfiled = try container.decodeIfPresent([RemoteOrganizerUnfiledItem].self, forKey: .unfiled)
     readings = Self.readings(in: container)
+    // v7, additive: a malformed entry is dropped, never the pull.
+    ropes =
+      ((try? container.decodeIfPresent([Lenient<RemoteOrganizerRope>].self, forKey: .ropes))
+      ?? nil)?.compactMap(\.value)
+    relations =
+      ((try? container.decodeIfPresent(
+        [Lenient<RemoteOrganizerRelation>].self, forKey: .relations)) ?? nil)?.compactMap(\.value)
   }
 
   enum CodingKeys: String, CodingKey {
-    case cursor, events, questions, persons, unfiled, readings
+    case cursor, events, questions, persons, unfiled, readings, ropes, relations
     case storeID = "store_id"
   }
 
@@ -1102,6 +1161,9 @@ public struct RemoteOrganizerProjection: Equatable, Sendable {
   public let readingSummaries: [String: String]
   /// A file reading's type, fields, counts, inner files and error, same keys.
   public let readingFacts: [String: RemoteOrganizerReadingFacts]
+  /// v7: ropes and relations with the user's decisions applied.
+  public let ropes: [RemoteOrganizerRope]
+  public let relations: [RemoteOrganizerRelation]
 
   public init(
     cursor: Int64, events: [RemoteOrganizerEvent],
@@ -1109,7 +1171,8 @@ public struct RemoteOrganizerProjection: Equatable, Sendable {
     unacceptedDecisions: [RemoteOrganizerDecisionIssue] = [],
     unfiled: [RemoteOrganizerUnfiledItem] = [], readings: [String: String] = [:],
     readingSummaries: [String: String] = [:],
-    readingFacts: [String: RemoteOrganizerReadingFacts] = [:]
+    readingFacts: [String: RemoteOrganizerReadingFacts] = [:],
+    ropes: [RemoteOrganizerRope] = [], relations: [RemoteOrganizerRelation] = []
   ) {
     self.cursor = cursor
     self.events = events
@@ -1120,6 +1183,8 @@ public struct RemoteOrganizerProjection: Equatable, Sendable {
     self.readings = readings
     self.readingSummaries = readingSummaries
     self.readingFacts = readingFacts
+    self.ropes = ropes
+    self.relations = relations
   }
 }
 
@@ -1286,7 +1351,7 @@ extension RemoteOrganizerEvent {
         return Segment(
           itemID: segment.itemID, segID: segment.segID, start: start, end: max(end, start + 1),
           gist: text(segment.gist))
-      })
+      }, map: map?.unmasked(text), facets: facets)
   }
 }
 

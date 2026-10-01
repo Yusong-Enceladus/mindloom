@@ -24,6 +24,8 @@ struct HomeTones {
   let amber: Tint
   let blue: Tint
   let gray: Tint
+  /// Going well (a matter's health).
+  let green: Tint
 
   init(_ palette: ZhijiPalette) {
     if palette.isDark {
@@ -38,6 +40,7 @@ struct HomeTones {
       amber = Tint(fill: .hex(0x3A2D1A), ink: .hex(0xE8C07A), mark: .hex(0xD69E42))
       blue = Tint(fill: .hex(0x1F2B3D), ink: .hex(0xA3C1EE), mark: .hex(0x7FA3E0))
       gray = Tint(fill: .white.opacity(0.08), ink: .hex(0xB8B4AB), mark: .hex(0x8F8B82))
+      green = Tint(fill: .hex(0x1E3326), ink: .hex(0x9FD3B2), mark: .hex(0x6FBF8E))
     } else {
       page = .hex(0xFBFAF7)
       future = .hex(0xF4F2EC)
@@ -50,6 +53,7 @@ struct HomeTones {
       amber = Tint(fill: .hex(0xFAF0DC), ink: .hex(0x7A4E0E), mark: .hex(0xB7791F))
       blue = Tint(fill: .hex(0xE7EEF9), ink: .hex(0x1E4E8C), mark: .hex(0x2F5D9E))
       gray = Tint(fill: .hex(0xEFEDE8), ink: .hex(0x5F5C56), mark: .hex(0x8C887F))
+      green = Tint(fill: .hex(0xE7F2EA), ink: .hex(0x2E6B47), mark: .hex(0x4E9A6E))
     }
   }
 
@@ -81,6 +85,8 @@ struct LoomPanel: View {
   /// People known beyond the chips ("+N" opens 人物).
   var morePeople = 0
   var showAllPeople: () -> Void = {}
+  /// The shell's namespace: each lane is where its matter's map grows from.
+  var morph: Namespace.ID? = nil
   /// Opens a matter with these event page rows expanded.
   let open: (String, [String]) -> Void
   /// The day under the pointer (settable for a still image).
@@ -113,10 +119,11 @@ struct LoomPanel: View {
           labels(layout, tones).frame(width: Self.labelWidth)
           LoomCanvas(
             loom: loom, layout: layout, tones: tones, person: person, hover: hover,
-            calendar: state.calendar
+            calendar: state.calendar, shared: state.sharedItemIDs
           )
           .frame(width: layout.width, height: layout.height)
           .accessibilityHidden(true)
+          .overlay(alignment: .topLeading) { zoomSources(layout) }
         }
         .overlay(alignment: .topLeading) { tooltip(layout, tones) }
         .contentShape(Rectangle())
@@ -138,6 +145,23 @@ struct LoomPanel: View {
     }
     .accessibilityElement(children: .contain)
     .accessibilityIdentifier("bestASR.memory.loom")
+  }
+
+  /// One clear rectangle per lane, the source of the continuous zoom into
+  /// that matter's 线索 map (matched geometry; none under Reduce Motion).
+  @ViewBuilder
+  private func zoomSources(_ layout: LoomLayout) -> some View {
+    if let morph {
+      ZStack(alignment: .topLeading) {
+        ForEach(Array(loom.lanes.enumerated()), id: \.element.id) { index, lane in
+          Color.clear
+            .frame(width: layout.width, height: layout.laneHeight(index))
+            .zhijiMorph("thread-\(lane.eventID)", in: morph, isSource: true)
+            .offset(y: layout.laneTop(index))
+            .allowsHitTesting(false)
+        }
+      }
+    }
   }
 
   // MARK: - 看某个人
@@ -453,6 +477,8 @@ struct LoomCanvas: View {
   let person: String?
   let hover: LoomHover?
   let calendar: Calendar
+  /// Others' items (upper-case IDs): their days are drawn in the second tone.
+  var shared: Set<String> = []
 
   var body: some View {
     Canvas { context, size in
@@ -613,16 +639,31 @@ struct LoomCanvas: View {
     let milestoneDays = Set(lane.milestones.map(\.day))
     for knot in lane.knots where !milestoneDays.contains(knot.day) {
       let hovered = hover == .day(lane: index, day: knot.day)
-      let r: CGFloat = hovered ? 4.5 : 2.6
+      let others =
+        shared.isEmpty ? 0 : knot.itemIDs.filter { shared.contains($0.uppercased()) }.count
+      // Others' days are a little larger, so the second tone reads.
+      let r: CGFloat = hovered ? 4.5 : (others > 0 ? 3.6 : 2.6)
       let c = CGPoint(x: layout.x(knot.day), y: y)
       if hovered {
         context.fill(
           Path(ellipseIn: CGRect(x: c.x - 8, y: c.y - 8, width: 16, height: 16)),
           with: .color(color.opacity(0.22)))
       }
-      context.fill(
-        Path(ellipseIn: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2)),
-        with: .color(color.opacity(a)))
+      let dot = Path(ellipseIn: CGRect(x: c.x - r, y: c.y - r, width: r * 2, height: r * 2))
+      if others == 0 {
+        context.fill(dot, with: .color(color.opacity(a)))
+      } else {
+        // A shared day: others' items in the second tone (half when mixed).
+        context.fill(dot, with: .color(palette.mate.opacity(a)))
+        if others < knot.itemIDs.count {
+          var half = Path()
+          half.addArc(
+            center: c, radius: r, startAngle: .degrees(90), endAngle: .degrees(270),
+            clockwise: false)
+          half.closeSubpath()
+          context.fill(half, with: .color(color.opacity(a)))
+        }
+      }
     }
     // Milestones: a hollow circle and, where there is room, a chip above.
     for milestone in lane.milestones {

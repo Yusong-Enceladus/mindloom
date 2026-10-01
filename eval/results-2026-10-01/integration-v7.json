@@ -1,0 +1,87 @@
+{
+ "title": "Checks on the integrated v7 build (organizer main + Mac client hackathon/base)",
+ "date": "2026-10-01",
+ "data": "synthetic only; the end-to-end runs used synthetic data roots, a fresh organizer instance on one Spark node and the iOS 26.5 simulator",
+ "merged": {
+  "organizer": [
+   "claude/v7-map (matter-map 1.1.1, matter-group 1.0.1, relations v2, review fixes M1-M3)",
+   "claude/v7-spaces (shared spaces, review fixes S1-S18 except S6 skipped and S7 partly)"
+  ],
+  "mac": [
+   "claude/v7-agents (local MCP helper, consent, audit, review fixes A1-A5)",
+   "claude/v7-map (the 线索 view, Home lenses, rope and relation decisions)",
+   "claude/v7-spaces (member engine, crypto, share review list, review fixes)"
+  ]
+ },
+ "tests": {
+  "organizer_pytest_mac": {
+   "passed": 674,
+   "skipped": 1,
+   "xfailed": 1,
+   "note": "Python 3.12, SQLCipher 4.12.0"
+  },
+  "organizer_pytest_spark_aarch64": {
+   "passed": 673,
+   "xfailed": 1
+  },
+  "mac_swift_package": {
+   "executed": 922,
+   "skipped": 21,
+   "failed": 0,
+   "bundles": 45,
+   "note": "swift test --skip QwenWhisperFeaturesTests (needs Metal)"
+  },
+  "mac_mindloomlink_package": {
+   "executed": 86,
+   "skipped": 1,
+   "failed": 0,
+   "note": "MindloomLinkTests 47, MindloomSpacesTests 39; the skip is the opt-in live test"
+  },
+  "mac_app_debug_build": "succeeded",
+  "iphone_app_simulator": {
+   "executed": 158,
+   "skipped": 1,
+   "failed": 0,
+   "note": "iOS 26.5 simulator; the skip is on-device zh-CN recognition"
+  }
+ },
+ "end_to_end": {
+  "privacy": {
+   "passed": 68,
+   "failed": 0,
+   "seconds": 131.4,
+   "organize_seconds": 72.5,
+   "files_scanned": 9638,
+   "plaintext_hits": 0
+  },
+  "phone": {
+   "passed": 67,
+   "failed": 0,
+   "seconds": 331.2,
+   "organize_seconds": 48.3,
+   "pairing_seconds": 2.4,
+   "files_scanned": 9644,
+   "plaintext_hits": 0,
+   "authorized_keys_restored": "byte-identical on both hosts"
+  },
+  "shared_spaces": {
+   "passed": 57,
+   "failed": 0,
+   "seconds": 269,
+   "union_items": 23,
+   "rewrapped_item_keys": 22,
+   "requests": 268,
+   "plaintext_hits": 0
+  },
+  "agent_mcp": {
+   "swiftpm_helper": {
+    "passed": 43,
+    "failed": 0
+   },
+   "app_bundle_helper": {
+    "passed": 43,
+    "failed": 0
+   }
+  }
+ }
+}

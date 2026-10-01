@@ -494,6 +494,9 @@ public struct MemoryLoom: Equatable, Sendable {
     #"(今天|明天|后天|昨天|今晚|明早|今早)"#,
   ]
 
+  /// The mark a record's source leaves (for the pages' source tiles).
+  public static func sourceKind(_ record: MemoryItemRecord) -> KnotKind { kind(record) }
+
   static func kind(_ record: MemoryItemRecord) -> KnotKind {
     switch record.inputMode {
     case .dictation: return .dictation

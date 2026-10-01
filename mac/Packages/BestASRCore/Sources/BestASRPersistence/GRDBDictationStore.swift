@@ -8337,8 +8337,9 @@ public actor GRDBDictationStore:
       guard names == Array(currentOrder.dropLast(1)) else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }
-    case 22, 23:
-      // v23 widened a portable table in place; v24 added only local tables.
+    case 22, 23, 24:
+      // v23 widened a portable table in place; v24 and v25 added only local
+      // tables.
       guard names == currentOrder else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }

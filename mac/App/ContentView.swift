@@ -138,6 +138,7 @@ struct ContentView: View {
   @Environment(\.openWindow) var openWindow
   @State var selection = BestASRSection.home
   @StateObject var memoryScreen = MemoryScreenModel()
+  @StateObject var spaces = SpacesModel()
   @State var memoryNavigation = MemoryNavigation()
   /// Which capture page the indicator (or a menu) opens when none is running.
   @State var captureSection: BestASRSection?
@@ -206,8 +207,12 @@ struct ContentView: View {
       }
       model.refreshHistoryIfStale()
       memoryScreen.attach(to: model)
+      spaces.attach(to: model, memory: memoryScreen)
       trackCaptureStart()
       followRequestedNavigation(model.requestedNavigationSectionID)
+    }
+    .sheet(item: $spaces.sheet) { sheet in
+      SpaceSheetHost(sheet: sheet, state: spaces.screen, actions: spacesActions)
     }
     .onChange(of: model.capture.roomSnapshot.phase) { _, _ in trackCaptureStart() }
     .onChange(of: model.capture.systemAudioSnapshot.phase) { _, _ in trackCaptureStart() }

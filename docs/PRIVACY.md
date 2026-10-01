@@ -70,7 +70,7 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 - `xxxxxx` 由一把只属于你这个资料库的遮号钥匙算出来。同一个号码在你的资料库里永远是同一个占位符，所以整理时仍然看得出「两条素材提到的是同一个手机号」。换一个资料库，占位符就完全不同。
 - 遮号码可以重复做：已经遮过的文字再遮一次，结果不变。
 - Spark 自己也遮一遍。从图片和文件里读出来的文字（读图结果、文档正文和概要、字段），在存盘或放进任何提示词之前先遮；Mac 发来的文字再遮一遍，作为纵深防御。每次模型调用的输出记录也一样（`test_text_read_from_bytes_and_incoming_text_are_masked_before_storage_and_prompts`、`test_masking_is_idempotent_on_what_the_mac_already_masked`）。
-- 会看到占位符的 Skill（八个里读素材文字的七个，加上 recall），说明里都写了一句：「占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。」（`test_skills_that_see_masked_text_say_placeholders_stay_as_they_are`）
+- 会看到占位符的 Skill（十个里读素材文字的九个，加上 recall），说明里都写了一句：「占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。」（`test_skills_that_see_masked_text_say_placeholders_stay_as_they_are`）
 - **模型改坏的占位符当场修好。** 模型偶尔把抄来的占位符写坏，例如把〔验证码·3feb18〕写成「邮箱验证码3feb18」：括号和「·」没了，Mac 还原不了，会显示一串像验证码的字符。现在每个 Skill 的输出在校验和存盘之前都先过一道确定性的修补：这次调用的输入里出现过的占位符，它的 6 位编号如果出现在完整的〔标签·编号〕之外，就连同残留的标签、「·」和括号改回完整的占位符；输入里没有的编号不动，也不会凭空造出占位符；两个号码碰巧同一编号时，只有残留的标签说得清是哪一个才修（`masking.repair_placeholders`；`test_the_organizer_stores_the_repaired_gist`、`test_the_broken_forms_seen_and_their_neighbours_are_rewritten_to_the_input_placeholder`）。
 - **规范第 3 版**：遮号评测里漏掉的一处是聊天里后说出来的验证码（「……短信验证码刚刚发过来了，我收到的是 2802」）。第 3 版加了一条规则：「验证码」这类词之后、同一句话里（40 个字以内，中间没有句号、问号、叹号、分号、换行和数字），在「是」「为」、冒号或 is 之后出现的 4–8 位数字也遮住。共享向量 200 条（新增 8 条要遮的和 6 条不能遮的）；在本仓库全部合成场景的文字上，这条新规则一处也没有命中，所以已有的整理结果不变。
 - **遮号会不会影响整理效果**：用 `eval/privacy/` 里的工具（号码压力集生成、遮号开关对照、成对调用、还原检查、向量相似度）在同一套数据上比较过遮号和不遮号（规范第 1 版，Qwen3.6）。在留出集里写进 37 处合成号码的压力集上各跑 5 次，B³ F1 不遮号 0.788 ± 0.038、遮号 0.788 ± 0.013；而输入逐字节相同的对照组，两组之间自己就差 0.038。在完全相同的上下文里把含占位符的调用再发两次，归事件的决定和原文版本相同 105/111、和原样再发相同 104/111：遮号造成的差别和服务器自己的波动一样大。占位符不会让不相干的素材在检索上变得更像。代价是：号码本身就是事情内容时（换号、换邮箱），结果里偶尔少写一个号码（原文仍在 Mac 上）。数字和出处见 [EVALUATION.md §11](EVALUATION.md#11-隐私) 和 `eval/results-2026-09-30/eval.json` 的 `masking_eval`。
@@ -84,7 +84,7 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 - **从旧版本升级**：以前的明文库在第一次开锁时整库加密，随后删掉明文文件（`test_legacy_plaintext_store_is_encrypted_on_first_unlock`）。
 - **光有令牌读不到**：链路令牌是 Spark 账户下的一个文件，同一账户下的程序都能读到它。所以 Mac 开锁之后，每个数据请求还要带一个从钥匙推出来的访问凭证（`X-Mindloom-Access`）；只拿令牌来读，回答 403（`test_after_the_macs_unlock_data_routes_need_the_key_derived_access_proof`）。
 - **Mac 不在就自己锁上**：Mac 连着时每隔几秒就会来取一次状态。超过 10 分钟没有来自 Mac 的数据请求（Mac 退出、睡眠、崩溃或断网），Spark 自己上锁；Mac 下次连上时重新开锁（`test_a_store_the_mac_unlocked_locks_itself_when_the_mac_stops_asking`）。Mac 睡眠和退出时也会主动先上锁，上锁没成功会再发一次。
-- **后台任务只在开着锁的时候跑，写入绑在这一次开锁上**：整理素材、定期整理事件（event-consolidate）、人物整理（person-resolve）都在后台 worker 里，库锁着时一概不跑。它们发给模型的每个调用（包括并发的调用）都绑定发出时的那一次开锁：调用还在路上时库被锁上，或者「忘掉我」之后又用新钥匙开了新库，调用回来时什么都写不进去（`test_a_model_call_in_flight_during_wipe_writes_nothing_into_the_next_store`、`test_a_consolidation_call_in_flight_during_forget_writes_nothing_into_the_next_store`、`test_a_person_resolve_call_in_flight_during_forget_writes_nothing_into_the_next_store`、`test_a_lock_during_a_pass_writes_nothing_and_the_pass_runs_again_after_the_next_unlock`）。它们放在内存里的东西（事件的标题和样例、人名索引）随上锁、清空一起丢掉。
+- **后台任务只在开着锁的时候跑，写入绑在这一次开锁上**：整理素材、定期整理事件（event-consolidate）、人物整理（person-resolve）、画线索图（matter-map）和把事搓成绳（matter-group）都在后台 worker 里，库锁着时一概不跑。它们发给模型的每个调用（包括并发的调用）都绑定发出时的那一次开锁：调用还在路上时库被锁上，或者「忘掉我」之后又用新钥匙开了新库，调用回来时什么都写不进去（`test_a_model_call_in_flight_during_wipe_writes_nothing_into_the_next_store`、`test_a_consolidation_call_in_flight_during_forget_writes_nothing_into_the_next_store`、`test_a_person_resolve_call_in_flight_during_forget_writes_nothing_into_the_next_store`、`test_a_lock_during_a_pass_writes_nothing_and_the_pass_runs_again_after_the_next_unlock`、`test_a_map_call_in_flight_during_forget_writes_nothing_into_the_next_store`、`test_a_lock_during_a_grouping_call_writes_nothing`）。它们放在内存里的东西（事件的标题和样例、人名索引）随上锁、清空一起丢掉。
 - **不留转储**：整理进程启动时把自己设成不可转储（`PR_SET_DUMPABLE=0`），核心转储上限设为 0：它崩溃时不会把内存里的钥匙和文字写进系统的崩溃目录，同一账户下的程序也读不了它的内存（`test_process_hardening_sets_a_hard_zero_core_limit_and_turns_dumping_off`）。
 
 ### 4. 读完就删
@@ -97,10 +97,10 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 
 ### 5. 收回
 
-- **删一条**：Mac 上删掉一条已经送达的素材，Spark 上它的所有修订、读图读文件的结果、向量、拆出来的片段、人物关联都会删掉；删一段录音，从它截出的关键帧也一起删。它**待过的每个事件**（现在所在的、之前被移出的、已被合并或被你删掉的）都立即清掉可能引用它的内容：现在的事件只留你自己改过的标题（或事件的锚点），状态行、排序理由清空，等重新整理；只剩它或已删除的事件整张卡片清空；它当初定下的锚点也清掉。读过它的模型调用（按记录的「读过哪些素材」，不靠文字前缀比对）和相关提问都清空，删除时正在进行的简报和排序结果直接丢弃，只留一个不含内容的墓碑。定期整理事件和人物整理的记录也一样：它们的每次模型调用都记下自己读了哪些素材，删掉其中任何一条，这次调用的输入、输出和提案都清空；这条素材的人物扫描记录（`person_scan`）删掉，因为它只剩下没有素材的人物记录的判断（`person_checks`）删掉，它待过的事件的整理记录（`consolidate_checks`，只有编号、条数和结论）删掉，那些事件下一轮重新判断；删掉的素材不会再被人物整理重读或搜索（`test_deleting_an_item_a_consolidation_call_read_clears_that_run_and_its_proposal`、`test_deleting_an_item_a_person_resolve_call_read_clears_the_run_and_the_record_of_the_pass`）。之后再有人送同一个 ID，回答 410（`test_delete_purges_every_revision_child_and_derived_row`、`test_delete_does_not_rely_on_a_successful_rebrief`、`test_delete_while_a_brief_is_being_written_leaves_no_copy`、`test_deleting_a_recording_also_deletes_its_keyframes`：删除之后，即使拿着钥匙把整个库读一遍，也找不到那条素材里的哨兵文字）。
+- **删一条**：Mac 上删掉一条已经送达的素材，Spark 上它的所有修订、读图读文件的结果、向量、拆出来的片段、人物关联都会删掉；删一段录音，从它截出的关键帧也一起删。它**待过的每个事件**（现在所在的、之前被移出的、已被合并或被你删掉的）都立即清掉可能引用它的内容：现在的事件只留你自己改过的标题（或事件的锚点），状态行、排序理由清空，等重新整理；只剩它或已删除的事件整张卡片清空；它当初定下的锚点也清掉。读过它的模型调用（按记录的「读过哪些素材」，不靠文字前缀比对）和相关提问都清空，删除时正在进行的简报和排序结果直接丢弃，只留一个不含内容的墓碑。定期整理事件和人物整理的记录也一样：它们的每次模型调用都记下自己读了哪些素材，删掉其中任何一条，这次调用的输入、输出和提案都清空；这条素材的人物扫描记录（`person_scan`）删掉，因为它只剩下没有素材的人物记录的判断（`person_checks`）删掉，它待过的事件的整理记录（`consolidate_checks`，只有编号、条数和结论）删掉，那些事件下一轮重新判断；删掉的素材不会再被人物整理重读或搜索（`test_deleting_an_item_a_consolidation_call_read_clears_that_run_and_its_proposal`、`test_deleting_an_item_a_person_resolve_call_read_clears_the_run_and_the_record_of_the_pass`）。线索图（v7）也一样，图上不留任何从它写出来的字：凡是以它为出处的结都去掉（哪怕还有别的出处，和事件卡片上的事实一样），列过它的线整条去掉（线名和概要都可能是转述它），这条线上剩下的结回到主线；引过它的健康理由清空；引它原话的牵制关系删掉；这件事重新排队画图，重画失败就把图整张删掉，不保留旧图。事件被删掉、被合并或删到一条不剩时，它的图和排队记录一起删除。模型提议、你还没确认的绳如果以它为出处，整根绳连同名字删掉，里面的事以后重新判断；你确认过或改过名的绳保留你的决定，只去掉出处和理由（`test_deleting_an_item_prunes_maps_blocks_and_their_runs`、`test_every_knot_that_cites_the_deleted_item_goes_even_with_other_evidence`、`test_deleting_a_sample_item_drops_the_proposed_rope_written_from_it_and_clears_the_run`、`spark/tests/test_map_review_v7.py`）。交叉关系是现算的，不存；成股整理的判断记录只有事件编号、标题的哈希和结论。之后再有人送同一个 ID，回答 410（`test_delete_purges_every_revision_child_and_derived_row`、`test_delete_does_not_rely_on_a_successful_rebrief`、`test_delete_while_a_brief_is_being_written_leaves_no_copy`、`test_deleting_a_recording_also_deletes_its_keyframes`：删除之后，即使拿着钥匙把整个库读一遍，也找不到那条素材里的哨兵文字）。
 - **正在送的也能收回**：关链路时还没确认送达的素材，Mac 会记下「可能已在 Spark 上」（不含内容）；之后删掉它，删除照样会发。
 - **原文不许改**：模型输出和整理代码都改不了素材原文。数据库触发器只放行两种变动：你的删除，和读完就删；其他任何改写都会被拒绝（`test_item_content_is_never_rewritten_only_purged`、`test_item_blobs_are_never_rewritten`）。
-- **全部忘掉**：清空要带上钥匙编号，编号对得上才执行，锁着的时候也能做。数据库、WAL、钥匙编号文件、收件箱里还没取走的内容会全部删除，数据目录里的日志、服务自己的日志文件也会清空（`test_wipe_needs_the_matching_key_id_and_forgets_everything`、`test_wipe_empties_the_configured_log_file_and_the_process_log`）。清空那一刻还在跑的模型调用，结果不会写进之后新建的库（`test_a_model_call_in_flight_during_wipe_writes_nothing_into_the_next_store`）。Mac 这边如果钥匙串删不掉旧钥匙，会改写成一把新钥匙；两样都做不到，链路就停下，旧钥匙不会再用。
+- **全部忘掉**：清空要带上钥匙编号，编号对得上才执行，锁着的时候也能做。数据库（连同线索图、关系和绳）、WAL、钥匙编号文件、收件箱里还没取走的内容会全部删除，数据目录里的日志、服务自己的日志文件也会清空（`test_wipe_needs_the_matching_key_id_and_forgets_everything`、`test_wipe_empties_the_configured_log_file_and_the_process_log`）。清空那一刻还在跑的模型调用，结果不会写进之后新建的库（`test_a_model_call_in_flight_during_wipe_writes_nothing_into_the_next_store`）。Mac 这边如果钥匙串删不掉旧钥匙，会改写成一把新钥匙；两样都做不到，链路就停下，旧钥匙不会再用。
 - **日志只记类型**：日志和健康检查里的错误只写错误类型（和 HTTP 状态码），不写错误正文；锁着时健康检查不显示任何错误。
 
 ### 6. 功能不打折
@@ -137,6 +137,14 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 - 键盘开着语音的时候，系统的麦克风指示会一直亮着（最后一次用完 10 分钟后关）；只有按住麦克风键时说的话才会被识别，其余的声音在进来的那一刻就丢掉。键盘看不到你用别的键盘打的字。
 - 手机上送达的条目只留 7 天的文字预览（图片不留），方便你看到「已送出」。
 - 以前的 iOS 快捷指令「分享到织机」已经停用：它没法封存，内容在 Spark 收件箱里等 Mac 取走时是明文。现在 Spark 只收封好的条目：手机密钥的 `gate` 只放行 `add --sealed --id <UUID>` 和 `status`，明文的 `add` 回答 `not_sealed`，接口对明文条目回答 422 且不回显内容（`test_plaintext_adds_are_refused_and_nothing_is_sent`、`test_inbox_refuses_plaintext_and_bad_input`）。
+
+## 共享空间
+
+共享空间用的是同一套规则：Spark 只看到整理需要的东西（遮过号码的文字、缩小的图，只在某位成员的 Mac 借出钥匙时、只在内存里）；人看到的是你给的（原件端到端加密给成员，Spark 存密文、打不开）；声纹、词典、个性化识别从不进任何空间，录音只按片段共享。空间里的线索图和绳也是整理结果，同样只在空间的加密整理库里，成员撤回或移除素材时按上面「删一条」的规则清掉。怎么做到、边界在哪，见 [SPACES.md](SPACES.md)。
+
+## Agent 读取织机（Mac 端）
+
+Claude Code 这类 Agent 读的是 Mac 上的织机，经 App 自带的本机连接程序和一个只有你能用的本机通道；Spark 不参与，也不经过 Spark。每个 Agent 第一次读之前要你同意，范围、期限、号码遮挡由你定（默认遮号，规则和发给 Spark 的相同）；音频、声纹、词典永远不给。Agent 背后的模型通常在它厂商的云上，所以它读到的文字会离开 Mac——同意窗口写明这一点。共享空间里的事单独标着空间，只给授权了那个空间的 Agent；读到时，那个空间的操作日志多一条不含内容的 `agent.access`。详见 Mac 仓库的 `docs/AGENTS.md`。
 
 ## 链路本身
 
@@ -181,6 +189,7 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 - **隐私端到端（整合版，68/68）**：Mac 端是真实代码（资料库、链路、SSH 转发、截图涂抹），Spark 端是一个真实的 v6 整理服务实例。五条合成素材（口述、粘贴文字、PDF、聊天截图、xlsx），每条带 7 种哨兵号码：线路上的每个请求里都没有哨兵；只拿令牌、不带访问凭证读，回答 403；Spark 上 9,554 个文件逐字节扫描 0 处命中，用钥匙解密逐行扫描也 0 处；删除、上锁、断开时删除、「忘掉我」、锁着时清空都按上面说的生效。
 - **手机端到端（整合版，67/67）**：iOS 模拟器里的 App 经跳板机把 3 条封好的条目送进真实 Spark 的收件箱；Spark 上 9,552 个文件扫描 0 处明文；Mac 取走后照常遮号、整理；「断开 iPhone」之后手机再发被拒，两台主机的 `authorized_keys` 和开始时逐字节相同。
 - 数字和前几次没全过的原因见 [EVALUATION.md §11.4、§12](EVALUATION.md#114-mac--spark-隐私端到端) 和 `eval/results-2026-09-30/integration.json`。
+- **v7 整合后重跑（2026-10-01）**：在一个全新的 v7 整合版实例上依次重跑，全部通过：隐私端到端 68/68（9,638 个文件逐字节扫描 0 处明文）、手机端到端 67/67（9,644 个文件 0 处明文；两台主机的 `authorized_keys` 和开始时逐字节相同）、共享空间端到端 57/57（两个合成资料库共享实验室的同一件事；Spark 的数据和日志目录里，哨兵号码、词典、声纹、窗口标题、空间名、成员名和实验室用词都是 0 处）。
 
 **截止时的出网统计**：三个规模场景（合成数据）结束后，只读打开 Spark 上的整理库，逐条统计 Mac 发来的内容：每个场景 7.6–12.6 MB，只有文字、文档文字和截图；音视频文件头 0 个，长度 ≥32 的浮点向量 0 个，162 张截图的 EXIF 里只剩像素尺寸和色彩空间。这批素材本来就没有音频，所以这组数字不能证明「不发音频」（那由发送类型和测试保证），它说明的是出网内容可以这样逐字节核对。数字和脚本见 [EVALUATION-2026-09-29.md](EVALUATION-2026-09-29.md#12-隐私spark-实际收到了什么) 和 [eval/results-2026-09-29/](../eval/results-2026-09-29/README.md)。这组测量早于「遮号码」和「读完就删」。
 
@@ -242,3 +251,14 @@ Spark 上没有任何东西是唯一的一份。「让 Spark 忘掉我的内容�
 | 两个新 Skill 的说明缺占位符和「素材即数据」 | 补上（event-consolidate 1.0.1、person-resolve 1.2.1） |
 | 遮号评测漏掉的验证码说法 | 规范第 3 版，共享向量 200 条 |
 | 遮号评测里模型改坏的占位符 | 每个 Skill 的输出先修补再校验、存盘 |
+
+## 整合之后（2026-10-01，v7）
+
+线索图、共享空间和 Agent 读取三条分支合到一起时补上的缝：
+
+| 缝 | 做法 |
+|---|---|
+| 共享空间的整理器也会画线索图、搓绳，撤回的素材可能留在图里 | 空间用同一个整理器和同一套删除规则；有测试证明撤回后图里不留它（`spark/tests/test_v7_integration.py`） |
+| 空间的「打包」步骤可能在成股整理之后才挪素材 | 打包（不调模型）排在成股整理和空闲画图之前 |
+| 只授权「我的」的 Agent 可能经由「全部」视图读到共享空间的素材 | Agent 看到的共享空间的事单独列出、标着空间，不并进「我的」（Mac 端） |
+| Agent 读了共享空间却没有记录 | Mac 往那个空间的操作日志写 `agent.access`，只有数量 |

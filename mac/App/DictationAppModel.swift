@@ -628,6 +628,9 @@ final class DictationAppModel: ObservableObject {
   var remoteOrganizer: RemoteOrganizerLinkController?
   /// The paired iPhone (PHONE-CONTRACT §4).
   var phoneLink = PhoneLinkModel()
+  /// Agents reading 织机 (AGENT-CONTRACT): grants, audit, the Agent 收件箱.
+  var agentAccess = AgentAccessModel()
+  var agentRequestPanel: AgentRequestPanelController?
   var spoken = SpokenModel()
   var hotkeys = HotkeysModel()
   var onboarding = OnboardingModel()
@@ -656,6 +659,7 @@ final class DictationAppModel: ObservableObject {
       onboarding.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
       intake.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
       phoneLink.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
+      agentAccess.objectWillChange.sink { [weak self] _ in self?.objectWillChange.send() },
     ]
   }
   static let speechLicenseReceiptKey =
@@ -1109,6 +1113,7 @@ final class DictationAppModel: ObservableObject {
       repository = durableRepository
       configureRemoteOrganizer(repository: durableRepository, dataRoot: root)
       configureIntake(repository: durableRepository, assetRoot: durableJournal.assetRootURL)
+      configureAgentAccess(repository: durableRepository, dataRoot: root)
       dictionary.repository = durableRepository
       history.repository = durableRepository
       journal = durableJournal

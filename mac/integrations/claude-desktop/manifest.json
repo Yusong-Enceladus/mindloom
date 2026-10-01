@@ -1,0 +1,51 @@
+{
+  "manifest_version": "0.2",
+  "name": "mindloom",
+  "display_name": "织机",
+  "version": "1.0.0",
+  "description": "在你允许的范围里读取织机里的事，并把结果作为建议交回织机的收件箱。",
+  "long_description": "织机是你 Mac 上的“事的账本”。这个扩展启动织机自带的连接程序 mindloom-mcp：Claude 可以找事、读一件事的进度和原始资料、看截止和最近的动静、找人，并把交接说明等结果作为建议放进织机的 Agent 收件箱。第一次使用时织机会在 Mac 上问你给它看哪些事、看多久、号码是否遮住（默认遮住）；在织机的 设置 → Agent 里可以随时撤销，并查看谁读过什么。注意：Claude 读到的内容会交给 Anthropic 的服务处理，也就离开了这台 Mac。",
+  "author": {
+    "name": "织机"
+  },
+  "server": {
+    "type": "binary",
+    "entry_point": "server/mindloom-mcp.sh",
+    "mcp_config": {
+      "command": "${__dirname}/server/mindloom-mcp.sh",
+      "args": [],
+      "env": {
+        "MINDLOOM_MCP": "${user_config.helper_path}",
+        "MINDLOOM_DATA_ROOT": "${user_config.data_root}"
+      }
+    }
+  },
+  "tools": [
+    { "name": "search_matters", "description": "按关键词找事，返回 id、标题、现在到哪一步、最近的截止和所属的绳" },
+    { "name": "get_matter", "description": "读一件事：进度、已经知道的事实、分线、人物和原始资料摘录（带条目 id）" },
+    { "name": "list_deadlines", "description": "接下来若干天（最多 30 天）有日期的计划" },
+    { "name": "list_recent", "description": "最近若干天（最多 14 天）有动静的事" },
+    { "name": "get_person", "description": "一个人参与的事和他最近说过的话" },
+    { "name": "add_to_inbox", "description": "向织机的 Agent 收件箱提一条建议；主人收下之前什么都不会归档" }
+  ],
+  "tools_generated": false,
+  "keywords": ["mindloom", "织机", "memory", "context"],
+  "compatibility": {
+    "platforms": ["darwin"]
+  },
+  "user_config": {
+    "helper_path": {
+      "type": "string",
+      "title": "织机的连接程序",
+      "description": "织机.app 里 Contents/Helpers/mindloom-mcp 的完整路径。织机装在“应用程序”里时不用改。",
+      "default": "/Applications/织机.app/Contents/Helpers/mindloom-mcp",
+      "required": false
+    },
+    "data_root": {
+      "type": "directory",
+      "title": "数据目录（只有开发版需要）",
+      "description": "开发版织机使用另一个数据目录时填写；平时留空。",
+      "required": false
+    }
+  }
+}

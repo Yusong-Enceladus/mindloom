@@ -78,11 +78,16 @@ class Pipeline:
             if fut is not None:
                 fut.result()  # never raises: prefetch failures are redone inline by process_item
             org._run_job(job)
+            if org.mapper.demand_due():
+                # The Mac asked for a matter's map (the user opened it): one at this barrier, not at the idle end.
+                org.mapper.run(pool=self.pool, demand_only=True, max_calls=1)
             if org.consolidator.due():
                 # Every N items, at this barrier: its calls run on the pool, results are applied in order.
                 org.consolidator.run(pool=self.pool)
             if org.people_pass.due():
                 org.people_pass.run(pool=self.pool)
+            if org.grouper.due():
+                org.grouper.run(pool=self.pool)
             return True
         # Idle: settle everything, then brief what is left (concurrently), consolidate, and rank.
         if self.pending:
@@ -96,6 +101,18 @@ class Pipeline:
             return True
         if org.people_pass.idle_due():
             org.people_pass.run(pool=self.pool)
+            return True
+        if org.mapper.demand_due():
+            org.mapper.run(pool=self.pool, demand_only=True)
+            return True
+        # The owner's idle hooks (no model calls; they may move items) run before grouping and the idle maps.
+        if org.run_idle_hooks():
+            return True
+        if org.grouper.idle_due():
+            org.grouper.run(pool=self.pool)
+            return True
+        if org.mapper.idle_due():
+            org.mapper.run(pool=self.pool)
             return True
         if org._rank_dirty or org._day_changed():
             org.rank()

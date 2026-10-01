@@ -1,0 +1,127 @@
+{
+ "note": "Shared-spaces crypto vectors (SPACES-CONTRACT section 3). All values invented. hex = lowercase hex, b64u = base64url without padding. See privacy/make_space_vectors.py.",
+ "devices": [
+  {
+   "device_id": "a1a1a1a1-0000-4000-8000-00000000000a",
+   "sign_priv_hex": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+   "seal_priv_hex": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+   "expected_sign_pub_b64u": "A6EHv_POEL4dcN0Y50vAmWfk1jCbpQ1fHdyGZBJVMbg",
+   "expected_seal_pub_b64u": "NYBy1jZYgNGu6jKa35EhODhR7SGijjt16WXQ0s0WYlQ"
+  },
+  {
+   "device_id": "b2b2b2b2-0000-4000-8000-00000000000b",
+   "sign_priv_hex": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+   "seal_priv_hex": "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f",
+   "expected_sign_pub_b64u": "JUO5L_EJVRFHatyDadtt3JM2ZaEZeN2hQE7hBmypVZ0",
+   "expected_seal_pub_b64u": "Z13VdO13iTELPS52gfN5C0ZsdzsVIf7PNld5WDcepS8"
+  }
+ ],
+ "op_signature": {
+  "device_id": "a1a1a1a1-0000-4000-8000-00000000000a",
+  "domain": "mindloom-space-op-v1\\n",
+  "op_b64u": "eyJ2IjoxLCJzcGFjZV9pZCI6IjViMWU3YzJhLTBkM2YtNGU2YS05YjhjLTdkNmU1ZjRhM2IyMSIsIm9wX2lkIjoiZjZmNmY2ZjYtMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDAxIiwidHlwZSI6Iml0ZW0ud2l0aGRyYXciLCJtZW1iZXJfaWQiOiJjM2MzYzNjMy0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMGEiLCJkZXZpY2VfaWQiOiJhMWExYTFhMS0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMGEiLCJjcmVhdGVkX2F0IjoiMjAyNi0wOS0zMFQwODowMDowMCswMDowMCIsImJvZHkiOnsiaXRlbV9pZCI6ImQ0ZDRkNGQ0LTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMSJ9fQ",
+  "expected_sig_b64u": "pUlh0erF-MwLtYrwAygvzwfIz9_H5bV1RkwQaXg6ztRHx_3TuOgPe0_55V2WxSorIq2hywMRrcvR3bG9uQllBw"
+ },
+ "request_signature": {
+  "device_id": "a1a1a1a1-0000-4000-8000-00000000000a",
+  "method": "GET",
+  "target": "/v1/spaces/5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21/ops?since=0&limit=200",
+  "date": "1790000000",
+  "nonce": "bm9uY2Utbm9uY2Utbm9uY2U",
+  "body_b64u": "",
+  "expected_message_b64u": "bWluZGxvb20tc3BhY2UtcmVxLXYxCkdFVAovdjEvc3BhY2VzLzViMWU3YzJhLTBkM2YtNGU2YS05YjhjLTdkNmU1ZjRhM2IyMS9vcHM_c2luY2U9MCZsaW1pdD0yMDAKMTc5MDAwMDAwMApibTl1WTJVdGJtOXVZMlV0Ym05dVkyVQplM2IwYzQ0Mjk4ZmMxYzE0OWFmYmY0Yzg5OTZmYjkyNDI3YWU0MWU0NjQ5YjkzNGNhNDk1OTkxYjc4NTJiODU1",
+  "expected_sig_b64u": "sMgSEt28WlfPZeYUsALhF22UgKtytX2QAo49xA8mb9VdWiATr4D1NTMeTPACRponBMIDri2yjHNJkxb61aPcBA"
+ },
+ "join_signature": {
+  "device_id": "b2b2b2b2-0000-4000-8000-00000000000b",
+  "domain": "mindloom-space-join-v1\\n",
+  "request_b64u": "eyJ2IjoxLCJzcGFjZV9pZCI6IjViMWU3YzJhLTBkM2YtNGU2YS05YjhjLTdkNmU1ZjRhM2IyMSIsImludml0ZV9pZCI6ImI4YjhiOGI4LTAwMDAtNDAwMC04MDAwLTAwMDAwMDAwMDAwMSIsInJlcXVlc3RfaWQiOiJhN2E3YTdhNy0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMDEiLCJtZW1iZXJfaWQiOiJjM2MzYzNjMy0wMDAwLTQwMDAtODAwMC0wMDAwMDAwMDAwMGEiLCJkZXZpY2UiOnsiZGV2aWNlX2lkIjoiYjJiMmIyYjItMDAwMC00MDAwLTgwMDAtMDAwMDAwMDAwMDBiIiwic2lnbl9wdWIiOiJKVU81TF9FSlZSRkhhdHlEYWR0dDNKTTJaYUVaZU4yaFFFN2hCbXlwVlowIiwic2VhbF9wdWIiOiJaMTNWZE8xM2lURUxQUzUyZ2ZONUMwWnNkenNWSWY3UE5sZDVXRGNlcFM4In0sImNyZWF0ZWRfYXQiOiIyMDI2LTA5LTMwVDA4OjAwOjAwKzAwOjAwIn0",
+  "expected_sig_b64u": "pIV3QL0GomswPkRp3GBKrZ5wZllmvvAEvDpfAJlR5qTUSFcjHsF4mQyLe00LCCTQoP87tgyf0206-sFZ5KHhDQ"
+ },
+ "space_key_wrap": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "epoch": 1,
+  "device_id": "b2b2b2b2-0000-4000-8000-00000000000b",
+  "space_key_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "recipient_seal_priv_hex": "606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f",
+  "eph_priv_hex": "3131313131313131313131313131313131313131313131313131313131313131",
+  "nonce_hex": "414141414141414141414141",
+  "aad": "mindloom-space-wrap-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|1|b2b2b2b2-0000-4000-8000-00000000000b",
+  "expected": "mlwrap1.BPXykWLDGo3voY5udCIk7oBvwXGKJ4voWbpWIEArjzpBQUFBQUFBQUFBQUHsXLlZEAvKRyaxBLqQD73mRZ3MfCYqn1nYAuP_j_Wim1oCP-YuQMYLztxSaylSkXo"
+ },
+ "epoch_link": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "epoch": 2,
+  "new_key_hex": "2222222222222222222222222222222222222222222222222222222222222222",
+  "prev_key_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "nonce_hex": "414141414141414141414141",
+  "aad": "mindloom-space-epoch-link-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|2",
+  "expected": "mlelink1.QUFBQUFBQUFBQUFBVUwLQ91kY2KN6EoNeqylzooRE5w9gZmtYPQ88rVEtkTaF-U2RunHHlSMPqW5k3k5"
+ },
+ "item_key_wrap": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "epoch": 1,
+  "item_id": "d4d4d4d4-0000-4000-8000-000000000001",
+  "space_key_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "data_key_hex": "5151515151515151515151515151515151515151515151515151515151515151",
+  "nonce_hex": "414141414141414141414141",
+  "aad": "mindloom-space-item-key-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|1|d4d4d4d4-0000-4000-8000-000000000001",
+  "expected": "mlikey1.QUFBQUFBQUFBQUFBLK4UQSpUIRcSIQIvLvHwWUBLEK_axVwd_zaSVByV6vdxPED-d5H9hVbCmB97w8ZE"
+ },
+ "item_enc": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "item_id": "d4d4d4d4-0000-4000-8000-000000000001",
+  "revision": 3,
+  "data_key_hex": "5151515151515151515151515151515151515151515151515151515151515151",
+  "nonce_hex": "414141414141414141414141",
+  "plaintext_b64u": "eyJ0aXRsZSI6IuWRqOS8mue6quimgSIsInRleHQiOiLlk6jlhbXvvJrnlLXor50gMTM4MDAxMzgwMDAiLCJyZXZpc2lvbiI6M30",
+  "aad": "mindloom-space-item-enc-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|d4d4d4d4-0000-4000-8000-000000000001|3",
+  "expected": "mlenc1.QUFBQUFBQUFBQUFBQHeIU5b5wj36pBjgAsu2FIZT5WH63ZdXL7kM3p2sA53xjrygW8MqLiH0seHsd9baP9NPEabBVJgFMWWi9OFRqv8SiLYXiKeXH-42dDU1-jnvu-YIuIcUY1X3"
+ },
+ "op_enc": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "op_id": "f6f6f6f6-0000-4000-8000-000000000001",
+  "space_key_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "nonce_hex": "414141414141414141414141",
+  "plaintext_b64u": "eyJuYW1lIjoi5a6e6aqM5a6kwrdTa2lsbEtuaXQifQ",
+  "aad": "mindloom-space-op-enc-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|f6f6f6f6-0000-4000-8000-000000000001",
+  "expected": "mlenc1.QUFBQUFBQUFBQUFBgTLCWS-SibI42TomASWS-BdYCmI3FVgM5ELsy0DshPUbbpsZCdg9BV9uHnJf1uA"
+ },
+ "blob": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "item_id": "d4d4d4d4-0000-4000-8000-000000000001",
+  "blob_id": "e5e5e5e5-0000-4000-8000-000000000001",
+  "data_key_hex": "5151515151515151515151515151515151515151515151515151515151515151",
+  "nonce_hex": "414141414141414141414141",
+  "plaintext_b64u": "JVBERi0xLjcgc3ludGhldGljIG9yaWdpbmFsIGJ5dGVz",
+  "aad": "mindloom-space-blob-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|d4d4d4d4-0000-4000-8000-000000000001|e5e5e5e5-0000-4000-8000-000000000001",
+  "expected_b64u": "TUxCMUFBQUFBQUFBQUFBQTaxrUSCDT9Pp8zGzsFaC8tV9Pn2_sMJ2NPP64rrjO76TrBRXgwrbTsCjDk9hFqxmE0"
+ },
+ "join_profile": {
+  "space_id": "5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21",
+  "request_id": "a7a7a7a7-0000-4000-8000-000000000001",
+  "recipient_seal_priv_hex": "202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f",
+  "eph_priv_hex": "3131313131313131313131313131313131313131313131313131313131313131",
+  "nonce_hex": "414141414141414141414141",
+  "plaintext_b64u": "eyJkaXNwbGF5X25hbWUiOiLpn6nnrZYifQ",
+  "aad": "mindloom-space-join-profile-v1|5b1e7c2a-0d3f-4e6a-9b8c-7d6e5f4a3b21|a7a7a7a7-0000-4000-8000-000000000001",
+  "expected": "mlpro1.BPXykWLDGo3voY5udCIk7oBvwXGKJ4voWbpWIEArjzpBQUFBQUFBQUFBQUFpoN8sN-n4RXxDyOObaawML1FbTjPyFlmmqv-VD2_PxKtMMv7Fu881AQ"
+ },
+ "derived": {
+  "first_epoch_key_hex": "2121212121212121212121212121212121212121212121212121212121212121",
+  "epoch2_key_hex": "2222222222222222222222222222222222222222222222222222222222222222",
+  "expected_store_key_epoch1_hex": "82a7b75e08d1b5f22577452723f069842a5f507225ca68e790cafa2239261354",
+  "expected_store_key_epoch2_hex": "4f918d79e93f0eadc54db6dd465f3ef4b39aae8b67dcf24b79e880f321006774",
+  "expected_mask_key_hex": "b5b256ab33041579af865feada51a81a952d00abb735ff4ddb21af3e4e4afe28",
+  "expected_store_key_id_epoch1": "91423686355296e2",
+  "expected_mask_key_id": "0e8567120ddb8332",
+  "invite_secret_hex": "6161616161616161616161616161616161616161616161616161616161616161",
+  "expected_invite_gate_hex": "ac95e0cd55a271b57353f017abc2488935d29165914ad5b7470fefcdba97c07d",
+  "expected_invite_secret_hash": "0908d55be1cda816af5ec55e948a0886071245f631cb1edb63ee87209868e15b",
+  "request_id": "a7a7a7a7-0000-4000-8000-000000000001",
+  "invite_binding_note": "HMAC-SHA256(HMAC-SHA256(secret, 'mindloom-space-join-bind-key-v1'), 'mindloom-space-join-bind-v2\\n' || join_signature.request bytes), hex",
+  "expected_invite_binding": "c16565ac2e43ef8ffdb116803d579f20471d86559b77bfb1c0124a36995b9745",
+  "detached_value": "mlenc1.AAAA",
+  "expected_detached_sha256": "6ba2933ebac1b7657121537a724e0d1883713f24ab73562f8f8af2c9f502a9f4"
+ }
+}

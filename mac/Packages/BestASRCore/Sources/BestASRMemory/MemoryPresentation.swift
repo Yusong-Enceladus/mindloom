@@ -432,4 +432,39 @@ public enum MemoryDecisions {
   public static func name(personID: String, name: String) -> RemoteOrganizerDecision {
     RemoteOrganizerDecision(kind: "name_person", personID: personID, displayName: name)
   }
+
+  /// A rope or relation decision (MAP-CONTRACT §2) as it is stored and sent.
+  public static func relation(_ decision: MemoryRelationDecision) -> RemoteOrganizerDecision {
+    switch decision {
+    case .confirmRope(let ropeID):
+      RemoteOrganizerDecision(kind: "confirm_rope", ropeID: ropeID)
+    case .rejectRope(let ropeID):
+      RemoteOrganizerDecision(kind: "reject_rope", ropeID: ropeID)
+    case .renameRope(let ropeID, let title):
+      RemoteOrganizerDecision(
+        kind: "rename_rope", title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+        ropeID: ropeID)
+    case .moveToRope(let eventID, let ropeID):
+      RemoteOrganizerDecision(kind: "move_to_rope", eventID: eventID, ropeID: ropeID)
+    case .rejectBlocks(let a, let b):
+      RemoteOrganizerDecision(kind: "reject_relation", a: a, b: b, relation: "blocks")
+    case .hideCrossing(let a, let b):
+      RemoteOrganizerDecision(kind: "hide_crossing", a: a, b: b)
+    }
+  }
+}
+
+/// What the user can say about ropes and relations: confirm or reject a
+/// rope, rename it, move a matter to another rope (or none), reject a
+/// blocks edge, hide a crossing. User decisions win; a rejected proposal is
+/// never proposed again.
+public enum MemoryRelationDecision: Equatable, Hashable, Sendable {
+  case confirmRope(String)
+  case rejectRope(String)
+  case renameRope(String, title: String)
+  /// The matter goes on the rope; nil puts it on none.
+  case moveToRope(eventID: String, ropeID: String?)
+  /// `a` blocks `b` (b waits on a) is wrong.
+  case rejectBlocks(a: String, b: String)
+  case hideCrossing(a: String, b: String)
 }

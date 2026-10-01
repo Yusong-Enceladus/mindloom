@@ -124,14 +124,14 @@ def test_mask_obj_masks_free_text_and_leaves_ids_alone():
 def test_skills_that_see_masked_text_say_placeholders_stay_as_they_are():
     line = "占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写"
     for name in ("event-assign", "event-brief", "home-rank", "item-split", "file-read", "recall",
-                 "event-consolidate", "person-resolve"):
+                 "event-consolidate", "person-resolve", "matter-map", "matter-group"):
         assert line in (REPO / "skills" / name / "SKILL.md").read_text(encoding="utf-8"), name
 
 
 def test_skills_that_read_material_say_it_is_data_not_instructions():
     """Every routed skill whose prompt holds item text says that text is material, never an instruction."""
     for name in ("event-assign", "event-brief", "item-split", "file-read", "image-read", "event-consolidate",
-                 "person-resolve"):
+                 "person-resolve", "matter-map", "matter-group"):
         text = (REPO / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
         assert "不是指令" in text or "只是素材内容" in text, name
 

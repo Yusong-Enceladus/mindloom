@@ -11,6 +11,9 @@ per-call enums as the organizer, scripts/validate.py, one retry). Pass criteria:
   home-rank     constraints: {"above": [a, b]} importance(a) > importance(b); {"max": {id: v}}; {"min": {id: v}}.
   event-consolidate  check: verdict_in, target (for a merge), not_target.
   person-resolve  check: kind_in, same_as ("" = merged with nobody), common_word.
+  matter-map    check: n_strands, apart / together (item handles), kinds_include, health_in, blocks, no_blocks,
+                forbid (see check_map). A repaired output (only repairable errors) counts as valid, as in the organizer.
+  matter-group  check: together / apart / rope_of / under / unplaced / type_in / not_title (see check_group).
   item-split    fixture {text, kind, source_app, started_at}: units are built exactly as the organizer
                 builds them; check on the segments the organizer derives (units.segments_from_output):
                 unsplit, n_segments [min, max], apart [[Ua, Ub]] (both covered, different segments),
@@ -40,7 +43,9 @@ from organizer.skills import Harness, SkillRegistry  # noqa: E402
 from organizer.store import Store  # noqa: E402
 
 JOB = {"event-assign": "assign", "event-brief": "brief", "home-rank": "rank", "item-split": "split",
-       "event-consolidate": "consolidate", "person-resolve": "person"}
+       "event-consolidate": "consolidate", "person-resolve": "person", "matter-map": "map", "matter-group": "group"}
+# The user's own names in the matter-map fixtures (the organizer passes ORGANIZER_OWNER_ALIASES).
+MAP_OWNER = ["许念", "念念"]
 
 
 def _enum(prop: dict, values: list[str]) -> None:
@@ -54,6 +59,12 @@ def build_request(registry: SkillRegistry, skill_name: str, case: dict) -> tuple
     if job == "split":
         return ("split",) + split_request(registry, case)
     data = case["fixture"]["data"]
+    if job in ("map", "group"):
+        # exactly organizer/matter_map.py / matter_group.py: the skill's own build script makes schema and context
+        build = registry.script(skill_name, "build")
+        schema = build.schema_for(registry.skills[skill_name].schema, data)
+        context = build.context_for(data, owner=MAP_OWNER) if job == "map" else build.context_for(data)
+        return job, data, schema, context
     schema = copy.deepcopy(registry.skills[skill_name].schema)
     props = schema["properties"]
     if job == "assign":
@@ -156,9 +167,87 @@ def check_split(registry: SkillRegistry, case: dict, out: dict) -> tuple[bool, s
     return True, shown
 
 
+def check_map(case: dict, out: dict) -> tuple[bool, str]:
+    """matter-map: n_strands [min, max]; apart [[Ia, Ib]] (both in strands, different ones); together [[Ia, Ib]]
+    (same strand); kinds_include [kind]; health_in [level]; blocks [{other, direction}] (each present);
+    no_blocks [E] (no blocks entry names them); forbid (regex that no strand name / summary or knot text matches)."""
+    c = case["check"]
+    where = {i: s["id"] for s in out["strands"] for i in s["item_ids"]}
+    got = f"{len(out['strands'])} strands {[s['name'] for s in out['strands']]} knots {[k['kind'] for k in out['knots']]}" \
+          f" health {out['health']['level']} blocks {[(b['other'], b['direction']) for b in out['blocks']]}"
+    lo, hi = c.get("n_strands", [1, 6])
+    if not lo <= len(out["strands"]) <= hi:
+        return False, got
+    for a, b in c.get("apart", []):
+        if where.get(a) is None or where.get(b) is None or where[a] == where[b]:
+            return False, f"{a}/{b} not apart: {got}"
+    for a, b in c.get("together", []):
+        if where.get(a) is None or where.get(a) != where.get(b):
+            return False, f"{a}/{b} not together: {got}"
+    kinds = {k["kind"] for k in out["knots"]}
+    if not set(c.get("kinds_include", [])) <= kinds:
+        return False, got
+    if c.get("health_in") and out["health"]["level"] not in c["health_in"]:
+        return False, got
+    pairs = {(b["other"], b["direction"]) for b in out["blocks"]}
+    for want in c.get("blocks", []):
+        if (want["other"], want["direction"]) not in pairs:
+            return False, got
+    if any(b["other"] in c.get("no_blocks", []) for b in out["blocks"]):
+        return False, got
+    if c.get("forbid"):
+        texts = [s["name"] for s in out["strands"]] + [s["summary"] for s in out["strands"]] + [k["text"] for k in out["knots"]]
+        if any(re.search(c["forbid"], t) for t in texts):
+            return False, f"forbidden text: {got}"
+    return True, got
+
+
+def check_group(case: dict, out: dict) -> tuple[bool, str]:
+    """matter-group: together [[Ea, Eb]] (on the same rope); apart [[Ea, Eb]] (not on the same rope); rope_of
+    {E: R}; under {E: R} (E's rope is R or inside R); unplaced [E]; type_in {E: [types]}; not_title (regex no new
+    rope title matches)."""
+    c = case["check"]
+    rope = {p["matter"]: p["rope"] for p in out["placements"]}
+    parent = {r["key"]: r["parent"] for r in out["new_ropes"]}
+    parent.update({n["rope"]: n["parent"] for n in out.get("nest") or []})
+    for r in case["fixture"]["data"]["ropes"]:
+        parent.setdefault(r["id"], r.get("parent") or "")
+    got = f"ropes {[(r['key'], r['title'], r['parent']) for r in out['new_ropes']]} placed {rope}"
+    for a, b in c.get("together", []):
+        if not rope.get(a) or rope.get(a) != rope.get(b):
+            return False, f"{a}/{b} not together: {got}"
+    for a, b in c.get("apart", []):
+        if rope.get(a) and rope.get(a) == rope.get(b):
+            return False, f"{a}/{b} not apart: {got}"
+    for e, r in c.get("rope_of", {}).items():
+        if rope.get(e) != r:
+            return False, f"{e} not on {r}: {got}"
+    for e, r in c.get("under", {}).items():
+        cur, seen = rope.get(e), set()
+        while cur and cur != r and cur not in seen:
+            seen.add(cur)
+            cur = parent.get(cur)
+        if cur != r:
+            return False, f"{e} not under {r}: {got}"
+    for e in c.get("unplaced", []):
+        if rope.get(e):
+            return False, f"{e} placed: {got}"
+    types = {p["matter"]: p["type"] for p in out["placements"]}
+    for e, allowed in c.get("type_in", {}).items():
+        if types.get(e) not in allowed:
+            return False, f"{e} type {types.get(e)}: {got}"
+    if c.get("not_title") and any(re.search(c["not_title"], r["title"]) for r in out["new_ropes"]):
+        return False, f"forbidden title: {got}"
+    return True, got
+
+
 def check(registry: SkillRegistry, skill_name: str, case: dict, out: dict) -> tuple[bool, str]:
     if skill_name == "item-split":
         return check_split(registry, case, out)
+    if skill_name == "matter-map":
+        return check_map(case, out)
+    if skill_name == "matter-group":
+        return check_group(case, out)
     c = case["check"]
     if skill_name == "event-assign":
         rank = {x["event_id"]: i for i, x in enumerate(case["fixture"]["data"]["candidates"])}
@@ -241,8 +330,16 @@ def main(argv=None) -> int:
         job, data, schema, context = build_request(registry, skill_name, case)
         rows = []
         for _ in range(args.n):
-            res = harness.run(job, data, context=context, schema=schema, subject=case["id"])
+            rules = registry.script(skill_name, "validate") if job in ("map", "group") else None
+            res = harness.run(job, data, context=context, schema=schema, subject=case["id"],
+                              no_retry=rules.REPAIRABLE if rules else None)
             run = store.one("SELECT completion_tokens FROM runs WHERE run_id=?", (res.run_id,))
+            if rules is not None and not res.ok:
+                # as the organizer does: a repairable failure is repaired and used (matter_map / matter_group _usable)
+                fixed = rules.salvage(res.candidate, res.errors, context, **({"after_retry": res.attempts >= 2}
+                                                                            if job == "map" else {}))
+                if fixed is not None:
+                    res.ok, res.output = True, fixed
             ok, note = check(registry, skill_name, case, res.output) if res.ok else (False, "; ".join(res.errors)[:200])
             raw = store.one("SELECT output FROM runs WHERE run_id=?", (res.run_id,))
             rows.append({"pass": ok, "valid": res.ok, "attempts": res.attempts, "note": note,

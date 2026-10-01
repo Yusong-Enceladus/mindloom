@@ -118,6 +118,8 @@ public enum ZhijiMetrics {
   public static let sidebarWidth: CGFloat = 212
   public static let headerHeight: CGFloat = 56
   public static let column: CGFloat = 760
+  /// The 线索 and 网 lenses: the map and its panel side by side.
+  public static let wideColumn: CGFloat = 1180
 }
 
 private struct ZhijiPaletteKey: EnvironmentKey {

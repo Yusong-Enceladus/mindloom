@@ -55,7 +55,7 @@ import threading
 import time
 import uuid
 from datetime import datetime, timedelta
-from typing import Any, Optional
+from typing import Any, Callable, Optional
 
 from .clients import EmbedClient, ModelUnavailable, safe_error
 from .clock import Clock
@@ -65,6 +65,7 @@ from .file_read import read_file
 from .image_read import read_image
 from .skills import Harness, SkillRegistry
 from .store import ItemPurged, Store, StoreLocked
+from .relations import today_of
 from . import keys
 
 log = logging.getLogger("organizer")
@@ -103,7 +104,8 @@ class Organizer:
                  recheck_max: int = 2, owner_ids: tuple[str, ...] | list[str] = (),
                  owner_aliases: tuple[str, ...] | list[str] = ("我",), workers: int = 1, pipeline_lag: int = 2,
                  image_clients: Optional[dict] = None, inbox=None, unlock_lease_s: float = 0.0,
-                 log_file=None, consolidate: Optional[dict] = None, people: Optional[dict] = None):
+                 log_file=None, consolidate: Optional[dict] = None, people: Optional[dict] = None,
+                 maps: Optional[dict] = None, grouping: Optional[dict] = None):
         self.store = store
         # The phone inbox (organizer/inbox.py): its own small database, usable while the store is locked.
         self.inbox = inbox
@@ -154,6 +156,19 @@ class Organizer:
         # turns it off.
         from .people_pass import PeoplePass
         self.people_pass = PeoplePass(self, **(people or {}))
+        # (i) v7 (MAP-CONTRACT): the read model of relations (crossings, blocks, ropes, facets), each matter's map
+        # (skill matter-map: after its card is rewritten, when idle, or when the Mac asks) and the grouping pass
+        # (skill matter-group: ropes and the type facet). maps / grouping = {"enabled": False} turn them off.
+        from .matter_group import MatterGrouper
+        from .matter_map import MatterMapper
+        from .relations import Graph
+        self.graph = Graph(self)
+        self.mapper = MatterMapper(self, **(maps or {}))
+        self.grouper = MatterGrouper(self, **(grouping or {}))
+        # (j) passes an owner adds (a shared space's package step, space_organizer.py): each is called when the
+        # worker is idle, inside its step (bound to the unlock session), and returns True when it changed
+        # something. No model calls.
+        self.idle_hooks: list[Callable[[], bool]] = []
         self._wake = threading.Event()
         self._feat_cache: dict[str, tuple] = {}
         self._items_since_rank = 0
@@ -187,6 +202,25 @@ class Organizer:
                 self._access = None if bytes(library_key) == keys.synthetic_library_key() \
                     else bytearray(keys.access_proof(library_key).encode("ascii"))
                 self._lease_deadline = (time.monotonic() + self.unlock_lease_s) if self.unlock_lease_s > 0 else None
+        self._after_unlock(before)
+        return res
+
+    def unlock_leased(self, key_id: str, store_key: bytes, mask_key: bytes,
+                      previous: Optional[tuple[str, bytes]] = None) -> dict:
+        """A shared space's organizer store opened by a member Mac's lease (organizer/space_organizer.py): the Mac
+        lends the store key and the mask key (derived from the space key, which never reaches the Spark), kept in
+        memory only. Requests are authenticated by member signatures, so there is no access proof; the store
+        locks itself after unlock_lease_s without a request from a member (renew_lease)."""
+        before = self.store.generation
+        res = self.store.unlock_keys(key_id, store_key, mask_key, previous)
+        with self._access_lock:
+            _zero(self._access)
+            self._access = None
+            self._lease_deadline = (time.monotonic() + self.unlock_lease_s) if self.unlock_lease_s > 0 else None
+        self._after_unlock(before)
+        return res
+
+    def _after_unlock(self, before: int) -> None:
         if self.store.generation != before:  # a new session (a repeated unlock with the same key changes nothing)
             if self.inbox is not None:
                 rows = self.store.legacy_inbox_rows()
@@ -199,7 +233,6 @@ class Organizer:
             self._feat_cache = {}
             self._restore_replay_clock()
         self.wake()
-        return res
 
     def lock(self) -> dict:
         """Close the store and drop its keys; the worker pauses until the next unlock. Organizing state held
@@ -216,6 +249,9 @@ class Organizer:
         self._feat_cache = {}
         self.consolidator.reset()
         self.people_pass.reset()
+        self.mapper.reset()
+        self.grouper.reset()
+        self.graph.reset()
 
     def in_session(self, fn):
         """fn bound, on whatever thread runs it (a model-pool thread), to the unlock session current now: a model
@@ -311,6 +347,7 @@ class Organizer:
         self.store.checkpoint()
         self._feat_cache = {}
         self.consolidator.reset()  # its cached event views may quote the deleted item
+        self.graph.reset()
         self._rank_dirty = True
         self.wake()
         return res
@@ -403,6 +440,13 @@ class Organizer:
                 self._wake.wait(1.0)
                 self._wake.clear()
 
+    def run_idle_hooks(self) -> bool:
+        """The owner's idle passes, in order; the first that changed something ends this step."""
+        for hook in self.idle_hooks:
+            if hook():
+                return True
+        return False
+
     def step(self) -> bool:
         """Do one unit of work. Returns False when there is nothing to do. Every store access of the step is
         bound to the unlock session it started in: after a lock, or a wipe and an unlock with a new key while a
@@ -418,6 +462,10 @@ class Organizer:
     def _step(self) -> bool:
         if self.pipeline is not None:
             return self.pipeline.step()
+        if self.mapper.demand_due():
+            # The Mac asked for a matter's map (the user opened it): one map before the next item.
+            self.mapper.run(demand_only=True, max_calls=1)
+            return True
         job = self.store.claim_next_job()
         if job:
             self._run_job(job)
@@ -432,6 +480,16 @@ class Organizer:
             return True
         if self.people_pass.idle_due():
             self.people_pass.run()
+            return True
+        # The owner's idle hooks (a shared space's package step) make no model calls and may move items, so they run
+        # before the grouping pass and the maps, which then see the result.
+        if self.run_idle_hooks():
+            return True
+        if self.grouper.idle_due():
+            self.grouper.run()
+            return True
+        if self.mapper.idle_due():
+            self.mapper.run()
             return True
         if self._rank_dirty or self._day_changed():
             self.rank()
@@ -492,6 +550,7 @@ class Organizer:
         self.store.finish_job(item_id, revision, "done")
         self.consolidator.note_job()
         self.people_pass.note_job()
+        self.grouper.note_job()
         self._items_since_rank += 1
         self._rank_dirty = True
         if self._items_since_rank >= self.rank_every_n_items:
@@ -504,6 +563,8 @@ class Organizer:
             self.consolidator.run()  # pipeline mode runs it at the next item barrier (pipeline.py)
         if self.pipeline is None and self.people_pass.due():
             self.people_pass.run()
+        if self.pipeline is None and self.grouper.due():
+            self.grouper.run()
 
     # ---- item pipeline --------------------------------------------------------------
 
@@ -1569,6 +1630,7 @@ class Organizer:
             self.store.record_proposal(res.run_id, "brief", event_id, out, "partial" if partial else "applied", note)
         if flagged:
             self._ask_off_anchor(event_id, flagged, res.run_id)
+        self.mapper.note_brief(event_id)  # a big matter whose items changed gets its map drawn again
         self._rank_dirty = True
 
     def _ask_off_anchor(self, event_id: str, flagged: list[str], run_id: str) -> Optional[str]:
@@ -1754,6 +1816,7 @@ class Organizer:
                         "gist": r["gist"]}
 
             events = []
+            today = today_of(self)
             for row in self.store.all("SELECT event_id FROM events WHERE seq > ? ORDER BY seq", (since,)):
                 ev = self.store.get_event(row["event_id"])
                 ids = self.store.event_item_ids(ev["event_id"])
@@ -1801,6 +1864,11 @@ class Organizer:
                     "merged_into": ev["merged_into"],
                     "provenance": ev["provenance"],
                 })
+                # v7 (MAP-CONTRACT): the matter's map (null until one is drawn) and its facets.
+                emap = self.graph.map_view(ev, ids)
+                events[-1]["map"] = emap
+                health = emap["health"]["level"] if emap and emap.get("health") else None
+                events[-1]["facets"] = self.graph.facets(ev, today, health)
             persons = []
             for p in self.store.all("SELECT * FROM persons WHERE seq > ? ORDER BY seq", (since,)):
                 persons.append({
@@ -1838,8 +1906,12 @@ class Organizer:
             # image type) and `fields` / `numbers` (key fields and key numbers as printed; each value is
             # in `text`); a reading stored by screenshot-read has type "chat_screenshot" or "other".
             readings = {r["item_id"]: self._reading_entry(r) for r in self.store.readings_since(since)}
+            # v7 (MAP-CONTRACT section 2): the complete current sets (not deltas), like `unfiled`.
+            live = self.graph.live_events()
+            ropes = self.graph.ropes(live)
+            relations = self.graph.relations(live)
         return {"cursor": cursor, "events": events, "questions": questions, "persons": persons,
-                "unfiled": unfiled, "readings": readings}
+                "unfiled": unfiled, "readings": readings, "ropes": ropes, "relations": relations}
 
 
 _SEGMENT_NS = uuid.UUID("6f1f7c1e-2b0a-4e4f-9a57-0c0ffee00002")
