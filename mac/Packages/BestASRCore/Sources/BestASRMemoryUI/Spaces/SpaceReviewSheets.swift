@@ -38,7 +38,17 @@ struct SpaceItemsSheet: View {
           if let note = row.windowNote {
             Text(note).font(.zhiji(11)).foregroundStyle(palette.secondary)
           }
+          if let note = row.snapshotNote {
+            Text(note).font(.zhiji(11)).foregroundStyle(palette.secondary)
+          }
           HStack(spacing: 6) {
+            if let audio = row.audio {
+              Button(state.playingItem == row.itemID ? "停止" : "听这段原音") {
+                actions.playAudio(spaceID, row.itemID, audio)
+              }
+              .buttonStyle(ZhijiCapsuleButtonStyle())
+              .accessibilityIdentifier("bestASR.spaces.playAudio")
+            }
             ForEach(row.originals, id: \.blobID) { blob in
               Button("打开原件") { actions.openOriginal(spaceID, row.itemID, blob) }
                 .buttonStyle(ZhijiCapsuleButtonStyle())
@@ -92,8 +102,10 @@ struct SpaceItemsSheet: View {
         .font(.zhiji(12)).foregroundStyle(palette.secondary)
       case .requestPrivacyTakedown:
         Text("因隐私申请下架").font(.zhiji(13, .semibold))
-        Text("维护者要在 \(space?.policy.takedownWindowHours ?? 72) 小时内处理：可以写明理由不同意；没人处理会到期自动下架。理由只给维护者看。")
-          .font(.zhiji(12)).foregroundStyle(palette.secondary)
+        Text(
+          "维护者要在 \(space?.policy.takedownWindowHours ?? 72) 小时内处理：可以写明理由不同意；没人处理会到期自动下架。理由只给维护者看。"
+        )
+        .font(.zhiji(12)).foregroundStyle(palette.secondary)
         TextField("理由（可不填）", text: $reason).textFieldStyle(.roundedBorder)
       default:
         Text("移除这条素材？").font(.zhiji(13, .semibold))

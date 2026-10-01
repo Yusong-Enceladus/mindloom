@@ -7,6 +7,251 @@ test does not by itself make a product capability complete.
 
 Status date: 2026-10-01.
 
+## 2026-10-01 v8 integration, Mac side (`claude/v8` → `hackathon/base`)
+
+`claude/v8` (entries A1–A7, lab infrastructure B, shared-space leftovers C and
+the adversarial review fixes) fast-forwarded into `hackathon/base`; the
+organizing device's `claude/v8` into its `main` the same way. Design in the
+"v8 集成" section of `docs/architecture/TECHNICAL_DESIGN.md`. PRD V1.11: §0.3
+item 15 indexes the v8 IDs; new SPACE-019 (everything written from an item goes
+with it) and INFRA-010 (two members isolated at the gate); no existing ID
+changed or reused. Traced in `config/traceability.json` with
+`artifacts/evidence/v8/e2e-summary.json`. Not installed; the App was not
+launched. Synthetic data only.
+
+- Added by the integration: `swift-format --strict` on the six files the review
+  fixes left with findings (formatting only); the Chrome extension's 48-px icon
+  without its EXIF chunk (the public export's gate refuses image metadata). On
+  the organizing device: two integration tests, a two-member gate test, export
+  rules. No functional seam was found: every end to end below passed on the
+  first run against the merged code.
+- Verified on the merged code: BestASRCore package suite **969 executed, 23
+  skipped, 0 failed, 46 bundles** (`swift test --skip QwenWhisperFeaturesTests`;
+  v7 922); MindloomLink **119 executed, 1 skipped, 0 failed** (MindloomLinkTests
+  47, MindloomSpacesTests 72; the skip is the opt-in spaces live test; the
+  member bridge live test ran, see below); App Debug build succeeded (share
+  extension, bundled helper, Chrome extension in Resources; `codesign --verify
+  --deep --strict` ok; `verify_built_permissions.sh` passes); iOS simulator
+  **158 executed, 157 passed, 1 skipped**; `swift-format lint --strict` finds
+  nothing in any Swift file v8 added or changed except the 339 findings
+  `App/DictationAppModel.swift` already had at `2d174f4`; `privacy_scan.sh`,
+  `validate_product_consistency.sh`, `validate_traceability.sh`,
+  `check_project_drift.sh`, `lint_permissions.sh` pass. The organizing device:
+  762 passed, 1 skipped, 1 xfailed on the Mac; 761 passed, 1 xfailed on the
+  device (aarch64).
+- End to end against one fresh integrated organizing-device instance:
+  privacy **68/68**; phone (simulator, real relay and SSH) **67/67** with both
+  `authorized_keys` files byte-identical afterwards; shared spaces (two
+  synthetic libraries) **57/57**; spaces infrastructure (a teammate through the
+  gate, an audio part, a second Mac, the outbox, a handover pack written by the
+  device's model, backup and restore) **53/53**; the member Mac's own bridge
+  client **13/13**; the device-side gate runs from this Mac through the real
+  sshd: one member **19/19**, two members isolated **31/31**, contract C
+  **29/29**; agent MCP **43/43** with the SwiftPM helper and with the helper in
+  the built App; the Chrome extension through native messaging in a headless
+  Chromium with the repository extension and SwiftPM helper, and with the App's
+  bundled extension and helper (the bundle's seal intact afterwards).
+
+| requirement | state |
+|---|---|
+| ENTRY-001–012 | delivered as in the entries and browser-extension entries below; no change in the integration; Services, Shortcuts, the share sheet and the EventKit prompts still not exercised in a running App; real Zotero not run; Chrome only headless |
+| INFRA-001–009 | delivered; live on the integrated instance (gate, health, handover, backup and restore, quotas through the outbox); escrow takeover still only on the in-memory device |
+| INFRA-010 | delivered (organizing device); verified live with two synthetic members through the real sshd (31/31); the Mac's own client re-run live (13/13) |
+| SPACE-013–018 | delivered; live on the integrated instance (audio part, snapshot, outbox, second Mac, restore) |
+| SPACE-019 | delivered; organizing-device integration tests (knot, pack and snapshot go together; a restore's purge reaches the restored map at the next lease); the live spaces-infra run sees the snapshot removal accepted on a member's Mac |
+
+## 2026-10-01 v8 adversarial review fixes, Mac side (`claude/v8`)
+
+The adversarial review of `claude/v8` (findings V8R-01–18, organizing-device side
+and Mac side) and what was done on this side. Design in the "v8 对抗复查之后"
+section of `docs/architecture/TECHNICAL_DESIGN.md`; the organizing device's
+fixes (restore integrity, access scope, quotas, gate headers, handover quote
+check) are in its own repository. PRD V1.10.1: new INFRA-008–009, SPACE-017–018;
+INFRA-001/002/003/005/007, SPACE-013/014/015, ENTRY-003/008 amended (no ID
+changed or reused), traced in `config/traceability.json` with
+`artifacts/evidence/v8/review-fixes-summary.json`. Synthetic data only; the App
+was not launched (rule).
+
+| Finding | Mac side | Test |
+|---|---|---|
+| V8R-02 forged org log gets the space key | Fixed: org log pinned (genesis hash, creator device, hash chain); org spaces' genesis commits to it (`owner.org_genesis`); a log that does not continue the pin gets no escrow, rotation wrap or takeover | `V8ReviewFixTests` M1, genesis commitment, cut history |
+| V8R-03 restore of an older backup | Organizing device keeps its longer log (fill only); Mac: a log gone back that readmits removed people blocks new shares until an admin's Mac removes them again (`repairRollback`, also instead of a plain rotation) | `V8ReviewFixTests` rollback |
+| V8R-04 deleted items still go out from the outbox | Fixed: local delete, withdraw and delete take waiting shares (and parts) out with their files; cancel per entry in the members sheet; a withdraw of an item never sent goes nowhere | `V8ReviewFixTests` M2, withdraw/cancel |
+| V8R-07 unpairing leaves a Mac in its spaces | Organizing device refuses the device everywhere and never re-enrolls it; the unpairing Mac removes it (new key) from every space and org it can sign before saying done | organizing-device tests; App code (not unit-testable) |
+| V8R-08 member id squatting | Organizing device refuses; Mac adds an org admin's device only from a signed space roster | organizing-device tests; App code |
+| V8R-11 snapshot shares facts of unticked items | Fixed: the exact text shown and editable; facts only from ticked items; status line only when all ticked; number warning | `V8ReviewFixTests` snapshot text |
+| V8R-12 relay lines never removed | Fixed: the owner's Mac reconciles the relay's `team-` lines with open tickets and paired Macs; members offer their own key first | `PhonePairingTests` +1, `V8ReviewFixTests` (wanted lines, key order) |
+| V8R-13 any member opens a backup | Fixed: per-backup random key sealed to admin and org escrow devices; receipt names no space, 0600, neutral file name | `V8ReviewFixTests` backup; `SpaceInfraTests` updated |
+| V8R-15 "never the whole recording" | Fixed on both sides: a part is at most 4/5 of its recording; no other blob on meeting items (organizing device) | `V8ReviewFixTests` 4/5 |
+| V8R-17 same-user injection | Services entry off by default; share-drop signing and the command line's file bytes not changed (see the design note) | `EntrySettingsTests` |
+| V8R-18 Reminders to iCloud | Fixed: a list on this Mac first; a synced list is named in the result; Settings says so beforehand | `CalendarEntryTests` +1 |
+
+- Checks: MindloomLink package: MindloomSpacesTests 72 executed (10 new),
+  2 skipped (opt-in live), 0 failed; MindloomLinkTests 47; BestASRCore suite
+  (`swift test --skip QwenWhisperFeaturesTests`) 969 executed, 23 skipped,
+  0 failed, 46 bundles; App Debug build succeeded. The organizing device's suite:
+  760 passed, 1 skipped, 1 xfailed (21 new, including the review's 11 proof tests).
+- Not re-run: the live end-to-end runs against the organizing device's test
+  instance (`MemberBridgeLiveTests`, `SpacesInfraEndToEndTests`; the latter was
+  updated for the new backup and restore semantics and compiles), and the
+  organizing device's suite on aarch64.
+- Honest limits: an organization created before this fix and never read by
+  this Mac is pinned on first read (trust on first use); a plain member's Mac
+  cannot remove readmitted people itself, it only holds its shares; the relay
+  lines follow only while the owner's Mac runs; the share-drop folder and the
+  command line's `--file` path are unchanged (V8R-17, low).
+
+## 2026-10-01 v8 lab infrastructure and shared-space leftovers, Mac side (`claude/v8`)
+
+V8 contract §B (Mac side) and §C. Design in the "v8 实验室 infra 与共享空间收尾"
+section of `docs/architecture/TECHNICAL_DESIGN.md`; the organizing device's
+side is in its own repository (`docs/INFRA.md`, `docs/SPACES.md`). New
+requirement IDs (PRD V1.10, §0.3 item 14, §12.13 and §12.11; no existing ID
+changed; SPACE-005 and item 8 amended with the segment-audio decision):
+INFRA-001–007, SPACE-013–016, traced in `config/traceability.json` with
+`artifacts/evidence/v8/spaces-infra-summary.json`. The App was not launched
+(rule): the new settings category and sheets are covered by unit tests, the
+App build and renders of the sheets only. Synthetic data only.
+
+| Requirement | State | What exists |
+|---|---|---|
+| INFRA-001 own key and credential per Mac | Implemented; unit-tested; live through the real sshd | `SSHEd25519Key` (OpenSSH formats, read back by `ssh-keygen`), tickets and `mlteam1.` invites, enrollment over the ticket key, `SSHBridgeTransport` (HTTP/1.1 keep-alive over `ssh -T … bridge`, pinned host key, no config/agent, short-lived key files), Keychain store, one member id per Mac, relay line for the ticket key |
+| INFRA-002 unpair | Implemented; live (credential refused at once, `authorized_keys` byte-identical) | unpair from Settings (own Mac or, as admin, another), work list `to_remove` → `device.remove` with a new key + `org.device_remove` |
+| INFRA-003 admin console | Implemented; App builds; not looked at in a running App | Settings → 团队与整理设备: way in, health card (owner/admins), members and devices with roles, invite teammate (optionally with a space invite), add my Mac, revoke tickets, org admins and escrow, agents with revoke, audit records |
+| INFRA-004 handover | Implemented; live (pack written by the Spark's model, shown unmasked, shared as snapshot, `matter.handover` with it) | handover sheet: 生成交接包, export Markdown, share as snapshot, 转交负责人 |
+| INFRA-005 backups | Implemented; unit-tested; live restore drill | scheduled/manual backup to a folder (Mac or external disk), stream verified before kept, sidecar with ids/sizes/digest, restore (`replace`) with purge, members re-read a log that went back |
+| INFRA-006 key escrow and takeover | Implemented; unit-tested (in-memory Spark); not in the live run | escrow wraps from the org's signed log on every new key, fill missing, policy 1–3, `space.recover` with key check, members confirm a takeover by fingerprint when they cannot read the org log |
+| INFRA-007 quotas | Implemented; unit-tested | usage in the members sheet and Settings; `quota_exceeded` waits in the outbox |
+| SPACE-013 meeting segment audio | Implemented; unit-tested; live (ciphertext on the Spark, opened and length-checked on two member Macs, bytes never in a request in clear) | review-list tick (off by default), cut from the retained recording (tracks mixed, pauses as silence, AAC 16 kHz), local checks, play after `SpaceAudioCheck` |
+| SPACE-014 snapshot share | Implemented; unit-tested; live (removed with a withdrawn cited item) | share sheet 「一份摘要（冻结）」, frozen, `cites`; `system.remove cited_item_gone` / `restore` accepted only as stated |
+| SPACE-015 durable share outbox | Implemented; unit-tested; live (link cut, entry on disk, sent once) | per-space outbox on disk, `share_key`, `retry`/`accepted_as`, withdraw/delete while offline, failures listed |
+| SPACE-016 a member's further Macs | Implemented; unit-tested; live (B2 added, reads and hears, unpaired, retired with a new key) | device tickets, `to_add`/`to_remove`, `device.add` + `org.device_add`, `adoptSpaces` |
+
+- Checks: MindloomLink package: MindloomSpacesTests 62 (23 new; the 2 opt-in
+  live tests skipped in a normal run), MindloomLinkTests 47; BestASRCore suite
+  (`swift test --skip QwenWhisperFeaturesTests`) 967 executed, 944 passed, 23
+  skipped, 0 failed, 46 bundles (new: SpaceInfraMacTests 3, PhonePairingTests
+  +1, SpaceUITests +1 with renders of the new sheets, the opt-in E2E);
+  App Debug build succeeded; `swift-format lint --strict` 0 findings in new
+  and changed files; privacy scan, product consistency, traceability (13
+  entries), project drift and permission lint pass. Live: `MemberBridgeLiveTests` 13/13 and
+  `SpacesInfraEndToEndTests` 52/52 (45 s) against the organizing device's
+  test instance through its real sshd; `authorized_keys` hash the same before
+  and after.
+- Honest limits: nothing was looked at in a running App; a plain member's Mac
+  cannot read the org's signed log, so a takeover needs the member's
+  fingerprint confirmation; escrow wraps are made only by org admins' Macs (a
+  space admin who is not an org admin gets `escrow_required` when the policy
+  asks for more); relay lines for teammates are added only by the Spark
+  owner's Mac (the one with the relay); backups are whole, held in memory
+  once while written; the meeting-part audio is mixed from all tracks of the
+  recording; the escrow takeover was tested on the in-memory Spark, not live.
+
+## 2026-10-01 v8 browser extension, Mac side (`claude/v8`)
+
+V8 contract §A item A6: the Chrome extension 「收进织机」. Design in the
+"Chrome 扩展（A6）" bullets of the "v8 入口" section of
+`docs/architecture/TECHNICAL_DESIGN.md`. New requirement ID (PRD V1.9.1
+§12.12; no existing ID changed): ENTRY-012, traced in
+`config/traceability.json` with
+`artifacts/evidence/v8/browser-extension-summary.json`. Not installed; the App
+was not launched; the user's Chrome profile was not touched. Synthetic data
+only.
+
+| Requirement | State | What exists |
+|---|---|---|
+| ENTRY-012 Chrome extension 「收进织机」 | Implemented; unit-tested; host protocol tested with the real helper (SwiftPM and inside the built App); end to end in a headless Chromium with a throw-away profile (repository copy and the App's bundled copy); not clicked in a user's Chrome; Settings row not looked at in a running App | `integrations/chrome-extension` (MV3, fixed ID from the manifest key, bundled at `Contents/Resources/chrome-extension`); `MindloomAgentProtocol` `BrowserExtension`, `NativeMessaging`, `BrowserAddRequest`, `BrowserReply`; helper `BrowserHostRunner`, `OwnerSocketCall` (shared with the command line); `OwnerChannel.browserAddMethod`; `BestASREntries` `EntryKind.browserExtension`, `HandEntries.browser`, `BrowserHostManifest`, per-entry switches in `OwnerEntryChannel`; App `DictationAppModel+Entries` (switch = install/remove the host manifest), `EntriesSettingsSection` (status, 重新连接 Chrome, 删掉连接文件, 在访达中显示扩展文件夹) |
+
+- Choices: the extension's ID is fixed by a public key in the manifest, so
+  `allowed_origins` can name it on every Mac (the private key was not kept;
+  it is not needed for an unpacked extension). The host is the existing
+  bundled helper, dispatched on Chrome's origin argument, and reaches the App
+  over the command line's owner channel with its own method and its own
+  switch. The switch is the Settings click: on writes Chrome's host manifest,
+  off removes it. Safari needs no extension: the share sheet takes the page
+  link and the Services menu the selected text. Other Chromium browsers
+  (Edge, Brave, Arc) are not connected; their users can use the Services
+  menu. The extension's icons are the current App icon, which is temporary.
+- Fixed on the way: the BestASR scheme's test coverage made Xcode instrument
+  every Debug build, and the instrumented helper created `default.profraw` in
+  the folder it was started in before `main` ran. Chrome starts the host in
+  `Contents/Helpers`, so the App bundle's seal broke (found by the end-to-end
+  run with the App's own helper; `verify_built_permissions.sh` failed on
+  `app-signature`). The scheme no longer gathers coverage (`xcodebuild test
+  -enableCodeCoverage YES` when a report is wanted; no gate reads coverage);
+  the host also moves to the temporary folder at start, and the end-to-end
+  test checks nothing appears next to the helper.
+- Verified: BestASRCore package suite **961 executed (939 passed, 22
+  skipped), 0 failed, 46 bundles** (`swift test --skip
+  QwenWhisperFeaturesTests`; before A6: 948 / 21 / 46) — new
+  `BrowserEntryTests` 7, `BrowserHostTests` 5 (also with the helper inside
+  the built App), `ChromeExtensionEndToEndTests` 1 (skipped unless
+  `MINDLOOM_E2E_CHROME` is set; run separately against Chromium 142, passed
+  with the repository's extension + SwiftPM helper and with the App's bundled
+  extension + bundled helper); `OwnerChannelTests` 3 still pass with the
+  shared socket call. App Debug build succeeded with the extension folder in
+  `Contents/Resources` and an uninstrumented helper; after Chromium had
+  started the App's own helper, `Contents/Helpers` held only `mindloom-mcp`
+  and `codesign --verify --deep --strict` and `verify_built_permissions.sh`
+  pass. `lint_permissions.sh`, `privacy_scan.sh`,
+  `validate_product_consistency.sh`, `validate_traceability.sh` (12 entries)
+  and `check_project_drift.sh` pass.
+  `swift-format lint --strict`: 0 findings in new and changed files.
+- Open: real clicks in a user's Chrome (context menu, toolbar badge, the
+  in-page note) and the Settings row in a running App were not looked at
+  (rule: the installed App is not launched, the user's browser profile is not
+  touched). Loading an unpacked extension needs Chrome's developer mode; a
+  packed or Web Store build is out of scope.
+
+## 2026-10-01 v8 entries, Mac side (`claude/v8`)
+
+V8 contract §A items A1–A5 and A7 ("兼容一切"; the browser extension, A6, is
+in the section above). Design in the "v8 入口" section of
+`docs/architecture/TECHNICAL_DESIGN.md`. New requirement IDs (PRD V1.9 §0.3
+item 13 and §12.12; no existing ID changed): ENTRY-001–011, traced in
+`config/traceability.json` with `artifacts/evidence/v8/entries-summary.json`.
+Not installed; the App was not launched. Synthetic data only.
+
+| Requirement | State | What exists |
+|---|---|---|
+| ENTRY-001 one intake path, Settings → 入口 | Implemented, unit-tested | `BestASREntries` (`EntryIntakeItem`, `EntryCommitter`, `EntrySettings`, `EntryFolder`); App `DictationAppModel+Entries`, `EntriesSettingsSection` (category 入口) |
+| ENTRY-002 share extension 「收进织机」 | Implemented, unit-tested; built and embedded; not driven in a running App | target `MindloomShare` (`Contents/PlugIns/MindloomShare.appex`), `MindloomShareDrop` drop folder, `mindloom://share-inbox` |
+| ENTRY-003 Services menu | Implemented (Info.plist `NSServices`, `MindloomServicesProvider`); rule tested; menu not exercised live | |
+| ENTRY-004 Shortcuts | Implemented (`AddToMindloomIntent`, `DueTodayIntent`, `MindloomShortcuts`; metadata extracted in the build); `DueList` tested; not run from Shortcuts | |
+| ENTRY-005 command line | Implemented, tested end to end with the SwiftPM helper and with the helper inside the built App | `OwnerCommandLineRunner`, `OwnerChannel`, `AgentSocketServer` owner routing, `OwnerEntryChannel` |
+| ENTRY-006 folders | Implemented, unit-tested on real temporary folders | `FolderWatchEngine`, `FolderChangeMonitor` |
+| ENTRY-007 calendar (read) | Implemented, tested with a fake reader + a source check; EventKit not exercised (no permission prompt was triggered) | `EventKitCalendarReader`, `CalendarSync` |
+| ENTRY-008 Reminders on click | Implemented; button on the 线索 page's 下一步; writer tested with a fake | `EventKitRemindersWriter`, `MemoryActions.addToReminders` |
+| ENTRY-009 Git | Implemented, tested against real git repositories (every blob deleted, commits still read) | `GitRunner`, `GitWatch` |
+| ENTRY-010 Zotero | Implemented, tested with a fake local API; real Zotero not run | `ZoteroLoopbackTransport`, `ZoteroWatch` |
+| ENTRY-011 no new network path | Tested (URLProtocol tripwire; loopback-only request builder) | |
+
+- Choices: the command line is **off by default** (anything running as the
+  owner, an agent's terminal tool too, could use it; the setting says so);
+  share, Services and Shortcuts are on (the owner triggers each use through
+  the system); Reminders is on (it writes only when clicked). Entries record
+  their source in the item's source name and use `source_origin = unknown`,
+  so no schema migration. Git shows file counts, not line counts (line counts
+  need file contents). A calendar event that changes is a new item marked as
+  changed; the earlier one is kept.
+- Verified: BestASRCore package suite **948 executed (927 passed, 21
+  skipped), 0 failed, 46 bundles** (`swift test --skip
+  QwenWhisperFeaturesTests`; v7 922 / 21 / 45) — new `BestASREntriesTests` 23
+  and `OwnerChannelTests` 3 (also run with the helper inside the built App);
+  App Debug build succeeded with the share extension, the helper and the
+  App Intents metadata in the bundle; `verify_built_permissions.sh` and
+  `lint_permissions.sh` pass (calendars and reminders added to the manifest);
+  iOS simulator build succeeded (iOS code unchanged); `swift-format lint
+  --strict`: 0 findings in new files and no new finding in changed files;
+  `privacy_scan.sh`, `validate_product_consistency.sh`,
+  `validate_traceability.sh` (11 entries), `check_project_drift.sh` pass.
+- Not verified (rule: the installed App is never launched): the share sheet,
+  the Services menu, Shortcuts, Settings → 入口, the Reminders button and the
+  EventKit permission prompts were not seen in a running App; real Zotero was
+  not run. The first share needs the owner to tick 「收进织机」 in System
+  Settings → Extensions; the Services item may need ticking in the keyboard
+  shortcuts settings.
+
 ## 2026-10-01 v7 integration, Mac side (`claude/v7`)
 
 `claude/v7-agents`, `claude/v7-map` and `claude/v7-spaces` (with the review

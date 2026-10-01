@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "kind": "v8-entries-summary",
+  "date": "2026-10-01",
+  "branch": "claude/v8",
+  "dataPolicy": "synthetic data only; the installed App was not launched; no inference on the Mac",
+  "requirements": ["ENTRY-001", "ENTRY-002", "ENTRY-003", "ENTRY-004", "ENTRY-005", "ENTRY-006", "ENTRY-007", "ENTRY-008", "ENTRY-009", "ENTRY-010", "ENTRY-011"],
+  "packageSuite": {
+    "command": "swift test --skip QwenWhisperFeaturesTests (BestASRCore)",
+    "bundles": 46,
+    "executed": 948,
+    "passed": 927,
+    "skipped": 21,
+    "failed": 0
+  },
+  "newTests": {
+    "BestASREntriesTests": {"executed": 23, "failed": 0},
+    "OwnerChannelTests": {"executed": 3, "failed": 0, "alsoRunWithTheHelperInsideTheBuiltApp": true}
+  },
+  "checks": [
+    "entries off by default where they capture in the background; command line off by default",
+    "settings file 0600 in a 0700 folder; unknown switches never turn an entry on",
+    "share drop: written whole, half-written and malformed entries never taken, data names cannot escape",
+    "links from share, Services, Shortcuts and the command line: zero HTTP requests (URLProtocol tripwire)",
+    "files inside the library refused from every entry",
+    "audio bytes without a file refused; a shared audio file queued for import",
+    "owner channel: refused while off, taken as 命令行 while on, no consent and no audit row",
+    "MCP session cannot call an owner method; the MCP helper refuses to forward one",
+    "folder watch: baseline, settle, exclusions, size limit, pause, links and subfolders, library paths",
+    "calendar: chosen calendars only, moved event is a new item, no write call in the reader",
+    "reminders: written only on click",
+    "today's due steps: today and up to 7 days overdue, read-only",
+    "git: subject, body, author name, file names and counts; every blob deleted and the commits still read; sentinel absent",
+    "git: unchosen branches ignored, unsafe branch names refused, only six read-only subcommands",
+    "zotero: items, notes and annotations with citations; loopback 127.0.0.1:23119 only"
+  ],
+  "appDebugBuild": {
+    "result": "succeeded",
+    "shareExtension": "Contents/PlugIns/MindloomShare.appex (sandboxed, one home-relative read-write exception for the share drop folder)",
+    "helper": "Contents/Helpers/mindloom-mcp (MCP and the mindloom command line)",
+    "appIntents": ["AddToMindloomIntent", "DueTodayIntent"],
+    "services": "NSServices addToMindloom (plain text)",
+    "builtPermissionCheck": "pass: 4 usage descriptions, 2 required entitlements, signatures valid"
+  },
+  "iosBuild": "succeeded (iOS 26.5 simulator; iOS code unchanged)",
+  "gates": {
+    "lint_permissions": "pass (5 capabilities)",
+    "swift_format_lint_strict": "0 findings in new files; no new findings in changed files",
+    "privacy_scan": "pass",
+    "validate_product_consistency": "pass"
+  },
+  "notLookedAtInTheRunningApp": [
+    "share sheet, Services menu, Shortcuts actions, Settings → 入口, the Reminders button, EventKit permission prompts"
+  ]
+}

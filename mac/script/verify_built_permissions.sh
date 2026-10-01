@@ -125,4 +125,4 @@ if [[ "$app_permission_status" != "pass" ]]; then
   exit 1
 fi
 
-print "built app permissions passed: 2 usage descriptions, required entitlement, App/XPC signatures valid"
+print "built app permissions passed: $checked_usage_keys usage descriptions, $checked_required_entitlements required entitlements, App/XPC signatures valid"

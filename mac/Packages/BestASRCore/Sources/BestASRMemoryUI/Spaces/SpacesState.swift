@@ -26,6 +26,8 @@ public enum SpaceSheet: Identifiable, Equatable, Sendable {
   case review(spaceID: String)
   case audit(spaceID: String)
   case propose(spaceID: String, eventID: String)
+  /// 交接: hand a matter's 负责人 to another member, with a handover pack.
+  case handover(spaceID: String, eventID: String)
 
   public var id: String {
     switch self {
@@ -37,6 +39,7 @@ public enum SpaceSheet: Identifiable, Equatable, Sendable {
     case .review(let s): "review-\(s)"
     case .audit(let s): "audit-\(s)"
     case .propose(let s, let e): "propose-\(s)-\(e)"
+    case .handover(let s, let e): "handover-\(s)-\(e)"
     }
   }
 }
@@ -70,14 +73,21 @@ public struct SpaceItemRow: Identifiable, Equatable, Sendable {
   public let originals: [SpaceBlobRef]
   /// "还能撤回 5 小时" in an org space, or nil.
   public let windowNote: String?
+  /// A meeting part's audio (members play it after checking its length).
+  public let audio: SpaceBlobRef?
+  /// A frozen summary: what it was made from.
+  public let snapshotNote: String?
 
   public var id: String { itemID }
 
   public init(
     itemID: String, title: String, preview: String, contributor: String, isMine: Bool,
     sharedAt: Date, kindLabel: String, actions: [SpaceRules.ItemAction], hidden: Bool,
-    forked: Bool, originals: [SpaceBlobRef], windowNote: String?
+    forked: Bool, originals: [SpaceBlobRef], windowNote: String?, audio: SpaceBlobRef? = nil,
+    snapshotNote: String? = nil
   ) {
+    self.audio = audio
+    self.snapshotNote = snapshotNote
     self.itemID = itemID
     self.title = title
     self.preview = preview
@@ -117,6 +127,10 @@ public struct SpaceMatterInfo: Equatable, Sendable {
         note = left > 0 ? "还能撤回 \(max(1, Int(left / 3_600))) 小时" : nil
       }
       let fields = item.fields
+      let originals = state.policy.originalsForMembers ? item.blobs : []
+      let snapshot = item.snapshot.map { ref in
+        "冻结的摘要\(ref.cites.isEmpty ? "" : "，引用 \(ref.cites.count) 条素材；它们被撤回时这条也会下架")"
+      }
       return SpaceItemRow(
         itemID: id, title: fields?.title ?? "共享的素材",
         preview: String((fields?.text ?? fields?.reading ?? "").prefix(80)),
@@ -124,11 +138,13 @@ public struct SpaceMatterInfo: Equatable, Sendable {
         kindLabel: SpaceWords.kind(item.kind),
         actions: state.archived ? [] : SpaceRules.actions(context, now: now),
         hidden: state.hidden.contains(id), forked: state.forks[id] != nil,
-        originals: state.policy.originalsForMembers ? item.blobs : [], windowNote: note)
+        originals: originals.filter { $0.role != "audio" }, windowNote: note,
+        audio: originals.first { $0.role == "audio" }, snapshotNote: snapshot)
     }
     return SpaceMatterInfo(
       spaceID: state.spaceID, spaceName: state.name, contributionLine: contributionLine,
-      items: rows, canPropose: state.can("propose"), canEdit: state.can("edit_matters"))
+      items: rows, canPropose: state.can("propose"), canEdit: state.can("edit_matters"),
+      canHandover: state.can("handover"))
   }
 
   public let spaceID: String
@@ -138,10 +154,12 @@ public struct SpaceMatterInfo: Equatable, Sendable {
   public let items: [SpaceItemRow]
   public let canPropose: Bool
   public let canEdit: Bool
+  /// May hand the matter's 负责人 to another member (maintainers and admins).
+  public let canHandover: Bool
 
   public init(
     spaceID: String, spaceName: String, contributionLine: String?, items: [SpaceItemRow],
-    canPropose: Bool, canEdit: Bool
+    canPropose: Bool, canEdit: Bool, canHandover: Bool = false
   ) {
     self.spaceID = spaceID
     self.spaceName = spaceName
@@ -149,6 +167,7 @@ public struct SpaceMatterInfo: Equatable, Sendable {
     self.items = items
     self.canPropose = canPropose
     self.canEdit = canEdit
+    self.canHandover = canHandover
   }
 }
 
@@ -167,6 +186,20 @@ public struct SpaceShareDraft: Equatable, Sendable {
   public var picked: String?
   /// The spaces this matter is already in (as a package).
   public let sharedIn: [String: SpaceRuleMode]
+  /// 一份摘要 (review V8R-11): what it may be made of, and the exact text
+  /// that goes (shown and editable before sharing).
+  public var snapshotStatus: String?
+  public var snapshotFacts: [SpaceSnapshotText.Fact] = []
+  public var snapshotText: String = ""
+  /// The member edited the text: ticking items no longer rewrites it.
+  public var snapshotEdited = false
+
+  /// The snapshot text from the ticked items (unless the member edited it).
+  public mutating func refreshSnapshot() {
+    guard !snapshotEdited else { return }
+    snapshotText = SpaceSnapshotText.make(
+      title: title, statusLine: snapshotStatus, facts: snapshotFacts, review: review)
+  }
 
   public init(
     eventID: String, title: String, destinations: [SpaceLocalState], destination: String?,
@@ -187,7 +220,51 @@ public struct SpaceShareDraft: Equatable, Sendable {
   public static func == (lhs: SpaceShareDraft, rhs: SpaceShareDraft) -> Bool {
     lhs.eventID == rhs.eventID && lhs.destination == rhs.destination
       && lhs.review == rhs.review && lhs.scale == rhs.scale && lhs.picked == rhs.picked
-      && lhs.rope?.id == rhs.rope?.id
+      && lhs.rope?.id == rhs.rope?.id && lhs.snapshotText == rhs.snapshotText
+  }
+}
+
+/// The handover sheet: who leads the matter now, to whom it goes, and the
+/// pack (written on the Spark, numbers put back on this Mac).
+public struct SpaceHandoverDisplay: Equatable, Sendable {
+  public let spaceID: String
+  public let eventID: String
+  public let matterTitle: String
+  /// The current 负责人's name, if one was set.
+  public let currentLead: String?
+  /// Members it can go to: (member id, name), this member excluded.
+  public let members: [SpaceHandoverMember]
+  public var to: String?
+  public var packID: String?
+  public var status: String?
+  public var markdown: String?
+  public var sources: Int
+  /// The pack shared as a snapshot item (given with the handover).
+  public var packItemID: String?
+  public var working = false
+  public var done: String?
+
+  public init(
+    spaceID: String, eventID: String, matterTitle: String, currentLead: String?,
+    members: [SpaceHandoverMember]
+  ) {
+    self.spaceID = spaceID
+    self.eventID = eventID
+    self.matterTitle = matterTitle
+    self.currentLead = currentLead
+    self.members = members
+    to = members.first?.memberID
+    sources = 0
+  }
+}
+
+public struct SpaceHandoverMember: Equatable, Hashable, Sendable {
+  public let memberID: String
+  public let name: String
+
+  public init(memberID: String, name: String) {
+    self.memberID = memberID
+    self.name = name
   }
 }
 
@@ -266,8 +343,20 @@ public struct SpacesScreenState {
   /// The pasted invite, read (for the join sheet's preview).
   public var joinPreview: SpaceInviteCode?
   public var joinError: String?
+  /// What waits to be delivered to each space, and what was refused (v8 C3).
+  public var outbox: [String: SpaceOutboxContents] = [:]
+  /// The handover sheet's content (v8 B3).
+  public var handover: SpaceHandoverDisplay?
+  /// The audio part playing now.
+  public var playingItem: String?
 
   public init() {}
+
+  /// "2 条等联网后发出" for a space, or nil.
+  public func outboxLine(_ spaceID: String) -> String? {
+    guard let waiting = outbox[spaceID]?.entries.count, waiting > 0 else { return nil }
+    return linkReady ? "\(waiting) 条正在发出" : "\(waiting) 条等联网后发出"
+  }
 
   public func space(_ id: String?) -> SpaceLocalState? {
     guard let id else { return nil }
@@ -314,6 +403,16 @@ public struct SpacesActions {
       _ otherEventID: String?
     ) -> Void
   public var refresh: @MainActor (_ spaceID: String?) -> Void
+  /// v8: play a meeting part's audio (after checking its length).
+  public var playAudio: @MainActor (_ spaceID: String, _ itemID: String, SpaceBlobRef) -> Void
+  /// v8: the handover sheet's steps.
+  public var handoverStep: @MainActor (SpaceHandoverStep) -> Void
+  /// v8: a plain member confirms an org admin's takeover after comparing the fingerprint.
+  public var confirmRecovery: @MainActor (_ spaceID: String, _ deviceID: String) -> Void
+  /// v8: forget the outbox's refused entries (after reading them).
+  public var dismissOutbox: @MainActor (_ spaceID: String) -> Void
+  /// Review V8R-04: take back something still waiting to go.
+  public var cancelOutbox: @MainActor (_ spaceID: String, _ entryID: String) -> Void
 
   public init(
     setScope: @escaping @MainActor (SpaceScope) -> Void = { _ in },
@@ -346,8 +445,18 @@ public struct SpacesActions {
     propose: @escaping @MainActor (String, String, String, String, String?) -> Void = {
       _, _, _, _, _ in
     },
-    refresh: @escaping @MainActor (String?) -> Void = { _ in }
+    refresh: @escaping @MainActor (String?) -> Void = { _ in },
+    playAudio: @escaping @MainActor (String, String, SpaceBlobRef) -> Void = { _, _, _ in },
+    handoverStep: @escaping @MainActor (SpaceHandoverStep) -> Void = { _ in },
+    confirmRecovery: @escaping @MainActor (String, String) -> Void = { _, _ in },
+    dismissOutbox: @escaping @MainActor (String) -> Void = { _ in },
+    cancelOutbox: @escaping @MainActor (String, String) -> Void = { _, _ in }
   ) {
+    self.cancelOutbox = cancelOutbox
+    self.playAudio = playAudio
+    self.handoverStep = handoverStep
+    self.confirmRecovery = confirmRecovery
+    self.dismissOutbox = dismissOutbox
     self.setScope = setScope
     self.present = present
     self.createSpace = createSpace
@@ -377,6 +486,19 @@ public struct SpacesActions {
   }
 
   public static var inert: SpacesActions { SpacesActions() }
+}
+
+/// What the handover sheet asks for.
+public enum SpaceHandoverStep: Equatable, Sendable {
+  case choose(memberID: String)
+  /// 生成交接包 (written by the Spark's model from the matter's items).
+  case generate
+  /// 作为快照分享到空间 (a new item by this member, citing the pack's sources).
+  case shareSnapshot
+  /// 导出 Markdown… (numbers as they are, to a file the member picks).
+  case export
+  /// 转交负责人 (with the shared pack, if there is one).
+  case handOver
 }
 
 /// The plain words of shared spaces (user-facing copy is Chinese).
@@ -415,7 +537,7 @@ public enum SpaceWords {
     case "document": "文档"
     case "file": "文件"
     case "link": "链接"
-    case "snapshot": "摘要"
+    case "snapshot": "摘要（冻结）"
     default: "文字"
     }
   }
@@ -438,6 +560,12 @@ public enum SpaceWords {
       "matter.handover": "交接负责人", "agent.access": "Agent 读取", "organizer.lease": "开始整理",
       "organizer.lock": "整理上锁", "organizer.decisions": "直接修改", "organizer.answer": "回答整理提问",
       "item_keys.rewrap": "钥匙重新包装", "system.remove": "到期自动下架",
+      "escrow.wrap": "补了钥匙托管", "space.recover": "组织管理员接管", "space.backup": "导出备份",
+      "space.restore": "从备份恢复", "org.create": "建了组织", "org.admin_add": "添加组织管理员",
+      "org.admin_remove": "移出组织管理员", "org.device_add": "添加组织设备",
+      "org.device_remove": "退掉组织设备", "org.policy": "改了钥匙托管规则",
+      "access.ticket": "发了门钥匙邀请", "access.enroll": "一台 Mac 加入", "access.revoke": "断开一台 Mac",
+      "access.ticket_revoke": "收回邀请", "access.ticket_expired": "邀请过期",
     ]
     return words[action] ?? action
   }

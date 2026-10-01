@@ -50,6 +50,11 @@ targets:
         buildPhase: resources
       - path: THIRD-PARTY-NOTICES.md
         buildPhase: resources
+      # The Chrome extension 「收进织机」 (V8 contract A6), copied as a folder
+      # to Contents/Resources/chrome-extension for Chrome's "load unpacked".
+      - path: integrations/chrome-extension
+        type: folder
+        buildPhase: resources
     dependencies:
       - package: BestASRCore
         product: BestASRCore
@@ -105,8 +110,17 @@ targets:
         product: MindloomAgentProtocol
       - package: MindloomLink
         product: MindloomSpaces
+      # v8 entries (Settings → 入口, V8 contract §A).
+      - package: BestASRCore
+        product: BestASREntries
+      - package: BestASRCore
+        product: MindloomShareDrop
       - target: InferenceWorker
         embed: true
+      # The share extension 「收进织机」 (V8 contract A1), in Contents/PlugIns.
+      - target: MindloomShare
+        embed: true
+        codeSign: true
       # The MCP helper agents start over stdio (AGENT-CONTRACT §1).
       - target: MindloomMCP
         embed: true
@@ -164,6 +178,35 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom-mcp
         PRODUCT_NAME: mindloom-mcp
         SKIP_INSTALL: YES
+
+  # 收进织机: the macOS share extension (V8 contract A1). Sandboxed; it may
+  # write only the library's share drop folder, which the App reads.
+  MindloomShare:
+    type: app-extension
+    platform: macOS
+    deploymentTarget: "14.2"
+    sources:
+      - path: ShareExtension
+        excludes:
+          - "*.plist"
+          - "*.entitlements"
+    dependencies:
+      - package: BestASRCore
+        product: MindloomShareDrop
+    settings:
+      base:
+        CODE_SIGN_ENTITLEMENTS: ShareExtension/MindloomShare.entitlements
+        ENABLE_APP_SANDBOX: YES
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: ShareExtension/Info.plist
+        PRODUCT_NAME: MindloomShare
+        SKIP_INSTALL: YES
+        APPLICATION_EXTENSION_API_ONLY: YES
+      configs:
+        Debug:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.debug.share
+        Release:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.share
 
   InferenceXPCProbe:
     type: application
@@ -317,6 +360,7 @@ schemes:
         BestASR: all
         InferenceWorker: all
         MindloomMCP: all
+        MindloomShare: all
         BenchCLI: all
         ProcessTapProbe: all
         ProcessTapTCCDenialProbe: all
@@ -330,7 +374,12 @@ schemes:
       config: Debug
     test:
       config: Debug
-      gatherCoverageData: true
+      # Off: with coverage on, Xcode instruments every Debug build of the
+      # scheme, and the instrumented mindloom-mcp then writes default.profraw
+      # wherever it is started — Chrome starts it inside the App bundle,
+      # which broke the bundle's seal (V8 A6). Pass -enableCodeCoverage YES
+      # to xcodebuild test when a coverage report is wanted.
+      gatherCoverageData: false
       targets:
         - name: WorkspaceSmokeTests
           parallelizable: true

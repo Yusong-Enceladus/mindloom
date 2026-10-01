@@ -17,6 +17,12 @@ Spark 端能做到的强制：
 - 同一段录音，一个成员在一个空间里共享的所有片段（文字或音频）加起来最多 15 分钟，重叠的部分只算一次（`recording_share_limit`）：八段首尾相接的 15 分钟就是整场会议。撤回一段，它的时长就还回来。
 - 送来整理的素材里，人物编号（Mac 上可能来自声纹聚类）一律换成由名字算出的编号，没有名字的人直接丢掉。
 - 所有要存的密文先查外形（前缀、base64url、长度）：明文字符串、明文文件一律拒收（`not_ciphertext`）。
+- v8：会议片段的**原音**可以共享给成员，但只能是一段录音里的一部分：操作里要写明整段录音多长，片段最多占整段的 4/5（`whole_recording`；
+  复查 V8R-15：原来只要短 1 毫秒就算「一段」，短会议几乎就是整场）、最长 15 分钟；一条素材只带一个音频原件，只能挂在会议或导入的音视频素材上，
+  而这类素材上**不能带任何别的原件**（`original`、`file` 等角色一律拒，`bad_field`：Spark 看不进密文，换个名字的「原件」可能就是整场录音）；同一段录音，一个成员在一个空间里只能共享**一段原音**
+  （`one_part_per_recording`，撤回后名额还回来）；原音密文的大小按片段长度封顶（每秒 32 KB 加 64 KB 文件头，`audio_too_large`），
+  所以一个声称 10 秒的片段装不下一小时的声音。空间规则 `segment_audio: false` 可以整个关掉原音。整理器只收片段的遮号转写，
+  带着声音或文件来的一律拒收（`audio_not_for_organizer`）。
 
 ## 谁拥有什么（GitHub 模型）
 
@@ -81,15 +87,16 @@ Spark 端能做到的强制：
 
 ## 流程
 
-**创建**：空间要么个人拥有、要么组织拥有；名字（加密）、所在的 Spark、规则（撤回窗口、能否存一份、原件给成员还是只给文字、成员离开时贡献怎么办：组织空间保留，小组空间由贡献者选）。组织由第一位管理员创建；建议再加一位管理员（规则 `recovery_admins: 2`，Spark 只记这条规则，恢复用的钥匙包就是管理员设备上的普通钥匙包）。
+**创建**：空间要么个人拥有、要么组织拥有；名字（加密）、所在的 Spark、规则（撤回窗口、能否存一份、原件给成员还是只给文字、成员离开时贡献怎么办：组织空间保留，小组空间由贡献者选；v8 加了每人每空间的存储配额 `member_quota_mb`）。组织由第一位管理员创建；建议再加一位管理员。v8 起组织规则 `recovery_admins`（1–3）是**强制的**：组织空间每一代的钥匙，都要能被这么多位组织管理员用自己的组织设备打开（成员钥匙包或托管钥匙包），丢了唯一的空间管理员，组织里另一位管理员也能接管（见下面「托管和找回」）。
 
 **邀请和加入**：
+0. v8：受邀的人还没有这台 Spark 的钥匙时，邀请码里同时带一张**访问邀请**（一次性的临时 SSH 钥匙和密码）：受邀的 Mac 先用它换到自己的钥匙和凭证，之后经 bridge 走下面的步骤。见 [INFRA.md](INFRA.md) 第 1 节。
 1. 管理员的 Mac 生成邀请码（二维码）：空间编号、Spark 地址、钉住的 Spark 主机公钥、一次性密码、7 天到期。**密码只在两台 Mac 之间，Spark 从头到尾收不到**：Spark 只存「门票」的哈希（门票 = `SHA-256("mindloom-space-invite-gate-v1" ‖ 密码)`）；邀请里钉的主机公钥必须是这台 Spark 自己的（`GET /v1/spaces/host-keys`）。
 2. 受邀的 Mac 经 Spark 发加入申请：它的两把设备公钥，用它自己的签名钥匙签名；旁边带门票（Spark 核对哈希、把邀请作废）和一个绑定值：用密码派生的另一把钥匙对申请的原始字节做的 HMAC（`space_member.invite_binding`）。Spark 存下绑定值但算不出它，所以没法把自己的设备绑到这个邀请上。带着密码本身来的申请直接拒收。名字封给发邀请的那台设备，Spark 打不开。邀请用一次就作废；门票错 10 次邀请锁死。成员编号在整台 Spark 上绑定第一次用它的设备钥匙：拿着邀请码用别人（比如组织管理员）的成员编号加入会被拒（`member_id_taken`）。
 3. 管理员的 Mac 显示「同意 / 拒绝」（两边屏幕上核对设备指纹），发邀请的那台 Mac 先核对签名和绑定值，对不上就不让同意；同意时把空间钥匙封给新设备，并在签名的 `join.approve` 里写明新成员的编号和两把公钥（不一致 Spark 拒收：`approve_mismatch`）。
 4. 新成员同步：取钥匙包，顺着代际链往回走，读操作日志。
 
-一个人的第二台 Mac 不走邀请：由他已有的设备签 `device.add`，把钥匙封给新设备。拿着邀请码冒充已有成员会被拒（`member_exists`）。
+一个人的第二台 Mac 不走邀请：由他已有的设备签 `device.add`，把钥匙封给新设备。拿着邀请码冒充已有成员会被拒（`member_exists`）。v8：第二台 Mac 进这台 Spark 的门，用已有那台发的「设备邀请」（只能绑到同一个成员编号，见 [INFRA.md](INFRA.md)）。
 
 **共享、撤回、移除、隐藏、删除**：见上面的表。共享规则（「以后新归进来的也共享」）属于设它的成员，别人改不了也清不掉。离开的成员知道当代钥匙，所以离开后空间进入「待换钥匙」，管理员的 Mac 换过钥匙之前，新的共享会被拒（`rotation_pending`），Mac 把它们留在队列里；移除成员和换钥匙在同一个操作里完成，没有空档。
 
@@ -110,7 +117,7 @@ Spark 端能做到的强制：
 |---|---|---|
 | `GET /v1/spaces/host-keys` | 令牌 | 这台 Spark 的 SSH 主机公钥（邀请钉住用） |
 | `POST /v1/orgs` | 创建者设备自签 | 建组织（`org.create`） |
-| `GET /v1/orgs/{id}` · `POST /v1/orgs/{id}/ops` · `GET /v1/orgs/{id}/audit` | 组织管理员 | 组织概况、`org.admin_add` / `org.admin_remove` / `org.policy`、整个组织的审计记录 |
+| `GET /v1/orgs/{id}` · `POST /v1/orgs/{id}/ops` · `GET /v1/orgs/{id}/audit` | 组织管理员 | 组织概况、`org.admin_add` / `org.admin_remove` / `org.policy`（v8 加 `org.device_add` / `org.device_remove`）、整个组织的审计记录 |
 | `POST /v1/spaces` | 创建者设备自签 | 建空间（`space.create`，日志第 1 条） |
 | `GET /v1/spaces` | 已知设备 | 这台设备所在的空间、组织、等待中的加入申请 |
 | `GET /v1/spaces/{id}` | 成员 | 概况：规则、代数、成员和设备公钥、我的角色和权限、计数、整理库状态 |
@@ -127,11 +134,87 @@ Spark 端能做到的强制：
 | `GET …/organizer/state?since=` | 成员 | 共享的事（同 `/v1/state`）+ `same_as` + `busy` |
 | `POST …/organizer/decisions` · `POST …/organizer/questions/{qid}/answer` | 维护 | 直接改共享的事、回答整理器的提议 |
 
-操作类型：`space.meta`、`space.policy`、`space.archive`、`invite.create`、`invite.revoke`、`join.approve`、`join.reject`、`member.role`、`member.remove`、`member.leave`、`member.profile`、`device.add`、`device.remove`、`epoch.rotate`、`item.share`、`item.withdraw`、`item.delete`、`item.remove`、`item.hide`、`item.fork`、`item.unfork`、`takedown.request`、`takedown.resolve`、`takedown.withdraw`、`matter.share`、`matter.unshare`、`matter.handover`、`share_rule.set`、`share_rule.clear`、`proposal.create`、`proposal.resolve`、`proposal.withdraw`、`agent.access`。Spark 自己写的记录只有一种：`system.remove`（隐私下架到期未处理时由 Spark 执行），它没有签名，成员只在它**删东西**时认它。每种操作的字段和错误码见 `spark/organizer/spaces.py` 里对应的处理函数（`h_<类型>`），可运行的样例见 `spark/tests/spacekit.py`（一台用 Python 扮演的成员 Mac）。
+v8 新增：
+
+| 方法 路径 | 谁 | 作用 |
+|---|---|---|
+| `POST /v1/spaces/{id}/backup` | 管理（签名） | 加密备份流（`MLBK1`），钥匙是管理员的 Mac 为这份备份随机生成、封给各位管理员的，只借这一次 |
+| `POST /v1/spaces/{id}/restore` | Spark 主人，或此刻的空间管理员（经 bridge） | 从备份恢复：读请求体之前先查权限和大小；每一行都属于这个空间、决定权限的行不超出签名日志；Spark 的日志已包含备份的日志时只补数据，不回退；`purge` 里的素材恢复后再清除（[INFRA.md](INFRA.md) 第 4 节） |
+| `GET /v1/orgs/{id}/escrow` | 组织管理员（签名） | 这台组织设备的托管钥匙包 |
+| `POST /v1/spaces/{id}/organizer/handover-pack` · `GET …/handover-pack/{pack_id}` | 贡献 / 成员 | 生成、读取一件事的交接包 |
+
+经 bridge 进来的成员（[INFRA.md](INFRA.md)）只能签他注册时那台设备的请求和操作（`access_device`）。
+
+v8 合同 C：`item.share` 可带 `share_key`（发送队列的那一项）和音频片段的 `segment.recording_ms`；快照的 `snapshot` 可带 `as_of` 和 `cites`；被拒的操作带 `retry`；组织操作新增 `org.device_add`、`org.device_remove`，组织操作的结果带 `effects`；空间规则新增 `segment_audio`。
+
+操作类型：`space.meta`、`space.policy`、`space.archive`、`invite.create`、`invite.revoke`、`join.approve`、`join.reject`、`member.role`、`member.remove`、`member.leave`、`member.profile`、`device.add`、`device.remove`、`epoch.rotate`、`item.share`、`item.withdraw`、`item.delete`、`item.remove`、`item.hide`、`item.fork`、`item.unfork`、`takedown.request`、`takedown.resolve`、`takedown.withdraw`、`matter.share`、`matter.unshare`、`matter.handover`、`share_rule.set`、`share_rule.clear`、`proposal.create`、`proposal.resolve`、`proposal.withdraw`、`agent.access`；v8 新增 `escrow.wrap`（管理：把当代钥匙补封给缺托管的组织管理员设备）、`space.recover`（组织管理员用托管钥匙接管空间，由他的组织设备签名，成员的 Mac 对照组织的签名日志承认）。`matter.handover` 可带 `pack_item_id`（交接包那条快照素材）；`item.share` 的 `snapshot` 素材可带 `snapshot: {matter_id, pack_id}`（只能是编号）。Spark 自己写的记录只有一种：`system.remove`（隐私下架到期未处理时由 Spark 执行），它没有签名，成员只在它**删东西**时认它。每种操作的字段和错误码见 `spark/organizer/spaces.py` 里对应的处理函数（`h_<类型>`），可运行的样例见 `spark/tests/spacekit.py`（一台用 Python 扮演的成员 Mac）。
+
+## 交接、备份、托管、配额（v8）
+
+- **交接**：负责人（或维护者）用 `matter.handover` 把一件共享的事交给另一位成员；交之前可以「生成交接包」：技能 `handover-pack` 写现在到哪了、谁还欠着什么、截止日、已经定下的事（带原话）、还没答案的问题、先看哪几条素材、接手先做什么，每一句都带出处。成员把它（Mac 放回原号码后的 Markdown）作为**快照素材**分享进空间，`matter.handover` 引用这条素材。交接包存在空间的加密整理库里，它引用的素材被撤回或移除时整份删除。
+- **备份**：管理员的 Mac 定时拉整个空间的加密备份（操作日志、钥匙包、原件密文、整理库），钥匙是每份备份自己的随机钥匙、封给各位管理员（普通成员和 Spark 都打不开）；恢复时重放签名日志，写不进别的空间、塞不进一台日志外的设备、抬不高角色，旧备份不会让被移除的人回来。有恢复演练测试和对抗复查的回归测试（`test_v8_review.py`）。
+- **托管和找回**：见上面「创建」。组织管理员用 `GET /v1/orgs/{id}/escrow` 拿到托管钥匙包，签 `space.recover` 成为空间管理员，再用 `member.remove` / `device.remove` 带新钥匙把丢失的设备移出去。被移出组织的管理员，托管钥匙包随之删除；只凭托管知道当代钥匙的空间进入「待换钥匙」。
+- **配额和公平**：每人每空间一份存储配额（`member_quota_mb`，超了 413 `quota_exceeded`）；空间的整理队列让成员轮流，截止日在 7 天之内的事先整理。
+
+细节和接口见 [INFRA.md](INFRA.md)。
+
+## 片段原音、快照、断网时的共享、一个人的几台 Mac（v8 合同 C）
+
+**片段原音**（C1）。会议里归进这件事的那一段，成员可以听原音：Mac 把这段剪出来（AAC，单声道），用这条素材自己的数据钥匙加密成
+`MLB1` 原件，角色 `audio`，和转写一起 `item.share`：
+
+```
+"segment": {"parent_item_id": 录音的编号, "start_ms", "end_ms", "recording_ms": 整段录音的长度}
+```
+
+Spark 存的是密文，它手里的钥匙（借出的整理库钥匙、遮号钥匙、备份钥匙）都打不开（测试逐把试过）。Spark 看不见声音，只能按操作里
+签了名的数字把关：片段最多占整段的 4/5、不超过 15 分钟、一段录音一个人在一个空间里只共享一段原音、密文不超过 `64 KB + 每秒 32 KB`。
+成员的 Mac 解开之后自己再核一次：声音的长度要和签名里写的片段一致（误差 2 秒以内，参考实现 `space_member.audio_part_ok`），
+不一致就不放、提醒维护者。撤回、移除、隐私下架到期、换成新修订时，原音密文文件当场覆写删除，钥匙包一起删，名额还回来。
+`GET /v1/spaces/{id}` 的 `limits` 给出这些上限，Mac 发之前先自己检查。
+
+**快照**（C2）。冻结的小结作为**分享者自己的新素材**共享：`item.share`，`kind: "snapshot"`，内容和普通素材一样加密在 `enc` 里；
+明文部分只有编号（参考 `space_member.snapshot_body`）：
+
+```
+"snapshot": {"matter_id"?: 事件编号, "pack_id"?: 交接包编号, "as_of"?: 冻结时间, "cites"?: [这个空间里它引用的素材编号]}
+```
+
+快照永远是新的一条，不能改（`snapshot_frozen`），也不能把已有的素材改成快照；要更新就再分享一份。`cites` 里的素材必须是这个空间
+里还在的素材（`unknown_items`）。**被引用的素材一旦被撤回或移除，引用它的快照也一起移除**（Spark 写一条 `system.remove`，原因
+`cited_item_gone`，快照的快照也一样）：撤回自己的东西，也就收回了别人小结里对它的引用，和交接包的规则一致。不引用空间素材的快照
+（比如只是自己个人空间里一件事的小结）不受影响。
+
+**断网时的共享**（C3）。Mac 断网时把要共享的东西放进自己的发送队列，连上以后再发，可能发两次。Spark 保证每次共享只算一次：
+- 同一个签名操作再发一次：`duplicate: true`，同样的 `seq`（一直如此）。
+- 队列里的每一项带一个 `share_key`（UUID，放进 `item.share` 的签名正文）。答复丢了、或者换了钥匙之后 Mac **重新做**了一个操作
+  （新的操作编号、新的数据钥匙、新上传的原件）：只要是同一个 `share_key`、同一个修订号，就当作已经共享过的那一次，回答
+  `{"ok":true,"duplicate":true,"accepted_as":"share_key","seq":原来的 seq}`，不再记日志，这次新传的原件当场删掉。不同的
+  `share_key` 撞上同一个修订号仍然是 `stale_revision`。
+- 已经撤回的再撤回一次、过了窗口的删除再发一次：回答已经发生的那一次（`accepted_as: "withdrawn"` / `"open_takedown"`），不会开第二张下架申请。
+- 每个被拒的操作都带 `retry`：`remake`（先同步钥匙，再用同一个 `share_key` 重新做：`stale_epoch`、`rotation_pending`）、
+  `later`（原样再发：`unknown_blob` 先补传原件，`quota_exceeded` 先腾地方）、`never`（丢掉，告诉用户）。参考 `space_member.outbox_action`。
+- 上传后一天还没被共享认领的原件会被清掉；同一台 Mac 用同一个编号、同样的字节再传一次可以（所以队列里存着加密好的原件）；
+  素材已经撤回的再传，回答 410 `blob_gone`。
+- Spark 答 `ok` 时已经落盘：`spaces.db` 用 `synchronous=FULL`，原件文件和它所在的目录都 fsync，断电也不会丢掉已经答应过的共享。
+
+**一个人的几台 Mac**（第二台 Mac，配合 [INFRA.md](INFRA.md) 第 1 节）。整台 Spark 上**一个设备编号只属于一个成员**（空间、组织、
+访问记录合在一起看）：别人的 Mac 不能被加进我的名下，也不能换个成员编号再加入（`device_member_conflict`）。第二台 Mac 先用第一台
+发的设备邀请进门（访问记录里绑定同一个成员编号），然后由第一台在每个空间签 `device.add`、在每个它管理的组织签 `org.device_add`；
+第二台也可以拿邀请码直接加入它的成员还没进过的空间（因为第一台已经替它担保过）。断开（unpair）过的 Mac 不能再被加回任何空间或组织
+（`device_revoked`）。哪台 Mac 还差哪些空间、哪台已经断开却还留在哪些空间，见 `GET /v1/access/devices`。
+- `org.device_add {"device"}`：管理员给自己加一台 Mac，由他自己的一台组织设备签名。
+- `org.device_remove {"device_id"}`：管理员退掉一台组织设备（丢了的 Mac），不能退签名的这台。它从此拿不到托管钥匙、在组织空间里没有
+  管理员权限；它靠托管知道当代钥匙的组织空间进入「待换钥匙」，效果里列出 `rotation_pending` 和它仍是成员设备的空间
+  `still_member_in`（在那里签 `device.remove`，换钥匙在同一个操作里完成）。
+- `org.admin_add {"member_id","device"}` 现在要求写的是这个人**自己在这台 Spark 上用着的** Mac（某个空间里他的设备，或访问记录里
+  他的 Mac）；这台 Spark 还不认识的新成员照旧可以直接加。名下其余的 Mac 由他自己用 `org.device_add` 加（`unknown_member_device`）。
+- 经 bridge 进来的成员只能以自己的成员编号签操作（`access_member`）。
+- 成员 Mac 从组织签名日志重建管理员名单时同样承认这两种操作（`space_member.org_roster`），备份的日志校验也一样。
 
 ## 测试
 
-`spark/tests/test_spaces_crypto.py`（向量、封包 / 拆包、错钥匙和篡改、服务不导入成员端）、`spark/tests/test_spaces.py`（日志顺序和幂等、验签失败的操作被拒、签名请求和重放、邀请到期和一次性、**每种操作的角色检查**、撤回窗口、下架和到期执行、提议队列、移除成员后换钥匙、离开后先换钥匙、加密粉碎、所有存下的原件都是密文（哨兵扫描）、整理器只看到占位符、借钥匙的规则、换钥匙后整理库重新加密、维护者直接改、只按片段共享音频、归档 / 存一份 / 负责人、审计无内容、组织管理员、第二台设备、个人库锁着时共享空间照常）、`spark/tests/test_spaces_e2e.py`（两个合成的 Mac 数据目录 + 一个 Spark：建组织空间、邀请加入、两人共享同一件事、拼出并集、撤回、移除、换钥匙后读不到新素材、Spark 上找不到明文哨兵）、`spark/tests/test_v7_integration.py`（空间里画线索图、撤回的素材不留在图里、打包步骤排在成股整理之前）。`eval/tools/spaces_e2e.py` 用真模型对部署好的实例跑同一个流程。
+`spark/tests/test_spaces_crypto.py`（向量、封包 / 拆包、错钥匙和篡改、服务不导入成员端）、`spark/tests/test_spaces.py`（日志顺序和幂等、验签失败的操作被拒、签名请求和重放、邀请到期和一次性、**每种操作的角色检查**、撤回窗口、下架和到期执行、提议队列、移除成员后换钥匙、离开后先换钥匙、加密粉碎、所有存下的原件都是密文（哨兵扫描）、整理器只看到占位符、借钥匙的规则、换钥匙后整理库重新加密、维护者直接改、只按片段共享音频、归档 / 存一份 / 负责人、审计无内容、组织管理员、第二台设备、个人库锁着时共享空间照常）、`spark/tests/test_spaces_e2e.py`（两个合成的 Mac 数据目录 + 一个 Spark：建组织空间、邀请加入、两人共享同一件事、拼出并集、撤回、移除、换钥匙后读不到新素材、Spark 上找不到明文哨兵）、`spark/tests/test_v7_integration.py`（空间里画线索图、撤回的素材不留在图里、打包步骤排在成股整理之前）；v8：`test_escrow_quota.py`（托管规则、丢了唯一管理员之后的找回、配额）、`test_backup.py`（恢复演练、篡改和伪造被拒）、`test_handover.py`（交接包、快照、转交负责人）、`test_queue_fairness.py`（轮流和截止优先）、`test_access.py` / `test_access_sshd.py`（每人自己的钥匙，真的 sshd）；v8 合同 C：`test_space_audio.py`（片段原音：成员能解、Spark 用它拿到的任何钥匙都解不开、整理器不收声音，片段的各项上限和每段录音一段原音，撤回 / 移除 / 新修订 / 下架到期后文件消失、名额还回来）、`test_space_snapshots.py`（快照是分享者的新素材、不能改、只引用空间里还在的素材，被引用的素材撤回或移除时快照一起移除，包括快照的快照和到期的隐私下架）、`test_space_outbox.py`（答复丢了以后原样重发或重新做都只算一次、跨换钥匙、被清掉的上传重传、撤回和删除重发、重启后照样认得、`retry` 提示、`synchronous=FULL`）、`test_multi_device.py`（第二台 Mac 经设备邀请进门、第一台签 `device.add` / `org.device_add`、一个设备编号只属于一个成员、组织管理员只能加对方自己的 Mac、断开后不能加回、`org.device_remove` 和待换钥匙）、`test_space_c_backup.py`（这些规则在恢复之后照样成立，恢复的清除名单同样带走快照）。`eval/tools/spaces_e2e.py` 用真模型对部署好的实例跑同一个流程。v8 整合：`test_v8_integration.py`（一条素材撤回时，引用它的交接包、快照和线索图上的结一起去掉；恢复时补做的撤回在下一次借钥匙时也清掉恢复出来的线索图）；`eval/tools/member_gate_e2e.py` 和 `spaces_c_e2e.py` 经真实 sshd 对部署好的实例跑（两位成员互相隔离、合同 C 的全流程）。
 
 ## 依赖
 
@@ -144,9 +227,17 @@ Spark 端能做到的强制：
 - 空间整理库开着的时候，Spark 拿着库钥匙和遮号钥匙（和个人空间 v6 同样的已知限制：短占位符可以被持钥匙的人穷举）。
 - 撤回之前已经被成员同步到自己设备上的内容，只能靠成员的 Mac 在下次同步时删掉。
 - 撤回或移除过的素材，不能用同一个编号再共享进同一个空间（可以共享一份快照）。
-- 成员之间目前经各自的 SSH 连到同一个 Spark 账号；给队友的受限密钥（只能转发到这个服务）还没做。能改 `spaces.db` 的人可以让 Spark 拒绝服务、乱报名单，但伪造不了成员的操作、拿不到钥匙：成员的 Mac 只认签过名的日志。
+- v8 起队友用自己的受限钥匙经 bridge 进来（[INFRA.md](INFRA.md)），不再用 Spark 主人的账号；Spark 主人仍然是这台机器的管理员。能改 `spaces.db` 的人可以让 Spark 拒绝服务、乱报名单，但伪造不了成员的操作、拿不到钥匙：成员的 Mac 只认签过名的日志。
 - 成员的 Mac 从日志重建的是「谁、哪台设备」，不重算每个人的角色：角色检查在 Spark 上。
-- 组织管理员被移出组织后，在还有别的管理员的组织空间里降为贡献者；如果他是某个空间唯一的管理员，Spark 手里没有钥匙，没法把空间交给别人，组织概况里会列在 `former_admins` 下，等组织里持有钥匙的管理员接手（组织恢复用的钥匙托管还没做）。
+- 组织管理员被移出组织后，在还有别的管理员的组织空间里降为贡献者；如果他是某个空间唯一的管理员，组织概况里会列在 `former_admins` 下，v8 起组织里的另一位管理员用托管钥匙 `space.recover` 接管，再把他移出去（关闭 V7-S7）。托管意味着组织管理员能打开组织的任何空间（规则本意）；个人小组空间没有托管。
 - 共享包里分享者的标题等提示只给成员看（加密），整理器看不到，整理只看素材本身。
 - 两位成员说法不一致时，简介按现有规则写「现在的状态」，每条事实都带出处素材；把冲突的说法并排摆出来由 Mac 端按出处显示，Spark 端没有专门的冲突检测。
 - 在共享空间里，「我」指这条素材的贡献者：Spark 主人在 `ORGANIZER_OWNER_ALIASES` 里配的名字不用于共享空间。
+- 片段原音：Spark 打不开密文，只能按签名操作里写的数字（片段起止、整段长度）和密文大小把关，证明不了声音真的只有这么长、真的只是那一段；
+  这由分享者的 Mac 剪辑时保证，收到的成员 Mac 解开后再核一次长度。整段录音的长度也是分享者的 Mac 说的：改过的客户端可以把整段报得更长，
+  4/5 的比例只对诚实的 Mac 有约束力。
+- 快照的 `cites` 是分享者的 Mac 列的：Spark 看不到快照内容，没法核对它真的只引用了这些素材。没列出来的引用，撤回时带不走。
+- 「同一个 `share_key`、同一个修订号就算同一次」：如果分享者在两次发送之间改了内容却没有升修订号，后发的那份不会生效（Mac 的规则是
+  内容一变就升修订号、换新的 `share_key`）。
+- 一台断开访问的 Mac 在各个空间里仍是成员设备，直到有人签 `device.remove`（发起断开的 Mac 当场在它能签的空间里签，见 [INFRA.md](INFRA.md)）；
+  在那之前 Spark 在每个空间都拒绝它（`device_revoked`），它也不能用原来的设备钥匙再接入，但它知道当时的空间钥匙。

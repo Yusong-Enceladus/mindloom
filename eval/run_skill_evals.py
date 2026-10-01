@@ -14,6 +14,9 @@ per-call enums as the organizer, scripts/validate.py, one retry). Pass criteria:
   matter-map    check: n_strands, apart / together (item handles), kinds_include, health_in, blocks, no_blocks,
                 forbid (see check_map). A repaired output (only repairable errors) counts as valid, as in the organizer.
   matter-group  check: together / apart / rope_of / under / unplaced / type_in / not_title (see check_group).
+  handover-pack check: open_who / done_who (a commitment by that name, open / done), deadline_dates, not_dates,
+                decision_re, question_re, links_include, no_done (see check_handover). A repaired or salvaged
+                output counts as valid, as in the organizer.
   item-split    fixture {text, kind, source_app, started_at}: units are built exactly as the organizer
                 builds them; check on the segments the organizer derives (units.segments_from_output):
                 unsplit, n_segments [min, max], apart [[Ua, Ub]] (both covered, different segments),
@@ -43,7 +46,8 @@ from organizer.skills import Harness, SkillRegistry  # noqa: E402
 from organizer.store import Store  # noqa: E402
 
 JOB = {"event-assign": "assign", "event-brief": "brief", "home-rank": "rank", "item-split": "split",
-       "event-consolidate": "consolidate", "person-resolve": "person", "matter-map": "map", "matter-group": "group"}
+       "event-consolidate": "consolidate", "person-resolve": "person", "matter-map": "map", "matter-group": "group",
+       "handover-pack": "handover"}
 # The user's own names in the matter-map fixtures (the organizer passes ORGANIZER_OWNER_ALIASES).
 MAP_OWNER = ["许念", "念念"]
 
@@ -59,11 +63,12 @@ def build_request(registry: SkillRegistry, skill_name: str, case: dict) -> tuple
     if job == "split":
         return ("split",) + split_request(registry, case)
     data = case["fixture"]["data"]
-    if job in ("map", "group"):
-        # exactly organizer/matter_map.py / matter_group.py: the skill's own build script makes schema and context
+    if job in ("map", "group", "handover"):
+        # exactly organizer/matter_map.py / matter_group.py / handover.py: the skill's own build script makes schema
+        # and context
         build = registry.script(skill_name, "build")
         schema = build.schema_for(registry.skills[skill_name].schema, data)
-        context = build.context_for(data, owner=MAP_OWNER) if job == "map" else build.context_for(data)
+        context = build.context_for(data, owner=MAP_OWNER) if job in ("map", "handover") else build.context_for(data)
         return job, data, schema, context
     schema = copy.deepcopy(registry.skills[skill_name].schema)
     props = schema["properties"]
@@ -241,6 +246,45 @@ def check_group(case: dict, out: dict) -> tuple[bool, str]:
     return True, got
 
 
+def check_handover(case: dict, out: dict) -> tuple[bool, str]:
+    """handover-pack: open_who / done_who [names] (a commitment whose who contains or is contained in the name, in
+    that state); deadline_dates [d] (each among the deadlines); not_dates [d] (no deadline or due on it);
+    decision_re / question_re (some decision / open question, its text or quote, matches); links_include [I];
+    no_done (no commitment marked done)."""
+    c = case["check"]
+    commits = out["commitments"]
+    got = (f"commitments {[(x['who'], x['state'], x['due']) for x in commits]} deadlines {[d['date'] for d in out['deadlines']]}"
+           f" decisions {[d['what'] for d in out['decisions']]} questions {[q['what'] for q in out['open_questions']]}"
+           f" links {[ln['item'] for ln in out['links']]}")
+
+    def by(name: str, state: str) -> bool:
+        return any((name in x["who"] or x["who"] in name) and x["who"] and x["state"] == state for x in commits)
+    for name in c.get("open_who", []):
+        if not by(name, "open"):
+            return False, f"no open commitment by {name}: {got}"
+    for name in c.get("done_who", []):
+        if not by(name, "done"):
+            return False, f"no done commitment by {name}: {got}"
+    dates = {d["date"] for d in out["deadlines"]}
+    for d in c.get("deadline_dates", []):
+        if d not in dates:
+            return False, f"deadline {d} missing: {got}"
+    used = dates | {x["due"] for x in commits}
+    if set(c.get("not_dates", [])) & used:
+        return False, f"outdated date used: {got}"
+    if c.get("decision_re") and not any(re.search(c["decision_re"], d["what"] + d["quote"]) for d in out["decisions"]):
+        return False, f"decision missing: {got}"
+    if c.get("question_re") and not any(re.search(c["question_re"], q["what"] + q["quote"])
+                                        for q in out["open_questions"]):
+        return False, f"question missing: {got}"
+    links = {ln["item"] for ln in out["links"]}
+    if not set(c.get("links_include", [])) <= links:
+        return False, f"link missing: {got}"
+    if c.get("no_done") and any(x["state"] == "done" for x in commits):
+        return False, f"a commitment marked done: {got}"
+    return True, got
+
+
 def check(registry: SkillRegistry, skill_name: str, case: dict, out: dict) -> tuple[bool, str]:
     if skill_name == "item-split":
         return check_split(registry, case, out)
@@ -248,6 +292,8 @@ def check(registry: SkillRegistry, skill_name: str, case: dict, out: dict) -> tu
         return check_map(case, out)
     if skill_name == "matter-group":
         return check_group(case, out)
+    if skill_name == "handover-pack":
+        return check_handover(case, out)
     c = case["check"]
     if skill_name == "event-assign":
         rank = {x["event_id"]: i for i, x in enumerate(case["fixture"]["data"]["candidates"])}
@@ -330,14 +376,14 @@ def main(argv=None) -> int:
         job, data, schema, context = build_request(registry, skill_name, case)
         rows = []
         for _ in range(args.n):
-            rules = registry.script(skill_name, "validate") if job in ("map", "group") else None
+            rules = registry.script(skill_name, "validate") if job in ("map", "group", "handover") else None
             res = harness.run(job, data, context=context, schema=schema, subject=case["id"],
                               no_retry=rules.REPAIRABLE if rules else None)
             run = store.one("SELECT completion_tokens FROM runs WHERE run_id=?", (res.run_id,))
             if rules is not None and not res.ok:
                 # as the organizer does: a repairable failure is repaired and used (matter_map / matter_group _usable)
                 fixed = rules.salvage(res.candidate, res.errors, context, **({"after_retry": res.attempts >= 2}
-                                                                            if job == "map" else {}))
+                                                                            if job in ("map", "handover") else {}))
                 if fixed is not None:
                     res.ok, res.output = True, fixed
             ok, note = check(registry, skill_name, case, res.output) if res.ok else (False, "; ".join(res.errors)[:200])

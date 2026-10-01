@@ -324,6 +324,189 @@
       "evidence": [
         "artifacts/evidence/v7/e2e-summary.json"
       ]
+    },
+    {
+      "requirementIDs": [
+        "ENTRY-001",
+        "ENTRY-002",
+        "ENTRY-003",
+        "ENTRY-004",
+        "ENTRY-005",
+        "ENTRY-006",
+        "ENTRY-007",
+        "ENTRY-008",
+        "ENTRY-009",
+        "ENTRY-010",
+        "ENTRY-011"
+      ],
+      "threatIDs": ["TM-05", "TM-06", "TM-09", "TM-10", "TM-12"],
+      "scenarioIDs": [
+        "Every entry reaches the paste/drop intake path and keeps its source and time",
+        "Links from share, Services, Shortcuts and the command line are never fetched",
+        "Command line is the owner's intake over the private socket, off by default, never reachable from an agent session",
+        "Watched folders take only new settled files, honour exclusions, size limit and pause",
+        "Calendar read only for chosen calendars; Reminders written only on click",
+        "Git commits become items without reading file contents; Zotero over loopback only"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASREntriesTests/EntrySettingsTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/HandEntriesTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/FolderWatchTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/CalendarEntryTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/ResearchEntriesTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/OwnerChannelTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/v8/entries-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "ENTRY-012"
+      ],
+      "threatIDs": ["TM-05", "TM-06", "TM-09", "TM-10", "TM-12"],
+      "scenarioIDs": [
+        "The Chrome extension hands the selection, the page link or a link to the App through native messaging, labelled Chrome",
+        "The extension has no network path: no host permissions, CSP connect-src none, no network API in its code",
+        "Only the extension origin fixed by the manifest key is served; other origins are refused and nothing is forwarded",
+        "The host manifest is written only by the Settings switch and removed by it, idempotently",
+        "The browser entry has its own switch, off by default; agents can never call its method"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASREntriesTests/BrowserEntryTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/BrowserHostTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/ChromeExtensionEndToEndTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/v8/browser-extension-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "INFRA-001", "INFRA-002", "INFRA-003", "INFRA-004", "INFRA-005", "INFRA-006", "INFRA-007",
+        "SPACE-013", "SPACE-014", "SPACE-015", "SPACE-016"
+      ],
+      "threatIDs": ["TM-09", "TM-10", "TM-12", "TM-14", "TM-15"],
+      "scenarioIDs": [
+        "A teammate's Mac enrolls with a one-time ticket key and then reaches the team's organizing device only through the gate's bridge with its own key and credential",
+        "Unpairing a Mac refuses its credential at once and leaves authorized_keys byte-identical to before the invite",
+        "A meeting part's audio goes to members as ciphertext the organizing device cannot open, and members play it only after its decoded length matches the signed part",
+        "A share made while the link is down waits on disk and is accepted once after reconnecting, also when remade",
+        "A handover pack written on the organizing device is shown with the numbers put back, shared as a frozen snapshot and given with the matter",
+        "A snapshot leaves the space when an item it cites is withdrawn",
+        "A member's second Mac is added by the first, reads and hears the space, and is retired with a new key",
+        "An org space's key is escrowed to the org's admins from the org's signed log, and another admin takes the space over after losing the only admin",
+        "A backup opens only with the space's key and a restore drill gives the same space back, with later withdrawals purged again"
+      ],
+      "tests": [
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/MemberAccessTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/SpaceInfraTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/MemberBridgeLiveTests.swift",
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/SpaceInfraMacTests.swift",
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/PhonePairingTests.swift",
+        "Packages/BestASRCore/Tests/BestASRMemoryUITests/SpaceUITests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/SpacesInfraEndToEndTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/v8/spaces-infra-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "INFRA-001",
+        "INFRA-002",
+        "INFRA-003",
+        "INFRA-005",
+        "INFRA-007",
+        "INFRA-008",
+        "INFRA-009",
+        "SPACE-013",
+        "SPACE-014",
+        "SPACE-015",
+        "SPACE-017",
+        "SPACE-018",
+        "ENTRY-003",
+        "ENTRY-008"
+      ],
+      "threatIDs": [
+        "TM-09",
+        "TM-10",
+        "TM-12",
+        "TM-14",
+        "TM-15"
+      ],
+      "scenarioIDs": [
+        "A forged organization log served by the organizing device receives no escrow wrap or rotation wrap and its takeover is not accepted",
+        "A shared item deleted, withdrawn or cancelled on the Mac while it waits in the outbox never reaches the space",
+        "After the organizing device's log goes back and readmits a removed member, nothing new is shared until an admin's Mac removes them again with a new key",
+        "A backup opens only for the space's admins and its receipt names no space",
+        "A snapshot is the text the member saw and edited, made only of facts resting on ticked items",
+        "The relay's team lines follow open tickets and paired Macs, and a member's Mac offers its own key first",
+        "An audio part is at most four fifths of its recording",
+        "The Services entry is off by default and a next step goes to a Reminders list on this Mac first"
+      ],
+      "tests": [
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/V8ReviewFixTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/SpaceInfraTests.swift",
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/PhonePairingTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/EntrySettingsTests.swift",
+        "Packages/BestASRCore/Tests/BestASREntriesTests/CalendarEntryTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/SpacesInfraEndToEndTests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/v8/review-fixes-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "SPACE-019",
+        "INFRA-010",
+        "ENTRY-001",
+        "ENTRY-005",
+        "ENTRY-011",
+        "ENTRY-012",
+        "INFRA-001",
+        "INFRA-002",
+        "INFRA-003",
+        "INFRA-004",
+        "INFRA-005",
+        "INFRA-006",
+        "INFRA-007",
+        "INFRA-008",
+        "INFRA-009",
+        "SPACE-013",
+        "SPACE-014",
+        "SPACE-015",
+        "SPACE-016",
+        "SPACE-017",
+        "SPACE-018"
+      ],
+      "threatIDs": [
+        "TM-09",
+        "TM-10",
+        "TM-12",
+        "TM-14",
+        "TM-15"
+      ],
+      "scenarioIDs": [
+        "One withdrawn item takes its map knot, the handover pack and the snapshot that cite it; a restore's purge reaches the restored map at the next lease",
+        "Two members' Macs, each with its own key and credential through the real gate, cannot reach each other's spaces, Macs, records or signatures; removal and unpairing end all access",
+        "Privacy, phone, two-library spaces, spaces infrastructure, the member bridge, agent MCP and the Chrome native host re-run against one fresh integrated organizing device"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/SpacesInfraEndToEndTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/SpacesEndToEndTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/PrivacyEndToEndTests.swift",
+        "Packages/BestASRCore/Tests/BestASRSparkEndToEndTests/PhoneEndToEndTests.swift",
+        "Packages/MindloomLink/Tests/MindloomSpacesTests/MemberBridgeLiveTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/ChromeExtensionEndToEndTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/BrowserHostTests.swift",
+        "Packages/BestASRCore/Tests/BestASRAgentAccessTests/OwnerChannelTests.swift",
+        "script/agent_e2e/mcp_e2e.py"
+      ],
+      "evidence": [
+        "artifacts/evidence/v8/e2e-summary.json"
+      ]
     }
   ]
 }

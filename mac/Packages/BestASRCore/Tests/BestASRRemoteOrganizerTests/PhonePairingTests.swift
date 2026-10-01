@@ -4,6 +4,7 @@ import CoreImage
 import CryptoKit
 import Foundation
 import MindloomLink
+import MindloomSpaces
 import XCTest
 
 /// PHONE-CONTRACT §4 and §6 (Mac): pairing needs both host keys from the
@@ -661,6 +662,7 @@ final class ScriptedRunner: PhoneLinkCommandRunning, @unchecked Sendable {
   private var responses: [[String]: String] = [:]
   private var _calls: [Call] = []
   private var _failRemote: [String] = []
+  private var _remoteOutputs: [String: String] = [:]
   private let passThroughLocal: Bool
 
   init(passThroughLocal: Bool = false) {
@@ -678,6 +680,11 @@ final class ScriptedRunner: PhoneLinkCommandRunning, @unchecked Sendable {
     lock.withLock { responses[[executable] + arguments] = output }
   }
 
+  /// What a remote command (its last word list) prints, e.g. the relay's `list`.
+  func respondRemote(command: String, output: String) {
+    lock.withLock { _remoteOutputs[command] = output }
+  }
+
   func run(_ executable: String, _ arguments: [String], stdin: Data?, timeout: TimeInterval)
     async throws -> PhoneLinkCommandResult
   {
@@ -687,8 +694,8 @@ final class ScriptedRunner: PhoneLinkCommandRunning, @unchecked Sendable {
     if arguments.first == "-T" {
       let command = arguments.last ?? ""
       let fails = failRemote.contains { command.contains($0) }
-      return PhoneLinkCommandResult(
-        status: fails ? 1 : 0, stdout: Data(#"{"ok":true}"#.utf8))
+      let output = lock.withLock { _remoteOutputs[command] } ?? #"{"ok":true}"#
+      return PhoneLinkCommandResult(status: fails ? 1 : 0, stdout: Data(output.utf8))
     }
     if passThroughLocal {
       return try await ProcessPhoneLinkCommandRunner().run(
@@ -698,5 +705,71 @@ final class ScriptedRunner: PhoneLinkCommandRunning, @unchecked Sendable {
       return PhoneLinkCommandResult(status: 1)
     }
     return PhoneLinkCommandResult(status: 0, stdout: Data(output.utf8))
+  }
+}
+
+// MARK: - Teammates' Macs (v8 B1)
+
+extension PhonePairingTests {
+  func testTeamRoutePinsBothHostsAndTheRelayLineTakesOnlyTheTicketKey() async throws {
+    let setup = try fixture()
+    let route = try await setup.service.teamRoute()
+    XCTAssertEqual(route.spark.host, "10.20.30.40")
+    XCTAssertEqual(route.spark.user, "alice")
+    XCTAssertEqual(route.spark.hostKey, setup.sparkKey)
+    XCTAssertEqual(route.relay?.host, "relay.example.test")
+    XCTAssertEqual(route.relay?.port, 2200)
+    XCTAssertEqual(route.relay?.hostKey, setup.relayKey)
+    let key = SSHEd25519Key()
+    try await setup.service.authorizeTeamRelay(route, key: key)
+    let keyID = PhonePairingService.teamRelayKeyID(key)
+    XCTAssertTrue(keyID.hasPrefix("team-"))
+    let add = try XCTUnwrap(setup.runner.remoteCalls.last)
+    XCTAssertEqual(add.destination, "relay-box")
+    XCTAssertEqual(
+      add.command, "sh -s -- add \(keyID) 10.20.30.40 22 ssh-ed25519 \(key.publicKeyBase64)")
+    // Nothing secret goes to the relay.
+    let secret = Base64URL.encode(key.seed)
+    for call in setup.runner.calls {
+      XCTAssertFalse(call.arguments.joined(separator: " ").contains(secret))
+      XCTAssertFalse(String(decoding: call.stdin ?? Data(), as: UTF8.self).contains(secret))
+    }
+    try await setup.service.revokeTeamRelay(try XCTUnwrap(route.relayDestination), keyID: keyID)
+    XCTAssertEqual(setup.runner.remoteCalls.last?.command, "sh -s -- remove \(keyID)")
+    // Without a relay, nothing is installed anywhere.
+    let direct = try fixture(proxyJump: nil)
+    let directRoute = try await direct.service.teamRoute()
+    XCTAssertNil(directRoute.relay)
+    try await direct.service.authorizeTeamRelay(directRoute, key: key)
+    XCTAssertEqual(direct.runner.remoteCalls.count, 0)
+  }
+
+  /// Review V8R-12: the owner's Mac keeps the relay's team lines in step with
+  /// the Spark — a used ticket's and an unpaired Mac's line go, a paired
+  /// Mac's own key gets one; phone lines are never touched.
+  func testTeamRelayLinesAreReconciledWithTheSparksRecords() async throws {
+    let setup = try fixture()
+    let route = try await setup.service.teamRoute()
+    let paired = SSHEd25519Key()
+    let used = SSHEd25519Key()
+    let wanted = [
+      PhonePairingService.teamRelayKeyID(paired): paired.publicKeyBase64
+    ]
+    let stale = PhonePairingService.teamRelayKeyID(used)
+    setup.runner.respondRemote(
+      command: "sh -s -- list", output: #"{"ok":true,"phones":["phone-1","\#(stale)"]}"#)
+    let result = try await setup.service.reconcileTeamRelay(route, wanted: wanted)
+    XCTAssertEqual(result.added, 1)
+    XCTAssertEqual(result.removed, 1)
+    let commands = setup.runner.remoteCalls.map(\.command)
+    XCTAssertTrue(
+      commands.contains(
+        "sh -s -- add \(PhonePairingService.teamRelayKeyID(paired)) 10.20.30.40 22 ssh-ed25519 \(paired.publicKeyBase64)"
+      ))
+    XCTAssertTrue(commands.contains("sh -s -- remove \(stale)"))
+    XCTAssertFalse(commands.contains { $0.contains("phone-1") })
+    XCTAssertEqual(
+      TeamRelayLines.keyID(rawPublicKey: paired.publicKeyRaw),
+      PhonePairingService.teamRelayKeyID(paired))
   }
 }

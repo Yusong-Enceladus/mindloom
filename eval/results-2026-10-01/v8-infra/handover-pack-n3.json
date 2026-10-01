@@ -1,0 +1,1757 @@
+{
+ "summary": {
+  "cases": 6,
+  "all_pass": 6,
+  "pass_rate": 1.0,
+  "model": "qwen3.6-35b-a3b-nvfp4",
+  "n": 3
+ },
+ "cases": [
+  {
+   "skill": "handover-pack",
+   "id": "handover-001",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 0,
+   "completion_tokens_max": 1537,
+   "completion_tokens_per_attempt_max": 768,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 2,
+     "note": "commitments [('王老师', 'done', '2026-09-26'), ('小林', 'done', '2026-09-22'), ('小周', 'open', '2026-09-29')] deadlines ['2026-10-08', '2026-10-01'] decisions ['每个设置跑30次'] questions ['要不要加第二只机械臂'] links ['I3']",
+     "completion_tokens": 1537,
+     "completion_tokens_per_attempt": 768,
+     "output": {
+      "status": {
+       "text": "前两组实验完成，第三组等新夹爪（10/1到），仿真对照下周开始，表2真机结果需在10/8前补上。",
+       "evidence": [
+        "I8",
+        "I9",
+        "I2"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "王老师",
+        "to": "小周",
+        "what": "批下额外的GPU机时",
+        "due": "2026-09-26",
+        "state": "done",
+        "evidence": [
+         "I6",
+         "I9"
+        ],
+        "quote": "机时批了"
+       },
+       {
+        "who": "小林",
+        "to": "",
+        "what": "把真机数据传到组里的盘上",
+        "due": "2026-09-22",
+        "state": "done",
+        "evidence": [
+         "I4",
+         "I5"
+        ],
+        "quote": "数据已经传到组盘了"
+       },
+       {
+        "who": "小周",
+        "to": "",
+        "what": "开始跑仿真对照",
+        "due": "2026-09-29",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "那我下周开始跑仿真对照"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "CoRL rebuttal 截止",
+        "date": "2026-10-08",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "rebuttal 十月八号截止"
+       },
+       {
+        "what": "第三组等新夹爪发货",
+        "date": "2026-10-01",
+        "evidence": [
+         "I8"
+        ],
+        "quote": "十月一号发货"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "每个设置跑30次",
+        "date": "2026-09-15",
+        "who": [
+         "王老师"
+        ],
+        "evidence": [
+         "I1"
+        ],
+        "quote": "每个设置就跑30次"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "要不要加第二只机械臂",
+        "evidence": [
+         "I7"
+        ],
+        "quote": "第二只机械臂要不要也上"
+       }
+      ],
+      "links": [
+       {
+        "item": "I3",
+        "why": "实验流程文档"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "10/1等夹爪到货后跑第三组",
+        "evidence": [
+         "I8"
+        ]
+       },
+       {
+        "what": "10/8前补上表2真机结果",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 2,
+     "note": "commitments [('王老师', 'done', '2026-09-26'), ('小周', 'open', '2026-09-29'), ('小林', 'done', '2026-09-22')] deadlines ['2026-10-08', '2026-10-01'] decisions ['每个设置跑30次'] questions ['要不要加第二只机械臂'] links ['I3']",
+     "completion_tokens": 1521,
+     "completion_tokens_per_attempt": 760,
+     "output": {
+      "status": {
+       "text": "两组实验已完成，第三组等新夹爪（10/1到），仿真对照下周开始，表2真机结果需在10/8前补上。",
+       "evidence": [
+        "I8",
+        "I9",
+        "I2"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "王老师",
+        "to": "小周",
+        "what": "批下额外的GPU机时",
+        "due": "2026-09-26",
+        "state": "done",
+        "evidence": [
+         "I6",
+         "I9"
+        ],
+        "quote": "机时批了"
+       },
+       {
+        "who": "小周",
+        "to": "",
+        "what": "开始跑仿真对照",
+        "due": "2026-09-29",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "那我下周开始跑仿真对照"
+       },
+       {
+        "who": "小林",
+        "to": "",
+        "what": "把真机数据传到组盘",
+        "due": "2026-09-22",
+        "state": "done",
+        "evidence": [
+         "I4",
+         "I5"
+        ],
+        "quote": "数据已经传到组盘了"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "CoRL rebuttal 截止",
+        "date": "2026-10-08",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "rebuttal 十月八号截止"
+       },
+       {
+        "what": "第三组等夹爪发货",
+        "date": "2026-10-01",
+        "evidence": [
+         "I8"
+        ],
+        "quote": "十月一号发货"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "每个设置跑30次",
+        "date": "2026-09-15",
+        "who": [
+         "王老师"
+        ],
+        "evidence": [
+         "I1"
+        ],
+        "quote": "每个设置就跑30次"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "要不要加第二只机械臂",
+        "evidence": [
+         "I7"
+        ],
+        "quote": "第二只机械臂要不要也上"
+       }
+      ],
+      "links": [
+       {
+        "item": "I3",
+        "why": "实验流程文档"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "下周一开始跑仿真对照",
+        "evidence": [
+         "I6",
+         "I9"
+        ]
+       },
+       {
+        "what": "跟进第三组夹爪到货情况",
+        "evidence": [
+         "I8"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 2,
+     "note": "commitments [('王老师', 'done', '2026-09-26'), ('小林', 'done', '2026-09-22'), ('小周', 'open', '2026-09-29')] deadlines ['2026-10-08'] decisions ['每个设置跑30次'] questions ['要不要加第二只机械臂'] links ['I3']",
+     "completion_tokens": 1327,
+     "completion_tokens_per_attempt": 664,
+     "output": {
+      "status": {
+       "text": "两组实验已完成，第三组等新夹爪（10/1到），仿真下周开始，表2真机结果需在10/8前补上。",
+       "evidence": [
+        "I8",
+        "I9",
+        "I2"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "王老师",
+        "to": "小周",
+        "what": "批下额外的GPU机时",
+        "due": "2026-09-26",
+        "state": "done",
+        "evidence": [
+         "I6",
+         "I9"
+        ],
+        "quote": "机时批了"
+       },
+       {
+        "who": "小林",
+        "to": "",
+        "what": "把真机数据传到组里的盘上",
+        "due": "2026-09-22",
+        "state": "done",
+        "evidence": [
+         "I4",
+         "I5"
+        ],
+        "quote": "数据已经传到组盘了"
+       },
+       {
+        "who": "小周",
+        "to": "",
+        "what": "开始跑仿真对照",
+        "due": "2026-09-29",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "那我下周开始跑仿真对照"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "CoRL rebuttal 截止",
+        "date": "2026-10-08",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "rebuttal 十月八号截止"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "每个设置跑30次",
+        "date": "2026-09-15",
+        "who": [
+         "王老师"
+        ],
+        "evidence": [
+         "I1"
+        ],
+        "quote": "每个设置就跑30次"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "要不要加第二只机械臂",
+        "evidence": [
+         "I7"
+        ],
+        "quote": "第二只机械臂要不要也上"
+       }
+      ],
+      "links": [
+       {
+        "item": "I3",
+        "why": "实验流程文档"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "下周一开始跑仿真对照",
+        "evidence": [
+         "I6",
+         "I9"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  },
+  {
+   "skill": "handover-pack",
+   "id": "handover-002",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 3,
+   "completion_tokens_max": 756,
+   "completion_tokens_per_attempt_max": 756,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('周建国', 'open', '2026-09-18'), ('周建国', 'open', '')] deadlines ['2026-10-08', ''] decisions ['吧台采用L形设计，台面用石英石'] questions ['食品许可平面图是找设计师重画还是用施工图改'] links ['I7', 'I5']",
+     "completion_tokens": 681,
+     "completion_tokens_per_attempt": 681,
+     "output": {
+      "status": {
+       "text": "装修收尾阶段，开业定在10月8日。当前卡点是食品经营许可缺平面布局图，需决定是重画还是修改施工图。",
+       "evidence": [
+        "I4",
+        "I5",
+        "I8"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "周建国",
+        "to": "我",
+        "what": "周四上午带人刷墙面",
+        "due": "2026-09-18",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "墙面周四上午我带人过来刷"
+       },
+       {
+        "who": "周建国",
+        "to": "我",
+        "what": "另发吧台报价单",
+        "due": "",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "报价另发你"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "新店开业",
+        "date": "2026-10-08",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "开业定在十月八号"
+       },
+       {
+        "what": "请柬印刷",
+        "date": "",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "请柬下周印"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "吧台采用L形设计，台面用石英石",
+        "date": "2026-09-03",
+        "who": [
+         "周建国"
+        ],
+        "evidence": [
+         "I2"
+        ],
+        "quote": "吧台就按L形做，台面用石英石"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "食品许可平面图是找设计师重画还是用施工图改",
+        "evidence": [
+         "I8"
+        ],
+        "quote": "平面图要不要找设计师重画？还是用施工图改一下？"
+       }
+      ],
+      "links": [
+       {
+        "item": "I7",
+        "why": "石英石台面报价单"
+       },
+       {
+        "item": "I5",
+        "why": "许可证缺件通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "决定平面图处理方式（重画或修改）",
+        "evidence": [
+         "I8"
+        ]
+       },
+       {
+        "what": "准备食品经营许可平面布局图",
+        "evidence": [
+         "I5"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('周建国', 'open', '2026-09-18'), ('周建国', 'open', ''), ('阿May', 'done', '2026-09-06')] deadlines ['2026-10-08', ''] decisions ['吧台采用L形设计，台面用石英石'] questions ['食品经营许可的平面布局图是找设计师重画还是用施工图修改'] links ['I7']",
+     "completion_tokens": 756,
+     "completion_tokens_per_attempt": 756,
+     "output": {
+      "status": {
+       "text": "装修收尾阶段，开业日期已定10月8日。当前卡点是食品经营许可缺平面布局图，需决定是重画还是修改施工图。",
+       "evidence": [
+        "I4",
+        "I5",
+        "I8"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "周建国",
+        "to": "",
+        "what": "周四上午带人刷墙面",
+        "due": "2026-09-18",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "墙面周四上午我带人过来刷"
+       },
+       {
+        "who": "周建国",
+        "to": "",
+        "what": "发送吧台台面报价",
+        "due": "",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "报价另发你"
+       },
+       {
+        "who": "阿May",
+        "to": "",
+        "what": "安排裱花师试做",
+        "due": "2026-09-06",
+        "state": "done",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "约了三个裱花师周六下午来试做"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "新店开业",
+        "date": "2026-10-08",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "开业定在十月八号"
+       },
+       {
+        "what": "印制请柬",
+        "date": "",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "请柬下周印"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "吧台采用L形设计，台面用石英石",
+        "date": "2026-09-03",
+        "who": [
+         "周建国"
+        ],
+        "evidence": [
+         "I2"
+        ],
+        "quote": "吧台就按L形做，台面用石英石"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "食品经营许可的平面布局图是找设计师重画还是用施工图修改",
+        "evidence": [
+         "I8"
+        ],
+        "quote": "平面图要不要找设计师重画？还是用施工图改一下？"
+       }
+      ],
+      "links": [
+       {
+        "item": "I7",
+        "why": "石英石台面报价单"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "确定平面布局图的处理方案（重画或修改）",
+        "evidence": [
+         "I8"
+        ]
+       },
+       {
+        "what": "准备食品经营许可缺失的平面布局图材料",
+        "evidence": [
+         "I5"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('周建国', 'open', '2026-09-18')] deadlines ['2026-10-08'] decisions ['吧台采用L形设计，台面用石英石'] questions ['食品许可平面图是找设计师重画还是用施工图改'] links ['I7']",
+     "completion_tokens": 493,
+     "completion_tokens_per_attempt": 493,
+     "output": {
+      "status": {
+       "text": "装修收尾阶段，开业日期已定10月8日。当前卡点是食品经营许可缺平面布局图，需决定是重画还是修改施工图。",
+       "evidence": [
+        "I4",
+        "I5",
+        "I8"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "周建国",
+        "to": "",
+        "what": "周四上午带人刷墙面",
+        "due": "2026-09-18",
+        "state": "open",
+        "evidence": [
+         "I6"
+        ],
+        "quote": "墙面周四上午我带人过来刷"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "新店开业",
+        "date": "2026-10-08",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "开业定在十月八号"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "吧台采用L形设计，台面用石英石",
+        "date": "2026-09-03",
+        "who": [
+         "周建国"
+        ],
+        "evidence": [
+         "I2"
+        ],
+        "quote": "吧台就按L形做，台面用石英石"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "食品许可平面图是找设计师重画还是用施工图改",
+        "evidence": [
+         "I8"
+        ],
+        "quote": "平面图要不要找设计师重画？还是用施工图改一下？"
+       }
+      ],
+      "links": [
+       {
+        "item": "I7",
+        "why": "石英石台面报价单"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "确定平面图方案（重画或修改）",
+        "evidence": [
+         "I8"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  },
+  {
+   "skill": "handover-pack",
+   "id": "handover-003",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 3,
+   "completion_tokens_max": 649,
+   "completion_tokens_per_attempt_max": 649,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('财务小陈', 'open', '2026-09-30'), ('我', 'open', '2026-09-24')] deadlines ['2026-09-24', ''] decisions [] questions ['酒店发票明天能否补开'] links ['I4']",
+     "completion_tokens": 581,
+     "completion_tokens_per_attempt": 581,
+     "output": {
+      "status": {
+       "text": "财务小陈承诺月底前走完审批，但酒店发票还差一张，需明天补开，否则赶不上本期报销。",
+       "evidence": [
+        "I1",
+        "I2",
+        "I4"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "财务小陈",
+        "to": "我",
+        "what": "月底前走完差旅报销审批",
+        "due": "2026-09-30",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "差旅报销单我月底前帮你走完审批"
+       },
+       {
+        "who": "我",
+        "to": "财务小陈",
+        "what": "周三前将发票原件交到财务室",
+        "due": "2026-09-24",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "发票原件周三之前要交到财务室"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "发票原件交到财务室截止",
+        "date": "2026-09-24",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "发票原件周三之前要交到财务室"
+       },
+       {
+        "what": "财务小陈走完审批",
+        "date": "",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "月底前帮你走完审批"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [
+       {
+        "what": "酒店发票明天能否补开",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "酒店发票还差一张，前台说明天补开"
+       }
+      ],
+      "links": [
+       {
+        "item": "I4",
+        "why": "当前缺失发票及补开进度"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "明天跟进酒店发票补开情况",
+        "evidence": [
+         "I4"
+        ]
+       },
+       {
+        "what": "9月24日前将发票原件交至财务室",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('财务小陈', 'open', '2026-09-30'), ('我', 'open', '2026-09-24')] deadlines ['2026-09-24', '2026-09-30'] decisions [] questions [] links ['I4', 'I2']",
+     "completion_tokens": 649,
+     "completion_tokens_per_attempt": 649,
+     "output": {
+      "status": {
+       "text": "财务小陈承诺月底前走完审批，但发票原件周三（24日）前需交齐。目前还差一张酒店发票，前台说明天补开，时间紧迫。",
+       "evidence": [
+        "I2",
+        "I4"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "财务小陈",
+        "to": "我",
+        "what": "月底前走完差旅报销审批",
+        "due": "2026-09-30",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "月底前帮你走完审批"
+       },
+       {
+        "who": "我",
+        "to": "财务小陈",
+        "what": "周三前将发票原件交到财务室",
+        "due": "2026-09-24",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周三之前要交到财务室"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "发票原件交到财务室截止",
+        "date": "2026-09-24",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周三之前要交到财务室"
+       },
+       {
+        "what": "差旅报销审批完成",
+        "date": "2026-09-30",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "月底前帮你走完审批"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [],
+      "links": [
+       {
+        "item": "I4",
+        "why": "当前缺失发票及补开进度"
+       },
+       {
+        "item": "I2",
+        "why": "交发票的硬性截止时间"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "明天（24日）找酒店前台拿补开的发票",
+        "evidence": [
+         "I4"
+        ]
+       },
+       {
+        "what": "拿到发票后立刻交到财务室",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": [
+      "[who] commitments[2]: '酒店前台' appears nowhere in the matter"
+     ]
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('财务小陈', 'open', '2026-09-30'), ('我', 'open', '2026-09-24')] deadlines ['2026-09-24', ''] decisions [] questions ['明天补开的酒店发票能否及时拿到并赶上本期报销'] links ['I4']",
+     "completion_tokens": 589,
+     "completion_tokens_per_attempt": 589,
+     "output": {
+      "status": {
+       "text": "财务小陈承诺月底前走完审批，但发票原件周三（24日）前需交齐。目前还差一张酒店发票，明天（24日）补开，时间紧迫。",
+       "evidence": [
+        "I1",
+        "I2",
+        "I4"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "财务小陈",
+        "to": "我",
+        "what": "月底前走完差旅报销审批",
+        "due": "2026-09-30",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "月底前帮你走完审批"
+       },
+       {
+        "who": "我",
+        "to": "财务小陈",
+        "what": "周三前将发票原件交到财务室",
+        "due": "2026-09-24",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周三之前要交到财务室"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "发票原件交到财务室",
+        "date": "2026-09-24",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周三之前要交到财务室"
+       },
+       {
+        "what": "财务小陈走完审批",
+        "date": "",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "月底前帮你走完审批"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [
+       {
+        "what": "明天补开的酒店发票能否及时拿到并赶上本期报销",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "酒店发票还差一张，前台说明天补开"
+       }
+      ],
+      "links": [
+       {
+        "item": "I4",
+        "why": "当前缺失发票的具体说明"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "明天跟进酒店发票补开进度",
+        "evidence": [
+         "I4"
+        ]
+       },
+       {
+        "what": "确保周三前将发票原件交至财务室",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  },
+  {
+   "skill": "handover-pack",
+   "id": "handover-004",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 3,
+   "completion_tokens_max": 636,
+   "completion_tokens_per_attempt_max": 636,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('老周', 'open', ''), ('老周', 'open', '2026-09-05')] deadlines ['2026-09-05', '2026-10-12'] decisions ['读书会定在十月十二号下午两点', '书目是《置身事内》'] questions [] links ['I3', 'I2']",
+     "completion_tokens": 632,
+     "completion_tokens_per_attempt": 632,
+     "output": {
+      "status": {
+       "text": "读书会时间地点已定，老周负责联系场地，需在9月5日前回复人数，目前尚未确认回复。",
+       "evidence": [
+        "I3",
+        "I2",
+        "I1"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "老周",
+        "to": "",
+        "what": "联系图书馆二楼场地",
+        "due": "",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "十月的读书会场地我来联系"
+       },
+       {
+        "who": "老周",
+        "to": "",
+        "what": "回复场地负责人人数",
+        "due": "2026-09-05",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "回复场地负责人人数",
+        "date": "2026-09-05",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       },
+       {
+        "what": "十月社区读书会",
+        "date": "2026-10-12",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "读书会定在十月十二号下午两点",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号下午两点"
+       },
+       {
+        "what": "书目是《置身事内》",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "书目是《置身事内》"
+       }
+      ],
+      "open_questions": [],
+      "links": [
+       {
+        "item": "I3",
+        "why": "确定时间和书目"
+       },
+       {
+        "item": "I2",
+        "why": "场地负责人联系方式"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "确认是否已回复场地负责人人数",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('老周', 'open', ''), ('老周', 'open', '2026-09-05')] deadlines ['2026-09-05', '2026-10-12'] decisions ['读书会定在十月十二号下午两点', '书目是《置身事内》'] questions [] links ['I3']",
+     "completion_tokens": 636,
+     "completion_tokens_per_attempt": 636,
+     "output": {
+      "status": {
+       "text": "读书会时间地点已定，老周负责联系图书馆，需在9月5日前回复人数。",
+       "evidence": [
+        "I1",
+        "I2",
+        "I3"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "老周",
+        "to": "",
+        "what": "联系图书馆二楼场地",
+        "due": "",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "十月的读书会场地我来联系"
+       },
+       {
+        "who": "老周",
+        "to": "",
+        "what": "回复图书馆场地负责人人数",
+        "due": "2026-09-05",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "回复图书馆场地负责人人数",
+        "date": "2026-09-05",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       },
+       {
+        "what": "十月社区读书会举办",
+        "date": "2026-10-12",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "读书会定在十月十二号下午两点",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号下午两点"
+       },
+       {
+        "what": "书目是《置身事内》",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "书目是《置身事内》"
+       }
+      ],
+      "open_questions": [],
+      "links": [
+       {
+        "item": "I3",
+        "why": "确定时间和书目"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "联系图书馆确认场地",
+        "evidence": [
+         "I1"
+        ]
+       },
+       {
+        "what": "回复图书馆场地负责人人数",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('老周', 'open', '2026-09-05')] deadlines ['2026-09-05', '2026-10-12'] decisions ['读书会定在十月十二号下午两点', '书目是《置身事内》', '场地在图书馆二楼'] questions [] links ['I2']",
+     "completion_tokens": 602,
+     "completion_tokens_per_attempt": 602,
+     "output": {
+      "status": {
+       "text": "读书会时间地点已定，老周负责联系图书馆并确认人数，需在9月5日前回复。",
+       "evidence": [
+        "I1",
+        "I2",
+        "I3"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "老周",
+        "to": "",
+        "what": "联系图书馆并回复人数",
+        "due": "2026-09-05",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "回复图书馆人数",
+        "date": "2026-09-05",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "周五前要回复人数"
+       },
+       {
+        "what": "十月读书会举办",
+        "date": "2026-10-12",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "读书会定在十月十二号下午两点",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "读书会定在十月十二号下午两点"
+       },
+       {
+        "what": "书目是《置身事内》",
+        "date": "2026-09-06",
+        "who": [],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "书目是《置身事内》"
+       },
+       {
+        "what": "场地在图书馆二楼",
+        "date": "2026-09-02",
+        "who": [
+         "老周"
+        ],
+        "evidence": [
+         "I1"
+        ],
+        "quote": "图书馆二楼那间"
+       }
+      ],
+      "open_questions": [],
+      "links": [
+       {
+        "item": "I2",
+        "why": "图书馆负责人联系方式"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "联系图书馆确认人数",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  },
+  {
+   "skill": "handover-pack",
+   "id": "handover-005",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 3,
+   "completion_tokens_max": 585,
+   "completion_tokens_per_attempt_max": 585,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('Alice', 'open', '2026-10-09'), ('Bob', 'open', '2026-10-07')] deadlines ['2026-10-10'] decisions ['作者顺序按投稿时不变'] questions ['致谢里要不要加实验室基金号'] links ['I4']",
+     "completion_tokens": 585,
+     "completion_tokens_per_attempt": 585,
+     "output": {
+      "status": {
+       "text": "作者顺序已定，视频剪辑待完成，等待 Alice 提交最终 PDF。",
+       "evidence": [
+        "I3",
+        "I2",
+        "I1"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "Alice",
+        "to": "程序委员会",
+        "what": "发送 camera-ready PDF",
+        "due": "2026-10-09",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "I will send the camera-ready PDF to the"
+       },
+       {
+        "who": "Bob",
+        "to": "大家",
+        "what": "剪辑补充材料视频",
+        "due": "2026-10-07",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "补充材料的视频我来剪"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "camera-ready 提交截止",
+        "date": "2026-10-10",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "camera-ready 截止时间为 2026-10-10"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "作者顺序按投稿时不变",
+        "date": "2026-10-02",
+        "who": [
+         "Alice"
+        ],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "作者顺序不改了"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "致谢里要不要加实验室基金号",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "致谢里要不要加实验室的基金号"
+       }
+      ],
+      "links": [
+       {
+        "item": "I4",
+        "why": "官方截止日期通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "跟进 Bob 视频剪辑进度",
+        "evidence": [
+         "I2"
+        ]
+       },
+       {
+        "what": "确认 Alice 是否已发送 PDF",
+        "evidence": [
+         "I1"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('Alice', 'open', '2026-10-09'), ('Bob', 'open', '2026-10-07')] deadlines ['2026-10-10'] decisions ['作者顺序按投稿时不变'] questions ['致谢里要不要加实验室基金号'] links ['I4']",
+     "completion_tokens": 577,
+     "completion_tokens_per_attempt": 577,
+     "output": {
+      "status": {
+       "text": "作者顺序已定，视频剪辑待完成，等待提交最终PDF。",
+       "evidence": [
+        "I3",
+        "I2",
+        "I1"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "Alice",
+        "to": "程序委员会",
+        "what": "发送camera-ready PDF",
+        "due": "2026-10-09",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "I will send the camera-ready PDF"
+       },
+       {
+        "who": "Bob",
+        "to": "大家",
+        "what": "剪辑补充材料视频",
+        "due": "2026-10-07",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "补充材料的视频我来剪"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "camera-ready 提交截止",
+        "date": "2026-10-10",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "camera-ready 截止时间为 2026-10-10"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "作者顺序按投稿时不变",
+        "date": "2026-10-02",
+        "who": [
+         "Alice"
+        ],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "作者顺序不改了"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "致谢里要不要加实验室基金号",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "致谢里要不要加实验室的基金号"
+       }
+      ],
+      "links": [
+       {
+        "item": "I4",
+        "why": "官方截止日期通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "确认致谢是否加基金号",
+        "evidence": [
+         "I3"
+        ]
+       },
+       {
+        "what": "完成视频剪辑",
+        "evidence": [
+         "I2"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('Alice', 'open', '2026-10-09'), ('Bob', 'open', '2026-10-07')] deadlines ['2026-10-10'] decisions ['作者顺序按投稿时不变'] questions ['致谢里是否加实验室基金号'] links ['I4']",
+     "completion_tokens": 583,
+     "completion_tokens_per_attempt": 583,
+     "output": {
+      "status": {
+       "text": "作者顺序已定，待补充材料视频剪辑完成，由 Alice 提交最终版。",
+       "evidence": [
+        "I3",
+        "I2",
+        "I1"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "Alice",
+        "to": "程序委员会",
+        "what": "发送 camera-ready PDF",
+        "due": "2026-10-09",
+        "state": "open",
+        "evidence": [
+         "I1"
+        ],
+        "quote": "I will send the camera-ready PDF"
+       },
+       {
+        "who": "Bob",
+        "to": "大家",
+        "what": "剪辑补充材料视频",
+        "due": "2026-10-07",
+        "state": "open",
+        "evidence": [
+         "I2"
+        ],
+        "quote": "补充材料的视频我来剪"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "camera-ready 提交截止",
+        "date": "2026-10-10",
+        "evidence": [
+         "I4"
+        ],
+        "quote": "camera-ready 截止时间为 2026-10-10"
+       }
+      ],
+      "decisions": [
+       {
+        "what": "作者顺序按投稿时不变",
+        "date": "2026-10-02",
+        "who": [
+         "Alice"
+        ],
+        "evidence": [
+         "I3"
+        ],
+        "quote": "作者顺序不改了"
+       }
+      ],
+      "open_questions": [
+       {
+        "what": "致谢里是否加实验室基金号",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "致谢里要不要加实验室的基金号"
+       }
+      ],
+      "links": [
+       {
+        "item": "I4",
+        "why": "官方截止日期通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "跟进 Bob 视频剪辑进度",
+        "evidence": [
+         "I2"
+        ]
+       },
+       {
+        "what": "确认致谢基金号决定",
+        "evidence": [
+         "I3"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  },
+  {
+   "skill": "handover-pack",
+   "id": "handover-006",
+   "passes": 3,
+   "n": 3,
+   "first_attempt_valid": 3,
+   "completion_tokens_max": 375,
+   "completion_tokens_per_attempt_max": 375,
+   "runs": [
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('我', 'open', '2026-10-03')] deadlines ['2026-10-03'] decisions [] questions [] links ['I2', 'I3']",
+     "completion_tokens": 346,
+     "completion_tokens_per_attempt": 346,
+     "output": {
+      "status": {
+       "text": "搬家定在10月3日（周五），当天货梯检修，需确认能否使用。",
+       "evidence": [
+        "I2",
+        "I3"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "我",
+        "to": "",
+        "what": "提前跟物业确认货梯能否使用",
+        "due": "2026-10-03",
+        "state": "open",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "得提前跟物业确认货梯能不能用"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "搬家公司到达",
+        "date": "2026-10-03",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "周五搬家公司上午九点到"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [],
+      "links": [
+       {
+        "item": "I2",
+        "why": "电梯检修时间变更通知"
+       },
+       {
+        "item": "I3",
+        "why": "搬家时间与货梯确认需求"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "联系物业确认货梯使用情况",
+        "evidence": [
+         "I3"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('我', 'open', '2026-10-03')] deadlines ['2026-10-03'] decisions [] questions ['货梯是否可用'] links ['I2']",
+     "completion_tokens": 368,
+     "completion_tokens_per_attempt": 368,
+     "output": {
+      "status": {
+       "text": "搬家定在10月3日周五，电梯当天检修，需确认货梯可用性。",
+       "evidence": [
+        "I2",
+        "I3"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "我",
+        "to": "",
+        "what": "提前跟物业确认货梯能不能用",
+        "due": "2026-10-03",
+        "state": "open",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "得提前跟物业确认货梯能不能用"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "搬家公司到达",
+        "date": "2026-10-03",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "周五搬家公司上午九点到"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [
+       {
+        "what": "货梯是否可用",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "得提前跟物业确认货梯能不能用"
+       }
+      ],
+      "links": [
+       {
+        "item": "I2",
+        "why": "电梯检修时间变更通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "联系物业确认货梯使用",
+        "evidence": [
+         "I3"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    },
+    {
+     "pass": true,
+     "valid": true,
+     "attempts": 1,
+     "note": "commitments [('我', 'open', '2026-10-03')] deadlines ['2026-10-03'] decisions [] questions ['货梯检修期间如何搬运'] links ['I2']",
+     "completion_tokens": 375,
+     "completion_tokens_per_attempt": 375,
+     "output": {
+      "status": {
+       "text": "搬家定在10月3日周五，但当天货梯检修不可用，需尽快确认替代方案。",
+       "evidence": [
+        "I2",
+        "I3"
+       ]
+      },
+      "commitments": [
+       {
+        "who": "我",
+        "to": "",
+        "what": "跟物业确认货梯能否使用",
+        "due": "2026-10-03",
+        "state": "open",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "得提前跟物业确认货梯能不能用"
+       }
+      ],
+      "deadlines": [
+       {
+        "what": "搬家公司到达",
+        "date": "2026-10-03",
+        "evidence": [
+         "I3"
+        ],
+        "quote": "周五搬家公司上午九点到"
+       }
+      ],
+      "decisions": [],
+      "open_questions": [
+       {
+        "what": "货梯检修期间如何搬运",
+        "evidence": [
+         "I2",
+         "I3"
+        ],
+        "quote": "电梯检修改到周五"
+       }
+      ],
+      "links": [
+       {
+        "item": "I2",
+        "why": "电梯检修最新通知"
+       }
+      ],
+      "next_steps": [
+       {
+        "what": "联系物业确认货梯替代方案",
+        "evidence": [
+         "I3"
+        ]
+       }
+      ]
+     },
+     "errors": []
+    }
+   ]
+  }
+ ]
+}

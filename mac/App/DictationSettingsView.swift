@@ -11,7 +11,9 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   case models
   case language
   case data
+  case entries
   case agents
+  case team
 
   var id: String { rawValue }
 
@@ -19,7 +21,9 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   /// deployment, verification and rollback, per-App text policies — is
   /// operator tooling, kept whole but reached from 更多 → 高级 instead of
   /// sitting beside the microphone picker.
-  static let primary: [Self] = [.general, .shortcuts, .recording, .data, .agents]
+  static let primary: [Self] = [
+    .general, .shortcuts, .recording, .data, .team, .entries, .agents,
+  ]
   static let advanced: [Self] = [.models, .language]
 
   var title: String {
@@ -30,7 +34,9 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
     case .models: "识别组件"
     case .language: "文字格式"
     case .data: "数据"
+    case .entries: "入口"
     case .agents: "Agent"
+    case .team: "团队与整理设备"
     }
   }
 
@@ -42,7 +48,9 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
     case .models: "shippingbox"
     case .language: "character.book.closed"
     case .data: "lock.shield"
+    case .entries: "tray.and.arrow.down"
     case .agents: "person.badge.key"
+    case .team: "person.3"
     }
   }
 }
@@ -1052,8 +1060,14 @@ struct DictationSettingsView: View {
             }
           }
         }
+        if selectedCategory == .entries {
+          EntriesSettingsSections(model: model)
+        }
         if selectedCategory == .agents {
           AgentSettingsSections(model: model)
+        }
+        if selectedCategory == .team {
+          TeamSettingsSections(model: model)
         }
       }
       .formStyle(.grouped)

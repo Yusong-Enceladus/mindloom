@@ -17,20 +17,37 @@ public struct SpaceStores: Sendable {
   public let states: any SpaceStateStore
   public let keys: any SpaceKeyStore
   public let device: any SpaceDeviceStore
+  /// This Mac's own access to the team Spark (v8 B1): its credential and key.
+  public let access: any MemberAccessStore
+  /// What this Mac still has to deliver to its spaces (v8 C3), on disk.
+  public let outbox: any SpaceOutboxStore
+  /// A private 0700 folder for ssh's known_hosts and short-lived key files.
+  public let gateDirectory: URL?
 
-  public init(states: any SpaceStateStore, keys: any SpaceKeyStore, device: any SpaceDeviceStore) {
+  public init(
+    states: any SpaceStateStore, keys: any SpaceKeyStore, device: any SpaceDeviceStore,
+    access: any MemberAccessStore = MemoryMemberAccessStore(),
+    outbox: any SpaceOutboxStore = MemorySpaceOutboxStore(), gateDirectory: URL? = nil
+  ) {
     self.states = states
     self.keys = keys
     self.device = device
+    self.access = access
+    self.outbox = outbox
+    self.gateDirectory = gateDirectory
   }
 
   /// The Keychain stores of a library (the App).
   public static func keychain(dataRoot: URL, sealKeys: any PhoneSealKeyStore) -> SpaceStores {
     let account = OrganizerDataRootIdentity.hash(of: dataRoot)
+    let spaces = dataRoot.appendingPathComponent("spaces")
     return SpaceStores(
-      states: FileSpaceStateStore(directory: dataRoot.appendingPathComponent("spaces")),
+      states: FileSpaceStateStore(directory: spaces),
       keys: KeychainSpaceKeyStore(account: account),
-      device: KeychainSpaceDeviceStore(account: account, sealKeys: sealKeys))
+      device: KeychainSpaceDeviceStore(account: account, sealKeys: sealKeys),
+      access: KeychainMemberAccessStore(account: account),
+      outbox: FileSpaceOutboxStore(directory: spaces),
+      gateDirectory: dataRoot.appendingPathComponent("team-gate", isDirectory: true))
   }
 
   /// File stores for a synthetic root only (refused anywhere else).
@@ -49,9 +66,12 @@ public struct SpaceStores: Sendable {
     }
     let secrets = try FileSpaceSecretStore(
       directory: root.appendingPathComponent("space-keys", isDirectory: true), allowed: allowed)
+    let spaces = root.appendingPathComponent("spaces")
     return SpaceStores(
-      states: FileSpaceStateStore(directory: root.appendingPathComponent("spaces")),
-      keys: secrets, device: secrets)
+      states: FileSpaceStateStore(directory: spaces), keys: secrets, device: secrets,
+      access: FileMemberAccessStore(secrets: secrets),
+      outbox: FileSpaceOutboxStore(directory: spaces),
+      gateDirectory: root.appendingPathComponent("team-gate", isDirectory: true))
   }
 
   /// This Mac's device keys, made on first use (a new id and signing key next
@@ -176,5 +196,55 @@ public struct KeychainSpaceDeviceStore: SpaceDeviceStore {
     item[kSecAttrLabel] = "Mindloom space device key"
     let status = SecItemAdd(item as CFDictionary, nil)
     guard status == errSecSuccess else { throw OrganizerKeyStoreError.keychain(status) }
+  }
+}
+
+/// This Mac's own access record to the team Spark (credential, the seed of
+/// its SSH key, the route): service `com.bestasr.member-access`, account =
+/// the root hash; this device only, never synchronized.
+public struct KeychainMemberAccessStore: MemberAccessStore {
+  public static let service = "com.bestasr.member-access"
+  public let account: String
+
+  public init(account: String) { self.account = account }
+
+  private var query: [CFString: Any] {
+    [kSecClass: kSecClassGenericPassword, kSecAttrService: Self.service, kSecAttrAccount: account]
+  }
+
+  public func load() throws -> MemberAccessRecord? {
+    var request = query
+    request[kSecReturnData] = true
+    request[kSecMatchLimit] = kSecMatchLimitOne
+    var result: CFTypeRef?
+    let status = SecItemCopyMatching(request as CFDictionary, &result)
+    if status == errSecItemNotFound { return nil }
+    guard status == errSecSuccess else { throw OrganizerKeyStoreError.keychain(status) }
+    let decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .secondsSince1970
+    guard let data = result as? Data,
+      let record = try? decoder.decode(MemberAccessRecord.self, from: data)
+    else { throw OrganizerKeyStoreError.unreadable }
+    return record
+  }
+
+  public func save(_ record: MemberAccessRecord) throws {
+    let encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .secondsSince1970
+    _ = SecItemDelete(query as CFDictionary)
+    var item = query
+    item[kSecValueData] = try encoder.encode(record)
+    item[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+    item[kSecAttrSynchronizable] = false
+    item[kSecAttrLabel] = "Mindloom team access"
+    let status = SecItemAdd(item as CFDictionary, nil)
+    guard status == errSecSuccess else { throw OrganizerKeyStoreError.keychain(status) }
+  }
+
+  public func delete() throws {
+    let status = SecItemDelete(query as CFDictionary)
+    guard status == errSecSuccess || status == errSecItemNotFound else {
+      throw OrganizerKeyStoreError.keychain(status)
+    }
   }
 }

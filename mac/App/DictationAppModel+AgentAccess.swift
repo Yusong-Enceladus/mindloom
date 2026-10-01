@@ -21,7 +21,10 @@ extension DictationAppModel {
       memory: AppAgentMemory(app: self), records: repository,
       // Each grant's secret: the login Keychain, this Mac only.
       secrets: KeychainAgentGrantSecretStore(dataRoot: dataRoot), consent: presenter)
-    let server = AgentSocketServer(dataRoot: dataRoot, service: service)
+    // The same socket serves the owner's `mindloom` command line (V8
+    // contract A3), answered only while 设置 → 入口 has it on.
+    let server = AgentSocketServer(
+      dataRoot: dataRoot, service: service, owner: entryOwnerChannel())
     agentAccess.service = service
     agentAccess.server = server
     agentAccess.store = repository

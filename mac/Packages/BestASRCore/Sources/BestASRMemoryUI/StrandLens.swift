@@ -119,7 +119,14 @@ struct StrandLens: View {
           .zhijiMorph("thread-\(eventID)", in: morph, isSource: false)
           EvidencePanel(
             model: model, status: status, state: state, colors: colors, focused: $focused,
-            openRow: openRow
+            openRow: openRow,
+            addNextStep: actions.addToReminders.map { add in
+              { flag in
+                add(
+                  MemoryReminderRequest(
+                    eventID: eventID, matterTitle: detail.title, text: flag.text, date: flag.date))
+              }
+            }
           )
           .frame(width: Self.panelWidth)
         }
@@ -987,6 +994,10 @@ struct EvidencePanel: View {
   let colors: MatterColors
   @Binding var focused: String?
   let openRow: (String) -> Void
+  /// 把下一步加到提醒事项 (V8 contract A5); nil hides the button.
+  var addNextStep: (@MainActor (MemoryMatterStatus.Flag) -> Void)? = nil
+  /// The step just added (text and day), so one click adds one reminder.
+  @State private var addedNextStep: String?
 
   var body: some View {
     VStack(alignment: .leading, spacing: 14) {
@@ -1040,6 +1051,20 @@ struct EvidencePanel: View {
           }
           Text(LoomPanel.monthDay(flag.date, state.calendar, weekday: true))
             .metaStyle(palette)
+          if let addNextStep {
+            // Written only on this click; never automatic.
+            let key = "\(flag.text)|\(flag.date.timeIntervalSince1970)"
+            Button {
+              addNextStep(flag)
+              addedNextStep = key
+            } label: {
+              Label(ZhijiCopy.addNextStepToReminders, systemImage: "checklist")
+                .font(.zhiji(12))
+            }
+            .buttonStyle(.link)
+            .disabled(addedNextStep == key)
+            .accessibilityIdentifier("bestASR.memory.addToReminders")
+          }
         }
       }
       let questions = model.allKnots.filter { $0.glyph == .question }

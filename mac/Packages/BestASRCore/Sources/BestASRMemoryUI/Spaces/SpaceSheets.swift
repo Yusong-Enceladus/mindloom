@@ -26,6 +26,7 @@ public struct SpaceSheetHost: View {
           SpaceItemsSheet(spaceID: s, eventID: e, state: state, actions: actions)
         case .review(let id): SpaceReviewSheet(spaceID: id, state: state, actions: actions)
         case .audit(let id): SpaceAuditSheet(spaceID: id, state: state, actions: actions)
+        case .handover: HandoverSheet(state: state, actions: actions)
         case .propose(let s, let e):
           SpaceProposeSheet(spaceID: s, eventID: e, state: state, actions: actions)
         }
@@ -254,6 +255,7 @@ struct SpaceMembersSheet: View {
       SpaceSheetFrame(title: "\(space.name) · 邀请和成员", actions: actions) {
         Text("放在\(state.hostLabel) · \(space.ownerKind.title) · 你是\(space.role.title)")
           .font(.zhiji(12)).foregroundStyle(palette.secondary)
+        SpaceV8Notices(space: space, state: state, actions: actions)
         if space.can("invite") { inviteSection(space) }
         if space.can("approve_joins") { requests(space) }
         members(space)

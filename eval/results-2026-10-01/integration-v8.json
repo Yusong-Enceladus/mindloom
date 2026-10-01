@@ -1,0 +1,217 @@
+{
+ "schemaVersion": 1,
+ "kind": "v8-integration",
+ "date": "2026-10-01",
+ "note": "Synthetic data only. Counts and check names; no content, key, code, host or path. Both sides' v8 work (contract A entries, B lab infrastructure, C shared-space leftovers, the adversarial review fixes) merged into the organizer's main and the Mac client's hackathon/base; every end to end ran against one fresh integrated organizer instance.",
+ "tests": {
+  "organizer_pytest_mac": {
+   "python": "3.12",
+   "sqlcipher": "4.12.0",
+   "passed": 762,
+   "skipped": 1,
+   "xfailed": 1,
+   "seconds": 214.9,
+   "note": "before the integration tests: 760 / 1 / 1"
+  },
+  "organizer_pytest_aarch64": {
+   "passed": 761,
+   "xfailed": 1,
+   "seconds": 320.6,
+   "note": "on the organizing device, memory capped at 1.5 GB; the usual one-test collection difference"
+  },
+  "organizer_integration_tests": {
+   "file": "spark/tests/test_v8_integration.py",
+   "tests": 2,
+   "what": [
+    "one withdrawn item takes its map knot, the handover pack and the snapshot that cite it",
+    "a restore whose purge names a later withdrawal clears it from the restored map at the next lease"
+   ]
+  },
+  "mac_core_package": {
+   "executed": 969,
+   "skipped": 23,
+   "failed": 0,
+   "bundles": 46
+  },
+  "mac_link_package": {
+   "executed": 119,
+   "skipped": 1,
+   "failed": 0,
+   "MindloomLinkTests": 47,
+   "MindloomSpacesTests": 72,
+   "note": "the member bridge live test ran against the instance (13/13); the skip is the opt-in spaces live test"
+  },
+  "mac_app_debug_build": "succeeded (share extension, bundled helper, Chrome extension in Resources; codesign --deep --strict ok; built permissions verified)",
+  "ios_simulator": {
+   "executed": 158,
+   "passed": 157,
+   "skipped": 1,
+   "failed": 0
+  },
+  "mac_checks": [
+   "swift-format lint --strict: no finding in any Swift file v8 added or changed (one older file keeps its pre-existing findings)",
+   "privacy scan: 0 findings",
+   "product consistency",
+   "traceability",
+   "project drift",
+   "permission lint"
+  ]
+ },
+ "end_to_end": {
+  "privacy": {
+   "passed": 68,
+   "failed": 0,
+   "seconds": 139.9,
+   "organize_seconds": 80.6,
+   "files_scanned": 9706,
+   "plaintext_hits": 0
+  },
+  "phone": {
+   "passed": 67,
+   "failed": 0,
+   "seconds": 375.5,
+   "organize_seconds": 48.4,
+   "pairing_seconds": 2.6,
+   "authorized_keys_byte_identical": true
+  },
+  "spaces_two_libraries": {
+   "passed": 57,
+   "checks": 57,
+   "seconds": 262,
+   "plaintext_hits": 0
+  },
+  "spaces_infra_mac": {
+   "passed": 53,
+   "checks": 53,
+   "seconds": {
+    "audio": 9,
+    "backup": 52,
+    "done": 57,
+    "joined": 7,
+    "organized": 39,
+    "outbox": 18,
+    "pack": 49,
+    "second-mac": 18
+   }
+  },
+  "member_bridge_live_mac": {
+   "passed": 13,
+   "checks": 13
+  },
+  "gate": {
+   "access": {
+    "passed": 19,
+    "checks": 19,
+    "seconds": 13.2,
+    "check_names": [
+     "ticket registered",
+     "invite key cannot run a command",
+     "enrolled through the invite key",
+     "invite key dead after enrollment",
+     "bridge: /v1/access/me",
+     "bridge: personal store refused",
+     "bridge: infra health refused for a plain member",
+     "bridge: infra health for an org admin",
+     "infra health: chat model up",
+     "infra health: unified memory reported",
+     "bridge: share with a 1 MB original",
+     "bridge: backup streamed",
+     "backup opens with the derived key",
+     "backup holds no plaintext",
+     "member key cannot run a command",
+     "member key cannot open a tunnel",
+     "unpaired",
+     "authorized_keys byte-identical",
+     "member key refused after unpairing"
+    ]
+   },
+   "member_gate": {
+    "passed": 31,
+    "checks": 31,
+    "seconds": 27.2,
+    "check_names": [
+     "owner: a ticket for each member",
+     "A and B enrolled, each with its own key",
+     "the invite keys are dead after enrollment",
+     "each bridge answers as its own member",
+     "B cannot read A's space summary",
+     "B cannot read A's space log",
+     "B gets no key of A's space",
+     "B cannot list A's Macs",
+     "B cannot unpair A",
+     "B's member list holds only B",
+     "B's audit view holds no row about A",
+     "B (no admin anywhere) cannot invite a new member",
+     "B cannot read the Spark's health",
+     "B cannot reach the owner's store",
+     "B cannot sign as A's member id (access_member)",
+     "B cannot sign with another device (access_device)",
+     "A's credential over B's key is refused at the gate",
+     "two Authorization headers are refused",
+     "A lets B into the space",
+     "B reads A's item once let in",
+     "A removes B (member.remove with a new key)",
+     "removed B cannot read the space any more",
+     "removed B gets no new key",
+     "A still reads both items",
+     "owner unpairs B",
+     "B's key refused after unpairing",
+     "A unaffected by B's unpairing",
+     "B's unpaired device cannot enroll again",
+     "no item text on the Spark in the clear",
+     "A's key refused after unpairing",
+     "authorized_keys byte-identical"
+    ]
+   },
+   "spaces_c": {
+    "passed": 29,
+    "checks": 29,
+    "seconds": 22.7,
+    "check_names": [
+     "owner: ticket for A",
+     "A enrolled",
+     "A: device ticket for its second Mac",
+     "A2 enrolled under A's member id",
+     "devices: A2 still to add to the space and the org",
+     "A signs device.add and org.device_add for A2",
+     "A2 reads what A shared",
+     "A2 is admin in the org space",
+     "B enrolled",
+     "B joined",
+     "B shares an audio part",
+     "A2 opens the audio part",
+     "the sound matches the declared part",
+     "on the Spark: the audio is a ciphertext file",
+     "on the Spark: no audio sentinel anywhere",
+     "one audio part per recording",
+     "retried share accepted once",
+     "B shares a snapshot citing A's item",
+     "withdrawing the cited item removes the snapshot",
+     "B withdraws the audio part",
+     "on the Spark: the audio file is gone",
+     "the blob answers 410",
+     "A adds B as org admin (B's own Mac)",
+     "B is admin in the org space",
+     "A unpairs A2",
+     "devices: A2 still to remove",
+     "A retires A2 (device.remove with a new key, org.device_remove)",
+     "devices: nothing left to remove",
+     "authorized_keys byte-identical"
+    ]
+   }
+  },
+  "agent_mcp": {
+   "swiftpm_helper": "43/43",
+   "app_bundle_helper": "43/43"
+  },
+  "browser_native_host": {
+   "ChromeExtensionEndToEndTests": {
+    "swiftpm_helper_repository_extension": "passed",
+    "app_helper_bundled_extension": "passed"
+   },
+   "BrowserHostTests_app_helper": "5/5",
+   "OwnerChannelTests_app_helper": "3/3",
+   "app_bundle_seal_after": "codesign --verify --deep --strict ok"
+  }
+ }
+}

@@ -1,0 +1,151 @@
+{
+ "schemaVersion": 1,
+ "kind": "v8-spaces-infra-summary",
+ "date": "2026-10-01",
+ "branch": "claude/v8",
+ "dataPolicy": "synthetic data only; the real library and ~/Downloads were not read; the installed App was not launched; no inference on the Mac (the handover pack was written by the organizing device's model on its test instance)",
+ "requirements": [
+  "INFRA-001",
+  "INFRA-002",
+  "INFRA-003",
+  "INFRA-004",
+  "INFRA-005",
+  "INFRA-006",
+  "INFRA-007",
+  "SPACE-013",
+  "SPACE-014",
+  "SPACE-015",
+  "SPACE-016"
+ ],
+ "linkPackageSuite": {
+  "command": "swift test (Packages/MindloomLink)",
+  "MindloomSpacesTests": {
+   "executed": 62,
+   "skipped": 2,
+   "failed": 0,
+   "new": [
+    "MemberAccessTests (10)",
+    "SpaceInfraTests (12)",
+    "MemberBridgeLiveTests (1, opt-in)"
+   ]
+  },
+  "MindloomLinkTests": {
+   "executed": 47,
+   "failed": 0
+  }
+ },
+ "corePackageSuite": {
+  "command": "swift test --skip QwenWhisperFeaturesTests (BestASRCore)",
+  "bundles": 46,
+  "executed": 967,
+  "passed": 944,
+  "skipped": 23,
+  "failed": 0,
+  "new": [
+   "SpaceInfraMacTests (3)",
+   "PhonePairingTests.testTeamRoutePinsBothHostsAndTheRelayLineTakesOnlyTheTicketKey",
+   "SpaceUITests.testAudioPartsSnapshotsAndHandoverInTheRows (+4 rendered sheets)",
+   "SpacesInfraEndToEndTests (1, opt-in)"
+  ]
+ },
+ "appBuild": "xcodebuild -scheme BestASR -configuration Debug: BUILD SUCCEEDED",
+ "liveRuns": {
+  "MemberBridgeLiveTests": {
+   "checks": 13,
+   "passed": 13,
+   "seconds": 7,
+   "via": "the organizing device's real sshd, the gate's bridge, a relay hop",
+   "runs": [
+    "13/13",
+    "13/13 after caching the credential per bridge session"
+   ]
+  },
+  "SpacesInfraEndToEndTests": {
+   "checks": 52,
+   "passed": 52,
+   "secondsAtStep": {
+    "audio": 10,
+    "backup": 41,
+    "done": 45,
+    "joined": 7,
+    "organized": 29,
+    "outbox": 18,
+    "pack": 38,
+    "second-mac": 18
+   },
+   "checkNames": [
+    "B enrolled with its own key and credential",
+    "B's bridge: /v1/access/me is B's Mac",
+    "B's bridge refuses the owner's store",
+    "A sees B's name and fingerprint",
+    "B joined the space through its bridge",
+    "B shares through its bridge (0)",
+    "B shares through its bridge (1)",
+    "A shares a meeting part with its audio",
+    "the whole recording is never shared",
+    "B opens the audio part (bytes as sent)",
+    "B's length check passes before playing",
+    "on the Spark: the audio is a sealed file",
+    "on the Spark: the stored audio holds none of the sound's bytes",
+    "B2 enrolled under B's member id",
+    "B's work list: B2 still to add to the space",
+    "B2 takes the space in",
+    "B2 reads A's items",
+    "B2 opens the audio part too",
+    "A reads B2's item as B's",
+    "B unpairs B2",
+    "B's work list: B2 still to remove from the space",
+    "retiring B2 rotated the key",
+    "B2 is out of the signed roster",
+    "B2 cannot reach the Spark any more",
+    "B's share waits while the link is down",
+    "B's outbox is on disk",
+    "B's outbox sent it after reconnecting",
+    "the Spark logged it once",
+    "the space organizer made the matter",
+    "handover pack queued",
+    "the Spark's model wrote the pack",
+    "the pack cites the space's items",
+    "the pack shown on the Mac has no placeholder left",
+    "the pack is shared as a snapshot",
+    "B is the matter's 负责人",
+    "B sees the pack given with it",
+    "a withdrawn cited item takes the snapshot along",
+    "B's Mac accepted the Spark's removal record",
+    "backup pulled and opens with the space's key",
+    "the backup holds no plaintext",
+    "restored, with the later withdrawal purged again",
+    "after the restore A reads the items",
+    "after the restore B reads the items",
+    "the withdrawal holds after the restore",
+    "the audio part opens after the restore",
+    "sharing works after the restore",
+    "no sentinel anywhere on the Spark",
+    "no number on the Spark",
+    "the text reaches the Spark only in organizing payloads (members get ciphertext)",
+    "no number in any request (masked for organizing)",
+    "the sound's bytes are never in any request",
+    "authorized_keys byte-identical"
+   ],
+   "runs": [
+    "run 1: 48/50 (two check-design bugs in the test, fixed)",
+    "run 2: 52/52",
+    "run 3 (after caching the credential per bridge session): 52/52"
+   ]
+  },
+  "authorizedKeysSha256Prefix": "6d5585addb92e2d3",
+  "authorizedKeysByteIdentical": true
+ },
+ "privacy": [
+  "no sentinel in the organizing device's data or logs",
+  "no number in the spaces data",
+  "the shared text reaches the organizing device only inside masked organizing payloads",
+  "no number and none of the sound's bytes in any request",
+  "the stored audio part is an MLB1 ciphertext holding none of the sound's bytes",
+  "the backup stream holds no plaintext"
+ ],
+ "notInTheLiveRun": [
+  "escrow takeover (space.recover) and the member's fingerprint confirmation: in-memory Spark only"
+ ],
+ "notLookedAtInARunningApp": true
+}

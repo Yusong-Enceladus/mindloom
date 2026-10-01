@@ -176,7 +176,7 @@ public struct IntakeInboxIngestor: RemoteOrganizerInboxIngesting {
   }
 
   /// A link kept as text: its title and note, then the URL on its own line.
-  static func linkText(url: String, title: String?, note: String?) -> String {
+  public static func linkText(url: String, title: String?, note: String?) -> String {
     var lines: [String] = []
     for part in [title, note] {
       guard let part = part?.trimmingCharacters(in: .whitespacesAndNewlines), !part.isEmpty,
@@ -191,7 +191,7 @@ public struct IntakeInboxIngestor: RemoteOrganizerInboxIngesting {
   /// Writes a phone document into a private folder (0700, file 0600) in the
   /// user's temporary directory, so the ordinary file rules can classify and
   /// stage it. The folder is removed as soon as intake has copied it.
-  static func writeScratch(_ bytes: Data, filename: String) throws -> URL {
+  public static func writeScratch(_ bytes: Data, filename: String) throws -> URL {
     let folder = FileManager.default.temporaryDirectory
       .appendingPathComponent("bestasr-inbox-\(UUID().uuidString)", isDirectory: true)
     guard mkdir(folder.path, S_IRWXU) == 0 else { throw CocoaError(.fileWriteUnknown) }
@@ -210,12 +210,12 @@ public struct IntakeInboxIngestor: RemoteOrganizerInboxIngesting {
     return url
   }
 
-  static func removeScratch(_ folder: URL) {
+  public static func removeScratch(_ folder: URL) {
     try? FileManager.default.removeItem(at: folder)
   }
 
   /// The pasteboard type of image bytes, from their signature.
-  static func imageType(_ data: Data) -> String? {
+  public static func imageType(_ data: Data) -> String? {
     let bytes = [UInt8](data.prefix(12))
     if bytes.starts(with: [0x89, 0x50, 0x4E, 0x47]) { return UTType.png.identifier }
     if bytes.starts(with: [0xFF, 0xD8, 0xFF]) { return UTType.jpeg.identifier }

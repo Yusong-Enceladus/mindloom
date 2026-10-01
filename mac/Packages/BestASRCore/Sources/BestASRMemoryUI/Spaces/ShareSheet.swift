@@ -86,9 +86,37 @@ struct ShareSheet: View {
             draft, .rope(rule: .ask), "整根绳「\(rope.title)」",
             "绳上现在有 \(rope.matters) 件事；以后放到这根绳上的事也会共享（每次先问你，或自动）。")
         }
+        scaleOption(
+          draft, .snapshot, "一份摘要（冻结）",
+          "把这件事现在的标题、进展和要点写成一条新的摘要放进空间，署你的名字；之后不会跟着变。它引用的空间素材被撤回时，摘要也会下架。")
       }
-      SpaceSection(title: "会共享的素材 · \(value.review.ticked.count)/\(value.review.candidates.count)")
-      {
+      if isScale(value.scale, .snapshot) {
+        // Review V8R-11: the exact text members will get, editable; it is made
+        // only of what rests on the items ticked below.
+        SpaceSection(title: "摘要的内容（发出去就是这样，可以改）") {
+          TextEditor(
+            text: Binding(
+              get: { draft.wrappedValue.snapshotText },
+              set: {
+                draft.wrappedValue.snapshotText = $0
+                draft.wrappedValue.snapshotEdited = true
+              })
+          )
+          .font(.zhiji(13)).frame(minHeight: 120)
+          .accessibilityIdentifier("bestASR.spaces.snapshotText")
+          Text("只用下面勾选的素材里的要点；没勾的私人口述和带号码的素材不会被摘进去。进展一句只在全部勾选时才写。")
+            .font(.zhiji(12)).foregroundStyle(palette.secondary)
+          if SpaceSnapshotText.hasNumbers(value.snapshotText) {
+            Text("摘要里有像电话、卡号、证件号的数字：每位成员都会看到原样的数字，确认再共享。")
+              .font(.zhiji(12, .semibold)).foregroundStyle(palette.label)
+          }
+        }
+      }
+      SpaceSection(
+        title: isScale(value.scale, .snapshot)
+          ? "摘要可以用到的素材 · \(value.review.ticked.count)/\(value.review.candidates.count)"
+          : "会共享的素材 · \(value.review.ticked.count)/\(value.review.candidates.count)"
+      ) {
         ForEach(value.review.candidates) { candidate in
           reviewRow(draft, candidate)
         }
@@ -120,16 +148,21 @@ struct ShareSheet: View {
 
   private func selectedCount(_ value: SpaceShareDraft) -> Int {
     if case .item = value.scale { return value.picked == nil ? 0 : 1 }
+    if case .snapshot = value.scale {
+      return value.snapshotText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0 : 1
+    }
     return value.review.ticked.count
   }
 
   private func shareTitle(_ value: SpaceShareDraft) -> String {
-    "共享 \(selectedCount(value)) 条"
+    if case .snapshot = value.scale { return "共享这份摘要" }
+    let audio = value.review.audio.intersection(value.review.ticked).count
+    return "共享 \(selectedCount(value)) 条" + (audio > 0 ? "（含 \(audio) 段原音）" : "")
   }
 
   private func isScale(_ a: SpaceShareScale, _ b: SpaceShareScale) -> Bool {
     switch (a, b) {
-    case (.item, .item), (.matter, .matter), (.rope, .rope): true
+    case (.item, .item), (.matter, .matter), (.rope, .rope), (.snapshot, .snapshot): true
     default: false
     }
   }
@@ -169,6 +202,7 @@ struct ShareSheet: View {
         draft.wrappedValue.picked = candidate.id
       } else {
         draft.wrappedValue.review.toggle(candidate.id)
+        draft.wrappedValue.refreshSnapshot()
       }
     } label: {
       HStack(alignment: .top, spacing: 10) {
@@ -191,6 +225,9 @@ struct ShareSheet: View {
           if let reason = candidate.untickedReason {
             Text(reason).font(.zhiji(11)).foregroundStyle(palette.mateInk)
           }
+          if on, !single, candidate.audioPossible {
+            audioToggle(draft, candidate)
+          }
         }
         Spacer(minLength: 0)
       }
@@ -199,5 +236,26 @@ struct ShareSheet: View {
     }
     .buttonStyle(.plain)
     .accessibilityLabel("\(candidate.title)，\(on ? "已勾选" : "未勾选")")
+  }
+
+  /// 附上这段原音: off by default; only members can hear it, the organizing
+  /// device stores it locked and cannot open it.
+  private func audioToggle(_ draft: Binding<SpaceShareDraft>, _ candidate: SpaceShareCandidate)
+    -> some View
+  {
+    let on = draft.wrappedValue.review.audio.contains(candidate.id)
+    return Button {
+      draft.wrappedValue.review.toggleAudio(candidate.id)
+    } label: {
+      HStack(spacing: 6) {
+        Image(systemName: on ? "checkmark.square.fill" : "square")
+          .foregroundStyle(on ? palette.accent : palette.tertiary)
+        Text("附上这段原音（只有成员能听；整理设备只存锁好的文件，打不开）")
+          .font(.zhiji(11)).foregroundStyle(palette.secondary)
+      }
+    }
+    .buttonStyle(.plain)
+    .accessibilityIdentifier("bestASR.spaces.attachAudio")
+    .accessibilityLabel("附上这段原音，\(on ? "已勾选" : "未勾选")")
   }
 }

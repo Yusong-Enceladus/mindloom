@@ -7,7 +7,8 @@
   "injectBaseEntitlements": false,
   "requestPolicy": "on-demand-per-feature",
   "requiredEntitlements": [
-    "com.apple.security.device.audio-input"
+    "com.apple.security.device.audio-input",
+    "com.apple.security.personal-information.calendars"
   ],
   "forbiddenEntitlements": [
     "com.apple.security.app-sandbox",
@@ -50,6 +51,30 @@
       "runtimeAuthorizationAPI": "AXIsProcessTrustedWithOptions(kAXTrustedCheckOptionPrompt)",
       "requestTiming": "on-demand",
       "deniedBehavior": "Do not inspect or write another app; preserve the transcript and offer manual copy plus a System Settings recovery action."
+    },
+    {
+      "id": "calendars",
+      "requirementRefs": [
+        "PRD-12.12",
+        "ENTRY-007"
+      ],
+      "usageDescriptionKey": "NSCalendarsFullAccessUsageDescription",
+      "usageDescription": "织机 reads only the calendars you choose in Settings, and never writes to them.",
+      "runtimeAuthorizationAPI": "EKEventStore.requestFullAccessToEvents",
+      "requestTiming": "on-demand",
+      "deniedBehavior": "Keep the calendar entry off, read nothing, and show the System Settings path; every other entry and capture keeps working."
+    },
+    {
+      "id": "reminders",
+      "requirementRefs": [
+        "PRD-12.12",
+        "ENTRY-008"
+      ],
+      "usageDescriptionKey": "NSRemindersFullAccessUsageDescription",
+      "usageDescription": "织机 adds a reminder only when you click to add a next step to Reminders.",
+      "runtimeAuthorizationAPI": "EKEventStore.requestFullAccessToReminders (at the first click of 把下一步加到提醒事项)",
+      "requestTiming": "on-demand",
+      "deniedBehavior": "Write nothing and show the System Settings path; the matter page is unchanged."
     }
   ],
   "workerPolicy": {

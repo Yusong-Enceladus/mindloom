@@ -149,12 +149,16 @@ public struct SpaceShareCandidate: Identifiable, Equatable, Sendable {
   public let numberLabels: [String]
   /// An original members could open (a file, a screenshot, the segment's audio).
   public let hasOriginal: Bool
+  /// A part of a recording whose audio this Mac still has and may attach
+  /// for members (v8 C1): a part, never the whole, at most 15 minutes.
+  public let audioPossible: Bool
 
   public init(
     id: String, sourceItemID: String, kind: Kind, wireKind: String, title: String,
     preview: String, startedAt: Date?, isPrivateDictation: Bool, numberLabels: [String],
-    hasOriginal: Bool
+    hasOriginal: Bool, audioPossible: Bool = false
   ) {
+    self.audioPossible = audioPossible
     self.id = id.lowercased()
     self.sourceItemID = sourceItemID
     self.kind = kind
@@ -207,6 +211,9 @@ public enum SpaceShareScale: Equatable, Sendable {
   case matter(rule: SpaceRuleMode)
   /// 整根绳: everything on a rope, now and later.
   case rope(rule: SpaceRuleMode)
+  /// 一份摘要: the matter's summary as it is now, frozen into a new item
+  /// authored by the sharer (v8 C2).
+  case snapshot
 }
 
 /// "以后新归进来的也共享": ask each time, automatic, or not at all.
@@ -217,6 +224,8 @@ public enum SpaceRuleMode: String, Codable, Equatable, Sendable {
 public struct SpaceShareReview: Equatable, Sendable {
   public private(set) var candidates: [SpaceShareCandidate]
   public var ticked: Set<String>
+  /// Parts whose audio goes with them, for members only (never ticked by default).
+  public private(set) var audio: Set<String> = []
 
   public init(candidates: [SpaceShareCandidate]) {
     self.candidates = candidates
@@ -230,11 +239,66 @@ public struct SpaceShareReview: Equatable, Sendable {
   public mutating func toggle(_ id: String) {
     if ticked.contains(id) {
       ticked.remove(id)
+      audio.remove(id)
       return
     }
     if let recording = candidates.first(where: { $0.id == id })?.recordingID {
-      for other in candidates where other.recordingID == recording { ticked.remove(other.id) }
+      for other in candidates where other.recordingID == recording {
+        ticked.remove(other.id)
+        audio.remove(other.id)
+      }
     }
     ticked.insert(id)
+  }
+
+  /// Attaches or takes off a ticked part's audio (members only).
+  public mutating func toggleAudio(_ id: String) {
+    if audio.contains(id) {
+      audio.remove(id)
+      return
+    }
+    guard ticked.contains(id), candidates.first(where: { $0.id == id })?.audioPossible == true
+    else { return }
+    audio.insert(id)
+  }
+}
+
+/// The text of a 一份摘要 snapshot as the member will see and may edit it
+/// before it goes (review V8R-11): the matter's title; its progress line only
+/// when every item of the matter is ticked in the review list; and only the
+/// facts that rest on at least one ticked item (a fact drawn only from an
+/// unticked private dictation or an item with numbers never goes by itself).
+public enum SpaceSnapshotText {
+  public struct Fact: Equatable, Sendable {
+    public let text: String
+    /// The local items it rests on.
+    public let sourceIDs: [String]
+
+    public init(text: String, sourceIDs: [String]) {
+      self.text = text
+      self.sourceIDs = sourceIDs.map { $0.lowercased() }
+    }
+  }
+
+  public static let maximumFacts = 12
+
+  public static func make(
+    title: String, statusLine: String?, facts: [Fact], review: SpaceShareReview
+  ) -> String {
+    let ticked = Set(review.selected.map { $0.sourceItemID.lowercased() })
+    let everything = !review.candidates.isEmpty && review.selected.count == review.candidates.count
+    var lines = ["# \(title)"]
+    if everything, let statusLine, !statusLine.isEmpty { lines.append(statusLine) }
+    for fact in facts where !fact.sourceIDs.isEmpty && !ticked.isDisjoint(with: fact.sourceIDs) {
+      guard lines.count < maximumFacts + 2 else { break }
+      lines.append("- \(fact.text)")
+    }
+    return lines.joined(separator: "\n")
+  }
+
+  /// Whether the text holds something that looks like a phone, card or id
+  /// number (shown as a warning before it goes).
+  public static func hasNumbers(_ text: String) -> Bool {
+    text.range(of: #"\d[\d\s-]{6,}\d"#, options: .regularExpression) != nil
   }
 }

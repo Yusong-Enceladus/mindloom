@@ -1,7 +1,11 @@
 // mindloom-mcp: the MCP server an agent (Claude Code, Claude Desktop, Codex,
-// Cursor …) starts over stdio. It holds no library data and no secret: it
-// forwards each MCP message to the running 织机 App over a Unix socket in
-// the data root's private folder and forwards the App's answers back
+// Cursor …) starts over stdio; with a command (`add`, `due`) or under the
+// name `mindloom`, the owner's own command line (OwnerCommandLineRunner);
+// started by Chrome with an extension origin, the native messaging host of
+// the Chrome extension 「收进织机」 (BrowserHostRunner).
+// It holds no library data and no secret: it forwards each MCP message to
+// the running 织机 App over a Unix socket in the data root's private folder
+// and forwards the App's answers back
 // (AGENT-CONTRACT §1). The App decides everything (consent, scope, masking,
 // audit). While the App is not running, this helper answers the handshake
 // and the tool list itself and every tool call returns
@@ -148,6 +152,13 @@ final class Bridge: @unchecked Sendable {
     case .invalid:
       if let reply = AgentOfflineResponder.reply(to: message) { emit(reply) }
       return
+    case .request(let id, let method, _) where OwnerChannel.isOwnerMethod(method):
+      // The owner's command-line methods are never an agent's: not
+      // forwarded, whatever the agent sends (V8 contract A3).
+      emit(MCPMessage.error(id: id, code: MCPErrorCode.methodNotFound, message: "Method not found"))
+      return
+    case .notification(let method, _) where OwnerChannel.isOwnerMethod(method):
+      return
     default: break
     }
     let descriptor = connectedSocket(replay: !isInitialize, replayInitialized: !isInitialized)
@@ -212,6 +223,18 @@ let socketPath = AgentSocketLocation.dataRoot(environment: environment).map {
   AgentSocketLocation.socketURL(dataRoot: $0).path
 }
 let arguments = CommandLine.arguments.dropFirst()
+// Chrome starts a native messaging host with the calling extension's origin
+// as the first argument (V8 contract A6). Any other origin is refused there.
+if let origin = arguments.first, BrowserExtension.isHostLaunch(origin) {
+  BrowserHostRunner(socketPath: socketPath, origin: origin).run()
+}
+// `mindloom add …` / `mindloom due`: the owner's own command line (V8
+// contract A3), the same binary under a second name or with a command.
+let invokedAsMindloom =
+  CommandLine.arguments.first.map { ($0 as NSString).lastPathComponent == "mindloom" } ?? false
+if invokedAsMindloom || arguments.first.map(OwnerCommand.commands.contains) == true {
+  OwnerCommandLineRunner(socketPath: socketPath).run(Array(arguments))
+}
 if arguments.contains("--version") {
   print("mindloom-mcp \(MCPServerInfo.version)")
   exit(0)
@@ -232,6 +255,10 @@ if arguments.contains("--help") {
     mindloom-mcp：织机的 MCP 服务（stdio）。由 Claude Code、Claude Desktop 等启动，不需要手动运行。
       --check    检查织机是否在运行
       --version  版本
+    同一个程序也是你自己的命令行入口（需要在设置 → 入口里打开）：
+      mindloom-mcp add "文字" / --file 路径 / 管道输入；mindloom-mcp due
+      以 mindloom 的名字链接它之后：mindloom add …、mindloom due
+    它也是 Chrome 扩展「收进织机」的本机连接程序，由 Chrome 启动（需要在设置 → 入口里打开「Chrome 扩展」）。
     环境变量 MINDLOOM_DATA_ROOT：开发版使用的另一个数据目录（绝对路径）。
     """)
   exit(0)

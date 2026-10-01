@@ -1,0 +1,93 @@
+{
+ "schemaVersion": 1,
+ "kind": "v8-review-fixes-summary",
+ "date": "2026-10-01",
+ "branch": "claude/v8",
+ "dataPolicy": "synthetic data only; the real library and ~/Downloads were not read; the installed App was not launched; no inference on the Mac",
+ "findings": {
+  "fixedMacSide": [
+   "V8R-02",
+   "V8R-03",
+   "V8R-04",
+   "V8R-07",
+   "V8R-08",
+   "V8R-11",
+   "V8R-12",
+   "V8R-13",
+   "V8R-15",
+   "V8R-17 (Services default off)",
+   "V8R-18"
+  ],
+  "fixedOrganizingDeviceSide": [
+   "V8R-01",
+   "V8R-03",
+   "V8R-05",
+   "V8R-06",
+   "V8R-07",
+   "V8R-08",
+   "V8R-09",
+   "V8R-10",
+   "V8R-14",
+   "V8R-15",
+   "V8R-16"
+  ],
+  "notChanged": [
+   "V8R-17 share-drop folder signing",
+   "V8R-17 command line --file sends a path"
+  ]
+ },
+ "requirements": [
+  "INFRA-001",
+  "INFRA-002",
+  "INFRA-003",
+  "INFRA-005",
+  "INFRA-007",
+  "INFRA-008",
+  "INFRA-009",
+  "SPACE-013",
+  "SPACE-014",
+  "SPACE-015",
+  "SPACE-017",
+  "SPACE-018",
+  "ENTRY-003",
+  "ENTRY-008"
+ ],
+ "linkPackageSuite": {
+  "command": "swift test (Packages/MindloomLink)",
+  "MindloomSpacesTests": {
+   "executed": 72,
+   "skipped": 2,
+   "failed": 0,
+   "new": [
+    "V8ReviewFixTests (10)"
+   ]
+  },
+  "MindloomLinkTests": {
+   "executed": 47,
+   "failed": 0
+  }
+ },
+ "corePackageSuite": {
+  "command": "swift test --skip QwenWhisperFeaturesTests (BestASRCore)",
+  "bundles": 46,
+  "executed": 969,
+  "skipped": 23,
+  "failed": 0,
+  "new": [
+   "PhonePairingTests.testTeamRelayLinesAreReconciledWithTheSparksRecords",
+   "CalendarEntryTests.testRemindersPreferAListOnThisMac"
+  ]
+ },
+ "appBuild": "xcodebuild -scheme BestASR -configuration Debug: BUILD SUCCEEDED",
+ "organizingDeviceSuite": {
+  "command": "pytest spark/tests (Mac, Python 3.12)",
+  "passed": 760,
+  "skipped": 1,
+  "xfailed": 1,
+  "new": 21
+ },
+ "notRerun": [
+  "live end-to-end runs against the organizing device's test instance",
+  "the organizing device's suite on aarch64"
+ ]
+}

@@ -206,6 +206,8 @@ public enum ZhijiCopy {
   public static let waitsOn = "在等"
   public static let waitedBy = "被它等"
   public static let nextStep = "下一步"
+  /// v8 (V8 contract A5): written only when clicked.
+  public static let addNextStepToReminders = "把下一步加到提醒事项"
   public static let stillOpen = "还没解决"
   public static let decided = "定下来的"
   public static let promised = "答应的事"
@@ -333,7 +335,8 @@ public enum ZhijiCopy {
       lensNetCaption, lensTextCaption, drafting, draftingDetail, redrawing, mainThread,
       closedStrand, nowHeader("9月20日 周日"), nowLabel, healthOK, healthRisk, healthStuck,
       dueTodayWord, dueTomorrowWord, dueIn(3), overdue(1), promises(2), openQuestions(1),
-      waitsOn, waitedBy, nextStep, stillOpen, decided, promised, pickAKnot, evidenceCount(3),
+      waitsOn, waitedBy, nextStep, addNextStepToReminders, stillOpen, decided, promised, pickAKnot,
+      evidenceCount(3),
       theWords, openSource, dateFromEvidence, knotState("done"), knotState("doing"),
       knotState("planned"), knotState("decision"), knotState("question"), knotKind("progress"),
       knotKind("decision"), knotKind("question"), knotKind("commitment"), knotKind("deadline"),

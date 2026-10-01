@@ -39,7 +39,7 @@ import uuid
 from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterator, Optional
+from typing import Any, Callable, Iterator, Optional
 
 from . import db, keys, masking
 from .clock import Clock, WallClock
@@ -265,6 +265,15 @@ class Store:
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self._lock = threading.RLock()
         self._depth = 0
+        # v8 B6 (a shared space's store; space_organizer.py turns these on): the job queue serves the members in
+        # turn and organizes first what belongs to a matter with a near deadline. The personal store keeps plain
+        # time order (one member).
+        self.fair_members = False
+        self.deadline_days = 0
+        self.today: Optional[Callable[[], Optional[str]]] = None
+        self._served: dict[str, int] = {}
+        self._turn = 0
+        self._urgent_cache: Optional[tuple] = None
         self.conn: Optional[db.Connection] = None
         self.store_id: Optional[str] = None
         self.key_id: Optional[str] = None
@@ -603,6 +612,12 @@ class Store:
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS person_scan(item_id TEXT PRIMARY KEY, rules TEXT NOT NULL,"
             " mentions TEXT NOT NULL DEFAULT '')")
+        # --- v8 B3: handover packs (skill handover-pack, organizer/handover.py): one per request, the pack JSON with
+        # the ids of the items it cites (item_set), its run; deleted with any item it cites (purge_graph). ---
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS handover_packs(pack_id TEXT PRIMARY KEY, event_id TEXT NOT NULL,"
+            " status TEXT NOT NULL, pack TEXT, error TEXT, run_id TEXT, item_set TEXT NOT NULL DEFAULT '[]',"
+            " people TEXT NOT NULL DEFAULT '{}', as_of TEXT, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)")
         # --- v7: the matter map and relations v2 (MAP-CONTRACT sections 1-2) ---
         # event_maps: one map per event (skill matter-map): strands, knots, health and the blocks it proposed, with
         # the internal ids of the items it cites (map, JSON), the item set it was drawn from (item_set: ids, no
@@ -1046,6 +1061,11 @@ class Store:
                    (dumps(m), row["event_id"]))
             self.touch_event(row["event_id"])
             self.queue_map(row["event_id"], 1, "purge")
+        # v8: a handover pack that cites a deleted item (or was drawn from it) goes whole: it quotes and paraphrases
+        # its items, and a new one can be asked for.
+        for row in self.all("SELECT pack_id, item_set, pack FROM handover_packs"):
+            if gone & set(json.loads(row["item_set"] or "[]")) or (row["pack"] and any(i in row["pack"] for i in gone)):
+                self.x("DELETE FROM handover_packs WHERE pack_id=?", (row["pack_id"],))
         marks = ",".join("?" * len(ids))
         self.x(f"DELETE FROM relations WHERE item_id IN ({marks})", list(ids))
         for r in self.all("SELECT * FROM ropes WHERE state != 'rejected'"):
@@ -1192,15 +1212,117 @@ class Store:
 
     def claim_next_job(self) -> Optional[dict]:
         with self.tx():
-            job = self.one(
-                "SELECT * FROM jobs WHERE state='queued' AND not_before <= ? ORDER BY started_ts, item_id LIMIT 1",
-                (time.time(),),
-            )
+            plan = self.job_plan(1)
+            job = plan[0] if plan else None
             if job:
+                member = job.pop("_member", "")
+                job.pop("_urgent", None)
                 self.x("UPDATE jobs SET state='running', run_started=?, attempts=attempts+1 WHERE item_id=? AND revision=?",
                        (time.time(), job["item_id"], job["revision"]))
                 job["attempts"] += 1
+                if self.fair_members:
+                    self._turn += 1
+                    self._served[member] = self._turn
             return job
+
+    def job_plan(self, limit: int) -> list[dict]:
+        """The next `limit` queued jobs in the order they will be claimed. Plain time order, except in a shared
+        space's store (v8 B6): jobs of items that belong to a matter with a near deadline come first, and among
+        the jobs of the same urgency the members take turns (the member served longest ago first; each member's
+        own items stay in time order), so one member's bulk import does not hold back everyone else's."""
+        now = time.time()
+        if not self.fair_members and not self.deadline_days:
+            return self.all("SELECT * FROM jobs WHERE state='queued' AND not_before <= ? ORDER BY started_ts, item_id"
+                            " LIMIT ?", (now, limit))
+        jobs = self.all("SELECT * FROM jobs WHERE state='queued' AND not_before <= ? ORDER BY started_ts, item_id",
+                        (now,))
+        if not jobs:
+            return []
+        members: dict[str, str] = {}
+        if self.fair_members and self.one("SELECT 1 FROM sqlite_master WHERE type='table' AND"
+                                          " name='space_item_origins'"):
+            members = {r["item_id"]: r["member_id"] for r in self.all("SELECT item_id, member_id FROM space_item_origins")}
+        urgent = self.urgent_items()
+        pools: dict[bool, dict[str, list[dict]]] = {True: {}, False: {}}
+        for j in jobs:
+            j["_member"] = members.get(j["item_id"], "") if self.fair_members else ""
+            j["_urgent"] = j["item_id"] in urgent
+            pools[j["_urgent"]].setdefault(j["_member"], []).append(j)
+        served = dict(self._served)
+        turn = self._turn
+        out: list[dict] = []
+        for flag in (True, False):
+            pool = pools[flag]
+            while pool and len(out) < limit:
+                member = min(pool, key=lambda m: (served.get(m, 0), pool[m][0]["started_ts"], pool[m][0]["item_id"]))
+                out.append(pool[member].pop(0))
+                if not pool[member]:
+                    del pool[member]
+                turn += 1
+                served[member] = turn
+        return out
+
+    def next_brief(self) -> Optional[str]:
+        """The next matter whose card waits to be rewritten: the oldest first; in a shared space's store a matter
+        with a near deadline before the others (v8 B6)."""
+        rows = self.all("SELECT event_id FROM events WHERE needs_brief=1 AND deleted=0 ORDER BY updated_ts, handle")
+        if not rows:
+            return None
+        urgent = self.urgent_events() if self.deadline_days else set()
+        return next((r["event_id"] for r in rows if r["event_id"] in urgent), rows[0]["event_id"])
+
+    def urgent_events(self) -> set[str]:
+        """Matters whose next open dated step (a planned or ongoing fact on the card, or an open deadline or
+        commitment knot of the map) falls within deadline_days from today. Cached per store change and day."""
+        if not self.deadline_days or self.today is None:
+            return set()
+        today = self.today()
+        if not today:
+            return set()
+        key = (self.cursor(), today)
+        if self._urgent_cache is not None and self._urgent_cache[0] == key:
+            return self._urgent_cache[1]
+        from datetime import date, timedelta
+        try:
+            horizon = (date.fromisoformat(today) + timedelta(days=int(self.deadline_days))).isoformat()
+        except ValueError:
+            return set()
+        out: set[str] = set()
+        for ev in self.all("SELECT event_id, status_facts FROM events WHERE deleted=0"):
+            for f in json.loads(ev["status_facts"] or "[]"):
+                d = f.get("date") or ""
+                if today <= d <= horizon and f.get("state") in ("planned", "in_progress", None):
+                    out.add(ev["event_id"])
+                    break
+        for row in self.all("SELECT m.event_id, m.map FROM event_maps m JOIN events e ON e.event_id=m.event_id AND"
+                            " e.deleted=0 WHERE m.map IS NOT NULL"):
+            try:
+                knots = (json.loads(row["map"]) or {}).get("knots") or []
+            except ValueError:
+                continue
+            if any(k.get("kind") in ("deadline", "commitment") and k.get("state") != "done"
+                   and today <= (k.get("date") or "") <= horizon for k in knots):
+                out.add(row["event_id"])
+        self._urgent_cache = (key, out)
+        return out
+
+    def urgent_items(self) -> set[str]:
+        """Item ids whose job serves an urgent matter: its items (a split item by its parent), and in a shared
+        space the other items of the same member's package (the same origin matter on their Mac)."""
+        events = self.urgent_events()
+        if not events:
+            return set()
+        marks = ",".join("?" * len(events))
+        ids = {r["item_id"] for r in self.all(
+            f"SELECT item_id FROM event_items WHERE removed=0 AND event_id IN ({marks})", list(events))}
+        ids |= {r["parent_id"] for r in self.all(
+            f"SELECT s.parent_id FROM item_segments s JOIN event_items ei ON ei.item_id=s.child_id AND ei.removed=0"
+            f" WHERE ei.event_id IN ({marks})", list(events))}
+        if self.one("SELECT 1 FROM sqlite_master WHERE type='table' AND name='space_item_origins'"):
+            origins = self.all("SELECT item_id, member_id, matter_id FROM space_item_origins WHERE matter_id IS NOT NULL")
+            packages = {(r["member_id"], r["matter_id"]) for r in origins if r["item_id"] in ids}
+            ids |= {r["item_id"] for r in origins if (r["member_id"], r["matter_id"]) in packages}
+        return ids
 
     def finish_job(self, item_id: str, revision: int, state: str = "done",
                    error: Optional[str] = None, category: Optional[str] = None, delay_s: float = 0.0) -> None:

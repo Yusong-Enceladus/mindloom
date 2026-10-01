@@ -2,11 +2,21 @@ import Darwin
 import Foundation
 import MindloomAgentProtocol
 
+/// The owner's command line on the App's socket (V8 contract A3): the App's
+/// answer to `mindloom add` / `mindloom due`. Never an agent session.
+public protocol OwnerChannelHandling: Sendable {
+  /// The full JSON-RPC reply to one owner request.
+  func handleOwner(id: JSONValue, method: String, params: JSONValue?, peer: AgentConnectionPeer)
+    async -> JSONValue
+}
+
 /// The App's end of the helper's socket (AGENT-CONTRACT §1): a Unix domain
 /// socket at `<data root>/agent/mindloom.sock`, the folder 0700 and the
 /// socket 0600, both this user's. Each accepted connection is checked with
 /// the kernel's peer credentials and libproc (the peer must be a process of
-/// this user) before a single byte is read; then it is one MCP session.
+/// this user) before a single byte is read; then it is one MCP session, or,
+/// when its first line is an owner request (`OwnerChannel`), the owner's
+/// command line, which never opens an agent session.
 public final class AgentSocketServer: @unchecked Sendable {
   public enum ServerError: Error, Equatable, Sendable {
     case folderNotPrivate
@@ -15,6 +25,7 @@ public final class AgentSocketServer: @unchecked Sendable {
 
   public let socketURL: URL
   private let service: AgentAccessService
+  private let owner: (any OwnerChannelHandling)?
   private let peerCheck: @Sendable (AgentPeer) -> Bool
   private let lock = NSLock()
   private var listener: Int32 = -1
@@ -24,11 +35,13 @@ public final class AgentSocketServer: @unchecked Sendable {
 
   public init(
     dataRoot: URL, service: AgentAccessService,
-    peerCheck: @escaping @Sendable (AgentPeer) -> Bool = { AgentProcessInspector.peerIsOwner($0) }
+    peerCheck: @escaping @Sendable (AgentPeer) -> Bool = { AgentProcessInspector.peerIsOwner($0) },
+    owner: (any OwnerChannelHandling)? = nil
   ) {
     socketURL = AgentSocketLocation.socketURL(dataRoot: dataRoot)
     self.service = service
     self.peerCheck = peerCheck
+    self.owner = owner
   }
 
   /// Connections refused by the owner check since start.
@@ -134,26 +147,65 @@ public final class AgentSocketServer: @unchecked Sendable {
     reader.start()
     let writeLock = NSLock()
     let service = service
+    let owner = owner
     Task { [weak self] in
-      let session = await service.openSession(peer: peer)
       let write: @Sendable (String?) -> Void = { reply in
         guard let reply else { return }
         writeLock.withLock { _ = AgentSocketIO.writeAll(connection, Data((reply + "\n").utf8)) }
       }
-      await withTaskGroup(of: Void.self) { group in
-        for await line in lines {
-          // The handshake names the client; it is answered before anything
-          // after it is read, so a call never runs as "unknown".
-          if case .request(_, "initialize", _) = MCPMessage.decode(line) {
-            write(await service.handle(line: line, session: session))
-          } else {
-            group.addTask { write(await service.handle(line: line, session: session)) }
+      var iterator = lines.makeAsyncIterator()
+      if let first = await iterator.next() {
+        if OwnerChannel.isOwnerRequest(first) {
+          // The owner's command line: answered one request at a time, never
+          // an agent session (no grant, no audit row).
+          var line: String? = first
+          while let current = line {
+            write(await Self.ownerReply(current, owner: owner, peer: peer)?.serialized)
+            line = await iterator.next()
           }
+        } else {
+          let session = await service.openSession(peer: peer)
+          await withTaskGroup(of: Void.self) { group in
+            var line: String? = first
+            while let current = line {
+              // The handshake names the client; it is answered before
+              // anything after it is read, so a call never runs as "unknown".
+              if case .request(_, "initialize", _) = MCPMessage.decode(current) {
+                write(await service.handle(line: current, session: session))
+              } else {
+                group.addTask { write(await service.handle(line: current, session: session)) }
+              }
+              line = await iterator.next()
+            }
+          }
+          await service.closeSession(session)
         }
       }
-      await service.closeSession(session)
       self?.lock.withLock { _ = self?.connections.remove(connection) }
       close(connection)
+    }
+  }
+
+  /// One line on an owner connection: an owner request goes to the App's
+  /// owner channel (or is refused when there is none); anything else is not
+  /// served here.
+  static func ownerReply(
+    _ line: String, owner: (any OwnerChannelHandling)?, peer: AgentConnectionPeer
+  ) async -> JSONValue? {
+    switch MCPMessage.decode(line) {
+    case .request(let id, let method, let params) where OwnerChannel.isOwnerMethod(method):
+      guard let owner else {
+        return MCPMessage.error(
+          id: id, code: OwnerChannel.ErrorCode.disabled, message: OwnerChannel.disabledMessage)
+      }
+      return await owner.handleOwner(id: id, method: method, params: params, peer: peer)
+    case .request(let id, _, _):
+      return MCPMessage.error(
+        id: id, code: MCPErrorCode.methodNotFound, message: "Method not found")
+    case .invalid(let id, let code, let text):
+      return MCPMessage.error(id: id, code: code, message: text)
+    case .notification, .response, .errorResponse:
+      return nil
     }
   }
 }

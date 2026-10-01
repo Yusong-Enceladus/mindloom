@@ -19,7 +19,14 @@ and <data_dir>/spaces/<space_id>/blobs/:
     maintain / admin, outside collaborators), the withdraw window, takedown requests (a privacy takedown not
     handled within the policy's window is carried out by the Spark itself), the proposals queue, maintainers'
     removal (tombstone + purge), forks, matter handover, archive;
-  * an audit log: records only (who, when, which action on which ids), never content.
+  * an audit log: records only (who, when, which action on which ids), never content;
+  * v8: org key escrow (each epoch's key also wrapped to the organization's admin devices, by the org's
+    recovery_admins policy) and space.recover; a storage quota per member per space (B5, B6; docs/INFRA.md);
+  * v8 contract C: a meeting segment's audio as a members-only ciphertext blob (one audio part per recording and
+    member, shorter than the recording and at most 15 minutes, its size bounded by its length; purged with the
+    item), snapshots (a frozen summary shared as a new item; removed with any space item it cites), durable
+    acceptance of retried shares (share_key, idempotent withdraw, retry hints, synchronous commits), and one
+    member's several devices (one device id belongs to one member on this Spark; org.device_add / remove).
 
 The space's organizer store (the same skills assembling shared matters from all members' shared items) is
 organizer/space_organizer.py; it is encrypted and opened only by a member Mac's lease.
@@ -30,6 +37,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import threading
 import time
 import uuid
@@ -55,6 +63,7 @@ NEVER_SHARED = {"recording", "voiceprint", "speaker_embedding", "dictionary", "p
 BLOB_ROLES = {"original", "image", "file", "audio", "preview"}
 AUDIO_KINDS = {"meeting_online", "meeting_offline", "imported_media", "audio_segment"}
 MAX_SEGMENT_MS = 15 * 60 * 1000          # one shared audio segment: at most 15 minutes of a recording
+AUDIO_PART_NUM, AUDIO_PART_DEN = 4, 5    # V8R-15: an audio part is at most 4/5 of its recording
 MAX_OP_BYTES = 256 * 1024
 MAX_OPS_PER_POST = 50
 INVITE_MAX_S = 7 * 86400
@@ -65,12 +74,29 @@ PENDING_BLOB_TTL_S = 86400
 PROPOSAL_KINDS = {"rename", "split", "merge", "move_to_rope", "relation", "other"}
 TAKEDOWN_KINDS = {"privacy", "other"}
 MAX_OPEN_PRIVACY_TAKEDOWNS = 3          # open privacy takedowns one member keeps on items others shared
+RECOVERY_ADMINS = (1, 2, 3)             # org policy: how many admins' devices every org space key is wrapped to
+# v8 C1: a meeting segment's audio (blob role "audio"). The Spark cannot open it, so it bounds what it stores by
+# what the signed op declares: at most 256 kbit/s of the part's length (room for 16 kHz 16-bit mono PCM; the Mac
+# sends AAC) plus a container header, one audio blob per item, one audio part per recording per member and space.
+AUDIO_BYTES_PER_S = 32_000
+AUDIO_OVERHEAD_BYTES = 64 * 1024
+MAX_SNAPSHOT_CITES = 500                # v8 C2: space items one snapshot names as its sources
+# v8 C3: what a member Mac's outbox does with a refused op: "remake" (sync the keys, then make a new op for the same
+# outbox entry, same share_key), "later" (send the very same op again later, e.g. after re-uploading its blob or
+# freeing quota), "never" (drop the entry and tell the user). Codes not listed here are "never".
+RETRY = {"rotation_pending": "remake", "stale_epoch": "remake", "bad_epoch": "remake", "escrow_required": "remake",
+         "unknown_blob": "later", "quota_exceeded": "later", "unavailable": "later", "busy": "later"}
+
+# What a member Mac checks before it sends (GET /v1/spaces/{id} "limits"; the same numbers the handlers enforce).
+LIMITS = {"segment_ms": MAX_SEGMENT_MS, "audio_bytes_per_s": AUDIO_BYTES_PER_S,
+          "audio_overhead_bytes": AUDIO_OVERHEAD_BYTES, "blob_bytes": sc.MAX_BLOB_BYTES, "blobs_per_item": 20,
+          "ops_per_post": MAX_OPS_PER_POST, "snapshot_cites": MAX_SNAPSHOT_CITES}
 
 DEFAULT_POLICY = {
     "org": {"withdraw_window_h": 24, "takedown_window_h": 72, "forks_allowed": False, "originals": "members",
-            "on_leave": "keep"},
+            "on_leave": "keep", "segment_audio": True},
     "person": {"withdraw_window_h": None, "takedown_window_h": 72, "forks_allowed": True, "originals": "members",
-               "on_leave": "contributor_choice"},
+               "on_leave": "contributor_choice", "segment_audio": True},
 }
 
 SCHEMA = """
@@ -145,10 +171,19 @@ CREATE TABLE IF NOT EXISTS nonces(device_id TEXT NOT NULL, nonce TEXT NOT NULL, 
 CREATE TABLE IF NOT EXISTS segments(space_id TEXT NOT NULL, item_id TEXT NOT NULL, contributor TEXT NOT NULL,
   parent_item_id TEXT NOT NULL, start_ms INTEGER NOT NULL, end_ms INTEGER NOT NULL, PRIMARY KEY(space_id, item_id));
 CREATE INDEX IF NOT EXISTS segments_parent ON segments(space_id, contributor, parent_item_id);
+CREATE TABLE IF NOT EXISTS escrow_wraps(space_id TEXT NOT NULL, epoch INTEGER NOT NULL, device_id TEXT NOT NULL,
+  member_id TEXT NOT NULL, wrap TEXT NOT NULL, PRIMARY KEY(space_id, epoch, device_id));
+CREATE TABLE IF NOT EXISTS snapshot_cites(space_id TEXT NOT NULL, snapshot_id TEXT NOT NULL, item_id TEXT NOT NULL,
+  PRIMARY KEY(space_id, snapshot_id, item_id));
+CREATE INDEX IF NOT EXISTS snapshot_cites_item ON snapshot_cites(space_id, item_id);
 """
 
 # Columns added after the first deployment (an existing spaces.db gets them on open).
-MIGRATIONS = [("join_requests", "binding", "TEXT")]
+MIGRATIONS = [("join_requests", "binding", "TEXT"),
+              ("items", "share_key", "TEXT"),                          # v8 C3: the Mac outbox entry of the share
+              ("blobs", "role", "TEXT"),                               # v8 C1: original / image / file / audio / preview
+              ("segments", "audio", "INTEGER NOT NULL DEFAULT 0"),     # v8 C1: this part carries the audio
+              ("segments", "recording_ms", "INTEGER")]                 # v8 C1: the whole recording's length
 
 
 class SpaceError(Exception):
@@ -264,8 +299,15 @@ class Actor:
 
 class Spaces:
     def __init__(self, data_dir: str | Path, *, now: Callable[[], float] = time.time,
-                 host_keys: Optional[Callable[[], list[str]]] = None):
+                 host_keys: Optional[Callable[[], list[str]]] = None, member_quota_mb: int = 2048,
+                 member_total_mb: int = 8192, max_spaces_per_member: int = 30):
         self.root = Path(data_dir) / "spaces"
+        # v8 B6: a member's storage in one space (ciphertext blobs + encrypted fields). The Spark owner's ceiling:
+        # a space's policy may only lower it (review finding V8R-09); 0 = no ceiling.
+        self.member_quota_mb = int(member_quota_mb)
+        # V8R-09: one member's storage across all the spaces here (0 = no limit) and the spaces one member id creates
+        self.member_total_mb = int(member_total_mb)
+        self.max_spaces_per_member = int(max_spaces_per_member)
         self.root.mkdir(parents=True, exist_ok=True)
         os.chmod(self.root, 0o700)
         self.now = now
@@ -275,6 +317,9 @@ class Spaces:
         self.conn = db.connect(self.root / "spaces.db", None, check_same_thread=False, isolation_level=None)
         self.conn.row_factory = db.Row
         self.conn.execute("PRAGMA journal_mode=WAL")
+        # v8 C3: an op the Spark answered "ok" survives a power cut too (WAL synced at every commit): a member Mac's
+        # outbox drops an entry once it is accepted, so an accepted share must not roll back afterwards.
+        self.conn.execute("PRAGMA synchronous=FULL")
         self.conn.execute("PRAGMA secure_delete=ON")
         self.conn.executescript(SCHEMA)
         for table, column, kind in MIGRATIONS:
@@ -286,6 +331,9 @@ class Spaces:
         # with (space_id) after the space key rotated (the organizer store locks until a lease re-keys it)
         self.on_purge: Optional[Callable[[str, str], None]] = None
         self.on_rotate: Optional[Callable[[str], None]] = None
+        # v8: the per-member access records (organizer/access.py), when this Spark has them: a Mac enrolled there is
+        # bound to its member id and keys like a device of a space (one device id, one member, one key).
+        self.directory: Optional[Any] = None
 
     # ---- db helpers ---------------------------------------------------------------------------------
 
@@ -376,20 +424,25 @@ class Spaces:
             return ROLES["admin"]
         return role
 
-    def _member_id_keys(self, member_id: str, space_id: str) -> set[str]:
+    def _member_id_keys(self, member_id: str, space_id: Optional[str] = None) -> set[str]:
         """Every signing key a member id is already bound to anywhere on this Spark (devices of any space, the
-        organization's admin devices, join requests still pending or approved)."""
+        organizations' admin devices, join requests still pending or approved in other spaces, and v8 the Macs
+        enrolled for it in the access records, i.e. a second Mac its first one invited)."""
         keys: set[str] = set()
         for sql, args in (("SELECT sign_pub FROM devices WHERE member_id=?", (member_id,)),
                           ("SELECT sign_pub FROM org_devices WHERE member_id=?", (member_id,)),
                           ("SELECT sign_pub FROM join_requests WHERE member_id=? AND status IN ('pending','approved')"
-                           " AND space_id!=?", (member_id, space_id))):
+                           " AND (? IS NULL OR space_id!=?)", (member_id, space_id, space_id))):
             keys |= {r["sign_pub"] for r in self.all(sql, args)}
+        if self.directory is not None:
+            keys |= self.directory.member_keys(member_id)
         return keys
 
     def _member_id_known(self, member_id: str) -> bool:
-        return any(self.one(sql, (member_id,)) for sql in (
-            "SELECT 1 FROM members WHERE member_id=? LIMIT 1", "SELECT 1 FROM org_admins WHERE member_id=? LIMIT 1"))
+        if any(self.one(sql, (member_id,)) for sql in (
+                "SELECT 1 FROM members WHERE member_id=? LIMIT 1", "SELECT 1 FROM org_admins WHERE member_id=? LIMIT 1")):
+            return True
+        return self.directory is not None and self.directory.member_known(member_id)
 
     def _known_sign_pub(self, device_id: str) -> Optional[str]:
         """The signing key a device id is bound to anywhere on this Spark (one device id, one key)."""
@@ -399,12 +452,42 @@ class Spaces:
             row = self.one(sql, (device_id,))
             if row:
                 return row["sign_pub"]
+        rec = self.directory.device_record(device_id) if self.directory is not None else None
+        return rec["sign_pub"] if rec else None
+
+    def _space_device_member(self, device_id: str) -> Optional[str]:
+        """The member a device id belongs to in the spaces and organizations of this Spark (not the access records)."""
+        for sql in ("SELECT member_id FROM devices WHERE device_id=? LIMIT 1",
+                    "SELECT member_id FROM org_devices WHERE device_id=? LIMIT 1",
+                    "SELECT member_id FROM join_requests WHERE device_id=? AND status IN ('pending','approved') LIMIT 1"):
+            row = self.one(sql, (device_id,))
+            if row:
+                return row["member_id"]
         return None
 
-    def _check_device_binding(self, device: dict) -> None:
+    def _device_member(self, device_id: str) -> Optional[str]:
+        """v8: one device id belongs to one member on this Spark (spaces, organizations and access records)."""
+        owner = self._space_device_member(device_id)
+        if owner is None and self.directory is not None:
+            rec = self.directory.device_record(device_id)
+            owner = rec["member_id"] if rec else None
+        return owner
+
+    def _check_device_binding(self, device: dict, member_id: Optional[str] = None, added: bool = False) -> None:
+        """One device id, one key and (v8) one member across the whole Spark. `added`: someone else adds this device
+        (device.add, org.admin_add, org.device_add): a Mac whose access was unpaired here is not added back."""
         known = self._known_sign_pub(device["device_id"])
         if known is not None and known != device["sign_pub"]:
             raise SpaceError(409, "device_key_conflict", "this device id is registered with another key")
+        if member_id is None:
+            return
+        owner = self._device_member(device["device_id"])
+        if owner is not None and owner != member_id:
+            raise SpaceError(409, "device_member_conflict", "this device belongs to another member on this Spark")
+        if added and self.directory is not None:
+            rec = self.directory.device_record(device["device_id"])
+            if rec is not None and rec["status"] != "active":
+                raise SpaceError(409, "device_revoked", "this Mac was unpaired from the Spark; pair it again first")
 
     # ---- signed requests ----------------------------------------------------------------------------
 
@@ -442,6 +525,7 @@ class Spaces:
         if dev is None:
             raise SpaceError(401, "unknown_device")
         self._check_request(device_id, dev["sign_pub"], method, target, headers, body)
+        self._refuse_unpaired(device_id)
         member = self.member(space_id, dev["member_id"])
         if dev["status"] != "active" or member is None or member["status"] != "active":
             # A device whose access ended learns it on its next sync, with the forks it must delete
@@ -484,7 +568,15 @@ class Spaces:
         if sign_pub is None:
             raise SpaceError(401, "unknown_device")
         self._check_request(device_id, sign_pub, method, target, headers, body)
+        self._refuse_unpaired(device_id)
         return device_id
+
+    def _refuse_unpaired(self, device_id: str) -> None:
+        """A Mac whose access to this Spark was unpaired reads and writes nothing here any more, whatever channel
+        it comes through (review finding V8R-07; it may not enroll again either, access.enroll)."""
+        rec = self.directory.device_record(device_id) if self.directory is not None else None
+        if rec is not None and rec["status"] != "active":
+            raise SpaceError(403, "device_revoked", "this Mac was unpaired from the Spark")
 
     # ---- audit ----------------------------------------------------------------------------------------
 
@@ -511,7 +603,7 @@ class Spaces:
         policy = body.get("policy") or {}
         _need(isinstance(policy, dict), "bad_field", "policy must be an object")
         recovery = policy.get("recovery_admins", 1)
-        _need(recovery in (1, 2), "bad_field", "recovery_admins is 1 or 2")
+        _need(recovery in RECOVERY_ADMINS, "bad_field", "recovery_admins is 1, 2 or 3")
         org_id = payload["org_id"]
         with self.tx():
             existing = self.one("SELECT * FROM org_ops WHERE org_id=? AND op_id=?", (org_id, payload["op_id"]))
@@ -519,7 +611,7 @@ class Spaces:
                 return self._duplicate(existing, raw)
             if self.one("SELECT 1 FROM orgs WHERE org_id=?", (org_id,)):
                 raise SpaceError(409, "org_exists")
-            self._check_device_binding(device)
+            self._check_device_binding(device, payload["member_id"])
             now = self.now()
             self.x("INSERT INTO orgs(org_id, policy, created_ts, head) VALUES (?,?,?,1)",
                    (org_id, _dumps({"recovery_admins": recovery}), now))
@@ -551,6 +643,7 @@ class Spaces:
         if dev is None:
             raise SpaceError(401, "unknown_device")
         self._check_request(device_id, dev["sign_pub"], method, target, headers, body)
+        self._refuse_unpaired(device_id)
         if dev["status"] != "active" or not self.is_org_admin(org_id, dev["member_id"]):
             raise SpaceError(403, "forbidden", "org admins only")
         return dev
@@ -579,18 +672,39 @@ class Spaces:
                 raise SpaceError(403, "unknown_device")
             if not sc.verify(sc.b64u_decode(dev["sign_pub"]), sc.OP_DOMAIN + raw, wire.get("sig")):
                 raise SpaceError(401, "bad_signature")
+            self._refuse_unpaired(dev["device_id"])
             if dev["status"] != "active" or not self.is_org_admin(org_id, payload["member_id"]):
                 raise SpaceError(403, "forbidden", "org admins only")
             body, now = payload["body"], self.now()
+            effects: dict = {}
             if payload["type"] == "org.admin_add":
                 member_id = _uuid_field(body, "member_id")
                 device = _device_record(body.get("device"))
-                self._check_device_binding(device)
+                # v8: the named device is that member's own: not another member's (one device id, one member), and
+                # for a member this Spark already knows, one of the keys it is bound to (a Mac of theirs in a space,
+                # or one enrolled for them in the access records). A member's other Macs come with org.device_add,
+                # signed by one of theirs.
+                self._check_device_binding(device, member_id, added=True)
+                if self._member_id_known(member_id) or self._member_id_keys(member_id):
+                    _need(device["sign_pub"] in self._member_id_keys(member_id), "unknown_member_device",
+                          "name a Mac this member already uses here; their other Macs add themselves (org.device_add)",
+                          409)
                 self.x("INSERT INTO org_admins(org_id, member_id, status, since_ts) VALUES (?,?,'active',?)"
                        " ON CONFLICT(org_id, member_id) DO UPDATE SET status='active'", (org_id, member_id, now))
                 self.x("INSERT OR REPLACE INTO org_devices VALUES (?,?,?,?,?,'active')",
                        (org_id, device["device_id"], member_id, device["sign_pub"], device["seal_pub"]))
                 target = {"member_id": member_id}
+                effects = {"member_id": member_id, "device_id": device["device_id"]}
+            elif payload["type"] == "org.device_add":
+                # v8: an admin's own further Mac (a second Mac), signed by one of that admin's org devices
+                device = _device_record(body.get("device"))
+                self._check_device_binding(device, payload["member_id"], added=True)
+                self.x("INSERT OR REPLACE INTO org_devices VALUES (?,?,?,?,?,'active')",
+                       (org_id, device["device_id"], payload["member_id"], device["sign_pub"], device["seal_pub"]))
+                target = {"member_id": payload["member_id"], "device_id": device["device_id"]}
+                effects = dict(target)
+            elif payload["type"] == "org.device_remove":
+                target, effects = self._org_device_remove(org_id, payload, body)
             elif payload["type"] == "org.admin_remove":
                 member_id = _uuid_field(body, "member_id")
                 n = self.one("SELECT COUNT(*) AS n FROM org_admins WHERE org_id=? AND status='active'", (org_id,))["n"]
@@ -599,16 +713,20 @@ class Spaces:
                 self.x("UPDATE org_admins SET status='removed' WHERE org_id=? AND member_id=?", (org_id, member_id))
                 self.x("UPDATE org_devices SET status='removed' WHERE org_id=? AND member_id=?", (org_id, member_id))
                 demoted, alone = self._end_org_admin_rights(org_id, member_id)
-                target = {"member_id": member_id, "demoted": len(demoted), "sole_admin": len(alone)}
+                rekey = self._end_escrow(org_id, member_id)
+                target = {"member_id": member_id, "demoted": len(demoted), "sole_admin": len(alone),
+                          "rotation_pending": len(rekey)}
+                effects = {"member_id": member_id, "demoted": demoted, "sole_admin": alone, "rotation_pending": rekey}
             elif payload["type"] == "org.policy":
                 recovery = body.get("recovery_admins")
-                _need(recovery in (1, 2), "bad_field", "recovery_admins is 1 or 2")
+                _need(recovery in RECOVERY_ADMINS, "bad_field", "recovery_admins is 1, 2 or 3")
                 self.x("UPDATE orgs SET policy=? WHERE org_id=?", (_dumps({"recovery_admins": recovery}), org_id))
                 target = {"recovery_admins": recovery}
+                effects = dict(target)
             else:
                 raise SpaceError(400, "unknown_type", payload["type"])
             seq = self.one("SELECT head FROM orgs WHERE org_id=?", (org_id,))["head"] + 1
-            result = {"org_id": org_id, "seq": seq}
+            result = {"org_id": org_id, "seq": seq, "effects": effects}
             self.x("UPDATE orgs SET head=? WHERE org_id=?", (seq, org_id))
             self.x("INSERT INTO org_ops VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                    (org_id, seq, payload["op_id"], payload["type"], payload["member_id"], payload["device_id"], raw,
@@ -616,6 +734,34 @@ class Spaces:
             self.audit(payload["type"], target, org_id=org_id, seq=seq, member_id=payload["member_id"],
                        device_id=payload["device_id"])
         return {"ok": True, "op_id": payload["op_id"], "duplicate": False, **result}
+
+    def _org_device_remove(self, org_id: str, payload: dict, body: dict) -> tuple[dict, dict]:
+        """org.device_remove (v8): an admin retires one org device (a lost or retired Mac: theirs from another of
+        their devices, or anyone's as an admin). The device gets no more escrow and no admin rights in the org's
+        spaces. It knew the current key of every org space it held an escrow wrap for: those spaces wait for a new key
+        (rotation_pending). Where it is still a member device of a space, a member signs device.remove there (that op
+        rotates the key itself); the effects list those spaces."""
+        device_id = _uuid_field(body, "device_id")
+        dev = self.one("SELECT * FROM org_devices WHERE org_id=? AND device_id=?", (org_id, device_id))
+        if dev is None or dev["status"] != "active":
+            raise SpaceError(404, "unknown_device")
+        # (the signing device stays, so the organization always keeps an active admin device)
+        _need(device_id != payload["device_id"], "bad_field", "retire a device from another one")
+        self.x("UPDATE org_devices SET status='removed' WHERE org_id=? AND device_id=?", (org_id, device_id))
+        rekey = []
+        for sp in self.all("SELECT space_id, epoch FROM spaces WHERE org_id=? ORDER BY created_ts", (org_id,)):
+            if self.one("SELECT 1 FROM escrow_wraps WHERE space_id=? AND epoch=? AND device_id=?",
+                        (sp["space_id"], sp["epoch"], device_id)):
+                self.x("UPDATE spaces SET rotation_pending=1 WHERE space_id=?", (sp["space_id"],))
+                rekey.append(sp["space_id"])
+        self.x("DELETE FROM escrow_wraps WHERE device_id=? AND space_id IN (SELECT space_id FROM spaces WHERE org_id=?)",
+               (device_id, org_id))
+        member_of = [r["space_id"] for r in self.all(
+            "SELECT d.space_id FROM devices d JOIN spaces s ON s.space_id=d.space_id WHERE d.device_id=? AND"
+            " d.status='active' ORDER BY d.space_id", (device_id,))]
+        target = {"member_id": dev["member_id"], "device_id": device_id, "rotation_pending": len(rekey)}
+        return target, {"member_id": dev["member_id"], "device_id": device_id, "rotation_pending": rekey,
+                        "still_member_in": member_of}
 
     def _end_org_admin_rights(self, org_id: str, member_id: str) -> tuple[list[str], list[str]]:
         """An admin removed from the organization keeps no admin rights in its spaces (review finding V7-S7):
@@ -640,6 +786,203 @@ class Spaces:
                 alone.append(space["space_id"])
         return demoted, alone
 
+    def _end_escrow(self, org_id: str, member_id: str) -> list[str]:
+        """A removed org admin's escrow wraps go. Where that admin held the current key only through escrow (not as
+        an active member), the space waits for a new key before anything new is shared (like after a leave)."""
+        rekey = []
+        for sp in self.all("SELECT space_id, epoch FROM spaces WHERE org_id=?", (org_id,)):
+            held = self.one("SELECT 1 FROM escrow_wraps WHERE space_id=? AND epoch=? AND member_id=?",
+                            (sp["space_id"], sp["epoch"], member_id))
+            m = self.member(sp["space_id"], member_id)
+            if held and (m is None or m["status"] != "active"):
+                self.x("UPDATE spaces SET rotation_pending=1 WHERE space_id=?", (sp["space_id"],))
+                rekey.append(sp["space_id"])
+        self.x("DELETE FROM escrow_wraps WHERE member_id=? AND space_id IN (SELECT space_id FROM spaces WHERE org_id=?)",
+               (member_id, org_id))
+        return rekey
+
+    # ---- org key escrow (v8 B5) -------------------------------------------------------------------------
+
+    def escrow_devices(self, org_id: str) -> list[dict]:
+        """The org admins' active org devices: where an org space's key is escrowed."""
+        return self.all("SELECT od.device_id, od.member_id, od.sign_pub, od.seal_pub FROM org_devices od JOIN org_admins"
+                        " oa ON oa.org_id=od.org_id AND oa.member_id=od.member_id WHERE od.org_id=? AND"
+                        " od.status='active' AND oa.status='active' ORDER BY od.member_id, od.device_id", (org_id,))
+
+    def escrow_holders(self, space: dict, epoch: int) -> set[str]:
+        """Org admins whose own org device can open this epoch's key: an escrow wrap, or a member wrap of that very
+        device (same id and signing key) in the space."""
+        holders = set()
+        for d in self.escrow_devices(space["org_id"]):
+            if self.one("SELECT 1 FROM escrow_wraps WHERE space_id=? AND epoch=? AND device_id=?",
+                        (space["space_id"], epoch, d["device_id"])):
+                holders.add(d["member_id"])
+                continue
+            dev = self.one("SELECT sign_pub, status FROM devices WHERE space_id=? AND device_id=?",
+                           (space["space_id"], d["device_id"]))
+            if dev and dev["status"] == "active" and dev["sign_pub"] == d["sign_pub"] and self.one(
+                    "SELECT 1 FROM key_wraps WHERE space_id=? AND epoch=? AND device_id=?",
+                    (space["space_id"], epoch, d["device_id"])):
+                holders.add(d["member_id"])
+        return holders
+
+    def escrow_status(self, space: dict) -> Optional[dict]:
+        """For an org space: how many admins must be able to open the current key (the org's recovery_admins, at
+        most the admins there are), who can, and which admin devices still lack a wrap (an admin's Mac adds them
+        with escrow.wrap)."""
+        if space["owner_kind"] != "org":
+            return None
+        org = self.org(space["org_id"])
+        devices = self.escrow_devices(space["org_id"])
+        admins = {d["member_id"] for d in devices}
+        required = min(int(org["policy"].get("recovery_admins", 1)), len(admins))
+        holders = self.escrow_holders(space, space["epoch"])
+        member_devices = {r["device_id"] for r in self.all(
+            "SELECT device_id FROM key_wraps WHERE space_id=? AND epoch=?", (space["space_id"], space["epoch"]))}
+        escrowed = {r["device_id"] for r in self.all(
+            "SELECT device_id FROM escrow_wraps WHERE space_id=? AND epoch=?", (space["space_id"], space["epoch"]))}
+        missing = [{"device_id": d["device_id"], "member_id": d["member_id"], "seal_pub": d["seal_pub"]}
+                   for d in devices if d["device_id"] not in member_devices | escrowed]
+        return {"policy": int(org["policy"].get("recovery_admins", 1)), "required": required,
+                "holders": sorted(holders), "missing": missing, "ok": len(holders) >= required}
+
+    def store_escrow(self, space: dict, epoch: int, wraps: object) -> int:
+        """Escrow wraps for `epoch`: each for an active admin device of the space's organization (not one that
+        gets a member wrap), shaped like a sealed wrap."""
+        if wraps is None:
+            return 0
+        _need(space["owner_kind"] == "org", "bad_field", "escrow is for organization spaces")
+        _need(isinstance(wraps, list) and len(wraps) <= 64, "bad_field", "escrow_wraps is a list")
+        devices = {d["device_id"]: d for d in self.escrow_devices(space["org_id"])}
+        n = 0
+        seen = set()
+        for w in wraps:
+            _need(isinstance(w, dict) and w.get("epoch") == epoch, "bad_wraps", f"every escrow wrap is for epoch {epoch}")
+            dev = devices.get(w.get("device_id"))
+            if dev is None:
+                raise SpaceError(422, "bad_wraps", "escrow wraps go to the organization's admin devices",
+                                 device_id=w.get("device_id") if sc.is_uuid(w.get("device_id")) else None)
+            _need(w["device_id"] not in seen, "bad_wraps", "one escrow wrap per device")
+            seen.add(w["device_id"])
+            problem = sc.wrap_problem(w.get("wrap"))
+            _need(problem is None, "not_ciphertext", f"escrow wrap: {problem}")
+            self.x("INSERT OR REPLACE INTO escrow_wraps VALUES (?,?,?,?,?)",
+                   (space["space_id"], epoch, w["device_id"], dev["member_id"], w["wrap"]))
+            n += 1
+        return n
+
+    def check_escrow(self, space: dict, epoch: int) -> None:
+        """A new key of an org space must be openable by the org's recovery_admins admins (V7-S7)."""
+        if space["owner_kind"] != "org":
+            return
+        status = self.escrow_status({**space, "epoch": epoch})
+        if not status["ok"]:
+            raise SpaceError(409, "escrow_required", f"wrap the key to {status['required']} admins' devices",
+                             required=status["required"], holders=status["holders"],
+                             missing=[m["device_id"] for m in status["missing"]])
+
+    def escrow_for(self, org_id: str, device_id: str) -> dict:
+        """GET /v1/orgs/{org}/escrow: this admin device's escrow wraps of each org space's current key."""
+        out = []
+        for sp in self.all("SELECT space_id, epoch, rotation_pending FROM spaces WHERE org_id=? ORDER BY created_ts",
+                           (org_id,)):
+            w = self.one("SELECT wrap FROM escrow_wraps WHERE space_id=? AND epoch=? AND device_id=?",
+                         (sp["space_id"], sp["epoch"], device_id))
+            out.append({"space_id": sp["space_id"], "epoch": sp["epoch"], "wrap": w["wrap"] if w else None,
+                        "rotation_pending": bool(sp["rotation_pending"])})
+        return {"device_id": device_id, "spaces": out}
+
+    def _recover(self, space_id: str, wire: dict, payload: dict, raw: bytes, det: dict) -> dict:
+        """space.recover (v8 B5): an org admin whose own org device holds the escrow wrap of the current key takes
+        the space over as an admin, without any space member: the escrow wrap becomes the device's member wrap. The
+        op is signed by that org device; members verify it against the organization's signed log
+        (space_member.replay with the org roster). From there the usual ops apply (member.remove / device.remove with
+        a new key for a lost admin, member.role)."""
+        space = self.space(space_id)
+        _need(space["owner_kind"] == "org", "bad_op", "space.recover is for organization spaces", 400)
+        od = self.one("SELECT * FROM org_devices WHERE org_id=? AND device_id=?", (space["org_id"], payload["device_id"]))
+        if od is None or od["member_id"] != payload["member_id"]:
+            raise SpaceError(403, "unknown_device")
+        if not sc.verify(sc.b64u_decode(od["sign_pub"]), sc.OP_DOMAIN + raw, wire.get("sig")):
+            raise SpaceError(401, "bad_signature")
+        self._refuse_unpaired(od["device_id"])
+        if od["status"] != "active" or not self.is_org_admin(space["org_id"], od["member_id"]):
+            raise SpaceError(403, "forbidden", "org admins only")
+        dev = _device_record(payload["body"].get("device"))
+        _need(dev == {"device_id": od["device_id"], "sign_pub": od["sign_pub"], "seal_pub": od["seal_pub"]},
+              "bad_field", "space.recover names the signing org device's own keys")
+        esc = self.one("SELECT wrap FROM escrow_wraps WHERE space_id=? AND epoch=? AND device_id=?",
+                       (space_id, space["epoch"], od["device_id"]))
+        _need(esc is not None, "no_escrow", "this device holds no escrow wrap of the current key", 409)
+        _need(not det, "bad_op", "space.recover carries no detached fields", 400)
+        with self.tx():
+            existing = self.one("SELECT * FROM ops WHERE space_id=? AND op_id=?", (space_id, payload["op_id"]))
+            if existing:
+                return self._duplicate(existing, raw)
+            seq = self.one("SELECT head FROM spaces WHERE space_id=?", (space_id,))["head"] + 1
+            member_id, now = od["member_id"], self.now()
+            m = self.member(space_id, member_id)
+            if m is None:
+                self.x("INSERT INTO members(space_id, member_id, role, outside, status, joined_ts)"
+                       " VALUES (?,?,'admin',0,'active',?)", (space_id, member_id, now))
+            else:
+                self.x("UPDATE members SET role='admin', status='active', ended_ts=NULL WHERE space_id=? AND member_id=?",
+                       (space_id, member_id))
+            if self.one("SELECT 1 FROM devices WHERE space_id=? AND device_id=?", (space_id, od["device_id"])):
+                self.x("UPDATE devices SET status='active', member_id=? WHERE space_id=? AND device_id=?",
+                       (member_id, space_id, od["device_id"]))
+            else:
+                self.x("INSERT INTO devices VALUES (?,?,?,?,?,'active',?)",
+                       (space_id, od["device_id"], member_id, od["sign_pub"], od["seal_pub"], seq))
+            self.x("INSERT OR REPLACE INTO key_wraps VALUES (?,?,?,?)", (space_id, space["epoch"], od["device_id"],
+                                                                         esc["wrap"]))
+            result = self._log(space_id, payload, raw, wire["sig"], det, None,
+                               {"member_id": member_id, "device_id": od["device_id"], "epoch": space["epoch"]})
+            self.audit("space.recover", {"member_id": member_id, "epoch": space["epoch"]}, space_id=space_id,
+                       org_id=space["org_id"], seq=result["seq"], member_id=member_id, device_id=od["device_id"])
+        return result
+
+    # ---- storage quota (v8 B6) ------------------------------------------------------------------------------
+
+    def quota_bytes(self, space: dict) -> Optional[int]:
+        """The per-member quota of one space: the policy's value, never above the Spark owner's ceiling
+        (ORGANIZER_MEMBER_QUOTA_MB); a policy of 0 or none means the ceiling (review finding V8R-09)."""
+        ceiling = int(self.member_quota_mb or 0)
+        mb = space["policy"].get("member_quota_mb")
+        mb = ceiling if not mb else (min(int(mb), ceiling) if ceiling else int(mb))
+        return None if not mb else int(mb) * 1024 * 1024
+
+    def total_usage(self, member_id: str) -> int:
+        """What one member stores across every space of this Spark (V8R-09)."""
+        blobs = self.one("SELECT COALESCE(SUM(b.size),0) AS n FROM blobs b JOIN devices d ON d.space_id=b.space_id AND"
+                         " d.device_id=b.device_id WHERE d.member_id=? AND b.status!='deleted'", (member_id,))["n"]
+        enc = self.one("SELECT COALESCE(SUM(LENGTH(enc)),0) AS n FROM ops WHERE member_id=? AND enc IS NOT NULL",
+                       (member_id,))["n"]
+        return int(blobs) + int(enc)
+
+    def usage(self, space_id: str, member_id: str) -> int:
+        """What one member stores in one space: their originals' ciphertext (pending and attached) and the
+        encrypted fields of their ops that are still there."""
+        blobs = self.one("SELECT COALESCE(SUM(b.size),0) AS n FROM blobs b JOIN devices d ON d.space_id=b.space_id AND"
+                         " d.device_id=b.device_id WHERE b.space_id=? AND d.member_id=? AND b.status!='deleted'",
+                         (space_id, member_id))["n"]
+        enc = self.one("SELECT COALESCE(SUM(LENGTH(enc)),0) AS n FROM ops WHERE space_id=? AND member_id=? AND"
+                       " enc IS NOT NULL", (space_id, member_id))["n"]
+        return int(blobs) + int(enc)
+
+    def check_quota(self, space: dict, member_id: str, adding: int) -> None:
+        quota = self.quota_bytes(space)
+        if quota is not None:
+            used = self.usage(space["space_id"], member_id)
+            if used + adding > quota:
+                raise SpaceError(413, "quota_exceeded", "this member's storage in the space is full",
+                                 used_bytes=used, quota_bytes=quota, adding_bytes=adding)
+        if self.member_total_mb and adding > 0:
+            total, limit = self.total_usage(member_id), int(self.member_total_mb) * 1024 * 1024
+            if total + adding > limit:
+                raise SpaceError(413, "quota_exceeded", "this member's storage on this Spark is full",
+                                 used_bytes=total, quota_bytes=limit, adding_bytes=adding, scope="spark")
+
     def org_summary(self, org_id: str) -> dict:
         org = self.org(org_id)
         admins = self.all("SELECT member_id, status, since_ts FROM org_admins WHERE org_id=? ORDER BY since_ts",
@@ -656,8 +999,59 @@ class Spaces:
                 "admins": [{"member_id": a["member_id"], "status": a["status"], "since": iso(a["since_ts"])}
                            for a in admins],
                 "devices": devices, "spaces": spaces, "former_admins": former,
+                "escrow": {sid: self.escrow_status(self.space(sid)) for sid in spaces},
                 "ops": [{"seq": r["seq"], "type": r["type"], "op": sc.b64u(r["op"]), "sig": r["sig"], "enc": r["enc"]}
                         for r in self.all("SELECT * FROM org_ops WHERE org_id=? ORDER BY seq", (org_id,))]}
+
+    def admin_scope(self, member_id: str, device_id: str) -> dict:
+        """What a member's Mac administers on this Spark (v8 access routes, admin console): the organizations where
+        this member is an active admin with this device as an active org device, the spaces where this device is an
+        active admin device, and every member id of those organizations' spaces, admins and of those spaces."""
+        orgs = [r["org_id"] for r in self.all(
+            "SELECT oa.org_id FROM org_admins oa JOIN org_devices od ON od.org_id=oa.org_id AND od.member_id=oa.member_id"
+            " WHERE oa.member_id=? AND oa.status='active' AND od.device_id=? AND od.status='active' ORDER BY oa.org_id",
+            (member_id, device_id))]
+        spaces = []
+        for r in self.all("SELECT d.space_id FROM devices d JOIN members m ON m.space_id=d.space_id AND"
+                          " m.member_id=d.member_id WHERE d.member_id=? AND d.device_id=? AND d.status='active' AND"
+                          " m.status='active' ORDER BY d.space_id", (member_id, device_id)):
+            space = self.space(r["space_id"])
+            dev = self.one("SELECT * FROM devices WHERE space_id=? AND device_id=?", (r["space_id"], device_id))
+            if self.effective_role(space, self.member(r["space_id"], member_id), dev) == ROLES["admin"]:
+                spaces.append(r["space_id"])
+        members: set[str] = set()
+        for org_id in orgs:
+            members |= {x["member_id"] for x in self.all("SELECT member_id FROM org_admins WHERE org_id=?", (org_id,))}
+            members |= {x["member_id"] for x in self.all(
+                "SELECT m.member_id FROM members m JOIN spaces s ON s.space_id=m.space_id WHERE s.org_id=?", (org_id,))}
+        org_members = set(members)
+        for space_id in spaces:
+            members |= {x["member_id"] for x in self.all("SELECT member_id FROM members WHERE space_id=?", (space_id,))}
+        # V8R-06: what reaches across the whole Spark (unpairing someone's Mac, their access records and audit, new
+        # people, the Spark's health) is for org admins over their organizations' people; administering a space
+        # one made oneself gives none of it (any teammate may make a space).
+        return {"orgs": orgs, "spaces": spaces, "members": members, "org_members": org_members,
+                "may_invite": bool(orgs)}
+
+    def member_devices(self, member_id: str) -> dict:
+        """v8 (one member, several Macs; the admin console): every device of a member in this Spark's spaces and
+        organizations with its state there, the spaces the member is in and the organizations it administers."""
+        devices: dict[str, dict] = {}
+
+        def entry(r: dict) -> dict:
+            return devices.setdefault(r["device_id"], {"device_id": r["device_id"], "sign_pub": r["sign_pub"],
+                                                       "seal_pub": r["seal_pub"], "spaces": [], "orgs": []})
+        for r in self.all("SELECT space_id, device_id, sign_pub, seal_pub, status FROM devices WHERE member_id=?"
+                          " ORDER BY space_id", (member_id,)):
+            entry(r)["spaces"].append({"space_id": r["space_id"], "status": r["status"]})
+        for r in self.all("SELECT org_id, device_id, sign_pub, seal_pub, status FROM org_devices WHERE member_id=?"
+                          " ORDER BY org_id", (member_id,)):
+            entry(r)["orgs"].append({"org_id": r["org_id"], "status": r["status"]})
+        spaces = [r["space_id"] for r in self.all("SELECT space_id FROM members WHERE member_id=? AND status='active'"
+                                                  " ORDER BY space_id", (member_id,))]
+        orgs = [r["org_id"] for r in self.all("SELECT org_id FROM org_admins WHERE member_id=? AND status='active'"
+                                              " ORDER BY org_id", (member_id,))]
+        return {"devices": devices, "spaces": spaces, "orgs": orgs}
 
     # ---- spaces: genesis ---------------------------------------------------------------------------
 
@@ -681,6 +1075,11 @@ class Spaces:
                 return self._duplicate(existing, raw)
             if self.one("SELECT 1 FROM spaces WHERE space_id=?", (space_id,)):
                 raise SpaceError(409, "space_exists")
+            # V8R-09: one member id makes at most so many spaces here (each is storage on the owner's disk)
+            made = self.one("SELECT COUNT(*) AS n FROM ops WHERE seq=1 AND type='space.create' AND member_id=?",
+                            (member_id,))["n"]
+            if self.max_spaces_per_member and made >= self.max_spaces_per_member:
+                raise SpaceError(409, "too_many_spaces", f"at most {self.max_spaces_per_member} spaces per member here")
             org_id = None
             if owner["kind"] == "org":
                 org_id = _uuid_field(owner, "org_id")
@@ -689,7 +1088,7 @@ class Spaces:
                               (org_id, device["device_id"]))
                 if not self.is_org_admin(org_id, member_id) or od is None or od["sign_pub"] != device["sign_pub"]:
                     raise SpaceError(403, "forbidden", "only an org admin's device creates an org space")
-            self._check_device_binding(device)
+            self._check_device_binding(device, member_id)
             policy = self._policy(owner["kind"], body.get("policy") or {}, None)
             wraps = self._wraps(body.get("wraps"), space_id, 1, [device["device_id"]])
             now = self.now()
@@ -703,6 +1102,10 @@ class Spaces:
                    (space_id, device["device_id"], member_id, device["sign_pub"], device["seal_pub"]))
             for w in wraps:
                 self.x("INSERT INTO key_wraps VALUES (?,?,?,?)", (space_id, 1, w["device_id"], w["wrap"]))
+            if owner["kind"] == "org":
+                created = self.space(space_id)
+                self.store_escrow(created, 1, _escrow_list(body.get("escrow_wraps"), {device["device_id"]}))
+                self.check_escrow(created, 1)
             self.space_dir(space_id).mkdir(mode=0o700, exist_ok=True)
             result = self._log(space_id, payload, raw, wire["sig"], det, subject=None,
                                effects={"space_id": space_id, "epoch": 1})
@@ -725,6 +1128,11 @@ class Spaces:
                 _need(isinstance(value, bool), "bad_field", "forks_allowed is a boolean")
             elif key == "originals":
                 _need(value in ("members", "text_only"), "bad_field", "originals is members or text_only")
+            elif key == "segment_audio":
+                _need(isinstance(value, bool), "bad_field", "segment_audio is a boolean (meeting audio parts allowed)")
+            elif key == "member_quota_mb":
+                _need(value is None or (isinstance(value, int) and 0 <= value <= 1_000_000), "bad_field",
+                      "member_quota_mb is 0-1000000 (0 or null: the Spark's ceiling; a value above it counts as it)")
             elif key == "on_leave":
                 _need(value in ("keep", "contributor_choice"), "bad_field", "on_leave is keep or contributor_choice")
                 _need(value == "keep" or owner_kind == "person", "bad_field", "org spaces keep contributions")
@@ -789,12 +1197,16 @@ class Spaces:
             try:
                 results.append(self._apply(space_id, wire))
             except SpaceError as exc:
-                results.append({"ok": False, "status": exc.status, **exc.body(), "op_id": _op_id_of(wire)})
+                # v8 C3: what the Mac's outbox does with it (RETRY)
+                results.append({"ok": False, "status": exc.status, **exc.body(), "op_id": _op_id_of(wire),
+                                "retry": RETRY.get(exc.code, "never")})
         return {"results": results, "head": self.one("SELECT head FROM spaces WHERE space_id=?", (space_id,))["head"]}
 
     def _apply(self, space_id: str, wire: object) -> dict:
         payload, raw, det = parse_wire(wire)
         _need(payload["space_id"] == space_id, "wrong_space", "the op names another space", 400)
+        if payload["type"] == "space.recover":
+            return self._recover(space_id, wire, payload, raw, det)
         handler = HANDLERS.get(payload["type"])
         if handler is None:
             raise SpaceError(400, "unknown_type", payload["type"])
@@ -808,6 +1220,7 @@ class Spaces:
                 raise SpaceError(403, "unknown_device")
             if not sc.verify(sc.b64u_decode(dev["sign_pub"]), sc.OP_DOMAIN + raw, wire.get("sig")):
                 raise SpaceError(401, "bad_signature")
+            self._refuse_unpaired(dev["device_id"])
             space = self.space(space_id)
             member = self.member(space_id, payload["member_id"])
             if dev["status"] != "active" or member is None or member["status"] != "active":
@@ -815,10 +1228,16 @@ class Spaces:
             ctx = OpContext(self, space, member, dev, payload, det, self.effective_role(space, member, dev), purges)
             if space["archived"] and payload["type"] in ARCHIVE_BLOCKED:
                 raise SpaceError(403, "archived", "the space is archived (read-only)")
-            subject, effects, target = handler(ctx)
-            result = self._log(space_id, payload, raw, wire["sig"], det, subject, effects)
-            self.audit(payload["type"], target, space_id=space_id, org_id=space["org_id"], seq=result["seq"],
-                       member_id=member["member_id"], device_id=dev["device_id"])
+            out = handler(ctx)
+            if isinstance(out, _Already):
+                result = {"op_id": payload["op_id"], **out.result}
+            else:
+                subject, effects, target = out
+                result = self._log(space_id, payload, raw, wire["sig"], det, subject, effects)
+                self.audit(payload["type"], target, space_id=space_id, org_id=space["org_id"], seq=result["seq"],
+                           member_id=member["member_id"], device_id=dev["device_id"])
+                # v8 C2: snapshots that cite what this op withdrew or removed go too (each a system record)
+                self.cascade_snapshots(space_id, purges)
         for blob_id in ctx.dead_blobs:  # a replaced revision's blobs, after the commit
             _unlink(self.blob_path(space_id, blob_id))
         if ctx.rotated and self.on_rotate is not None:
@@ -864,11 +1283,31 @@ class Spaces:
         self.x("UPDATE ops SET enc=NULL, purged=1 WHERE space_id=? AND subject=? AND type='item.share'",
                (space_id, item_id))
         self.x("UPDATE blobs SET status='deleted' WHERE space_id=? AND item_id=?", (space_id, item_id))
+        self.x("DELETE FROM snapshot_cites WHERE space_id=? AND snapshot_id=?", (space_id, item_id))
         self.x("UPDATE takedowns SET status=CASE WHEN status='open' THEN 'done' ELSE status END, resolved_seq="
                "COALESCE(resolved_seq, ?) WHERE space_id=? AND item_id=?", (seq, space_id, item_id))
         self.x("INSERT OR REPLACE INTO organizer_purges(space_id, item_id, queued_ts) VALUES (?,?,?)",
                (space_id, item_id, self.now()))
         purges.append(item_id)
+
+    def cascade_snapshots(self, space_id: str, purges: list[str]) -> int:
+        """v8 C2: a snapshot that cites an item of this space which was just withdrawn or removed is removed too, by
+        a system record (reason cited_item_gone): a withdraw also takes back the quotes of it in others' frozen
+        summaries, as it does for the handover packs. Runs inside the caller's transaction, after its own op is
+        logged; `purges` grows with the snapshots (and snapshots of snapshots)."""
+        n, i = 0, 0
+        while i < len(purges):
+            gone = purges[i]
+            i += 1
+            for r in self.all("SELECT c.snapshot_id FROM snapshot_cites c JOIN items s ON s.space_id=c.space_id AND"
+                              " s.item_id=c.snapshot_id WHERE c.space_id=? AND c.item_id=? AND s.status='active'"
+                              " ORDER BY c.snapshot_id", (space_id, gone)):
+                body = {"item_id": r["snapshot_id"], "reason": "cited_item_gone", "cited_item_id": gone}
+                seq = self._system_record(space_id, "system.remove", body, r["snapshot_id"])
+                self.purge_item(space_id, r["snapshot_id"], "removed", None, "cited_item_gone", seq, purges)
+                self.audit("system.remove", body, space_id=space_id, seq=seq)
+                n += 1
+        return n
 
     # ---- sweep: overdue privacy takedowns, stale uploads ---------------------------------------------
 
@@ -900,6 +1339,7 @@ class Spaces:
                        (seq, t["space_id"], t["takedown_id"]))
                 self.audit("system.remove", {"item_id": t["item_id"], "takedown_id": t["takedown_id"],
                                              "reason": "takedown_overdue"}, space_id=t["space_id"], seq=seq)
+                self.cascade_snapshots(t["space_id"], purges)
             self._run_purges(t["space_id"], purges)
             done["takedowns"] += 1
         stale = self.all("SELECT space_id, blob_id FROM blobs WHERE status='pending' AND created_ts < ? " + where,
@@ -981,7 +1421,7 @@ class Spaces:
                 raise SpaceError(410, "invite_" + inv["status"])
             if space["archived"]:
                 raise SpaceError(403, "archived")
-            self._check_device_binding(device)
+            self._check_device_binding(device, req["member_id"])
             member = self.member(space_id, req["member_id"])
             if self.one("SELECT 1 FROM devices WHERE space_id=? AND device_id=?", (space_id, device["device_id"])):
                 raise SpaceError(409, "already_member")
@@ -1090,10 +1530,14 @@ class Spaces:
                                                         (sid, actor.member_id))],
               "forks": [r["item_id"] for r in self.all("SELECT item_id FROM forks WHERE space_id=? AND member_id=?",
                                                        (sid, actor.member_id))]}
+        me["usage"] = {"bytes": self.usage(sid, actor.member_id), "quota_bytes": self.quota_bytes(space)}
+        if actor.role >= ROLES["admin"]:
+            for m in members:
+                m["usage_bytes"] = self.usage(sid, m["member_id"])
         return {"space_id": sid, "owner": owner, "policy": space["policy"], "epoch": space["epoch"],
                 "rotation_pending": bool(space["rotation_pending"]), "archived": bool(space["archived"]),
                 "head": space["head"], "created_at": iso(space["created_ts"]), "members": members, "me": me,
-                "counts": counts}
+                "counts": counts, "escrow": self.escrow_status(space), "limits": LIMITS}
 
     def ops_since(self, actor: Actor, since: int, limit: int) -> dict:
         rows = self.all("SELECT * FROM ops WHERE space_id=? AND seq > ? ORDER BY seq LIMIT ?",
@@ -1203,14 +1647,31 @@ class Spaces:
         path = self.blob_path(actor.space_id, blob_id)
         with self.tx():
             row = self.one("SELECT * FROM blobs WHERE space_id=? AND blob_id=?", (actor.space_id, blob_id))
+            again = False
             if row is not None:
                 if row["sha256"] == digest and row["device_id"] == actor.device_id and row["status"] != "deleted":
                     return {"blob_id": blob_id, "size": row["size"], "sha256": digest, "duplicate": True}
-                raise SpaceError(409, "blob_exists")
+                if row["status"] == "deleted" and row["item_id"] is not None:
+                    # its item was withdrawn, removed or replaced: the outbox entry is over (v8 C3)
+                    raise SpaceError(410, "blob_gone")
+                # v8 C3: an upload the daily sweep dropped before its share arrived (the link was down) comes again
+                # from the same Mac with the same bytes
+                again = row["status"] == "deleted" and row["device_id"] == actor.device_id and row["sha256"] == digest
+                if not again:
+                    raise SpaceError(409, "blob_exists")
+            self.check_quota(space, actor.member_id, len(data))
             path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            if again:
+                _unlink(path)
             _write_new(path, data)
-            self.x("INSERT INTO blobs VALUES (?,?,?,NULL,?,?,'pending',?)",
-                   (actor.space_id, blob_id, actor.device_id, len(data), digest, self.now()))
+            _fsync_dir(path.parent)  # v8 C3: an accepted upload survives a power cut
+            if again:
+                self.x("UPDATE blobs SET status='pending', created_ts=?, role=NULL WHERE space_id=? AND blob_id=?",
+                       (self.now(), actor.space_id, blob_id))
+            else:
+                self.x("INSERT INTO blobs(space_id, blob_id, device_id, item_id, size, sha256, status, created_ts)"
+                       " VALUES (?,?,?,NULL,?,?,'pending',?)",
+                       (actor.space_id, blob_id, actor.device_id, len(data), digest, self.now()))
             self.audit("blob.put", {"blob_id": blob_id, "size": len(data)}, space_id=actor.space_id,
                        member_id=actor.member_id, device_id=actor.device_id)
         return {"blob_id": blob_id, "size": len(data), "sha256": digest, "duplicate": False}
@@ -1284,6 +1745,13 @@ class Spaces:
                              "at": r["at"], "actor_member": r["actor_member"], "actor_device": r["actor_device"],
                              "action": r["action"], "target": json.loads(r["target"])} for r in rows],
                 "cursor": rows[-1]["id"] if rows else since}
+
+    def has_audio(self, space_id: str, item_id: str, kind: Optional[str] = None) -> bool:
+        """A meeting or imported-media item, or one that carries an audio part (v8 C1)."""
+        if kind in AUDIO_KINDS:
+            return True
+        return self.one("SELECT 1 FROM segments WHERE space_id=? AND item_id=? AND audio=1",
+                        (space_id, item_id)) is not None
 
     def active_items(self, space_id: str) -> list[dict]:
         return self.all("SELECT item_id, revision, contributor, kind, share_seq FROM items WHERE space_id=? AND"
@@ -1368,11 +1836,24 @@ class OpContext:
         stored = self.s._wraps(wraps, self.space_id, new, devices)
         for w in stored:
             self.s.x("INSERT OR REPLACE INTO key_wraps VALUES (?,?,?,?)", (self.space_id, new, w["device_id"], w["wrap"]))
+        if self.org_space:
+            # v8 B5: the new key also goes to the org admins' devices by the org's policy (escrow).
+            self.s.store_escrow(self.space, new, _escrow_list(self.body.get("escrow_wraps"), set(devices)))
+            self.s.check_escrow(self.space, new)
         self.s.x("INSERT OR REPLACE INTO epoch_links VALUES (?,?,?)", (self.space_id, new, link))
         self.s.x("UPDATE spaces SET epoch=?, rotation_pending=0 WHERE space_id=?", (new, self.space_id))
         self.space["epoch"] = new
         self.rotated = True
         return new
+
+
+def _escrow_list(wraps: object, members: set[str]) -> Optional[list]:
+    """Escrow wraps as sent, without those of devices that get a member wrap anyway; None when there are none."""
+    if wraps is None:
+        return None
+    _need(isinstance(wraps, list) and all(isinstance(w, dict) for w in wraps), "bad_field",
+          "escrow_wraps is a list of {device_id, epoch, wrap}")
+    return [w for w in wraps if w.get("device_id") not in members] or None
 
 
 def _op_id_of(wire: object) -> Optional[str]:
@@ -1396,6 +1877,20 @@ def _write_new(path: Path, data: bytes) -> None:
             n = os.write(fd, view)
             view = view[n:]
         os.fsync(fd)
+    finally:
+        os.close(fd)
+
+
+def _fsync_dir(path: Path) -> None:
+    """Make a new file's directory entry durable (best effort where directories cannot be opened)."""
+    try:
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+    except OSError:
+        return
+    try:
+        os.fsync(fd)
+    except OSError:
+        pass
     finally:
         os.close(fd)
 
@@ -1642,7 +2137,9 @@ def h_device_add(c: OpContext):
     _need(not c.space["rotation_pending"], "rotation_pending", "an admin rotates the space key first", 409)
     if c.s.one("SELECT 1 FROM devices WHERE space_id=? AND device_id=?", (c.space_id, device["device_id"])):
         raise SpaceError(409, "device_exists")
-    c.s._check_device_binding(device)
+    # v8: the new device is this member's own Mac (a device id belongs to one member on this Spark), not one whose
+    # access was unpaired here
+    c.s._check_device_binding(device, c.member_id, added=True)
     wraps = c.s._wraps(c.body.get("wraps"), c.space_id, c.space["epoch"], [device["device_id"]])
     c.s.x("INSERT INTO devices VALUES (?,?,?,?,?,'active',?)",
           (c.space_id, device["device_id"], c.member_id, device["sign_pub"], device["seal_pub"], c.next_seq()))
@@ -1682,11 +2179,67 @@ def _blobs(c: OpContext, item_id: str) -> list[dict]:
         row = c.s.one("SELECT * FROM blobs WHERE space_id=? AND blob_id=?", (c.space_id, b["blob_id"]))
         _need(row is not None and row["status"] == "pending" and row["device_id"] == c.device["device_id"],
               "unknown_blob", "upload the blob from this device first", 409)
-        out.append({"blob_id": b["blob_id"], "role": b.get("role", "original")})
+        _need(all(x["blob_id"] != b["blob_id"] for x in out), "bad_field", "a blob is listed once")
+        out.append({"blob_id": b["blob_id"], "role": b.get("role", "original"), "size": row["size"]})
     if out:
         _need(c.space["policy"].get("originals") != "text_only", "originals_not_allowed",
               "this space keeps text only", 403)
     return out
+
+
+def audio_limit_bytes(length_ms: int) -> int:
+    """The largest audio blob (ciphertext) a part of this length may have (v8 C1)."""
+    return AUDIO_OVERHEAD_BYTES + -(-length_ms * AUDIO_BYTES_PER_S // 1000)
+
+
+def _segment(c: OpContext) -> Optional[dict]:
+    segment = c.body.get("segment")
+    if segment is None:
+        return None
+    _need(isinstance(segment, dict), "bad_field", "segment is an object")
+    parent = _item_id(segment.get("parent_item_id"))
+    start, end = segment.get("start_ms"), segment.get("end_ms")
+    _need(isinstance(start, int) and isinstance(end, int) and 0 <= start < end, "bad_field",
+          "segment start_ms < end_ms")
+    rec = segment.get("recording_ms")
+    _need(rec is None or (isinstance(rec, int) and rec >= end), "bad_field",
+          "segment recording_ms is the whole recording's length (>= end_ms)")
+    return {"parent_item_id": parent, "start_ms": start, "end_ms": end, "recording_ms": rec}
+
+
+def _snapshot(c: OpContext, kind: str, item_id: str) -> Optional[dict]:
+    """v8 C2: a snapshot (a frozen summary, a handover pack) names what it froze, by ids only (this body is plain):
+    the matter, the pack, when, and the items of this space it draws on (when one of them is withdrawn or removed,
+    the snapshot goes too)."""
+    snap = c.body.get("snapshot")
+    if snap is None:
+        return None
+    _need(kind == "snapshot" and isinstance(snap, dict) and set(snap) <= {"matter_id", "pack_id", "as_of", "cites"},
+          "bad_field", "snapshot is {matter_id?, pack_id?, as_of?, cites?} on a snapshot item")
+    _need(snap.get("matter_id") is None or (isinstance(snap["matter_id"], str) and re.fullmatch(
+        r"[A-Za-z0-9._:-]{1,64}", snap["matter_id"]) is not None), "bad_field", "snapshot.matter_id is an id")
+    _need(snap.get("pack_id") is None or sc.is_uuid(snap.get("pack_id")), "bad_field", "snapshot.pack_id is a UUID")
+    if snap.get("as_of") is not None:
+        as_of = parse_ts(snap["as_of"])
+        _need(as_of is not None and as_of <= c.now + REQUEST_SKEW_S, "bad_field",
+              "snapshot.as_of is an ISO-8601 time with an offset, not in the future")
+    cites = snap.get("cites") or []
+    _need(isinstance(cites, list) and len(cites) <= MAX_SNAPSHOT_CITES, "bad_field",
+          f"snapshot.cites is a list of up to {MAX_SNAPSHOT_CITES} item ids")
+    ids = sorted({_item_id(i) for i in cites})
+    _need(item_id not in ids, "bad_field", "a snapshot does not cite itself")
+    gone = [i for i in ids if (c.s.item(c.space_id, i) or {}).get("status") != "active"]
+    if gone:
+        raise SpaceError(422, "unknown_items", "a snapshot cites active items of this space", item_ids=gone[:20])
+    return {"cites": ids}
+
+
+class _Already:
+    """What an op asks for is already done (a retried share, a second withdraw): answered like a duplicate, not
+    logged again (v8 C3)."""
+
+    def __init__(self, seq: Optional[int], effects: dict, accepted_as: str):
+        self.result = {"ok": True, "duplicate": True, "accepted_as": accepted_as, "seq": seq, "effects": effects}
 
 
 def h_item_share(c: OpContext):
@@ -1700,27 +2253,56 @@ def h_item_share(c: OpContext):
     _need(kind in ITEM_KINDS, "bad_field", "unknown item kind")
     revision = b.get("revision")
     _need(isinstance(revision, int) and revision >= 0, "bad_field", "revision is an integer >= 0")
+    share_key = _uuid_field(b, "share_key", required=False)
+    cur = c.s.item(c.space_id, item_id)
+    # v8 C3: the Mac's outbox may send a share again after the first one was applied and its answer lost, as the
+    # same op (a plain duplicate, above) or remade (new op id, new data key: e.g. after a key rotation). The same
+    # outbox entry (share_key) at the item's current revision is that share, accepted once: the remade op's own
+    # uploads are dropped and nothing new is logged.
+    if share_key is not None and cur is not None and cur["status"] == "active" and \
+            cur["contributor"] == c.member_id and cur["share_key"] == share_key and cur["revision"] == revision:
+        for x in b.get("blobs") or []:
+            bid = x.get("blob_id") if isinstance(x, dict) else None
+            if sc.is_uuid(bid) and c.s.one("SELECT 1 FROM blobs WHERE space_id=? AND blob_id=? AND status='pending'"
+                                           " AND device_id=?", (c.space_id, bid, c.device["device_id"])):
+                c.s.x("UPDATE blobs SET status='deleted' WHERE space_id=? AND blob_id=?", (c.space_id, bid))
+                c.dead_blobs.append(bid)
+        return _Already(cur["share_seq"], {"item_id": item_id, "revision": revision,
+                                           "epoch": (c.s.one("SELECT epoch FROM item_keys WHERE space_id=? AND"
+                                                             " item_id=?", (c.space_id, item_id)) or {}).get("epoch")},
+                        "share_key")
+    # v8 C2: a snapshot is frozen: always a new item, never revised (share a new snapshot instead)
+    if cur is not None and (kind == "snapshot" or cur["kind"] == "snapshot"):
+        raise SpaceError(409, "snapshot_frozen", "a snapshot is never revised; share a new one")
+    snap = _snapshot(c, kind, item_id)
     _need("enc" in c.det and "wrapped_dk" in c.det, "bad_op", "item.share carries enc and wrapped_dk", 400)
     _need(not c.space["rotation_pending"], "rotation_pending", "an admin rotates the space key first", 409)
     c.need_enc(True)
     blobs = _blobs(c, item_id)
-    segment = b.get("segment")
-    if segment is not None:
-        _need(isinstance(segment, dict), "bad_field", "segment is an object")
-        _item_id(segment.get("parent_item_id"))
-        start, end = segment.get("start_ms"), segment.get("end_ms")
-        _need(isinstance(start, int) and isinstance(end, int) and 0 <= start < end, "bad_field",
-              "segment start_ms < end_ms")
-    audio = any(x["role"] == "audio" for x in blobs)
+    segment = _segment(c)
+    audio = [x for x in blobs if x["role"] == "audio"]
     if audio or kind == "audio_segment":
         # Audio only as segments: a whole meeting holds other people's words.
         _need(segment is not None, "audio_needs_segment", "audio is shared only as a segment of a recording")
         _need(segment["end_ms"] - segment["start_ms"] <= MAX_SEGMENT_MS, "segment_too_long",
               "a shared audio segment is at most 15 minutes")
+    if audio:
+        _audio_part(c, item_id, kind, segment, audio)
+    if kind in AUDIO_KINDS:
+        # V8R-15: a meeting or imported-media item carries at most its audio part; an "original" (or any other blob)
+        # there could be the whole recording under another name, which the Spark cannot look inside to tell.
+        _need(all(x["role"] == "audio" for x in blobs), "bad_field",
+              "a meeting or imported-media item carries no blob but its audio part")
     package_id = _uuid_field(b, "package_id", required=False)
-    cur = c.s.item(c.space_id, item_id)
     if segment is not None:
         _recording_limit(c, item_id, segment)
+    # v8 B6: the member's quota in this space (a new revision replaces the old one's fields and blobs)
+    replaced = 0 if cur is None or cur["contributor"] != c.member_id else int(c.s.one(
+        "SELECT COALESCE(SUM(LENGTH(enc)),0) AS n FROM ops WHERE space_id=? AND subject=? AND type='item.share' AND"
+        " enc IS NOT NULL", (c.space_id, item_id))["n"]) + int(c.s.one(
+            "SELECT COALESCE(SUM(size),0) AS n FROM blobs WHERE space_id=? AND item_id=? AND status='attached'",
+            (c.space_id, item_id))["n"])
+    c.s.check_quota(c.space, c.member_id, len(c.det["enc"]) - replaced)
     seq = c.next_seq()
     if cur is not None:
         if cur["status"] != "active":
@@ -1740,32 +2322,70 @@ def h_item_share(c: OpContext):
         c.s.x("UPDATE blobs SET status='deleted' WHERE space_id=? AND item_id=? AND status='attached'",
               (c.space_id, item_id))
         c.dead_blobs += [o["blob_id"] for o in old]
-        c.s.x("UPDATE items SET revision=?, kind=?, device_id=?, share_seq=?, updated_seq=? WHERE space_id=? AND"
-              " item_id=?", (revision, kind, c.device["device_id"], seq, seq, c.space_id, item_id))
+        c.s.x("UPDATE items SET revision=?, kind=?, device_id=?, share_seq=?, updated_seq=?, share_key=? WHERE"
+              " space_id=? AND item_id=?",
+              (revision, kind, c.device["device_id"], seq, seq, share_key, c.space_id, item_id))
     else:
         c.s.x("INSERT INTO items(space_id, item_id, contributor, device_id, kind, revision, status, share_seq,"
-              " first_ts, updated_seq) VALUES (?,?,?,?,?,?,'active',?,?,?)",
-              (c.space_id, item_id, c.member_id, c.device["device_id"], kind, revision, seq, c.now, seq))
+              " first_ts, updated_seq, share_key) VALUES (?,?,?,?,?,?,'active',?,?,?,?)",
+              (c.space_id, item_id, c.member_id, c.device["device_id"], kind, revision, seq, c.now, seq, share_key))
     c.s.x("INSERT OR REPLACE INTO item_keys VALUES (?,?,?,?)",
           (c.space_id, item_id, c.space["epoch"], c.det["wrapped_dk"]))
     for x in blobs:
-        c.s.x("UPDATE blobs SET status='attached', item_id=? WHERE space_id=? AND blob_id=?",
-              (item_id, c.space_id, x["blob_id"]))
+        c.s.x("UPDATE blobs SET status='attached', item_id=?, role=? WHERE space_id=? AND blob_id=?",
+              (item_id, x["role"], c.space_id, x["blob_id"]))
     if segment is not None:
-        c.s.x("INSERT OR REPLACE INTO segments VALUES (?,?,?,?,?,?)",
-              (c.space_id, item_id, c.member_id, segment["parent_item_id"].lower(), segment["start_ms"],
-               segment["end_ms"]))
+        c.s.x("INSERT OR REPLACE INTO segments(space_id, item_id, contributor, parent_item_id, start_ms, end_ms, audio,"
+              " recording_ms) VALUES (?,?,?,?,?,?,?,?)",
+              (c.space_id, item_id, c.member_id, segment["parent_item_id"], segment["start_ms"], segment["end_ms"],
+               1 if audio else 0, segment["recording_ms"]))
     else:
         c.s.x("DELETE FROM segments WHERE space_id=? AND item_id=?", (c.space_id, item_id))
-    return item_id, {"item_id": item_id, "revision": revision, "epoch": c.space["epoch"]}, \
-        {"item_id": item_id, "kind": kind, "revision": revision, "blobs": len(blobs), "package_id": package_id}
+    if snap is not None:
+        for cited in snap["cites"]:
+            c.s.x("INSERT OR IGNORE INTO snapshot_cites VALUES (?,?,?)", (c.space_id, item_id, cited))
+    target = {"item_id": item_id, "kind": kind, "revision": revision, "blobs": len(blobs), "package_id": package_id}
+    if audio:
+        target["audio_ms"] = segment["end_ms"] - segment["start_ms"]
+    if snap is not None:
+        target["cites"] = len(snap["cites"])
+    return item_id, {"item_id": item_id, "revision": revision, "epoch": c.space["epoch"]}, target
+
+
+def _audio_part(c: OpContext, item_id: str, kind: str, segment: dict, audio: list[dict]) -> None:
+    """v8 C1: a meeting segment's audio, end-to-end encrypted to the members (the Spark stores the ciphertext and
+    cannot open it). One audio blob per item, only on a meeting or imported-media item, only where the space allows
+    it; a part of a recording, never all of it (the op names the recording's length); its ciphertext no larger than
+    the part's length allows; one audio part per recording per member in a space."""
+    _need(c.space["policy"].get("segment_audio", True) is not False, "audio_not_allowed",
+          "this space does not take meeting audio", 403)
+    _need(kind in AUDIO_KINDS, "bad_field", "audio goes with a meeting or imported-media item")
+    _need(len(audio) == 1, "bad_field", "an item carries one audio part")
+    _need(segment["recording_ms"] is not None, "bad_field",
+          "an audio part names the whole recording's length (segment.recording_ms)")
+    length = segment["end_ms"] - segment["start_ms"]
+    # A part, never (nearly) the whole: at most 4/5 of the recording (review finding V8R-15; "1 ms shorter" was a
+    # whole short meeting).
+    _need(length * AUDIO_PART_DEN <= segment["recording_ms"] * AUDIO_PART_NUM, "whole_recording",
+          "a whole recording is never shared, only a part of it (at most 4/5 of it)")
+    limit = audio_limit_bytes(length)
+    if audio[0]["size"] > limit:
+        raise SpaceError(413, "audio_too_large", "the audio is larger than its length allows",
+                         limit_bytes=limit, size_bytes=audio[0]["size"])
+    other = c.s.one("SELECT s.item_id FROM segments s JOIN items i ON i.space_id=s.space_id AND i.item_id=s.item_id"
+                    " WHERE s.space_id=? AND s.contributor=? AND s.parent_item_id=? AND s.audio=1 AND s.item_id!=?"
+                    " AND i.status='active' LIMIT 1",
+                    (c.space_id, c.member_id, segment["parent_item_id"], item_id))
+    if other is not None:
+        raise SpaceError(409, "one_part_per_recording", "one audio part of a recording per member in a space",
+                         item_id=other["item_id"])
 
 
 def _recording_limit(c: OpContext, item_id: str, segment: dict) -> None:
     """Parts of one recording a member shares, text or audio, add up to at most 15 minutes in a space: a whole
     meeting holds other people's words, and eight consecutive 15-minute parts are the whole meeting (review
     finding V7-S5). Overlaps count once; this item's own earlier revision does not count."""
-    parent = segment["parent_item_id"].lower()
+    parent = segment["parent_item_id"]
     spans = [(r["start_ms"], r["end_ms"]) for r in c.s.all(
         "SELECT s.start_ms, s.end_ms FROM segments s JOIN items i ON i.space_id=s.space_id AND i.item_id=s.item_id"
         " WHERE s.space_id=? AND s.contributor=? AND s.parent_item_id=? AND s.item_id!=? AND i.status='active'",
@@ -1786,8 +2406,20 @@ def _withdraw_window_open(c: OpContext, item: dict) -> bool:
     return window is None or c.now - item["first_ts"] <= window * 3600
 
 
+def _already_withdrawn(c: OpContext, item_id: str) -> Optional[_Already]:
+    """v8 C3: the member's own item they already withdrew (a remade withdraw or delete from the outbox)."""
+    item = c.s.item(c.space_id, item_id)
+    if item is not None and item["status"] == "withdrawn" and item["contributor"] == c.member_id and \
+            item["ended_by"] == c.member_id:
+        return _Already(item["ended_seq"], {"item_id": item_id, "status": "withdrawn"}, "withdrawn")
+    return None
+
+
 def h_item_withdraw(c: OpContext):
     item_id = _item_id(c.body.get("item_id"))
+    done = _already_withdrawn(c, item_id)
+    if done is not None:
+        return done
     item = c.active_item(item_id)
     _need(item["contributor"] == c.member_id, "forbidden", "only the contributor withdraws an item", 403)
     if not _withdraw_window_open(c, item):
@@ -1808,8 +2440,16 @@ def _open_takedown(c: OpContext, takedown_id: str, item_id: str, kind: str) -> d
 def h_item_delete(c: OpContext):
     """The contributor deletes their item: a withdraw, or in an org space past the window a takedown request."""
     item_id = _item_id(c.body.get("item_id"))
+    done = _already_withdrawn(c, item_id)
+    if done is not None:
+        return done
     item = c.active_item(item_id)
     _need(item["contributor"] == c.member_id, "forbidden", "only the contributor deletes an item", 403)
+    t = c.s.one("SELECT * FROM takedowns WHERE space_id=? AND item_id=? AND requester=? AND kind='other' AND"
+                " status='open' ORDER BY created_ts LIMIT 1", (c.space_id, item_id, c.member_id))
+    if t is not None:  # v8 C3: a remade delete past the window: the takedown it asked for is open already
+        return _Already(t["op_seq"], {"item_id": item_id, "status": "takedown_requested", "takedown_id": t["takedown_id"],
+                                      "kind": "other", "due_at": None}, "open_takedown")
     if _withdraw_window_open(c, item):
         c.s.purge_item(c.space_id, item_id, "withdrawn", c.member_id, "deleted", c.next_seq(), c.purges)
         return item_id, {"item_id": item_id, "status": "withdrawn"}, {"item_id": item_id, "outcome": "withdrawn"}
@@ -2027,8 +2667,27 @@ def h_matter_handover(c: OpContext):
     target = c.s.member(c.space_id, to)
     _need(target is not None and target["status"] == "active" and c.s.effective_role(c.space, target) >= ROLES["write"],
           "bad_field", "the new 负责人 is an active member who can contribute")
+    # v8 B3: the handover pack shared for it (a snapshot item in this space), if any
+    pack = c.body.get("pack_item_id")
+    if pack is not None:
+        pack = _item_id(pack)
+        _need(c.active_item(pack)["kind"] == "snapshot", "bad_field", "pack_item_id is a snapshot item of this space")
     c.s.x("INSERT OR REPLACE INTO matter_leads VALUES (?,?,?,?)", (c.space_id, matter_id, to, c.next_seq()))
-    return None, {"matter_id": matter_id, "lead": to}, {"matter_id": matter_id, "to_member_id": to}
+    return None, {"matter_id": matter_id, "lead": to, "pack_item_id": pack}, \
+        {"matter_id": matter_id, "to_member_id": to, "pack_item_id": pack}
+
+
+def h_escrow_wrap(c: OpContext):
+    """v8 B5: an admin's Mac wraps the current key to org admin devices that lack it (a new org admin, a raised
+    recovery_admins policy)."""
+    c.need_role("admin")
+    _need(c.org_space, "bad_field", "escrow is for organization spaces")
+    epoch = c.body.get("epoch")
+    _need(epoch == c.space["epoch"], "stale_epoch", "escrow wraps are for the current epoch", 409)
+    _need(isinstance(c.body.get("wraps"), list) and c.body["wraps"], "bad_field", "wraps is a non-empty list")
+    n = c.s.store_escrow(c.space, epoch, _escrow_list(c.body["wraps"], set(c.active_devices())) or [])
+    status = c.s.escrow_status(c.space)
+    return None, {"epoch": epoch, "stored": n, "escrow_ok": status["ok"]}, {"epoch": epoch, "stored": n}
 
 
 def h_agent_access(c: OpContext):
@@ -2078,6 +2737,7 @@ HANDLERS: dict[str, Callable[[OpContext], tuple]] = {
     "proposal.resolve": h_proposal_resolve,
     "proposal.withdraw": h_proposal_withdraw,
     "agent.access": h_agent_access,
+    "escrow.wrap": h_escrow_wrap,
 }
 
 # An archived space is read-only: nothing new comes in; withdraw, removal, takedowns, leave and key rotation work.

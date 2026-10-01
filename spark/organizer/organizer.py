@@ -159,12 +159,15 @@ class Organizer:
         # (i) v7 (MAP-CONTRACT): the read model of relations (crossings, blocks, ropes, facets), each matter's map
         # (skill matter-map: after its card is rewritten, when idle, or when the Mac asks) and the grouping pass
         # (skill matter-group: ropes and the type facet). maps / grouping = {"enabled": False} turn them off.
+        from .handover import HandoverPacks
         from .matter_group import MatterGrouper
         from .matter_map import MatterMapper
         from .relations import Graph
         self.graph = Graph(self)
         self.mapper = MatterMapper(self, **(maps or {}))
         self.grouper = MatterGrouper(self, **(grouping or {}))
+        # v8 B3: handover packs, on request (organizer/handover.py)
+        self.handover = HandoverPacks(self)
         # (j) passes an owner adds (a shared space's package step, space_organizer.py): each is called when the
         # worker is idle, inside its step (bound to the unlock session), and returns True when it changed
         # something. No model calls.
@@ -466,14 +469,17 @@ class Organizer:
             # The Mac asked for a matter's map (the user opened it): one map before the next item.
             self.mapper.run(demand_only=True, max_calls=1)
             return True
+        if self.handover.due():
+            # A member asked for a handover pack (someone is waiting for it): one before the next item.
+            self.handover.run_one()
+            return True
         job = self.store.claim_next_job()
         if job:
             self._run_job(job)
             return True
-        ev = self.store.one("SELECT event_id FROM events WHERE needs_brief=1 AND deleted=0"
-                            " ORDER BY updated_ts, handle LIMIT 1")
+        ev = self.store.next_brief()
         if ev:
-            self.brief(ev["event_id"])
+            self.brief(ev)
             return True
         if self.consolidator.idle_due():
             self.consolidator.run()

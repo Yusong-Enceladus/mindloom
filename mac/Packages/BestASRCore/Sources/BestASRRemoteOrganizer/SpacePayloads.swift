@@ -227,17 +227,28 @@ public enum SpaceShareContent {
         fields.endedAt = SpaceTime.string(
           recordingStart.addingTimeInterval(Double(range.end) / 1000), timeZone: zone)
       }
+      // The recording's length on the same clock (its last line's end): a
+      // part of at most 4/5 of it may carry its audio for members (v8 C1,
+      // review V8R-15).
+      let recordingMS = lines.map { Int($0.endMS) }.max()
+      let audioPossible =
+        recordingMS.map {
+          SpaceAudioCheck.isPart(lengthMS: range.end - range.start, recordingMS: $0)
+            && range.end <= $0
+        } ?? false
       let candidate = SpaceShareCandidate(
         id: partID, sourceItemID: itemID,
         kind: .segment(parentItemID: itemID, startMS: range.start, endMS: range.end),
         wireKind: "audio_segment", title: fields.title ?? partTitle, preview: preview(text),
         startedAt: partStart, isPrivateDictation: false,
-        numberLabels: numberLabels([text]), hasOriginal: false)
+        numberLabels: numberLabels([text]), hasOriginal: false, audioPossible: audioPossible)
       return Entry(
         candidate: candidate,
         item: SpaceOutgoingItem(
           itemID: partID, kind: "audio_segment", fields: fields,
-          segment: SpaceSegmentRef(parentItemID: itemID, startMS: range.start, endMS: range.end)))
+          segment: SpaceSegmentRef(
+            parentItemID: itemID, startMS: range.start, endMS: range.end,
+            recordingMS: recordingMS)))
     }
   }
 

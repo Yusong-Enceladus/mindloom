@@ -177,5 +177,9 @@ def test_service_never_imports_the_member_side():
             continue
         code = "\n".join(ln for ln in p.read_text(encoding="utf-8").splitlines()
                          if re.match(r"\s*(from\s+[\w.]+\s+import\s|import\s+[\w.]+)", ln))
+        if p.name == "backup.py":
+            # v8 B4: the backup stream is sealed with a key the admin's Mac lends for one export (like the organizer
+            # lease's store key); the Spark still never derives, wraps or unwraps a space key.
+            code = code.replace("from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305", "")
         assert not re.search(r"space_member|ChaCha20Poly1305|X25519PrivateKey|Ed25519PrivateKey|aead|hkdf", code), \
             p.name

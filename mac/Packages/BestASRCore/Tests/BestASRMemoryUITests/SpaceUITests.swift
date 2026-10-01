@@ -148,8 +148,40 @@ final class SpaceUITests: XCTestCase {
           id: "d", sourceItemID: "rec",
           kind: .segment(parentItemID: "rec", startMS: 60_000, endMS: 180_000),
           wireKind: "audio_segment", title: "看房录音（1:00–3:00）", preview: "王姐：押金一个月",
-          startedAt: nil, isPrivateDictation: false, numberLabels: [], hasOriginal: false),
+          startedAt: nil, isPrivateDictation: false, numberLabels: [], hasOriginal: false,
+          audioPossible: true),
       ]), sharedIn: [:])
+    // v8: the part ticked with its audio; the handover sheet; a takeover to
+    // confirm and the outbox on the members sheet.
+    share.shareDraft?.review.toggle("d")
+    share.shareDraft?.review.toggleAudio("d")
+    var snapshot = share
+    snapshot.shareDraft?.scale = .snapshot
+    var handover = inSpace
+    var display = SpaceHandoverDisplay(
+      spaceID: space.spaceID, eventID: "ev-rent", matterTitle: "租房续约", currentLead: "林知远",
+      members: [SpaceHandoverMember(memberID: Self.mate, name: "韩策")])
+    display.status = "交接包已经写好"
+    display.markdown = "# 交接包：租房续约\n\n## 现在到哪了\n- 房东同意涨 200（素材 1）\n\n## 谁还欠着什么\n- 韩策：周五前把合同寄回（素材 2）"
+    display.sources = 2
+    display.packID = "88888888-0000-4000-8000-000000000001"
+    handover.handover = display
+    var notices = base
+    var recovered = space
+    recovered.pendingRecoveries = [
+      SpacePendingRecovery(
+        seq: 9, memberID: Self.mate,
+        device: SpaceDevicePublic(deviceID: "d2", signPub: "AAAA", sealPub: "AAAA"))
+    ]
+    recovered.usage = SpaceUsage(bytes: 12 * 1_048_576, quotaBytes: 2_048 * 1_048_576)
+    notices.spaces = [recovered]
+    notices.outbox[space.spaceID] = SpaceOutboxContents(
+      entries: [
+        SpaceOutboxEntry(entryID: "e1", kind: .share, label: "周四复测", createdAt: Self.now)
+      ],
+      failures: [
+        SpaceOutboxFailure(entryID: "e2", label: "整场录音", code: "whole_recording", at: Self.now)
+      ])
     return [
       ("space-home-mine", base, nil, MemoryNavigation()),
       ("space-home-space", inSpace, nil, MemoryNavigation()),
@@ -157,6 +189,12 @@ final class SpaceUITests: XCTestCase {
       ("space-event-mine-badge", base, nil, MemoryNavigation(path: [.event("ev-rent")])),
       ("space-event-in-space", inSpace, nil, MemoryNavigation(path: [.event("ev-rent")])),
       ("space-sheet-share", share, .share(eventID: "ev-rent"), MemoryNavigation()),
+      ("space-sheet-share-snapshot", snapshot, .share(eventID: "ev-rent"), MemoryNavigation()),
+      (
+        "space-sheet-handover", handover, .handover(spaceID: space.spaceID, eventID: "ev-rent"),
+        MemoryNavigation()
+      ),
+      ("space-sheet-members-v8", notices, .members(spaceID: space.spaceID), MemoryNavigation()),
       ("space-sheet-members", base, .members(spaceID: space.spaceID), MemoryNavigation()),
       (
         "space-sheet-items", inSpace, .items(spaceID: space.spaceID, eventID: "ev-rent"),
@@ -167,6 +205,65 @@ final class SpaceUITests: XCTestCase {
       ("space-sheet-new", base, .newSpace, MemoryNavigation()),
       ("space-sheet-join", base, .join, MemoryNavigation()),
     ]
+  }
+
+  /// v8: a meeting part's audio is played (not opened as a file), a
+  /// snapshot says it is frozen, maintainers may hand a matter over, the
+  /// outbox line says what waits.
+  func testAudioPartsSnapshotsAndHandoverInTheRows() {
+    var state = Self.space(.org, role: .maintain)
+    let part = "44444444-0000-4000-8000-000000000009"
+    state.items[part] = SpaceSharedItem(
+      itemID: part, contributor: Self.mate, kind: "audio_segment", revision: 1, shareSeq: 3,
+      firstSharedAt: Self.now, updatedAt: Self.now,
+      fields: SpaceItemFields(kind: "audio_segment", title: "会议（1:00–1:20）", text: "这二十秒"),
+      blobs: [SpaceBlobRef(blobID: "55555555-0000-4000-8000-000000000009", role: "audio")],
+      segment: SpaceSegmentRef(
+        parentItemID: "99999999-0000-4000-8000-000000000001", startMS: 60_000, endMS: 80_000,
+        recordingMS: 3_600_000), packageID: nil, status: .active, keyEpoch: 1)
+    var snap = state.items[part]!
+    snap = SpaceSharedItem(
+      itemID: "44444444-0000-4000-8000-00000000000a", contributor: Self.me, kind: "snapshot",
+      revision: 1, shareSeq: 4, firstSharedAt: Self.now, updatedAt: Self.now,
+      fields: SpaceItemFields(kind: "snapshot", title: "交接包", text: "合成"), blobs: [],
+      segment: nil, packageID: nil, status: .active, keyEpoch: 1)
+    snap.snapshot = SpaceSnapshotRef(matterID: "ev", packID: nil, asOf: nil, cites: [part])
+    state.items[snap.itemID] = snap
+    let info = SpaceMatterInfo.make(
+      state: state, itemIDs: [part, snap.itemID], contributionLine: nil, now: Self.now)
+    let audioRow = info.items.first { $0.itemID == part }
+    XCTAssertEqual(audioRow?.audio?.role, "audio")
+    XCTAssertEqual(audioRow?.originals, [])
+    XCTAssertNotNil(info.items.first { $0.itemID == snap.itemID }?.snapshotNote)
+    XCTAssertTrue(info.canHandover)
+    XCTAssertFalse(
+      SpaceMatterInfo.make(
+        state: Self.space(.org, role: .write), itemIDs: [], contributionLine: nil, now: Self.now
+      ).canHandover)
+    var screen = SpacesScreenState()
+    screen.outbox[state.spaceID] = SpaceOutboxContents(
+      entries: [SpaceOutboxEntry(entryID: "e", kind: .share, label: "x", createdAt: Self.now)])
+    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条等联网后发出")
+    screen.linkReady = true
+    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条正在发出")
+    // Audio goes only with a ticked part that may carry it.
+    var review = SpaceShareReview(candidates: [
+      SpaceShareCandidate(
+        id: "p", sourceItemID: "r", kind: .segment(parentItemID: "r", startMS: 0, endMS: 10),
+        wireKind: "audio_segment", title: "t", preview: "", startedAt: nil,
+        isPrivateDictation: false, numberLabels: [], hasOriginal: false, audioPossible: true),
+      SpaceShareCandidate(
+        id: "q", sourceItemID: "q", kind: .item, wireKind: "text", title: "t", preview: "",
+        startedAt: nil, isPrivateDictation: false, numberLabels: [], hasOriginal: false),
+    ])
+    review.toggleAudio("p")
+    XCTAssertEqual(review.audio, [], "not ticked yet")
+    review.toggle("p")
+    review.toggleAudio("p")
+    review.toggleAudio("q")
+    XCTAssertEqual(review.audio, ["p"])
+    review.toggle("p")
+    XCTAssertEqual(review.audio, [], "unticking the part drops its audio")
   }
 
   /// Every space view draws (light and dark); with `BESTASR_UI_SNAPSHOT_DIR`

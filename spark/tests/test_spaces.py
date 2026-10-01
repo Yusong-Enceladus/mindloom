@@ -701,8 +701,13 @@ def test_audio_only_as_segments_and_never_shared_kinds(spark):
     res = b.share(sid, "会议", kind="audio_segment", original=b"AUDIO", blob_role="audio",
                   segment={"parent_item_id": parent, "start_ms": 0, "end_ms": 16 * 60 * 1000})["result"]
     assert res["error"] == "segment_too_long"
+    # v8 C1: an audio part names its recording's length (a part, never the whole; test_space_audio.py)
     res = b.share(sid, "会议里关于读书会的一分钟", kind="audio_segment", original=b"AUDIO", blob_role="audio",
                   segment={"parent_item_id": parent, "start_ms": 60_000, "end_ms": 120_000})["result"]
+    assert res["error"] == "bad_field"
+    res = b.share(sid, "会议里关于读书会的一分钟", kind="audio_segment", original=b"AUDIO", blob_role="audio",
+                  segment={"parent_item_id": parent, "start_ms": 60_000, "end_ms": 120_000,
+                           "recording_ms": 3_600_000})["result"]
     assert res["ok"]
     # a text-only space keeps no originals
     tsid, ta, (tb,) = team(spark, "person", policy={"originals": "text_only"})

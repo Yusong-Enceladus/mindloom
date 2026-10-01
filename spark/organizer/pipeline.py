@@ -81,6 +81,8 @@ class Pipeline:
             if org.mapper.demand_due():
                 # The Mac asked for a matter's map (the user opened it): one at this barrier, not at the idle end.
                 org.mapper.run(pool=self.pool, demand_only=True, max_calls=1)
+            if org.handover.due():
+                org.handover.run_one()  # v8: a handover pack someone is waiting for
             if org.consolidator.due():
                 # Every N items, at this barrier: its calls run on the pool, results are applied in order.
                 org.consolidator.run(pool=self.pool)
@@ -104,6 +106,9 @@ class Pipeline:
             return True
         if org.mapper.demand_due():
             org.mapper.run(pool=self.pool, demand_only=True)
+            return True
+        if org.handover.due():
+            org.handover.run_one()
             return True
         # The owner's idle hooks (no model calls; they may move items) run before grouping and the idle maps.
         if org.run_idle_hooks():
@@ -152,8 +157,7 @@ class Pipeline:
 
     def _prefetch(self, current: dict) -> None:
         store = self.org.store
-        queued = store.all("SELECT item_id, revision FROM jobs WHERE state='queued' AND not_before <= ?"
-                           " ORDER BY started_ts, item_id LIMIT ?", (time.time(), self.prefetch_ahead))
+        queued = store.job_plan(self.prefetch_ahead)  # the claim order (v8 B6: turns and deadlines in spaces)
         wanted = [(current["item_id"], current["revision"])] + [(r["item_id"], r["revision"]) for r in queued]
         for key in wanted:
             if key not in self.prefetched:
@@ -166,6 +170,9 @@ class Pipeline:
     def _launch_briefs(self) -> int:
         store = self.org.store
         rows = store.all("SELECT event_id FROM events WHERE needs_brief=1 AND deleted=0 ORDER BY handle")
+        if store.deadline_days:  # v8 B6: in a shared space a matter with a near deadline is briefed first
+            urgent = store.urgent_events()
+            rows.sort(key=lambda r: r["event_id"] not in urgent)
         launched = 0
         for row in rows:
             event_id = row["event_id"]

@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "kind": "v8-browser-extension-summary",
+  "date": "2026-10-01",
+  "branch": "claude/v8",
+  "dataPolicy": "synthetic data only; the installed App was not launched; the user's Chrome profile was not touched (a throw-away Chromium profile was used); no inference on the Mac",
+  "requirements": ["ENTRY-012"],
+  "extension": {
+    "folder": "integrations/chrome-extension",
+    "manifestVersion": 3,
+    "extensionID": "mhpochidiepnikgedmjbpnoknbkjidpa",
+    "permissions": ["activeTab", "contextMenus", "nativeMessaging", "scripting"],
+    "hostPermissions": [],
+    "contentSecurityPolicy": "script-src 'self'; object-src 'none'; connect-src 'none'",
+    "nativeMessagingHost": "com.bestasr.mindloom",
+    "bundledInApp": "Contents/Resources/chrome-extension"
+  },
+  "packageSuite": {
+    "command": "swift test --skip QwenWhisperFeaturesTests (BestASRCore)",
+    "bundles": 46,
+    "executed": 961,
+    "passed": 939,
+    "skipped": 22,
+    "failed": 0
+  },
+  "newTests": {
+    "BrowserEntryTests": {"executed": 7, "failed": 0},
+    "BrowserHostTests": {"executed": 5, "failed": 0, "alsoRunWithTheHelperInsideTheBuiltApp": true},
+    "ChromeExtensionEndToEndTests": {
+      "executed": 1,
+      "failed": 0,
+      "optIn": "MINDLOOM_E2E_CHROME",
+      "browser": "Chromium 142, headless, throw-away profile",
+      "runs": ["repository extension + SwiftPM helper", "extension and helper inside the built App"]
+    }
+  },
+  "checks": [
+    "Chrome framing: 4-byte native-order length + UTF-8 JSON, chunked, several per stream, bad JSON, truncated, oversized stops the host",
+    "requests checked: type, kind, field types, sizes, something to take",
+    "host manifest: written only by install, unchanged on a second install (same inode and mtime), removed twice without error, neighbour manifest byte-identical, no temporary file left",
+    "host manifest: no Chrome folder means nothing created; helper must be an executable absolute path; a link by our name is replaced, never written through; a folder by our name is left alone",
+    "allowed_origins holds only the extension ID derived from the manifest key",
+    "helper refuses any other origin with one reply and exit 2, nothing forwarded",
+    "browser entry off by default with its own switch; the command-line switch never lets it in",
+    "items: selection with page title and link, page link, link; source Chrome; links never fetched (URLProtocol tripwire)",
+    "an agent's MCP session and the MCP-mode helper both answer the browser method with Method not found",
+    "no consent sheet and no audit row for the owner's own intake",
+    "extension code: no network, storage or dynamic-code API; only js/json/png/md files",
+    "in Chromium: CSP blocked a fetch from the service worker and a loopback listener saw zero connections",
+    "in Chromium: allowed_origins naming another extension made Chrome refuse to start the helper; a removed manifest gave the install hint",
+    "in Chromium: the toolbar badge showed the check mark or the exclamation mark with the App's answer as the tooltip",
+    "the host moves to the temporary folder at start, whatever folder it was started in",
+    "after Chromium started the App's own helper, nothing appeared beside it and the App bundle's signature stayed valid",
+    "the BestASR scheme no longer gathers coverage, so Debug builds of the helper are not instrumented (no default.profraw)"
+  ],
+  "appDebugBuild": {
+    "result": "succeeded",
+    "extension": "Contents/Resources/chrome-extension (manifest, background.js, icons, README)",
+    "helper": "Contents/Helpers/mindloom-mcp (MCP, the mindloom command line, and the Chrome native messaging host)",
+    "codesignVerifyDeepStrict": "pass (also after Chromium started the bundled helper)",
+    "builtPermissionCheck": "pass: 4 usage descriptions, 2 required entitlements, App/XPC signatures valid",
+    "helperCoverageInstrumentation": "none"
+  },
+  "gates": {
+    "lint_permissions": "pass (5 capabilities)",
+    "swift_format_lint_strict": "0 findings in new and changed files",
+    "privacy_scan": "pass",
+    "validate_product_consistency": "pass",
+    "validate_traceability": "pass (12 entries)",
+    "check_project_drift": "pass"
+  },
+  "notLookedAtInTheRunningApp": [
+    "Settings → 入口 → Chrome 扩展 switch and its status lines; the real context menu and toolbar clicks in a user's Chrome"
+  ]
+}

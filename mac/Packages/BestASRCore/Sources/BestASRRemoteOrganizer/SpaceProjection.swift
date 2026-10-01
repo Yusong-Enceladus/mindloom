@@ -34,6 +34,26 @@ public struct SpaceView: Sendable {
 }
 
 public enum SpaceProjectionBuilder {
+  /// Puts the numbers back into a text the space organizer wrote
+  /// (placeholders made with the space's mask key), from every text members
+  /// can read in the space; anything not found stays a placeholder.
+  public static func unmasker(_ state: SpaceLocalState, maskKey: Data?)
+    -> @Sendable (String) -> String
+  {
+    var originals: [String: String] = [:]
+    if let maskKey, let masker = try? PrivacyMasker(maskKey: maskKey) {
+      for item in state.activeItems {
+        for text in item.fields?.texts ?? [] {
+          for span in masker.maskWithSpans(text).spans {
+            originals[span.placeholder] = span.original
+          }
+        }
+      }
+    }
+    let map = originals
+    return { text in PrivacyUnmask.unmask(text) { map[$0] } }
+  }
+
   public static func build(
     _ state: SpaceLocalState, maskKey: Data?, timeZone: TimeZone = .current
   ) -> SpaceView {
@@ -344,4 +364,50 @@ public enum SpaceRopeRule {
   /// proposed rope holds) never decide on their own what leaves for a space;
   /// until then the rule only asks.
   public static func sendsByItself(_ rope: RemoteOrganizerRope) -> Bool { !rope.proposed }
+}
+
+/// A handover pack as a member reads it (v8 B3): the Spark's masked pack
+/// with the numbers put back on this Mac, ready to show, export as Markdown
+/// or share into the space as a snapshot citing its sources.
+public struct SpaceHandoverView: Equatable, Sendable {
+  public let packID: String
+  public let matterID: String?
+  /// `queued`, `running`, `ready`, `failed`.
+  public let status: String
+  public let error: String?
+  public let markdown: String?
+  /// The space's items the pack quotes or draws on (a snapshot's `cites`).
+  public let sources: [String]
+
+  public var isReady: Bool { status == "ready" && markdown != nil }
+
+  public var statusText: String {
+    switch status {
+    case "ready": return "交接包已经写好"
+    case "failed": return "没有写成（\(error ?? "未知原因")）；可以再试一次"
+    case "running": return "整理设备正在写交接包…"
+    default: return "排队中，整理设备空下来就写…"
+    }
+  }
+
+  public init(_ pack: SpaceHandoverPack, state: SpaceLocalState, maskKey: Data?) {
+    let unmask = SpaceProjectionBuilder.unmasker(state, maskKey: maskKey)
+    packID = pack.packID
+    matterID = pack.matterID
+    status = pack.status
+    error = pack.error
+    markdown = pack.markdown.map(unmask)
+    let present = Set(state.activeItems.map(\.itemID))
+    sources = pack.sources.map { $0.lowercased() }.filter(present.contains)
+  }
+
+  /// A file name for the exported Markdown.
+  public static func fileName(title: String, date: Date) -> String {
+    let formatter = DateFormatter()
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.dateFormat = "yyyy-MM-dd"
+    let safe = title.replacingOccurrences(of: "/", with: "-").replacingOccurrences(
+      of: ":", with: "-")
+    return "交接包-\(safe.prefix(40))-\(formatter.string(from: date)).md"
+  }
 }

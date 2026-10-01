@@ -5,6 +5,7 @@ import CryptoKit
 import Darwin
 import Foundation
 import MindloomLink
+import MindloomSpaces
 
 /// Which SSH hop a pairing step is about.
 public enum PhonePairingHop: String, Codable, Equatable, Sendable {
@@ -458,5 +459,120 @@ extension RemoteOrganizerRuntime {
   ) -> RemoteOrganizerRuntime {
     onInboxDiscarded = handler
     return self
+  }
+}
+
+// MARK: - Teammates' Macs (v8 B1)
+
+/// How an invite to the team's Spark pins the way in: the organizing device
+/// and, when this Mac reaches it through a relay, the relay — both with host
+/// keys from this Mac's known_hosts, never trust-on-first-use.
+public struct TeamRoute: Equatable, Sendable {
+  public let spark: SpaceInviteCode.Endpoint
+  public let relay: SpaceInviteCode.Endpoint?
+  /// This Mac's own ssh destination for the relay (to add the ticket key's line).
+  public let relayDestination: SSHDestination?
+}
+
+extension PhonePairingService {
+  /// The team route an invite carries.
+  public func teamRoute() async throws -> TeamRoute {
+    let spark = try await resolve(settings.spark, hop: .spark)
+    let sparkKey = try await hostKey(for: spark, hop: .spark)
+    var relay: SpaceInviteCode.Endpoint?
+    var relayDestination: SSHDestination?
+    if let jump = spark.proxyJump {
+      guard let spec = try? SSHJumpSpec.parse(jump) else {
+        throw PhonePairingError.unsupportedProxy
+      }
+      let destination = SSHDestination(spec)
+      let resolved = try await resolve(destination, hop: .relay)
+      guard resolved.proxyJump == nil, resolved.proxyCommand == nil else {
+        throw PhonePairingError.unsupportedProxy
+      }
+      let key = try await hostKey(for: resolved, hop: .relay)
+      relay = SpaceInviteCode.Endpoint(
+        host: resolved.hostname, port: resolved.port, user: resolved.user, hostKey: key.openSSH)
+      relayDestination = destination
+    } else if spark.proxyCommand != nil {
+      throw PhonePairingError.unsupportedProxy
+    }
+    return TeamRoute(
+      spark: SpaceInviteCode.Endpoint(
+        host: spark.hostname, port: spark.port, user: spark.user, hostKey: sparkKey.openSSH),
+      relay: relay, relayDestination: relayDestination)
+  }
+
+  /// The relay line of a ticket key (`team-…`): it can only open a tunnel to
+  /// the Spark's SSH port, where the key itself can only enroll once.
+  public static func teamRelayKeyID(_ key: SSHEd25519Key) -> String {
+    "team-" + SpaceCrypto.sha256Hex(key.publicKeyRaw).prefix(12)
+  }
+
+  public func authorizeTeamRelay(_ route: TeamRoute, key: SSHEd25519Key) async throws {
+    guard let destination = route.relayDestination else { return }
+    do {
+      try await runRemote(
+        destination,
+        PhoneLinkSSHCommand.relayAuthorizeCommand(
+          keyID: Self.teamRelayKeyID(key), sparkHost: route.spark.host, sparkPort: route.spark.port,
+          publicKeyBase64: key.publicKeyBase64),
+        stdin: Data(relayScript.utf8))
+    } catch {
+      try? await revokeTeamRelay(destination, keyID: Self.teamRelayKeyID(key))
+      throw PhonePairingError.authorizeFailed(.relay)
+    }
+  }
+
+  public func revokeTeamRelay(_ destination: SSHDestination, keyID: String) async throws {
+    do {
+      try await runRemote(
+        destination, PhoneLinkSSHCommand.relayRevokeCommand(keyID: keyID),
+        stdin: Data(relayScript.utf8))
+    } catch { throw PhonePairingError.revokeFailed(.relay) }
+  }
+
+  /// The key ids of the 织机 lines on the relay (`relay-authorize list`).
+  public func relayKeyIDs(_ destination: SSHDestination) async throws -> [String] {
+    let result = try await runner.run(
+      PhoneLinkSSHCommand.sshPath,
+      PhoneLinkSSHCommand.remoteArguments(
+        destination, command: "sh -s -- list", configFile: settings.sshConfigFile),
+      stdin: Data(relayScript.utf8), timeout: remoteTimeout)
+    guard result.status == 0,
+      let object = try? JSONSerialization.jsonObject(with: result.stdout) as? [String: Any],
+      object["ok"] as? Bool == true, let ids = object["phones"] as? [String]
+    else { throw PhonePairingError.authorizeFailed(.relay) }
+    return ids
+  }
+
+  /// Review V8R-12: the relay's team lines (`team-…`) brought in step with
+  /// the Spark's own records: a line for every open ticket key and every
+  /// paired Mac's own key (`wanted`, key id → base64), none for anything else.
+  /// A used, expired or revoked ticket's line and an unpaired Mac's line go,
+  /// so the relay's authorized_keys is what it was before the invite. Phone
+  /// lines (other ids) are never touched. Returns what was added and removed.
+  @discardableResult
+  public func reconcileTeamRelay(_ route: TeamRoute, wanted: [String: String]) async throws
+    -> (added: Int, removed: Int)
+  {
+    guard let destination = route.relayDestination else { return (0, 0) }
+    let present = Set(try await relayKeyIDs(destination).filter { $0.hasPrefix("team-") })
+    var added = 0
+    var removed = 0
+    for (keyID, base64) in wanted.sorted(by: { $0.key < $1.key }) where !present.contains(keyID) {
+      try await runRemote(
+        destination,
+        PhoneLinkSSHCommand.relayAuthorizeCommand(
+          keyID: keyID, sparkHost: route.spark.host, sparkPort: route.spark.port,
+          publicKeyBase64: base64),
+        stdin: Data(relayScript.utf8))
+      added += 1
+    }
+    for keyID in present.sorted() where wanted[keyID] == nil {
+      try await revokeTeamRelay(destination, keyID: keyID)
+      removed += 1
+    }
+    return (added, removed)
   }
 }

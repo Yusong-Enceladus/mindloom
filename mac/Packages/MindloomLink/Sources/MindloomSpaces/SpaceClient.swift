@@ -93,14 +93,15 @@ public struct SpaceClient: Sendable {
 
   public func send(
     _ method: String, _ path: String, query: [(String, String)] = [], body: Data? = nil,
-    contentType: String? = "application/json", signed: Bool
+    contentType: String? = "application/json", signed: Bool, headers extra: [String: String] = [:]
   ) async throws -> Data {
     let queryString = query.map { "\($0.0)=\(Self.percentEncode($0.1))" }.joined(separator: "&")
     let target = path + (queryString.isEmpty ? "" : "?" + queryString)
-    let headers =
+    var headers =
       signed
       ? try device.requestHeaders(method: method, target: target, body: body ?? Data(), date: now())
       : [:]
+    for (name, value) in extra { headers[name] = value }
     let response: SpaceHTTPResponse
     do {
       response = try await transport.send(
@@ -180,6 +181,70 @@ public struct SpaceClient: Sendable {
       await send(
         "GET", "/v1/orgs/\(orgID)/audit", query: [("since", "\(since)"), ("limit", "\(limit)")],
         signed: true))
+  }
+
+  /// The organization's signed log (org admins' devices only).
+  public func orgLog(_ orgID: String) async throws -> [SpaceLogEntry] {
+    try await org(orgID)["ops"].map { try $0.decoded(as: [SpaceLogEntry].self) } ?? []
+  }
+
+  /// This org device's escrow wraps of each org space's current key (v8 B5).
+  public func orgEscrow(_ orgID: String) async throws -> [SpaceEscrowWrap] {
+    let data = try await send("GET", "/v1/orgs/\(orgID)/escrow", signed: true)
+    return try decode(SpaceJSON.self, data)["spaces"].map {
+      try $0.decoded(as: [SpaceEscrowWrap].self)
+    } ?? []
+  }
+
+  // MARK: - Backups (v8 B4)
+
+  /// The encrypted `MLBK1` stream of the space (an admin device signs; the
+  /// key it lends is derived from the current epoch's key).
+  public func backup(_ spaceID: String, backupID: String, epoch: Int, key: Data) async throws
+    -> Data
+  {
+    let body: SpaceJSON = [
+      "backup_id": .string(backupID.lowercased()), "epoch": SpaceJSON(epoch),
+      "key": .string(SpaceCrypto.hex(key)),
+    ]
+    return try await send("POST", "/v1/spaces/\(spaceID)/backup", body: json(body), signed: true)
+  }
+
+  /// Puts a space back from a backup stream (`mode` new or replace; `purge`:
+  /// items withdrawn or removed after it, from this Mac's own log).
+  public func restore(
+    _ spaceID: String, stream: Data, key: Data, mode: String, purge: [String]
+  ) async throws -> SpaceJSON {
+    let options: SpaceJSON = ["mode": .string(mode), "purge": SpaceJSON(purge)]
+    let data = try await send(
+      "POST", "/v1/spaces/\(spaceID)/restore", body: stream,
+      contentType: "application/octet-stream", signed: false,
+      headers: [
+        "X-Mindloom-Backup-Key": SpaceCrypto.hex(key),
+        "X-Mindloom-Restore": String(decoding: try options.encoded(), as: UTF8.self),
+      ])
+    return try decode(SpaceJSON.self, data)
+  }
+
+  // MARK: - Handover packs (v8 B3)
+
+  public func requestHandoverPack(
+    _ spaceID: String, matterID: String, from: String?, to: String?
+  ) async throws -> SpaceJSON {
+    var body: SpaceJSON = ["matter_id": .string(matterID)]
+    if let from { body = body.setting("from", .string(from)) }
+    if let to { body = body.setting("to", .string(to)) }
+    return try decode(
+      SpaceJSON.self,
+      await send(
+        "POST", "/v1/spaces/\(spaceID)/organizer/handover-pack", body: json(body), signed: true))
+  }
+
+  public func handoverPack(_ spaceID: String, packID: String) async throws -> SpaceJSON {
+    try decode(
+      SpaceJSON.self,
+      await send(
+        "GET", "/v1/spaces/\(spaceID)/organizer/handover-pack/\(packID)", signed: true))
   }
 
   // MARK: - Spaces

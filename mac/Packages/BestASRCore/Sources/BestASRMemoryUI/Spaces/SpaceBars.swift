@@ -215,6 +215,11 @@ public struct SpaceMatterBar: View {
       .font(.zhiji(12)).foregroundStyle(palette.secondary).lineLimit(1)
       Button("素材和权限…") { actions.present(.items(spaceID: info.spaceID, eventID: eventID)) }
         .buttonStyle(ZhijiCapsuleButtonStyle())
+      if info.canHandover {
+        Button("交接…") { actions.present(.handover(spaceID: info.spaceID, eventID: eventID)) }
+          .buttonStyle(ZhijiCapsuleButtonStyle())
+          .accessibilityIdentifier("bestASR.spaces.handover")
+      }
       if info.canPropose || info.canEdit {
         Button(info.canEdit ? "修改…" : "提议修改…") {
           actions.present(.propose(spaceID: info.spaceID, eventID: eventID))

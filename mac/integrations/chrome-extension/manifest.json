@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "收进织机",
+  "short_name": "织机",
+  "version": "0.8.0",
+  "description": "把选中的文字或网页链接收进这台 Mac 上的织机。只在你点的时候读取选中的文字；不联网。",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxqwUsYLD/C4oaiIF7wIz/iVvkXTrVyZ6Xno2XORI8TvqgGrcOa/wWeTXXpod++vAWs0zBvi55h8h3QcmO1r6uQJrTTszwQtAqYF0AiRiodRIWLmGBtUDJcfmwKmPxFjrxx4saO+oZSMID01fNVb8iGFAjJ/mcbCA0auFFOoOqyvYm4PLytDHenBe11x/SuwtGhEb5HrzngGMcYb4yWeIlhGd6raKJWggQHqyeRyxFU/rJ4LYc7uhet5SQd/2Y6+bCKGIpAJkwN9/1zVPsV/S48FSYamSLR6K35XOblWXNcgNF1+MAm56aragii7+lBjMvbdXQ3X8IF4U1nHtZnauQwIDAQAB",
+  "minimum_chrome_version": "116",
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab", "contextMenus", "nativeMessaging", "scripting"],
+  "action": {
+    "default_title": "收进织机",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; connect-src 'none'"
+  }
+}

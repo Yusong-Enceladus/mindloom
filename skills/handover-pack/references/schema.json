@@ -1,0 +1,270 @@
+{
+ "type": "object",
+ "properties": {
+  "status": {
+   "type": "object",
+   "properties": {
+    "text": {
+     "type": "string",
+     "minLength": 1,
+     "maxLength": 80
+    },
+    "evidence": {
+     "type": "array",
+     "minItems": 1,
+     "maxItems": 4,
+     "items": {
+      "type": "string",
+      "pattern": "^I[0-9]+$"
+     }
+    }
+   },
+   "required": [
+    "text",
+    "evidence"
+   ],
+   "additionalProperties": false
+  },
+  "commitments": {
+   "type": "array",
+   "maxItems": 12,
+   "items": {
+    "type": "object",
+    "properties": {
+     "who": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 20
+     },
+     "to": {
+      "type": "string",
+      "maxLength": 20
+     },
+     "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+     },
+     "due": {
+      "type": "string",
+      "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+     },
+     "state": {
+      "type": "string",
+      "enum": [
+       "open",
+       "done"
+      ]
+     },
+     "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+       "type": "string",
+       "pattern": "^I[0-9]+$"
+      }
+     },
+     "quote": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 40
+     }
+    },
+    "required": [
+     "who",
+     "to",
+     "what",
+     "due",
+     "state",
+     "evidence",
+     "quote"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "deadlines": {
+   "type": "array",
+   "maxItems": 8,
+   "items": {
+    "type": "object",
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+     },
+     "date": {
+      "type": "string",
+      "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+     },
+     "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+       "type": "string",
+       "pattern": "^I[0-9]+$"
+      }
+     },
+     "quote": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 40
+     }
+    },
+    "required": [
+     "what",
+     "date",
+     "evidence",
+     "quote"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "decisions": {
+   "type": "array",
+   "maxItems": 10,
+   "items": {
+    "type": "object",
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+     },
+     "date": {
+      "type": "string",
+      "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"
+     },
+     "who": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+       "type": "string",
+       "minLength": 1,
+       "maxLength": 20
+      }
+     },
+     "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+       "type": "string",
+       "pattern": "^I[0-9]+$"
+      }
+     },
+     "quote": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 40
+     }
+    },
+    "required": [
+     "what",
+     "date",
+     "who",
+     "evidence",
+     "quote"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "open_questions": {
+   "type": "array",
+   "maxItems": 8,
+   "items": {
+    "type": "object",
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+     },
+     "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+       "type": "string",
+       "pattern": "^I[0-9]+$"
+      }
+     },
+     "quote": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 40
+     }
+    },
+    "required": [
+     "what",
+     "evidence",
+     "quote"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "links": {
+   "type": "array",
+   "maxItems": 8,
+   "items": {
+    "type": "object",
+    "properties": {
+     "item": {
+      "type": "string",
+      "pattern": "^I[0-9]+$"
+     },
+     "why": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 30
+     }
+    },
+    "required": [
+     "item",
+     "why"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "next_steps": {
+   "type": "array",
+   "maxItems": 5,
+   "items": {
+    "type": "object",
+    "properties": {
+     "what": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 40
+     },
+     "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+       "type": "string",
+       "pattern": "^I[0-9]+$"
+      }
+     }
+    },
+    "required": [
+     "what",
+     "evidence"
+    ],
+    "additionalProperties": false
+   }
+  }
+ },
+ "required": [
+  "status",
+  "commitments",
+  "deadlines",
+  "decisions",
+  "open_questions",
+  "links",
+  "next_steps"
+ ],
+ "additionalProperties": false
+}

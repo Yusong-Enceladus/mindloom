@@ -277,7 +277,70 @@ def roster_device(roster: dict, member_id: Optional[str], device_id: Optional[st
     return d if d is not None and d["status"] == "active" else None
 
 
-def replay(entries: list[dict], space_id: str, roster: Optional[dict] = None) -> tuple[dict, list[dict], list[dict]]:
+def org_roster(org_ops: list[dict], org_id: str) -> dict:
+    """The organization's admins and their devices from its signed log alone (GET /v1/orgs/{id} "ops", in seq
+    order): org.create (signed by the device it names), then org.admin_add / org.admin_remove signed by an active
+    admin's device, and v8 org.device_add (an admin's own further Mac, signed by one of that admin's devices) /
+    org.device_remove (any admin retires one device, never the one that signs). Used to accept space.recover (v8 B5)
+    and to know where a new key is escrowed."""
+    admins: dict[str, dict] = {}
+    for entry in org_ops:
+        raw = sc.b64u_decode(entry.get("op"))
+        try:
+            payload = json.loads(raw.decode("utf-8")) if raw else None
+        except (UnicodeDecodeError, ValueError):
+            payload = None
+        if not isinstance(payload, dict) or payload.get("org_id") != org_id or payload.get("type") != entry.get("type"):
+            continue
+        body = payload.get("body") if isinstance(payload.get("body"), dict) else {}
+        if payload["type"] == "org.create" and not admins:
+            dev = body.get("device") or {}
+            key = sc.public_key(dev.get("sign_pub"))
+            if key is not None and dev.get("device_id") == payload.get("device_id") and \
+                    sc.verify(key, sc.OP_DOMAIN + raw, entry.get("sig")):
+                admins[payload["member_id"]] = {"status": "active",
+                                                "devices": {dev["device_id"]: {**_pub(dev), "status": "active"}}}
+            continue
+        signer = admins.get(payload.get("member_id") or "")
+        dev = (signer or {}).get("devices", {}).get(payload.get("device_id") or "") if signer else None
+        if signer is None or signer["status"] != "active" or dev is None or dev["status"] != "active" or \
+                not sc.verify(sc.b64u_decode(dev["sign_pub"]) or b"", sc.OP_DOMAIN + raw, entry.get("sig")):
+            continue
+        if payload["type"] == "org.admin_add":
+            d = body.get("device") or {}
+            mid = body.get("member_id")
+            if sc.is_uuid(mid) and sc.is_uuid(d.get("device_id")) and sc.public_key(d.get("sign_pub")) and \
+                    sc.public_key(d.get("seal_pub")):
+                a = admins.setdefault(mid, {"status": "active", "devices": {}})
+                a["status"] = "active"
+                a["devices"][d["device_id"]] = {**_pub(d), "status": "active"}
+        elif payload["type"] == "org.device_add":
+            d = body.get("device") or {}
+            if sc.is_uuid(d.get("device_id")) and sc.public_key(d.get("sign_pub")) and sc.public_key(d.get("seal_pub")):
+                signer["devices"][d["device_id"]] = {**_pub(d), "status": "active"}
+        elif payload["type"] == "org.device_remove":
+            target = body.get("device_id")
+            if target != payload.get("device_id"):
+                for a in admins.values():
+                    if target in a["devices"]:
+                        a["devices"][target]["status"] = "removed"
+        elif payload["type"] == "org.admin_remove":
+            a = admins.get(body.get("member_id") or "")
+            if a is not None:
+                a["status"] = "removed"
+                for d in a["devices"].values():
+                    d["status"] = "removed"
+    return {"org_id": org_id, "admins": admins}
+
+
+def escrow_devices(org: dict) -> list[dict]:
+    """Every active device of every active admin of the organization (where an org space's key is escrowed)."""
+    return [_pub(d) for a in org["admins"].values() if a["status"] == "active"
+            for d in a["devices"].values() if d["status"] == "active"]
+
+
+def replay(entries: list[dict], space_id: str, roster: Optional[dict] = None,
+           org: Optional[dict] = None) -> tuple[dict, list[dict], list[dict]]:
     """Verifies op log entries (GET /v1/spaces/{id}/ops) in order and rebuilds the member and device set from them
     alone: the genesis op's device, then join.approve (which commits to the joiner's member id and both public
     keys), device.add, device.remove, member.remove and member.leave. The Spark's member list
@@ -313,6 +376,21 @@ def replay(entries: list[dict], space_id: str, roster: Optional[dict] = None) ->
             roster["epoch"] = 1
             roster["members"][payload["member_id"]] = {
                 "status": "active", "devices": {dev["device_id"]: {**_pub(dev), "status": "active"}}}
+            accepted.append({**entry, "payload": payload})
+            continue
+        if type_ == "space.recover":
+            # v8 B5: an org admin takes the space over with the escrowed key: signed by an active admin device of
+            # the organization as its own signed log admits it (org_roster), naming that device's own keys.
+            a = (org or {}).get("admins", {}).get(payload.get("member_id") or "")
+            od = a["devices"].get(payload.get("device_id") or "") if a and a["status"] == "active" else None
+            named = body.get("device") if isinstance(body.get("device"), dict) else {}
+            if od is None or od["status"] != "active" or _norm(named) != _norm(od) or \
+                    not sc.verify(sc.b64u_decode(od["sign_pub"]) or b"", sc.OP_DOMAIN + raw, entry.get("sig")):
+                rejected.append(entry)
+                continue
+            m = roster["members"].setdefault(payload["member_id"], {"status": "active", "devices": {}})
+            m["status"] = "active"
+            m["devices"][od["device_id"]] = {**_pub(od), "status": "active"}
             accepted.append({**entry, "payload": payload})
             continue
         dev = roster_device(roster, payload.get("member_id"), payload.get("device_id"))
@@ -484,6 +562,62 @@ class Device:
         sig = self.sign(sc.request_message(method, target, date_s, nonce, body))
         return {"X-Mindloom-Device": self.device_id, "X-Mindloom-Date": date_s, "X-Mindloom-Nonce": nonce,
                 "X-Mindloom-Signature": sig}
+
+
+def backup_key(space_key: bytes, backup_id: str) -> bytes:
+    """v8 B4: the key an admin's Mac lends the Spark for one encrypted backup of a space (organizer/backup.py), and
+    derives again to restore it: HKDF-SHA256(ikm = the backup's epoch key, salt = the backup id's 16 bytes,
+    info = "mindloom-space-backup-v1")."""
+    return hkdf(space_key, b"mindloom-space-backup-v1", salt=uuid.UUID(backup_id).bytes)
+
+
+# ---- v8 contract C: audio parts, snapshots, the share outbox --------------------------------------------------
+
+AUDIO_TOLERANCE_MS = 2000
+
+
+def audio_part_ok(duration_ms: int, segment: dict, tolerance_ms: int = AUDIO_TOLERANCE_MS) -> bool:
+    """What a member Mac checks after it opened an audio part, before it plays it (the Spark cannot look inside):
+    the sound is as long as the part the signed op declares (within a tolerance), and that part is a part of the
+    recording (at most 4/5 of it), at most 15 minutes. Anything else is not played and is reported to the space's
+    maintainers."""
+    try:
+        length = int(segment["end_ms"]) - int(segment["start_ms"])
+        whole = int(segment["recording_ms"])
+    except (KeyError, TypeError, ValueError):
+        return False
+    # a part, never (nearly) the whole recording: at most 4/5 of it (review finding V8R-15)
+    return 0 < length <= 15 * 60 * 1000 and length * 5 <= whole * 4 and abs(int(duration_ms) - length) <= tolerance_ms
+
+
+def snapshot_body(item_id: str, revision: int, *, matter_id: Optional[str] = None, pack_id: Optional[str] = None,
+                  as_of: Optional[str] = None, cites: Optional[list[str]] = None,
+                  share_key: Optional[str] = None) -> dict:
+    """The plain body of a snapshot share (item.share, kind "snapshot"; v8 C2): ids only. `cites`: the items of the
+    space the summary quotes or draws on; when one of them is withdrawn or removed, the Spark removes the snapshot
+    too. The frozen text itself goes in enc, under the snapshot's own data key, like any item."""
+    snap: dict = {}
+    if matter_id is not None:
+        snap["matter_id"] = matter_id
+    if pack_id is not None:
+        snap["pack_id"] = pack_id
+    if as_of is not None:
+        snap["as_of"] = as_of
+    if cites:
+        snap["cites"] = sorted({c.lower() for c in cites})
+    body = {"item_id": item_id, "revision": revision, "kind": "snapshot", "blobs": [], "snapshot": snap}
+    if share_key is not None:
+        body["share_key"] = share_key
+    return body
+
+
+def outbox_action(result: dict) -> str:
+    """What a Mac's share outbox does with one op result (v8 C3): "done" (accepted now or before: drop the entry),
+    "remake" (sync the space keys, make a new op for the same entry with the same share_key), "later" (send the
+    very same op again later), "drop" (refused for good: drop the entry and tell the user)."""
+    if result.get("ok"):
+        return "done"
+    return {"remake": "remake", "later": "later"}.get(result.get("retry") or "never", "drop")
 
 
 def wraps_for(space_key: bytes, devices: list[dict], space_id: str, epoch: int) -> list[dict]:

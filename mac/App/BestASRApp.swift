@@ -45,6 +45,11 @@ private final class BestASRApplicationDelegate: NSObject, NSApplicationDelegate 
   }
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    // 收进织机 in other Apps' Services menu (V8 contract A1).
+    if !BestASRProcessEnvironment.isXCTestHost {
+      NSApplication.shared.servicesProvider = MindloomServicesProvider.shared
+      NSUpdateDynamicServices()
+    }
     // End an organizer ssh forward orphaned by a crash of an earlier run,
     // whatever happens later with the library or the link preferences. Each
     // record carries its own exact command line; nothing else is touched.
@@ -63,6 +68,12 @@ private final class BestASRApplicationDelegate: NSObject, NSApplicationDelegate 
     NSApplication.shared.setActivationPolicy(.regular)
     NSApplication.shared.activate(ignoringOtherApps: true)
   }
+}
+
+/// `mindloom://share-inbox`: the share extension tells the App to look in
+/// its drop folder. Any other `mindloom:` URL does the same and nothing more.
+enum ShareEntryURL {
+  static let scheme = "mindloom"
 }
 
 @main
@@ -108,6 +119,12 @@ struct BestASRApp: App {
       // main window sharing the same capture and selection state.
       .handlesExternalEvents(preferring: ["*"], allowing: ["*"])
       .onOpenURL { url in
+        // The share extension's poke: look in the drop folder (the URL
+        // carries nothing else).
+        if url.scheme == ShareEntryURL.scheme {
+          model.pickUpShares()
+          return
+        }
         model.importMedia(url)
       }
     }

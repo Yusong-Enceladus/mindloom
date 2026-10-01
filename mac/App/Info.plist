@@ -53,5 +53,41 @@
   </dict>
   <key>NSMicrophoneUsageDescription</key>
   <string>织机 uses the microphone only for recordings you start.</string>
+  <key>NSCalendarsFullAccessUsageDescription</key>
+  <string>织机 reads only the calendars you choose in Settings, and never writes to them.</string>
+  <key>NSRemindersFullAccessUsageDescription</key>
+  <string>织机 adds a reminder only when you click to add a next step to Reminders.</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.bestasr.app.share-inbox</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>mindloom</string>
+      </array>
+    </dict>
+  </array>
+  <key>NSServices</key>
+  <array>
+    <dict>
+      <key>NSMenuItem</key>
+      <dict>
+        <key>default</key>
+        <string>收进织机</string>
+      </dict>
+      <key>NSMessage</key>
+      <string>addToMindloom</string>
+      <key>NSPortName</key>
+      <string>$(PRODUCT_NAME)</string>
+      <key>NSRequiredContext</key>
+      <dict/>
+      <key>NSSendTypes</key>
+      <array>
+        <string>public.utf8-plain-text</string>
+        <string>NSStringPboardType</string>
+      </array>
+    </dict>
+  </array>
 </dict>
 </plist>

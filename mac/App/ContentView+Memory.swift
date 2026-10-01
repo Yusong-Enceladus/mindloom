@@ -1,4 +1,5 @@
 import BestASRDomain
+import BestASREntries
 import BestASRMemory
 import BestASRMemoryUI
 import SwiftUI
@@ -25,7 +26,7 @@ extension ContentView {
   var memoryActions: MemoryActions {
     let model = model
     let screen = memoryScreen
-    return MemoryActions(
+    var actions = MemoryActions(
       answer: { model.memoryAnswer($0, yes: $1) },
       answerReview: { model.memoryAnswerReview($0, yes: $1) },
       pin: { model.memoryPin($0, pinned: $1) },
@@ -55,6 +56,11 @@ extension ContentView {
       relation: { model.memoryRelationDecision($0) },
       requestMap: { model.memoryRequestMap($0) }
     )
+    // 把下一步加到提醒事项 (V8 contract A5), only while 设置 → 入口 has it on.
+    if model.entries.isOn(.reminders) {
+      actions.addToReminders = { model.addNextStepToReminders($0) }
+    }
+    return actions
   }
 
   /// A room or system recording, or an import, the user may walk away from.

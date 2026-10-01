@@ -53,6 +53,8 @@ extension ContentView {
       actions.copyText = { model.copySpaceText($0) }
       actions.refresh = { model.rebuild() }
       actions.stop = personal.stop
+      // The owner's own Reminders, on the owner's click (V8 contract A5).
+      actions.addToReminders = personal.addToReminders
       return actions
     case .all:
       let shared = model.spaceEventsInAll

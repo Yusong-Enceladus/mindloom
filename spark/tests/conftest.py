@@ -114,6 +114,20 @@ def default_group(data: dict, schema: dict) -> dict:
                                                         for m in data["matters"]]}
 
 
+def default_handover(data: dict, schema: dict) -> dict:
+    """handover-pack: the status from the latest item, one decision quoting the first item verbatim (tests that
+    need more push outputs)."""
+    items = data["items"]
+    first, last = items[0], items[-1]
+    quote = first["text"].replace("…", "")[:8]
+    return {"status": {"text": "测试：最新进展", "evidence": [last["id"]]}, "commitments": [], "deadlines": [],
+            "decisions": ([{"what": f"测试决定：{quote}", "date": "", "who": [], "evidence": [first["id"]],
+                            "quote": quote}]
+                          if len(quote) >= 4 else []),
+            "open_questions": [], "links": [{"item": first["id"], "why": "最早的一条"}],
+            "next_steps": [{"what": "测试：先看最新一条", "evidence": [last["id"]]}]}
+
+
 def is_detect_step(schema: dict) -> bool:
     """image-read's first step asks only for the image type."""
     return set(schema.get("properties", {})) == {"type"}
@@ -181,6 +195,7 @@ class FakeChat:
             "person-resolve": default_person,
             "matter-map": default_map,
             "matter-group": default_group,
+            "handover-pack": default_handover,
         }
         self.before: dict[str, Callable[[dict], None]] = {}
 

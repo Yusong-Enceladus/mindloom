@@ -202,6 +202,32 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
     }
   }
 
+  /// The clock a shared part's milliseconds count from (v8 C1): the first
+  /// committed transcript line's monotonic start of a recording, and its last
+  /// line's end — the same lines `spaceShareContent` offers. Nil without lines.
+  public func spaceShareTimeBase(sessionID: SessionID) async throws -> (
+    startNS: Int64, endNS: Int64
+  )? {
+    let database = try requirePool()
+    let itemID = sessionID.rawValue.uuidString
+    return try await database.read { db in
+      guard
+        let row = try Row.fetchOne(
+          db,
+          sql: """
+            SELECT MIN(ts.monotonic_start_ns) AS start_ns, MAX(ts.monotonic_end_ns) AS end_ns
+            FROM transcript_segments ts
+            WHERE ts.transcript_id = (
+              SELECT id FROM transcript_revisions
+              WHERE session_id = ? AND kind IN ('final', 'userEdit')
+              ORDER BY created_at DESC, revision DESC, id DESC LIMIT 1)
+            """, arguments: [itemID]),
+        let start = row["start_ns"] as Int64?, let end = row["end_ns"] as Int64?
+      else { return nil }
+      return (start, end)
+    }
+  }
+
   public func claimNextRemoteItem(now: Date = Date()) async throws
     -> RemoteOrganizerItemDelivery?
   {

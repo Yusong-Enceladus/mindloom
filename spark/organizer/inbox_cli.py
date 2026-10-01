@@ -23,6 +23,12 @@ prints one JSON line:
     zhiji-inbox revoke-phone --key-id <id>
     zhiji-inbox list-phones
 
+v8 (organizer/gate.py, docs/INFRA.md): the forced commands of teammates' keys, written by organizer/access_keys.py
+and never reachable through the phone gate:
+
+    zhiji-inbox bridge <access id>    a member Mac's HTTP bridge to the organizer (member routes only)
+    zhiji-inbox enroll <ticket id>    an invite's one-time key: redeem the ticket, get the member line and credential
+
 `add` and `status` talk to the organizer's private Unix socket with the link token, both read from the data
 directory (ORGANIZER_DATA_DIR, ORGANIZER_UDS), as the same user that runs the organizer. Nothing is sent
 anywhere else: an entry waits on the Spark until the Mac fetches it (GET /v1/inbox) and acks it, then its
@@ -182,6 +188,10 @@ def _admin(args: argparse.Namespace, stdin: Optional[bytes]) -> int:
 def main(argv: Optional[list[str]] = None, stdin: Optional[bytes] = None,
          client: Optional[httpx.Client] = None) -> int:
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] in (["bridge"], ["enroll"]):
+        # v8: the forced commands of a member Mac's key and of an invite's one-time key (organizer/gate.py).
+        from . import gate
+        return gate.main(argv)
     if argv[:1] == ["gate"]:
         original = os.environ.get("SSH_ORIGINAL_COMMAND")
         allowed = gate_argv(original)

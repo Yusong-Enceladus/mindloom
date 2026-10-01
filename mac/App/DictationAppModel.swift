@@ -806,6 +806,8 @@ final class DictationAppModel: ObservableObject {
   var importCancellationShouldDiscard = true
   /// Pasted/dragged intake (PRD §0.3.2); set once the library is open.
   let intake = IntakeModel()
+  /// Every other entry (Settings → 入口, V8 contract §A).
+  let entries = EntriesModel()
   var intakeProcessor: IntakeProcessor?
   /// The startup staging sweep; every intake waits for it.
   var intakeReady: Task<Void, Never>?
@@ -1114,6 +1116,7 @@ final class DictationAppModel: ObservableObject {
       configureRemoteOrganizer(repository: durableRepository, dataRoot: root)
       configureIntake(repository: durableRepository, assetRoot: durableJournal.assetRootURL)
       configureAgentAccess(repository: durableRepository, dataRoot: root)
+      configureEntries(dataRoot: root)
       dictionary.repository = durableRepository
       history.repository = durableRepository
       journal = durableJournal

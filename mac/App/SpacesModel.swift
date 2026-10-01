@@ -1,3 +1,4 @@
+import AVFoundation
 import AppKit
 import BestASRAgentAccess
 import BestASRDomain
@@ -35,15 +36,22 @@ final class SpacesModel: ObservableObject {
   var ropeOf: ((String) -> (id: String, title: String, matters: Int)?)?
 
   private var views: [String: SpaceView] = [:]
-  private weak var app: DictationAppModel?
+  private(set) weak var app: DictationAppModel?
   private weak var memory: MemoryScreenModel?
   private var engine: SpaceEngine?
+  /// This library's space stores (state, keys, this Mac's team access, outbox).
+  private(set) var stores: SpaceStores?
+  /// This Mac's own way in when it is a team member (v8 B1).
+  private var bridge: SSHBridgeTransport?
+  private var lastAdopt = Date.distantPast
+  private var player: AVAudioPlayer?
   private var loop: Task<Void, Never>?
   private var rebuildTask: Task<Void, Never>?
   private var observers: Set<AnyCancellable> = []
   private var shareEntries: [String: [String: SpaceShareContent.Entry]] = [:]
   private var lastOrganized: [String: Date] = [:]
   private var lastRewrap: [String: Date] = [:]
+  private var lastEscrow: [String: Date] = [:]
   private var refused = false
   /// Originals opened from a space, decrypted for the viewer app (V7-S11).
   private let originals = SpaceOriginalsFolder()
@@ -83,46 +91,93 @@ final class SpacesModel: ObservableObject {
         try? await Task.sleep(for: Self.tickInterval)
       }
     }
+    TeamModel.shared.attach(spaces: self, app: app)
   }
 
-  /// The engine of this library, made once the link controller exists. During
-  /// development only a synthetic data root may share (the same provenance
-  /// rule as the organizing link).
+  /// The engine as it is now (the team console uses the same one).
+  func currentEngine() -> SpaceEngine? { ensureEngine() }
+
+  /// After pairing or unpairing this Mac with the team's gate: the next
+  /// request goes the new way in.
+  func resetEngine() {
+    Task { [bridge] in await bridge?.close() }
+    bridge = nil
+    engine = nil
+    refused = false
+  }
+
+  /// This Mac reaches the Spark through its own key and the gate (a team
+  /// member), not the Spark owner's link.
+  var isTeamMember: Bool { (try? stores?.access.load()) != nil }
+
+  /// The engine of this library. A team member's Mac speaks through its own
+  /// key and the gate's bridge (v8 B1); the Spark owner's Mac through its own
+  /// link's forward. During development only a synthetic data root may share
+  /// (the same provenance rule as the organizing link).
   private func ensureEngine() -> SpaceEngine? {
     if let engine { return engine }
-    guard !refused, let controller = app?.remoteOrganizer else { return nil }
-    guard controller.provenance == .allowed else {
+    guard !refused, let dataRoot = try? DictationAppModel.applicationDataRoot() else { return nil }
+    let verdict =
+      app?.remoteOrganizer?.provenance
+      ?? BestASRDataRootSelection.ownerRealLibraryRoot().map {
+        RemoteOrganizerDataProvenance.verdict(dataRoot: dataRoot, realLibraryRoot: $0)
+      } ?? .refusedNotSynthetic
+    guard verdict == .allowed else {
       refused = true
       screen.status = "开发阶段只在合成演示资料库里使用共享空间；你的真实资料库不会发出任何内容"
       return nil
     }
-    guard let dataRoot = try? DictationAppModel.applicationDataRoot() else { return nil }
     let stores = SpaceStores.keychain(
       dataRoot: dataRoot, sealKeys: KeychainPhoneSealKeyStore(dataRoot: dataRoot))
+    self.stores = stores
     guard let device = try? stores.loadOrCreateDevice() else {
       screen.status = "钥匙串暂不可用；共享空间没有打开"
       return nil
     }
-    // The space routes ride the organizing link's own forward: the port is
-    // handed out only while our own ssh child still holds it.
-    let transport = LoopbackSpaceTransport {
-      try await MainActor.run {
-        guard let controller = RemoteOrganizerQuitLock.controller else {
+    let transport: any SpaceTransport
+    if let access = try? stores.access.load(), access.isUsable,
+      let gate = stores.gateDirectory
+    {
+      // A team member: its own SSH key and credential, through the gate.
+      let store = stores.access
+      let bridge = SSHBridgeTransport(
+        route: SSHGateRoute(spark: access.spark, relay: access.relay, workDirectory: gate)
+      ) {
+        guard let current = try store.load(), let key = current.key else {
           throw SpaceClientError.transport
         }
-        return try controller.spaceEndpoint()
+        return (current.credential, key, current.relayKey)
+      }
+      self.bridge = bridge
+      transport = bridge
+      screen.hostLabel = access.team.map { "「\($0)」的整理设备" } ?? "团队的整理设备"
+    } else {
+      guard app?.remoteOrganizer != nil else { return nil }
+      // The space routes ride the organizing link's own forward: the port is
+      // handed out only while our own ssh child still holds it.
+      transport = LoopbackSpaceTransport {
+        try await MainActor.run {
+          guard let controller = RemoteOrganizerQuitLock.controller else {
+            throw SpaceClientError.transport
+          }
+          return try controller.spaceEndpoint()
+        }
       }
     }
     let engine = SpaceEngine(
       client: SpaceClient(transport: transport, device: device), states: stores.states,
-      keys: stores.keys, textMasker: SpaceTitleMasker())
+      keys: stores.keys, textMasker: SpaceTitleMasker(), outbox: stores.outbox)
+    if let access = try? stores.access.load(), access.isUsable {
+      Task { try? await engine.setMemberIdentity(access.memberID) }
+    }
     self.engine = engine
     screen.myFingerprint = device.fingerprint
     return engine
   }
 
   private var linkReady: Bool {
-    (try? RemoteOrganizerQuitLock.controller?.spaceEndpoint()) != nil
+    if bridge != nil { return true }
+    return (try? RemoteOrganizerQuitLock.controller?.spaceEndpoint()) != nil
   }
 
   // MARK: - Sync loop
@@ -133,11 +188,22 @@ final class SpacesModel: ObservableObject {
     screen.linkReady = ready
     if ready {
       await reconcileDeletions(engine)
+      // Another Mac of this member added this one to its spaces (v8 C4).
+      if isTeamMember, Date().timeIntervalSince(lastAdopt) > 120 {
+        lastAdopt = Date()
+        if let adopted = try? await engine.adoptSpaces(), !adopted.isEmpty {
+          screen.status = "这台 Mac 已加进 \(adopted.count) 个共享空间（由你的另一台 Mac 添加）"
+        }
+      }
       for state in (try? await engine.allStates()) ?? [] {
         await sync(state, engine: engine)
       }
       await deleteForkCopies(engine)
       await followRules(engine)
+      await TeamModel.shared.runDueBackups()
+    }
+    for state in (try? await engine.allStates()) ?? [] where state.membership == .active {
+      screen.outbox[state.spaceID] = try? await engine.outboxContents(state.spaceID)
     }
     await publish()
   }
@@ -152,8 +218,10 @@ final class SpacesModel: ObservableObject {
       case .rejected:
         break
       case .active:
-        // Items whose local source the user deleted leave the space first.
+        // Items whose local source the user deleted leave the space first;
+        // then whatever waited while the link was down (v8 C3).
         _ = try? await engine.flushDeletes(id)
+        _ = try? await engine.flushOutbox(id)
         var synced = try await engine.sync(id)
         if synced.rotationPending, synced.can("rotate") {
           try await engine.rotate(id)
@@ -169,6 +237,14 @@ final class SpacesModel: ObservableObject {
         {
           lastRewrap[id] = Date()
           _ = try? await engine.rewrapStale(id)
+        }
+        // v8 B5: an org admin's Mac escrows the current key to admins who lack it.
+        if synced.ownerKind == .org, synced.role == .admin,
+          !(synced.escrow?.missing.isEmpty ?? true),
+          Date().timeIntervalSince(lastEscrow[id] ?? .distantPast) > Self.rewrapInterval
+        {
+          lastEscrow[id] = Date()
+          _ = try? await engine.fillEscrow(id)
         }
         if Date().timeIntervalSince(lastOrganized[id] ?? .distantPast) > Self.organizeInterval {
           lastOrganized[id] = Date()
@@ -486,6 +562,7 @@ final class SpacesModel: ObservableObject {
   static func message(_ error: Error) -> String {
     switch error {
     case SpaceClientError.transport: return "整理设备没有连上；稍后再试"
+    case SpaceEngine.EngineError.queued: return "整理设备没有连上：已记下，连上后会自动发出"
     case SpaceClientError.accessEnded: return "你已不在这个空间里"
     case SpaceEngine.EngineError.notAllowed(let right): return "你的角色不能这样做（\(right)）"
     case SpaceEngine.EngineError.refused(let code):
@@ -519,6 +596,14 @@ final class SpacesModel: ObservableObject {
       "owner_cannot_leave": "主人不能离开自己的空间", "last_admin": "空间至少要留一位管理员",
       "never_shared": "声纹、词典、个人识别习惯和整段录音永远不共享",
       "audio_needs_segment": "录音只能按片段共享", "segment_too_long": "一段录音最多 15 分钟",
+      "whole_recording": "整段录音不能共享，只能共享其中一段",
+      "one_part_per_recording": "同一段录音只能附一段原音",
+      "audio_too_large": "这段原音太大", "audio_not_allowed": "这个空间不收原音",
+      "snapshot_frozen": "摘要是冻结的，请另分享一份", "quota_exceeded": "你在这个空间的存储满了",
+      "escrow_required": "这个组织要求更多管理员能找回空间；请组织管理员的 Mac 来换钥匙",
+      "no_escrow": "这台 Mac 没有这个空间的托管钥匙", "recovered_key_unverified": "接管时拿到的钥匙对不上，没有接管",
+      "device_member_conflict": "这台 Mac 已经以别人的身份登记过", "device_revoked": "这台 Mac 已经断开，不能再加回",
+      "unknown_member_device": "请选这个人自己正在用的 Mac", "last_admin": "组织至少要留一位管理员",
     ]
     return words[code] ?? "整理设备没有接受（\(code)）"
   }
@@ -615,6 +700,31 @@ final class SpacesModel: ObservableObject {
           }
           await self.tick()
         }
+      },
+      playAudio: { [weak self] space, item, blob in self?.playAudio(space, itemID: item, blob: blob)
+      },
+      handoverStep: { [weak self] step in self?.handoverStep(step) },
+      confirmRecovery: { [weak self] space, device in
+        self?.run("已承认接管；这台 Mac 重新核对了空间的记录") {
+          try await $0.confirmRecovery(space, deviceID: device)
+        }
+      },
+      dismissOutbox: { [weak self] space in
+        self?.run(nil) { try await $0.dismissOutboxFailures(space) }
+      },
+      cancelOutbox: { [weak self] space, entry in
+        // Review V8R-04: something still waiting is taken back for good.
+        guard let self, let engine = self.ensureEngine() else { return }
+        Task { @MainActor in
+          do {
+            try await engine.cancelOutboxEntry(space, entryID: entry)
+            self.screen.outbox[space] = try? await engine.outboxContents(space)
+            self.screen.status = "已取消，不会发出"
+          } catch {
+            self.screen.status = Self.message(error)
+          }
+          await self.publish()
+        }
       }
     )
   }
@@ -622,6 +732,7 @@ final class SpacesModel: ObservableObject {
   private func present(_ sheet: SpaceSheet?) {
     self.sheet = sheet
     if case .share(let eventID) = sheet { prepareShare(eventID) }
+    if case .handover(let space, let eventID) = sheet { prepareHandover(space, eventID: eventID) }
     if case .audit(let space) = sheet, let engine {
       Task { [weak self] in self?.screen.audit[space] = (try? await engine.audit(space))?.records }
     }
@@ -672,6 +783,16 @@ final class SpacesModel: ObservableObject {
       screen.joinError = "邀请码看不懂或已过期"
       return
     }
+    if let access = try? stores?.access.load() {
+      // A team member's Mac pinned the Spark's host key when it enrolled
+      // with its own key (v8 B1): the invite must name that same machine.
+      run("已发送申请；对方同意后会自动加入") { [weak self] engine in
+        _ = try await engine.join(
+          code: invite, displayName: name, localHostKey: access.spark.hostKey)
+        await MainActor.run { self?.sheet = nil }
+      }
+      return
+    }
     guard let service = app?.phoneLink.service else {
       screen.joinError = "整理设备的连接设置无效，无法加入"
       return
@@ -687,6 +808,26 @@ final class SpacesModel: ObservableObject {
   }
 
   private func makeInvite(_ spaceID: String, role: SpaceRole) {
+    if let access = try? stores?.access.load() {
+      // A team member who administers the space invites with the Spark it
+      // pinned when it enrolled.
+      run(nil) { [weak self] engine in
+        let spark = SpaceInviteCode.Endpoint(
+          host: access.spark.host, port: access.spark.port, user: nil,
+          hostKey: access.spark.hostKey)
+        let code = try await engine.invite(
+          spaceID, role: role, hostKey: access.spark.hostKey, spark: spark)
+        let text = try code.encoded()
+        let qr = PhonePairingQRCode.image(for: text).map {
+          NSImage(cgImage: $0, size: NSSize(width: $0.width, height: $0.height))
+        }
+        await MainActor.run {
+          self?.screen.invite = SpaceInviteDisplay(
+            spaceID: spaceID, code: text, role: role, expires: code.expiry ?? Date(), qr: qr)
+        }
+      }
+      return
+    }
     guard let service = app?.phoneLink.service else {
       screen.status = "整理设备的连接设置无效，无法生成邀请"
       return
@@ -740,6 +881,13 @@ final class SpacesModel: ObservableObject {
       if let space = draft.destination, let mode = sharedIn[space] {
         draft.scale = .matter(rule: mode)
       }
+      // 一份摘要 (review V8R-11): facts with the items they rest on; the text
+      // is made from the ticked ones and shown before it goes.
+      draft.snapshotStatus = detail?.statusLine
+      draft.snapshotFacts = (detail?.statusFacts ?? []).map {
+        SpaceSnapshotText.Fact(text: $0.text, sourceIDs: $0.itemIDs)
+      }
+      draft.refreshSnapshot()
       self.screen.shareDraft = draft
     }
   }
@@ -797,7 +945,7 @@ final class SpacesModel: ObservableObject {
   private func share(_ draft: SpaceShareDraft) {
     guard let space = draft.destination ?? draft.destinations.first?.spaceID else { return }
     let entries = shareEntries[draft.eventID] ?? [:]
-    let picked: [SpaceShareContent.Entry]
+    var picked: [SpaceShareContent.Entry]
     var package: SpacePackageRequest?
     var rope: (id: String, title: String, mode: SpaceRuleMode)?
     let detail = memory?.projection?.event(id: draft.eventID)
@@ -819,10 +967,34 @@ final class SpacesModel: ObservableObject {
       package = SpacePackageRequest(
         auto: .off, matterID: draft.eventID, title: detail?.title,
         facts: (detail?.statusFacts ?? []).prefix(8).map(\.text))
+    case .snapshot:
+      shareSnapshot(space, eventID: draft.eventID, text: draft.snapshotText, review: draft.review)
+      return
     }
-    let count = picked.count
+    let withAudio = draft.review.audio
+    let app = self.app
     run(nil) { [weak self] engine in
-      let report = try await engine.share(space, items: picked.map(\.item), package: package)
+      // A part ticked with its audio carries the cut-out sound (members only).
+      var items: [SpaceOutgoingItem] = []
+      var noAudio = 0
+      for entry in picked {
+        guard withAudio.contains(entry.candidate.id), let segment = entry.item.segment, let app
+        else {
+          items.append(entry.item)
+          continue
+        }
+        do {
+          let (audio, full) = try await SpaceAudioSource.part(app: app, segment: segment)
+          items.append(
+            SpaceOutgoingItem(
+              itemID: entry.item.itemID, kind: entry.item.kind, fields: entry.item.fields,
+              originals: [("audio", audio)], segment: full))
+        } catch {
+          noAudio += 1
+          items.append(entry.item)
+        }
+      }
+      let report = try await engine.share(space, items: items, package: package)
       if let rope {
         _ = try await engine.setRule(
           space, kind: "rope", targetID: rope.id, title: rope.title, auto: rope.mode)
@@ -830,12 +1002,185 @@ final class SpacesModel: ObservableObject {
       await MainActor.run {
         self?.sheet = nil
         let refused = report.refused.count
-        self?.screen.status =
-          "已共享 \(report.shared.count) 条" + (refused > 0 ? "，\(refused) 条没有共享" : "")
-          + (report.originalsDropped > 0 ? "；这个空间只留文字，原件留在你的 Mac 上" : "")
-        _ = count
+        var line = "已共享 \(report.shared.count) 条"
+        if !report.queued.isEmpty { line += "，\(report.queued.count) 条等联网后发出" }
+        if refused > 0 { line += "，\(refused) 条没有共享" }
+        if report.originalsDropped > 0 { line += "；这个空间只留文字，原件留在你的 Mac 上" }
+        if noAudio > 0 { line += "；\(noAudio) 段的原音不在这台 Mac 上，只共享了文字" }
+        self?.screen.status = line
       }
     }
+  }
+
+  /// 一份摘要 (v8 C2): exactly the text the member saw and could edit in the
+  /// share sheet (review V8R-11: made only of facts resting on ticked items),
+  /// a new frozen item by this member; it cites the matter's ticked items that
+  /// are already in the space (they take it along if they leave).
+  private func shareSnapshot(
+    _ spaceID: String, eventID: String, text: String, review: SpaceShareReview
+  ) {
+    guard let detail = memory?.projection?.event(id: eventID),
+      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    else { return }
+    let itemIDs = Set(review.selected.map { $0.sourceItemID.lowercased() })
+    run("已把这件事的摘要共享到空间；它不会跟着变") { engine in
+      let state = try await engine.state(spaceID)
+      let cites = (state?.activeItems ?? []).filter {
+        itemIDs.contains($0.itemID) || itemIDs.contains($0.segment?.parentItemID ?? "")
+      }.map(\.itemID)
+      let (_, report) = try await engine.shareSnapshot(
+        spaceID, title: "摘要：\(detail.title)", text: text, matterID: eventID, cites: cites)
+      if let code = report.refused.values.first { throw SpaceEngine.EngineError.refused(code) }
+      await MainActor.run { self.sheet = nil }
+    }
+  }
+
+  // MARK: - Meeting parts' audio (v8 C1)
+
+  /// Fetches a member's audio part, checks its decoded length against the
+  /// signed part before playing (never plays what does not match), and
+  /// plays it from a per-launch temporary file.
+  private func playAudio(_ spaceID: String, itemID: String, blob: SpaceBlobRef) {
+    if screen.playingItem == itemID {
+      player?.stop()
+      player = nil
+      screen.playingItem = nil
+      return
+    }
+    let folder = originals
+    run(nil) { [weak self] engine in
+      let (audio, segment) = try await engine.audioPart(spaceID, itemID: itemID)
+      let length = try SpaceAudioPart.durationMS(of: audio, directory: SpaceAudioSource.scratch)
+      guard SpaceAudioCheck.ok(durationMS: length, segment: segment) else {
+        throw SpaceEngine.EngineError.refused("audio_mismatch")
+      }
+      let url = try folder.write(audio, space: spaceID, item: itemID, blob: blob.blobID, ext: "m4a")
+      await MainActor.run {
+        self?.player?.stop()
+        self?.player = try? AVAudioPlayer(contentsOf: url)
+        self?.player?.play()
+        self?.screen.playingItem = itemID
+      }
+    }
+  }
+
+  // MARK: - Handover (v8 B3)
+
+  private func prepareHandover(_ spaceID: String, eventID: String) {
+    guard let state = screen.space(spaceID) else { return }
+    let original =
+      eventID.hasPrefix("space:") ? String(eventID.split(separator: ":").last ?? "") : eventID
+    let title = screen.matterTitles[spaceID]?[original] ?? "这件事"
+    let lead = state.handovers[original].map { state.name(of: $0) }
+    let members = state.activeMembers.filter { $0.memberID != state.memberID }.map {
+      SpaceHandoverMember(memberID: $0.memberID, name: state.name(of: $0.memberID))
+    }
+    screen.handover = SpaceHandoverDisplay(
+      spaceID: spaceID, eventID: original, matterTitle: title, currentLead: lead, members: members)
+  }
+
+  private func handoverStep(_ step: SpaceHandoverStep) {
+    guard var display = screen.handover else { return }
+    let spaceID = display.spaceID
+    let matter = display.eventID
+    switch step {
+    case .choose(let member):
+      display.to = member
+      screen.handover = display
+    case .generate:
+      display.working = true
+      display.status = "排队中，整理设备空下来就写…"
+      display.markdown = nil
+      display.packItemID = nil
+      screen.handover = display
+      let state = screen.space(spaceID)
+      let from = state.map { $0.name(of: $0.memberID) }
+      let to = display.to.flatMap { id in state.map { $0.name(of: id) } }
+      Task { [weak self] in await self?.generatePack(spaceID, matter: matter, from: from, to: to) }
+    case .shareSnapshot:
+      guard let markdown = display.markdown, let pack = display.packID else { return }
+      display.working = true
+      screen.handover = display
+      let title = "交接包：\(display.matterTitle)"
+      run(nil) { [weak self] engine in
+        let view = try await engine.handoverPack(spaceID, packID: pack)
+        let (item, report) = try await engine.shareSnapshot(
+          spaceID, title: title, text: markdown, matterID: matter, packID: pack,
+          cites: view.sources)
+        await MainActor.run {
+          self?.screen.handover?.working = false
+          if report.shared.contains(item) {
+            self?.screen.handover?.packItemID = item
+            self?.screen.handover?.done = "交接包已作为快照分享到空间；它引用的素材被撤回时会一起下架"
+          } else {
+            self?.screen.handover?.done =
+              report.queued.isEmpty ? "没有分享出去（\(report.refused.values.first ?? "")）" : "已记下，连上后分享"
+          }
+        }
+      }
+    case .export:
+      guard let markdown = display.markdown else { return }
+      let panel = NSSavePanel()
+      panel.nameFieldStringValue = SpaceHandoverView.fileName(
+        title: display.matterTitle, date: Date())
+      panel.allowedContentTypes = [.init(filenameExtension: "md") ?? .plainText]
+      guard panel.runModal() == .OK, let url = panel.url else { return }
+      do {
+        try Data(markdown.utf8).write(to: url, options: [.atomic])
+        screen.handover?.done = "已导出到 \(url.lastPathComponent)"
+      } catch {
+        screen.handover?.done = "没有导出成功"
+      }
+    case .handOver:
+      guard let to = display.to else { return }
+      let pack = display.packItemID
+      let name = screen.space(spaceID)?.name(of: to) ?? "对方"
+      run("已把这件事交给\(name)" + (pack == nil ? "" : "，附上了交接包")) { [weak self] engine in
+        try await engine.handover(spaceID, matterID: matter, to: to, packItemID: pack)
+        await MainActor.run { self?.sheet = nil }
+      }
+    }
+  }
+
+  /// The pack is written by the Spark's model while the space organizer is
+  /// leased (organizing runs first); polled until it is ready, then shown
+  /// with the numbers put back on this Mac.
+  private func generatePack(_ spaceID: String, matter: String, from: String?, to: String?) async {
+    guard let engine = ensureEngine() else { return }
+    do {
+      _ = try await engine.organize(
+        spaceID, builder: SpaceOrganizerPayloads(imageRedactor: VisionSendCopyRedactor()))
+      let (packID, reason) = try await engine.requestHandoverPack(
+        spaceID, matterID: matter, from: from, to: to)
+      guard let packID else {
+        screen.handover?.working = false
+        screen.handover?.status =
+          reason == "empty" ? "这件事在空间里还没有素材，写不出交接包" : "整理设备正忙，请稍后再试"
+        return
+      }
+      screen.handover?.packID = packID
+      let deadline = Date().addingTimeInterval(600)
+      while Date() < deadline {
+        let pack = try await engine.handoverPack(spaceID, packID: packID)
+        let state = try await engine.state(spaceID)
+        if let state {
+          let view = SpaceHandoverView(
+            pack, state: state, maskKey: try? await engine.maskKey(spaceID))
+          screen.handover?.status = view.statusText
+          if view.isReady || pack.status == "failed" {
+            screen.handover?.markdown = view.markdown
+            screen.handover?.sources = view.sources.count
+            screen.handover?.working = false
+            return
+          }
+        }
+        try await Task.sleep(for: .seconds(4))
+      }
+      screen.handover?.status = "等了 10 分钟还没写好；可以稍后再试"
+    } catch {
+      screen.handover?.status = Self.message(error)
+    }
+    screen.handover?.working = false
   }
 
   private func unshare(_ spaceID: String, eventID: String) {

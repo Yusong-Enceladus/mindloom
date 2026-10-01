@@ -124,6 +124,27 @@ class Settings:
     unlock_lease_s: float = field(default_factory=lambda: float(_env("ORGANIZER_UNLOCK_LEASE_S", "600")))
     # The service's own log file (ctl.sh sets it): emptied by POST /v1/wipe like the data directory's logs.
     log_file: Optional[Path] = field(default_factory=lambda: Path(v) if (v := _env("ORGANIZER_LOG_FILE", "")) else None)
+    # v8 per-member access (organizer/access.py, docs/INFRA.md): the authorized_keys file member and invite lines
+    # go into (default ~/.ssh/authorized_keys) and the gate program their forced commands run (an instance's
+    # zhiji-inbox wrapper; default ZHIJI_INBOX_GATE, else this checkout's spark/zhiji-inbox).
+    authorized_keys: Optional[Path] = field(
+        default_factory=lambda: Path(v) if (v := _env("ORGANIZER_AUTHORIZED_KEYS", "")) else None)
+    gate_path: str = field(default_factory=lambda: _env("ORGANIZER_GATE_PATH", _env("ZHIJI_INBOX_GATE", "")))
+    # v8 B6: per member, per space storage quota (MB). The Spark owner's ceiling: a space's policy may only lower it
+    # (review finding V8R-09); 0 = no ceiling.
+    member_quota_mb: int = field(default_factory=lambda: int(_env("ORGANIZER_MEMBER_QUOTA_MB", "2048")))
+    # V8R-09: what one member stores across all spaces of this Spark (MB; 0 = no limit), and how many spaces one member
+    # id may create here.
+    member_total_mb: int = field(default_factory=lambda: int(_env("ORGANIZER_MEMBER_TOTAL_MB", "8192")))
+    max_spaces_per_member: int = field(default_factory=lambda: int(_env("ORGANIZER_MAX_SPACES_PER_MEMBER", "30")))
+    # V8R-10: the largest backup a restore reads (MB); the body is refused before it is read when it says more.
+    max_restore_mb: int = field(default_factory=lambda: int(_env("ORGANIZER_MAX_RESTORE_MB", "8192")))
+    # V8R-06: whether a space admin who is not an org admin may invite new people to this Spark (access tickets of
+    # kind "member"); off by default: the owner and org admins invite, a space admin invites into its space only
+    # people who are already paired here.
+    space_admins_invite: bool = field(default_factory=lambda: _env("ORGANIZER_SPACE_ADMINS_INVITE", "0") == "1")
+    # v8 B6: matters whose next open dated step is at most this many days away are organized first.
+    deadline_days: int = field(default_factory=lambda: int(_env("ORGANIZER_DEADLINE_DAYS", "7")))
 
     @property
     def socket_path(self) -> Path:

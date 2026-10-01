@@ -404,18 +404,20 @@ final class SpaceEngineTests: XCTestCase {
     var aState = try await a.engine.sync(spaceID)
     XCTAssertTrue(aState.rotationPending)
     XCTAssertEqual(spark.space(spaceID)?.items[item]?.status, "withdrawn")
-    // Shares wait until an admin rotates.
-    do {
-      _ = try await a.engine.share(
-        spaceID, items: [SpaceOutgoingItem(itemID: SpaceID.new(), kind: "text", fields: note("x"))])
-      XCTFail("shared while a rotation was pending")
-    } catch SpaceEngine.EngineError.refused(let code) {
-      XCTAssertEqual(code, "rotation_pending")
-    }
+    // Shares wait in the outbox until an admin rotates (v8 C3), then go
+    // under the new key.
+    let waiting = SpaceID.new()
+    let report = try await a.engine.share(
+      spaceID, items: [SpaceOutgoingItem(itemID: waiting, kind: "text", fields: note("x"))])
+    XCTAssertEqual(report.queued, [waiting])
+    XCTAssertNil(spark.space(spaceID)?.items[waiting])
     try await a.engine.rotate(spaceID)
     aState = try await a.engine.sync(spaceID)
     XCTAssertFalse(aState.rotationPending)
     XCTAssertEqual(aState.epoch, 2)
+    let flush = try await a.engine.flushOutbox(spaceID)
+    XCTAssertEqual(flush.done.values.compactMap { $0 }, [waiting])
+    XCTAssertEqual(spark.space(spaceID)?.itemKeys[waiting]?.epoch, 2)
   }
 
   // MARK: - What never leaves
@@ -442,7 +444,8 @@ final class SpaceEngineTests: XCTestCase {
       SpaceOutgoingItem(
         itemID: okSegment, kind: "audio_segment", fields: note("这一分钟"),
         originals: [("audio", Data("RIFF-minute".utf8))],
-        segment: SpaceSegmentRef(parentItemID: parent, startMS: 60_000, endMS: 120_000)),
+        segment: SpaceSegmentRef(
+          parentItemID: parent, startMS: 60_000, endMS: 120_000, recordingMS: 3_600_000)),
     ]
     let report = try await a.engine.share(spaceID, items: items)
     XCTAssertEqual(report.shared, [okSegment])

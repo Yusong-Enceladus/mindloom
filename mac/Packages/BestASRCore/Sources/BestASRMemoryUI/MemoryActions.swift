@@ -43,6 +43,9 @@ public struct MemoryActions {
   public var relation: @MainActor (MemoryRelationDecision) -> Void
   /// v7: a matter page with no map yet asks for one (optional).
   public var requestMap: @MainActor (_ eventID: String) -> Void
+  /// v8: 把下一步加到提醒事项 — one reminder, written only on this click
+  /// (V8 contract A5). Nil hides the button.
+  public var addToReminders: (@MainActor (MemoryReminderRequest) -> Void)?
 
   public init(
     answer: @escaping @MainActor (MemoryQuestion, Bool) -> Void = { _, _ in },
@@ -65,7 +68,8 @@ public struct MemoryActions {
     retryIssue: @escaping @MainActor (String) -> Void = { _ in },
     discardIssue: @escaping @MainActor (String) -> Void = { _ in },
     relation: @escaping @MainActor (MemoryRelationDecision) -> Void = { _ in },
-    requestMap: @escaping @MainActor (String) -> Void = { _ in }
+    requestMap: @escaping @MainActor (String) -> Void = { _ in },
+    addToReminders: (@MainActor (MemoryReminderRequest) -> Void)? = nil
   ) {
     self.answer = answer
     self.answerReview = answerReview
@@ -88,8 +92,24 @@ public struct MemoryActions {
     self.discardIssue = discardIssue
     self.relation = relation
     self.requestMap = requestMap
+    self.addToReminders = addToReminders
   }
 
   /// Does nothing; for snapshots and previews.
   public static var inert: MemoryActions { MemoryActions() }
+}
+
+/// A matter's next step, for 把下一步加到提醒事项.
+public struct MemoryReminderRequest: Equatable, Sendable {
+  public let eventID: String
+  public let matterTitle: String
+  public let text: String
+  public let date: Date?
+
+  public init(eventID: String, matterTitle: String, text: String, date: Date?) {
+    self.eventID = eventID
+    self.matterTitle = matterTitle
+    self.text = text
+    self.date = date
+  }
 }

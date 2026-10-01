@@ -1,0 +1,1454 @@
+{
+ "schemaVersion": 1,
+ "kind": "v8-integration-e2e",
+ "date": "2026-10-01",
+ "note": "Synthetic data only. Counts and check names; no content, key, code, host or path. One fresh integrated organizing-device instance; member Macs through its real sshd and the gate's bridge.",
+ "code": {
+  "mac": "claude/v8 at the integration (6336e43 for the code; later commits are docs)",
+  "organizer": "claude/v8 at the integration (runtime code 7964f05; 3fee7c8 adds tests and tools only)"
+ },
+ "privacy_e2e": {
+  "passed": 68,
+  "failed": 0,
+  "checks": [
+   {
+    "name": "every item organized on the Spark",
+    "passed": true
+   },
+   {
+    "name": "no sentinel in any request's text fields",
+    "passed": true
+   },
+   {
+    "name": "the key crosses only in /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "every item was posted",
+    "passed": true
+   },
+   {
+    "name": "dictation: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "dictation: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "pasted: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "pasted: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "document: every identifier left as its placeholder",
+    "passed": true
+   },
+   {
+    "name": "document: the marker (not an identifier) is sent as is",
+    "passed": true
+   },
+   {
+    "name": "the first data call is /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "screenshot send copy: no identifier readable",
+    "passed": true
+   },
+   {
+    "name": "screenshot send copy: the rest of the text survives",
+    "passed": true
+   },
+   {
+    "name": "spreadsheet goes as bytes (read on the Spark)",
+    "passed": true
+   },
+   {
+    "name": "Spark holds the 5 items and no image/file bytes (read, then deleted)",
+    "passed": true
+   },
+   {
+    "name": "the link token without the key's access proof gets 403",
+    "passed": true
+   },
+   {
+    "name": "no sentinel, marker or key in any Spark file",
+    "passed": true
+   },
+   {
+    "name": "store is not a plaintext SQLite file",
+    "passed": true
+   },
+   {
+    "name": "even decrypted, no sentinel is stored on the Spark",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_dictation is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_pasted is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_document is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_sheet is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "rename delivered",
+    "passed": true
+   },
+   {
+    "name": "the Spark returned placeholders the Mac knows",
+    "passed": true
+   },
+   {
+    "name": "no tagged placeholder is shown or exported on the Mac",
+    "passed": true
+   },
+   {
+    "name": "every known placeholder the Spark returned is shown as its original",
+    "passed": true
+   },
+   {
+    "name": "a number the Mac never saw is not guessed",
+    "passed": true
+   },
+   {
+    "name": "the renamed title is shown as typed",
+    "passed": true
+   },
+   {
+    "name": "the Spark holds the renamed title masked",
+    "passed": true
+   },
+   {
+    "name": "spreadsheet reading: the known number is restored, the unknown one is untagged",
+    "passed": true
+   },
+   {
+    "name": "deletion sent as DELETE /v1/items/{id} → 200",
+    "passed": true
+   },
+   {
+    "name": "the deletion carries no content",
+    "passed": true
+   },
+   {
+    "name": "deleted item's text is gone from the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "the other items stay",
+    "passed": true
+   },
+   {
+    "name": "still no plaintext in any Spark file after the delete",
+    "passed": true
+   },
+   {
+    "name": "Spark stats count one item fewer",
+    "passed": true
+   },
+   {
+    "name": "turning the link off sends POST /v1/lock → 200",
+    "passed": true
+   },
+   {
+    "name": "health says locked with this library's key",
+    "passed": true
+   },
+   {
+    "name": "data routes answer 423 while locked",
+    "passed": true
+   },
+   {
+    "name": "locked store: no plaintext in any file",
+    "passed": true
+   },
+   {
+    "name": "a deletion made while off is queued on the Mac",
+    "passed": true
+   },
+   {
+    "name": "link reconnects and unlocks the same store",
+    "passed": true
+   },
+   {
+    "name": "the first data call after reconnecting is /v1/unlock",
+    "passed": true
+   },
+   {
+    "name": "the queued deletion is the first call after the unlock",
+    "passed": true
+   },
+   {
+    "name": "nothing is sent again after reconnecting",
+    "passed": true
+   },
+   {
+    "name": "no deletion left queued after reconnecting",
+    "passed": true
+   },
+   {
+    "name": "the item deleted while off is gone from the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "the remaining items stay",
+    "passed": true
+   },
+   {
+    "name": "no plaintext in any file",
+    "passed": true
+   },
+   {
+    "name": "Spark stats count two items fewer",
+    "passed": true
+   },
+   {
+    "name": "forget answers forgotten",
+    "passed": true
+   },
+   {
+    "name": "forget sends POST /v1/wipe → 200",
+    "passed": true
+   },
+   {
+    "name": "the old key is destroyed; a new one replaces it",
+    "passed": true
+   },
+   {
+    "name": "the link goes on with the new key",
+    "passed": true
+   },
+   {
+    "name": "the Spark now holds only the new key's store",
+    "passed": true
+   },
+   {
+    "name": "the new store is empty",
+    "passed": true
+   },
+   {
+    "name": "nothing re-sent after forgetting",
+    "passed": true
+   },
+   {
+    "name": "after forgetting: no plaintext, marker or key in any file",
+    "passed": true
+   },
+   {
+    "name": "no deletion left queued",
+    "passed": true
+   },
+   {
+    "name": "final link off: locked",
+    "passed": true
+   },
+   {
+    "name": "final lock is on the current key",
+    "passed": true
+   },
+   {
+    "name": "wipe while locked → 200",
+    "passed": true
+   },
+   {
+    "name": "store files are gone (organizer.db, -wal, -shm, store.keyid)",
+    "passed": true
+   },
+   {
+    "name": "health after wipe: locked, no key",
+    "passed": true
+   },
+   {
+    "name": "no marker in any file after the wipe",
+    "passed": true
+   },
+   {
+    "name": "the link never dropped to unavailable",
+    "passed": true
+   },
+   {
+    "name": "each of the 3 link runtimes unlocked before any other call",
+    "passed": true
+   }
+  ],
+  "elapsed_seconds": 139.9,
+  "organize_seconds": 80.6,
+  "files_scanned": 9706,
+  "plaintext_hits": 0,
+  "purge_seconds": 2.8
+ },
+ "phone_e2e": {
+  "passed": 67,
+  "failed": 0,
+  "checks": [
+   {
+    "name": "the link connects and unlocks the Spark store",
+    "passed": true
+   },
+   {
+    "name": "pairing code decodes (mlpair1.) with this Mac's seal key and the installed key id",
+    "passed": true
+   },
+   {
+    "name": "the Spark's host key is pinned from known_hosts as ed25519 (never RSA)",
+    "passed": true
+   },
+   {
+    "name": "the relay is in the code exactly when the Mac's ssh uses a ProxyJump",
+    "passed": true
+   },
+   {
+    "name": "the relay's host key is pinned as ed25519 or ECDSA",
+    "passed": true
+   },
+   {
+    "name": "the gate word is zhiji-inbox",
+    "passed": true
+   },
+   {
+    "name": "the Mac remembers the inbox command it installed with",
+    "passed": true
+   },
+   {
+    "name": "the phone's private key is in no file on the Mac (root, link state, pairing state)",
+    "passed": true
+   },
+   {
+    "name": "the Mac remembers the pairing (key id, hosts, inbox command, time)",
+    "passed": true
+   },
+   {
+    "name": "Spark: exactly one line for this phone",
+    "passed": true
+   },
+   {
+    "name": "Spark: the line forces zhiji-inbox gate and restricts everything else",
+    "passed": true
+   },
+   {
+    "name": "Spark: the line holds the phone's ed25519 public key and its marker",
+    "passed": true
+   },
+   {
+    "name": "Spark: every other line is unchanged",
+    "passed": true
+   },
+   {
+    "name": "relay: exactly one line for this phone",
+    "passed": true
+   },
+   {
+    "name": "relay: the line allows only a forward to the Spark's ssh port (no shell, no -R)",
+    "passed": true
+   },
+   {
+    "name": "relay: the line holds the phone's ed25519 public key and its marker",
+    "passed": true
+   },
+   {
+    "name": "relay: every other line is unchanged",
+    "passed": true
+   },
+   {
+    "name": "list-phones on the Spark shows the phone as restricted to the gate",
+    "passed": true
+   },
+   {
+    "name": "turning the link off sends POST /v1/lock → 200",
+    "passed": true
+   },
+   {
+    "name": "the Spark inbox holds exactly the 3 entries the phone sent",
+    "passed": true
+   },
+   {
+    "name": "every waiting entry is kind sealed, source sealed, with no text or image column",
+    "passed": true
+   },
+   {
+    "name": "every waiting blob is an mlseal1. wire string",
+    "passed": true
+   },
+   {
+    "name": "every inbox id is the phone's lowercase UUID, stored as sent",
+    "passed": true
+   },
+   {
+    "name": "every blob opens with this Mac's seal key (test side)",
+    "passed": true
+   },
+   {
+    "name": "the phone sent one keyboard dictation, one shared text and one shared image",
+    "passed": true
+   },
+   {
+    "name": "no marker is readable in the sealed blobs",
+    "passed": true
+   },
+   {
+    "name": "a waiting blob does not open with another key or under another id",
+    "passed": true
+   },
+   {
+    "name": "each entry was made on the phone after pairing and before the Spark received it",
+    "passed": true
+   },
+   {
+    "name": "the shared image was re-encoded on the phone: no GPS, no description, no metadata marker",
+    "passed": true
+   },
+   {
+    "name": "while waiting: no marker or phone number in any file of the Spark instance",
+    "passed": true
+   },
+   {
+    "name": "while waiting: the Spark store stays locked and encrypted (no plaintext header)",
+    "passed": true
+   },
+   {
+    "name": "the Mac takes every phone entry in and the Spark inbox is empty",
+    "passed": true
+   },
+   {
+    "name": "each entry acknowledged once the item was committed (POST /v1/inbox/{id}/ack → 200)",
+    "passed": true
+   },
+   {
+    "name": "no entry was dropped as unopenable or unusable",
+    "passed": true
+   },
+   {
+    "name": "share_text: a user item whose source is iPhone 分享",
+    "passed": true
+   },
+   {
+    "name": "share_text: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "share_text: the item's text is what the phone sealed (marker included)",
+    "passed": true
+   },
+   {
+    "name": "image: a user item whose source is iPhone 分享",
+    "passed": true
+   },
+   {
+    "name": "image: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "image: stored on the Mac through the image path, without location or metadata marker",
+    "passed": true
+   },
+   {
+    "name": "image: the Mac's own on-device reading sees the pixels (marker readable)",
+    "passed": true
+   },
+   {
+    "name": "keyboard: a user item whose source is iPhone 键盘",
+    "passed": true
+   },
+   {
+    "name": "keyboard: its time is the phone's created_at (to the millisecond)",
+    "passed": true
+   },
+   {
+    "name": "keyboard: the item's text is what the phone sealed (marker included)",
+    "passed": true
+   },
+   {
+    "name": "after the ack the Spark keeps only content-free rows (blob gone) for these entries",
+    "passed": true
+   },
+   {
+    "name": "every phone item is organized on the Spark",
+    "passed": true
+   },
+   {
+    "name": "no request carries an mlseal1. blob (opened on the Mac only)",
+    "passed": true
+   },
+   {
+    "name": "the phone number never crosses the link in a text field",
+    "passed": true
+   },
+   {
+    "name": "share_text: sent for organizing as iPhone 分享 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "share_text: masked on the wire (placeholder, marker kept)",
+    "passed": true
+   },
+   {
+    "name": "image: sent for organizing as iPhone 分享 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "image: the send copy has the number painted over, the rest survives",
+    "passed": true
+   },
+   {
+    "name": "keyboard: sent for organizing as iPhone 键盘 at its phone time",
+    "passed": true
+   },
+   {
+    "name": "keyboard: masked on the wire (placeholder, marker kept)",
+    "passed": true
+   },
+   {
+    "name": "after organizing: no marker, phone number or key in any Spark file",
+    "passed": true
+   },
+   {
+    "name": "the store is not a plaintext SQLite file",
+    "passed": true
+   },
+   {
+    "name": "even decrypted, the phone number is not stored on the Spark (masked)",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_keyboard is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "positive control: marker_share_text is in the decrypted rows",
+    "passed": true
+   },
+   {
+    "name": "the image's metadata marker never reached the Spark, even decrypted",
+    "passed": true
+   },
+   {
+    "name": "final: store wiped while locked; health locked, no key, inbox empty",
+    "passed": true
+   },
+   {
+    "name": "unpair: no mindloom-phone line left on the Spark; file byte-identical to the start",
+    "passed": true
+   },
+   {
+    "name": "unpair: no mindloom-phone line left on the relay; file byte-identical to the start",
+    "passed": true
+   },
+   {
+    "name": "unpair: list-phones no longer shows the phone",
+    "passed": true
+   },
+   {
+    "name": "unpair: the Mac forgets the phone",
+    "passed": true
+   },
+   {
+    "name": "after unpair the phone's next send is refused (its key no longer opens the relay)",
+    "passed": true
+   },
+   {
+    "name": "after unpair nothing new reached the Spark inbox",
+    "passed": true
+   }
+  ],
+  "elapsed_seconds": 375.5,
+  "organize_seconds": 48.4,
+  "pairing_seconds": 2.6,
+  "after_unpair_refusal": true,
+  "authorized_keys_byte_identical": {
+   "organizing_device": true,
+   "relay": true
+  }
+ },
+ "spaces_e2e": {
+  "passed": 57,
+  "failed": 0,
+  "checks": 57,
+  "names": 57,
+  "seconds_total": 262,
+  "counts": {
+   "assembled_items": 23,
+   "contribution_line_names": 2,
+   "entries_a": 12,
+   "entries_b": 12,
+   "entries_unticked_by_default": 7,
+   "organizer_payload_requests": 2,
+   "payloads_sent_by_a": 23,
+   "recording_lines_b": 38,
+   "recording_lines_b_unfiled": 29,
+   "request_bytes": 635731,
+   "requests": 286,
+   "rewrapped_item_keys": 22,
+   "shared_a": 12,
+   "shared_b": 11,
+   "space_events": 3,
+   "spark_blobs": 2,
+   "union_items": 23
+  },
+  "organizing_device_plaintext_hits": {
+   "dictionary": 0,
+   "lab-sheet": 0,
+   "lab-words": 0,
+   "marker": 0,
+   "name-a": 0,
+   "name-b": 0,
+   "number": 0,
+   "space-name": 0,
+   "supplier": 0,
+   "unfiled-words": 0,
+   "voiceprint": 0,
+   "window": 0
+  }
+ },
+ "spaces_infra_e2e": {
+  "passed": 53,
+  "checks": 53,
+  "seconds": {
+   "audio": 9,
+   "backup": 52,
+   "done": 57,
+   "joined": 7,
+   "organized": 39,
+   "outbox": 18,
+   "pack": 49,
+   "second-mac": 18
+  },
+  "check_names": [
+   "B enrolled with its own key and credential",
+   "B's bridge: /v1/access/me is B's Mac",
+   "B's bridge refuses the owner's store",
+   "A sees B's name and fingerprint",
+   "B joined the space through its bridge",
+   "B shares through its bridge (0)",
+   "B shares through its bridge (1)",
+   "A shares a meeting part with its audio",
+   "the whole recording is never shared",
+   "B opens the audio part (bytes as sent)",
+   "B's length check passes before playing",
+   "on the Spark: the audio is a sealed file",
+   "on the Spark: the stored audio holds none of the sound's bytes",
+   "B2 enrolled under B's member id",
+   "B's work list: B2 still to add to the space",
+   "B2 takes the space in",
+   "B2 reads A's items",
+   "B2 opens the audio part too",
+   "A reads B2's item as B's",
+   "B unpairs B2",
+   "B's work list: B2 still to remove from the space",
+   "retiring B2 rotated the key",
+   "B2 is out of the signed roster",
+   "B2 cannot reach the Spark any more",
+   "B's share waits while the link is down",
+   "B's outbox is on disk",
+   "B's outbox sent it after reconnecting",
+   "the Spark logged it once",
+   "the space organizer made the matter",
+   "handover pack queued",
+   "the Spark's model wrote the pack",
+   "the pack cites the space's items",
+   "the pack shown on the Mac has no placeholder left",
+   "the pack is shared as a snapshot",
+   "B is the matter's 负责人",
+   "B sees the pack given with it",
+   "a withdrawn cited item takes the snapshot along",
+   "B's Mac accepted the Spark's removal record",
+   "backup pulled and opens with its key sealed to the admins",
+   "a plain member cannot open the backup (review V8R-13)",
+   "the backup holds no plaintext",
+   "restored onto the Spark's longer log: data filled in, nothing rolled back (V8R-03)",
+   "after the restore A reads the items",
+   "after the restore B reads the items",
+   "the withdrawal holds after the restore",
+   "the audio part opens after the restore",
+   "sharing works after the restore",
+   "no sentinel anywhere on the Spark",
+   "no number on the Spark",
+   "the text reaches the Spark only in organizing payloads (members get ciphertext)",
+   "no number in any request (masked for organizing)",
+   "the sound's bytes are never in any request",
+   "authorized_keys byte-identical"
+  ],
+  "authorized_keys_byte_identical": true
+ },
+ "member_bridge_live": {
+  "checks": [
+   {
+    "name": "enrolled through the ticket key",
+    "passed": true
+   },
+   {
+    "name": "the ticket key is dead after enrolling",
+    "passed": true
+   },
+   {
+    "name": "bridge: /v1/access/me is this Mac",
+    "passed": true
+   },
+   {
+    "name": "bridge: the owner's store is refused",
+    "passed": true
+   },
+   {
+    "name": "bridge: health refused to a plain member",
+    "passed": true
+   },
+   {
+    "name": "bridge: health for an org admin",
+    "passed": true
+   },
+   {
+    "name": "bridge: share with a 1 MB original",
+    "passed": true
+   },
+   {
+    "name": "bridge: the original comes back",
+    "passed": true
+   },
+   {
+    "name": "bridge: a backup streamed and opens",
+    "passed": true
+   },
+   {
+    "name": "bridge: one long session for every call",
+    "passed": true
+   },
+   {
+    "name": "unpaired",
+    "passed": true
+   },
+   {
+    "name": "the credential stops at once",
+    "passed": true
+   },
+   {
+    "name": "authorized_keys byte-identical",
+    "passed": true
+   }
+  ],
+  "note": "MemberBridgeLiveTests: the Mac's own Swift client through its own ssh bridge"
+ },
+ "gate_e2e": {
+  "access": {
+   "checks": 19,
+   "passed": 19,
+   "seconds": 13.2,
+   "failed": [],
+   "check_names": [
+    {
+     "name": "ticket registered",
+     "passed": true
+    },
+    {
+     "name": "invite key cannot run a command",
+     "passed": true
+    },
+    {
+     "name": "enrolled through the invite key",
+     "passed": true
+    },
+    {
+     "name": "invite key dead after enrollment",
+     "passed": true
+    },
+    {
+     "name": "bridge: /v1/access/me",
+     "passed": true
+    },
+    {
+     "name": "bridge: personal store refused",
+     "passed": true
+    },
+    {
+     "name": "bridge: infra health refused for a plain member",
+     "passed": true
+    },
+    {
+     "name": "bridge: infra health for an org admin",
+     "passed": true
+    },
+    {
+     "name": "infra health: chat model up",
+     "passed": true
+    },
+    {
+     "name": "infra health: unified memory reported",
+     "passed": true
+    },
+    {
+     "name": "bridge: share with a 1 MB original",
+     "passed": true
+    },
+    {
+     "name": "bridge: backup streamed",
+     "passed": true
+    },
+    {
+     "name": "backup opens with the derived key",
+     "passed": true
+    },
+    {
+     "name": "backup holds no plaintext",
+     "passed": true
+    },
+    {
+     "name": "member key cannot run a command",
+     "passed": true
+    },
+    {
+     "name": "member key cannot open a tunnel",
+     "passed": true
+    },
+    {
+     "name": "unpaired",
+     "passed": true
+    },
+    {
+     "name": "authorized_keys byte-identical",
+     "passed": true
+    },
+    {
+     "name": "member key refused after unpairing",
+     "passed": true
+    }
+   ],
+   "authorized_keys_byte_identical": true
+  },
+  "member_gate": {
+   "checks": 31,
+   "passed": 31,
+   "seconds": 27.2,
+   "failed": [],
+   "check_names": [
+    {
+     "name": "owner: a ticket for each member",
+     "passed": true
+    },
+    {
+     "name": "A and B enrolled, each with its own key",
+     "passed": true
+    },
+    {
+     "name": "the invite keys are dead after enrollment",
+     "passed": true
+    },
+    {
+     "name": "each bridge answers as its own member",
+     "passed": true
+    },
+    {
+     "name": "B cannot read A's space summary",
+     "passed": true
+    },
+    {
+     "name": "B cannot read A's space log",
+     "passed": true
+    },
+    {
+     "name": "B gets no key of A's space",
+     "passed": true
+    },
+    {
+     "name": "B cannot list A's Macs",
+     "passed": true
+    },
+    {
+     "name": "B cannot unpair A",
+     "passed": true
+    },
+    {
+     "name": "B's member list holds only B",
+     "passed": true
+    },
+    {
+     "name": "B's audit view holds no row about A",
+     "passed": true
+    },
+    {
+     "name": "B (no admin anywhere) cannot invite a new member",
+     "passed": true
+    },
+    {
+     "name": "B cannot read the Spark's health",
+     "passed": true
+    },
+    {
+     "name": "B cannot reach the owner's store",
+     "passed": true
+    },
+    {
+     "name": "B cannot sign as A's member id (access_member)",
+     "passed": true
+    },
+    {
+     "name": "B cannot sign with another device (access_device)",
+     "passed": true
+    },
+    {
+     "name": "A's credential over B's key is refused at the gate",
+     "passed": true
+    },
+    {
+     "name": "two Authorization headers are refused",
+     "passed": true
+    },
+    {
+     "name": "A lets B into the space",
+     "passed": true
+    },
+    {
+     "name": "B reads A's item once let in",
+     "passed": true
+    },
+    {
+     "name": "A removes B (member.remove with a new key)",
+     "passed": true
+    },
+    {
+     "name": "removed B cannot read the space any more",
+     "passed": true
+    },
+    {
+     "name": "removed B gets no new key",
+     "passed": true
+    },
+    {
+     "name": "A still reads both items",
+     "passed": true
+    },
+    {
+     "name": "owner unpairs B",
+     "passed": true
+    },
+    {
+     "name": "B's key refused after unpairing",
+     "passed": true
+    },
+    {
+     "name": "A unaffected by B's unpairing",
+     "passed": true
+    },
+    {
+     "name": "B's unpaired device cannot enroll again",
+     "passed": true
+    },
+    {
+     "name": "no item text on the Spark in the clear",
+     "passed": true
+    },
+    {
+     "name": "A's key refused after unpairing",
+     "passed": true
+    },
+    {
+     "name": "authorized_keys byte-identical",
+     "passed": true
+    }
+   ],
+   "authorized_keys_byte_identical": true
+  },
+  "spaces_c": {
+   "checks": 29,
+   "passed": 29,
+   "seconds": 22.7,
+   "failed": [],
+   "check_names": [
+    {
+     "name": "owner: ticket for A",
+     "passed": true
+    },
+    {
+     "name": "A enrolled",
+     "passed": true
+    },
+    {
+     "name": "A: device ticket for its second Mac",
+     "passed": true
+    },
+    {
+     "name": "A2 enrolled under A's member id",
+     "passed": true
+    },
+    {
+     "name": "devices: A2 still to add to the space and the org",
+     "passed": true
+    },
+    {
+     "name": "A signs device.add and org.device_add for A2",
+     "passed": true
+    },
+    {
+     "name": "A2 reads what A shared",
+     "passed": true
+    },
+    {
+     "name": "A2 is admin in the org space",
+     "passed": true
+    },
+    {
+     "name": "B enrolled",
+     "passed": true
+    },
+    {
+     "name": "B joined",
+     "passed": true
+    },
+    {
+     "name": "B shares an audio part",
+     "passed": true
+    },
+    {
+     "name": "A2 opens the audio part",
+     "passed": true
+    },
+    {
+     "name": "the sound matches the declared part",
+     "passed": true
+    },
+    {
+     "name": "on the Spark: the audio is a ciphertext file",
+     "passed": true
+    },
+    {
+     "name": "on the Spark: no audio sentinel anywhere",
+     "passed": true
+    },
+    {
+     "name": "one audio part per recording",
+     "passed": true
+    },
+    {
+     "name": "retried share accepted once",
+     "passed": true
+    },
+    {
+     "name": "B shares a snapshot citing A's item",
+     "passed": true
+    },
+    {
+     "name": "withdrawing the cited item removes the snapshot",
+     "passed": true
+    },
+    {
+     "name": "B withdraws the audio part",
+     "passed": true
+    },
+    {
+     "name": "on the Spark: the audio file is gone",
+     "passed": true
+    },
+    {
+     "name": "the blob answers 410",
+     "passed": true
+    },
+    {
+     "name": "A adds B as org admin (B's own Mac)",
+     "passed": true
+    },
+    {
+     "name": "B is admin in the org space",
+     "passed": true
+    },
+    {
+     "name": "A unpairs A2",
+     "passed": true
+    },
+    {
+     "name": "devices: A2 still to remove",
+     "passed": true
+    },
+    {
+     "name": "A retires A2 (device.remove with a new key, org.device_remove)",
+     "passed": true
+    },
+    {
+     "name": "devices: nothing left to remove",
+     "passed": true
+    },
+    {
+     "name": "authorized_keys byte-identical",
+     "passed": true
+    }
+   ],
+   "authorized_keys_byte_identical": true
+  }
+ },
+ "browser_native_host": {
+  "ChromeExtensionEndToEndTests": {
+   "swiftpm_helper_repository_extension": "passed",
+   "app_helper_bundled_extension": "passed"
+  },
+  "BrowserHostTests_app_helper": "5/5",
+  "OwnerChannelTests_app_helper": "3/3",
+  "app_bundle_seal_after": "codesign --verify --deep --strict ok"
+ },
+ "agent_mcp_e2e": {
+  "swiftpm_helper": {
+   "checks": 43,
+   "passed": 43,
+   "check_names": [
+    {
+     "name": "offline: initialize answers",
+     "passed": true
+    },
+    {
+     "name": "offline: tools/list has the six tools",
+     "passed": true
+    },
+    {
+     "name": "offline: tool call says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "offline: resources/read is an error",
+     "passed": true
+    },
+    {
+     "name": "socket is 0600 in a 0700 folder",
+     "passed": true
+    },
+    {
+     "name": "unknown client: consent requested",
+     "passed": true
+    },
+    {
+     "name": "consent names the client's executable",
+     "passed": true
+    },
+    {
+     "name": "unknown client: call waits for the owner",
+     "passed": true
+    },
+    {
+     "name": "granted: search finds the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "search output starts with the data header",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside is invisible to search",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside the rope is invisible",
+     "passed": true
+    },
+    {
+     "name": "scope: get_matter outside the grant is not found",
+     "passed": true
+    },
+    {
+     "name": "get_matter: text lens with the data header and quoted items",
+     "passed": true
+    },
+    {
+     "name": "masking default: no phone or email in the output",
+     "passed": true
+    },
+    {
+     "name": "masking default: placeholders instead",
+     "passed": true
+    },
+    {
+     "name": "get_matter json: items carry their ids",
+     "passed": true
+    },
+    {
+     "name": "list_deadlines: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "list_recent: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "get_person: matters within scope only",
+     "passed": true
+    },
+    {
+     "name": "get_person: quotes from the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "resources/list: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "resources/read: same text as get_matter",
+     "passed": true
+    },
+    {
+     "name": "resources/read outside the grant is an error",
+     "passed": true
+    },
+    {
+     "name": "read-only grant: add_to_inbox refused",
+     "passed": true
+    },
+    {
+     "name": "revoked: the next call asks the owner again",
+     "passed": true
+    },
+    {
+     "name": "denied: a clear error",
+     "passed": true
+    },
+    {
+     "name": "once: allowed in this connection (我的 only: the lab matter stays out)",
+     "passed": true
+    },
+    {
+     "name": "once: a new connection asks again",
+     "passed": true
+    },
+    {
+     "name": "ask first: a new matter is approved one by one",
+     "passed": true
+    },
+    {
+     "name": "numbers as they are when granted",
+     "passed": true
+    },
+    {
+     "name": "ask first: a refused matter stays closed",
+     "passed": true
+    },
+    {
+     "name": "ask first: an approved matter is not asked again",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox: a proposal waits in the inbox",
+     "passed": true
+    },
+    {
+     "name": "inbox holds one pending proposal",
+     "passed": true
+    },
+    {
+     "name": "App quit: the helper says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "App back: the grant (today) still holds, the helper reconnects",
+     "passed": true
+    },
+    {
+     "name": "audit: every call written",
+     "passed": true
+    },
+    {
+     "name": "audit: outcomes recorded",
+     "passed": true
+    },
+    {
+     "name": "audit: no content (numbers, text, queries, titles)",
+     "passed": true
+    },
+    {
+     "name": "grant record holds no content",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox never files an item",
+     "passed": true
+    },
+    {
+     "name": "grant secret stored 0600 (synthetic root's key file)",
+     "passed": true
+    }
+   ]
+  },
+  "app_bundle_helper": {
+   "checks": 43,
+   "passed": 43,
+   "check_names": [
+    {
+     "name": "offline: initialize answers",
+     "passed": true
+    },
+    {
+     "name": "offline: tools/list has the six tools",
+     "passed": true
+    },
+    {
+     "name": "offline: tool call says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "offline: resources/read is an error",
+     "passed": true
+    },
+    {
+     "name": "socket is 0600 in a 0700 folder",
+     "passed": true
+    },
+    {
+     "name": "unknown client: consent requested",
+     "passed": true
+    },
+    {
+     "name": "consent names the client's executable",
+     "passed": true
+    },
+    {
+     "name": "unknown client: call waits for the owner",
+     "passed": true
+    },
+    {
+     "name": "granted: search finds the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "search output starts with the data header",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside is invisible to search",
+     "passed": true
+    },
+    {
+     "name": "scope: a matter outside the rope is invisible",
+     "passed": true
+    },
+    {
+     "name": "scope: get_matter outside the grant is not found",
+     "passed": true
+    },
+    {
+     "name": "get_matter: text lens with the data header and quoted items",
+     "passed": true
+    },
+    {
+     "name": "masking default: no phone or email in the output",
+     "passed": true
+    },
+    {
+     "name": "masking default: placeholders instead",
+     "passed": true
+    },
+    {
+     "name": "get_matter json: items carry their ids",
+     "passed": true
+    },
+    {
+     "name": "list_deadlines: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "list_recent: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "get_person: matters within scope only",
+     "passed": true
+    },
+    {
+     "name": "get_person: quotes from the in-scope matter",
+     "passed": true
+    },
+    {
+     "name": "resources/list: only in-scope matters",
+     "passed": true
+    },
+    {
+     "name": "resources/read: same text as get_matter",
+     "passed": true
+    },
+    {
+     "name": "resources/read outside the grant is an error",
+     "passed": true
+    },
+    {
+     "name": "read-only grant: add_to_inbox refused",
+     "passed": true
+    },
+    {
+     "name": "revoked: the next call asks the owner again",
+     "passed": true
+    },
+    {
+     "name": "denied: a clear error",
+     "passed": true
+    },
+    {
+     "name": "once: allowed in this connection (我的 only: the lab matter stays out)",
+     "passed": true
+    },
+    {
+     "name": "once: a new connection asks again",
+     "passed": true
+    },
+    {
+     "name": "ask first: a new matter is approved one by one",
+     "passed": true
+    },
+    {
+     "name": "numbers as they are when granted",
+     "passed": true
+    },
+    {
+     "name": "ask first: a refused matter stays closed",
+     "passed": true
+    },
+    {
+     "name": "ask first: an approved matter is not asked again",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox: a proposal waits in the inbox",
+     "passed": true
+    },
+    {
+     "name": "inbox holds one pending proposal",
+     "passed": true
+    },
+    {
+     "name": "App quit: the helper says 织机没有在运行",
+     "passed": true
+    },
+    {
+     "name": "App back: the grant (today) still holds, the helper reconnects",
+     "passed": true
+    },
+    {
+     "name": "audit: every call written",
+     "passed": true
+    },
+    {
+     "name": "audit: outcomes recorded",
+     "passed": true
+    },
+    {
+     "name": "audit: no content (numbers, text, queries, titles)",
+     "passed": true
+    },
+    {
+     "name": "grant record holds no content",
+     "passed": true
+    },
+    {
+     "name": "add_to_inbox never files an item",
+     "passed": true
+    },
+    {
+     "name": "grant secret stored 0600 (synthetic root's key file)",
+     "passed": true
+    }
+   ]
+  }
+ }
+}

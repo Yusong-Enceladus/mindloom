@@ -11,7 +11,8 @@ from conftest import REPO
 
 def test_every_skill_has_spec_frontmatter_and_files():
     registry = SkillRegistry(REPO / "skills")
-    for name in ["event-assign", "event-brief", "home-rank", "image-read", "file-read", "matter-map", "matter-group"]:
+    for name in ["event-assign", "event-brief", "home-rank", "image-read", "file-read", "matter-map", "matter-group",
+                 "handover-pack"]:
         skill = registry.skills[name]
         meta, _ = parse_skill_md((skill.path / "SKILL.md").read_text(encoding="utf-8"))
         assert meta["name"] == skill.path.name == name
@@ -33,7 +34,8 @@ def test_job_routing_is_a_fixed_table():
     assert {job: registry.for_job(job).name for job in JOB_TO_SKILL} == {
         "image_detect": "image-read", "image_read": "image-read", "assign": "event-assign", "brief": "event-brief", "rank": "home-rank",
         "split": "item-split", "file_read": "file-read",
-        "consolidate": "event-consolidate", "person": "person-resolve", "map": "matter-map", "group": "matter-group"}
+        "consolidate": "event-consolidate", "person": "person-resolve", "map": "matter-map", "group": "matter-group",
+        "handover": "handover-pack"}
     with pytest.raises(KeyError):
         registry.for_job("recall")  # P1 stub is never auto-selected
 

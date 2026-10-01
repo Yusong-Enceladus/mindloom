@@ -34,6 +34,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     public var status = "active"
     public var shareSeq: Int
     public var first: Date
+    public var shareKey: String?
   }
 
   public struct LoggedOp {
@@ -87,17 +88,30 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     public var payloads: [String: SpaceJSON] = [:]
     public var payloadRevisions: [String: Int] = [:]
     public var origins: [String: (member: String, matter: String?)] = [:]
+    // v8.
+    public var escrow: [String: String] = [:]  // "epoch|device" → wrap
+    public var snapshotCites: [String: [String]] = [:]
+    public var audioParts: [String: String] = [:]  // "member|recording" → item
+    /// Items that just left, whose citing snapshots go after the op is logged.
+    var cascade: [String] = []
   }
 
-  private let lock = NSLock()
+  let lock = NSLock()
   public var now = Date(timeIntervalSince1970: 1_790_000_000)
-  public private(set) var spaces: [String: Space] = [:]
-  private(set) var orgs: [String: (admins: Set<String>, devices: [String: Data])] = [:]
+  public internal(set) var spaces: [String: Space] = [:]
+  var orgs: [String: FakeOrg] = [:]
+  var backups: [String: Space] = [:]
+  var packs: [String: (space: String, matter: String, pack: SpaceJSON, markdown: String)] = [:]
+  public internal(set) var access: [String: FakeAccess] = [:]
+  var tickets: [String: FakeTicket] = [:]
+  var accessAudit: [(action: String, target: SpaceJSON)] = []
+  var failures: [String: (code: String, status: Int)] = [:]
+  var lostAnswers: Set<String> = []
   /// Every request as sent (method, target, body).
   public private(set) var requests: [SpaceHTTPRequest] = []
   /// Lent keys, as the real organizer would hold them in memory.
   public private(set) var leases: [(space: String, storeKey: String, maskKey: String)] = []
-  private var nonces: Set<String> = []
+  var nonces: Set<String> = []
   /// Tests: fail every request (the link is down).
   public var offline = false
 
@@ -167,21 +181,24 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     var extra: [String: SpaceJSON] = [:]
   }
 
-  private func need(_ condition: Bool, _ status: Int, _ code: String) throws {
+  func need(_ condition: Bool, _ status: Int, _ code: String) throws {
     if !condition { throw FakeError(status: status, code: code) }
   }
 
-  private func ok(_ value: SpaceJSON) throws -> SpaceHTTPResponse {
+  func ok(_ value: SpaceJSON) throws -> SpaceHTTPResponse {
     SpaceHTTPResponse(status: 200, body: try value.encoded())
   }
 
-  private func route(_ request: SpaceHTTPRequest) throws -> SpaceHTTPResponse {
+  func route(_ request: SpaceHTTPRequest) throws -> SpaceHTTPResponse {
     let parts = request.target.split(separator: "?", maxSplits: 1)
     let path = String(parts[0])
     let query = parts.count > 1 ? String(parts[1]) : ""
     let segments = path.split(separator: "/").map(String.init)
     let body = request.body ?? Data()
     func json() throws -> SpaceJSON { try SpaceJSON.decode(body) }
+    if let answer = try routeV8(request, path: path, query: query, segments: segments) {
+      return answer
+    }
     switch (request.method, segments.count) {
     case ("GET", 3) where segments[2] == "host-keys":
       return try ok(["host_keys": [.string(Self.hostKey)]])
@@ -376,6 +393,15 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         "locked": false, "key_id": .string(keyID), "created": false, "store_id": "store",
         "epoch": SpaceJSON(space.epoch), "lease_s": 600, "purged": 0,
       ])
+    case ("POST", ["backup"]):
+      try need(role == .admin, 403, "forbidden")
+      return try backupStream(spaceID, space, request: request, body: try json())
+    case ("POST", ["organizer", "handover-pack"]):
+      try need(role >= .write, 403, "forbidden")
+      return try handoverPackRequest(spaceID, space, body: try json())
+    case ("GET", let path)
+    where path.count == 3 && path[0] == "organizer" && path[1] == "handover-pack":
+      return try ok(handoverPackGet(path[2]))
     case ("POST", ["organizer", "lock"]):
       space.leaseOpen = false
       return try ok(["locked": true])
@@ -434,7 +460,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
 
   // MARK: - Authentication
 
-  private func checkSignature(_ request: SpaceHTTPRequest, signPub: Data) throws {
+  func checkSignature(_ request: SpaceHTTPRequest, signPub: Data) throws {
     let h = request.headers
     guard let date = h["X-Mindloom-Date"], let nonce = h["X-Mindloom-Nonce"],
       let sig = h["X-Mindloom-Signature"], let seconds = Double(date),
@@ -449,7 +475,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     guard nonces.insert(nonce).inserted else { throw FakeError(status: 401, code: "replayed") }
   }
 
-  private func authenticateDevice(_ request: SpaceHTTPRequest) throws -> String {
+  func authenticateDevice(_ request: SpaceHTTPRequest) throws -> String {
     guard let id = request.headers["X-Mindloom-Device"],
       let key = spaces.values.compactMap({ $0.devices[id]?.signPub }).first
     else { throw FakeError(status: 401, code: "unknown_device") }
@@ -457,7 +483,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     return id
   }
 
-  private func authenticate(_ spaceID: String, _ request: SpaceHTTPRequest) throws -> (
+  func authenticate(_ spaceID: String, _ request: SpaceHTTPRequest) throws -> (
     String, SpaceRole
   ) {
     guard let space = spaces[spaceID] else { throw FakeError(status: 404, code: "unknown_space") }
@@ -488,7 +514,8 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         extra["removal"] = [
           "seq": SpaceJSON(ending.seq), "type": .string(ending.type),
           "applied_at": .string(SpaceTime.string(ending.at)),
-          "op": .string(Base64URL.encode(ending.op)), "sig": ending.sig.map(SpaceJSON.string) ?? .null,
+          "op": .string(Base64URL.encode(ending.op)),
+          "sig": ending.sig.map(SpaceJSON.string) ?? .null,
           "enc": .null, "purged": false,
         ]
       }
@@ -497,15 +524,15 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     return (device.member, effectiveRole(space, member: device.member))
   }
 
-  private func effectiveRole(_ space: Space, member: String) -> SpaceRole {
+  func effectiveRole(_ space: Space, member: String) -> SpaceRole {
     if space.ownerKind == "person", space.ownerMember == member { return .admin }
-    if let org = space.orgID, orgs[org]?.admins.contains(member) == true { return .admin }
+    if let org = space.orgID, orgs[org]?.isAdmin(member) == true { return .admin }
     return space.members[member]?.role ?? .read
   }
 
   // MARK: - Orgs and spaces
 
-  private func parse(_ wire: SpaceJSON) throws -> (SpaceJSON, Data, String) {
+  func parse(_ wire: SpaceJSON) throws -> (SpaceJSON, Data, String) {
     guard let opString = wire["op"]?.string, let bytes = Base64URL.decode(opString),
       let op = try? SpaceJSON.decode(bytes), let sig = wire["sig"]?.string
     else { throw FakeError(status: 400, code: "bad_op") }
@@ -517,18 +544,28 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     return (op, bytes, sig)
   }
 
-  private func createOrg(_ wire: SpaceJSON) throws -> SpaceJSON {
+  func createOrg(_ wire: SpaceJSON) throws -> SpaceJSON {
     let (op, bytes, sig) = try parse(wire)
     guard let orgID = op["org_id"]?.string, let member = op["member_id"]?.string,
       let device = op["body"]?["device"], let pub = device["sign_pub"]?.string,
       let key = Base64URL.decode(pub), let deviceID = device["device_id"]?.string
     else { throw FakeError(status: 400, code: "bad_op") }
     try need(SpaceSignatures.verifyOp(bytes, signature: sig, signPub: key), 401, "bad_signature")
-    orgs[orgID] = ([member], [deviceID: key])
+    if let owner = memberOfDevice(deviceID) {
+      try need(owner == member, 409, "device_member_conflict")
+    }
+    var org = FakeOrg()
+    org.admins[member] = "active"
+    org.devices[deviceID] = .init(
+      member: member, signPub: key, signPubB64: pub,
+      sealPub: device["seal_pub"]?.string ?? "")
+    org.policy = op["body"]?["policy"]?["recovery_admins"]?.int ?? 1
+    org.log.append(LoggedOp(seq: 1, type: "org.create", op: bytes, sig: sig, enc: nil, at: now))
+    orgs[orgID] = org
     return ["ok": true, "org_id": .string(orgID), "seq": 1]
   }
 
-  private func createSpace(_ wire: SpaceJSON) throws -> SpaceJSON {
+  func createSpace(_ wire: SpaceJSON) throws -> SpaceJSON {
     let (op, bytes, sig) = try parse(wire)
     let body = op["body"] ?? [:]
     guard op["type"]?.string == "space.create", let spaceID = op["space_id"]?.string,
@@ -542,7 +579,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     let orgID = body["owner"]?["org_id"]?.string
     if kind == "org" {
       try need(
-        orgID.flatMap { orgs[$0] }.map { $0.admins.contains(member) } == true, 403, "forbidden")
+        orgID.flatMap { orgs[$0] }.map { $0.isAdmin(member) } == true, 403, "forbidden")
     }
     var policy = kind == "org" ? SpacePolicy.org : SpacePolicy.group
     if let given = body["policy"],
@@ -565,6 +602,11 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       space.wraps["1|\(device)"] = value
     }
     try need(wire["enc"]?.string?.hasPrefix("mlenc1.") ?? true, 422, "not_ciphertext")
+    if let owner = memberOfDevice(record.deviceID) {
+      try need(owner == member, 409, "device_member_conflict")
+    }
+    try storeEscrow(&space, epoch: 1, wraps: body["escrow_wraps"]?.array)
+    try checkEscrow(space, epoch: 1)
     space.log.append(
       LoggedOp(
         seq: 1, type: "space.create", op: bytes, sig: sig, enc: wire["enc"]?.string, at: now))
@@ -576,7 +618,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     ]
   }
 
-  private func summary(
+  func summary(
     _ space: Space, spaceID: String, member: String, role: SpaceRole, request: SpaceHTTPRequest
   ) -> SpaceJSON {
     let members: [SpaceJSON] = space.memberOrder.compactMap { id in
@@ -592,10 +634,11 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         "effective_role": .string(effectiveRole(space, member: id).rawValue),
         "outside": .bool(m.outside), "status": .string(m.status),
         "owner": .bool(space.ownerKind == "person" && space.ownerMember == id),
-        "org_admin": .bool(space.orgID.flatMap { orgs[$0]?.admins.contains(id) } ?? false),
+        "org_admin": .bool(space.orgID.flatMap { orgs[$0]?.isAdmin(id) } ?? false),
         "joined_at": .string(SpaceTime.string(m.joined)),
         "ended_at": m.ended.map { .string(SpaceTime.string($0)) } ?? .null,
         "devices": .array(devices),
+        "usage_bytes": role == .admin ? SpaceJSON(usage(space, member: id)) : .null,
       ]
     }
     var owner: SpaceJSON = ["kind": .string(space.ownerKind)]
@@ -621,7 +664,14 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
           space.forks.filter { $0.hasPrefix(member + "|") }.map {
             String($0.split(separator: "|")[1])
           }),
+        "usage": [
+          "bytes": SpaceJSON(usage(space, member: member)),
+          "quota_bytes": (space.policy.memberQuotaMB ?? 2048) > 0
+            ? SpaceJSON((space.policy.memberQuotaMB ?? 2048) * 1_048_576) : .null,
+        ],
       ],
+      "escrow": escrowStatus(space, epoch: space.epoch) ?? .null,
+      "limits": (try? SpaceJSON.from(SpaceLimits.standard)) ?? .null,
       "counts": [
         "items": SpaceJSON(space.items.values.filter { $0.status == "active" }.count),
         "open_takedowns": 0, "open_proposals": 0,
@@ -633,7 +683,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
 
   // MARK: - Join
 
-  private func join(_ spaceID: String, _ wire: SpaceJSON) throws -> SpaceJSON {
+  func join(_ spaceID: String, _ wire: SpaceJSON) throws -> SpaceJSON {
     guard var space = spaces[spaceID] else { throw FakeError(status: 404, code: "unknown_space") }
     guard let raw = wire["request"]?.string.flatMap({ Base64URL.decode($0) }),
       let request = try? SpaceJSON.decode(raw), let sig = wire["sig"]?.string,
@@ -669,7 +719,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
     return ["ok": true, "duplicate": false, "request_id": .string(requestID), "status": "pending"]
   }
 
-  private func joinStatus(_ spaceID: String, _ requestID: String, _ request: SpaceHTTPRequest)
+  func joinStatus(_ spaceID: String, _ requestID: String, _ request: SpaceHTTPRequest)
     throws -> SpaceJSON
   {
     guard let join = spaces[spaceID]?.joins[requestID],
@@ -684,27 +734,50 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
 
   // MARK: - Ops
 
-  private func applyOps(_ spaceID: String, _ wires: [SpaceJSON]) throws -> SpaceJSON {
+  func applyOps(_ spaceID: String, _ wires: [SpaceJSON]) throws -> SpaceJSON {
     guard spaces[spaceID] != nil else { throw FakeError(status: 404, code: "unknown_space") }
     var results: [SpaceJSON] = []
     for wire in wires {
       do {
-        results.append(try applyOne(spaceID, wire))
+        let type = (try? parse(wire))?.0["type"]?.string ?? ""
+        if let failure = failures.removeValue(forKey: type) {
+          throw FakeError(status: failure.status, code: failure.code)
+        }
+        let result = try applyOne(spaceID, wire)
+        if lostAnswers.remove(type) != nil { throw URLError(.networkConnectionLost) }
+        results.append(result)
       } catch let error as FakeError {
-        results.append([
+        var result: SpaceJSON = [
           "ok": false, "status": SpaceJSON(error.status), "error": .string(error.code),
-        ])
+          "retry": .string(Self.retryCodes[error.code] ?? "never"),
+        ]
+        for (key, value) in error.extra { result = result.setting(key, value) }
+        results.append(result)
       }
     }
     return ["results": .array(results), "head": SpaceJSON(spaces[spaceID]?.log.last?.seq ?? 0)]
   }
 
-  private func applyOne(_ spaceID: String, _ wire: SpaceJSON) throws -> SpaceJSON {
+  func applyOne(_ spaceID: String, _ wire: SpaceJSON) throws -> SpaceJSON {
     let (op, bytes, sig) = try parse(wire)
     var space = spaces[spaceID]!
     guard let type = op["type"]?.string, let member = op["member_id"]?.string,
       let deviceID = op["device_id"]?.string, op["space_id"]?.string == spaceID
     else { throw FakeError(status: 400, code: "bad_op") }
+    if let opID = op["op_id"]?.string,
+      let existing = space.log.first(where: {
+        (try? SpaceJSON.decode($0.op))?["op_id"]?.string == opID
+      })
+    {
+      return ["ok": true, "duplicate": true, "seq": SpaceJSON(existing.seq)]
+    }
+    if type == "space.recover" {
+      let effects = try recoverOp(spaceID, &space, op: op, bytes: bytes, sig: sig)
+      let seq = (space.log.last?.seq ?? 0) + 1
+      space.log.append(LoggedOp(seq: seq, type: type, op: bytes, sig: sig, enc: nil, at: now))
+      spaces[spaceID] = space
+      return ["ok": true, "seq": SpaceJSON(seq), "effects": effects]
+    }
     guard let device = space.devices[deviceID], device.member == member else {
       throw FakeError(status: 403, code: "unknown_device")
     }
@@ -787,8 +860,47 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       if let id = body["member_id"]?.string, let r = body["role"]?.string.flatMap(SpaceRole.init) {
         space.members[id]?.role = r
       }
-    case "member.remove", "epoch.rotate", "device.remove":
+    case "device.add":
+      guard let added = try? body["device"]?.decoded(as: SpaceDevicePublic.self),
+        let addedKey = added.signKey, added.sealKey != nil
+      else { throw FakeError(status: 422, code: "bad_field") }
+      if let owner = memberOfDevice(added.deviceID) {
+        try need(owner == member, 409, "device_member_conflict")
+      }
+      try need(space.devices[added.deviceID] == nil, 409, "device_exists")
+      let wraps = body["wraps"]?.array ?? []
+      try need(
+        wraps.count == 1 && wraps[0]["device_id"]?.string == added.deviceID
+          && wraps[0]["epoch"]?.int == space.epoch, 422, "bad_wraps")
+      space.devices[added.deviceID] = Device(
+        member: member, signPub: addedKey, sealPub: added.sealPub, signPubB64: added.signPub)
+      space.wraps["\(space.epoch)|\(added.deviceID)"] = wraps[0]["wrap"]?.string
+      effects = ["device_id": .string(added.deviceID)]
+    case "escrow.wrap":
       try needRole(.admin)
+      try need(body["epoch"]?.int == space.epoch, 409, "stale_epoch")
+      let wraps = body["wraps"]?.array ?? []
+      let members = Set(space.wraps.keys.filter { $0.hasPrefix("\(space.epoch)|") })
+      try need(
+        wraps.allSatisfy { !members.contains("\(space.epoch)|\($0["device_id"]?.string ?? "")") },
+        422, "bad_field")
+      try storeEscrow(&space, epoch: space.epoch, wraps: wraps)
+      effects = [
+        "epoch": SpaceJSON(space.epoch), "stored": SpaceJSON(wraps.count),
+        "escrow_ok": escrowStatus(space, epoch: space.epoch)?["ok"] ?? true,
+      ]
+    case "member.remove", "epoch.rotate", "device.remove":
+      // A member retires its own devices; an admin anyone's (and rotates).
+      if type == "device.remove", let retired = body["device_id"]?.string {
+        guard let retiredDevice = space.devices[retired] else {
+          throw FakeError(status: 404, code: "unknown_device")
+        }
+        if retiredDevice.member != member { try needRole(.admin) }
+        try need(retired != deviceID, 422, "bad_field")
+        space.devices[retired]?.status = "removed"
+      } else {
+        try needRole(.admin)
+      }
       let removed = type == "member.remove" ? body["member_id"]?.string : nil
       if let removed {
         try need(removed != space.ownerMember, 403, "forbidden")
@@ -810,6 +922,8 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       for wrap in wraps {
         space.wraps["\(next)|\(wrap["device_id"]!.string!)"] = wrap["wrap"]?.string
       }
+      try storeEscrow(&space, epoch: next, wraps: body["escrow_wraps"]?.array)
+      try checkEscrow(space, epoch: next)
       guard let link = body["epoch_link"]?.string, link.hasPrefix("mlelink1.") else {
         throw FakeError(status: 422, code: "bad_field")
       }
@@ -828,7 +942,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       var withdrawn = 0
       if body["contributions"]?.string == "withdraw", space.policy.onLeave == "contributor_choice" {
         for (id, item) in space.items where item.contributor == member && item.status == "active" {
-          purge(&space, id, status: "withdrawn")
+          purge(&space, id, status: "withdrawn", spaceID: spaceID)
           withdrawn += 1
         }
       }
@@ -844,8 +958,15 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       try need(!SpaceEngine.neverShared.contains(kind), 422, "never_shared")
       try need(
         enc != nil && wire["wrapped_dk"]?.string?.hasPrefix("mlikey1.") == true, 400, "bad_op")
-      try need(!space.rotationPending, 409, "rotation_pending")
       let blobs = body["blobs"]?.array ?? []
+      if let duplicate = try shareChecks(
+        &space, item: item, member: member, revision: revision, kind: kind, body: body,
+        blobs: blobs, enc: enc)
+      {
+        spaces[spaceID] = space
+        return duplicate
+      }
+      try need(!space.rotationPending, 409, "rotation_pending")
       for blob in blobs {
         guard let id = blob["blob_id"]?.string, let stored = space.blobs[id],
           stored.status == "pending", stored.device == deviceID
@@ -895,6 +1016,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         space.items[item] = Item(
           contributor: member, kind: kind, revision: revision, shareSeq: seq, first: now)
       }
+      space.items[item]?.shareKey = body["share_key"]?.string
       space.itemKeys[item] = (space.epoch, wire["wrapped_dk"]!.string!)
       for blob in blobs {
         let id = blob["blob_id"]!.string!
@@ -906,6 +1028,15 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         "item_id": .string(item), "revision": SpaceJSON(revision), "epoch": SpaceJSON(space.epoch),
       ]
     case "item.withdraw", "item.delete":
+      if let item = body["item_id"]?.string, let current = space.items[item],
+        current.status == "withdrawn", current.contributor == member,
+        let original = space.log.last(where: { $0.subject == item && $0.type != "item.share" })
+      {
+        // A remade withdraw of what this member already took back (v8 C3).
+        return [
+          "ok": true, "duplicate": true, "accepted_as": "withdrawn", "seq": SpaceJSON(original.seq),
+        ]
+      }
       guard let item = body["item_id"]?.string, let current = space.items[item],
         current.status == "active"
       else { throw FakeError(status: 410, code: "item_gone") }
@@ -915,7 +1046,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
           now.timeIntervalSince(current.first) <= TimeInterval($0) * 3_600
         } ?? true
       if open {
-        purge(&space, item, status: "withdrawn")
+        purge(&space, item, status: "withdrawn", spaceID: spaceID)
         effects = ["item_id": .string(item), "status": "withdrawn"]
       } else if type == "item.withdraw" {
         throw FakeError(status: 403, code: "window_passed")
@@ -934,7 +1065,7 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       guard let item = body["item_id"]?.string, space.items[item]?.status == "active" else {
         throw FakeError(status: 410, code: "item_gone")
       }
-      purge(&space, item, status: "removed")
+      purge(&space, item, status: "removed", spaceID: spaceID)
       subject = item
     case "item.hide":
       if let item = body["item_id"]?.string {
@@ -969,11 +1100,12 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       if !accept, takedown.kind == "privacy" {
         // The contributor's own privacy takedown is honoured; anyone else's may
         // be rejected with a reason.
-        try need(space.items[takedown.item]?.contributor != takedown.requester, 403, "privacy_takedown")
+        try need(
+          space.items[takedown.item]?.contributor != takedown.requester, 403, "privacy_takedown")
         try need(enc != nil, 400, "bad_op")
       }
       space.takedowns[id]?.status = accept ? "done" : "rejected"
-      if accept { purge(&space, takedown.item, status: "removed") }
+      if accept { purge(&space, takedown.item, status: "removed", spaceID: spaceID) }
     case "takedown.withdraw":
       if let id = body["takedown_id"]?.string { space.takedowns[id]?.status = "withdrawn" }
     case "matter.share":
@@ -991,11 +1123,18 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
       try needRole(.maintain)
     case "matter.handover":
       try needRole(.maintain)
+      if let pack = body["pack_item_id"]?.string {
+        try need(
+          space.items[pack]?.kind == "snapshot" && space.items[pack]?.status == "active", 422,
+          "bad_field")
+        effects = ["pack_item_id": .string(pack)]
+      }
     default:
       throw FakeError(status: 400, code: "unknown_type")
     }
     space.log.append(
       LoggedOp(seq: seq, type: type, op: bytes, sig: sig, enc: enc, subject: subject, at: now))
+    drainCascade(&space, spaceID: spaceID)
     space.audit.append((type, member))
     spaces[spaceID] = space
     return [
@@ -1005,7 +1144,8 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
   }
 
   /// Crypto-shredding: the data key, the fields and the originals go.
-  private func purge(_ space: inout Space, _ item: String, status: String) {
+  func purge(_ space: inout Space, _ item: String, status: String, spaceID: String = "") {
+    if space.items[item]?.status == "active", !spaceID.isEmpty { space.cascade.append(item) }
     space.items[item]?.status = status
     space.itemKeys[item] = nil
     for index in space.log.indices
@@ -1021,11 +1161,11 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
   }
 
   /// An overdue privacy takedown is carried out by the Spark.
-  private func sweep(_ space: inout Space, spaceID: String) {
+  func sweep(_ space: inout Space, spaceID: String) {
     for (id, takedown) in space.takedowns
     where takedown.status == "open" && takedown.kind == "privacy" && (takedown.due ?? now) < now {
       space.takedowns[id]?.status = "done"
-      purge(&space, takedown.item, status: "removed")
+      purge(&space, takedown.item, status: "removed", spaceID: spaceID)
       let seq = (space.log.last?.seq ?? 0) + 1
       let record: SpaceJSON = [
         "v": 1, "space_id": .string(spaceID), "op_id": .string(SpaceID.new()),
@@ -1039,12 +1179,13 @@ public final class FakeSpaceSpark: SpaceTransport, @unchecked Sendable {
         LoggedOp(
           seq: seq, type: "system.remove", op: (try? record.encoded()) ?? Data(), sig: nil,
           enc: nil, subject: takedown.item, at: now))
+      drainCascade(&space, spaceID: spaceID)
     }
   }
 
   /// A one-event state: every ingested item in one matter titled by the
   /// first payload's text (masked as it came), and the "同一件事" links.
-  private func organizerState(_ space: Space) -> SpaceJSON {
+  func organizerState(_ space: Space) -> SpaceJSON {
     let ids = space.payloads.keys.sorted()
     var events: [SpaceJSON] = []
     if let first = ids.first, let text = space.payloads[first]?["text"]?.string {

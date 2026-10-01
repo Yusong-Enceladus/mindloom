@@ -4,24 +4,28 @@
 
 <p align="center"><b>只管丢进来，不用整理。</b><br>会议、口述、聊天、截图、文件，还有手机上说的话和分享的东西，都从一个入口进来；<br>Mac 在本地听清、认出是谁；桌上那台 NVIDIA DGX Spark（你自己的，或团队共用的）用一组 Agent Skills 把它们织成一件件事，<br>Spark 上的东西用一把只在你 Mac 上的钥匙锁着。</p>
 
-<p align="center"><a href="https://www.bilibili.com/video/BV1CbaW6pEcX/">演示视频（B 站，3 分钟）</a> · <a href="https://blog.csdn.net/BronyaZaychik818/article/details/166849977">「十日谈」征文（CSDN）</a> · <a href="docs/ESSAY.md">征文（仓库里的 v7 版）</a> · <a href="https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29">截止时提交的版本</a></p>
+<p align="center"><a href="https://www.bilibili.com/video/BV1CbaW6pEcX/">演示视频（B 站，约 5 分钟）</a> · <a href="https://blog.csdn.net/BronyaZaychik818/article/details/166849977">「十日谈」征文（CSDN）</a> · <a href="docs/ESSAY.md">征文（仓库里的 v8 版）</a> · <a href="https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29">截止时提交的版本</a></p>
 
 第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛参赛项目。一个人用：一台 Mac、一部 iPhone，加一台 DGX Spark。截止时的版本打了标签 [`submitted-2026-09-29`](https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29)；之后的改动都是带日期的提交，列在下面的[提交后更新](#提交后更新)里。
 
 ## 提交后更新
 
-截止（2026-09-29 23:59，北京时间）之后，Spark 端 75 个提交、Mac 端 62 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
+截止（2026-09-29 23:59，北京时间）之后，Spark 端 91 个提交、Mac 端 78 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
 
+- **入口：兼容一切（v8，Mac 端）**：除了粘贴和拖入，又有了系统分享菜单和服务菜单里的「收进织机」、快捷指令（「添加到织机」「织机：今天到期」）、命令行 `mindloom`、监视文件夹、日历（只读）和「把下一步加到提醒事项」（点了才写）、Git 仓库和 Zotero 两个科研入口，以及 Chrome 扩展「收进织机」（经 Chrome 的本机通信交给 App，没有网络路径）。全部走和粘贴相同的收进规则，记来源和时间，链接只记不打开；命令行、服务菜单和会在后台收东西的入口默认关闭，都列在「设置 → 入口」里（[mac/README.md](mac/README.md)）。
+- **实验室的 infra（v8）**：队友的 Mac 用自己的钥匙进团队的 Spark：钥匙在 Spark 上被强制命令锁在一个只转发共享空间请求的门上（没有 shell、没有转发），每人有自己的凭证，邀请里是只能用一次的钥匙，断开后 Spark 上的钥匙文件和之前逐字节相同。Mac 设置里新增「团队与整理设备」：Spark 的状态（只有数字）、成员和设备、邀请、加一台我的 Mac、组织管理员和钥匙托管（丢了一位管理员，另一位能接管空间）、加密备份与恢复、存储配额、审计记录。一件事换负责人时，新的 Agent Skill handover-pack 写交接包（每一句带出处），可以导出 Markdown，或作为冻结的快照分享进空间（[docs/INFRA.md](docs/INFRA.md)）。
+- **共享空间收尾（v8）**：会议片段的原音可以逐段勾选、端到端加密给成员（每段录音每人只能附一段，最多占整段的 4/5、不超过 15 分钟；Spark 只存打不开的密文，撤回即删）；「一份摘要」作为冻结的快照分享；断网时的共享先存在 Mac 上，连上再发，重发只算一次；一个人的几台 Mac（[docs/SPACES.md](docs/SPACES.md)）。v8 做完又做了一轮对抗式复查，找出 18 个问题，17 个修好；剩下一个低危只改了一半（服务菜单改成默认关），分享扩展的投递文件夹和命令行交文件没改，写进了边界。
+- **v8 整合版**：在一个全新的整合版实例上重跑了端到端：隐私 68/68、手机 67/67、共享空间 57/57、团队 infra（队友经门进来、片段原音、第二台 Mac、断网队列、交接包、备份恢复）53/53、两位队友各用自己的钥匙互相隔离 31/31、Agent 的 MCP 43/43、Chrome 扩展经本机通信（无头 Chromium）通过；三个规模场景的数字在合并后的整理器上重跑了（v7 整合版，v8 没有改个人整理的流程；[eval/results-2026-10-01/](eval/results-2026-10-01/README.md)）。
 - **线索图（v7）**：事件页默认是「线索」：一件事分成几股线（分头推进的几摊事），线上打结（进展、决定、没解决的问题、谁答应了什么、截止），每个结都带出处素材和一段逐字原话；另有结构、网、文本三个看法，首页多了按绳、按截止、按人。新增两个 Agent Skill：matter-map（画图）和 matter-group（把长期的领域和更大的项目搓成「绳」）。事和事之间只有三种关系，各有各的证据：交叉（共用同一条素材，程序直接算）、成股（绳）、牵制（素材里明确写了先后依赖，带原话）。你的决定永远优先（[matter-map](skills/matter-map/BENCHMARK.md)、[matter-group](skills/matter-group/BENCHMARK.md)）。
 - **共享空间（v7）**：照 GitHub 的逻辑和别人一起记一件事：个人拥有的小组空间、实验室的组织空间，只读 / 贡献 / 维护 / 管理。空间的钥匙只在成员的 Mac 上，Spark 只存成员设备签过名的操作记录和密文，整理时只看到遮过号码的文字；声纹、词典和整段录音永远不进空间，录音只按归进这件事的片段共享。做完又做了一轮对抗式复查，严重和中等的问题全部修复（[docs/SPACES.md](docs/SPACES.md)）。
 - **Agent 读取织机（v7，Mac 端）**：App 自带本机 MCP 连接程序，加 Claude Code 插件和 Claude Desktop 扩展；第一次读取要你在 Mac 上同意，空间、范围、期限、号码遮挡都由你定，每次读取都有不含内容的记录，Agent 只能往收件箱提建议。没有公网入口。Agent 背后的模型通常在它的公司的服务器上，它读到的文字会离开这台 Mac，同意窗口里写明了这一点（[mac/docs/AGENTS.md](mac/docs/AGENTS.md)）。
 - **v7 整合版**：在一个全新的整合版实例上重跑了四条端到端：隐私 68/68、手机 67/67、共享空间 57/57、Agent 的 MCP 43/43（[eval/results-2026-10-01/](eval/results-2026-10-01/README.md)）。
 - **隐私重做了一遍（v6），为团队共用的 Spark 设计**：Spark 上的库加密，钥匙只在你的 Mac 上；号码出门前遮住，截图里的号码涂掉；图片和文件在 Spark 上读完就删；Mac 上删一条，Spark 上跟着删；「让 Spark 忘掉我的内容」。做完又做了一轮对抗式复查：16 个问题修了 14 个，另外 2 个一个由手机端的封存解决、一个写进了边界（[隐私](#隐私团队共用一台-spark也放心丢进来)）。
 - **手机**：新写了 iPhone App「织机」：织机键盘（按住说话，字进当前 App，同时收进织机）和分享扩展「收进织机」，每一条在手机上封好、只有你的 Mac 能打开。截止时的 iOS 快捷指令没法封存，已停用。**只在 iOS 模拟器上跑过，没在真 iPhone 上跑过。**
-- **整理质量**：新增两个 Agent Skill：event-consolidate（定期把碎片事件并回它的事）和 person-resolve（整理人物）；item-split 1.3.0 参照你已有的事来切，少切了三分之一到一半。三个规模场景的 B³ F1 从 0.584–0.642 升到 0.663–0.709，事件数从真值的 11–17 倍降到 2.5–4.2 倍。代价：相像的两件事偶尔被合在一起（[评测](#评测)）。
+- **整理质量**：新增两个 Agent Skill：event-consolidate（定期把碎片事件并回它的事）和 person-resolve（整理人物）；item-split 1.3.0 参照你已有的事来切，少切了三分之一到一半。三个规模场景的 B³ F1 从 0.584–0.642 升到 0.668–0.724，事件数从真值的 11–17 倍降到 2.6–4.5 倍（v8 在整合版上重跑的数字）。代价：相像的两件事偶尔被合在一起（[评测](#评测)）。
 - **Mac 端**：遮号码、截图涂号、文件的发送副本、钥匙和上锁、删除同步、「连接 iPhone」和打开封存条目；人物页和事件页不再显示被判为「不是人」的记录，事件页的人物行限数；换了新图标「结绳记事」。
-- **文档和评测**：README 和 `docs/` 全部更新到 v6；新的评测在 [docs/EVALUATION.md](docs/EVALUATION.md)，截止时的评测原样留在 [docs/EVALUATION-2026-09-29.md](docs/EVALUATION-2026-09-29.md)；截图换成 v6 整合版的真实 App 渲染，合成场景里个别和真实人物、公司或论文重名的名字换掉了，虚构的地名换成了真实的城市；征文按 v6 改写，又补了 v7 一节：线索图、事和事的关系、Agent 读取和团队共享空间（[docs/ESSAY.md](docs/ESSAY.md)）。
-- **还没做到的**：合并后的整体版本没有在三个规模场景上重跑（各项数字在各自的分支上测得，整合版上跑的是全部测试和端到端）；真 iPhone；真实资料库；共享空间里录音片段的原音（现在只共享文字和说话人）；队友还要经 Spark 主人的 SSH 账户连进来；App 里的同意窗口和线索图只在测试和渲染里看过，没有在运行的 App 里看过。
+- **文档和评测**：README 和 `docs/` 全部更新到 v6；新的评测在 [docs/EVALUATION.md](docs/EVALUATION.md)，截止时的评测原样留在 [docs/EVALUATION-2026-09-29.md](docs/EVALUATION-2026-09-29.md)；截图换成 v6 整合版的真实 App 渲染，合成场景里个别和真实人物、公司或论文重名的名字换掉了，虚构的地名换成了真实的城市；征文按 v6 改写，又补了 v7 一节（线索图、事和事的关系、Agent 读取和团队共享空间）和 v8 一节（入口、实验室用的 Spark 基础设施、共享空间收尾），规模场景的数字换成了整合版重跑的（[docs/ESSAY.md](docs/ESSAY.md)）。
+- **还没做到的**：真 iPhone；真实资料库；App 里的同意窗口、线索图和 v8 的新界面（入口、团队与整理设备、交接）只在测试和渲染里看过，没有在运行的 App 里看过；Chrome 扩展只在无头 Chromium 里测过，没在真的 Chrome 窗口里点过；真的 Zotero 没跑过；队友的钥匙装在 Spark 主人的账户里（强制命令以主人的身份运行，每人一个系统账户需要管理员权限）；钥匙托管的接管只在内存里模拟的 Spark 上测过；规模场景每个只跑了 1 次。
 
 ## 一分钟看懂
 
@@ -29,17 +33,17 @@
 |---|---|
 | **是什么** | 一个人的「记录 → 组织 → 行动」：一个入口接住所有场景；Spark 把散落的素材织成一件件事（现在到哪一步、谁参与、下一个截止）；要推进时，一键复制成纯文字交给 Claude / Codex |
 | **在哪跑** | Mac：录音、识别、认人、存储、界面。iPhone：织机键盘和「收进织机」，语音在手机上识别。DGX Spark：整理（vLLM 上的 Qwen3.6-35B-A3B NVFP4 + MTP）。**没有云端** |
-| **Agent Skills** | 10 个在路由里：image-read、file-read、item-split、event-assign、event-brief、event-consolidate、person-resolve、home-rank、matter-map、matter-group；另有 1 个占位 recall。按素材类型分路、长素材拆段扇出、串行判断归属、受影响的几件事各自重写卡片，定期把碎片事件并回它的事、整理人物；每步都有确定性校验，拿不准就问一句，你的纠正永远优先（[架构图](#spark-上的-skill-图不是一条流水线)） |
+| **Agent Skills** | 10 个在路由里：image-read、file-read、item-split、event-assign、event-brief、event-consolidate、person-resolve、home-rank、matter-map、matter-group；交接时按需调用的 handover-pack；另有 1 个占位 recall。按素材类型分路、长素材拆段扇出、串行判断归属、受影响的几件事各自重写卡片，定期把碎片事件并回它的事、整理人物；每步都有确定性校验，拿不准就问一句，你的纠正永远优先（[架构图](#spark-上的-skill-图不是一条流水线)） |
 | **SKILL.md 正文有用吗** | 同一模型只去掉正文：事件归属 B³ F1 0.782 → 0.612，读图关键字段 97.5% → 62.6%，文件概要一次合格 36/38 → 1–2/38（[评测](#评测)） |
-| **规模实测** | 三个合成场景，各是一个人五到六周里的 1,510–1,600 条素材：B³ F1 0.663–0.709，是无模型基线的 2.3–4.0 倍（留出场景 startup 0.663）；事件数是真值的 2.5–4.2 倍 |
-| **最大短板** | 留出场景的事件数还是真值的 4.2 倍；定期合并的提高全部来自召回，相像的两件事偶尔被合在一起；人物只能认出库里已有的名字 |
-| **隐私** | 一台 Spark 常常是团队共用的，所以：原件只在 Mac；号码出门前遮住；Spark 上的库加密、钥匙只在你的 Mac；图片和文件读完就删；Mac 上删、Spark 跟着删；手机上的内容在手机上就封好。隐私端到端 68/68、手机端到端 67/67；遮号前后整理质量测不出差别（[隐私](#隐私团队共用一台-spark也放心丢进来)） |
+| **规模实测** | 三个合成场景，各是一个人五到六周里的 1,510–1,600 条素材：B³ F1 0.668–0.724，是无模型基线的 2.3–4.0 倍（留出场景 startup 0.668）；事件数是真值的 2.6–4.5 倍（整合版上重跑） |
+| **最大短板** | 留出场景的事件数还是真值的 4.5 倍；定期合并的提高全部来自召回，相像的两件事偶尔被合在一起；人物只能认出库里已有的名字 |
+| **隐私** | 一台 Spark 常常是团队共用的，所以：原件只在 Mac；号码出门前遮住；Spark 上的库加密、钥匙只在你的 Mac；图片和文件读完就删；Mac 上删、Spark 跟着删；手机上的内容在手机上就封好；队友各用自己的钥匙进门。隐私端到端 68/68、手机端到端 67/67、两位队友互相隔离 31/31；遮号前后整理质量测不出差别（[隐私](#隐私团队共用一台-spark也放心丢进来)） |
 | **模型对比** | 同一代码、同一留出集比了 9 个开放权重模型：Qwen3.8-27B、Muse Glimmer-30B 到 0.83，但每条 52–57 秒；默认 Qwen3.6 是 0.738、每条 9 秒 |
 
 <details>
 <summary>English summary</summary>
 
-Mindloom is a personal capture-and-organize system for the NVIDIA DGX Spark Agent Skills hackathon. Everything goes into one inbox: meetings, dictation, chats, screenshots and files on the Mac, plus a voice keyboard and a share extension on the iPhone. The Mac transcribes speech and recognizes speakers locally; audio, voiceprints and the dictionary never leave it. Because a DGX Spark is often shared by a team, the Spark is treated as a workbench, not a vault: identifiers are masked (and painted over in screenshots) before anything leaves the Mac, the Spark store is encrypted with a key that lives only in the Mac's Keychain, images and files are deleted once read, deletions follow the Mac, and "forget me" wipes the Spark and destroys the key; phone items are sealed on the phone to the Mac's public key. On the Spark, ten Agent Skills (routed by code, schema-guided, each followed by a deterministic validator) turn the stream into matters with a status line, people and deadlines. On three synthetic scenarios (one person's five to six weeks each, 1,510–1,600 items) the organizer with periodic consolidation reaches B³ F1 0.663–0.709 (2.3–4.0x a no-model baseline); removing only the SKILL.md bodies drops held-out B³ F1 from 0.782 to 0.612. Masking made no measurable difference to organizing quality. The iPhone app has only run in the iOS simulator. All Spark-side data is synthetic.
+Mindloom is a personal capture-and-organize system for the NVIDIA DGX Spark Agent Skills hackathon. Everything goes into one inbox: meetings, dictation, chats, screenshots and files on the Mac, plus a voice keyboard and a share extension on the iPhone. The Mac transcribes speech and recognizes speakers locally; audio, voiceprints and the dictionary never leave it. Because a DGX Spark is often shared by a team, the Spark is treated as a workbench, not a vault: identifiers are masked (and painted over in screenshots) before anything leaves the Mac, the Spark store is encrypted with a key that lives only in the Mac's Keychain, images and files are deleted once read, deletions follow the Mac, and "forget me" wipes the Spark and destroys the key; phone items are sealed on the phone to the Mac's public key. On the Spark, ten Agent Skills (routed by code, schema-guided, each followed by a deterministic validator) turn the stream into matters with a status line, people and deadlines. On three synthetic scenarios (one person's five to six weeks each, 1,510–1,600 items) the organizer with periodic consolidation reaches B³ F1 0.668–0.724 (2.3–4.0x a no-model baseline), measured on the merged build; removing only the SKILL.md bodies drops held-out B³ F1 from 0.782 to 0.612. Masking made no measurable difference to organizing quality. Since v8, teammates reach a shared Spark each with their own forced-command SSH key and credential (pairing and unpairing leave the key file byte-identical), a handover pack is written with a citation for every line, and the Mac takes things in from the share menu, Services, Shortcuts, a command line, watched folders, the calendar, Git, Zotero and a Chrome extension through the same intake rules. The iPhone app has only run in the iOS simulator. All Spark-side data is synthetic.
 
 </details>
 
@@ -186,7 +190,7 @@ flowchart TB
 
 七条保证，每一条都在代码里做到、有测试：
 
-1. **原件只在你的 Mac 上。** 录音、声纹、词典、你放进来的原始文件和截图都留在 Mac；整理好的结果也存回 Mac。Spark 上的东西随时可以清空，再从 Mac 重建。
+1. **原件只在你的 Mac 上。** 录音、声纹、词典、你放进来的原始文件和截图都留在 Mac（共享空间里你逐段勾选的片段原音除外：它端到端加密给成员，Spark 只存打不开的密文）；整理好的结果也存回 Mac。Spark 上的东西随时可以清空，再从 Mac 重建。
 2. **号码出门前先遮住。** 手机号、邮箱、身份证号、银行卡号、验证码、密码、密钥和令牌、IP、车牌号，发出去之前换成占位符，截图里同样的号码涂掉；结果回来，Mac 再把原文放回去。人名、日期、金额、地点保留，因为整理要用。
 3. **Spark 上的东西锁着，钥匙只在你的 Mac 上。** 同一台 Spark 上的其他人只能看到密文；Spark 重启以后，你的 Mac 连上之前谁也读不出来；你的 Mac 走开 10 分钟，它自己上锁。
 4. **读完就删。** 图片和文件在 Spark 上读完就删，只留遮过号码的文字；手机送来的东西，Mac 取走就删。
@@ -197,6 +201,7 @@ flowchart TB
 | | 放在哪 | 经过链路的是什么 | 同一台 Spark 上谁能读 | 怎么收回 |
 |---|---|---|---|---|
 | 录音、声纹、词典 | 只在 Mac | 从不发送 | 没有人：Spark 上没有 | 在 Mac 上删 |
+| 共享空间里勾选的片段原音（v8） | Mac 和成员的 Mac | 端到端加密的密文，一段不超过整段的 4/5 | 没有人：Spark 只存密文 | 撤回或移除即删 |
 | 文字（口述、逐字稿、聊天、邮件） | Mac 存原文 | 遮过号码的文字 | 库是密文；只有开着锁时的整理进程，和它调用的模型服务 | Mac 上删，Spark 跟着删；关链路即上锁 |
 | 截图、图片、文件 | Mac 存原件 | 号码涂掉、去掉元数据的副本；音视频从不以字节发送 | 读完即删，只留遮过号码的文字 | 同上 |
 | 手机上说的话、分享的东西 | Mac 取走后保存 | 在手机上就封好，只有你的 Mac 能打开 | 没有人：Spark 只转交密文 | Mac 取走即删；「断开 iPhone」吊销手机的钥匙 |
@@ -211,38 +216,38 @@ flowchart TB
 - **手机收件箱不加密**（Spark 锁着时也要能收），但里面只有在手机上封好、Spark 打不开的条目。
 - **还没实证的**：真实资料库（发布开关关着，Spark 整理只在合成资料库上跑过）、真 iPhone。
 
-**实测**：隐私端到端 68/68（真实的 Mac 代码对真实的 Spark 实例：线路上、Spark 磁盘上 9,554 个文件里、解密后的库里都找不到哨兵号码；删除、上锁、「忘掉我」都生效）；手机端到端 67/67（模拟器里的 App 经跳板机送进真实 Spark 的收件箱，Spark 上 0 处明文，「断开 iPhone」之后手机的钥匙被拒）；对抗式复查的 13 种截图布局，涂过之后 Spark 的读图模型一个号码也读不出。
+**实测**（v6 整合版的数字；v8 整合版上重跑，各项检查同样全过）：隐私端到端 68/68（真实的 Mac 代码对真实的 Spark 实例：线路上、Spark 磁盘上 9,554 个文件里、解密后的库里都找不到哨兵号码；删除、上锁、「忘掉我」都生效）；手机端到端 67/67（模拟器里的 App 经跳板机送进真实 Spark 的收件箱，Spark 上 0 处明文，「断开 iPhone」之后手机的钥匙被拒）；对抗式复查的 13 种截图布局，涂过之后 Spark 的读图模型一个号码也读不出。
 
 威胁与对应防护、每一条怎么做到、Spark 上存了什么、接口，见 [docs/PRIVACY.md](docs/PRIVACY.md)；手机的五条保证见 [docs/PRIVACY.md 的「手机」](docs/PRIVACY.md#手机)。
 
 ## 评测
 
-全部是合成数据（虚构的人、公司、号码），如实报告，包括不好看的数字。n 很小：运行时的合并每个规模场景只跑了 1 次，遮号每个条件 5 次，小留出集只有 46 条；同一设计两次运行之间 B³ F1 就能差 0.01–0.02（规模场景）到 0.065（留出集）。每组数字在各自的分支上测得，**合并后的整体版本没有在规模场景上重跑**。完整表格和出处在 [docs/EVALUATION.md](docs/EVALUATION.md)，机器可读的全部数字在 [eval/results-2026-09-30/eval.json](eval/results-2026-09-30/eval.json)。
+全部是合成数据（虚构的人、公司、号码），如实报告，包括不好看的数字。n 很小：运行时的合并每个规模场景只跑了 1 次，遮号每个条件 5 次，小留出集只有 46 条；同一设计两次运行之间 B³ F1 就能差 0.01–0.02（规模场景）到 0.065（留出集）。规模场景的数字是合并后的整体版本（v8 整合，2026-10-01）在截止时状态的新副本上跑出来的，其余各组在各自的分支上测得。完整表格和出处在 [docs/EVALUATION.md](docs/EVALUATION.md)，机器可读的全部数字在 [eval/results-2026-10-01/eval.json](eval/results-2026-10-01/eval.json)。
 
 **指标一句话**：B³ F1 衡量分组（和一条素材分在一起的是不是真该在一起、该在一起的是不是都在一起，0–1）；Link F1 先把预测的事和真事一对一配对，再看每条素材是否挂在配对的那件事上；难干扰泄漏是刻意写得很像的两件事被并到一起的比例（越低越好）；卡片事实召回是金标准事实有多少写进了卡片。
 
 ### 规模场景：三个人，各 1,500–1,600 条
 
-![规模场景：B³ F1、Link F1、难干扰泄漏，对比无模型基线、截止时和加了定期合并](docs/img/eval-v6/01-scale-vs-baseline.png)
+![规模场景：B³ F1、Link F1、难干扰泄漏，对比无模型基线、截止时、v6 分支和整合版](docs/img/eval-v8/01-scale-vs-baseline.png)
 
-三个虚构人物（实验室研究生、创业公司 CTO、大厂产品经理），每人五到六周的素材由 Mac 端 harness 一次性粘贴进去，一台 Spark 整理完再打分；v6 在这个状态的副本上让新代码按运行时规则定期合并，到不再变化为止。金标准来自确定性计划，不来自模型；基线是不调模型的字符二元组相似度。调参只用 lab、pm，startup 是留出场景。
+三个虚构人物（实验室研究生、创业公司 CTO、大厂产品经理），每人五到六周的素材由 Mac 端 harness 一次性粘贴进去，一台 Spark 整理完再打分；整合版在这个状态的新副本上让运行时的四个整理环节（定期合并、人物整理、线索图、搓绳）按自己的调度跑完，到不再变化为止，再用同一个评分器打分。金标准来自确定性计划，不来自模型；基线是不调模型的字符二元组相似度。调参只用 lab、pm，startup 是留出场景。
 
 | | lab（dev） | pm（dev） | startup（**留出**） |
 |---|---|---|---|
 | 素材 / 真事件 | 1,510 / 22 | 1,600 / 21 | 1,600 / 20 |
-| **B³ F1**：基线 / 截止时 / **v6** | 0.179 / 0.642 / **0.709** | 0.299 / 0.606 / **0.692** | 0.266 / 0.584 / **0.663** |
-| **Link F1**：基线 / 截止时 / **v6** | 0.136 / 0.630 / **0.743** | 0.186 / 0.563 / **0.725** | 0.116 / 0.582 / **0.706** |
-| 难干扰泄漏 ↓：基线 / 截止时 / v6 | 0.258 / 0.225 / 0.338 | 0.920 / 0.140 / 0.164 | 0.833 / 0.068 / 0.089 |
-| 事件数：截止时 → v6（真值） | 242 → **54**（22） | 227 → **56**（21） | 348 → **84**（20） |
-| 只有 1 条的事件：截止时 → v6 | 143 → 19 | 109 → 11 | 233 → 33 |
-| 卡片事实召回：截止时 → v6 | 0.489 → 0.533 | 0.652 → 0.870 | 0.583 → 0.633 |
+| **B³ F1**：基线 / 截止时 / **整合版** | 0.179 / 0.642 / **0.724** | 0.299 / 0.606 / **0.689** | 0.266 / 0.584 / **0.668** |
+| **Link F1**：基线 / 截止时 / **整合版** | 0.136 / 0.630 / **0.766** | 0.186 / 0.563 / **0.723** | 0.116 / 0.582 / **0.711** |
+| 难干扰泄漏 ↓：基线 / 截止时 / 整合版 | 0.258 / 0.225 / 0.237 | 0.920 / 0.140 / 0.162 | 0.833 / 0.068 / 0.091 |
+| 事件数：截止时 → 整合版（真值） | 242 → **59**（22） | 227 → **55**（21） | 348 → **89**（20） |
+| 只有 1 条的事件：截止时 → 整合版 | 143 → 20 | 109 → 10 | 233 → 38 |
+| 卡片事实召回：截止时 → 整合版 | 0.489 → 0.511 | 0.652 → 0.783 | 0.583 → 0.633 |
 
-![事件数对比真值：截止时是真值的 11–17 倍，定期合并后 2.5–4.2 倍](docs/img/eval-v6/02-matters-vs-truth.png)
+![事件数对比真值：截止时是真值的 11–17 倍，定期合并后 2.6–4.5 倍](docs/img/eval-v8/02-matters-vs-truth.png)
 
-- **碎片化大部分解决了**：事件数从真值的 11–17 倍降到 2.5–4.2 倍；「≤ 3 倍」的目标两个 dev 场景达到，留出的 startup（4.2 倍）没达到。
-- **提高全部来自召回**：碎片被并回它们的事，召回 +0.12 到 +0.16，精确率持平或略降。
-- **代价**：lab 的难干扰泄漏 0.225 → 0.338：一场开放日演示被并进了它演示的实验（演示的标题里就有实验的名字）；一部分噪声被当成碎片并进了真事。
-- **合并不贵**：一个 1,500–1,600 条的库合并一次，连同合并后重写卡片共 3.8–6.1 M 输入 token，是整理这批素材的 5.1–7.9%。
+- **碎片化大部分解决了**：事件数从真值的 11–17 倍降到 2.6–4.5 倍；「≤ 3 倍」的目标两个 dev 场景达到，留出的 startup（4.45 倍）没达到。
+- **提高全部来自召回**：碎片被并回它们的事，召回 +0.15 到 +0.16，精确率 −0.01 到 +0.01。
+- **代价**：一部分噪声被当成碎片并进了真事（startup 0.100 → 0.225）；相像的事偶尔会被合并：v6 分支那次把一场开放日演示并进了它演示的实验（lab 难干扰泄漏 0.225 → 0.338），整合版这次没有并（0.237），但护栏没变。
+- **合并不贵**：一个 1,500–1,600 条的库合并一次，连同合并后重写卡片共 4.3–6.0 M 输入 token，是整理这批素材的 5.9–7.8%；加上人物、线索图和搓绳，四个环节合计 5.8–7.3 M（7.9–9.5%）。
 
 ### 拆分和人物
 
@@ -250,9 +255,9 @@ flowchart TB
 
 - **item-split 1.3.0 少切了三分之一到一半**：只讲一件事却被切开，lab 32.8% → 20.6%、pm 22.4% → 10.6%、startup（留出）30.2% → 17.7%（只切不归的重放）；留出场景边收边整理的完整运行里 27.9% → 13.5%，多件事里每件事被找回的比例不变（0.69–0.83）。
 
-![人物关联：人物整理前后](docs/img/eval-v6/05-people-linking.png)
+![人物关联：v6 分支人物整理前、后和整合版](docs/img/eval-v8/05-people-linking.png)
 
-- **人物明显变好，但仍是弱项**：人物关联 lab 0.301 → 0.447、pm 0.290 → 0.477、startup 0.269 → 0.417；显示的「人」里不是任何场景人物的记录 85 / 77 / 53 → 22 / 9 / 7。人物只能在库里已知的名字里找，只被点名、从没说过话的人还查不到。
+- **人物明显变好，但仍是弱项**：人物关联（截止时 → 整合版）lab 0.255 → 0.455、pm 0.244 → 0.501、startup 0.232 → 0.424；显示的「人」里不是任何场景人物的记录 85 / 77 / 53 → 22 / 6 / 7。人物只能在库里已知的名字里找，只被点名、从没说过话的人还查不到。
 
 ### 技能正文到底有没有用：有 / 没有 SKILL.md 正文（截止时）
 
@@ -299,7 +304,7 @@ v6 的三个新版本在各自 `evals/evals.json` 的虚构用例上每个跑 3 
 
 | 功能 | 模型 | 在哪 | 关键数字 |
 |---|---|---|---|
-| 事件归属、卡片、首页、拆段、定期合并、人物整理 | Qwen3.6-35B-A3B NVFP4（vLLM，MTP×3，fp8 KV） | Spark | 规模场景 B³ F1 0.663–0.709；单流约 100 tok/s |
+| 事件归属、卡片、首页、拆段、定期合并、人物整理 | Qwen3.6-35B-A3B NVFP4（vLLM，MTP×3，fp8 KV） | Spark | 规模场景 B³ F1 0.668–0.724；单流约 100 tok/s |
 | 读图 image-read、读文件 file-read | 同一个 Qwen3.6（解析文件的部分是确定性代码） | Spark | 98 张测试图关键字段 96.2% / 98.8%；33 种格式答案出现率 0.82 / 0.81（两次） |
 | 候选检索 | Qwen3-Embedding-0.6B | Spark | 候选 R@5：dev 98.6%、留出 100%；单条 25 ms |
 | 口述识别 · 终稿 | Qwen3-ASR 1.7B 8-bit（MLX）＋ 41 条词表 | Mac | CER 3.74%，松手到出字 P50 545 ms / P90 635 ms |
@@ -313,12 +318,12 @@ v6 的三个新版本在各自 `evals/evals.json` 的虚构用例上每个跑 3 
 
 ### 弱点和没测的
 
-1. **留出场景的事件数仍是真值的 4.2 倍**，只有 1 条的事件还有 33 件。
-2. **相像的两件事会被合并**：lab 的难干扰泄漏 0.225 → 0.338；小留出集上合并两次都把一对难干扰合成了一件。
+1. **留出场景的事件数仍是真值的 4.45 倍**（89 件），只有 1 条的事件还有 38 件。
+2. **相像的两件事会被合并**：v6 分支上 lab 的难干扰泄漏 0.225 → 0.338（整合版这次 0.237）；小留出集上合并两次都把一对难干扰合成了一件。
 3. **精确率没有提高**：提高全部来自召回；少量真素材被判成「不是事」。
 4. **人物只查库里已知的名字**；同一个人的昵称有些仍是单独的记录。
 5. **样本小**：运行时合并和人物整理每个场景 1 次；小留出集已经用过很多次。
-6. **没测的**：合并后的整体版本在规模场景上的表现；真 iPhone（端上中文识别、麦克风、后台、蜂窝网络）；卡片事实的精确率；HEIC 和视频在 Mac 端的完整路径；v6 发送副本路径上的读文件效果；真实照片和真实文件；recall；系统翻译；16 GB Mac 上的识别和说话人门槛。Spark 上没有任何真实用户数据的评测，这是隐私规则要求的。
+6. **没测的**：真 iPhone（端上中文识别、麦克风、后台、蜂窝网络）；卡片事实的精确率；HEIC 和视频在 Mac 端的完整路径；v6 发送副本路径上的读文件效果；真实照片和真实文件；recall；系统翻译；16 GB Mac 上的识别和说话人门槛。Spark 上没有任何真实用户数据的评测，这是隐私规则要求的。
 
 ## 对照评分项
 
@@ -327,9 +332,9 @@ v6 的三个新版本在各自 `evals/evals.json` 的虚构用例上每个跑 3 
 | 价值与创新 | 一个入口接住 Mac 和手机上的所有场景；Spark 把散落的素材织成一件件事；为团队共用的 Spark 设计的隐私系统，做到了代码和测试里（[隐私](#隐私团队共用一台-spark也放心丢进来)） |
 | 智能体与模型深度 · 多智能体与 Skills | 10 个 Skill 组成的图：按类型分路、扇出、串行主干、并发写卡片、定期收拾事件和人物、画线索图、搓绳、确定性校验、占位符修补、提问回路、纠正回路（[架构](#spark-上的-skill-图不是一条流水线)）；SKILL.md 正文的消融（[对比](#技能正文到底有没有用有--没有-skillmd-正文截止时)）；新技能在三个规模场景上调参和留出 |
 | 智能体与模型深度 · 模型调优 | System One：在 Spark 上用 Spark 生成的数据微调并校准 Qwen3-Reranker-0.6B（ECE 0.021，但准确率没有超过只取检索第一名，所以没接进整理器）；Mac 端口述整理模型 Qwen3-0.6B LoRA；过拟合审计后把提示里的开发集原话换成虚构例子，dev F1 从 0.787 降到 0.740，如实记录 |
-| 完整性 | Mac 客户端、iPhone App、Spark 服务、11 个 Skill 目录（各带 SKILL.md、scripts、evals、BENCHMARK）、评测驱动和评分器、三个规模场景、共享空间、Agent 的 MCP 接入，隐私、手机、共享空间和 Agent 四条端到端；[不装 Mac 也能验证](#不装-mac-也能验证) |
+| 完整性 | Mac 客户端（含分享扩展、服务菜单、快捷指令、命令行和 Chrome 扩展这些入口）、iPhone App、Spark 服务、12 个 Skill 目录（各带 SKILL.md、scripts、evals、BENCHMARK）、评测驱动和评分器、三个规模场景、共享空间、团队用的门和管理控制台、Agent 的 MCP 接入，隐私、手机、共享空间、团队 infra、门和 Agent 的端到端；[不装 Mac 也能验证](#不装-mac-也能验证) |
 | 平台适配（Spark、NVIDIA 技术栈、开源模型） | 单台 Spark 上 Qwen3.6-35B-A3B NVFP4 + MTP 单流约 100 tok/s，规模场景 GPU 利用率 87–94%；DeepSeek-V4-Flash 跨两台 Spark 做 TP2；Step3-VL-10B 原生接口适配，同一张截图 70.17 s → 19.16 s；在 Spark 上试了 20 多个开放权重模型，起不来的也记下了原因（[模型对比](#整理模型对比截止时同一代码同一留出集)）；合成数据由多台 Spark 并行生成；共用一台 Spark 时每人一个加密的整理实例 |
-| 演示视频 · 征文 | [B 站](https://www.bilibili.com/video/BV1CbaW6pEcX/)（按 v6 重剪的新版正在上传到同一链接）· [CSDN](https://blog.csdn.net/BronyaZaychik818/article/details/166849977) · [仓库里的 v6 版征文](docs/ESSAY.md) |
+| 演示视频 · 征文 | [B 站](https://www.bilibili.com/video/BV1CbaW6pEcX/)（新版会更新在同一链接）· [CSDN](https://blog.csdn.net/BronyaZaychik818/article/details/166849977) · [仓库里的 v8 版征文](docs/ESSAY.md) |
 
 ## 不装 Mac 也能验证
 
@@ -386,7 +391,7 @@ H=eval/scenarios/holdout-week-v2/scenario.json
 - **黑客松期间（北京时间 2026-09-26 至 09-29 23:59 截止）**：
   - Spark 端全部新做（90 个提交）：整理服务、6 个在路由里的 Agent Skills 和 1 个占位、读图和读文件、长素材拆段、手机收件箱、评测驱动与评分器、小场景和三个规模场景、多轮评测与过拟合审计、System One、20 多个开放权重模型的对比。
   - Mac 端 52 个提交（188 个文件，+34,933 / −571 行）：Mac↔Spark 可撤销链路（端口归属核对、链路令牌、按修订号发送、合成数据闸门）；粘贴 / 拖入任何文件并带来源 App；会议逐字稿导入；视频关键帧；手机收件箱拉取；导出为纯文字；首页、事件页、人物页；规模场景的端到端 harness。
-- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 75 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；v7 的线索图和绳（matter-map、matter-group）、关系 v2、共享空间（签名的操作日志、钥匙包、每个空间一个加密整理库）。Mac 端 62 个提交：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标；v7 的线索图和首页的四个看法、Agent 读取（本机 MCP、同意、记录、Claude Code 插件）、共享空间的成员端。
+- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 91 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；v7 的线索图和绳（matter-map、matter-group）、关系 v2、共享空间（签名的操作日志、钥匙包、每个空间一个加密整理库）；v8 的每人一把钥匙的门、Spark 状态、交接包（handover-pack）、加密备份和恢复、钥匙托管、配额和轮流整理、片段原音、快照、断网重发。Mac 端 78 个提交：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标；v7 的线索图和首页的四个看法、Agent 读取（本机 MCP、同意、记录、Claude Code 插件）、共享空间的成员端；v8 的入口（分享扩展、服务菜单、快捷指令、命令行、文件夹、日历和提醒事项、Git、Zotero、Chrome 扩展）和「团队与整理设备」。
 - 公开仓库不含私有仓库的历史：每次发布都是从私有仓库导出的一份快照提交（去掉个人数据工具、设备与签名信息和内部笔记）。
 
 ## 仓库结构
@@ -397,7 +402,7 @@ H=eval/scenarios/holdout-week-v2/scenario.json
 | [spark/](spark/README.md) | Spark 端整理服务（Python）与测试 |
 | [skills/](skills/) | Agent Skills（每个目录：SKILL.md、scripts/、evals/、BENCHMARK.md） |
 | [privacy/](privacy/) | 两端共用的遮号测试向量 |
-| [eval/](eval/README.md) | 合成场景、评测驱动、评分器、各次运行的结果；[eval/results-2026-09-30/](eval/results-2026-09-30/README.md) 是本 README 评测数字的汇总，[eval/results-2026-09-29/](eval/results-2026-09-29/README.md) 是截止时的 |
+| [eval/](eval/README.md) | 合成场景、评测驱动、评分器、各次运行的结果；[eval/results-2026-10-01/](eval/results-2026-10-01/README.md) 是整合版的规模场景数字和整合检查，[eval/results-2026-09-30/](eval/results-2026-09-30/README.md) 是 v6 其余评测数字的汇总，[eval/results-2026-09-29/](eval/results-2026-09-29/README.md) 是截止时的 |
 | [ops/](ops/spark_demo.sh) | 演示实例控制脚本 |
 | [docs/](docs/) | 架构、隐私、手机、文件类型、模型清单、部署、评测和征文 |
 

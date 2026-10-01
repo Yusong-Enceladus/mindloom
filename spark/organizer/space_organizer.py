@@ -122,6 +122,10 @@ class SpaceOrganizers:
                                   with_inbox=False)
             org.unlock_lease_s = self.lease_s
             org.idle_hooks.append(PackageCohesion(org))
+            # v8 B6: members take turns in the job queue; matters with a near deadline are organized first.
+            store.fair_members = True
+            store.deadline_days = max(0, int(getattr(self.settings, "deadline_days", 7)))
+            store.today = org._today
             self._orgs[space_id] = org
             if self.start_worker:
                 t = threading.Thread(target=org.run_worker, args=(self._stop,), name=f"space-worker-{space_id[:8]}",
@@ -304,6 +308,12 @@ class SpaceOrganizers:
             if raw.get("revision") != shared["revision"]:
                 raise SpaceError(409, "revision_mismatch", "send the shared revision", item_id=item_id,
                                  revision=shared["revision"])
+            if (raw.get("bytes_b64") is not None or raw.get("image_b64") is not None) and \
+                    self.spaces.has_audio(actor.space_id, item_id, shared["kind"]):
+                # v8 C1: a meeting part's audio goes to the members only, encrypted; the organizer reads its masked
+                # transcript, never sound or a file of it
+                raise SpaceError(422, "audio_not_for_organizer", "send the part's masked transcript only",
+                                 item_id=item_id)
             matter = raw.get("origin_matter_id")
             if matter is not None and not (isinstance(matter, str) and 0 < len(matter) <= 64):
                 raise SpaceError(400, "bad_request", "origin_matter_id is an id")
@@ -366,6 +376,27 @@ class SpaceOrganizers:
                     key = (ev["event_id"], o["member_id"], o["matter_id"])
                     links[key] = links.get(key, 0) + 1
         return [{"event_id": e, "member_id": m, "matter_id": t, "items": n} for (e, m, t), n in sorted(links.items())]
+
+    def handover_request(self, actor: Actor, body: object) -> dict:
+        """v8 B3: queue a handover pack of a shared matter (contributors; the member about to hand it over)."""
+        if not isinstance(body, dict) or not isinstance(body.get("matter_id"), str) or not 0 < len(body["matter_id"]) <= 64:
+            raise SpaceError(400, "bad_request", "matter_id is the shared matter's id")
+        org = self._open_org(actor.space_id)
+        self.renew(actor.space_id)
+        res = org.handover.request(body["matter_id"], {k: body.get(k) for k in ("from", "to")})
+        if res is None:
+            raise SpaceError(404, "unknown_matter")
+        self.spaces.audit("organizer.handover_pack", {"matter_id": body["matter_id"], "queued": res["queued"]},
+                          space_id=actor.space_id, member_id=actor.member_id, device_id=actor.device_id)
+        return res
+
+    def handover_get(self, actor: Actor, pack_id: str) -> dict:
+        org = self._open_org(actor.space_id)
+        self.renew(actor.space_id)
+        out = org.handover.get(pack_id) if isinstance(pack_id, str) and len(pack_id) <= 64 else None
+        if out is None:
+            raise SpaceError(404, "unknown_pack")
+        return out
 
     def questions(self, space_id: str) -> list[dict]:
         """The space organizer's open questions (AI merge / same-person proposals) for the maintainers' queue,

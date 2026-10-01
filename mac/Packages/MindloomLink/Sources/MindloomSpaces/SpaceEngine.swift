@@ -22,17 +22,23 @@ public struct SpaceOutgoingItem: Sendable {
   /// Originals members may open (a file, a screenshot, a segment's audio).
   public let originals: [(role: String, data: Data)]
   public let segment: SpaceSegmentRef?
+  /// A frozen summary's sources (`kind: snapshot`, v8 C2).
+  public let snapshot: SpaceSnapshotRef?
 
   public init(
     itemID: String, kind: String, fields: SpaceItemFields,
-    originals: [(role: String, data: Data)] = [], segment: SpaceSegmentRef? = nil
+    originals: [(role: String, data: Data)] = [], segment: SpaceSegmentRef? = nil,
+    snapshot: SpaceSnapshotRef? = nil
   ) {
     self.itemID = itemID.lowercased()
     self.kind = kind
     self.fields = fields
     self.originals = originals
     self.segment = segment
+    self.snapshot = snapshot
   }
+
+  public var hasAudio: Bool { originals.contains { $0.role == "audio" } }
 }
 
 /// A matter shared as a package (its hints are member-only ciphertext).
@@ -59,6 +65,8 @@ public struct SpaceShareReport: Equatable, Sendable {
   public var shared: [String] = []
   /// Item id → the Spark's (or this Mac's) reason it was not shared.
   public var refused: [String: String] = [:]
+  /// In the outbox: sent when the link is back (v8 C3).
+  public var queued: [String] = []
   public var packageID: String?
   /// Originals left out because the space keeps text only.
   public var originalsDropped = 0
@@ -129,15 +137,17 @@ public actor SpaceEngine {
     case missingKey(epoch: Int)
     case neverShared(String)
     case refused(String)
+    /// The link is down: it waits in the outbox and goes when the link is back.
+    case queued
   }
 
-  public let client: SpaceClient
-  private let states: any SpaceStateStore
-  private let keyStore: any SpaceKeyStore
-  private let now: @Sendable () -> Date
+  public nonisolated let client: SpaceClient
+  let states: any SpaceStateStore
+  let keyStore: any SpaceKeyStore
+  let now: @Sendable () -> Date
   /// Masks titles a maintainer writes before they reach the space organizer
   /// (review V7-S13); without one, such edits are not sent.
-  private var textMasker: (any SpaceTextMasking)?
+  var textMasker: (any SpaceTextMasking)?
 
   public func setTextMasker(_ masker: (any SpaceTextMasking)?) { textMasker = masker }
   /// Wire kinds that never leave the Mac, whatever asks (contract §0 rule 3).
@@ -150,14 +160,27 @@ public actor SpaceEngine {
   ]
   public static let maximumSegmentMS = 15 * 60 * 1000
 
+  /// What this Mac still has to deliver (v8 C3); durable in the App.
+  let outbox: any SpaceOutboxStore
+  /// When each org's signed log was last read (org admins' Macs).
+  var orgFetchedAt: [String: Date] = [:]
+  /// Organizations whose log the Spark served did not continue what this Mac
+  /// pinned (review V8R-02): no escrow, rotation wrap or takeover uses it.
+  var orgLogRefused: Set<String> = []
+  /// A space's roster as it was before this Mac re-read the log after a
+  /// restore that replaced it (V8R-03): the next sync compares against it.
+  var rosterBeforeReset: [String: SpaceRoster] = [:]
+
   public init(
     client: SpaceClient, states: any SpaceStateStore, keys: any SpaceKeyStore,
-    textMasker: (any SpaceTextMasking)? = nil, now: @escaping @Sendable () -> Date = { Date() }
+    textMasker: (any SpaceTextMasking)? = nil, outbox: (any SpaceOutboxStore)? = nil,
+    now: @escaping @Sendable () -> Date = { Date() }
   ) {
     self.client = client
     self.states = states
     keyStore = keys
     self.textMasker = textMasker
+    self.outbox = outbox ?? MemorySpaceOutboxStore()
     self.now = now
   }
 
@@ -171,19 +194,19 @@ public actor SpaceEngine {
     try states.load(spaceID.lowercased())
   }
 
-  private func required(_ spaceID: String) throws -> SpaceLocalState {
+  func required(_ spaceID: String) throws -> SpaceLocalState {
     guard let state = try states.load(spaceID.lowercased()) else { throw EngineError.unknownSpace }
     return state
   }
 
-  private func key(_ spaceID: String, epoch: Int) throws -> Data {
+  func key(_ spaceID: String, epoch: Int) throws -> Data {
     guard let key = try keyStore.keys(spaceID)[epoch] else {
       throw EngineError.missingKey(epoch: epoch)
     }
     return key
   }
 
-  private func currentKey(_ state: SpaceLocalState) throws -> Data {
+  func currentKey(_ state: SpaceLocalState) throws -> Data {
     try key(state.spaceID, epoch: state.epoch)
   }
 
@@ -194,7 +217,7 @@ public actor SpaceEngine {
 
   // MARK: - Ops
 
-  private func post(
+  func post(
     _ state: SpaceLocalState, type: String, body: SpaceJSON, encPlain: SpaceJSON? = nil,
     opID: String = SpaceID.new()
   ) async throws -> SpaceOpResult {
@@ -209,7 +232,7 @@ public actor SpaceEngine {
     return try await submitOne(state.spaceID, op)
   }
 
-  private func submitOne(_ spaceID: String, _ op: SpaceWireOp) async throws -> SpaceOpResult {
+  func submitOne(_ spaceID: String, _ op: SpaceWireOp) async throws -> SpaceOpResult {
     let answer = try await guarded(spaceID) { try await self.client.submit(spaceID, [op]) }
     guard let result = answer.results.first else { throw SpaceClientError.malformed }
     if !result.ok, result.status == 403, result.error == "not_member" {
@@ -225,7 +248,7 @@ public actor SpaceEngine {
   /// op that ended it checks out against this Mac's roster, the space's
   /// content and keys are deleted from this Mac before the error goes on. A
   /// bare "not a member" from the Spark deletes nothing (review V7-S16).
-  private func guarded<Value>(_ spaceID: String, _ work: () async throws -> Value) async throws
+  func guarded<Value>(_ spaceID: String, _ work: () async throws -> Value) async throws
     -> Value
   {
     do { return try await work() } catch SpaceClientError.accessEnded(
@@ -244,7 +267,7 @@ public actor SpaceEngine {
   /// The op that ended this device's access, signed by a device this Mac's
   /// roster admits: a `member.remove` of this member, a `device.remove` of
   /// this device, or this member's own `member.leave`.
-  private func verifiedRemoval(_ spaceID: String, _ entry: SpaceLogEntry?) -> Bool {
+  func verifiedRemoval(_ spaceID: String, _ entry: SpaceLogEntry?) -> Bool {
     guard let entry, let sig = entry.sig, let bytes = entry.opBytes,
       let op = try? SpaceJSON.decode(bytes), let state = try? states.load(spaceID.lowercased()),
       let roster = state.roster, op["space_id"]?.string == state.spaceID,
@@ -260,7 +283,7 @@ public actor SpaceEngine {
     }
   }
 
-  private func ok(_ result: SpaceOpResult) throws -> SpaceOpResult {
+  func ok(_ result: SpaceOpResult) throws -> SpaceOpResult {
     guard result.ok else { throw EngineError.refused(result.error ?? "refused") }
     return result
   }
@@ -281,7 +304,7 @@ public actor SpaceEngine {
     try? states.setForkCopiesToDelete(forkCopiesToDelete().filter { !done.contains($0) })
   }
 
-  private func queueForkCopyDeletion(_ copies: [String]) {
+  func queueForkCopyDeletion(_ copies: [String]) {
     let fresh = copies.filter { !$0.isEmpty }
     guard !fresh.isEmpty else { return }
     let queued = forkCopiesToDelete()
@@ -316,7 +339,7 @@ public actor SpaceEngine {
   /// organization's first admin.
   public func createOrg(recoveryAdmins: Int = 1) async throws -> (orgID: String, memberID: String) {
     let orgID = SpaceID.new()
-    let memberID = SpaceID.new()
+    let memberID = try memberIdentity()
     let op = try device.orgOp(
       org: orgID, member: memberID, type: "org.create",
       body: [
@@ -327,6 +350,11 @@ public actor SpaceEngine {
     guard answer["ok"]?.bool == true else {
       throw EngineError.refused(answer["error"]?.string ?? "refused")
     }
+    // V8R-02: this Mac knows the organization's first op; any log the Spark
+    // serves later must start with it.
+    var pins = (try? states.orgPins()) ?? [:]
+    pins[orgID] = SpaceOrgPin.created(orgID: orgID, op: op, device: device.publicRecord)
+    try states.setOrgPins(pins)
     return (orgID, memberID)
   }
 
@@ -340,13 +368,19 @@ public actor SpaceEngine {
     policy: SpacePolicy? = nil, displayName: String, spark: SpaceInviteCode.Endpoint?
   ) async throws -> SpaceLocalState {
     let spaceID = SpaceID.new()
-    let memberID = owner == .org ? (orgMemberID ?? SpaceID.new()) : SpaceID.new()
+    let identity = try memberIdentity()
+    let memberID = owner == .org ? (orgMemberID ?? identity) : identity
     let k1 = SpaceCrypto.randomKey()
     let opID = SpaceID.new()
     var ownerJSON: SpaceJSON = ["kind": .string(owner.rawValue)]
     if owner == .org {
       guard let orgID else { throw EngineError.notAllowed("org") }
       ownerJSON = ownerJSON.setting("org_id", .string(orgID))
+      // V8R-02: the space's signed genesis commits to the organization's
+      // first op, so every member checks the org log against it.
+      if let pin = try? states.orgPins()[orgID.lowercased()] {
+        ownerJSON = ownerJSON.setting("org_genesis", .string(pin.genesisHash))
+      }
     }
     let wrap = try SpaceCrypto.wrapSpaceKey(
       k1, to: device.sealPublicKey, spaceID: spaceID, epoch: 1, deviceID: device.deviceID)
@@ -355,6 +389,12 @@ public actor SpaceEngine {
       "wraps": [["device_id": .string(device.deviceID), "epoch": 1, "wrap": .string(wrap)]],
     ]
     if let policy { body = body.setting("policy", policy.json) }
+    if owner == .org, let orgID {
+      // v8 B5: the first key is escrowed to the org's other admin devices.
+      let escrow = try await escrowWraps(
+        orgID: orgID, key: k1, spaceID: spaceID, epoch: 1, memberDevices: [device.deviceID])
+      if !escrow.isEmpty { body = body.setting("escrow_wraps", .array(escrow)) }
+    }
     let enc = try SpaceCrypto.encryptOp(
       SpaceJSON.object(["name": .string(name)]).encoded(), spaceKey: k1, spaceID: spaceID,
       opID: opID)
@@ -445,7 +485,7 @@ public actor SpaceEngine {
     guard let localHostKey, Self.sameHostKey(localHostKey, code.spark.hostKey) else {
       throw EngineError.refused("host_key_mismatch")
     }
-    let memberID = SpaceID.new()
+    let memberID = try memberIdentity()
     let requestID = SpaceID.new()
     let profile = try SpaceCrypto.sealProfile(
       SpaceJSON.object(["display_name": .string(displayName)]).encoded(), to: inviterSeal,
@@ -565,7 +605,8 @@ public actor SpaceEngine {
     guard let encoded = record.request, let bytes = Base64URL.decode(encoded, allowPadding: true),
       let request = try? SpaceJSON.decode(bytes), let sig = record.sig,
       let key = record.device.signKey,
-      SpaceSignatures.verify(signPub: key, message: SpaceSignatures.joinDomain + bytes, signature: sig),
+      SpaceSignatures.verify(
+        signPub: key, message: SpaceSignatures.joinDomain + bytes, signature: sig),
       request["member_id"]?.string == record.memberID,
       request["request_id"]?.string == record.requestID,
       let named = try? request["device"]?.decoded(as: SpaceDevicePublic.self),
@@ -580,7 +621,7 @@ public actor SpaceEngine {
   }
 
   /// The secret of an invite this Mac made (its code is kept in the state).
-  private func inviteSecret(_ state: SpaceLocalState, _ inviteID: String?) -> Data? {
+  func inviteSecret(_ state: SpaceLocalState, _ inviteID: String?) -> Data? {
     guard let inviteID, let code = state.invites[inviteID]?.code,
       let decoded = try? SpaceInviteCode.decode(code, now: .distantPast)
     else { return nil }
@@ -590,7 +631,7 @@ public actor SpaceEngine {
   /// Member ids of every space this Mac is in, with the signing keys their
   /// signed logs admitted under them: an invite holder whose device is not
   /// one of those must never take one of these ids (an org admin's, say).
-  private func knownMemberKeys() -> [String: Set<Data>] {
+  func knownMemberKeys() -> [String: Set<Data>] {
     var known: [String: Set<Data>] = [:]
     for state in (try? states.states()) ?? [] {
       for (member, record) in state.roster?.members ?? [:] {
@@ -664,6 +705,16 @@ public actor SpaceEngine {
     let summary = try await guarded(id) { try await self.client.summary(id) }
     apply(summary: summary, to: &state)
     state.integrityWarnings = nil
+    var before: SpaceRoster? = rosterBeforeReset.removeValue(forKey: id)
+    if summary.head < state.cursor {
+      // The Spark's log went back (a restore from a backup): read it again
+      // from the start and believe only what the signed ops say. Who this
+      // Mac saw removed is kept (review V8R-03): a shorter log may admit them
+      // again, under an older key they hold.
+      before = state.roster
+      state.resetForResync()
+      state.warn("spark_restored")
+    }
     // Pass 1: verify the new ops in order and move the roster on.
     var fresh: [SpaceLogEntry] = []
     var more = true
@@ -674,6 +725,11 @@ public actor SpaceEngine {
       cursor = max(cursor, page.ops.map(\.seq).max() ?? cursor)
       state.head = page.head
       more = page.more && !page.ops.isEmpty
+    }
+    if state.ownerKind == .org, let orgID = state.orgID {
+      // A takeover is checked against the organization's own signed log.
+      await refreshOrgRoster(
+        &state, orgID: orgID, force: fresh.contains { $0.type == "space.recover" })
     }
     var accepted: [(entry: SpaceLogEntry, op: SpaceJSON)] = []
     for entry in fresh {
@@ -711,8 +767,29 @@ public actor SpaceEngine {
     let newest = max(roster.epoch, 1)
     if summary.epoch < newest || keys.epoch < newest { state.warn("spark_epoch_behind") }
     state.epoch = newest
+    // V8R-03: members and devices that a log gone back admitted again stay
+    // listed until an admin removes them again (with a new key); until then
+    // nothing new is shared (it would be under a key they hold).
+    var back = Set(state.readmittedAfterRollback ?? [])
+    if let before {
+      for (memberID, record) in before.members where record.status != "active" {
+        if roster.members[memberID]?.status == "active" { back.insert(memberID) }
+      }
+      let activeNow = roster.activeDeviceIDs
+      for record in before.members.values {
+        for device in record.devices.values
+        where !device.active && activeNow.contains(device.deviceID) {
+          back.insert(device.deviceID)
+        }
+      }
+    }
+    back = back.filter {
+      roster.members[$0]?.status == "active" || roster.activeDeviceIDs.contains($0)
+    }
+    state.readmittedAfterRollback = back.isEmpty ? nil : back.sorted()
+    if !back.isEmpty { state.warn("removed_member_back") }
     state.rotationPending =
-      roster.rotationPending || keys.rotationPending || summary.rotationPending
+      roster.rotationPending || keys.rotationPending || summary.rotationPending || !back.isEmpty
     // Devices the Spark lists that no signed op admitted get nothing from
     // this Mac; say so instead of trusting them.
     let listed = Set(
@@ -732,7 +809,7 @@ public actor SpaceEngine {
     return state
   }
 
-  private func apply(summary: SpaceSummary, to state: inout SpaceLocalState) {
+  func apply(summary: SpaceSummary, to state: inout SpaceLocalState) {
     state.memberID = summary.me.memberID
     state.ownerKind = SpaceOwnerKind(rawValue: summary.owner.kind) ?? state.ownerKind
     state.orgID = summary.owner.orgID
@@ -741,6 +818,9 @@ public actor SpaceEngine {
     state.role = SpaceRole(rawValue: summary.me.role) ?? state.role
     state.rights = summary.me.rights
     state.archived = summary.archived
+    state.escrow = summary.escrow
+    state.limits = summary.limits
+    state.usage = summary.me.usage
     state.hidden = Set(summary.me.hidden.map { $0.lowercased() })
     let forks = Set(summary.me.forks.map { $0.lowercased() })
     state.forks = state.forks.filter { forks.contains($0.key) }
@@ -757,7 +837,7 @@ public actor SpaceEngine {
   /// (a device the signed log admitted, never one the Spark merely lists);
   /// an accepted op moves the roster on and hands over any wrap it carries
   /// for this device. Returns the decoded op when it is accepted.
-  private func verify(_ entry: SpaceLogEntry, state: inout SpaceLocalState) -> SpaceJSON? {
+  func verify(_ entry: SpaceLogEntry, state: inout SpaceLocalState) -> SpaceJSON? {
     guard let bytes = entry.opBytes, let op = try? SpaceJSON.decode(bytes) else {
       state.rejectedOps += 1
       return nil
@@ -777,6 +857,37 @@ public actor SpaceEngine {
       state.rejectedOps += 1
       return nil
     }
+    if type == "space.recover" {
+      // v8 B5: signed by an org admin's own org device, as the organization's
+      // signed log admits it (or as the member confirmed it out of band).
+      guard let member, let named = SpaceRoster.device(body["device"]),
+        named.deviceID == op["device_id"]?.string, let key = named.signKey,
+        SpaceSignatures.verifyOp(bytes, signature: sig, signPub: key)
+      else {
+        state.rejectedOps += 1
+        return nil
+      }
+      let orgDevice = state.orgRoster?.device(member: member, device: named.deviceID)
+      let admitted =
+        (orgDevice?.signPub == named.signPub && orgDevice?.sealPub == named.sealPub)
+        || state.trustedRecoveries?[named.deviceID] == named.signPub
+      guard admitted else {
+        var pending = state.pendingRecoveries ?? []
+        if !pending.contains(where: { $0.device.deviceID == named.deviceID }) {
+          pending.append(
+            SpacePendingRecovery(seq: entry.seq, memberID: member, device: named.publicRecord))
+        }
+        state.pendingRecoveries = pending
+        state.rejectedOps += 1
+        return nil
+      }
+      roster.admitRecovery(member: member, device: named)
+      state.roster = roster
+      state.pendingRecoveries = state.pendingRecoveries?.filter {
+        $0.device.deviceID != named.deviceID
+      }
+      return op
+    }
     if type == "space.create", !roster.genesis {
       let key = body["device"]?["sign_pub"]?.string.flatMap {
         Base64URL.decode($0, allowPadding: true)
@@ -788,6 +899,7 @@ public actor SpaceEngine {
         state.rejectedOps += 1
         return nil
       }
+      if let committed = body["owner"]?["org_genesis"]?.string { state.orgGenesis = committed }
     } else {
       guard let signer = roster.device(member: member, device: op["device_id"]?.string),
         let key = signer.signKey, SpaceSignatures.verifyOp(bytes, signature: sig, signPub: key)
@@ -802,7 +914,9 @@ public actor SpaceEngine {
     }
     roster.apply(type: type, member: member, body: body)
     state.roster = roster
-    for wrap in body["wraps"]?.array ?? [] where wrap["device_id"]?.string == device.deviceID {
+    // Member wraps, and (v8 B5) escrow wraps an admin signed into the log.
+    let carried = (body["wraps"]?.array ?? []) + (body["escrow_wraps"]?.array ?? [])
+    for wrap in carried where wrap["device_id"]?.string == device.deviceID {
       if let epoch = wrap["epoch"]?.int, let value = wrap["wrap"]?.string {
         var signed = state.signedWraps ?? [:]
         signed[epoch] = value
@@ -813,7 +927,7 @@ public actor SpaceEngine {
   }
 
   /// Pass 2 of a sync: what one accepted op changes on this Mac.
-  private func apply(
+  func apply(
     _ entry: SpaceLogEntry, op: SpaceJSON, to state: inout SpaceLocalState, keys: [Int: Data]
   ) {
     let type = op["type"]?.string ?? entry.type
@@ -821,17 +935,9 @@ public actor SpaceEngine {
     let member = op["member_id"]?.string
     let at = SpaceTime.date(entry.appliedAt) ?? now()
     let opID = op["op_id"]?.string ?? ""
-    if entry.sig == nil {
-      // The Spark's own record may only carry out a privacy takedown this Mac
-      // saw filed and whose window has ended.
-      guard type == "system.remove", let item = body["item_id"]?.string?.lowercased(),
-        let takedownID = body["takedown_id"]?.string, let takedown = state.takedowns[takedownID],
-        takedown.kind == "privacy", takedown.status == "open", takedown.itemID == item,
-        let due = takedown.dueAt, at >= due
-      else {
-        state.rejectedOps += 1
-        return
-      }
+    if entry.sig == nil, !Self.acceptsSystemRemove(type: type, body: body, state: state, at: at) {
+      state.rejectedOps += 1
+      return
     }
     func opened() -> SpaceJSON? {
       guard let enc = entry.enc, !entry.purged, let epoch = op["epoch"]?.int,
@@ -896,7 +1002,8 @@ public actor SpaceEngine {
         guard let parent = s["parent_item_id"]?.string, let start = s["start_ms"]?.int,
           let end = s["end_ms"]?.int
         else { return nil }
-        return SpaceSegmentRef(parentItemID: parent, startMS: start, endMS: end)
+        return SpaceSegmentRef(
+          parentItemID: parent, startMS: start, endMS: end, recordingMS: s["recording_ms"]?.int)
       }
       if previous != nil, previous?.revision ?? 0 < revision {
         try? states.deleteOriginals(space: state.spaceID, item: itemID)
@@ -910,6 +1017,7 @@ public actor SpaceEngine {
         // that took it out (withdraw, remove) follows in the log.
         status: .active, keyEpoch: entry.itemKey?.epoch)
       shared.deviceID = op["device_id"]?.string
+      shared.snapshot = try? body["snapshot"]?.decoded(as: SpaceSnapshotRef.self)
       state.items[itemID] = shared
     case "item.withdraw":
       if let itemID { state.items[itemID].map { _ in markGone(itemID, .withdrawn, &state) } }
@@ -1011,13 +1119,44 @@ public actor SpaceEngine {
     case "matter.handover":
       if let matter = body["matter_id"]?.string, let to = body["to_member_id"]?.string {
         state.handovers[matter] = to
+        if let pack = body["pack_item_id"]?.string {
+          state.handoverPacks[matter] = pack.lowercased()
+        }
       }
     default:
       break
     }
   }
 
-  private func markGone(
+  /// The Spark's own unsigned record is accepted only when it removes what
+  /// this Mac can see should go: a privacy takedown it saw filed whose window
+  /// ended, a snapshot whose cited item left (v8 C2), or an item a restoring
+  /// admin's Mac listed as gone (v8 B4; it only removes).
+  static func acceptsSystemRemove(type: String, body: SpaceJSON, state: SpaceLocalState, at: Date)
+    -> Bool
+  {
+    guard type == "system.remove", let item = body["item_id"]?.string?.lowercased() else {
+      return false
+    }
+    switch body["reason"]?.string {
+    case "cited_item_gone":
+      guard let cited = body["cited_item_id"]?.string?.lowercased(),
+        let snapshot = state.items[item]?.snapshot, snapshot.cites.contains(cited)
+      else { return false }
+      return state.items[cited]?.isActive != true
+    case "restore":
+      return true
+    default:
+      guard let takedownID = body["takedown_id"]?.string,
+        let takedown = state.takedowns[takedownID],
+        takedown.kind == "privacy", takedown.status == "open", takedown.itemID == item,
+        let due = takedown.dueAt
+      else { return false }
+      return at >= due
+    }
+  }
+
+  func markGone(
     _ itemID: String, _ status: SpaceSharedItem.Status, _ state: inout SpaceLocalState,
     privacy: Bool = false
   ) {
@@ -1053,142 +1192,29 @@ public actor SpaceEngine {
 
   // MARK: - Share
 
-  /// Shares items after the review list: per item a random data key; each
-  /// original sealed and uploaded first; then `item.share` with the
-  /// member-visible fields (numbers as they are) under the data key and the
-  /// data key wrapped under the current space key; then the optional matter
-  /// package with the sharer's hints. Audio only as a segment of at most 15
-  /// minutes; nothing that belongs to the body and habits ever goes.
-  public func share(
-    _ spaceID: String, items: [SpaceOutgoingItem], package: SpacePackageRequest? = nil
-  ) async throws -> SpaceShareReport {
-    var state = try required(spaceID)
-    guard state.membership == .active else { throw EngineError.notActive }
-    guard state.can("share") else { throw EngineError.notAllowed("share") }
-    guard !state.archived else { throw EngineError.notAllowed("archived") }
-    if state.rotationPending { state = try await sync(spaceID) }
-    guard !state.rotationPending else { throw EngineError.refused("rotation_pending") }
-    var report = SpaceShareReport()
-    let spaceKey = try currentKey(state)
-    var ops: [(item: SpaceOutgoingItem, op: SpaceWireOp)] = []
-    // Parts of one recording this member has out in the space, by recording.
-    var recordingSpans: [String: [(Int, Int)]] = [:]
-    for shared in state.activeItems where shared.contributor == state.memberID {
-      if let segment = shared.segment {
-        recordingSpans[segment.parentItemID, default: []].append((segment.startMS, segment.endMS))
-      }
-    }
-    for item in items {
-      if let reason = Self.refusal(item) {
-        report.refused[item.itemID] = reason
-        continue
-      }
-      if let segment = item.segment {
-        // At most 15 minutes of one recording go to a space, however they are
-        // cut (review V7-S5; the Spark enforces the same).
-        var spans = recordingSpans[segment.parentItemID] ?? []
-        if state.items[item.itemID]?.segment == nil {
-          spans.append((segment.startMS, segment.endMS))
-        }
-        guard Self.covered(spans) <= Self.maximumSegmentMS else {
-          report.refused[item.itemID] = "recording_share_limit"
-          continue
-        }
-        recordingSpans[segment.parentItemID] = spans
-      }
-      let previous = state.items[item.itemID]
-      if let previous, !previous.isActive {
-        report.refused[item.itemID] = "item_gone"
-        continue
-      }
-      if let previous, previous.contributor != state.memberID {
-        report.refused[item.itemID] = "forbidden"
-        continue
-      }
-      let revision = previous.map { $0.revision + 1 } ?? 1
-      let dataKey = SpaceCrypto.randomKey()
-      var blobs: [SpaceJSON] = []
-      var originals = item.originals
-      if !state.policy.originalsForMembers, !originals.isEmpty {
-        report.originalsDropped += originals.count
-        originals = []
-      }
-      for original in originals {
-        let blobID = SpaceID.new()
-        let sealed = try SpaceCrypto.sealBlob(
-          original.data, dataKey: dataKey, spaceID: state.spaceID, itemID: item.itemID,
-          blobID: blobID)
-        try await guarded(state.spaceID) {
-          try await self.client.putBlob(state.spaceID, blobID: blobID, sealed: sealed)
-        }
-        blobs.append(["blob_id": .string(blobID), "role": .string(original.role)])
-      }
-      var body: SpaceJSON = [
-        "item_id": .string(item.itemID), "revision": SpaceJSON(revision),
-        "kind": .string(item.kind), "blobs": .array(blobs),
-      ]
-      if let segment = item.segment {
-        body = body.setting(
-          "segment",
-          [
-            "parent_item_id": .string(segment.parentItemID),
-            "start_ms": SpaceJSON(segment.startMS), "end_ms": SpaceJSON(segment.endMS),
-          ])
-      }
-      if let package { body = body.setting("package_id", .string(package.packageID)) }
-      let fields = try JSONEncoder().encode(item.fields)
-      let enc = try SpaceCrypto.encryptItem(
-        fields, dataKey: dataKey, spaceID: state.spaceID, itemID: item.itemID, revision: revision)
-      let wrapped = try SpaceCrypto.wrapItemKey(
-        dataKey, spaceKey: spaceKey, spaceID: state.spaceID, epoch: state.epoch,
-        itemID: item.itemID)
-      let op = try device.op(
-        space: state.spaceID, member: state.memberID, type: "item.share", body: body,
-        epoch: state.epoch, enc: enc, wrappedDK: wrapped, createdAt: now())
-      ops.append((item, op))
-    }
-    for start in stride(from: 0, to: ops.count, by: 50) {
-      let batch = Array(ops[start..<min(start + 50, ops.count)])
-      let answer = try await guarded(state.spaceID) {
-        try await self.client.submit(state.spaceID, batch.map(\.op))
-      }
-      for (index, result) in answer.results.enumerated() where index < batch.count {
-        let itemID = batch[index].item.itemID
-        if result.ok {
-          report.shared.append(itemID)
-        } else {
-          report.refused[itemID] = result.error ?? "refused"
-        }
-      }
-    }
-    if let package, !report.shared.isEmpty || state.packages[package.packageID] != nil {
-      let shared = Set(report.shared)
-      let ids =
-        (state.packages[package.packageID]?.itemIDs ?? [])
-        + items.map(\.itemID).filter { shared.contains($0) }
-      var hints: SpaceJSON = ["facts": SpaceJSON(package.facts)]
-      if let title = package.title { hints = hints.setting("title", .string(title)) }
-      if let matter = package.matterID { hints = hints.setting("matter_id", .string(matter)) }
-      let result = try await post(
-        state, type: "matter.share",
-        body: [
-          "package_id": .string(package.packageID), "item_ids": SpaceJSON(Self.unique(ids)),
-          "auto": .string(package.auto.rawValue),
-        ], encPlain: hints)
-      if result.ok { report.packageID = package.packageID }
-    }
-    _ = try? await sync(spaceID)
-    return report
-  }
-
   /// Why an item may not go at all (checked on this Mac before anything is sent).
   public static func refusal(_ item: SpaceOutgoingItem) -> String? {
     if neverShared.contains(item.kind) { return "never_shared" }
-    let audio = item.originals.contains { $0.role == "audio" }
+    let audio = item.hasAudio
     if audio || item.kind == "audio_segment" {
       guard let segment = item.segment else { return "audio_needs_segment" }
       guard segment.endMS > segment.startMS else { return "bad_segment" }
       if segment.endMS - segment.startMS > maximumSegmentMS { return "segment_too_long" }
+    }
+    if audio {
+      // v8 C1: one audio part, of a meeting, a part and never the whole recording.
+      guard audioKinds.contains(item.kind), item.originals.filter({ $0.role == "audio" }).count == 1
+      else { return "bad_field" }
+      guard let segment = item.segment, let whole = segment.recordingMS else {
+        return "audio_needs_recording_length"
+      }
+      guard segment.endMS <= whole else { return "bad_segment" }
+      guard SpaceAudioCheck.isPart(lengthMS: segment.lengthMS, recordingMS: whole) else {
+        return "whole_recording"
+      }
+    }
+    if item.kind == "snapshot" {
+      guard item.originals.isEmpty, item.segment == nil else { return "bad_field" }
     }
     if audioKinds.contains(item.kind), item.kind != "audio_segment", item.segment == nil {
       // A whole recording is never shared, only the parts filed into the matter.
@@ -1277,12 +1303,16 @@ public actor SpaceEngine {
     let sources = Set(sourceIDs.map { $0.lowercased() })
     var queued = 0
     for var state in try states.states() where state.membership == .active {
-      let doomed = state.activeItems.filter {
-        Self.sharedHere($0, state, device.deviceID)
-          && sources.contains($0.segment?.parentItemID ?? $0.itemID)
-      }.map(\.itemID)
+      // Shares of these items still waiting in the outbox never go (review
+      // V8R-04); one that may have reached the Spark is deleted there too.
+      let maybeSent = try dropQueuedShares(state.spaceID, items: sources)
+      let doomed =
+        state.activeItems.filter {
+          Self.sharedHere($0, state, device.deviceID)
+            && sources.contains($0.segment?.parentItemID ?? $0.itemID)
+        }.map(\.itemID) + maybeSent.sorted()
       let pending = state.pendingDeletes ?? []
-      let fresh = doomed.filter { !pending.contains($0) }
+      let fresh = Self.unique(doomed.filter { !pending.contains($0) })
       guard !fresh.isEmpty else { continue }
       state.pendingDeletes = pending + fresh
       try states.save(state)
@@ -1333,8 +1363,18 @@ public actor SpaceEngine {
     -> SpaceRules.DeleteOutcome
   {
     let state = try required(spaceID)
-    let result = try ok(
-      try await post(state, type: "item.delete", body: ["item_id": .string(itemID.lowercased())]))
+    let maybeSent = try dropQueuedShares(spaceID, items: [itemID.lowercased()])
+    if state.items[itemID.lowercased()] == nil, maybeSent.isEmpty { return .withdrawn }
+    let result: SpaceOpResult
+    do {
+      result = try ok(
+        try await post(state, type: "item.delete", body: ["item_id": .string(itemID.lowercased())]))
+    } catch SpaceClientError.transport {
+      // v8 C3: waits in the outbox; a remade delete is taken as the first.
+      try enqueueOp(
+        spaceID, type: "item.delete", body: ["item_id": .string(itemID.lowercased())], label: "删除")
+      throw EngineError.queued
+    }
     _ = try await sync(spaceID)
     return result.effects?["status"]?.string == "takedown_requested"
       ? .takedownRequested : .withdrawn
@@ -1369,9 +1409,21 @@ public actor SpaceEngine {
     return copy.flatMap { $0.isEmpty ? nil : $0 }
   }
 
-  private func itemOp(_ spaceID: String, _ type: String, _ body: SpaceJSON) async throws {
+  func itemOp(_ spaceID: String, _ type: String, _ body: SpaceJSON) async throws {
     let state = try required(spaceID)
-    _ = try ok(try await post(state, type: type, body: body))
+    if type == "item.withdraw", let item = body["item_id"]?.string {
+      // A share of it still waiting here never goes (review V8R-04); when it
+      // never reached the Spark there is nothing to withdraw there.
+      let maybeSent = try dropQueuedShares(spaceID, items: [item])
+      if state.items[item] == nil, maybeSent.isEmpty { return }
+    }
+    do {
+      _ = try ok(try await post(state, type: type, body: body))
+    } catch SpaceClientError.transport where type == "item.withdraw" {
+      // v8 C3: a withdraw waits in the outbox while the link is down.
+      try enqueueOp(spaceID, type: type, body: body, label: "撤回")
+      throw EngineError.queued
+    }
     _ = try await sync(spaceID)
   }
 
@@ -1395,7 +1447,7 @@ public actor SpaceEngine {
     return data
   }
 
-  private func dataKey(_ state: SpaceLocalState, itemID: String) async throws -> Data {
+  func dataKey(_ state: SpaceLocalState, itemID: String) async throws -> Data {
     let answer = try await guarded(state.spaceID) {
       try await self.client.itemKeys(state.spaceID, itemIDs: [itemID])
     }
@@ -1600,7 +1652,7 @@ public actor SpaceEngine {
   public func removeMember(_ spaceID: String, memberID: String) async throws {
     var state = try await sync(spaceID)
     guard state.can("remove_members") else { throw EngineError.notAllowed("remove_members") }
-    let (body, newKey) = try rotation(state, excluding: memberID)
+    let (body, newKey) = try await rotation(state, excluding: memberID)
     let result = try ok(
       try await post(
         state, type: "member.remove", body: body.setting("member_id", .string(memberID))))
@@ -1614,7 +1666,13 @@ public actor SpaceEngine {
   public func rotate(_ spaceID: String) async throws {
     var state = try await sync(spaceID)
     guard state.can("rotate") else { throw EngineError.notAllowed("rotate") }
-    let (body, newKey) = try rotation(state, excluding: nil)
+    if let back = state.readmittedAfterRollback, !back.isEmpty {
+      // V8R-03: a new key never goes to whoever a log gone back let in again;
+      // they are removed again instead (each removal makes the new key).
+      if try await repairRollback(spaceID) > 0 { return }
+      throw EngineError.refused("removed_member_back")
+    }
+    let (body, newKey) = try await rotation(state, excluding: nil)
     _ = try ok(try await post(state, type: "epoch.rotate", body: body))
     try keyStore.save(newKey, space: state.spaceID, epoch: state.epoch + 1)
     state.epoch += 1
@@ -1622,15 +1680,18 @@ public actor SpaceEngine {
     _ = try await sync(spaceID)
   }
 
-  private func rotation(_ state: SpaceLocalState, excluding memberID: String?) throws -> (
-    SpaceJSON, Data
-  ) {
+  func rotation(
+    _ state: SpaceLocalState, excluding memberID: String?, excludingDevice: String? = nil
+  ) async throws -> (SpaceJSON, Data) {
     let next = state.epoch + 1
     let newKey = SpaceCrypto.randomKey()
     var wraps: [SpaceJSON] = []
     // Only devices the signed log admitted get the new key (V7-S1); a device
     // the Spark lists beyond those makes the Spark refuse the rotation.
-    for device in (state.roster ?? SpaceRoster()).activeDevices(excluding: memberID) {
+    let devices = (state.roster ?? SpaceRoster()).activeDevices(excluding: memberID).filter {
+      $0.deviceID != excludingDevice
+    }
+    for device in devices {
       guard let seal = device.sealKey else { continue }
       wraps.append([
         "device_id": .string(device.deviceID), "epoch": SpaceJSON(next),
@@ -1641,9 +1702,19 @@ public actor SpaceEngine {
     }
     let link = try SpaceCrypto.epochLink(
       newKey: newKey, previousKey: currentKey(state), spaceID: state.spaceID, epoch: next)
-    return (
-      ["epoch": SpaceJSON(next), "wraps": .array(wraps), "epoch_link": .string(link)], newKey
-    )
+    var body: SpaceJSON = [
+      "epoch": SpaceJSON(next), "wraps": .array(wraps), "epoch_link": .string(link),
+    ]
+    if state.ownerKind == .org, let orgID = state.orgID {
+      // v8 B5: the new key is also escrowed to the org's admin devices that
+      // get no member wrap, as the org's own signed log names them.
+      // Never to a device being retired, even while it is still an org device.
+      let escrow = try await escrowWraps(
+        orgID: orgID, key: newKey, spaceID: state.spaceID, epoch: next,
+        memberDevices: Set(devices.map(\.deviceID) + [excludingDevice].compactMap { $0 }))
+      if !escrow.isEmpty { body = body.setting("escrow_wraps", .array(escrow)) }
+    }
+    return (body, newKey)
   }
 
   /// 离开: contributions stay (org spaces) or go (group spaces, if chosen);
@@ -1820,7 +1891,7 @@ public actor SpaceEngine {
 
   /// The lease: the current epoch's store key and the space's mask key (and,
   /// to re-key a store an older epoch's key still locks, that key too).
-  private func leaseBody(_ state: SpaceLocalState, mask: Data, previous: Int?) throws -> SpaceJSON {
+  func leaseBody(_ state: SpaceLocalState, mask: Data, previous: Int?) throws -> SpaceJSON {
     var body: SpaceJSON = [
       "epoch": SpaceJSON(state.epoch),
       "store_key": .string(SpaceCrypto.hex(SpaceCrypto.storeKey(spaceKey: try currentKey(state)))),

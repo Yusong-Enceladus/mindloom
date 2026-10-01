@@ -40,16 +40,23 @@ public struct SpacePolicy: Codable, Equatable, Sendable {
   public var originals: String
   /// `keep` (org spaces) or `contributor_choice` (group spaces).
   public var onLeave: String
+  /// Each member's storage in the space, in MB (0 = none; nil = the Spark's default).
+  public var memberQuotaMB: Int?
+  /// Members may share a meeting part's audio (v8 C1; on unless switched off).
+  public var segmentAudio: Bool
 
   public init(
     withdrawWindowHours: Int?, takedownWindowHours: Int = 72, forksAllowed: Bool,
-    originals: String = "members", onLeave: String
+    originals: String = "members", onLeave: String, memberQuotaMB: Int? = nil,
+    segmentAudio: Bool = true
   ) {
     self.withdrawWindowHours = withdrawWindowHours
     self.takedownWindowHours = takedownWindowHours
     self.forksAllowed = forksAllowed
     self.originals = originals
     self.onLeave = onLeave
+    self.memberQuotaMB = memberQuotaMB
+    self.segmentAudio = segmentAudio
   }
 
   /// The Spark's defaults: an org space keeps contributions (a 24 h withdraw
@@ -67,6 +74,8 @@ public struct SpacePolicy: Codable, Equatable, Sendable {
     case forksAllowed = "forks_allowed"
     case originals
     case onLeave = "on_leave"
+    case memberQuotaMB = "member_quota_mb"
+    case segmentAudio = "segment_audio"
   }
 
   public init(from decoder: Decoder) throws {
@@ -76,6 +85,8 @@ public struct SpacePolicy: Codable, Equatable, Sendable {
     forksAllowed = try c.decodeIfPresent(Bool.self, forKey: .forksAllowed) ?? false
     originals = try c.decodeIfPresent(String.self, forKey: .originals) ?? "members"
     onLeave = try c.decodeIfPresent(String.self, forKey: .onLeave) ?? "keep"
+    memberQuotaMB = try c.decodeIfPresent(Int.self, forKey: .memberQuotaMB)
+    segmentAudio = try c.decodeIfPresent(Bool.self, forKey: .segmentAudio) ?? true
   }
 
   public func encode(to encoder: Encoder) throws {
@@ -86,6 +97,9 @@ public struct SpacePolicy: Codable, Equatable, Sendable {
     try c.encode(forksAllowed, forKey: .forksAllowed)
     try c.encode(originals, forKey: .originals)
     try c.encode(onLeave, forKey: .onLeave)
+    // Absent means the Spark's default; only an explicit quota is sent.
+    try c.encodeIfPresent(memberQuotaMB, forKey: .memberQuotaMB)
+    try c.encode(segmentAudio, forKey: .segmentAudio)
   }
 
   public var json: SpaceJSON { (try? SpaceJSON.from(self)) ?? [:] }
@@ -101,12 +115,57 @@ public struct SpaceOpResult: Decodable, Equatable, Sendable {
   public let status: Int?
   public let error: String?
   public let detail: String?
+  /// What an outbox does with a refused op (v8 C3): `remake`, `later` or `never`.
+  public let retry: String?
+  /// A remade op the Spark took as the one it already has (`share_key`,
+  /// `withdrawn`, `open_takedown`).
+  public let acceptedAs: String?
 
   enum CodingKeys: String, CodingKey {
     case ok
     case opID = "op_id"
-    case duplicate, seq, effects, status, error, detail
+    case duplicate, seq, effects, status, error, detail, retry
+    case acceptedAs = "accepted_as"
   }
+
+  public init(
+    ok: Bool, opID: String? = nil, duplicate: Bool? = nil, seq: Int? = nil,
+    effects: SpaceJSON? = nil,
+    status: Int? = nil, error: String? = nil, detail: String? = nil, retry: String? = nil,
+    acceptedAs: String? = nil
+  ) {
+    self.ok = ok
+    self.opID = opID
+    self.duplicate = duplicate
+    self.seq = seq
+    self.effects = effects
+    self.status = status
+    self.error = error
+    self.detail = detail
+    self.retry = retry
+    self.acceptedAs = acceptedAs
+  }
+
+  /// What the share outbox does with this result (`space_member.outbox_action`).
+  public var outboxAction: SpaceOutboxAction {
+    if ok { return .done }
+    switch retry ?? "never" {
+    case "remake": return .remake
+    case "later": return .later
+    default: return .drop
+    }
+  }
+}
+
+public enum SpaceOutboxAction: String, Sendable {
+  /// Accepted now or before: the entry leaves the outbox.
+  case done
+  /// Sync the keys, make a new op for the same entry (same share key).
+  case remake
+  /// Send the very same op again later.
+  case later
+  /// Refused for good: drop it and tell the user.
+  case drop
 }
 
 public struct SpaceOpsAnswer: Decodable, Sendable {
@@ -180,6 +239,8 @@ public struct SpaceMemberRecord: Codable, Equatable, Sendable {
   public let joinedAt: String?
   public let endedAt: String?
   public let devices: [SpaceDevicePublic]
+  /// What this member stores here (admins see it for everyone).
+  public let usageBytes: Int?
 
   enum CodingKeys: String, CodingKey {
     case memberID = "member_id"
@@ -190,6 +251,7 @@ public struct SpaceMemberRecord: Codable, Equatable, Sendable {
     case joinedAt = "joined_at"
     case endedAt = "ended_at"
     case devices
+    case usageBytes = "usage_bytes"
   }
 
   public var isActive: Bool { status == "active" }
@@ -215,10 +277,11 @@ public struct SpaceSummary: Decodable, Sendable {
     public let rights: [String]
     public let hidden: [String]
     public let forks: [String]
+    public let usage: SpaceUsage?
     enum CodingKeys: String, CodingKey {
       case memberID = "member_id"
       case deviceID = "device_id"
-      case role, rights, hidden, forks
+      case role, rights, hidden, forks, usage
     }
   }
 
@@ -262,6 +325,9 @@ public struct SpaceSummary: Decodable, Sendable {
   public let me: Me
   public let counts: Counts?
   public let organizer: Organizer?
+  /// Org spaces: who can open the current key and which admin devices lack a wrap.
+  public let escrow: SpaceEscrowStatus?
+  public let limits: SpaceLimits?
 
   enum CodingKeys: String, CodingKey {
     case spaceID = "space_id"
@@ -269,7 +335,125 @@ public struct SpaceSummary: Decodable, Sendable {
     case rotationPending = "rotation_pending"
     case archived, head
     case createdAt = "created_at"
-    case members, me, counts, organizer
+    case members, me, counts, organizer, escrow, limits
+  }
+}
+
+/// `me.usage`: this member's storage in the space against its quota.
+public struct SpaceUsage: Codable, Equatable, Sendable {
+  public let bytes: Int
+  public let quotaBytes: Int?
+
+  public init(bytes: Int, quotaBytes: Int?) {
+    self.bytes = bytes
+    self.quotaBytes = quotaBytes
+  }
+
+  enum CodingKeys: String, CodingKey {
+    case bytes
+    case quotaBytes = "quota_bytes"
+  }
+
+  /// "已用 12 MB / 2048 MB" (or without a ceiling).
+  public var text: String {
+    let used = SpaceUsage.megabytes(bytes)
+    guard let quotaBytes else { return "已用 \(used)（不限）" }
+    return "已用 \(used) / \(SpaceUsage.megabytes(quotaBytes))"
+  }
+
+  public var fraction: Double? {
+    guard let quotaBytes, quotaBytes > 0 else { return nil }
+    return min(1, Double(bytes) / Double(quotaBytes))
+  }
+
+  public static func megabytes(_ bytes: Int) -> String {
+    let mb = Double(bytes) / 1_048_576
+    if mb < 0.1, bytes > 0 { return "不到 0.1 MB" }
+    return mb < 10 ? String(format: "%.1f MB", mb) : "\(Int(mb.rounded())) MB"
+  }
+}
+
+/// `escrow` of an org space (v8 B5).
+public struct SpaceEscrowStatus: Codable, Equatable, Sendable {
+  public struct Missing: Codable, Equatable, Sendable {
+    public let deviceID: String
+    public let memberID: String
+    public let sealPub: String
+    enum CodingKeys: String, CodingKey {
+      case deviceID = "device_id"
+      case memberID = "member_id"
+      case sealPub = "seal_pub"
+    }
+  }
+
+  public let policy: Int
+  public let required: Int
+  public let holders: [String]
+  public let missing: [Missing]
+  public let ok: Bool
+
+  public init(policy: Int, required: Int, holders: [String], missing: [Missing], ok: Bool) {
+    self.policy = policy
+    self.required = required
+    self.holders = holders
+    self.missing = missing
+    self.ok = ok
+  }
+}
+
+/// `limits`: the numbers the Spark enforces, checked before sending.
+public struct SpaceLimits: Codable, Equatable, Sendable {
+  public let segmentMS: Int
+  public let audioBytesPerS: Int
+  public let audioOverheadBytes: Int
+  public let blobBytes: Int
+  public let blobsPerItem: Int
+  public let opsPerPost: Int
+  public let snapshotCites: Int
+
+  public static let standard = SpaceLimits(
+    segmentMS: 15 * 60 * 1000, audioBytesPerS: 32_000, audioOverheadBytes: 65_536,
+    blobBytes: 36_000_000, blobsPerItem: 20, opsPerPost: 50, snapshotCites: 500)
+
+  public init(
+    segmentMS: Int, audioBytesPerS: Int, audioOverheadBytes: Int, blobBytes: Int,
+    blobsPerItem: Int, opsPerPost: Int, snapshotCites: Int
+  ) {
+    self.segmentMS = segmentMS
+    self.audioBytesPerS = audioBytesPerS
+    self.audioOverheadBytes = audioOverheadBytes
+    self.blobBytes = blobBytes
+    self.blobsPerItem = blobsPerItem
+    self.opsPerPost = opsPerPost
+    self.snapshotCites = snapshotCites
+  }
+
+  enum CodingKeys: String, CodingKey {
+    case segmentMS = "segment_ms"
+    case audioBytesPerS = "audio_bytes_per_s"
+    case audioOverheadBytes = "audio_overhead_bytes"
+    case blobBytes = "blob_bytes"
+    case blobsPerItem = "blobs_per_item"
+    case opsPerPost = "ops_per_post"
+    case snapshotCites = "snapshot_cites"
+  }
+
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    let d = Self.standard
+    segmentMS = try c.decodeIfPresent(Int.self, forKey: .segmentMS) ?? d.segmentMS
+    audioBytesPerS = try c.decodeIfPresent(Int.self, forKey: .audioBytesPerS) ?? d.audioBytesPerS
+    audioOverheadBytes =
+      try c.decodeIfPresent(Int.self, forKey: .audioOverheadBytes) ?? d.audioOverheadBytes
+    blobBytes = try c.decodeIfPresent(Int.self, forKey: .blobBytes) ?? d.blobBytes
+    blobsPerItem = try c.decodeIfPresent(Int.self, forKey: .blobsPerItem) ?? d.blobsPerItem
+    opsPerPost = try c.decodeIfPresent(Int.self, forKey: .opsPerPost) ?? d.opsPerPost
+    snapshotCites = try c.decodeIfPresent(Int.self, forKey: .snapshotCites) ?? d.snapshotCites
+  }
+
+  /// The largest ciphertext the Spark takes for an audio part of `ms`.
+  public func audioCeiling(ms: Int) -> Int {
+    audioOverheadBytes + Int((Double(ms) * Double(audioBytesPerS) / 1000).rounded(.up))
   }
 }
 
@@ -559,5 +743,27 @@ public struct SpaceSameAs: Codable, Equatable, Sendable {
     case memberID = "member_id"
     case matterID = "matter_id"
     case items
+  }
+}
+
+/// One org space's escrow wrap for the asking admin device (`GET /v1/orgs/{id}/escrow`).
+public struct SpaceEscrowWrap: Decodable, Equatable, Sendable {
+  public let spaceID: String
+  public let epoch: Int
+  public let wrap: String?
+  public let rotationPending: Bool
+
+  enum CodingKeys: String, CodingKey {
+    case spaceID = "space_id"
+    case epoch, wrap
+    case rotationPending = "rotation_pending"
+  }
+
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    spaceID = try c.decode(String.self, forKey: .spaceID)
+    epoch = try c.decode(Int.self, forKey: .epoch)
+    wrap = try c.decodeIfPresent(String.self, forKey: .wrap)
+    rotationPending = try c.decodeIfPresent(Bool.self, forKey: .rotationPending) ?? false
   }
 }

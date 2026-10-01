@@ -1,0 +1,6250 @@
+{
+ "meta": {
+  "title": "织机 Mindloom evaluation v8 (final numbers on the merged build)",
+  "date": "2026-10-01",
+  "data": "synthetic only on every Spark; the phone E2E used synthetic items in the iOS simulator",
+  "hardware": "NVIDIA DGX Spark (GB10, 121 GiB unified memory), vLLM 0.30.0; Mac: Apple Silicon",
+  "model": "Qwen3.6-35B-A3B NVFP4 (thinking off, temperature 0) + Qwen3-Embedding-0.6B for every v6 organizer number",
+  "code": {
+   "event-consolidate": "organizer claude/quality-v6 f4fe3ed",
+   "item-split 1.3.0 / person-resolve": "claude/quality-v6 abd9cf0 / 8138c7f",
+   "privacy": "claude/privacy-v6 (ef3392a for the masking evaluation; 3c6dfb1…30af5b1 Spark and 5113570…8b9205b Mac for the review fixes)",
+   "phone": "bestASR claude/phone-v6 203b7a1, claude/phone-link-v6 e1d309d/22379f6; organizer claude/phone-link-v6 16cbfc1"
+  },
+  "integration": "v8 final numbers (final_v8) are on the merged build; the other sections are v6 branch measurements and v5 carry-overs, unchanged",
+  "paths": "v5/… and v6/… are the evaluation folders; skills/…, eval/…, spark/… are in the organizer repo; Packages/…, iOS/… in the Mac repo",
+  "final_run": {
+   "code": "organizer main 474b165 (v7 integration: event-consolidate 1.0.1, person-resolve 1.2.1, item-split 1.3.1, matter-map 1.1.1, matter-group 1.0.1), not modified",
+   "method": "fresh copies (SQLite backup API, read-only source) of the three v5 scale final states; the organizer encrypted each copy on its first unlock with the public synthetic key; nothing was sent; the runtime passes (consolidation, people, matter-map, matter-group) ran by their own schedule until the cursor, the queue and the pass counters had not moved for 10 minutes",
+   "settings": "replay clock, 4 workers, Qwen3.6-35B-A3B NVFP4 (thinking off, temperature 0) + Qwen3-Embedding-0.6B on the same node, no unlock lease (harness), all passes on (defaults)",
+   "scorer": "scalefeat eval/score.py b1419a9 + the scenario patches and the Mac-id ledger of scale/SUMMARY.md (same files as v6/quality/QUALITY.md)",
+   "runs_per_scenario": 1,
+   "held_out": "startup: nothing was tuned on it, before or after this run",
+   "nodes": "one DGX Spark per scenario, shared with other work"
+  }
+ },
+ "headline_final": {
+  "b3_f1": {
+   "lab": 0.724,
+   "pm": 0.689,
+   "startup": 0.668
+  },
+  "b3_f1_range": [
+   0.668,
+   0.724
+  ],
+  "b3_precision": {
+   "lab": 0.71,
+   "pm": 0.686,
+   "startup": 0.666
+  },
+  "b3_recall": {
+   "lab": 0.738,
+   "pm": 0.692,
+   "startup": 0.67
+  },
+  "link_f1": {
+   "lab": 0.766,
+   "pm": 0.723,
+   "startup": 0.711
+  },
+  "link_f1_range": [
+   0.711,
+   0.766
+  ],
+  "b3_vs_baseline_range": [
+   2.3,
+   4.04
+  ],
+  "link_vs_baseline_range": [
+   3.89,
+   6.13
+  ],
+  "b3_gain_over_v5_state_range": [
+   0.082,
+   0.084
+  ],
+  "events": {
+   "lab": 59,
+   "pm": 55,
+   "startup": 89
+  },
+  "true_events": {
+   "lab": 22,
+   "pm": 21,
+   "startup": 20
+  },
+  "events_over_truth_range": [
+   2.6,
+   4.5
+  ],
+  "singletons": {
+   "lab": 20,
+   "pm": 10,
+   "startup": 38
+  },
+  "hard_decoy_leakage": {
+   "lab": 0.237,
+   "pm": 0.162,
+   "startup": 0.091
+  },
+  "person_link": {
+   "lab": 0.455,
+   "pm": 0.501,
+   "startup": 0.424
+  },
+  "person_link_range": [
+   0.424,
+   0.501
+  ],
+  "item_level_person_recall_range": [
+   0.66,
+   0.691
+  ],
+  "not_a_scenario_person": {
+   "lab": 22,
+   "pm": 6,
+   "startup": 7
+  },
+  "maps": {
+   "lab": 26,
+   "pm": 31,
+   "startup": 31
+  },
+  "ropes": {
+   "lab": 8,
+   "pm": 6,
+   "startup": 12
+  },
+  "passes_share_of_organizing_range": [
+   0.079,
+   0.095
+  ],
+  "settled_minutes_range": [
+   23.8,
+   30.3
+  ]
+ },
+ "final_v8": {
+  "scenarios": {
+   "lab": {
+    "split": "dev",
+    "items": 1510,
+    "true_events": 22,
+    "baseline": {
+     "bcubed_f1": 0.179,
+     "link_f1": 0.136,
+     "segment_link_f1": 0.083,
+     "hard_decoy_leakage": 0.258
+    },
+    "v5_scale_state": {
+     "bcubed_precision": 0.708,
+     "bcubed_recall": 0.588,
+     "bcubed_f1": 0.642,
+     "link_f1": 0.63,
+     "segment_link_f1": 0.453,
+     "pred_event_count": 242,
+     "gold_event_count": 22,
+     "singletons": 143,
+     "noise_only_events": 35,
+     "noise_unfiled_rate": 0.61,
+     "noise_singleton_rate": 0.276,
+     "noise_in_real_event_rate": 0.114,
+     "false_unfiled": 6,
+     "hard_decoy_leakage": 0.225,
+     "easy_decoy_leakage": 0.085,
+     "card_fact_recall": 0.489,
+     "person_link_accuracy": 0.255,
+     "home_ndcg5": 0.128
+    },
+    "v6_branch_runtime": {
+     "bcubed_precision": 0.679,
+     "bcubed_recall": 0.74,
+     "bcubed_f1": 0.709,
+     "link_f1": 0.743,
+     "segment_link_f1": 0.534,
+     "pred_event_count": 54,
+     "gold_event_count": 22,
+     "singletons": 19,
+     "noise_only_events": 8,
+     "noise_unfiled_rate": 0.771,
+     "noise_singleton_rate": 0.067,
+     "noise_in_real_event_rate": 0.162,
+     "false_unfiled": 8,
+     "hard_decoy_leakage": 0.338,
+     "easy_decoy_leakage": 0.111,
+     "card_fact_recall": 0.533,
+     "person_link_accuracy": 0.301,
+     "home_ndcg5": 0.477
+    },
+    "final": {
+     "bcubed_precision": 0.71,
+     "bcubed_recall": 0.738,
+     "bcubed_f1": 0.724,
+     "link_f1": 0.766,
+     "segment_link_f1": 0.552,
+     "pred_event_count": 59,
+     "gold_event_count": 22,
+     "singletons": 20,
+     "noise_only_events": 8,
+     "noise_unfiled_rate": 0.81,
+     "noise_singleton_rate": 0.057,
+     "noise_in_real_event_rate": 0.133,
+     "false_unfiled": 7,
+     "hard_decoy_leakage": 0.237,
+     "easy_decoy_leakage": 0.113,
+     "decoy_seed_ok": "0/8",
+     "card_fact_recall": 0.511,
+     "person_link_accuracy": 0.455,
+     "home_ndcg5": 0.811
+    },
+    "final_vs_baseline_b3": 4.04,
+    "final_vs_baseline_link": 5.63,
+    "b3_gain_over_v5_state": 0.082,
+    "events_over_truth": {
+     "v5": 11.0,
+     "v6": 2.5,
+     "final": 2.7,
+     "target_max": 66,
+     "target_met": true
+    }
+   },
+   "pm": {
+    "split": "dev",
+    "items": 1600,
+    "true_events": 21,
+    "baseline": {
+     "bcubed_f1": 0.299,
+     "link_f1": 0.186,
+     "segment_link_f1": 0.127,
+     "hard_decoy_leakage": 0.92
+    },
+    "v5_scale_state": {
+     "bcubed_precision": 0.679,
+     "bcubed_recall": 0.547,
+     "bcubed_f1": 0.606,
+     "link_f1": 0.563,
+     "segment_link_f1": 0.438,
+     "pred_event_count": 227,
+     "gold_event_count": 21,
+     "singletons": 109,
+     "noise_only_events": 37,
+     "noise_unfiled_rate": 0.43,
+     "noise_singleton_rate": 0.523,
+     "noise_in_real_event_rate": 0.047,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.14,
+     "easy_decoy_leakage": 0.091,
+     "card_fact_recall": 0.652,
+     "person_link_accuracy": 0.244,
+     "home_ndcg5": 0.343
+    },
+    "v6_branch_runtime": {
+     "bcubed_precision": 0.683,
+     "bcubed_recall": 0.702,
+     "bcubed_f1": 0.692,
+     "link_f1": 0.725,
+     "segment_link_f1": 0.559,
+     "pred_event_count": 56,
+     "gold_event_count": 21,
+     "singletons": 11,
+     "noise_only_events": 12,
+     "noise_unfiled_rate": 0.57,
+     "noise_singleton_rate": 0.369,
+     "noise_in_real_event_rate": 0.06,
+     "false_unfiled": 4,
+     "hard_decoy_leakage": 0.164,
+     "easy_decoy_leakage": 0.114,
+     "card_fact_recall": 0.87,
+     "person_link_accuracy": 0.29,
+     "home_ndcg5": 0.719
+    },
+    "final": {
+     "bcubed_precision": 0.686,
+     "bcubed_recall": 0.692,
+     "bcubed_f1": 0.689,
+     "link_f1": 0.723,
+     "segment_link_f1": 0.557,
+     "pred_event_count": 55,
+     "gold_event_count": 21,
+     "singletons": 10,
+     "noise_only_events": 13,
+     "noise_unfiled_rate": 0.631,
+     "noise_singleton_rate": 0.309,
+     "noise_in_real_event_rate": 0.06,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.162,
+     "easy_decoy_leakage": 0.116,
+     "decoy_seed_ok": "0/6",
+     "card_fact_recall": 0.783,
+     "person_link_accuracy": 0.501,
+     "home_ndcg5": 0.782
+    },
+    "final_vs_baseline_b3": 2.3,
+    "final_vs_baseline_link": 3.89,
+    "b3_gain_over_v5_state": 0.083,
+    "events_over_truth": {
+     "v5": 10.8,
+     "v6": 2.7,
+     "final": 2.6,
+     "target_max": 63,
+     "target_met": true
+    }
+   },
+   "startup": {
+    "split": "held-out",
+    "items": 1600,
+    "true_events": 20,
+    "baseline": {
+     "bcubed_f1": 0.266,
+     "link_f1": 0.116,
+     "segment_link_f1": 0.094,
+     "hard_decoy_leakage": 0.833
+    },
+    "v5_scale_state": {
+     "bcubed_precision": 0.678,
+     "bcubed_recall": 0.514,
+     "bcubed_f1": 0.584,
+     "link_f1": 0.582,
+     "segment_link_f1": 0.557,
+     "pred_event_count": 348,
+     "gold_event_count": 20,
+     "singletons": 233,
+     "noise_only_events": 37,
+     "noise_unfiled_rate": 0.317,
+     "noise_singleton_rate": 0.583,
+     "noise_in_real_event_rate": 0.1,
+     "false_unfiled": 0,
+     "hard_decoy_leakage": 0.068,
+     "easy_decoy_leakage": 0.334,
+     "card_fact_recall": 0.583,
+     "person_link_accuracy": 0.232,
+     "home_ndcg5": 0.351
+    },
+    "v6_branch_runtime": {
+     "bcubed_precision": 0.665,
+     "bcubed_recall": 0.661,
+     "bcubed_f1": 0.663,
+     "link_f1": 0.706,
+     "segment_link_f1": 0.66,
+     "pred_event_count": 84,
+     "gold_event_count": 20,
+     "singletons": 33,
+     "noise_only_events": 7,
+     "noise_unfiled_rate": 0.475,
+     "noise_singleton_rate": 0.283,
+     "noise_in_real_event_rate": 0.242,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.089,
+     "easy_decoy_leakage": 0.362,
+     "card_fact_recall": 0.633,
+     "person_link_accuracy": 0.269,
+     "home_ndcg5": 0.792
+    },
+    "final": {
+     "bcubed_precision": 0.666,
+     "bcubed_recall": 0.67,
+     "bcubed_f1": 0.668,
+     "link_f1": 0.711,
+     "segment_link_f1": 0.664,
+     "pred_event_count": 89,
+     "gold_event_count": 20,
+     "singletons": 38,
+     "noise_only_events": 9,
+     "noise_unfiled_rate": 0.458,
+     "noise_singleton_rate": 0.317,
+     "noise_in_real_event_rate": 0.225,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.091,
+     "easy_decoy_leakage": 0.363,
+     "decoy_seed_ok": "1/6",
+     "card_fact_recall": 0.633,
+     "person_link_accuracy": 0.424,
+     "home_ndcg5": 1.0
+    },
+    "final_vs_baseline_b3": 2.51,
+    "final_vs_baseline_link": 6.13,
+    "b3_gain_over_v5_state": 0.084,
+    "events_over_truth": {
+     "v5": 17.4,
+     "v6": 4.2,
+     "final": 4.5,
+     "target_max": 60,
+     "target_met": false
+    }
+   }
+  },
+  "people": {
+   "lab": {
+    "v5_scale_report": 0.255,
+    "v6_before_people_pass": {
+     "person_link_degraded": 0.301,
+     "item_level_recall": 0.168,
+     "item_level_precision": 0.971,
+     "shown_person_records": 157,
+     "not_a_scenario_person": 85,
+     "records_per_true_person": 2.4,
+     "true_people_found": 30,
+     "true_people": 35
+    },
+    "v6_after_people_pass": {
+     "person_link_degraded": 0.447,
+     "item_level_recall": 0.655,
+     "item_level_precision": 0.969,
+     "shown_person_records": 65,
+     "not_a_scenario_person": 22,
+     "records_per_true_person": 1.34,
+     "true_people_found": 32,
+     "true_people": 35
+    },
+    "final": {
+     "person_link_degraded": 0.455,
+     "item_level_recall": 0.66,
+     "item_level_precision": 0.969,
+     "shown_person_records": 65,
+     "not_a_scenario_person": 22,
+     "records_per_true_person": 1.34,
+     "true_people_found": 32,
+     "true_people": 35,
+     "missed_pairs": {
+      "elsewhere_only": 284,
+      "hit": 266,
+      "nowhere": 29,
+      "variant_name": 5
+     }
+    }
+   },
+   "pm": {
+    "v5_scale_report": 0.244,
+    "v6_before_people_pass": {
+     "person_link_degraded": 0.29,
+     "item_level_recall": 0.189,
+     "item_level_precision": 0.803,
+     "shown_person_records": 216,
+     "not_a_scenario_person": 77,
+     "records_per_true_person": 3.86,
+     "true_people_found": 36,
+     "true_people": 41
+    },
+    "v6_after_people_pass": {
+     "person_link_degraded": 0.477,
+     "item_level_recall": 0.689,
+     "item_level_precision": 0.305,
+     "shown_person_records": 102,
+     "not_a_scenario_person": 9,
+     "records_per_true_person": 2.58,
+     "true_people_found": 36,
+     "true_people": 41
+    },
+    "final": {
+     "person_link_degraded": 0.501,
+     "item_level_recall": 0.691,
+     "item_level_precision": 0.303,
+     "shown_person_records": 100,
+     "not_a_scenario_person": 6,
+     "records_per_true_person": 2.61,
+     "true_people_found": 36,
+     "true_people": 41,
+     "missed_pairs": {
+      "hit": 314,
+      "elsewhere_only": 264,
+      "nowhere": 49
+     }
+    }
+   },
+   "startup": {
+    "v5_scale_report": 0.232,
+    "v6_before_people_pass": {
+     "person_link_degraded": 0.269,
+     "item_level_recall": 0.134,
+     "item_level_precision": 0.954,
+     "shown_person_records": 110,
+     "not_a_scenario_person": 53,
+     "records_per_true_person": 1.39,
+     "true_people_found": 41,
+     "true_people": 42
+    },
+    "v6_after_people_pass": {
+     "person_link_degraded": 0.417,
+     "item_level_recall": 0.647,
+     "item_level_precision": 0.997,
+     "shown_person_records": 52,
+     "not_a_scenario_person": 7,
+     "records_per_true_person": 1.07,
+     "true_people_found": 42,
+     "true_people": 42
+    },
+    "final": {
+     "person_link_degraded": 0.424,
+     "item_level_recall": 0.66,
+     "item_level_precision": 0.997,
+     "shown_person_records": 52,
+     "not_a_scenario_person": 7,
+     "records_per_true_person": 1.07,
+     "true_people_found": 42,
+     "true_people": 42,
+     "missed_pairs": {
+      "hit": 312,
+      "elsewhere_only": 424
+     }
+    }
+   }
+  },
+  "maps_ropes": {
+   "lab": {
+    "counts": {
+     "live_events": 59,
+     "events_ge8": 25,
+     "maps": 26,
+     "maps_of_ge8": 25,
+     "strands_total": 60,
+     "strands_per_map_mean": 2.31,
+     "one_strand_maps": 6,
+     "knots_total": 173,
+     "knots_per_map_mean": 6.65,
+     "knot_kinds": {
+      "progress": 78,
+      "commitment": 24,
+      "decision": 32,
+      "question": 24,
+      "deadline": 15
+     },
+     "knot_states": {
+      "done": 110,
+      "planned": 33,
+      "open": 24,
+      "doing": 6
+     },
+     "health": {
+      "risk": 14,
+      "ok": 12
+     },
+     "stale_maps": 0,
+     "map_versions": {
+      "1.1.1": 26
+     },
+     "ropes": 8,
+     "ropes_top_level": 7,
+     "ropes_nested": 1,
+     "ropes_proposed": 8,
+     "rope_kinds": {
+      "project": 6,
+      "area": 2
+     },
+     "rope_sizes": [
+      5,
+      5,
+      4,
+      3,
+      3,
+      2,
+      2,
+      2
+     ],
+     "matters_placed": 26,
+     "matters_ge2": 39,
+     "type_facets": {
+      "实验": 15,
+      "行政": 10,
+      "论文": 6,
+      "求职": 2,
+      "生活": 1,
+      "差旅": 1,
+      "教学": 1,
+      "竞赛": 1,
+      "健康": 1,
+      "财务": 1,
+      "学习": 1,
+      "会议": 1
+     },
+     "matters_with_type": 41,
+     "matters_with_deadline": 21,
+     "relations_cross": 253,
+     "relations_blocks": 0,
+     "cross_count_max": 35
+    },
+    "bench": {
+     "maps": 26,
+     "with_sub_threads": 16,
+     "strand_b3_p": 0.78,
+     "one_strand_b3_p": 0.756,
+     "strand_b3_f1": 0.69,
+     "one_strand_b3_f1": 0.849,
+     "separation": 0.428,
+     "separation_chance": 0.347,
+     "coverage": 0.804,
+     "fact_coverage": 0.486,
+     "rope_pairs": 32,
+     "rope_pairs_linked": 18
+    },
+    "ropes": [
+     {
+      "title": "GraspDiff论文",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 0
+     },
+     {
+      "title": "NeurCon论文",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 1
+     },
+     {
+      "title": "Twin-7真机实验",
+      "kind": "project",
+      "children": 4,
+      "pairs": 6,
+      "agree": 3
+     },
+     {
+      "title": "TG-2触觉夹爪调试",
+      "kind": "project",
+      "children": 5,
+      "pairs": 10,
+      "agree": 3
+     },
+     {
+      "title": "Spark集群维护",
+      "kind": "project",
+      "children": 5,
+      "pairs": 10,
+      "agree": 10
+     },
+     {
+      "title": "博士学业与求职",
+      "kind": "area",
+      "children": 3,
+      "pairs": 3,
+      "agree": 1
+     },
+     {
+      "title": "实验室行政与招生",
+      "kind": "area",
+      "children": 3,
+      "pairs": 1,
+      "agree": 0
+     },
+     {
+      "title": "仿真与相机标定",
+      "kind": "project",
+      "children": 2,
+      "pairs": 0,
+      "agree": 0
+     }
+    ],
+    "outcomes": {
+     "ok": 26
+    },
+    "group_outcomes": {
+     "none": 15,
+     "rope": 26
+    }
+   },
+   "pm": {
+    "counts": {
+     "live_events": 55,
+     "events_ge8": 30,
+     "maps": 31,
+     "maps_of_ge8": 30,
+     "strands_total": 66,
+     "strands_per_map_mean": 2.13,
+     "one_strand_maps": 5,
+     "knots_total": 189,
+     "knots_per_map_mean": 6.1,
+     "knot_kinds": {
+      "progress": 85,
+      "question": 26,
+      "commitment": 25,
+      "decision": 36,
+      "deadline": 17
+     },
+     "knot_states": {
+      "done": 134,
+      "open": 26,
+      "planned": 26,
+      "doing": 3
+     },
+     "health": {
+      "risk": 18,
+      "ok": 13
+     },
+     "stale_maps": 0,
+     "map_versions": {
+      "1.1.1": 31
+     },
+     "ropes": 6,
+     "ropes_top_level": 4,
+     "ropes_nested": 2,
+     "ropes_proposed": 6,
+     "rope_kinds": {
+      "project": 3,
+      "area": 3
+     },
+     "rope_sizes": [
+      10,
+      8,
+      5,
+      4,
+      4,
+      3
+     ],
+     "matters_placed": 34,
+     "matters_ge2": 45,
+     "type_facets": {
+      "生活": 3,
+      "项目": 17,
+      "招聘": 2,
+      "行政": 2,
+      "健康": 2,
+      "求职": 8,
+      "团队": 2,
+      "规划": 1,
+      "绩效": 3,
+      "晋升": 1,
+      "分享": 1,
+      "家里": 2,
+      "合规": 1
+     },
+     "matters_with_type": 45,
+     "matters_with_deadline": 25,
+     "relations_cross": 276,
+     "relations_blocks": 0,
+     "cross_count_max": 84
+    },
+    "bench": {
+     "maps": 31,
+     "with_sub_threads": 16,
+     "strand_b3_p": 0.818,
+     "one_strand_b3_p": 0.719,
+     "strand_b3_f1": 0.741,
+     "one_strand_b3_f1": 0.827,
+     "separation": 0.47,
+     "separation_chance": 0.331,
+     "coverage": 0.74,
+     "fact_coverage": 0.601,
+     "rope_pairs": null,
+     "rope_pairs_linked": null
+    },
+    "ropes": [
+     {
+      "title": "求职去留",
+      "kind": "project",
+      "children": 8,
+      "pairs": 21,
+      "agree": 7
+     },
+     {
+      "title": "小澄AI导购",
+      "kind": "project",
+      "children": 10,
+      "pairs": 45,
+      "agree": 4
+     },
+     {
+      "title": "积分商城",
+      "kind": "project",
+      "children": 4,
+      "pairs": 6,
+      "agree": 0
+     },
+     {
+      "title": "团队管理",
+      "kind": "area",
+      "children": 5,
+      "pairs": 10,
+      "agree": 2
+     },
+     {
+      "title": "家庭与生活",
+      "kind": "area",
+      "children": 4,
+      "pairs": 0,
+      "agree": 0
+     },
+     {
+      "title": "团队与行政",
+      "kind": "area",
+      "children": 3,
+      "pairs": 0,
+      "agree": 0
+     }
+    ],
+    "outcomes": {
+     "ok": 31
+    },
+    "group_outcomes": {
+     "none": 11,
+     "rope": 34
+    }
+   },
+   "startup": {
+    "counts": {
+     "live_events": 89,
+     "events_ge8": 30,
+     "maps": 31,
+     "maps_of_ge8": 30,
+     "strands_total": 83,
+     "strands_per_map_mean": 2.68,
+     "one_strand_maps": 3,
+     "knots_total": 212,
+     "knots_per_map_mean": 6.84,
+     "knot_kinds": {
+      "progress": 89,
+      "decision": 41,
+      "question": 44,
+      "commitment": 18,
+      "deadline": 20
+     },
+     "knot_states": {
+      "done": 125,
+      "open": 44,
+      "doing": 5,
+      "planned": 38
+     },
+     "health": {
+      "risk": 23,
+      "ok": 7,
+      "stuck": 1
+     },
+     "stale_maps": 0,
+     "map_versions": {
+      "1.1.1": 31
+     },
+     "ropes": 12,
+     "ropes_top_level": 11,
+     "ropes_nested": 1,
+     "ropes_proposed": 12,
+     "rope_kinds": {
+      "project": 12
+     },
+     "rope_sizes": [
+      10,
+      4,
+      4,
+      3,
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+     ],
+     "matters_placed": 38,
+     "matters_ge2": 51,
+     "type_facets": {
+      "生活": 3,
+      "项目": 36,
+      "采购": 1,
+      "招聘": 4,
+      "行政": 9,
+      "健康": 1
+     },
+     "matters_with_type": 54,
+     "matters_with_deadline": 24,
+     "relations_cross": 304,
+     "relations_blocks": 1,
+     "cross_count_max": 28
+    },
+    "bench": {
+     "maps": 31,
+     "with_sub_threads": 20,
+     "strand_b3_p": 0.782,
+     "one_strand_b3_p": 0.714,
+     "strand_b3_f1": 0.635,
+     "one_strand_b3_f1": 0.813,
+     "separation": 0.573,
+     "separation_chance": 0.476,
+     "coverage": 0.737,
+     "fact_coverage": 0.452,
+     "rope_pairs": 51,
+     "rope_pairs_linked": 18
+    },
+    "ropes": [
+     {
+      "title": "恒拓二期项目",
+      "kind": "project",
+      "children": 10,
+      "pairs": 28,
+      "agree": 5
+     },
+     {
+      "title": "栖木A轮融资",
+      "kind": "project",
+      "children": 3,
+      "pairs": 3,
+      "agree": 3
+     },
+     {
+      "title": "栖木团队招聘",
+      "kind": "project",
+      "children": 4,
+      "pairs": 6,
+      "agree": 2
+     },
+     {
+      "title": "焊缝检测研发",
+      "kind": "project",
+      "children": 3,
+      "pairs": 3,
+      "agree": 3
+     },
+     {
+      "title": "Q4规划与预算",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 1
+     },
+     {
+      "title": "LX-8S模组供货",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 1
+     },
+     {
+      "title": "栖木技术例会与站会",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 1
+     },
+     {
+      "title": "栖木A轮期权与激励",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 1
+     },
+     {
+      "title": "嵌入式组开发与调试",
+      "kind": "project",
+      "children": 4,
+      "pairs": 6,
+      "agree": 1
+     },
+     {
+      "title": "测试组分工与自动化",
+      "kind": "project",
+      "children": 2,
+      "pairs": 1,
+      "agree": 0
+     },
+     {
+      "title": "省重点研发与联合申报",
+      "kind": "project",
+      "children": 2,
+      "pairs": 0,
+      "agree": 0
+     },
+     {
+      "title": "唐宁报价与营销优化",
+      "kind": "project",
+      "children": 2,
+      "pairs": 0,
+      "agree": 0
+     }
+    ],
+    "outcomes": {
+     "ok": 31
+    },
+    "group_outcomes": {
+     "none": 16,
+     "rope": 38
+    }
+   }
+  },
+  "cost": {
+   "lab": {
+    "jobs": {
+     "consolidate": {
+      "calls": 370,
+      "ok": 347,
+      "prompt_tokens": 3586175,
+      "completion_tokens": 57336,
+      "p50_s": 4.9,
+      "p95_s": 9.3
+     },
+     "brief": {
+      "calls": 112,
+      "ok": 17,
+      "prompt_tokens": 1246056,
+      "completion_tokens": 39960,
+      "p50_s": 9.8,
+      "p95_s": 17.5
+     },
+     "person": {
+      "calls": 78,
+      "ok": 78,
+      "prompt_tokens": 208698,
+      "completion_tokens": 3278,
+      "p50_s": 2.1,
+      "p95_s": 2.7
+     },
+     "group": {
+      "calls": 2,
+      "ok": 0,
+      "prompt_tokens": 13454,
+      "completion_tokens": 2786,
+      "p50_s": 13.4,
+      "p95_s": 13.4
+     },
+     "map": {
+      "calls": 26,
+      "ok": 8,
+      "prompt_tokens": 1037376,
+      "completion_tokens": 97448,
+      "p50_s": 67.8,
+      "p95_s": 96.4
+     },
+     "rank": {
+      "calls": 1,
+      "ok": 1,
+      "prompt_tokens": 15414,
+      "completion_tokens": 1833,
+      "p50_s": 15.8,
+      "p95_s": 15.8
+     }
+    },
+    "prompt_tokens_total": 6107173,
+    "completion_tokens_total": 202641,
+    "organizing_prompt_tokens_v5": 74151570,
+    "share_of_organizing": 0.082,
+    "busy_minutes": 23.7,
+    "settled_after_minutes": 23.8,
+    "per_map_mean_prompt_tokens": 39899.0,
+    "per_map_mean_completion_tokens": 3748.0,
+    "per_map_mean_seconds": 58.9,
+    "maps_drawn_calls": 26,
+    "consolidate_outcomes": {
+     "invalid": 5,
+     "kept": 48,
+     "merged": 139,
+     "skipped": 2,
+     "unfiled": 30
+    },
+    "events_merged": 153,
+    "persons_status": {
+     "person": 68,
+     "not_person": 86,
+     "role": 3
+    },
+    "persons_merged": 30,
+    "store_bytes_encrypted": 102821888
+   },
+   "pm": {
+    "jobs": {
+     "consolidate": {
+      "calls": 339,
+      "ok": 321,
+      "prompt_tokens": 3176233,
+      "completion_tokens": 51958,
+      "p50_s": 5.2,
+      "p95_s": 9.7
+     },
+     "brief": {
+      "calls": 109,
+      "ok": 25,
+      "prompt_tokens": 1158440,
+      "completion_tokens": 38450,
+      "p50_s": 9.8,
+      "p95_s": 21.2
+     },
+     "person": {
+      "calls": 155,
+      "ok": 155,
+      "prompt_tokens": 419715,
+      "completion_tokens": 6468,
+      "p50_s": 2.2,
+      "p95_s": 2.9
+     },
+     "group": {
+      "calls": 2,
+      "ok": 1,
+      "prompt_tokens": 14187,
+      "completion_tokens": 2443,
+      "p50_s": 12.9,
+      "p95_s": 12.9
+     },
+     "map": {
+      "calls": 31,
+      "ok": 8,
+      "prompt_tokens": 1052830,
+      "completion_tokens": 111487,
+      "p50_s": 62.0,
+      "p95_s": 120.6
+     },
+     "rank": {
+      "calls": 1,
+      "ok": 1,
+      "prompt_tokens": 16002,
+      "completion_tokens": 1953,
+      "p50_s": 20.3,
+      "p95_s": 20.3
+     }
+    },
+    "prompt_tokens_total": 5837407,
+    "completion_tokens_total": 212759,
+    "organizing_prompt_tokens_v5": 73766400,
+    "share_of_organizing": 0.079,
+    "busy_minutes": 26.4,
+    "settled_after_minutes": 26.5,
+    "per_map_mean_prompt_tokens": 33962.0,
+    "per_map_mean_completion_tokens": 3596.0,
+    "per_map_mean_seconds": 61.7,
+    "maps_drawn_calls": 31,
+    "consolidate_outcomes": {
+     "invalid": 8,
+     "kept": 40,
+     "merged": 148,
+     "skipped": 5,
+     "unfiled": 17
+    },
+    "events_merged": 155,
+    "persons_status": {
+     "person": 102,
+     "not_person": 73,
+     "role": 7
+    },
+    "persons_merged": 58,
+    "store_bytes_encrypted": 113356800
+   },
+   "startup": {
+    "jobs": {
+     "consolidate": {
+      "calls": 473,
+      "ok": 437,
+      "prompt_tokens": 4465464,
+      "completion_tokens": 72297,
+      "p50_s": 4.9,
+      "p95_s": 8.9
+     },
+     "brief": {
+      "calls": 181,
+      "ok": 23,
+      "prompt_tokens": 1521186,
+      "completion_tokens": 57709,
+      "p50_s": 8.0,
+      "p95_s": 14.0
+     },
+     "person": {
+      "calls": 65,
+      "ok": 65,
+      "prompt_tokens": 174257,
+      "completion_tokens": 2620,
+      "p50_s": 2.0,
+      "p95_s": 2.4
+     },
+     "group": {
+      "calls": 2,
+      "ok": 1,
+      "prompt_tokens": 15641,
+      "completion_tokens": 3231,
+      "p50_s": 13.1,
+      "p95_s": 13.1
+     },
+     "map": {
+      "calls": 31,
+      "ok": 6,
+      "prompt_tokens": 1069824,
+      "completion_tokens": 126263,
+      "p50_s": 61.0,
+      "p95_s": 110.9
+     },
+     "rank": {
+      "calls": 1,
+      "ok": 1,
+      "prompt_tokens": 15744,
+      "completion_tokens": 1847,
+      "p50_s": 15.8,
+      "p95_s": 15.8
+     }
+    },
+    "prompt_tokens_total": 7262116,
+    "completion_tokens_total": 263967,
+    "organizing_prompt_tokens_v5": 76660800,
+    "share_of_organizing": 0.095,
+    "busy_minutes": 30.2,
+    "settled_after_minutes": 30.3,
+    "per_map_mean_prompt_tokens": 34510.0,
+    "per_map_mean_completion_tokens": 4073.0,
+    "per_map_mean_seconds": 58.5,
+    "maps_drawn_calls": 31,
+    "consolidate_outcomes": {
+     "invalid": 18,
+     "kept": 62,
+     "merged": 227,
+     "skipped": 2,
+     "unfiled": 17
+    },
+    "events_merged": 242,
+    "persons_status": {
+     "person": 52,
+     "not_person": 50,
+     "role": 2
+    },
+    "persons_merged": 12,
+    "store_bytes_encrypted": 111816704
+   }
+  },
+  "src": "v8/EVAL-FINAL.md; v8/eval/data/<scenario>/ (score.json, frag.txt, person_diag.json, score.item-level.json, map-bench.json, mapstats.json, raw/svc.json)"
+ },
+ "headline_v6": {
+  "b3_f1_after": {
+   "lab": 0.709,
+   "pm": 0.692,
+   "startup": 0.663
+  },
+  "b3_f1_before": {
+   "lab": 0.642,
+   "pm": 0.606,
+   "startup": 0.584
+  },
+  "b3_f1_baseline": {
+   "lab": 0.179,
+   "pm": 0.299,
+   "startup": 0.266
+  },
+  "b3_vs_baseline_range": [
+   2.31,
+   3.96
+  ],
+  "link_vs_baseline_range": [
+   3.9,
+   6.09
+  ],
+  "events_after": {
+   "lab": 54,
+   "pm": 56,
+   "startup": 84
+  },
+  "events_before": {
+   "lab": 242,
+   "pm": 227,
+   "startup": 348
+  },
+  "true_events": {
+   "lab": 22,
+   "pm": 21,
+   "startup": 20
+  },
+  "oversplit_before": {
+   "lab": 0.328,
+   "pm": 0.224,
+   "startup": 0.302
+  },
+  "oversplit_after": {
+   "lab": 0.206,
+   "pm": 0.106,
+   "startup": 0.177
+  },
+  "person_link_before": {
+   "lab": 0.301,
+   "pm": 0.29,
+   "startup": 0.269
+  },
+  "person_link_after": {
+   "lab": 0.447,
+   "pm": 0.477,
+   "startup": 0.417
+  },
+  "consolidation_overhead_range": [
+   0.051,
+   0.079
+  ]
+ },
+ "scale_consolidation": {
+  "scenarios": {
+   "lab": {
+    "split": "dev",
+    "items": 1510,
+    "true_events": 22,
+    "before": {
+     "bcubed_precision": 0.708,
+     "bcubed_recall": 0.588,
+     "bcubed_f1": 0.642,
+     "link_f1": 0.63,
+     "segment_link_f1": 0.453,
+     "pred_event_count": 242,
+     "gold_event_count": 22,
+     "singletons": 143,
+     "noise_only_events": 35,
+     "noise_unfiled_rate": 0.61,
+     "noise_singleton_rate": 0.276,
+     "noise_in_real_event_rate": 0.114,
+     "false_unfiled": 6,
+     "hard_decoy_leakage": 0.225,
+     "easy_decoy_leakage": 0.085,
+     "card_fact_recall": 0.489,
+     "person_link_accuracy": 0.255,
+     "home_ndcg5": 0.128
+    },
+    "after": {
+     "bcubed_precision": 0.679,
+     "bcubed_recall": 0.74,
+     "bcubed_f1": 0.709,
+     "link_f1": 0.743,
+     "segment_link_f1": 0.534,
+     "pred_event_count": 54,
+     "gold_event_count": 22,
+     "singletons": 19,
+     "noise_only_events": 8,
+     "noise_unfiled_rate": 0.771,
+     "noise_singleton_rate": 0.067,
+     "noise_in_real_event_rate": 0.162,
+     "false_unfiled": 8,
+     "hard_decoy_leakage": 0.338,
+     "easy_decoy_leakage": 0.111,
+     "card_fact_recall": 0.533,
+     "person_link_accuracy": 0.301,
+     "home_ndcg5": 0.477
+    },
+    "baseline_b3_f1": 0.179,
+    "baseline_link_f1": 0.136,
+    "baseline_hard_decoy_leakage": 0.258,
+    "after_vs_baseline_b3": 3.96,
+    "after_vs_baseline_link": 5.46,
+    "events_over_truth": {
+     "before": 11.0,
+     "after": 2.5,
+     "target_max": 66,
+     "target_met": true
+    }
+   },
+   "pm": {
+    "split": "dev",
+    "items": 1600,
+    "true_events": 21,
+    "before": {
+     "bcubed_precision": 0.679,
+     "bcubed_recall": 0.547,
+     "bcubed_f1": 0.606,
+     "link_f1": 0.563,
+     "segment_link_f1": 0.438,
+     "pred_event_count": 227,
+     "gold_event_count": 21,
+     "singletons": 109,
+     "noise_only_events": 37,
+     "noise_unfiled_rate": 0.43,
+     "noise_singleton_rate": 0.523,
+     "noise_in_real_event_rate": 0.047,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.14,
+     "easy_decoy_leakage": 0.091,
+     "card_fact_recall": 0.652,
+     "person_link_accuracy": 0.244,
+     "home_ndcg5": 0.343
+    },
+    "after": {
+     "bcubed_precision": 0.683,
+     "bcubed_recall": 0.702,
+     "bcubed_f1": 0.692,
+     "link_f1": 0.725,
+     "segment_link_f1": 0.559,
+     "pred_event_count": 56,
+     "gold_event_count": 21,
+     "singletons": 11,
+     "noise_only_events": 12,
+     "noise_unfiled_rate": 0.57,
+     "noise_singleton_rate": 0.369,
+     "noise_in_real_event_rate": 0.06,
+     "false_unfiled": 4,
+     "hard_decoy_leakage": 0.164,
+     "easy_decoy_leakage": 0.114,
+     "card_fact_recall": 0.87,
+     "person_link_accuracy": 0.29,
+     "home_ndcg5": 0.719
+    },
+    "baseline_b3_f1": 0.299,
+    "baseline_link_f1": 0.186,
+    "baseline_hard_decoy_leakage": 0.92,
+    "after_vs_baseline_b3": 2.31,
+    "after_vs_baseline_link": 3.9,
+    "events_over_truth": {
+     "before": 10.8,
+     "after": 2.7,
+     "target_max": 63,
+     "target_met": true
+    }
+   },
+   "startup": {
+    "split": "held-out",
+    "items": 1600,
+    "true_events": 20,
+    "before": {
+     "bcubed_precision": 0.678,
+     "bcubed_recall": 0.514,
+     "bcubed_f1": 0.584,
+     "link_f1": 0.582,
+     "segment_link_f1": 0.557,
+     "pred_event_count": 348,
+     "gold_event_count": 20,
+     "singletons": 233,
+     "noise_only_events": 37,
+     "noise_unfiled_rate": 0.317,
+     "noise_singleton_rate": 0.583,
+     "noise_in_real_event_rate": 0.1,
+     "false_unfiled": 0,
+     "hard_decoy_leakage": 0.068,
+     "easy_decoy_leakage": 0.334,
+     "card_fact_recall": 0.583,
+     "person_link_accuracy": 0.232,
+     "home_ndcg5": 0.351
+    },
+    "after": {
+     "bcubed_precision": 0.665,
+     "bcubed_recall": 0.661,
+     "bcubed_f1": 0.663,
+     "link_f1": 0.706,
+     "segment_link_f1": 0.66,
+     "pred_event_count": 84,
+     "gold_event_count": 20,
+     "singletons": 33,
+     "noise_only_events": 7,
+     "noise_unfiled_rate": 0.475,
+     "noise_singleton_rate": 0.283,
+     "noise_in_real_event_rate": 0.242,
+     "false_unfiled": 2,
+     "hard_decoy_leakage": 0.089,
+     "easy_decoy_leakage": 0.362,
+     "card_fact_recall": 0.633,
+     "person_link_accuracy": 0.269,
+     "home_ndcg5": 0.792
+    },
+    "baseline_b3_f1": 0.266,
+    "baseline_link_f1": 0.116,
+    "baseline_hard_decoy_leakage": 0.833,
+    "after_vs_baseline_b3": 2.49,
+    "after_vs_baseline_link": 6.09,
+    "events_over_truth": {
+     "before": 17.4,
+     "after": 4.2,
+     "target_max": 60,
+     "target_met": false
+    }
+   },
+   "lab-v3": {
+    "split": "dev",
+    "items": 1510,
+    "true_events": 22,
+    "before": {
+     "bcubed_precision": 0.706,
+     "bcubed_recall": 0.62,
+     "bcubed_f1": 0.66,
+     "link_f1": 0.662,
+     "segment_link_f1": 0.475,
+     "pred_event_count": 184,
+     "gold_event_count": 22,
+     "singletons": 99,
+     "noise_only_events": 33,
+     "noise_unfiled_rate": 0.61,
+     "noise_singleton_rate": 0.276,
+     "noise_in_real_event_rate": 0.114,
+     "false_unfiled": 6,
+     "hard_decoy_leakage": 0.227,
+     "easy_decoy_leakage": 0.093,
+     "card_fact_recall": 0.533,
+     "person_link_accuracy": 0.298,
+     "home_ndcg5": 0.796
+    },
+    "after": {
+     "bcubed_precision": 0.682,
+     "bcubed_recall": 0.744,
+     "bcubed_f1": 0.712,
+     "link_f1": 0.744,
+     "segment_link_f1": 0.536,
+     "pred_event_count": 59,
+     "gold_event_count": 22,
+     "singletons": 21,
+     "noise_only_events": 10,
+     "noise_unfiled_rate": 0.762,
+     "noise_singleton_rate": 0.095,
+     "noise_in_real_event_rate": 0.143,
+     "false_unfiled": 8,
+     "hard_decoy_leakage": 0.334,
+     "easy_decoy_leakage": 0.111,
+     "card_fact_recall": 0.467,
+     "person_link_accuracy": 0.304,
+     "home_ndcg5": 0.83
+    },
+    "baseline_b3_f1": 0.179,
+    "baseline_link_f1": 0.136,
+    "baseline_hard_decoy_leakage": 0.258,
+    "after_vs_baseline_b3": 3.98,
+    "after_vs_baseline_link": 5.47,
+    "events_over_truth": {
+     "before": 8.4,
+     "after": 2.7,
+     "target_max": 66,
+     "target_met": true
+    },
+    "note": "demo copy: continues from lab-v2 (an earlier one-off consolidation of the lab state, 184 events); the other three start from the raw scale states"
+   }
+  },
+  "design_A_14c661d": {
+   "lab": {
+    "bcubed_precision": 0.689,
+    "bcubed_recall": 0.756,
+    "bcubed_f1": 0.721,
+    "link_f1": 0.761,
+    "segment_link_f1": 0.548,
+    "pred_event_count": 47,
+    "gold_event_count": 22,
+    "singletons": 17,
+    "noise_only_events": 6,
+    "noise_unfiled_rate": 0.8,
+    "noise_singleton_rate": 0.048,
+    "noise_in_real_event_rate": 0.152,
+    "false_unfiled": 7,
+    "hard_decoy_leakage": 0.336,
+    "easy_decoy_leakage": 0.115,
+    "card_fact_recall": 0.4,
+    "person_link_accuracy": 0.313,
+    "home_ndcg5": 0.823
+   },
+   "pm": {
+    "bcubed_precision": 0.663,
+    "bcubed_recall": 0.759,
+    "bcubed_f1": 0.708,
+    "link_f1": 0.754,
+    "segment_link_f1": 0.582,
+    "pred_event_count": 39,
+    "gold_event_count": 21,
+    "singletons": 7,
+    "noise_only_events": 8,
+    "noise_unfiled_rate": 0.631,
+    "noise_singleton_rate": 0.309,
+    "noise_in_real_event_rate": 0.06,
+    "false_unfiled": 2,
+    "hard_decoy_leakage": 0.196,
+    "easy_decoy_leakage": 0.14,
+    "card_fact_recall": 0.826,
+    "person_link_accuracy": 0.292,
+    "home_ndcg5": 0.691
+   },
+   "startup": {
+    "bcubed_precision": 0.654,
+    "bcubed_recall": 0.69,
+    "bcubed_f1": 0.672,
+    "link_f1": 0.73,
+    "segment_link_f1": 0.676,
+    "pred_event_count": 68,
+    "gold_event_count": 20,
+    "singletons": 28,
+    "noise_only_events": 7,
+    "noise_unfiled_rate": 0.433,
+    "noise_singleton_rate": 0.317,
+    "noise_in_real_event_rate": 0.25,
+    "false_unfiled": 2,
+    "hard_decoy_leakage": 0.102,
+    "easy_decoy_leakage": 0.37,
+    "card_fact_recall": 0.667,
+    "person_link_accuracy": 0.27,
+    "home_ndcg5": 0.944
+   },
+   "lab-v3": {
+    "bcubed_precision": 0.703,
+    "bcubed_recall": 0.742,
+    "bcubed_f1": 0.722,
+    "link_f1": 0.768,
+    "segment_link_f1": 0.553,
+    "pred_event_count": 50,
+    "gold_event_count": 22,
+    "singletons": 19,
+    "noise_only_events": 4,
+    "noise_unfiled_rate": 0.79,
+    "noise_singleton_rate": 0.029,
+    "noise_in_real_event_rate": 0.181,
+    "false_unfiled": 6,
+    "hard_decoy_leakage": 0.24,
+    "easy_decoy_leakage": 0.116,
+    "card_fact_recall": 0.467,
+    "person_link_accuracy": 0.315,
+    "home_ndcg5": 0.251
+   }
+  },
+  "src": "v6/quality/QUALITY.md round 1 §3; v6/quality/quality.json before.* / runtime.*; baselines from v5/eval.json scale_runs (scale/SUMMARY.md)"
+ },
+ "consolidation_cost": {
+  "per_library": {
+   "lab": {
+    "passes": 10,
+    "consolidate_calls": 364,
+    "consolidate_prompt_tokens": 3562192,
+    "consolidate_completion_tokens": 56821,
+    "consolidate_p50_s": 8.0,
+    "consolidate_p95_s": 13.8,
+    "rebrief_calls": 118,
+    "rebrief_prompt_tokens": 1290545,
+    "busy_minutes": 21.9,
+    "outcomes": {
+     "invalid": 7,
+     "kept": 40,
+     "merged": 150,
+     "skipped": 3,
+     "unfiled": 28
+    },
+    "organizing_prompt_tokens_v5": 74151570,
+    "overhead_share": 0.065
+   },
+   "pm": {
+    "passes": 8,
+    "consolidate_calls": 340,
+    "consolidate_prompt_tokens": 3230400,
+    "consolidate_completion_tokens": 52935,
+    "consolidate_p50_s": 5.2,
+    "consolidate_p95_s": 9.9,
+    "rebrief_calls": 112,
+    "rebrief_prompt_tokens": 1166064,
+    "busy_minutes": 13.6,
+    "outcomes": {
+     "invalid": 7,
+     "kept": 42,
+     "merged": 148,
+     "skipped": 5,
+     "unfiled": 16
+    },
+    "organizing_prompt_tokens_v5": 73766400,
+    "overhead_share": 0.06
+   },
+   "startup": {
+    "passes": 11,
+    "consolidate_calls": 479,
+    "consolidate_prompt_tokens": 4503980,
+    "consolidate_completion_tokens": 74036,
+    "consolidate_p50_s": 6.8,
+    "consolidate_p95_s": 12.6,
+    "rebrief_calls": 193,
+    "rebrief_prompt_tokens": 1563904,
+    "busy_minutes": 26.3,
+    "outcomes": {
+     "invalid": 19,
+     "kept": 55,
+     "merged": 229,
+     "skipped": 3,
+     "unfiled": 17
+    },
+    "organizing_prompt_tokens_v5": 76660800,
+    "overhead_share": 0.079
+   },
+   "lab-v3": {
+    "passes": 11,
+    "consolidate_calls": 289,
+    "consolidate_prompt_tokens": 2854298,
+    "consolidate_completion_tokens": 45055,
+    "consolidate_p50_s": 8.2,
+    "consolidate_p95_s": 15.6,
+    "rebrief_calls": 80,
+    "rebrief_prompt_tokens": 956200,
+    "busy_minutes": 20.2,
+    "outcomes": {
+     "invalid": 11,
+     "kept": 43,
+     "merged": 93,
+     "skipped": 2,
+     "unfiled": 27
+    },
+    "organizing_prompt_tokens_v5": 74151570,
+    "overhead_share": 0.051
+   }
+  },
+  "small_set_share_of_prompt_tokens": "14–15% (holdout-week-v2), 17% (dev-week-v1)",
+  "src": "v6/quality/QUALITY.md round 1 §4–§5; organizing tokens = v5 per-item prompt tokens × items (v5/eval.json per_skill_latency_tokens)"
+ },
+ "holdout_small_set": {
+  "set": "holdout-week-v2 (46 items, 7 matters, 2 hard decoys)",
+  "v5_headline": {
+   "b3_f1_mean": 0.738,
+   "runs": [
+    0.706,
+    0.771
+   ],
+   "code": "2e532bc",
+   "condition": "eval/run_eval.py --condition skills, no consolidation",
+   "src": "v5/EVAL.md §4"
+  },
+  "v5_final_skill_version": {
+   "b3_f1": 0.782,
+   "runs": [
+    0.782,
+    0.782
+   ],
+   "code": "13c3ae1 (before item-split)",
+   "src": "v5/EVAL.md §3"
+  },
+  "v6_runs": {
+   "h2-base-r1": {
+    "bcubed_precision": 0.84,
+    "bcubed_recall": 0.774,
+    "bcubed_f1": 0.806,
+    "link_f1": 0.796,
+    "segment_link_f1": null,
+    "pred_event_count": 8,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.5,
+    "noise_singleton_rate": 0.5,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.506,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 1.018,
+    "code": "consolidation off (ORGANIZER_CONSOLIDATE=0), same build"
+   },
+   "h2-base-r2": {
+    "bcubed_precision": 0.84,
+    "bcubed_recall": 0.773,
+    "bcubed_f1": 0.806,
+    "link_f1": 0.796,
+    "segment_link_f1": null,
+    "pred_event_count": 8,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.5,
+    "noise_singleton_rate": 0.5,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.529,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 1.033,
+    "code": "consolidation off (ORGANIZER_CONSOLIDATE=0), same build"
+   },
+   "h2-cons-r1": {
+    "bcubed_precision": 0.802,
+    "bcubed_recall": 0.847,
+    "bcubed_f1": 0.824,
+    "link_f1": 0.736,
+    "segment_link_f1": null,
+    "pred_event_count": 6,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.417,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.46,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 0.947,
+    "code": "f4fe3ed (final event-consolidate)"
+   },
+   "h2-cons-r2": {
+    "bcubed_precision": 0.754,
+    "bcubed_recall": 0.869,
+    "bcubed_f1": 0.807,
+    "link_f1": 0.654,
+    "segment_link_f1": null,
+    "pred_event_count": 5,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.771,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.414,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 0.902,
+    "code": "f4fe3ed (final event-consolidate)"
+   },
+   "h2-consA-r1": {
+    "bcubed_precision": 0.757,
+    "bcubed_recall": 0.862,
+    "bcubed_f1": 0.806,
+    "link_f1": 0.686,
+    "segment_link_f1": null,
+    "pred_event_count": 6,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.75,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.448,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 0.886,
+    "code": "14c661d (intermediate design A)"
+   },
+   "h2-consA-r2": {
+    "bcubed_precision": 0.724,
+    "bcubed_recall": 0.83,
+    "bcubed_f1": 0.773,
+    "link_f1": 0.642,
+    "segment_link_f1": null,
+    "pred_event_count": 5,
+    "gold_event_count": 7,
+    "singletons": null,
+    "noise_only_events": null,
+    "noise_unfiled_rate": 0.75,
+    "noise_singleton_rate": 0.25,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.396,
+    "easy_decoy_leakage": null,
+    "card_fact_recall": 0.506,
+    "person_link_accuracy": 0.291,
+    "home_ndcg5": 0.935,
+    "code": "14c661d (intermediate design A)"
+   }
+  },
+  "mask_eval_control": {
+   "code": "ef3392a (privacy-v6, no consolidation)",
+   "b3_f1_runs": [
+    0.806,
+    0.786,
+    0.808
+   ],
+   "src": "v6/privacy/MASK-EVAL.md §2 (zero-effect control, 'off' group)"
+  },
+  "src": "v6/quality/QUALITY.md §4 (round 1); v6/quality/quality.json holdout.*"
+ },
+ "dev_week_v1": {
+  "runs": {
+   "dev-base-r1": {
+    "bcubed_precision": 0.957,
+    "bcubed_recall": 0.666,
+    "bcubed_f1": 0.785,
+    "link_f1": 0.798,
+    "segment_link_f1": null,
+    "pred_event_count": 13,
+    "gold_event_count": 9,
+    "singletons": 2,
+    "noise_only_events": 0,
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.083,
+    "easy_decoy_leakage": 0.0,
+    "card_fact_recall": 0.808,
+    "person_link_accuracy": 0.306,
+    "home_ndcg5": 0.659
+   },
+   "dev-cons-r1": {
+    "bcubed_precision": 0.836,
+    "bcubed_recall": 0.669,
+    "bcubed_f1": 0.743,
+    "link_f1": 0.741,
+    "segment_link_f1": null,
+    "pred_event_count": 9,
+    "gold_event_count": 9,
+    "singletons": 2,
+    "noise_only_events": 0,
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 3,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "card_fact_recall": 0.577,
+    "person_link_accuracy": 0.306,
+    "home_ndcg5": 0.836
+   },
+   "dev-cons-r2": {
+    "bcubed_precision": 0.874,
+    "bcubed_recall": 0.694,
+    "bcubed_f1": 0.774,
+    "link_f1": 0.774,
+    "segment_link_f1": null,
+    "pred_event_count": 7,
+    "gold_event_count": 9,
+    "singletons": 0,
+    "noise_only_events": 0,
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 5,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "card_fact_recall": 0.635,
+    "person_link_accuracy": 0.306,
+    "home_ndcg5": 0.774
+   },
+   "dev-cons-r3": {
+    "bcubed_precision": 0.928,
+    "bcubed_recall": 0.664,
+    "bcubed_f1": 0.774,
+    "link_f1": 0.821,
+    "segment_link_f1": null,
+    "pred_event_count": 11,
+    "gold_event_count": 9,
+    "singletons": 1,
+    "noise_only_events": 0,
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "hard_decoy_leakage": 0.083,
+    "easy_decoy_leakage": 0.0,
+    "card_fact_recall": 0.769,
+    "person_link_accuracy": 0.306,
+    "home_ndcg5": 0.706
+   },
+   "dev-cons-r4": {
+    "bcubed_precision": 0.95,
+    "bcubed_recall": 0.672,
+    "bcubed_f1": 0.787,
+    "link_f1": 0.802,
+    "segment_link_f1": null,
+    "pred_event_count": 11,
+    "gold_event_count": 9,
+    "singletons": 1,
+    "noise_only_events": 0,
+    "noise_unfiled_rate": 1.0,
+    "noise_singleton_rate": 0.0,
+    "noise_in_real_event_rate": 0.0,
+    "false_unfiled": 1,
+    "hard_decoy_leakage": 0.0,
+    "easy_decoy_leakage": 0.0,
+    "card_fact_recall": 0.827,
+    "person_link_accuracy": 0.306,
+    "home_ndcg5": 0.854
+   }
+  },
+  "src": "v6/quality/QUALITY.md round 1 §4"
+ },
+ "item_split": {
+  "lab": {
+   "split": "dev",
+   "v1.1.1_stored": {
+    "single_matter_oversplit_rate": 0.328,
+    "fp": 402,
+    "tn": 822,
+    "split_decision_f1": 0.385,
+    "split_decision_precision": 0.273,
+    "split_decision_recall": 0.654,
+    "matter_recall_in_multi": 0.692,
+    "multi_all_matters_recovered": 0.55,
+    "part_purity_mean": 0.969,
+    "pred_multi": 553,
+    "gold_multi": 231,
+    "items_scored": 1455
+   },
+   "v1.2.0": {
+    "single_matter_oversplit_rate": 0.306,
+    "fp": 374,
+    "tn": 850,
+    "split_decision_f1": 0.402,
+    "split_decision_precision": 0.289,
+    "split_decision_recall": 0.658,
+    "matter_recall_in_multi": 0.701,
+    "multi_all_matters_recovered": 0.571,
+    "part_purity_mean": 0.973,
+    "pred_multi": 526,
+    "gold_multi": 231,
+    "items_scored": 1455,
+    "statuses": {
+     "applied": 1100,
+     "prefilter": 298,
+     "image": 52,
+     "salvaged": 34,
+     "rejected": 24
+    },
+    "seconds": 1138.6,
+    "skill_version": "1.2.0",
+    "prompt_hash": "75bba8fb61ada5cc"
+   },
+   "v1.3.0": {
+    "single_matter_oversplit_rate": 0.206,
+    "fp": 252,
+    "tn": 972,
+    "split_decision_f1": 0.464,
+    "split_decision_precision": 0.367,
+    "split_decision_recall": 0.632,
+    "matter_recall_in_multi": 0.695,
+    "multi_all_matters_recovered": 0.537,
+    "part_purity_mean": 0.971,
+    "pred_multi": 398,
+    "gold_multi": 231,
+    "items_scored": 1455,
+    "statuses": {
+     "applied": 1087,
+     "prefilter": 298,
+     "salvaged": 71,
+     "image": 52
+    },
+    "seconds": 1891.1,
+    "skill_version": "1.3.0",
+    "prompt_hash": "d4c404e8ba541664"
+   }
+  },
+  "pm": {
+   "split": "dev",
+   "v1.1.1_stored": {
+    "single_matter_oversplit_rate": 0.224,
+    "fp": 251,
+    "tn": 868,
+    "split_decision_f1": 0.657,
+    "split_decision_precision": 0.569,
+    "split_decision_recall": 0.779,
+    "matter_recall_in_multi": 0.832,
+    "multi_all_matters_recovered": 0.64,
+    "part_purity_mean": 0.971,
+    "pred_multi": 582,
+    "gold_multi": 425,
+    "items_scored": 1544
+   },
+   "v1.2.0": {
+    "single_matter_oversplit_rate": 0.197,
+    "fp": 221,
+    "tn": 898,
+    "split_decision_f1": 0.675,
+    "split_decision_precision": 0.598,
+    "split_decision_recall": 0.774,
+    "matter_recall_in_multi": 0.829,
+    "multi_all_matters_recovered": 0.645,
+    "part_purity_mean": 0.972,
+    "pred_multi": 550,
+    "gold_multi": 425,
+    "items_scored": 1544,
+    "statuses": {
+     "prefilter": 365,
+     "applied": 1152,
+     "image": 55,
+     "rejected": 18,
+     "salvaged": 10
+    },
+    "seconds": 1358.9,
+    "skill_version": "1.2.0",
+    "prompt_hash": "75bba8fb61ada5cc"
+   },
+   "v1.3.0": {
+    "single_matter_oversplit_rate": 0.106,
+    "fp": 119,
+    "tn": 1000,
+    "split_decision_f1": 0.745,
+    "split_decision_precision": 0.731,
+    "split_decision_recall": 0.76,
+    "matter_recall_in_multi": 0.808,
+    "multi_all_matters_recovered": 0.607,
+    "part_purity_mean": 0.965,
+    "pred_multi": 442,
+    "gold_multi": 425,
+    "items_scored": 1544,
+    "statuses": {
+     "prefilter": 365,
+     "applied": 1137,
+     "image": 55,
+     "salvaged": 43
+    },
+    "seconds": 1829.2,
+    "skill_version": "1.3.0",
+    "prompt_hash": "d4c404e8ba541664"
+   }
+  },
+  "startup": {
+   "split": "held-out",
+   "v1.1.1_stored": {
+    "single_matter_oversplit_rate": 0.302,
+    "fp": 355,
+    "tn": 820,
+    "split_decision_f1": 0.562,
+    "split_decision_precision": 0.444,
+    "split_decision_recall": 0.767,
+    "matter_recall_in_multi": 0.716,
+    "multi_all_matters_recovered": 0.577,
+    "part_purity_mean": 0.933,
+    "pred_multi": 638,
+    "gold_multi": 369,
+    "items_scored": 1544
+   },
+   "v1.2.0": {
+    "single_matter_oversplit_rate": 0.275,
+    "fp": 323,
+    "tn": 852,
+    "split_decision_f1": 0.573,
+    "split_decision_precision": 0.463,
+    "split_decision_recall": 0.753,
+    "matter_recall_in_multi": 0.721,
+    "multi_all_matters_recovered": 0.593,
+    "part_purity_mean": 0.935,
+    "pred_multi": 601,
+    "gold_multi": 369,
+    "items_scored": 1544,
+    "statuses": {
+     "prefilter": 415,
+     "applied": 1082,
+     "salvaged": 20,
+     "rejected": 28,
+     "image": 55
+    },
+    "seconds": 2922.1,
+    "skill_version": "1.2.0",
+    "prompt_hash": "75bba8fb61ada5cc"
+   },
+   "v1.3.0": {
+    "single_matter_oversplit_rate": 0.177,
+    "fp": 208,
+    "tn": 967,
+    "split_decision_f1": 0.65,
+    "split_decision_precision": 0.572,
+    "split_decision_recall": 0.753,
+    "matter_recall_in_multi": 0.72,
+    "multi_all_matters_recovered": 0.58,
+    "part_purity_mean": 0.932,
+    "pred_multi": 486,
+    "gold_multi": 369,
+    "items_scored": 1544,
+    "statuses": {
+     "prefilter": 415,
+     "applied": 1093,
+     "salvaged": 37,
+     "image": 55
+    },
+    "seconds": 2501.5,
+    "skill_version": "1.3.0",
+    "prompt_hash": "d4c404e8ba541664"
+   }
+  },
+  "src": "v6/quality/QUALITY.md round 2 §3 (split only, eval/tools/split_scale.py); v6/quality/quality.json round2.split",
+  "note": "dev (lab, pm) known_matters use the final event titles, optimistic for early items; startup (held-out) ran once after the design was fixed"
+ },
+ "people": {
+  "lab": {
+   "before": {
+    "person_link_degraded": 0.301,
+    "item_level_recall": 0.168,
+    "item_level_precision": 0.971,
+    "shown_person_records": 157,
+    "not_a_scenario_person": 85,
+    "records_per_true_person": 2.4,
+    "true_people_found": 30,
+    "true_people": 35
+   },
+   "after": {
+    "person_link_degraded": 0.447,
+    "item_level_recall": 0.655,
+    "item_level_precision": 0.969,
+    "shown_person_records": 65,
+    "not_a_scenario_person": 22,
+    "records_per_true_person": 1.34,
+    "true_people_found": 32,
+    "true_people": 35
+   }
+  },
+  "pm": {
+   "before": {
+    "person_link_degraded": 0.29,
+    "item_level_recall": 0.189,
+    "item_level_precision": 0.803,
+    "shown_person_records": 216,
+    "not_a_scenario_person": 77,
+    "records_per_true_person": 3.86,
+    "true_people_found": 36,
+    "true_people": 41
+   },
+   "after": {
+    "person_link_degraded": 0.477,
+    "item_level_recall": 0.689,
+    "item_level_precision": 0.305,
+    "shown_person_records": 102,
+    "not_a_scenario_person": 9,
+    "records_per_true_person": 2.58,
+    "true_people_found": 36,
+    "true_people": 41
+   }
+  },
+  "startup": {
+   "before": {
+    "person_link_degraded": 0.269,
+    "item_level_recall": 0.134,
+    "item_level_precision": 0.954,
+    "shown_person_records": 110,
+    "not_a_scenario_person": 53,
+    "records_per_true_person": 1.39,
+    "true_people_found": 41,
+    "true_people": 42
+   },
+   "after": {
+    "person_link_degraded": 0.417,
+    "item_level_recall": 0.647,
+    "item_level_precision": 0.997,
+    "shown_person_records": 52,
+    "not_a_scenario_person": 7,
+    "records_per_true_person": 1.07,
+    "true_people_found": 42,
+    "true_people": 42
+   }
+  },
+  "lab-v3": {
+   "before": {
+    "person_link_degraded": 0.304,
+    "item_level_recall": 0.244,
+    "item_level_precision": 1.0,
+    "shown_person_records": 90,
+    "not_a_scenario_person": 43,
+    "records_per_true_person": 1.57,
+    "true_people_found": 30,
+    "true_people": 35
+   },
+   "after": {
+    "person_link_degraded": 0.458,
+    "item_level_recall": 0.654,
+    "item_level_precision": 0.963,
+    "shown_person_records": 65,
+    "not_a_scenario_person": 22,
+    "records_per_true_person": 1.34,
+    "true_people_found": 32,
+    "true_people": 35
+   }
+  },
+  "src": "v6/quality/QUALITY.md round 2 §3 (runtime path, people pass after the fact; person-resolve 1.2.0, code 8138c7f)",
+  "note": "pm item-level precision 0.305 is an artefact of pm's incomplete gold person list: 97.9% of pm links are scenario people written in the item text"
+ },
+ "people_pass_cost": {
+  "person_resolve_calls": {
+   "lab": 78,
+   "pm": 155,
+   "startup": 65,
+   "lab-v3": 77
+  },
+  "prompt_tokens_M": {
+   "lab": 0.2,
+   "pm": 0.41,
+   "startup": 0.17
+  },
+  "item_split_extra_prompt_tokens_per_call": 1200,
+  "src": "v6/quality/QUALITY.md round 2 §3, §5"
+ },
+ "heldout_full_run": {
+  "startup-A": {
+   "bcubed_precision": 0.693,
+   "bcubed_recall": 0.718,
+   "bcubed_f1": 0.705,
+   "link_f1": 0.767,
+   "segment_link_f1": 0.703,
+   "pred_event_count": 61,
+   "gold_event_count": 20,
+   "singletons": null,
+   "noise_only_events": null,
+   "noise_unfiled_rate": 0.45,
+   "noise_singleton_rate": 0.325,
+   "noise_in_real_event_rate": 0.225,
+   "false_unfiled": 1,
+   "hard_decoy_leakage": 0.123,
+   "easy_decoy_leakage": 0.235,
+   "card_fact_recall": 0.667,
+   "person_link_accuracy": 0.28,
+   "home_ndcg5": null,
+   "oversplit": 0.279,
+   "oversplit_parts_in_several_events": 141,
+   "matter_recall_in_multi": 0.717,
+   "person_item_level_recall": 0.135,
+   "person_item_level_precision": 0.866,
+   "shown_person_records": 111,
+   "not_a_scenario_person": 54,
+   "wall_s": 18642.3,
+   "items_per_min": 5.15,
+   "prompt_tokens_total": 57657230,
+   "consolidate_calls": 463,
+   "consolidate_prompt_tokens": 3617702,
+   "consolidate_share_of_prompt_tokens": 0.063,
+   "person_calls": 0,
+   "person_prompt_tokens": 0,
+   "split_prompt_tokens": 4368581
+  },
+  "startup-B": {
+   "bcubed_precision": 0.737,
+   "bcubed_recall": 0.747,
+   "bcubed_f1": 0.742,
+   "link_f1": 0.804,
+   "segment_link_f1": 0.748,
+   "pred_event_count": 66,
+   "gold_event_count": 20,
+   "singletons": null,
+   "noise_only_events": null,
+   "noise_unfiled_rate": 0.425,
+   "noise_singleton_rate": 0.383,
+   "noise_in_real_event_rate": 0.192,
+   "false_unfiled": 0,
+   "hard_decoy_leakage": 0.073,
+   "easy_decoy_leakage": 0.475,
+   "card_fact_recall": 0.65,
+   "person_link_accuracy": 0.481,
+   "home_ndcg5": null,
+   "oversplit": 0.135,
+   "oversplit_parts_in_several_events": 75,
+   "matter_recall_in_multi": 0.729,
+   "person_item_level_recall": 0.735,
+   "person_item_level_precision": 0.998,
+   "shown_person_records": 52,
+   "not_a_scenario_person": 7,
+   "wall_s": 16068.6,
+   "items_per_min": 5.97,
+   "prompt_tokens_total": 54552040,
+   "consolidate_calls": 419,
+   "consolidate_prompt_tokens": 3275290,
+   "consolidate_share_of_prompt_tokens": 0.06,
+   "person_calls": 68,
+   "person_prompt_tokens": 169277,
+   "split_prompt_tokens": 6383129
+  },
+  "code": {
+   "A": "8ecc90f (item-split 1.2.0, no people pass; event-consolidate on)",
+   "B": "abd9cf0 (item-split 1.3.0, person-resolve 1.1.0; event-consolidate on)"
+  },
+  "driver": "eval/run_eval.py --stream --workers 4 --owner-aliases scenario (Spark-side driver, replay clock); not the same path as the Mac-harness scale states, compare A with B only",
+  "src": "v6/quality/QUALITY.md round 2 §4; v6/quality/quality.json round2.full"
+ },
+ "skill_eval_cases_v6": {
+  "event-consolidate (final f4fe3ed)": {
+   "cases": 12,
+   "all_pass": 12,
+   "pass_rate": 1.0,
+   "n": 3,
+   "src": "v6/quality/QUALITY.md round 1 §7"
+  },
+  "item-split 1.3.0": {
+   "cases": 10,
+   "all_pass": 10,
+   "pass_rate": 1.0,
+   "n": 3,
+   "src": "v6/quality/QUALITY.md round 2 §3"
+  },
+  "person-resolve 1.2.0": {
+   "cases": 15,
+   "all_pass": 15,
+   "pass_rate": 1.0,
+   "n": 3,
+   "src": "v6/quality/QUALITY.md round 2 §3"
+  }
+ },
+ "masking_eval": {
+  "code": "organizer claude/privacy-v6 ef3392a (masking spec v1); eval/run_eval.py --condition skills, replay clock, workers 1; Qwen3.6-35B-A3B NVFP4, temperature 0",
+  "sets": {
+   "numbers": "holdout-week-v2-numbers: holdout-week-v2 with 37 synthetic identifier occurrences (26 distinct values) written into 25 of 46 items",
+   "holdout": "holdout-week-v2 itself: contains no maskable value, so both groups send byte-identical input (zero-effect control)",
+   "probe": "mask-probe: 13 items, 5 matters where the number is the content (restoration probe)"
+  },
+  "per_run": [
+   {
+    "set": "holdout",
+    "mask": "off",
+    "repeat": 1,
+    "bcubed_f1": 0.8058,
+    "link_f1": 0.7963,
+    "card_fact_recall": 0.5632,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 11.7
+   },
+   {
+    "set": "holdout",
+    "mask": "off",
+    "repeat": 2,
+    "bcubed_f1": 0.786,
+    "link_f1": 0.7664,
+    "card_fact_recall": 0.4713,
+    "hard_decoy_leakage": 0.1667,
+    "s_per_item": 16.2
+   },
+   {
+    "set": "holdout",
+    "mask": "off",
+    "repeat": 3,
+    "bcubed_f1": 0.8081,
+    "link_f1": 0.7358,
+    "card_fact_recall": 0.4943,
+    "hard_decoy_leakage": 0.25,
+    "s_per_item": 16.7
+   },
+   {
+    "set": "holdout",
+    "mask": "on",
+    "repeat": 1,
+    "bcubed_f1": 0.797,
+    "link_f1": 0.8148,
+    "card_fact_recall": 0.4598,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 11.4
+   },
+   {
+    "set": "holdout",
+    "mask": "on",
+    "repeat": 2,
+    "bcubed_f1": 0.7295,
+    "link_f1": 0.7778,
+    "card_fact_recall": 0.5517,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 16.5
+   },
+   {
+    "set": "holdout",
+    "mask": "on",
+    "repeat": 3,
+    "bcubed_f1": 0.7599,
+    "link_f1": 0.8148,
+    "card_fact_recall": 0.5632,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 17.5
+   },
+   {
+    "set": "numbers",
+    "mask": "off",
+    "repeat": 1,
+    "bcubed_f1": 0.804,
+    "link_f1": 0.8073,
+    "card_fact_recall": 0.5057,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 11.7
+   },
+   {
+    "set": "numbers",
+    "mask": "off",
+    "repeat": 2,
+    "bcubed_f1": 0.7214,
+    "link_f1": 0.7593,
+    "card_fact_recall": 0.4713,
+    "hard_decoy_leakage": 0.0833,
+    "s_per_item": 12.7
+   },
+   {
+    "set": "numbers",
+    "mask": "off",
+    "repeat": 3,
+    "bcubed_f1": 0.8057,
+    "link_f1": 0.789,
+    "card_fact_recall": 0.5402,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 12.8
+   },
+   {
+    "set": "numbers",
+    "mask": "off",
+    "repeat": 4,
+    "bcubed_f1": 0.7968,
+    "link_f1": 0.8073,
+    "card_fact_recall": 0.5977,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 18.0
+   },
+   {
+    "set": "numbers",
+    "mask": "off",
+    "repeat": 5,
+    "bcubed_f1": 0.8117,
+    "link_f1": 0.789,
+    "card_fact_recall": 0.4598,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 12.4
+   },
+   {
+    "set": "numbers",
+    "mask": "on",
+    "repeat": 1,
+    "bcubed_f1": 0.7921,
+    "link_f1": 0.7706,
+    "card_fact_recall": 0.4828,
+    "hard_decoy_leakage": 0.0833,
+    "s_per_item": 12.0
+   },
+   {
+    "set": "numbers",
+    "mask": "on",
+    "repeat": 2,
+    "bcubed_f1": 0.795,
+    "link_f1": 0.7963,
+    "card_fact_recall": 0.4943,
+    "hard_decoy_leakage": 0.0833,
+    "s_per_item": 12.0
+   },
+   {
+    "set": "numbers",
+    "mask": "on",
+    "repeat": 3,
+    "bcubed_f1": 0.7893,
+    "link_f1": 0.6852,
+    "card_fact_recall": 0.4023,
+    "hard_decoy_leakage": 0.3333,
+    "s_per_item": 12.4
+   },
+   {
+    "set": "numbers",
+    "mask": "on",
+    "repeat": 4,
+    "bcubed_f1": 0.7651,
+    "link_f1": 0.7963,
+    "card_fact_recall": 0.5402,
+    "hard_decoy_leakage": 0.0833,
+    "s_per_item": 17.7
+   },
+   {
+    "set": "numbers",
+    "mask": "on",
+    "repeat": 5,
+    "bcubed_f1": 0.797,
+    "link_f1": 0.8073,
+    "card_fact_recall": 0.6207,
+    "hard_decoy_leakage": 0.0,
+    "s_per_item": 12.4
+   },
+   {
+    "set": "probe",
+    "mask": "off",
+    "repeat": 1,
+    "bcubed_f1": 1.0,
+    "link_f1": 1.0,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 8.9
+   },
+   {
+    "set": "probe",
+    "mask": "off",
+    "repeat": 2,
+    "bcubed_f1": 1.0,
+    "link_f1": 1.0,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 9.2
+   },
+   {
+    "set": "probe",
+    "mask": "off",
+    "repeat": 3,
+    "bcubed_f1": 0.9388,
+    "link_f1": 0.96,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 9.0
+   },
+   {
+    "set": "probe",
+    "mask": "on",
+    "repeat": 1,
+    "bcubed_f1": 0.9388,
+    "link_f1": 0.96,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 8.8
+   },
+   {
+    "set": "probe",
+    "mask": "on",
+    "repeat": 2,
+    "bcubed_f1": 1.0,
+    "link_f1": 1.0,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 9.1
+   },
+   {
+    "set": "probe",
+    "mask": "on",
+    "repeat": 3,
+    "bcubed_f1": 1.0,
+    "link_f1": 1.0,
+    "card_fact_recall": null,
+    "hard_decoy_leakage": null,
+    "s_per_item": 10.0
+   }
+  ],
+  "aggregate": {
+   "numbers": {
+    "off": {
+     "bcubed_f1": {
+      "n": 5,
+      "mean": 0.788,
+      "sd": 0.038,
+      "values": [
+       0.804,
+       0.721,
+       0.806,
+       0.797,
+       0.812
+      ]
+     },
+     "link_f1": {
+      "n": 5,
+      "mean": 0.79,
+      "sd": 0.02,
+      "values": [
+       0.807,
+       0.759,
+       0.789,
+       0.807,
+       0.789
+      ]
+     },
+     "card_fact_recall": {
+      "n": 5,
+      "mean": 0.515,
+      "sd": 0.056,
+      "values": [
+       0.506,
+       0.471,
+       0.54,
+       0.598,
+       0.46
+      ]
+     },
+     "hard_decoy_leakage": {
+      "n": 5,
+      "mean": 0.017,
+      "sd": 0.037,
+      "values": [
+       0.0,
+       0.083,
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "on": {
+     "bcubed_f1": {
+      "n": 5,
+      "mean": 0.788,
+      "sd": 0.013,
+      "values": [
+       0.792,
+       0.795,
+       0.789,
+       0.765,
+       0.797
+      ]
+     },
+     "link_f1": {
+      "n": 5,
+      "mean": 0.771,
+      "sd": 0.05,
+      "values": [
+       0.771,
+       0.796,
+       0.685,
+       0.796,
+       0.807
+      ]
+     },
+     "card_fact_recall": {
+      "n": 5,
+      "mean": 0.508,
+      "sd": 0.08,
+      "values": [
+       0.483,
+       0.494,
+       0.402,
+       0.54,
+       0.621
+      ]
+     },
+     "hard_decoy_leakage": {
+      "n": 5,
+      "mean": 0.117,
+      "sd": 0.126,
+      "values": [
+       0.083,
+       0.083,
+       0.333,
+       0.083,
+       0.0
+      ]
+     }
+    }
+   },
+   "holdout": {
+    "off": {
+     "bcubed_f1": {
+      "n": 3,
+      "mean": 0.8,
+      "sd": 0.012,
+      "values": [
+       0.806,
+       0.786,
+       0.808
+      ]
+     },
+     "link_f1": {
+      "n": 3,
+      "mean": 0.766,
+      "sd": 0.03,
+      "values": [
+       0.796,
+       0.766,
+       0.736
+      ]
+     },
+     "card_fact_recall": {
+      "n": 3,
+      "mean": 0.51,
+      "sd": 0.048,
+      "values": [
+       0.563,
+       0.471,
+       0.494
+      ]
+     },
+     "hard_decoy_leakage": {
+      "n": 3,
+      "mean": 0.139,
+      "sd": 0.127,
+      "values": [
+       0.0,
+       0.167,
+       0.25
+      ]
+     }
+    },
+    "on": {
+     "bcubed_f1": {
+      "n": 3,
+      "mean": 0.762,
+      "sd": 0.034,
+      "values": [
+       0.797,
+       0.729,
+       0.76
+      ]
+     },
+     "link_f1": {
+      "n": 3,
+      "mean": 0.802,
+      "sd": 0.021,
+      "values": [
+       0.815,
+       0.778,
+       0.815
+      ]
+     },
+     "card_fact_recall": {
+      "n": 3,
+      "mean": 0.525,
+      "sd": 0.057,
+      "values": [
+       0.46,
+       0.552,
+       0.563
+      ]
+     },
+     "hard_decoy_leakage": {
+      "n": 3,
+      "mean": 0.0,
+      "sd": 0.0,
+      "values": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    }
+   },
+   "probe": {
+    "off": {
+     "bcubed_f1": {
+      "n": 3,
+      "mean": 0.98,
+      "sd": 0.035,
+      "values": [
+       1.0,
+       1.0,
+       0.939
+      ]
+     },
+     "link_f1": {
+      "n": 3,
+      "mean": 0.987,
+      "sd": 0.023,
+      "values": [
+       1.0,
+       1.0,
+       0.96
+      ]
+     },
+     "card_fact_recall": null,
+     "hard_decoy_leakage": null
+    },
+    "on": {
+     "bcubed_f1": {
+      "n": 3,
+      "mean": 0.98,
+      "sd": 0.035,
+      "values": [
+       0.939,
+       1.0,
+       1.0
+      ]
+     },
+     "link_f1": {
+      "n": 3,
+      "mean": 0.987,
+      "sd": 0.023,
+      "values": [
+       0.96,
+       1.0,
+       1.0
+      ]
+     },
+     "card_fact_recall": null,
+     "hard_decoy_leakage": null
+    }
+   }
+  },
+  "paired_calls_numbers_set": {
+   "event_assign": {
+    "calls": 111,
+    "same_as_unmasked": 105,
+    "same_as_replay": 104
+   },
+   "event_brief": {
+    "calls": 128,
+    "same_fact_set_as_unmasked": 80,
+    "same_fact_set_as_replay": 82,
+    "gold_facts_named_unmasked": 254,
+    "gold_facts_named_replay": 254
+   },
+   "item_split": {
+    "calls": 49,
+    "same_as_unmasked": 40,
+    "same_as_replay": 44
+   },
+   "note": "each masked call re-sent in the identical context twice: once with originals restored (= unmasked), once unchanged (= server noise)"
+  },
+  "wire": {
+   "occurrences_masked": "36/37",
+   "missed": "one 4-digit verification code 7 characters after its keyword (v1 allows 6)",
+   "raw_values_in_model_requests": {
+    "off": "26/26",
+    "on": "1/26"
+   },
+   "probe_raw_values_in_requests_on": 0
+  },
+  "restoration": {
+   "model_outputs_checked": 1554,
+   "restored": 23,
+   "broken_placeholders": 2,
+   "unknown_or_malformed": 0,
+   "raw_numbers": 0,
+   "broken_example": "an item-split gist wrote a verification-code placeholder without its brackets (2 of 7 masked runs on the numbers set); not restorable on the Mac, open"
+  },
+  "retrieval_separation": {
+   "holdout_raw": 0.1756,
+   "numbers_raw": 0.1746,
+   "numbers_masked": 0.1751
+  },
+  "speed": {
+   "mac_ms_per_item_python_reference": 0.09,
+   "spark_s_per_item": {
+    "off": 13.5,
+    "on": 13.3
+   }
+  },
+  "src": "v6/privacy/MASK-EVAL.md §1–§5; v6/privacy/mask-eval.json"
+ },
+ "privacy": {
+  "masking_coverage": {
+   "review_formats": {
+    "before_fix": "0/30",
+    "after_fix": "30/30",
+    "spec": "masking spec v2 (Spark 3c6dfb1/21ced44/0ed9f7e, Mac 5113570)",
+    "src": "v6/review/FINDINGS.md F8"
+   },
+   "shared_vectors": {
+    "v1": 123,
+    "v2": 184,
+    "identical_in_swift_and_python": true,
+    "src": "v6/PRIVACY-CONTRACT.md amendment §3; v6/privacy/MAC.md; v6/privacy/SPARK.md"
+   },
+   "swift_python_agreement_review": "430/430 inputs identical (v1)",
+   "swift_python_agreement_src": "v6/review/FINDINGS.md 'Checked and holding'",
+   "corpus_precision": {
+    "value": "1,302/1,303 (99.9%)",
+    "right_label": "1,301/1,303 (99.8%)",
+    "items": 4971,
+    "characters": 3145297,
+    "matches": 1303,
+    "idempotence_failures": 0,
+    "rules": "spec v1 (not re-run on v2)",
+    "src": "v6/mask/corpus_report.md"
+   },
+   "stress_set_occurrences_masked": {
+    "value": "36/37",
+    "rules": "spec v1 (ef3392a)",
+    "src": "v6/privacy/MASK-EVAL.md §4"
+   }
+  },
+  "screenshot_redaction": {
+   "synthetic_layouts": 13,
+   "legible_before_fix": 7,
+   "legible_after_fix": 0,
+   "spark_model_read_a_number_after_fix": 0,
+   "note": "probe of the review; after the fix the Spark vision model (Qwen3.6) read no number from any of the 13 redacted copies",
+   "src": "v6/review/FINDINGS.md F2; v6/privacy/MAC.md (review fixes)"
+  },
+  "e2e": {
+   "final": "68/68",
+   "code": "both claude/privacy-v6 branches with the review fixes",
+   "src": "v6/privacy/SPARK.md (update); v6/privacy/MAC.md (update); v6/review/FINDINGS.md",
+   "before_fixes": "67/67 (first green run, found and fixed one Mac redaction bug)",
+   "before_fixes_src": "v6/privacy/E2E.md",
+   "items": "5 synthetic items (dictation, pasted text, PDF, chat screenshot, xlsx), 7 sentinel identifiers each",
+   "disk_scan": "0 needle hits in 14,495 files; decrypted store 0 sentinel hits; positive controls found"
+  },
+  "review": {
+   "findings": 16,
+   "high": 3,
+   "medium": 7,
+   "low": 6,
+   "fixed": 14,
+   "skipped_with_reason": [
+    "F9 (phone inbox, handled by the sealed phone path)",
+    "F13 (short placeholders reversible with the key the Spark holds; documented)"
+   ],
+   "residue": "F1: a process of the same Spark account can impersonate the organizer; only a dedicated account prevents it",
+   "src": "v6/review/FINDINGS.md"
+  },
+  "spark_storage": {
+   "items": 1510,
+   "bytes_per_1000_items_before": 64925669,
+   "bytes_per_1000_items_after": 60422781,
+   "db_bytes_before": 98037760,
+   "db_bytes_after_encrypted": 91238400,
+   "blob_bytes_before": 8330144,
+   "blob_bytes_after": 0,
+   "embedding_bytes": 58349491,
+   "embedding_share_after": 0.64,
+   "encryption_overhead_pct": 2.1,
+   "reduction_pct": 6.9,
+   "measured_on": "a copy of the lab demo state (1,510 items, 3,246 revisions)",
+   "src": "v6/privacy/SPARK.md 'Storage numbers'; organizer repo eval/privacy/storage-lab.json"
+  },
+  "mac_dedup": {
+   "lab_files": 78,
+   "library_bytes": 15183059,
+   "second_intake_extra_bytes": 0,
+   "without_dedup": 30366118,
+   "src": "v6/privacy/MAC.md 'Numbers'"
+  }
+ },
+ "phone": {
+  "e2e": {
+   "final": "66/66",
+   "run1": "64/64 (two phone bugs found, fixed)",
+   "sealed_entries": 3,
+   "raw_scan_files": 9234,
+   "raw_scan_hits": 0,
+   "time_equals_phone_created_at": "Δ 0.0 s",
+   "after_unpair": "next send refused (authentication), nothing reached the inbox",
+   "limits": [
+    "dictation used the DEBUG scripted transcript (the simulator has no on-device speech models)",
+    "not run on a physical iPhone; on-device zh-CN recognition unverified",
+    "cellular / other networks and BGAppRefreshTask timing not tested"
+   ],
+   "src": "v6/phone/E2E.md"
+  },
+  "tests": {
+   "phone_packages_macos": "141 (APP stage); 94 after the E2E fixes (MindloomPhoneKit package)",
+   "ios_simulator": "157 run, 156 passed, 1 skipped (on-device recognition)",
+   "mac_link_package": "819 tests, 0 failures, 18 skipped",
+   "spark_phone_link": "379 passed, 1 skipped (Mac); 377 passed, 1 skipped (Spark)",
+   "src": "v6/phone/APP.md; v6/phone/E2E.md; v6/phone/MAC-LINK.md; v6/phone/SPARK-LINK.md"
+  }
+ },
+ "tests": [
+  {
+   "suite": "Spark organizer, claude/quality-v6 (round 2)",
+   "result": "416 passed, 1 skipped",
+   "src": "v6/quality/QUALITY.md round 2 §6"
+  },
+  {
+   "suite": "Spark organizer, claude/privacy-v6 with review fixes (Mac, Python 3.12)",
+   "result": "401 passed, 1 skipped, 1 xfailed",
+   "src": "v6/privacy/SPARK.md"
+  },
+  {
+   "suite": "Spark organizer, claude/privacy-v6 with review fixes (aarch64 Spark)",
+   "result": "402 passed, 1 xfailed",
+   "src": "v6/privacy/SPARK.md"
+  },
+  {
+   "suite": "Mac Swift package, claude/privacy-v6 with review fixes",
+   "result": "801 passed, 18 skipped, 0 failed",
+   "src": "v6/privacy/MAC.md"
+  },
+  {
+   "suite": "Mac Swift package, claude/phone-link-v6",
+   "result": "819 tests, 0 failures, 18 skipped",
+   "src": "v6/phone/MAC-LINK.md"
+  },
+  {
+   "suite": "iPhone app, iOS 26.5 simulator",
+   "result": "157 run, 156 passed, 1 skipped",
+   "src": "v6/phone/APP.md"
+  },
+  {
+   "suite": "Privacy E2E Mac ↔ Spark",
+   "result": "68/68 checks",
+   "src": "v6/privacy/SPARK.md"
+  },
+  {
+   "suite": "Phone E2E iPhone (simulator) → relay → Spark → Mac",
+   "result": "66/66 checks",
+   "src": "v6/phone/E2E.md"
+  }
+ ],
+ "v5_carried_over": {
+  "note": "measured in v5 (2026-09-29) and not re-measured in v6; copied from v5/eval.json",
+  "scale_runs_v5": {
+   "source": "<path> (+ lab|startup|pm/REPORT.md, score/*.json)",
+   "scenarios": {
+    "lab": {
+     "split": "dev",
+     "items": 1510,
+     "true_events": 22,
+     "true_people": 36
+    },
+    "startup": {
+     "split": "holdout",
+     "items": 1600,
+     "true_events": 20,
+     "true_people": 43
+    },
+    "pm": {
+     "split": "dev",
+     "items": 1600,
+     "true_events": 21,
+     "true_people": 42
+    }
+   },
+   "metrics": {
+    "b3_f1": {
+     "lab": 0.642,
+     "startup": 0.584,
+     "pm": 0.606
+    },
+    "b3_f1_baseline": {
+     "lab": 0.179,
+     "startup": 0.266,
+     "pm": 0.299
+    },
+    "b3_precision": {
+     "lab": 0.708,
+     "startup": 0.678,
+     "pm": 0.679
+    },
+    "b3_recall": {
+     "lab": 0.588,
+     "startup": 0.514,
+     "pm": 0.547
+    },
+    "link_f1": {
+     "lab": 0.63,
+     "startup": 0.582,
+     "pm": 0.563
+    },
+    "link_f1_baseline": {
+     "lab": 0.136,
+     "startup": 0.116,
+     "pm": 0.186
+    },
+    "segment_link_f1": {
+     "lab": 0.453,
+     "startup": 0.557,
+     "pm": 0.438
+    },
+    "segment_link_f1_baseline": {
+     "lab": 0.083,
+     "startup": 0.094,
+     "pm": 0.127
+    },
+    "lookalike_leak_hard": {
+     "lab": 0.225,
+     "startup": 0.068,
+     "pm": 0.14
+    },
+    "lookalike_leak_hard_baseline": {
+     "lab": 0.258,
+     "startup": 0.833,
+     "pm": 0.92
+    },
+    "lookalike_leak_easy": {
+     "lab": 0.085,
+     "startup": 0.334,
+     "pm": 0.091
+    },
+    "lookalike_leak_easy_baseline": {
+     "lab": 0.24,
+     "startup": 0.809,
+     "pm": 0.889
+    },
+    "noise_unfiled": {
+     "lab": 0.61,
+     "startup": 0.317,
+     "pm": 0.43
+    },
+    "noise_own_event": {
+     "lab": 0.276,
+     "startup": 0.583,
+     "pm": 0.523
+    },
+    "noise_into_real_event": {
+     "lab": 0.114,
+     "startup": 0.1,
+     "pm": 0.047
+    },
+    "pred_events": {
+     "lab": 242,
+     "startup": 348,
+     "pm": 227
+    },
+    "single_item_events": {
+     "lab": 143,
+     "startup": 233,
+     "pm": 109
+    },
+    "person_records": {
+     "lab": 171,
+     "startup": 116,
+     "pm": 222
+    },
+    "person_link_accuracy_fallback": {
+     "lab": 0.255,
+     "startup": 0.232,
+     "pm": 0.244
+    },
+    "status_fact_recall": {
+     "lab": 0.267,
+     "startup": 0.35,
+     "pm": 0.565
+    },
+    "card_fact_recall": {
+     "lab": 0.489,
+     "startup": 0.583,
+     "pm": 0.652
+    },
+    "plan_as_done_guard_truth": {
+     "lab": "0/0",
+     "startup": "0/0",
+     "pm": "0/1"
+    },
+    "unsupported_completion": {
+     "lab": 1,
+     "startup": 6,
+     "pm": 0
+    },
+    "relative_dates": {
+     "lab": 8,
+     "startup": 1,
+     "pm": 3
+    },
+    "unsourced_dates": {
+     "lab": 0,
+     "startup": 0,
+     "pm": 2
+    },
+    "stale_facts": {
+     "lab": "2/47",
+     "startup": "0/21",
+     "pm": "0/26"
+    },
+    "home_ndcg5": {
+     "lab": 0.128,
+     "startup": 0.351,
+     "pm": 0.343
+    },
+    "home_ndcg5_recency_only": {
+     "lab": 0.206,
+     "startup": 0.279,
+     "pm": 0.336
+    },
+    "questions_asked": {
+     "lab": 4,
+     "startup": 4,
+     "pm": 4
+    },
+    "items_per_min": {
+     "lab": 4.0,
+     "startup": 3.85,
+     "pm": 3.71
+    },
+    "gpu_util_mean_pct": {
+     "lab": 93.6,
+     "startup": 94.1,
+     "pm": 87.0
+    }
+   }
+  },
+  "skills_ablation": {
+   "source": "skills/*/BENCHMARK.md final sections (code 13c3ae1 for assign/brief/rank, image-read 1.0.0, file-read 1.0.0); 'without skill text' = eval_common.strip_skill_text (same model, schema, validators, retries)",
+   "rows": [
+    {
+     "skill": "event-assign",
+     "metric": "B³ F1",
+     "set": "holdout-week-v2 (46)",
+     "with": 0.782,
+     "without": 0.612,
+     "with_runs": [
+      0.782,
+      0.782
+     ],
+     "without_runs": [
+      0.575,
+      0.649
+     ],
+     "baselines": {
+      "vector τ=0.60": 0.336,
+      "lexical τ=0.41": 0.463
+     },
+     "src": "skills/event-assign/BENCHMARK.md"
+    },
+    {
+     "skill": "event-assign",
+     "metric": "B³ F1",
+     "set": "dev-week-v1 (82)",
+     "with": 0.748,
+     "without": 0.673,
+     "with_runs": [
+      0.763,
+      0.733
+     ],
+     "without_runs": [
+      0.697,
+      0.65
+     ],
+     "baselines": {
+      "vector": 0.53,
+      "lexical": 0.495
+     },
+     "src": "skills/event-assign/BENCHMARK.md"
+    },
+    {
+     "skill": "event-assign",
+     "metric": "first-try valid output",
+     "set": "holdout-week-v2",
+     "with": "45/46, 45/46",
+     "without": "38/46, 37/48",
+     "src": "skills/event-assign/BENCHMARK.md"
+    },
+    {
+     "skill": "event-brief",
+     "metric": "card fact recall",
+     "set": "holdout-week-v2",
+     "with": 0.511,
+     "without": 0.431,
+     "with_runs": [
+      0.517,
+      0.506
+     ],
+     "without_runs": [
+      0.402,
+      0.46
+     ],
+     "src": "skills/event-brief/BENCHMARK.md"
+    },
+    {
+     "skill": "event-brief",
+     "metric": "card fact recall",
+     "set": "dev-week-v1",
+     "with": 0.75,
+     "without": 0.644,
+     "src": "skills/event-brief/BENCHMARK.md"
+    },
+    {
+     "skill": "event-brief",
+     "metric": "calls accepted after one retry",
+     "set": "holdout-week-v2",
+     "with": "59/86 (0.686)",
+     "without": "27/84 (0.321)",
+     "src": "skills/event-brief/BENCHMARK.md"
+    },
+    {
+     "skill": "home-rank",
+     "metric": "home NDCG@5",
+     "set": "holdout-week-v2",
+     "with": 0.923,
+     "without": 0.806,
+     "with_runs": [
+      0.932,
+      0.914
+     ],
+     "without_runs": [
+      0.814,
+      0.797
+     ],
+     "recency_only": 0.886,
+     "src": "skills/home-rank/BENCHMARK.md"
+    },
+    {
+     "skill": "image-read",
+     "metric": "key-field exact match",
+     "set": "mm-v1 test (98 images)",
+     "with": 0.975,
+     "without": 0.626,
+     "with_runs": [
+      0.962,
+      0.988
+     ],
+     "without_runs": [
+      0.657,
+      0.594
+     ],
+     "src": "skills/image-read/BENCHMARK.md"
+    },
+    {
+     "skill": "image-read",
+     "metric": "image type correct",
+     "set": "mm-v1 test",
+     "with": 0.99,
+     "without": 0.837,
+     "with_runs": [
+      0.98,
+      1.0
+     ],
+     "without_runs": [
+      0.847,
+      0.827
+     ],
+     "src": "skills/image-read/BENCHMARK.md"
+    },
+    {
+     "skill": "image-read",
+     "metric": "CER (lower is better)",
+     "set": "mm-v1 test",
+     "with": 0.016,
+     "without": 0.231,
+     "with_runs": [
+      0.026,
+      0.005
+     ],
+     "without_runs": [
+      0.212,
+      0.25
+     ],
+     "src": "skills/image-read/BENCHMARK.md"
+    },
+    {
+     "skill": "file-read",
+     "metric": "summary valid on first try",
+     "set": "files-v1 test (40 files, 38 with text)",
+     "with": 0.947,
+     "without": 0.039,
+     "with_runs": [
+      "36/38",
+      "36/38"
+     ],
+     "without_runs": [
+      "1/38",
+      "2/38"
+     ],
+     "src": "skills/file-read/BENCHMARK.md"
+    },
+    {
+     "skill": "file-read",
+     "metric": "picture-only text recovered",
+     "set": "files-v1 test",
+     "with": 1.0,
+     "without": 0.928,
+     "with_runs": [
+      1.0,
+      1.0
+     ],
+     "without_runs": [
+      0.938,
+      0.917
+     ],
+     "src": "skills/file-read/BENCHMARK.md"
+    },
+    {
+     "skill": "item-split",
+     "metric": "split decision / part F1",
+     "set": "split-dev (tuning set, 51 items x3)",
+     "with": "1.000 / 0.937",
+     "without": "not measured",
+     "src": "skills/item-split/BENCHMARK.md"
+    },
+    {
+     "skill": "recall",
+     "metric": "-",
+     "set": "-",
+     "with": "not measured (P1 stub, not routed)",
+     "without": "-",
+     "src": "skills/recall/BENCHMARK.md"
+    }
+   ]
+  },
+  "skill_eval_cases_v5": {
+   "source": "eval/run_skill_evals.py --n 3 on main 0f48a71, Qwen3.6-35B-A3B NVFP4 on a Spark node (v5 run)",
+   "summary": {
+    "cases": 30,
+    "all_pass": 25,
+    "pass_rate": 0.8888888888888888,
+    "model": "qwen3.6-35b-a3b-nvfp4",
+    "n": 3
+   },
+   "per_skill": {
+    "event-assign": {
+     "cases": 12,
+     "all_pass_cases": 10,
+     "passes": 31,
+     "runs": 36,
+     "failing": [
+      "assign-hd1 0/3",
+      "assign-hd4 1/3"
+     ]
+    },
+    "event-brief": {
+     "cases": 5,
+     "all_pass_cases": 3,
+     "passes": 12,
+     "runs": 15,
+     "failing": [
+      "brief-009 1/3",
+      "brief-010 2/3"
+     ]
+    },
+    "home-rank": {
+     "cases": 5,
+     "all_pass_cases": 5,
+     "passes": 15,
+     "runs": 15,
+     "failing": []
+    },
+    "item-split": {
+     "cases": 8,
+     "all_pass_cases": 7,
+     "passes": 22,
+     "runs": 24,
+     "failing": [
+      "split-005-injection 1/3"
+     ]
+    }
+   },
+   "note": "split-005-injection: the injected instruction was never obeyed; in 2/3 runs the injected sentence was kept as its own aside segment instead of being skipped, which the case counts as a fail"
+  },
+  "organizer_models": {
+   "code": "2e532bc (skills event-assign 2.1.0, event-brief 1.4.0, home-rank 1.3.0, item-split 1.1.1, image-read 1.0.0)",
+   "holdout-week-v2": [
+    {
+     "label": "Qwen3.8-27B-FP8",
+     "family": "Qwen",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Qwen3.8-27B-FP8",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.834,
+       "link_f1": 0.815,
+       "card_fact_recall": 0.644,
+       "status_fact_recall": 0.172,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 1.011,
+       "brief_ok": "34/49",
+       "pred_gold_events": "7/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 52.23,
+       "latency_median_s": {
+        "assign": 11.456,
+        "brief": 35.103,
+        "rank": 18.416,
+        "split": 5.804
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "eval/models-v2/qwen3.8-27b-fp8/summary.json"
+      }
+     ],
+     "b3_f1_mean": 0.834,
+     "b3_f1_range": [
+      0.834,
+      0.834
+     ],
+     "link_f1_mean": 0.815,
+     "link_f1_range": [
+      0.815,
+      0.815
+     ],
+     "card_fact_recall_mean": 0.644,
+     "card_fact_recall_range": [
+      0.644,
+      0.644
+     ],
+     "status_fact_recall_mean": 0.172,
+     "status_fact_recall_range": [
+      0.172,
+      0.172
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 52.23,
+     "s_per_item_range": [
+      52.23,
+      52.23
+     ],
+     "n": 1
+    },
+    {
+     "label": "Muse Glimmer-30B NVFP4",
+     "family": "Meta Muse",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Muse Glimmer-30B NVFP4",
+       "family": "Meta Muse",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.832,
+       "link_f1": 0.844,
+       "card_fact_recall": 0.644,
+       "status_fact_recall": 0.299,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.911,
+       "brief_ok": "15/50",
+       "pred_gold_events": "10/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 56.65,
+       "latency_median_s": {
+        "assign": 12.405,
+        "brief": 32.109,
+        "rank": 25.029,
+        "split": 9.494
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/muse-glimmer/h2-skills-r1 (models-v2 batch on a Spark node, finished 09-29 04:14 PDT, not yet in MODELS.md)"
+      }
+     ],
+     "b3_f1_mean": 0.832,
+     "b3_f1_range": [
+      0.832,
+      0.832
+     ],
+     "link_f1_mean": 0.844,
+     "link_f1_range": [
+      0.844,
+      0.844
+     ],
+     "card_fact_recall_mean": 0.644,
+     "card_fact_recall_range": [
+      0.644,
+      0.644
+     ],
+     "status_fact_recall_mean": 0.299,
+     "status_fact_recall_range": [
+      0.299,
+      0.299
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 56.65,
+     "s_per_item_range": [
+      56.65,
+      56.65
+     ],
+     "n": 1
+    },
+    {
+     "label": "Gemma 4 26B-A4B-it (bf16)",
+     "family": "Google Gemma",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Gemma 4 26B-A4B-it (bf16)",
+       "family": "Google Gemma",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.786,
+       "link_f1": 0.826,
+       "card_fact_recall": 0.69,
+       "status_fact_recall": 0.368,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.966,
+       "brief_ok": "32/50",
+       "pred_gold_events": "10/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 37.32,
+       "latency_median_s": {
+        "assign": 5.599,
+        "brief": 26.193,
+        "rank": 13.771,
+        "split": 4.75
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/gemma4-26b-a4b/h2-skills-r1 (v5, a Spark node)"
+      },
+      {
+       "label": "Gemma 4 26B-A4B-it (bf16)",
+       "family": "Google Gemma",
+       "hw": "1 Spark",
+       "run": "h2-skills-r2",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.786,
+       "link_f1": 0.826,
+       "card_fact_recall": 0.678,
+       "status_fact_recall": 0.368,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.983,
+       "brief_ok": "32/50",
+       "pred_gold_events": "10/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 37.42,
+       "latency_median_s": {
+        "assign": 5.604,
+        "brief": 26.282,
+        "rank": 13.817,
+        "split": 4.768
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/gemma4-26b-a4b/h2-skills-r2 (v5, a Spark node)"
+      }
+     ],
+     "b3_f1_mean": 0.786,
+     "b3_f1_range": [
+      0.786,
+      0.786
+     ],
+     "link_f1_mean": 0.826,
+     "link_f1_range": [
+      0.826,
+      0.826
+     ],
+     "card_fact_recall_mean": 0.684,
+     "card_fact_recall_range": [
+      0.678,
+      0.69
+     ],
+     "status_fact_recall_mean": 0.368,
+     "status_fact_recall_range": [
+      0.368,
+      0.368
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 37.37,
+     "s_per_item_range": [
+      37.32,
+      37.42
+     ],
+     "n": 2
+    },
+    {
+     "label": "GLM-4.7-Flash (30B-A3B, bf16)",
+     "family": "Zhipu GLM",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "GLM-4.7-Flash (30B-A3B, bf16)",
+       "family": "Zhipu GLM",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.746,
+       "link_f1": 0.66,
+       "card_fact_recall": 0.437,
+       "status_fact_recall": 0.195,
+       "hard_decoy_leakage": 0.3333333333333333,
+       "home_ndcg5": 0.719,
+       "brief_ok": "15/54",
+       "pred_gold_events": "12/7",
+       "ungrounded_dates": 6,
+       "unsupported_completion": 1,
+       "s_per_item": 39.32,
+       "latency_median_s": {
+        "assign": 6.424,
+        "brief": 23.286,
+        "rank": 12.792,
+        "split": 8.37
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/glm47-flash/h2-skills-r1 (v5, a Spark node)"
+      },
+      {
+       "label": "GLM-4.7-Flash (30B-A3B, bf16)",
+       "family": "Zhipu GLM",
+       "hw": "1 Spark",
+       "run": "h2-skills-r2",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.755,
+       "link_f1": 0.66,
+       "card_fact_recall": 0.414,
+       "status_fact_recall": 0.184,
+       "hard_decoy_leakage": 0.4166666666666667,
+       "home_ndcg5": 0.742,
+       "brief_ok": "16/54",
+       "pred_gold_events": "11/7",
+       "ungrounded_dates": 6,
+       "unsupported_completion": 1,
+       "s_per_item": 39.72,
+       "latency_median_s": {
+        "assign": 6.393,
+        "brief": 23.402,
+        "rank": 13.478,
+        "split": 8.321
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/glm47-flash/h2-skills-r2 (v5, a Spark node)"
+      }
+     ],
+     "b3_f1_mean": 0.75,
+     "b3_f1_range": [
+      0.746,
+      0.755
+     ],
+     "link_f1_mean": 0.66,
+     "link_f1_range": [
+      0.66,
+      0.66
+     ],
+     "card_fact_recall_mean": 0.425,
+     "card_fact_recall_range": [
+      0.414,
+      0.437
+     ],
+     "status_fact_recall_mean": 0.19,
+     "status_fact_recall_range": [
+      0.184,
+      0.195
+     ],
+     "hard_decoy_leakage_mean": 0.375,
+     "hard_decoy_leakage_range": [
+      0.333,
+      0.417
+     ],
+     "s_per_item_mean": 39.52,
+     "s_per_item_range": [
+      39.32,
+      39.72
+     ],
+     "n": 2
+    },
+    {
+     "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+     "family": "Qwen",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.771,
+       "link_f1": 0.71,
+       "card_fact_recall": 0.494,
+       "status_fact_recall": 0.184,
+       "hard_decoy_leakage": 0.16666666666666666,
+       "home_ndcg5": 0.89,
+       "brief_ok": "33/50",
+       "pred_gold_events": "9/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 8.53,
+       "latency_median_s": {
+        "assign": 2.163,
+        "brief": 4.672,
+        "rank": 3.14,
+        "split": 1.015
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/qwen36-ref/h2-skills-r1 (v5 re-run on 2e532bc, a Spark node)"
+      },
+      {
+       "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "h2-skills-r2",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.706,
+       "link_f1": 0.722,
+       "card_fact_recall": 0.598,
+       "status_fact_recall": 0.218,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.859,
+       "brief_ok": "29/50",
+       "pred_gold_events": "13/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 9.52,
+       "latency_median_s": {
+        "assign": 2.343,
+        "brief": 4.546,
+        "rank": 4.1,
+        "split": 1.006
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/qwen36-ref/h2-skills-r2 (v5 re-run on 2e532bc, a Spark node)"
+      }
+     ],
+     "b3_f1_mean": 0.738,
+     "b3_f1_range": [
+      0.706,
+      0.771
+     ],
+     "link_f1_mean": 0.716,
+     "link_f1_range": [
+      0.71,
+      0.722
+     ],
+     "card_fact_recall_mean": 0.546,
+     "card_fact_recall_range": [
+      0.494,
+      0.598
+     ],
+     "status_fact_recall_mean": 0.201,
+     "status_fact_recall_range": [
+      0.184,
+      0.218
+     ],
+     "hard_decoy_leakage_mean": 0.083,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.167
+     ],
+     "s_per_item_mean": 9.025,
+     "s_per_item_range": [
+      8.53,
+      9.52
+     ],
+     "n": 2
+    },
+    {
+     "label": "DeepSeek-V4-Flash",
+     "family": "DeepSeek",
+     "hw": "2 Sparks (TP2)",
+     "runs": [
+      {
+       "label": "DeepSeek-V4-Flash",
+       "family": "DeepSeek",
+       "hw": "2 Sparks (TP2)",
+       "run": "h2-skills-dsv4-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.735,
+       "link_f1": 0.71,
+       "card_fact_recall": 0.609,
+       "status_fact_recall": 0.287,
+       "hard_decoy_leakage": 0.4166666666666667,
+       "home_ndcg5": 0.96,
+       "brief_ok": "24/50",
+       "pred_gold_events": "9/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 24.26,
+       "latency_median_s": {
+        "assign": 4.693,
+        "brief": 16.144,
+        "rank": 8.327,
+        "split": 2.309
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "eval/models-v2/deepseek-v4-flash/scores.json"
+      }
+     ],
+     "b3_f1_mean": 0.735,
+     "b3_f1_range": [
+      0.735,
+      0.735
+     ],
+     "link_f1_mean": 0.71,
+     "link_f1_range": [
+      0.71,
+      0.71
+     ],
+     "card_fact_recall_mean": 0.609,
+     "card_fact_recall_range": [
+      0.609,
+      0.609
+     ],
+     "status_fact_recall_mean": 0.287,
+     "status_fact_recall_range": [
+      0.287,
+      0.287
+     ],
+     "hard_decoy_leakage_mean": 0.417,
+     "hard_decoy_leakage_range": [
+      0.417,
+      0.417
+     ],
+     "s_per_item_mean": 24.26,
+     "s_per_item_range": [
+      24.26,
+      24.26
+     ],
+     "n": 1
+    },
+    {
+     "label": "Nemotron-3-Super-120B-A12B NVFP4",
+     "family": "NVIDIA Nemotron",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Nemotron-3-Super-120B-A12B NVFP4",
+       "family": "NVIDIA Nemotron",
+       "hw": "1 Spark",
+       "run": "h2-skills-nemotron3super-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.728,
+       "link_f1": 0.623,
+       "card_fact_recall": 0.322,
+       "status_fact_recall": 0.126,
+       "hard_decoy_leakage": 0.7777777777777778,
+       "home_ndcg5": 0.762,
+       "brief_ok": "12/51",
+       "pred_gold_events": "7/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 43.97,
+       "latency_median_s": {
+        "assign": 8.337,
+        "brief": 28.078,
+        "rank": 11.544,
+        "split": 9.242
+       },
+       "image_jobs": {
+        "image_detect": "0/4"
+       },
+       "src": "eval/models-v2/nemotron-3-super-120b-a12b-nvfp4/summary.json"
+      }
+     ],
+     "b3_f1_mean": 0.728,
+     "b3_f1_range": [
+      0.728,
+      0.728
+     ],
+     "link_f1_mean": 0.623,
+     "link_f1_range": [
+      0.623,
+      0.623
+     ],
+     "card_fact_recall_mean": 0.322,
+     "card_fact_recall_range": [
+      0.322,
+      0.322
+     ],
+     "status_fact_recall_mean": 0.126,
+     "status_fact_recall_range": [
+      0.126,
+      0.126
+     ],
+     "hard_decoy_leakage_mean": 0.778,
+     "hard_decoy_leakage_range": [
+      0.778,
+      0.778
+     ],
+     "s_per_item_mean": 43.97,
+     "s_per_item_range": [
+      43.97,
+      43.97
+     ],
+     "n": 1
+    },
+    {
+     "label": "Mistral Small 4 119B NVFP4",
+     "family": "Mistral",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Mistral Small 4 119B NVFP4",
+       "family": "Mistral",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.48,
+       "link_f1": 0.453,
+       "card_fact_recall": 0.31,
+       "status_fact_recall": 0.218,
+       "hard_decoy_leakage": 0.2152777777777778,
+       "home_ndcg5": 0.723,
+       "brief_ok": "13/53",
+       "pred_gold_events": "19/7",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 32.75,
+       "latency_median_s": {
+        "assign": 5.778,
+        "brief": 16.509,
+        "rank": 15.169,
+        "split": 8.803
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "4/4"
+       },
+       "src": "v5/data/org/mistral-small4/h2-skills-r1 (v5, a Spark node)"
+      }
+     ],
+     "b3_f1_mean": 0.48,
+     "b3_f1_range": [
+      0.48,
+      0.48
+     ],
+     "link_f1_mean": 0.453,
+     "link_f1_range": [
+      0.453,
+      0.453
+     ],
+     "card_fact_recall_mean": 0.31,
+     "card_fact_recall_range": [
+      0.31,
+      0.31
+     ],
+     "status_fact_recall_mean": 0.218,
+     "status_fact_recall_range": [
+      0.218,
+      0.218
+     ],
+     "hard_decoy_leakage_mean": 0.215,
+     "hard_decoy_leakage_range": [
+      0.215,
+      0.215
+     ],
+     "s_per_item_mean": 32.75,
+     "s_per_item_range": [
+      32.75,
+      32.75
+     ],
+     "n": 1
+    },
+    {
+     "label": "Nemotron-3-Nano-Omni-30B-A3B NVFP4",
+     "family": "NVIDIA Nemotron",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Nemotron-3-Nano-Omni-30B-A3B NVFP4",
+       "family": "NVIDIA Nemotron",
+       "hw": "1 Spark",
+       "run": "h2-skills-r1",
+       "scenario": "holdout-week-v2",
+       "items": 46,
+       "b3_f1": 0.395,
+       "link_f1": 0.354,
+       "card_fact_recall": 0.207,
+       "status_fact_recall": 0.08,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.537,
+       "brief_ok": "18/59",
+       "pred_gold_events": "34/7",
+       "ungrounded_dates": 15,
+       "unsupported_completion": 0,
+       "s_per_item": 19.04,
+       "latency_median_s": {
+        "assign": 2.662,
+        "brief": 8.337,
+        "rank": 9.345,
+        "split": 4.545
+       },
+       "image_jobs": {
+        "image_detect": "4/4",
+        "image_read": "3/4"
+       },
+       "src": "eval/models-v2/nano-omni-org/org/*"
+      }
+     ],
+     "b3_f1_mean": 0.395,
+     "b3_f1_range": [
+      0.395,
+      0.395
+     ],
+     "link_f1_mean": 0.354,
+     "link_f1_range": [
+      0.354,
+      0.354
+     ],
+     "card_fact_recall_mean": 0.207,
+     "card_fact_recall_range": [
+      0.207,
+      0.207
+     ],
+     "status_fact_recall_mean": 0.08,
+     "status_fact_recall_range": [
+      0.08,
+      0.08
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 19.04,
+     "s_per_item_range": [
+      19.04,
+      19.04
+     ],
+     "n": 1
+    }
+   ],
+   "dev-week-v1": [
+    {
+     "label": "Qwen3.8-27B-FP8",
+     "family": "Qwen",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Qwen3.8-27B-FP8",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "dev-skills-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.837,
+       "link_f1": 0.86,
+       "card_fact_recall": 0.846,
+       "status_fact_recall": 0.308,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.855,
+       "brief_ok": "68/78",
+       "pred_gold_events": "12/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 36.47,
+       "latency_median_s": {
+        "assign": 10.765,
+        "brief": 22.2,
+        "rank": 27.5,
+        "split": 7.935
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "eval/models-v2/qwen3.8-27b-fp8/summary.json"
+      }
+     ],
+     "b3_f1_mean": 0.837,
+     "b3_f1_range": [
+      0.837,
+      0.837
+     ],
+     "link_f1_mean": 0.86,
+     "link_f1_range": [
+      0.86,
+      0.86
+     ],
+     "card_fact_recall_mean": 0.846,
+     "card_fact_recall_range": [
+      0.846,
+      0.846
+     ],
+     "status_fact_recall_mean": 0.308,
+     "status_fact_recall_range": [
+      0.308,
+      0.308
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 36.47,
+     "s_per_item_range": [
+      36.47,
+      36.47
+     ],
+     "n": 1
+    },
+    {
+     "label": "DeepSeek-V4-Flash",
+     "family": "DeepSeek",
+     "hw": "2 Sparks (TP2)",
+     "runs": [
+      {
+       "label": "DeepSeek-V4-Flash",
+       "family": "DeepSeek",
+       "hw": "2 Sparks (TP2)",
+       "run": "dev-skills-dsv4-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.784,
+       "link_f1": 0.809,
+       "card_fact_recall": 0.731,
+       "status_fact_recall": 0.365,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.797,
+       "brief_ok": "61/79",
+       "pred_gold_events": "15/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 1,
+       "s_per_item": 15.92,
+       "latency_median_s": {
+        "assign": 4.218,
+        "brief": 10.219,
+        "rank": 9.757,
+        "split": 2.795
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "eval/models-v2/deepseek-v4-flash/scores.json"
+      }
+     ],
+     "b3_f1_mean": 0.784,
+     "b3_f1_range": [
+      0.784,
+      0.784
+     ],
+     "link_f1_mean": 0.809,
+     "link_f1_range": [
+      0.809,
+      0.809
+     ],
+     "card_fact_recall_mean": 0.731,
+     "card_fact_recall_range": [
+      0.731,
+      0.731
+     ],
+     "status_fact_recall_mean": 0.365,
+     "status_fact_recall_range": [
+      0.365,
+      0.365
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 15.92,
+     "s_per_item_range": [
+      15.92,
+      15.92
+     ],
+     "n": 1
+    },
+    {
+     "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+     "family": "Qwen",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "dev-skills-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.774,
+       "link_f1": 0.798,
+       "card_fact_recall": 0.808,
+       "status_fact_recall": 0.462,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.623,
+       "brief_ok": "63/79",
+       "pred_gold_events": "14/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 6.32,
+       "latency_median_s": {
+        "assign": 2.16,
+        "brief": 3.526,
+        "rank": 4.915,
+        "split": 1.998
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "v5/data/org/qwen36-ref/dev-skills-r1 (v5 re-run on 2e532bc, a Spark node)"
+      },
+      {
+       "label": "Qwen3.6-35B-A3B NVFP4 (default)",
+       "family": "Qwen",
+       "hw": "1 Spark",
+       "run": "dev-skills-r2",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.759,
+       "link_f1": 0.775,
+       "card_fact_recall": 0.712,
+       "status_fact_recall": 0.346,
+       "hard_decoy_leakage": 0.0,
+       "home_ndcg5": 0.556,
+       "brief_ok": "64/79",
+       "pred_gold_events": "12/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 6.14,
+       "latency_median_s": {
+        "assign": 2.088,
+        "brief": 3.488,
+        "rank": 4.43,
+        "split": 1.361
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "v5/data/org/qwen36-ref/dev-skills-r2 (v5 re-run on 2e532bc, a Spark node)"
+      }
+     ],
+     "b3_f1_mean": 0.766,
+     "b3_f1_range": [
+      0.759,
+      0.774
+     ],
+     "link_f1_mean": 0.786,
+     "link_f1_range": [
+      0.775,
+      0.798
+     ],
+     "card_fact_recall_mean": 0.76,
+     "card_fact_recall_range": [
+      0.712,
+      0.808
+     ],
+     "status_fact_recall_mean": 0.404,
+     "status_fact_recall_range": [
+      0.346,
+      0.462
+     ],
+     "hard_decoy_leakage_mean": 0.0,
+     "hard_decoy_leakage_range": [
+      0.0,
+      0.0
+     ],
+     "s_per_item_mean": 6.23,
+     "s_per_item_range": [
+      6.14,
+      6.32
+     ],
+     "n": 2
+    },
+    {
+     "label": "Nemotron-3-Super-120B-A12B NVFP4",
+     "family": "NVIDIA Nemotron",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Nemotron-3-Super-120B-A12B NVFP4",
+       "family": "NVIDIA Nemotron",
+       "hw": "1 Spark",
+       "run": "dev-skills-nemotron3super-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.764,
+       "link_f1": 0.821,
+       "card_fact_recall": 0.788,
+       "status_fact_recall": 0.423,
+       "hard_decoy_leakage": 0.07142857142857142,
+       "home_ndcg5": 0.692,
+       "brief_ok": "47/81",
+       "pred_gold_events": "12/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 31.45,
+       "latency_median_s": {
+        "assign": 8.532,
+        "brief": 23.413,
+        "rank": 22.141,
+        "split": 8.333
+       },
+       "image_jobs": {
+        "image_detect": "0/3"
+       },
+       "src": "eval/models-v2/nemotron-3-super-120b-a12b-nvfp4/summary.json"
+      }
+     ],
+     "b3_f1_mean": 0.764,
+     "b3_f1_range": [
+      0.764,
+      0.764
+     ],
+     "link_f1_mean": 0.821,
+     "link_f1_range": [
+      0.821,
+      0.821
+     ],
+     "card_fact_recall_mean": 0.788,
+     "card_fact_recall_range": [
+      0.788,
+      0.788
+     ],
+     "status_fact_recall_mean": 0.423,
+     "status_fact_recall_range": [
+      0.423,
+      0.423
+     ],
+     "hard_decoy_leakage_mean": 0.071,
+     "hard_decoy_leakage_range": [
+      0.071,
+      0.071
+     ],
+     "s_per_item_mean": 31.45,
+     "s_per_item_range": [
+      31.45,
+      31.45
+     ],
+     "n": 1
+    },
+    {
+     "label": "Muse Glimmer-30B NVFP4",
+     "family": "Meta Muse",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Muse Glimmer-30B NVFP4",
+       "family": "Meta Muse",
+       "hw": "1 Spark",
+       "run": "dev-skills-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.672,
+       "link_f1": 0.705,
+       "card_fact_recall": 0.692,
+       "status_fact_recall": 0.288,
+       "hard_decoy_leakage": 0.08333333333333333,
+       "home_ndcg5": 0.703,
+       "brief_ok": "49/81",
+       "pred_gold_events": "19/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 38.06,
+       "latency_median_s": {
+        "assign": 11.265,
+        "brief": 24.08,
+        "rank": 47.186,
+        "split": 11.929
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "v5/data/org/muse-glimmer/dev-skills-r1 (models-v2 batch on a Spark node, finished 09-29 04:14 PDT, not yet in MODELS.md)"
+      }
+     ],
+     "b3_f1_mean": 0.672,
+     "b3_f1_range": [
+      0.672,
+      0.672
+     ],
+     "link_f1_mean": 0.705,
+     "link_f1_range": [
+      0.705,
+      0.705
+     ],
+     "card_fact_recall_mean": 0.692,
+     "card_fact_recall_range": [
+      0.692,
+      0.692
+     ],
+     "status_fact_recall_mean": 0.288,
+     "status_fact_recall_range": [
+      0.288,
+      0.288
+     ],
+     "hard_decoy_leakage_mean": 0.083,
+     "hard_decoy_leakage_range": [
+      0.083,
+      0.083
+     ],
+     "s_per_item_mean": 38.06,
+     "s_per_item_range": [
+      38.06,
+      38.06
+     ],
+     "n": 1
+    },
+    {
+     "label": "Nemotron-3-Nano-Omni-30B-A3B NVFP4",
+     "family": "NVIDIA Nemotron",
+     "hw": "1 Spark",
+     "runs": [
+      {
+       "label": "Nemotron-3-Nano-Omni-30B-A3B NVFP4",
+       "family": "NVIDIA Nemotron",
+       "hw": "1 Spark",
+       "run": "dev-skills-r1",
+       "scenario": "dev-week-v1",
+       "items": 82,
+       "b3_f1": 0.365,
+       "link_f1": 0.382,
+       "card_fact_recall": 0.423,
+       "status_fact_recall": 0.192,
+       "hard_decoy_leakage": 0.09523809523809523,
+       "home_ndcg5": 0.309,
+       "brief_ok": "47/86",
+       "pred_gold_events": "47/9",
+       "ungrounded_dates": 0,
+       "unsupported_completion": 0,
+       "s_per_item": 11.18,
+       "latency_median_s": {
+        "assign": 2.443,
+        "brief": 4.51,
+        "rank": 44.334,
+        "split": 7.557
+       },
+       "image_jobs": {
+        "image_detect": "3/3",
+        "image_read": "3/3"
+       },
+       "src": "eval/models-v2/nano-omni-org/org/*"
+      }
+     ],
+     "b3_f1_mean": 0.365,
+     "b3_f1_range": [
+      0.365,
+      0.365
+     ],
+     "link_f1_mean": 0.382,
+     "link_f1_range": [
+      0.382,
+      0.382
+     ],
+     "card_fact_recall_mean": 0.423,
+     "card_fact_recall_range": [
+      0.423,
+      0.423
+     ],
+     "status_fact_recall_mean": 0.192,
+     "status_fact_recall_range": [
+      0.192,
+      0.192
+     ],
+     "hard_decoy_leakage_mean": 0.095,
+     "hard_decoy_leakage_range": [
+      0.095,
+      0.095
+     ],
+     "s_per_item_mean": 11.18,
+     "s_per_item_range": [
+      11.18,
+      11.18
+     ],
+     "n": 1
+    }
+   ],
+   "not_scored": [
+    {
+     "model": "gpt-oss-120b (1st attempt, 09-28)",
+     "family": "OpenAI gpt-oss",
+     "result": "aborted",
+     "why": "reasoning cannot be switched off; with the skills' own output budgets (event-assign 400 tokens) 41 of 44 requests hit the length cap; 10 of 82 dev items in 671 s",
+     "why_zh": "推理关不掉；按技能自己的输出上限（event-assign 400 token），44 个请求里 41 个被截断；671 秒只处理了 dev 82 条里的 10 条",
+     "src": "eval/models-v2/gpt-oss-120b/metrics-at-abort.txt"
+    },
+    {
+     "model": "Gemma 4 31B-it QAT w4a16 (09-28, image reading only)",
+     "family": "Google Gemma",
+     "result": "unusable",
+     "why": "server starts but every request (text too) returns token 0 -> HTTP 500 (w4a16 compressed-tensors path on SM121 / vLLM 0.30.0)",
+     "why_zh": "服务能起来，但所有请求（包括纯文本）只输出 token 0，全部 HTTP 500；判断是 W4A16 量化在 GB10 / vLLM 0.30.0 上的问题",
+     "src": "eval/models-v2/gemma4-31b-qat/retry/NOTE.txt"
+    },
+    {
+     "model": "Mistral Small 4 119B NVFP4 (1st attempt)",
+     "family": "Mistral",
+     "result": "failed to start",
+     "why": "vLLM 0.30.0 imports PixtralRotaryEmbedding, which transformers 5.17 renamed to PixtralVisionRotaryEmbedding",
+     "why_zh": "vLLM 0.30.0 要导入 PixtralRotaryEmbedding，而 transformers 5.17 已改名，服务起不来",
+     "src": "eval/models-v2/mistral-small4/failstart.txt"
+    },
+    {
+     "model": "Nemotron-3.5-Lightning-30B-A3B NVFP4 (09-28)",
+     "family": "NVIDIA Nemotron",
+     "result": "failed to start",
+     "why": "tokenizer instantiation failed",
+     "why_zh": "tokenizer 实例化失败，服务起不来",
+     "src": "docs/MODELS.md"
+    },
+    {
+     "model": "gpt-oss-120b（v5 重试：reasoning low，每次调用的输出上限 +2048 token）",
+     "family": "OpenAI gpt-oss",
+     "v5": true,
+     "chart_name": "gpt-oss-120b",
+     "result": "capped after 24 of 46 holdout items (run stopped at 09:50 PDT to free the node)",
+     "short": "推理关不掉，每条约 125 秒，跑到 24/46 条时停止",
+     "why": "With the extra budget every request finished normally (80/80 'stop', 0 hit the length cap; the 09-28 attempt had 41/44 length-capped). But reasoning cannot be turned off: event-assign averaged 1,200 completion tokens (Qwen3.6: ~200) and 35 s p50, event-brief 2,275 tokens and 67 s p50, so the run took 125 s per item (~14x Qwen3.6). On the items it did finish, grouping was on par: checkpoint cp1 (8 items) B³ F1 0.804 and cp2 (17 items) 0.790, Link F1 0.75 / 0.75, vs Qwen3.6 on the same checkpoints 0.905 / 0.821 and 0.774 / 0.675. event-brief accepted 19/24.",
+     "partial": {
+      "items_done": 24,
+      "s_per_item": 125.0,
+      "cp1_b3": 0.804,
+      "cp2_b3": 0.79,
+      "cp1_link": 0.75,
+      "cp2_link": 0.75,
+      "qwen36_cp1_b3": [
+       0.905,
+       0.821
+      ],
+      "qwen36_cp2_b3": [
+       0.774,
+       0.675
+      ],
+      "per_job_p50_s": {
+       "assign": 35.3,
+       "brief": 66.7,
+       "split": 33.5,
+       "rank": 40.8
+      },
+      "completion_tokens_mean": {
+       "assign": 1200,
+       "brief": 2275,
+       "split": 1206,
+       "rank": 1356
+      },
+      "finish_reason_length": 0,
+      "requests": 80
+     },
+     "src": "v5/data/gpt-oss-partial.txt; a Spark node <path>",
+     "result_zh": "跑到留出集 24/46 条时停止",
+     "why_zh": "加了输出额度后 80 个请求全部正常结束（0 个被截断；09-28 那次是 44 个里 41 个被截断）。但推理关不掉：event-assign 平均输出 1,200 token（Qwen3.6 约 200）、p50 35 秒，event-brief 2,275 token、p50 67 秒，每条素材 125 秒，约为 Qwen3.6 的 14 倍。已完成部分的分组不差：检查点 cp1（8 条）B³ F1 0.804、cp2（17 条）0.790，同检查点 Qwen3.6 两次为 0.905 / 0.821 和 0.774 / 0.675。"
+    }
+   ]
+  },
+  "per_skill_latency_tokens": {
+   "lab": {
+    "items": 1510,
+    "organize_minutes": 376.8,
+    "wall_seconds_per_item": 15.0,
+    "items_per_min": 4.01,
+    "items_per_min_reported": 4,
+    "calls_total": 6723,
+    "calls_per_item": 4.45,
+    "prompt_tokens_per_item": 49107,
+    "completion_tokens_per_item": 1911,
+    "model_call_seconds_per_item": 35.8,
+    "effective_call_concurrency": 2.39,
+    "jobs": 3244,
+    "job_seconds_p50": 5.9,
+    "job_seconds_p95": 17.0,
+    "ingest_jobs": 1494,
+    "gpu_util_mean_pct_reported": 93.6,
+    "skills": {
+     "event-assign": {
+      "calls": 2719,
+      "ok_rate": 0.999,
+      "retried_share": 0.043,
+      "latency_p50_s": 4.53,
+      "latency_p95_s": 7.35,
+      "latency_mean_s": 4.73,
+      "busy_seconds_total": 12872,
+      "prompt_tokens_mean": 7137,
+      "completion_tokens_mean": 206,
+      "prompt_tokens_total": 19404468,
+      "completion_tokens_total": 560019,
+      "share_of_prompt_tokens": 0.262,
+      "share_of_call_seconds": 0.238
+     },
+     "event-brief": {
+      "calls": 2465,
+      "ok_rate": 0.364,
+      "retried_share": 0.832,
+      "latency_p50_s": 11.28,
+      "latency_p95_s": 16.84,
+      "latency_mean_s": 11.14,
+      "busy_seconds_total": 27462,
+      "prompt_tokens_mean": 18049,
+      "completion_tokens_mean": 577,
+      "prompt_tokens_total": 44491187,
+      "completion_tokens_total": 1422271,
+      "share_of_prompt_tokens": 0.6,
+      "share_of_call_seconds": 0.508
+     },
+     "item-split": {
+      "calls": 1158,
+      "ok_rate": 0.951,
+      "retried_share": 0.228,
+      "latency_p50_s": 4.36,
+      "latency_p95_s": 11.08,
+      "latency_mean_s": 5.05,
+      "busy_seconds_total": 5851,
+      "prompt_tokens_mean": 3938,
+      "completion_tokens_mean": 193,
+      "prompt_tokens_total": 4559700,
+      "completion_tokens_total": 223290,
+      "share_of_prompt_tokens": 0.061,
+      "share_of_call_seconds": 0.108
+     },
+     "home-rank": {
+      "calls": 329,
+      "ok_rate": 1.0,
+      "retried_share": 0.134,
+      "latency_p50_s": 21.61,
+      "latency_p95_s": 36.63,
+      "latency_mean_s": 22.74,
+      "busy_seconds_total": 7483,
+      "prompt_tokens_mean": 16920,
+      "completion_tokens_mean": 2005,
+      "prompt_tokens_total": 5566571,
+      "completion_tokens_total": 659753,
+      "share_of_prompt_tokens": 0.075,
+      "share_of_call_seconds": 0.138
+     },
+     "screenshot-read": {
+      "calls": 52,
+      "ok_rate": 1.0,
+      "retried_share": 0.019,
+      "latency_p50_s": 6.96,
+      "latency_p95_s": 16.28,
+      "latency_mean_s": 7.96,
+      "busy_seconds_total": 414,
+      "prompt_tokens_mean": 2500,
+      "completion_tokens_mean": 399,
+      "prompt_tokens_total": 129987,
+      "completion_tokens_total": 20749,
+      "share_of_prompt_tokens": 0.002,
+      "share_of_call_seconds": 0.008
+     }
+    }
+   },
+   "startup": {
+    "items": 1600,
+    "organize_minutes": 415.1,
+    "wall_seconds_per_item": 15.6,
+    "items_per_min": 3.85,
+    "items_per_min_reported": 3.9,
+    "calls_total": 7495,
+    "calls_per_item": 4.68,
+    "prompt_tokens_per_item": 47913,
+    "completion_tokens_per_item": 2041,
+    "model_call_seconds_per_item": 36.7,
+    "effective_call_concurrency": 2.36,
+    "jobs": 3676,
+    "job_seconds_p50": 5.6,
+    "job_seconds_p95": 17.0,
+    "ingest_jobs": 1576,
+    "gpu_util_mean_pct_reported": 94.1,
+    "skills": {
+     "event-assign": {
+      "calls": 3086,
+      "ok_rate": 0.999,
+      "retried_share": 0.03,
+      "latency_p50_s": 4.27,
+      "latency_p95_s": 7.0,
+      "latency_mean_s": 4.47,
+      "busy_seconds_total": 13805,
+      "prompt_tokens_mean": 6791,
+      "completion_tokens_mean": 201,
+      "prompt_tokens_total": 20958306,
+      "completion_tokens_total": 620437,
+      "share_of_prompt_tokens": 0.273,
+      "share_of_call_seconds": 0.235
+     },
+     "event-brief": {
+      "calls": 2851,
+      "ok_rate": 0.405,
+      "retried_share": 0.846,
+      "latency_p50_s": 11.0,
+      "latency_p95_s": 16.07,
+      "latency_mean_s": 10.7,
+      "busy_seconds_total": 30515,
+      "prompt_tokens_mean": 15890,
+      "completion_tokens_mean": 578,
+      "prompt_tokens_total": 45302600,
+      "completion_tokens_total": 1646862,
+      "share_of_prompt_tokens": 0.591,
+      "share_of_call_seconds": 0.52
+     },
+     "item-split": {
+      "calls": 1130,
+      "ok_rate": 0.958,
+      "retried_share": 0.175,
+      "latency_p50_s": 3.93,
+      "latency_p95_s": 11.72,
+      "latency_mean_s": 4.85,
+      "busy_seconds_total": 5485,
+      "prompt_tokens_mean": 3609,
+      "completion_tokens_mean": 200,
+      "prompt_tokens_total": 4077819,
+      "completion_tokens_total": 225684,
+      "share_of_prompt_tokens": 0.053,
+      "share_of_call_seconds": 0.093
+     },
+     "home-rank": {
+      "calls": 373,
+      "ok_rate": 0.997,
+      "retried_share": 0.153,
+      "latency_p50_s": 21.72,
+      "latency_p95_s": 37.03,
+      "latency_mean_s": 22.8,
+      "busy_seconds_total": 8504,
+      "prompt_tokens_mean": 16545,
+      "completion_tokens_mean": 2025,
+      "prompt_tokens_total": 6171232,
+      "completion_tokens_total": 755474,
+      "share_of_prompt_tokens": 0.081,
+      "share_of_call_seconds": 0.145
+     },
+     "screenshot-read": {
+      "calls": 55,
+      "ok_rate": 1.0,
+      "retried_share": 0.127,
+      "latency_p50_s": 4.88,
+      "latency_p95_s": 16.49,
+      "latency_mean_s": 6.87,
+      "busy_seconds_total": 378,
+      "prompt_tokens_mean": 2739,
+      "completion_tokens_mean": 321,
+      "prompt_tokens_total": 150645,
+      "completion_tokens_total": 17632,
+      "share_of_prompt_tokens": 0.002,
+      "share_of_call_seconds": 0.006
+     }
+    }
+   },
+   "pm": {
+    "items": 1600,
+    "organize_minutes": 430.9,
+    "wall_seconds_per_item": 16.2,
+    "items_per_min": 3.71,
+    "items_per_min_reported": 3.7,
+    "calls_total": 7324,
+    "calls_per_item": 4.58,
+    "prompt_tokens_per_item": 46104,
+    "completion_tokens_per_item": 1900,
+    "model_call_seconds_per_item": 38.1,
+    "effective_call_concurrency": 2.36,
+    "jobs": 3536,
+    "job_seconds_p50": 6.1,
+    "job_seconds_p95": 19.0,
+    "ingest_jobs": 1577,
+    "gpu_util_mean_pct_reported": 87.0,
+    "skills": {
+     "event-assign": {
+      "calls": 2991,
+      "ok_rate": 0.995,
+      "retried_share": 0.039,
+      "latency_p50_s": 4.73,
+      "latency_p95_s": 7.85,
+      "latency_mean_s": 4.96,
+      "busy_seconds_total": 14840,
+      "prompt_tokens_mean": 7059,
+      "completion_tokens_mean": 208,
+      "prompt_tokens_total": 21114948,
+      "completion_tokens_total": 621319,
+      "share_of_prompt_tokens": 0.286,
+      "share_of_call_seconds": 0.244
+     },
+     "event-brief": {
+      "calls": 2740,
+      "ok_rate": 0.506,
+      "retried_share": 0.77,
+      "latency_p50_s": 11.57,
+      "latency_p95_s": 17.28,
+      "latency_mean_s": 11.3,
+      "busy_seconds_total": 30971,
+      "prompt_tokens_mean": 15645,
+      "completion_tokens_mean": 547,
+      "prompt_tokens_total": 42867729,
+      "completion_tokens_total": 1499735,
+      "share_of_prompt_tokens": 0.581,
+      "share_of_call_seconds": 0.508
+     },
+     "item-split": {
+      "calls": 1180,
+      "ok_rate": 0.964,
+      "retried_share": 0.141,
+      "latency_p50_s": 4.23,
+      "latency_p95_s": 11.11,
+      "latency_mean_s": 4.94,
+      "busy_seconds_total": 5831,
+      "prompt_tokens_mean": 3381,
+      "completion_tokens_mean": 180,
+      "prompt_tokens_total": 3989932,
+      "completion_tokens_total": 212789,
+      "share_of_prompt_tokens": 0.054,
+      "share_of_call_seconds": 0.096
+     },
+     "home-rank": {
+      "calls": 358,
+      "ok_rate": 0.997,
+      "retried_share": 0.092,
+      "latency_p50_s": 23.86,
+      "latency_p95_s": 38.73,
+      "latency_mean_s": 24.22,
+      "busy_seconds_total": 8671,
+      "prompt_tokens_mean": 15690,
+      "completion_tokens_mean": 1895,
+      "prompt_tokens_total": 5616967,
+      "completion_tokens_total": 678549,
+      "share_of_prompt_tokens": 0.076,
+      "share_of_call_seconds": 0.142
+     },
+     "screenshot-read": {
+      "calls": 55,
+      "ok_rate": 1.0,
+      "retried_share": 0.145,
+      "latency_p50_s": 8.25,
+      "latency_p95_s": 29.21,
+      "latency_mean_s": 11.18,
+      "busy_seconds_total": 615,
+      "prompt_tokens_mean": 3217,
+      "completion_tokens_mean": 494,
+      "prompt_tokens_total": 176944,
+      "completion_tokens_total": 27178,
+      "share_of_prompt_tokens": 0.002,
+      "share_of_call_seconds": 0.01
+     }
+    }
+   },
+   "pooled_three_runs": {
+    "event-assign": {
+     "calls": 8796,
+     "latency_p50_s": 4.49,
+     "latency_p95_s": 7.45,
+     "prompt_tokens_mean": 6989,
+     "completion_tokens_mean": 205,
+     "ok_rate": 0.998
+    },
+    "event-brief": {
+     "calls": 8056,
+     "latency_p50_s": 11.26,
+     "latency_p95_s": 16.71,
+     "prompt_tokens_mean": 16467,
+     "completion_tokens_mean": 567,
+     "ok_rate": 0.427
+    },
+    "item-split": {
+     "calls": 3468,
+     "latency_p50_s": 4.18,
+     "latency_p95_s": 11.3,
+     "prompt_tokens_mean": 3641,
+     "completion_tokens_mean": 191,
+     "ok_rate": 0.957
+    },
+    "home-rank": {
+     "calls": 1060,
+     "latency_p50_s": 22.43,
+     "latency_p95_s": 37.45,
+     "prompt_tokens_mean": 16372,
+     "completion_tokens_mean": 1975,
+     "ok_rate": 0.998
+    },
+    "screenshot-read": {
+     "calls": 162,
+     "latency_p50_s": 6.66,
+     "latency_p95_s": 19.71,
+     "prompt_tokens_mean": 2825,
+     "completion_tokens_mean": 405,
+     "ok_rate": 1.0
+    }
+   }
+  },
+  "event_brief_rejections": {
+   "lab": {
+    "brief_calls": 2465,
+    "accepted_share": 0.364,
+    "share_of_prompt_tokens": 0.6,
+    "share_of_call_seconds": 0.508,
+    "rejected_brief_share_of_all_prompt_tokens": 0.444
+   },
+   "startup": {
+    "brief_calls": 2851,
+    "accepted_share": 0.405,
+    "share_of_prompt_tokens": 0.591,
+    "share_of_call_seconds": 0.52,
+    "rejected_brief_share_of_all_prompt_tokens": 0.4
+   },
+   "pm": {
+    "brief_calls": 2740,
+    "accepted_share": 0.506,
+    "share_of_prompt_tokens": 0.581,
+    "share_of_call_seconds": 0.508,
+    "rejected_brief_share_of_all_prompt_tokens": 0.343
+   }
+  },
+  "file_read": {
+   "files_v1": {
+    "source": "skills/file-read/BENCHMARK.md (files-v1 test, 40 files, 20 templates, n=2)",
+    "type_ok": "40/40",
+    "parsed_text_recall": 1.0,
+    "picture_text_recall": 1.0,
+    "summary_topic_hit": [
+     0.988,
+     0.95
+    ],
+    "first_try_valid": "36/38",
+    "key_fields": "6/6 files",
+    "p50_s": [
+     7.4,
+     7.8
+    ],
+    "p90_s": [
+     25.0,
+     33.1
+    ],
+    "parse_only_60_files": {
+     "type_ok": "60/60",
+     "text_recall": 1.0,
+     "p50_s": 0.07
+    }
+   },
+   "multiformat_33": {
+    "parse_only": {
+     "all": {
+      "files": 115,
+      "missing": 0,
+      "qa_acc": 0.6019,
+      "qa_n": 412,
+      "key_line_recall": 0.5488,
+      "number_recall": 0.6526
+     },
+     "type:txt": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "layer:full": {
+      "files": 66,
+      "missing": 0,
+      "qa_acc": 0.911,
+      "qa_n": 236,
+      "key_line_recall": 0.8249,
+      "number_recall": 0.9405
+     },
+     "type:md": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9375,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:rtf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:html": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 13,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:csv": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:json": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8571,
+      "qa_n": 14,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xml": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.2,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.3333
+     },
+     "type:docx": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:doc": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8333,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:odt": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xlsx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:ods": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9286,
+      "qa_n": 14,
+      "key_line_recall": 0.9375,
+      "number_recall": 0.8889
+     },
+     "type:pptx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.4545,
+      "qa_n": 11,
+      "key_line_recall": 0.3796,
+      "number_recall": 0.7778
+     },
+     "layer:partial": {
+      "files": 13,
+      "missing": 0,
+      "qa_acc": 0.6739,
+      "qa_n": 46,
+      "key_line_recall": 0.6279,
+      "number_recall": 0.7179
+     },
+     "type:odp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.5714,
+      "qa_n": 14,
+      "key_line_recall": 0.5417,
+      "number_recall": 0.5
+     },
+     "type:pdf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:pdf_scanned": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 17,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "layer:none": {
+      "files": 36,
+      "missing": 0,
+      "qa_acc": 0.0154,
+      "qa_n": 130,
+      "key_line_recall": 0.0139,
+      "number_recall": 0.0
+     },
+     "type:epub": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8889,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:eml": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 15,
+      "key_line_recall": 0.8958,
+      "number_recall": 1.0
+     },
+     "type:mbox": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 0.7037,
+      "number_recall": 1.0
+     },
+     "type:ics": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.5
+     },
+     "type:vcf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 0.0,
+      "number_recall": null
+     },
+     "type:zip": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.7857,
+      "qa_n": 14,
+      "key_line_recall": 0.7143,
+      "number_recall": 0.75
+     },
+     "type:webarchive": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 10,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:png": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 13,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:jpg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 12,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:heic": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 14,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:webp": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 9,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:gif": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.1333,
+      "qa_n": 15,
+      "key_line_recall": 0.125,
+      "number_recall": 0.0
+     },
+     "type:tiff": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 12,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:bmp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 13,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:svg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.75,
+      "qa_n": 8,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:mp4": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:mov": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     }
+    },
+    "full_path": {
+     "all": {
+      "files": 115,
+      "missing": 0,
+      "qa_acc": 0.8204,
+      "qa_n": 412,
+      "key_line_recall": 0.728,
+      "number_recall": 0.8447
+     },
+     "type:txt": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "layer:full": {
+      "files": 66,
+      "missing": 0,
+      "qa_acc": 0.9153,
+      "qa_n": 236,
+      "key_line_recall": 0.8249,
+      "number_recall": 0.9405
+     },
+     "type:md": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9375,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:rtf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:html": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 13,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:csv": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:json": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8571,
+      "qa_n": 14,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xml": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.2,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.3333
+     },
+     "type:docx": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:doc": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8333,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:odt": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xlsx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:ods": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9286,
+      "qa_n": 14,
+      "key_line_recall": 0.9375,
+      "number_recall": 0.8889
+     },
+     "type:pptx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 0.8148,
+      "number_recall": 1.0
+     },
+     "layer:partial": {
+      "files": 13,
+      "missing": 0,
+      "qa_acc": 0.9783,
+      "qa_n": 46,
+      "key_line_recall": 0.8803,
+      "number_recall": 0.9615
+     },
+     "type:odp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9286,
+      "qa_n": 14,
+      "key_line_recall": 0.75,
+      "number_recall": 0.875
+     },
+     "type:pdf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:pdf_scanned": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 17,
+      "key_line_recall": 0.9583,
+      "number_recall": 1.0
+     },
+     "layer:none": {
+      "files": 36,
+      "missing": 0,
+      "qa_acc": 0.5923,
+      "qa_n": 130,
+      "key_line_recall": 0.4954,
+      "number_recall": 0.5801
+     },
+     "type:epub": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8889,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:eml": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 15,
+      "key_line_recall": 0.8958,
+      "number_recall": 1.0
+     },
+     "type:mbox": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 0.7037,
+      "number_recall": 1.0
+     },
+     "type:ics": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8667,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.5
+     },
+     "type:vcf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 0.0,
+      "number_recall": null
+     },
+     "type:zip": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 14,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:webarchive": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 10,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:png": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9231,
+      "qa_n": 13,
+      "key_line_recall": 0.6667,
+      "number_recall": 1.0
+     },
+     "type:jpg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:heic": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 14,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:webp": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 0.3333,
+      "number_recall": 0.875
+     },
+     "type:gif": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.4667,
+      "qa_n": 15,
+      "key_line_recall": 0.3958,
+      "number_recall": 0.4444
+     },
+     "type:tiff": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 0.9167,
+      "number_recall": 1.0
+     },
+     "type:bmp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.6923,
+      "qa_n": 13,
+      "key_line_recall": 0.75,
+      "number_recall": 1.0
+     },
+     "type:svg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.75,
+      "qa_n": 8,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:mp4": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:mov": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     }
+    },
+    "full_path_r2": {
+     "all": {
+      "files": 115,
+      "missing": 0,
+      "qa_acc": 0.8083,
+      "qa_n": 412,
+      "key_line_recall": 0.7216,
+      "number_recall": 0.8342
+     },
+     "type:txt": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "layer:full": {
+      "files": 66,
+      "missing": 0,
+      "qa_acc": 0.9153,
+      "qa_n": 236,
+      "key_line_recall": 0.8249,
+      "number_recall": 0.9405
+     },
+     "type:md": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9375,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:rtf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:html": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 13,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:csv": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:json": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8571,
+      "qa_n": 14,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xml": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.2,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.3333
+     },
+     "type:docx": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:doc": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8333,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:odt": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 16,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:xlsx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:ods": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9286,
+      "qa_n": 14,
+      "key_line_recall": 0.9375,
+      "number_recall": 0.8889
+     },
+     "type:pptx": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9091,
+      "qa_n": 11,
+      "key_line_recall": 0.9259,
+      "number_recall": 1.0
+     },
+     "layer:partial": {
+      "files": 13,
+      "missing": 0,
+      "qa_acc": 0.913,
+      "qa_n": 46,
+      "key_line_recall": 0.906,
+      "number_recall": 0.9615
+     },
+     "type:odp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.7857,
+      "qa_n": 14,
+      "key_line_recall": 0.75,
+      "number_recall": 0.875
+     },
+     "type:pdf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 12,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:pdf_scanned": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 17,
+      "key_line_recall": 0.9583,
+      "number_recall": 1.0
+     },
+     "layer:none": {
+      "files": 36,
+      "missing": 0,
+      "qa_acc": 0.5769,
+      "qa_n": 130,
+      "key_line_recall": 0.4657,
+      "number_recall": 0.5417
+     },
+     "type:epub": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.8889,
+      "qa_n": 9,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:eml": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 15,
+      "key_line_recall": 0.8958,
+      "number_recall": 1.0
+     },
+     "type:mbox": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 11,
+      "key_line_recall": 0.7037,
+      "number_recall": 1.0
+     },
+     "type:ics": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.8667,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.5
+     },
+     "type:vcf": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 0.0,
+      "number_recall": null
+     },
+     "type:zip": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 14,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:webarchive": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 10,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:png": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.9231,
+      "qa_n": 13,
+      "key_line_recall": 0.6667,
+      "number_recall": 1.0
+     },
+     "type:jpg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 0.8667,
+      "number_recall": 1.0
+     },
+     "type:heic": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 14,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:webp": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 1.0,
+      "qa_n": 9,
+      "key_line_recall": 0.3333,
+      "number_recall": 0.875
+     },
+     "type:gif": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.4667,
+      "qa_n": 15,
+      "key_line_recall": 0.3958,
+      "number_recall": 0.4444
+     },
+     "type:tiff": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.9167,
+      "qa_n": 12,
+      "key_line_recall": 0.9167,
+      "number_recall": 1.0
+     },
+     "type:bmp": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.6154,
+      "qa_n": 13,
+      "key_line_recall": 0.5833,
+      "number_recall": 0.5
+     },
+     "type:svg": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.75,
+      "qa_n": 8,
+      "key_line_recall": 1.0,
+      "number_recall": 1.0
+     },
+     "type:mp4": {
+      "files": 4,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 15,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     },
+     "type:mov": {
+      "files": 3,
+      "missing": 0,
+      "qa_acc": 0.0,
+      "qa_n": 10,
+      "key_line_recall": 0.0,
+      "number_recall": 0.0
+     }
+    },
+    "excluding_mac_routed_types": {
+     "parse_only": {
+      "formats": 30,
+      "files": 104,
+      "qa_n": 373,
+      "answer_present": 0.6649,
+      "key_line_recall": 0.6068
+     },
+     "full_path": {
+      "formats": 30,
+      "files": 104,
+      "qa_n": 373,
+      "answer_present": 0.9062,
+      "key_line_recall": 0.805
+     },
+     "full_path_r2": {
+      "formats": 30,
+      "files": 104,
+      "qa_n": 373,
+      "answer_present": 0.8928,
+      "key_line_recall": 0.798
+     }
+    }
+   }
+  },
+  "image_read": {
+   "source": "docs/MODELS.md (eval/multimodal/BENCHMARK.md, eval/models-v2/*/vlm-score.json); mm-v1 test 98 images, neutral prompt, type given, single stream",
+   "rows": [
+    {
+     "model": "Qwen3.6-35B-A3B NVFP4 (default)",
+     "cer": 0.003,
+     "key_em": 0.986,
+     "fab_num": 0.005,
+     "p50_s": 2.64,
+     "p90_s": 5.13,
+     "c4_img_per_min": 34.3,
+     "mem_gib": 49.9,
+     "status": "default"
+    },
+    {
+     "model": "Qwen3.8-27B-FP8",
+     "cer": 0.004,
+     "key_em": 0.988,
+     "fab_num": 0.005,
+     "p50_s": 10.97,
+     "p90_s": 21.41,
+     "c4_img_per_min": 14.3,
+     "mem_gib": 50.6,
+     "status": "most accurate, 4x slower"
+    },
+    {
+     "model": "Muse Glimmer-30B NVFP4",
+     "cer": 0.006,
+     "key_em": 0.976,
+     "fab_num": 0.0,
+     "p50_s": 17.81,
+     "p90_s": 34.85,
+     "c4_img_per_min": 11.9,
+     "mem_gib": 58.2,
+     "status": "no fabricated numbers, slowest of the good ones"
+    },
+    {
+     "model": "Qwen3.6-35B-A3B Q8_0 (llama.cpp)",
+     "cer": 0.005,
+     "key_em": 0.986,
+     "fab_num": 0.015,
+     "p50_s": 5.43,
+     "p90_s": 10.2,
+     "c4_img_per_min": 10.9,
+     "mem_gib": 40.8,
+     "status": "same quality, 2x slower"
+    },
+    {
+     "model": "Step3-VL-10B Q8_0",
+     "cer": 0.012,
+     "key_em": 0.966,
+     "fab_num": 0.02,
+     "p50_s": 12.55,
+     "p90_s": 25.07,
+     "c4_img_per_min": 8.3,
+     "mem_gib": 16.6,
+     "status": "chart data points 89.7%"
+    },
+    {
+     "model": "Qwen3-VL-8B Q8_0",
+     "cer": 0.01,
+     "key_em": 0.959,
+     "fab_num": 0.02,
+     "p50_s": 10.0,
+     "p90_s": 20.62,
+     "c4_img_per_min": 11.1,
+     "mem_gib": 19.2,
+     "status": "adds chat times not in the picture (85.9%)"
+    },
+    {
+     "model": "Nemotron-3-Nano-Omni NVFP4",
+     "cer": 0.026,
+     "key_em": 0.878,
+     "fab_num": 0.007,
+     "p50_s": 4.68,
+     "p90_s": 9.69,
+     "c4_img_per_min": 25.3,
+     "mem_gib": 54.3,
+     "status": "fast, not accurate enough"
+    },
+    {
+     "model": "MiniCPM-V-4.6",
+     "cer": 0.213,
+     "key_em": 0.581,
+     "fab_num": 0.052,
+     "p50_s": 3.18,
+     "p90_s": 36.77,
+     "c4_img_per_min": 31.1,
+     "mem_gib": 29.3,
+     "status": "JSON valid 88.8%"
+    },
+    {
+     "model": "GLM-OCR",
+     "cer": 0.536,
+     "key_em": 0.191,
+     "fab_num": 0.003,
+     "p50_s": 4.13,
+     "p90_s": 35.88,
+     "c4_img_per_min": 9.3,
+     "mem_gib": 35.9,
+     "status": "JSON valid 55.1% (OCR model, not a JSON reader)"
+    },
+    {
+     "model": "PaddleOCR-VL-1.6",
+     "cer": 0.976,
+     "key_em": 0.009,
+     "fab_num": 0.0,
+     "p50_s": 21.3,
+     "p90_s": 21.36,
+     "c4_img_per_min": 11.9,
+     "mem_gib": 34.9,
+     "status": "JSON valid 10.2%"
+    }
+   ],
+   "failed": [
+    {
+     "model": "Gemma 4 31B-it QAT",
+     "why": "0/98 usable, all HTTP 500 (token 0 only)"
+    },
+    {
+     "model": "Phi-4-reasoning-vision-15B",
+     "why": "failed to start: siglip2 lacks filter_out_non_signature_kwargs in transformers 5.17"
+    },
+    {
+     "model": "DeepSeek-OCR-2",
+     "why": "failed to start: Triton kernel compile error (LOG2E not constexpr)"
+    },
+    {
+     "model": "Keye-VL-2.0-30B-A3B",
+     "why": "failed to start: architecture not in vLLM 0.30.0; needs fast_hadamard_transform"
+    },
+    {
+     "model": "ERNIE-4.5-VL-28B-A3B-Thinking",
+     "why": "failed to start: missing decord"
+    },
+    {
+     "model": "Mistral Small 4 (vision)",
+     "why": "failed to start (Pixtral import)"
+    },
+    {
+     "model": "DeepSeek-V4-Flash",
+     "why": "text-only: HTTP 400 on images"
+    }
+   ],
+   "organizer_path": {
+    "source": "skills/image-read/BENCHMARK.md",
+    "type_correct": [
+     0.98,
+     1.0
+    ],
+    "key_em": [
+     0.962,
+     0.988
+    ],
+    "qa_answerable": [
+     0.993,
+     0.993
+    ],
+    "fab_num_ex_gist": [
+     0.009,
+     0.005
+    ],
+    "p50_s": [
+     4.09,
+     3.87
+    ],
+    "p90_s": [
+     6.58,
+     6.32
+    ]
+   }
+  },
+  "embeddings": {
+   "source": "eval/retrieval/README.md; eval/models-v2/embeddings/summary.json",
+   "candidate_event_R5": [
+    {
+     "model": "Qwen3-Embedding-0.6B (default)",
+     "dev": 0.986,
+     "holdout": 1.0,
+     "stress": 0.981,
+     "p50_ms": 25,
+     "mem_gib": 5.9
+    },
+    {
+     "model": "Qwen3-Embedding-4B",
+     "dev": 1.0,
+     "holdout": 1.0,
+     "stress": 0.99,
+     "p50_ms": 43,
+     "mem_gib": 18.7
+    },
+    {
+     "model": "char-bigram hash (lexical)",
+     "dev": 0.928,
+     "holdout": 0.971,
+     "stress": 0.76,
+     "p50_ms": 0.03,
+     "mem_gib": 0
+    },
+    {
+     "model": "no vectors",
+     "dev": 0.783,
+     "holdout": 0.886,
+     "stress": 0.596
+    }
+   ],
+   "item_level_R5": [
+    {
+     "model": "Qwen3-VL-Embedding-8B",
+     "dev": 0.868,
+     "holdout": 0.854
+    },
+    {
+     "model": "Nemotron-3-Embed-8B",
+     "dev": 0.795,
+     "holdout": 0.835
+    },
+    {
+     "model": "Qwen3-Embedding-0.6B (default)",
+     "dev": 0.798,
+     "holdout": 0.839
+    }
+   ]
+  },
+  "mac": {
+   "source": "bestASR DICTATION_ARCHITECTURE.md §2/§4/§5; IMPLEMENTATION_STATUS.md (Round 7; speaker freeze line 1444); aggregates of the user's own dictation only",
+   "dictation_recognizers_240": [
+    {
+     "model": "Qwen3-ASR 1.7B 8-bit + 41-term list (final, default)",
+     "cer": 0.0374,
+     "eng_terms": "30/41",
+     "decode_p50_ms": 939
+    },
+    {
+     "model": "Qwen3-ASR 1.7B bf16 (H100 reference)",
+     "cer": 0.0378,
+     "eng_terms": "29/41",
+     "decode_p50_ms": 710
+    },
+    {
+     "model": "FireRedASR2-AED (75-item subset)",
+     "cer": 0.0407,
+     "eng_terms": "6/10",
+     "decode_p50_ms": 1367
+    },
+    {
+     "model": "Fun-ASR-Nano-2512",
+     "cer": 0.0469,
+     "eng_terms": "27/41",
+     "decode_p50_ms": 396
+    },
+    {
+     "model": "SenseVoice small int8 (live draft)",
+     "cer": 0.0575,
+     "eng_terms": "24/41",
+     "decode_p50_ms": 150
+    }
+   ],
+   "feature_bug_fix_40_proofread": {
+    "cer_before": 0.032,
+    "cer_after": 0.0271,
+    "eng_terms_before": 0.68,
+    "eng_terms_after": 0.76
+   },
+   "release_to_insert_ms": {
+    "p50": 545,
+    "p90": 635,
+    "n": 24
+   },
+   "memory_gb": {
+    "dictating": 5.17,
+    "idle": 0.93
+   },
+   "cleanup_model": {
+    "model": "Qwen3-0.6B 8-bit LoRA + faithfulness guard",
+    "precision_vs_proofread": 0.9812,
+    "gen_p50_ms": 193,
+    "size_mb": 630
+   },
+   "rejected": {
+    "personal ASR LoRA": "CER 2.57% -> 8.43%",
+    "auto-picked term list": "4.06% vs 3.74% hand-picked"
+   },
+   "public_profiles": {
+    "Paraformer-large Mandarin FLEURS CER": 0.0917,
+    "Parakeet Unified English FLEURS WER": 0.078
+   },
+   "speaker_ami_holdout": {
+    "model": "FluidAudio 0.15.5 + fluid-speaker-diarization-coreml",
+    "speaker_confusion": 0.0207,
+    "known_person_misid": 0,
+    "false_merges": 0,
+    "known_queries": "15/16",
+    "unknown_rejections": "16/16",
+    "rtf": 0.0056,
+    "peak_rss_gb": 0.71,
+    "der": 0.2493,
+    "jer": 0.3178
+   }
+  }
+ }
+}

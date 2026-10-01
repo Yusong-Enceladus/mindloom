@@ -137,10 +137,14 @@ class MatterMapper:
         """Events to map now: queued ones by priority then importance, then (idle only) matters with enough items
         and no map yet, largest importance first."""
         rows = self.store.all(
-            "SELECT q.event_id FROM map_queue q JOIN events e ON e.event_id = q.event_id AND e.deleted = 0"
+            "SELECT q.event_id, q.priority FROM map_queue q JOIN events e ON e.event_id = q.event_id AND e.deleted = 0"
             + (" WHERE q.priority >= 2" if demand_only else "")
-            + " ORDER BY q.priority DESC, e.importance DESC, q.queued_at LIMIT ?", (limit,))
-        out = [r["event_id"] for r in rows]
+            + " ORDER BY q.priority DESC, e.importance DESC, q.queued_at")
+        if self.store.deadline_days:
+            # v8 B6 (a shared space's store): within a priority, matters with a near deadline first
+            urgent = self.store.urgent_events()
+            rows.sort(key=lambda r: (-r["priority"], r["event_id"] not in urgent))
+        out = [r["event_id"] for r in rows[:limit]]
         # queued rows of deleted events are dropped
         self.store.x("DELETE FROM map_queue WHERE event_id IN (SELECT event_id FROM events WHERE deleted = 1)")
         if demand_only or len(out) >= limit:

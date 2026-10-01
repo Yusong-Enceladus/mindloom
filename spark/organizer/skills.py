@@ -46,6 +46,8 @@ JOB_TO_SKILL: dict[str, str] = {
     "map": "matter-map",
     # v7: the grouping pass (organizer/matter_group.py): ropes (areas / projects) and each matter's type.
     "group": "matter-group",
+    # v8: a matter's handover pack, on request (organizer/handover.py).
+    "handover": "handover-pack",
 }
 
 GLOBAL_RULES = """\

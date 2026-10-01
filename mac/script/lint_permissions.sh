@@ -82,7 +82,7 @@ manifest_filter='def nonempty: type == "string" and length > 0;
   .requestPolicy == "on-demand-per-feature" and
   (.requiredEntitlements | type == "array") and
   (.forbiddenEntitlements | type == "array" and length > 0) and
-  ([.permissions[].id] | sort) == ["accessibility", "microphone", "system-audio"] and
+  ([.permissions[].id] | sort) == ["accessibility", "calendars", "microphone", "reminders", "system-audio"] and
   all(.permissions[];
     (.requirementRefs | type == "array" and length > 0) and
     (.runtimeAuthorizationAPI | nonempty) and
@@ -95,6 +95,14 @@ manifest_filter='def nonempty: type == "string" and length > 0;
   ) and
   (.permissions[] | select(.id == "system-audio") |
     .usageDescriptionKey == "NSAudioCaptureUsageDescription" and
+    (.usageDescription | nonempty)
+  ) and
+  (.permissions[] | select(.id == "calendars") |
+    .usageDescriptionKey == "NSCalendarsFullAccessUsageDescription" and
+    (.usageDescription | nonempty)
+  ) and
+  (.permissions[] | select(.id == "reminders") |
+    .usageDescriptionKey == "NSRemindersFullAccessUsageDescription" and
     (.usageDescription | nonempty)
   ) and
   (.permissions[] | select(.id == "accessibility") |
@@ -190,7 +198,7 @@ jq -n \
     entitlements: $entitlements,
     checkedPermissionCount: $checkedPermissionCount,
     checkedUsageDescriptionCount: $checkedUsageDescriptionCount,
-    requirementsCovered: ["PRD-18.1", "PRD-18.2", "SYS-001..012", "DICT-006..008"]
+    requirementsCovered: ["PRD-18.1", "PRD-18.2", "SYS-001..012", "DICT-006..008", "ENTRY-007", "ENTRY-008"]
   }' > "$summary_temp"
 mv "$summary_temp" "$summary_path"
 rmdir "$summary_temp_directory"
@@ -201,4 +209,4 @@ if [[ "$permission_status" != "pass" ]]; then
   exit 1
 fi
 
-print "permission lint passed: 3 capabilities, 2 usage descriptions, minimal entitlements"
+print "permission lint passed: $(jq ".permissions | length" "$manifest_path") capabilities, $checked_usage_keys usage descriptions, minimal entitlements"

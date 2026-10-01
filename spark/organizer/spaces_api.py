@@ -1,9 +1,11 @@
 """HTTP routes for shared spaces: /v1/spaces/... and /v1/orgs/... (docs/SPACES.md).
 
-Every route still needs the link token (the transport: the member's own SSH tunnel to this Spark). On top of it,
-space routes do not use the personal store's unlock or access proof: a member is identified by a signature of
-one of its device keys, per op (the op log) or per request (reads, uploads, the organizer). The personal store
-may be locked while a shared space is in use, and the other way round.
+Every route needs the link token (the Spark owner's Mac) or, since v8, a member's own access credential through the
+gate (organizer/access.py): the transport. On top of it, space routes do not use the personal store's unlock or
+access proof: a member is identified by a signature of one of its device keys, per op (the op log) or per request
+(reads, uploads, the organizer). A member coming through the gate must sign with the device its access was
+enrolled with (the auth middleware checks the request header; _bind checks the device inside signed ops and join
+requests). The personal store may be locked while a shared space is in use, and the other way round.
 
 Signed request headers (organizer/space_crypto.py request_message):
   X-Mindloom-Device: <device_id>   X-Mindloom-Date: <unix seconds>   X-Mindloom-Nonce: <16-64 base64url chars>
@@ -14,16 +16,24 @@ Errors are JSON {"error": "<code>", "detail"?: ..., ...} with the HTTP status; r
 from __future__ import annotations
 
 import json
+import os
+import shutil
+import tempfile
+from pathlib import Path
 from typing import Any, Callable, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse, Response
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 
+from . import backup
+from . import space_crypto as sc
 from .space_organizer import SpaceOrganizers
 from .spaces import ROLES, SpaceError, Spaces
 
 MAX_BODY = 40 * 1024 * 1024
+MAX_RESTORE_BYTES = 8 * 1024 * 1024 * 1024    # ORGANIZER_MAX_RESTORE_MB (review finding V8R-10)
+RESTORE_DISK_RESERVE = 1024 * 1024 * 1024     # a restore leaves at least this much free on the Spark's disk
 
 
 def _headers(request: Request) -> dict:
@@ -75,7 +85,38 @@ def _status(request: Request, allowed: set[str]) -> Optional[str]:
     return value
 
 
-def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
+def _wire_signer(wire: object, field: str = "op") -> tuple[Optional[str], Optional[str]]:
+    """The (device id, member id) a signed op (or a join request, field "request") names, without trusting them."""
+    if not isinstance(wire, dict):
+        return None, None
+    try:
+        payload = json.loads((sc.b64u_decode(wire.get(field)) or b"").decode("utf-8"))
+    except (UnicodeDecodeError, ValueError):
+        return None, None
+    if not isinstance(payload, dict):
+        return None, None
+    if field == "request":
+        dev = payload.get("device")
+        return (dev.get("device_id") if isinstance(dev, dict) else None), payload.get("member_id")
+    return payload.get("device_id"), payload.get("member_id")
+
+
+def _bind(request: Request, wires: list, field: str = "op") -> None:
+    """A member coming through the gate posts only ops (or a join request) of the device it enrolled with, under the
+    member id it enrolled with (v8: one Mac, one member)."""
+    rec = getattr(request.state, "access", None) if getattr(request.state, "caller", "owner") == "member" else None
+    if rec is None:
+        return
+    for wire in wires:
+        device_id, member_id = _wire_signer(wire, field)
+        if device_id != rec["device_id"]:
+            raise SpaceError(403, "access_device", "sign with the Mac this access belongs to")
+        if member_id != rec["member_id"]:
+            raise SpaceError(403, "access_member", "sign as the member this access belongs to")
+
+
+def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers, *,
+             max_restore_bytes: int = MAX_RESTORE_BYTES) -> None:
     @app.exception_handler(SpaceError)
     async def on_space_error(request: Request, exc: SpaceError):
         return JSONResponse(exc.body(), status_code=exc.status)
@@ -105,6 +146,7 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     @app.post("/v1/orgs")
     async def post_org(request: Request):
         wire = _json(await _read(request, 1024 * 1024))
+        _bind(request, [wire])
         return await run_in_threadpool(spaces.create_org, wire)
 
     @app.get("/v1/orgs/{org_id}")
@@ -120,6 +162,7 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     async def post_org_ops(org_id: str, request: Request):
         data = _json(await _read(request))
         ops = data.get("ops") if isinstance(data, dict) else None
+        _bind(request, ops if isinstance(ops, list) else [])
         return await run_in_threadpool(spaces.apply_org_ops, org_id, ops)
 
     @app.get("/v1/orgs/{org_id}/audit")
@@ -131,6 +174,16 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
         def run():
             spaces.authenticate_org(org_id, "GET", target, headers, body)
             return spaces.audit_log(org_id=org_id, since=since, limit=limit)
+        return await run_in_threadpool(run)
+
+    @app.get("/v1/orgs/{org_id}/escrow")
+    async def get_org_escrow(org_id: str, request: Request):
+        """v8 B5: the signing admin device's escrow wraps of each org space's current key (recovery)."""
+        body, headers, target = await request.body(), _headers(request), _target(request)
+
+        def run():
+            dev = spaces.authenticate_org(org_id, "GET", target, headers, body)
+            return spaces.escrow_for(org_id, dev["device_id"])
         return await run_in_threadpool(run)
 
     # ---- spaces ------------------------------------------------------------------------------------
@@ -148,6 +201,7 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     @app.post("/v1/spaces")
     async def post_space(request: Request):
         wire = _json(await _read(request, 1024 * 1024))
+        _bind(request, [wire])
         return await run_in_threadpool(spaces.create_space, wire)
 
     @app.get("/v1/spaces/{space_id}")
@@ -164,6 +218,7 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     async def post_ops(space_id: str, request: Request):
         data = _json(await _read(request))
         ops = data.get("ops") if isinstance(data, dict) else None
+        _bind(request, ops if isinstance(ops, list) else [])
         return await run_in_threadpool(spaces.apply_ops, space_id, ops)
 
     @app.get("/v1/spaces/{space_id}/ops")
@@ -203,6 +258,7 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     @app.post("/v1/spaces/{space_id}/join")
     async def post_join(space_id: str, request: Request):
         wire = _json(await _read(request, 64 * 1024))
+        _bind(request, [wire], "request")
         return await run_in_threadpool(spaces.join, space_id, wire)
 
     @app.get("/v1/spaces/{space_id}/join/{request_id}")
@@ -247,6 +303,99 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
                                                                                      limit=limit),
                             min_role=ROLES["admin"])
 
+    # ---- backups (v8 B4; organizer/backup.py) ---------------------------------------------------------
+
+    @app.post("/v1/spaces/{space_id}/backup")
+    async def post_backup(space_id: str, request: Request):
+        """An admin's Mac pulls an encrypted backup of the space; the key it lends is derived from the current
+        epoch's space key (backup.backup_key) and forgotten when the stream ends."""
+        body = await request.body()
+        if len(body) > 4096:
+            raise SpaceError(413, "too_large")
+        headers, target, method = _headers(request), _target(request), request.method
+
+        def prepare():
+            actor = spaces.authenticate(space_id, method, target, headers, body, ROLES["admin"])
+            data = _json(body)
+            if not isinstance(data, dict) or not sc.is_uuid(data.get("backup_id")):
+                raise SpaceError(400, "bad_request", "backup_id is a lowercase UUID")
+            key = data.get("key")
+            if not isinstance(key, str) or len(key) != 64 or any(c not in "0123456789abcdef" for c in key):
+                raise SpaceError(400, "bad_key", "key is 64 lowercase hex")
+            space = spaces.space(space_id)
+            if data.get("epoch") != space["epoch"]:
+                raise SpaceError(409, "stale_epoch", "derive the backup key from the current epoch",
+                                 epoch=space["epoch"])
+            spaces.audit("space.backup", {"backup_id": data["backup_id"], "epoch": space["epoch"]},
+                         space_id=space_id, member_id=actor.member_id, device_id=actor.device_id)
+            return data["backup_id"], backup.export_stream(spaces, organizers, space_id, bytes.fromhex(key),
+                                                           data["backup_id"], space["epoch"], spaces.now())
+        backup_id, stream = await run_in_threadpool(prepare)
+        return StreamingResponse(stream, media_type="application/octet-stream",
+                                 headers={"X-Mindloom-Backup": backup_id})
+
+    @app.post("/v1/spaces/{space_id}/restore")
+    async def post_restore(space_id: str, request: Request):
+        """Restore a space from a backup (the MLBK1 stream as the body). The Spark owner, or an admin of the space on
+        this Spark through the gate; the key in X-Mindloom-Backup-Key, options in X-Mindloom-Restore."""
+        if not sc.is_uuid(space_id):
+            raise SpaceError(404, "unknown_space")
+        key = request.headers.get("x-mindloom-backup-key", "")
+        if len(key) != 64 or any(c not in "0123456789abcdef" for c in key):
+            raise SpaceError(400, "bad_key", "X-Mindloom-Backup-Key is 64 lowercase hex")
+        raw_opts = request.headers.get("x-mindloom-restore") or "{}"
+        if len(raw_opts) > 64 * 1024:
+            raise SpaceError(413, "too_large")
+        try:
+            opts = json.loads(raw_opts)
+        except ValueError:
+            raise SpaceError(400, "bad_request", "X-Mindloom-Restore is JSON") from None
+        if not isinstance(opts, dict):
+            raise SpaceError(400, "bad_request", "X-Mindloom-Restore is a JSON object")
+        member = getattr(request.state, "access", None) if getattr(request.state, "caller", "owner") == "member" \
+            else None
+        force = opts.get("force") is True
+        # Who may restore, how much and whether it fits are decided before a byte of the body is read (review
+        # finding V8R-10): a member through the gate restores only a space it administers here now.
+        await run_in_threadpool(backup.check_restorer, spaces, space_id, member)
+        if force and member is not None:
+            raise SpaceError(403, "forbidden", "only the Spark's owner overwrites a space whose log diverged")
+        declared = request.headers.get("content-length")
+        if declared is not None:
+            try:
+                declared_n = int(declared)
+            except ValueError:
+                raise SpaceError(400, "bad_request", "Content-Length is a number") from None
+            if declared_n > max_restore_bytes:
+                raise SpaceError(413, "too_large", f"a backup here is at most {max_restore_bytes // (1024 * 1024)} MB",
+                                 limit_bytes=max_restore_bytes)
+        # The body is spooled, then unpacked next to it: room for twice its size plus a reserve for everyone else.
+        need = int(declared) if declared is not None else 0
+        if shutil.disk_usage(spaces.root).free < 2 * need + RESTORE_DISK_RESERVE:
+            raise SpaceError(507, "disk_full", "the Spark's disk has no room for this restore")
+        fd, tmp = tempfile.mkstemp(prefix=".restore-in-", dir=spaces.root)
+        try:
+            n, checked = 0, 0
+            with os.fdopen(fd, "wb") as fh:
+                async for chunk in request.stream():
+                    n += len(chunk)
+                    if n > max_restore_bytes or (declared is not None and n > need):
+                        raise SpaceError(413, "too_large", "the backup is larger than this Spark takes",
+                                         limit_bytes=max_restore_bytes)
+                    if n - checked >= 64 * 1024 * 1024:   # a body without a length: the disk is watched as it comes
+                        checked = n
+                        if shutil.disk_usage(spaces.root).free < n + RESTORE_DISK_RESERVE:
+                            raise SpaceError(507, "disk_full", "the Spark's disk has no room for this restore")
+                    fh.write(chunk)
+            return await run_in_threadpool(backup.restore, spaces, organizers, space_id, Path(tmp),
+                                           bytes.fromhex(key), mode=opts.get("mode", "new"),
+                                           purge=opts.get("purge"), member=member, force=force)
+        finally:
+            try:
+                os.unlink(tmp)
+            except FileNotFoundError:
+                pass
+
     # ---- the space's organizer ----------------------------------------------------------------------
 
     @app.post("/v1/spaces/{space_id}/organizer/lease")
@@ -268,6 +417,16 @@ def register(app: FastAPI, spaces: Spaces, organizers: SpaceOrganizers) -> None:
     async def post_space_items(space_id: str, request: Request):
         return await signed(request, space_id, lambda actor, body: organizers.ingest(actor, _json(body)),
                             min_role=ROLES["write"], max_body=MAX_BODY)
+
+    @app.post("/v1/spaces/{space_id}/organizer/handover-pack")
+    async def post_space_handover(space_id: str, request: Request):
+        res = await signed(request, space_id, lambda actor, body: organizers.handover_request(actor, _json(body)),
+                           min_role=ROLES["write"], max_body=4096)
+        return JSONResponse(res, status_code=202 if res.get("queued") else 200)
+
+    @app.get("/v1/spaces/{space_id}/organizer/handover-pack/{pack_id}")
+    async def get_space_handover(space_id: str, pack_id: str, request: Request):
+        return await signed(request, space_id, lambda actor, body: organizers.handover_get(actor, pack_id))
 
     @app.get("/v1/spaces/{space_id}/organizer/state")
     async def get_space_state(space_id: str, request: Request):

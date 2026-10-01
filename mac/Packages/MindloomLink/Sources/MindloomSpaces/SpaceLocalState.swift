@@ -120,17 +120,73 @@ public struct SpaceSegmentRef: Codable, Equatable, Sendable {
   public let parentItemID: String
   public let startMS: Int
   public let endMS: Int
+  /// The whole recording's length (v8 C1: required with an audio part, so
+  /// the Spark can see it is a part and never the whole).
+  public let recordingMS: Int?
 
-  public init(parentItemID: String, startMS: Int, endMS: Int) {
+  public init(parentItemID: String, startMS: Int, endMS: Int, recordingMS: Int? = nil) {
     self.parentItemID = parentItemID.lowercased()
     self.startMS = startMS
     self.endMS = endMS
+    self.recordingMS = recordingMS
   }
+
+  public var lengthMS: Int { endMS - startMS }
 
   enum CodingKeys: String, CodingKey {
     case parentItemID = "parent_item_id"
     case startMS = "start_ms"
     case endMS = "end_ms"
+    case recordingMS = "recording_ms"
+  }
+
+  public var json: SpaceJSON {
+    var out: SpaceJSON = [
+      "parent_item_id": .string(parentItemID), "start_ms": SpaceJSON(startMS),
+      "end_ms": SpaceJSON(endMS),
+    ]
+    if let recordingMS { out = out.setting("recording_ms", SpaceJSON(recordingMS)) }
+    return out
+  }
+}
+
+/// A snapshot's plain body (v8 C2): ids only. `cites` are the space's items
+/// the frozen summary quotes or draws on; when one leaves, the snapshot goes.
+public struct SpaceSnapshotRef: Codable, Equatable, Sendable {
+  public let matterID: String?
+  public let packID: String?
+  public let asOf: String?
+  public let cites: [String]
+
+  public init(matterID: String?, packID: String?, asOf: String?, cites: [String]) {
+    self.matterID = matterID
+    self.packID = packID
+    self.asOf = asOf
+    self.cites = Array(Set(cites.map { $0.lowercased() })).sorted()
+  }
+
+  enum CodingKeys: String, CodingKey {
+    case matterID = "matter_id"
+    case packID = "pack_id"
+    case asOf = "as_of"
+    case cites
+  }
+
+  public init(from decoder: Decoder) throws {
+    let c = try decoder.container(keyedBy: CodingKeys.self)
+    matterID = try c.decodeIfPresent(String.self, forKey: .matterID)
+    packID = try c.decodeIfPresent(String.self, forKey: .packID)
+    asOf = try c.decodeIfPresent(String.self, forKey: .asOf)
+    cites = try c.decodeIfPresent([String].self, forKey: .cites) ?? []
+  }
+
+  public var json: SpaceJSON {
+    var out: SpaceJSON = [:]
+    if let matterID { out = out.setting("matter_id", .string(matterID)) }
+    if let packID { out = out.setting("pack_id", .string(packID)) }
+    if let asOf { out = out.setting("as_of", .string(asOf)) }
+    if !cites.isEmpty { out = out.setting("cites", SpaceJSON(cites)) }
+    return out
   }
 }
 
@@ -161,6 +217,11 @@ public struct SpaceSharedItem: Codable, Equatable, Identifiable, Sendable {
   public var keyEpoch: Int?
   /// The device whose op shared it (this Mac withdraws only what it shared).
   public var deviceID: String?
+  /// A frozen summary (`kind: snapshot`): what it was made from.
+  public var snapshot: SpaceSnapshotRef?
+
+  /// A meeting part with its audio for members (role `audio`).
+  public var audioBlob: SpaceBlobRef? { blobs.first { $0.role == "audio" } }
 
   public var id: String { itemID }
   public var isActive: Bool { status == .active }
@@ -197,11 +258,14 @@ public struct SpaceMember: Codable, Equatable, Identifiable, Sendable {
   public var joinedAt: String?
   public var endedAt: String?
   public var devices: [SpaceDevicePublic]
+  /// What this member stores in the space (admins see everyone's).
+  public var usageBytes: Int?
 
   public var id: String { memberID }
   public var isActive: Bool { status == "active" }
 
   public init(record: SpaceMemberRecord, displayName: String?) {
+    usageBytes = record.usageBytes
     memberID = record.memberID
     self.displayName = displayName
     role = record.effective
@@ -333,6 +397,12 @@ public struct SpaceLocalState: Codable, Equatable, Identifiable, Sendable {
   public var invites: [String: SpaceInviteInfo]
   /// Matter id → the member who is its 负责人.
   public var handovers: [String: String]
+  /// Matter id → the snapshot item of the handover pack given with it.
+  public var handoverPacks: [String: String] {
+    get { handoverPackItems ?? [:] }
+    set { handoverPackItems = newValue }
+  }
+  var handoverPackItems: [String: String]?
   public var organizer: SpaceOrganizerSnapshot?
   /// Ops whose signature did not verify: never applied (counted, not kept).
   public var rejectedOps: Int
@@ -350,6 +420,27 @@ public struct SpaceLocalState: Codable, Equatable, Identifiable, Sendable {
   /// goes out of the space as `item.delete` (review V7-S12). Kept here so a
   /// quit or a link that is down does not lose it.
   public var pendingDeletes: [String]?
+  /// v8: org spaces' escrow status, the Spark's limits and this member's
+  /// storage (as the last summary said; shown, never used for keys).
+  public var escrow: SpaceEscrowStatus?
+  public var limits: SpaceLimits?
+  public var usage: SpaceUsage?
+  /// The organization's admins and devices from its own signed log (read
+  /// by an org admin's Mac): what a `space.recover` and escrow wraps are
+  /// checked against (v8 B5).
+  public var orgRoster: SpaceOrgRoster?
+  /// Takeovers (`space.recover`) this Mac could not check against the
+  /// organization's log; the member compares the fingerprint and confirms.
+  public var pendingRecoveries: [SpacePendingRecovery]?
+  /// Devices the member confirmed as a takeover's (device id → sign key).
+  public var trustedRecoveries: [String: String]?
+  /// The organization's first op as this org space's own signed genesis op
+  /// commits to it (`owner.org_genesis`, SHA-256 hex; review V8R-02).
+  public var orgGenesis: String?
+  /// Members and devices this Mac saw removed (or left) that the Spark's log
+  /// admitted again after it went back (a restore of an older backup, review
+  /// V8R-03): nothing new is shared until an admin removes them again.
+  public var readmittedAfterRollback: [String]?
 
   public var id: String { spaceID }
 
@@ -408,6 +499,22 @@ public struct SpaceLocalState: Codable, Equatable, Identifiable, Sendable {
 
   public var activeMembers: [SpaceMember] { members.filter(\.isActive) }
 
+  /// The Spark's log went back (a restore): everything that came from the
+  /// log is read again from the first op; local choices stay.
+  mutating func resetForResync() {
+    cursor = 0
+    roster = SpaceRoster()
+    items = [:]
+    packages = [:]
+    rules = [:]
+    takedowns = [:]
+    proposals = [:]
+    handovers = [:]
+    handoverPackItems = nil
+    rejectedOps = 0
+    pendingRecoveries = nil
+  }
+
   /// Records a contradiction between the Spark's answer and the signed log.
   mutating func warn(_ code: String) {
     var list = integrityWarnings ?? []
@@ -437,6 +544,14 @@ public protocol SpaceStateStore: Sendable {
   /// across a quit or a crash after the space's own state is gone (V7-S15).
   func forkCopiesToDelete() throws -> [String]
   func setForkCopiesToDelete(_ ids: [String]) throws
+  /// This Mac's member id on its Spark (v8: one device id is one member on
+  /// the whole Spark; an enrolled Mac's is its access record's).
+  func identity() throws -> String?
+  func setIdentity(_ memberID: String) throws
+  /// What this Mac pinned of each organization's signed log (review finding
+  /// V8R-02), by org id.
+  func orgPins() throws -> [String: SpaceOrgPin]
+  func setOrgPins(_ pins: [String: SpaceOrgPin]) throws
 }
 
 /// The space keys this device unwrapped, per epoch. Keychain on a real
@@ -498,6 +613,18 @@ public final class MemorySpaceStateStore: SpaceStateStore, @unchecked Sendable {
   public func forkCopiesToDelete() throws -> [String] { lock.withLock { forkDeletes } }
 
   public func setForkCopiesToDelete(_ ids: [String]) throws { lock.withLock { forkDeletes = ids } }
+
+  private var member: String?
+
+  public func identity() throws -> String? { lock.withLock { member } }
+  public func setIdentity(_ memberID: String) throws { lock.withLock { member = memberID } }
+
+  private var pins: [String: SpaceOrgPin] = [:]
+
+  public func orgPins() throws -> [String: SpaceOrgPin] { lock.withLock { pins } }
+  public func setOrgPins(_ pins: [String: SpaceOrgPin]) throws {
+    lock.withLock { self.pins = pins }
+  }
 }
 
 public final class MemorySpaceKeyStore: SpaceKeyStore, @unchecked Sendable {
@@ -627,6 +754,39 @@ public struct FileSpaceStateStore: SpaceStateStore {
       to: directory.appendingPathComponent("fork-copies-to-delete.json"))
   }
 
+  public func identity() throws -> String? {
+    let url = directory.appendingPathComponent("identity.json")
+    guard let data = try? Data(contentsOf: url) else { return nil }
+    guard let record = try? JSONDecoder().decode([String: String].self, from: data),
+      let id = record["member_id"], SpaceID.isValid(id)
+    else { throw SpaceStoreError.unreadable }
+    return id
+  }
+
+  public func setIdentity(_ memberID: String) throws {
+    guard SpaceID.isValid(memberID.lowercased()) else { throw SpaceStoreError.unreadable }
+    try ensure(directory)
+    try Self.write(
+      try JSONEncoder().encode(["member_id": memberID.lowercased()]),
+      to: directory.appendingPathComponent("identity.json"))
+  }
+
+  public func orgPins() throws -> [String: SpaceOrgPin] {
+    let url = directory.appendingPathComponent("org-pins.json")
+    guard let data = try? Data(contentsOf: url) else { return [:] }
+    guard let pins = try? JSONDecoder().decode([String: SpaceOrgPin].self, from: data) else {
+      throw SpaceStoreError.unreadable
+    }
+    return pins
+  }
+
+  public func setOrgPins(_ pins: [String: SpaceOrgPin]) throws {
+    try ensure(directory)
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.sortedKeys]
+    try Self.write(try encoder.encode(pins), to: directory.appendingPathComponent("org-pins.json"))
+  }
+
   /// Written to a 0600 temporary file in the same directory, then renamed.
   static func write(_ data: Data, to url: URL) throws {
     let temporary = url.deletingLastPathComponent().appendingPathComponent(
@@ -667,6 +827,15 @@ public struct FileSpaceSecretStore: SpaceKeyStore, SpaceDeviceStore {
     guard allowed() else { throw SpaceStoreError.notAllowed }
     try FileManager.default.createDirectory(
       at: directory, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+  }
+
+  func readSecret(_ name: String) throws -> Data? { try read(name) }
+  func writeSecret(_ data: Data, _ name: String) throws { try write(data, name) }
+
+  func deleteSecret(_ name: String) throws {
+    try check()
+    let url = directory.appendingPathComponent(name)
+    guard unlink(url.path) == 0 || errno == ENOENT else { throw SpaceStoreError.unreadable }
   }
 
   private func read(_ name: String) throws -> Data? {

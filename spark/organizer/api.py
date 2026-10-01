@@ -23,13 +23,17 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from . import __version__, fileparse, keys
+from .access import Access, AccessError
+from .access_api import register as register_access
 from .auth import bearer_matches, ensure_link_token
 from .clients import ChatClient, EmbedClient, ModelUnavailable, OpenAIChatClient, OpenAIEmbedClient
 from .clients import Step3LlamaNativeClient
 from .clock import Clock, from_setting
 from .config import Settings
 from .decisions import answer_question, apply_decision
+from .gate import member_path
 from .inbox import InboxStore
+from .infra import InfraProbe
 from .organizer import Organizer
 import base64
 
@@ -50,8 +54,10 @@ INBOX_PAGE_BYTES = 6 * 1024 * 1024
 # The key-derived access proof (keys.access_proof) of every data request after the Mac's unlock.
 ACCESS_HEADER = "x-mindloom-access"
 
-# Shared spaces and organizations: member-signed routes with their own lease (organizer/spaces_api.py).
-SPACE_PREFIXES = ("/v1/spaces", "/v1/orgs")
+# Shared spaces and organizations: member-signed routes with their own lease (organizer/spaces_api.py); v8: the
+# access routes (who may reach this Spark, organizer/access_api.py) and the admin console's health (infra.py) do not
+# touch the personal store either.
+SPACE_PREFIXES = ("/v1/spaces", "/v1/orgs", "/v1/access", "/v1/infra")
 
 OPEN_WHILE_LOCKED = {("GET", "/v1/health"), ("POST", "/v1/unlock"), ("POST", "/v1/lock"), ("POST", "/v1/wipe"),
                      ("POST", "/v1/inbox")}
@@ -146,11 +152,17 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
     stop = threading.Event()
     # Shared spaces (docs/SPACES.md): their own op logs, keys and ciphertext in <data_dir>/spaces, and one organizer
     # store per space, opened by a member Mac's lease. Independent of the personal store's lock.
-    spaces = spaces or Spaces(settings.data_dir)
+    spaces = spaces or Spaces(settings.data_dir, member_quota_mb=settings.member_quota_mb,
+                              member_total_mb=settings.member_total_mb,
+                              max_spaces_per_member=settings.max_spaces_per_member)
     space_orgs = SpaceOrganizers(spaces, settings, org.harness.client, org.embedder)
     # Created on first start and kept; while it exists (and ORGANIZER_REQUIRE_TOKEN != "0") every
     # request needs "Authorization: Bearer <token>". Held in memory only; never logged.
     token = ensure_link_token(settings.token_path)
+    # v8 B1: teammates' Macs reach this Spark with their own key and credential, through the gate (access.py).
+    access = Access(settings.data_dir, authorized_keys=settings.authorized_keys, gate_path=settings.gate_path or None)
+    # one device id, one member, one key across the spaces and the access records (a member's second Mac)
+    spaces.directory = access
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -158,8 +170,8 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
         if settings.start_worker:
             worker = threading.Thread(target=org.run_worker, args=(stop,), name="organizer-worker", daemon=True)
             worker.start()
-            sweeper = threading.Thread(target=_sweep_spaces, args=(stop, spaces, space_orgs), name="spaces-sweep",
-                                       daemon=True)
+            sweeper = threading.Thread(target=_sweep_spaces, args=(stop, spaces, space_orgs, access),
+                                       name="spaces-sweep", daemon=True)
             sweeper.start()
         yield
         stop.set()
@@ -178,6 +190,9 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
     app.state.link_token = token
     app.state.spaces = spaces
     app.state.space_organizers = space_orgs
+    app.state.access = access
+    # v8 B2: the admin console's health of this Spark (organizer, model servers, GPU memory, disk; no content).
+    app.state.infra = InfraProbe(settings, org, spaces, space_orgs, access)
     if org.inbox is None:
         org.inbox = InboxStore(settings.inbox_path)
 
@@ -215,14 +230,47 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             return JSONResponse({"detail": detail}, status_code=422)
         return await request_validation_exception_handler(request, exc)
 
-    if settings.require_token:
-        @app.middleware("http")
-        async def require_link_token(request: Request, call_next):
-            # Every path, not only /v1/*: nothing is served without the token.
-            if not bearer_matches(request.headers.get("authorization"), token):
-                return JSONResponse({"detail": "missing or invalid link token"}, status_code=401,
-                                    headers={"WWW-Authenticate": "Bearer"})
+    @app.middleware("http")
+    async def require_link_token(request: Request, call_next):
+        # Every path, not only /v1/*: nothing is served without the token, a member credential (v8) or, for one
+        # route, an invite key's enrollment stamp.
+        # A header that says who is asking comes once (review finding V8R-05): with two Authorization headers the
+        # gate and this check could each read a different one.
+        for name in ("authorization", "x-mindloom-gate", "x-mindloom-device"):
+            if len(request.headers.getlist(name)) > 1:
+                return JSONResponse({"error": "duplicate_header", "detail": f"{name} more than once"},
+                                    status_code=400)
+        authorization = request.headers.get("authorization")
+        if bearer_matches(authorization, token):
+            request.state.caller = "owner"
             return await call_next(request)
+        path = request.url.path
+        stamp = request.headers.get("x-mindloom-gate")
+        if request.method == "POST" and path.startswith("/v1/access/enroll/") and \
+                access.check_stamp(stamp, "enroll") == path.rsplit("/", 1)[-1]:
+            request.state.caller = "enroll"
+            return await call_next(request)
+        try:
+            rec = access.authenticate(authorization, stamp)
+        except AccessError as exc:
+            return JSONResponse(exc.body(), status_code=exc.status)
+        if rec is not None:
+            # A member reaches the member routes only (spaces, organizations, access, infra health), and signs
+            # space requests with the device it enrolled with.
+            if not member_path(path):
+                return JSONResponse({"error": "member_scope"}, status_code=403)
+            device = request.headers.get("x-mindloom-device")
+            if device is not None and device != rec["device_id"]:
+                return JSONResponse({"error": "access_device", "detail": "sign with the Mac this access belongs to"},
+                                    status_code=403)
+            request.state.caller = "member"
+            request.state.access = rec
+            return await call_next(request)
+        if settings.require_token:
+            return JSONResponse({"detail": "missing or invalid link token"}, status_code=401,
+                                headers={"WWW-Authenticate": "Bearer"})
+        request.state.caller = "owner"  # ORGANIZER_REQUIRE_TOKEN=0: harnesses only
+        return await call_next(request)
 
     @app.get("/v1/health")
     def health() -> dict:
@@ -240,7 +288,7 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             except ModelUnavailable:
                 embed_model = None
         required_skills = {"event-assign", "event-brief", "home-rank", "image-read", "item-split", "file-read",
-                           "event-consolidate", "person-resolve", "matter-map", "matter-group"}
+                           "event-consolidate", "person-resolve", "matter-map", "matter-group", "handover-pack"}
         available_skills = {skill["name"] for skill in org.registry.summary()}
         store = org.store
         locked = store.locked
@@ -345,6 +393,28 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             raise HTTPException(status_code=404, detail="unknown event")
         return JSONResponse(res, status_code=202 if res["queued"] else 200)
 
+    @app.post("/v1/events/{event_id}/handover-pack")
+    async def request_handover(event_id: str, request: Request):
+        """v8 B3: queue a handover pack of a personal matter. 202 {"queued": true, "pack_id"}; 200 {"queued": false,
+        "reason"}; 404 for an unknown or deleted matter. Optional body {"from", "to"}: display names."""
+        if not event_id or len(event_id) > 128:
+            raise HTTPException(status_code=400, detail="bad event id")
+        try:
+            body = await request.json()
+        except ValueError:
+            body = None
+        res = await run_in_threadpool(org.handover.request, event_id, body if isinstance(body, dict) else None)
+        if res is None:
+            raise HTTPException(status_code=404, detail="unknown event")
+        return JSONResponse(res, status_code=202 if res["queued"] else 200)
+
+    @app.get("/v1/handover-packs/{pack_id}")
+    def get_handover(pack_id: str):
+        out = org.handover.get(pack_id) if len(pack_id) <= 64 else None
+        if out is None:
+            raise HTTPException(status_code=404, detail="unknown pack")
+        return out
+
     @app.post("/v1/items", response_model=ItemsOut)
     def post_items(body: ItemsIn):
         gone = org.store.tombstoned([it.item_id for it in body.items])
@@ -428,15 +498,20 @@ def create_app(settings: Optional[Settings] = None, organizer: Optional[Organize
             "SELECT item_id, revision, state, attempts, reason, error_category, enqueued_at, run_started, run_ended"
             " FROM jobs ORDER BY started_ts")}
 
-    register_spaces(app, spaces, space_orgs)
+    register_spaces(app, spaces, space_orgs, max_restore_bytes=settings.max_restore_mb * 1024 * 1024)
+    register_access(app, access, spaces, space_admins_invite=settings.space_admins_invite)
     return app
 
 
-def _sweep_spaces(stop: threading.Event, spaces: Spaces, space_orgs: SpaceOrganizers) -> None:
-    """Once a minute: overdue privacy takedowns are carried out, stale uploads deleted, space leases expired."""
+def _sweep_spaces(stop: threading.Event, spaces: Spaces, space_orgs: SpaceOrganizers,
+                  access: Optional[Access] = None) -> None:
+    """Once a minute: overdue privacy takedowns are carried out, stale uploads deleted, space leases expired,
+    expired access tickets removed from authorized_keys."""
     while not stop.wait(60.0):
         try:
             spaces.sweep()
             space_orgs.expire()
+            if access is not None:
+                access.sweep()
         except Exception as exc:  # keep sweeping; the error's type only
             log.warning("spaces sweep failed: %s", type(exc).__name__)

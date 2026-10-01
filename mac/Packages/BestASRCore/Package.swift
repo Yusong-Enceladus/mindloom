@@ -77,6 +77,10 @@ let package = Package(
     ),
     .library(name: "BestASRIntake", targets: ["BestASRIntake"]),
     .library(name: "BestASRAgentAccess", targets: ["BestASRAgentAccess"]),
+    // v8 entries (Settings → 入口): share drop folder, Services, Shortcuts,
+    // command line, folders, calendar, Reminders, Git, Zotero.
+    .library(name: "BestASREntries", targets: ["BestASREntries"]),
+    .library(name: "MindloomShareDrop", targets: ["MindloomShareDrop"]),
     .library(name: "MindloomAgentProtocol", targets: ["MindloomAgentProtocol"]),
     // The MCP helper bundled in the App (Contents/Helpers/mindloom-mcp) and a
     // synthetic-root harness for its end-to-end test (AGENT-CONTRACT §1, §4).
@@ -481,6 +485,20 @@ let package = Package(
     .executableTarget(
       name: "MindloomMCPHelper",
       dependencies: ["MindloomAgentProtocol"]
+    ),
+    // The share extension's hand-over to the App (V8 contract A1):
+    // Foundation only, so the sandboxed extension links nothing else.
+    .target(name: "MindloomShareDrop"),
+    // Every other way into 织机 (V8 contract §A): the same intake rules as
+    // paste and drop. EventKit for the calendar (read) and the Reminders
+    // button (write on click); git and Zotero's loopback API for research.
+    .target(
+      name: "BestASREntries",
+      dependencies: [
+        "BestASRAgentAccess", "BestASRDomain", "BestASRIntake", "BestASRMemory",
+        "MindloomAgentProtocol", "MindloomShareDrop",
+      ],
+      linkerSettings: [.linkedFramework("EventKit")]
     ),
     .executableTarget(
       name: "MindloomAgentTestHost",
@@ -925,9 +943,18 @@ let package = Package(
     .testTarget(
       name: "BestASRAgentAccessTests",
       dependencies: [
-        "BestASRAgentAccess", "BestASRDomain", "BestASRMemory", "BestASRPersistence",
-        "MindloomAgentProtocol", "MindloomMCPHelper",
+        "BestASRAgentAccess", "BestASRDomain", "BestASREntries", "BestASRIntake", "BestASRMemory",
+        "BestASRPersistence", "MindloomAgentProtocol", "MindloomMCPHelper",
         .product(name: "GRDB", package: "GRDB.swift"),
+      ]
+    ),
+    .testTarget(
+      name: "BestASREntriesTests",
+      dependencies: [
+        "BestASRAgentAccess", "BestASRDomain", "BestASREntries", "BestASRIntake", "BestASRMemory",
+        "BestASRPersistence", "BestASRRemoteOrganizer", "MindloomAgentProtocol",
+        "MindloomMCPHelper",
+        "MindloomShareDrop",
       ]
     ),
     .testTarget(
