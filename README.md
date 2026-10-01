@@ -4,23 +4,23 @@
 
 <p align="center"><b>只管丢进来，不用整理。</b><br>会议、口述、聊天、截图、文件，还有手机上说的话和分享的东西，都从一个入口进来；<br>Mac 在本地听清、认出是谁；桌上那台 NVIDIA DGX Spark（你自己的，或团队共用的）用一组 Agent Skills 把它们织成一件件事，<br>Spark 上的东西用一把只在你 Mac 上的钥匙锁着。</p>
 
-<p align="center"><a href="https://www.bilibili.com/video/BV1CbaW6pEcX/">演示视频（B 站，3 分钟）</a> · <a href="https://blog.csdn.net/BronyaZaychik818/article/details/166849977">「十日谈」征文（CSDN）</a> · <a href="docs/ESSAY.md">征文（仓库里的 v6 版）</a> · <a href="https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29">截止时提交的版本</a></p>
+<p align="center"><a href="https://www.bilibili.com/video/BV1CbaW6pEcX/">演示视频（B 站，3 分钟）</a> · <a href="https://blog.csdn.net/BronyaZaychik818/article/details/166849977">「十日谈」征文（CSDN）</a> · <a href="docs/ESSAY.md">征文（仓库里的 v7 版）</a> · <a href="https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29">截止时提交的版本</a></p>
 
 第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛参赛项目。一个人用：一台 Mac、一部 iPhone，加一台 DGX Spark。截止时的版本打了标签 [`submitted-2026-09-29`](https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29)；之后的改动都是带日期的提交，列在下面的[提交后更新](#提交后更新)里。
 
 ## 提交后更新
 
-截止（2026-09-29 23:59，北京时间）之后，Spark 端 74 个提交、Mac 端 62 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
+截止（2026-09-29 23:59，北京时间）之后，Spark 端 75 个提交、Mac 端 62 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
 
 - **线索图（v7）**：事件页默认是「线索」：一件事分成几股线（分头推进的几摊事），线上打结（进展、决定、没解决的问题、谁答应了什么、截止），每个结都带出处素材和一段逐字原话；另有结构、网、文本三个看法，首页多了按绳、按截止、按人。新增两个 Agent Skill：matter-map（画图）和 matter-group（把长期的领域和更大的项目搓成「绳」）。事和事之间只有三种关系，各有各的证据：交叉（共用同一条素材，程序直接算）、成股（绳）、牵制（素材里明确写了先后依赖，带原话）。你的决定永远优先（[matter-map](skills/matter-map/BENCHMARK.md)、[matter-group](skills/matter-group/BENCHMARK.md)）。
 - **共享空间（v7）**：照 GitHub 的逻辑和别人一起记一件事：个人拥有的小组空间、实验室的组织空间，只读 / 贡献 / 维护 / 管理。空间的钥匙只在成员的 Mac 上，Spark 只存成员设备签过名的操作记录和密文，整理时只看到遮过号码的文字；声纹、词典和整段录音永远不进空间，录音只按归进这件事的片段共享。做完又做了一轮对抗式复查，严重和中等的问题全部修复（[docs/SPACES.md](docs/SPACES.md)）。
-- **Agent 读取织机（v7，Mac 端）**：App 自带本机 MCP 连接程序，加 Claude Code 插件和 Claude Desktop 扩展；第一次读取要你在 Mac 上同意，空间、范围、期限、号码遮挡都由你定，每次读取都有不含内容的记录，Agent 只能往收件箱提建议。没有公网入口。
+- **Agent 读取织机（v7，Mac 端）**：App 自带本机 MCP 连接程序，加 Claude Code 插件和 Claude Desktop 扩展；第一次读取要你在 Mac 上同意，空间、范围、期限、号码遮挡都由你定，每次读取都有不含内容的记录，Agent 只能往收件箱提建议。没有公网入口。Agent 背后的模型通常在它的公司的服务器上，它读到的文字会离开这台 Mac，同意窗口里写明了这一点（[mac/docs/AGENTS.md](mac/docs/AGENTS.md)）。
 - **v7 整合版**：在一个全新的整合版实例上重跑了四条端到端：隐私 68/68、手机 67/67、共享空间 57/57、Agent 的 MCP 43/43（[eval/results-2026-10-01/](eval/results-2026-10-01/README.md)）。
 - **隐私重做了一遍（v6），为团队共用的 Spark 设计**：Spark 上的库加密，钥匙只在你的 Mac 上；号码出门前遮住，截图里的号码涂掉；图片和文件在 Spark 上读完就删；Mac 上删一条，Spark 上跟着删；「让 Spark 忘掉我的内容」。做完又做了一轮对抗式复查：16 个问题修了 14 个，另外 2 个一个由手机端的封存解决、一个写进了边界（[隐私](#隐私团队共用一台-spark也放心丢进来)）。
 - **手机**：新写了 iPhone App「织机」：织机键盘（按住说话，字进当前 App，同时收进织机）和分享扩展「收进织机」，每一条在手机上封好、只有你的 Mac 能打开。截止时的 iOS 快捷指令没法封存，已停用。**只在 iOS 模拟器上跑过，没在真 iPhone 上跑过。**
 - **整理质量**：新增两个 Agent Skill：event-consolidate（定期把碎片事件并回它的事）和 person-resolve（整理人物）；item-split 1.3.0 参照你已有的事来切，少切了三分之一到一半。三个规模场景的 B³ F1 从 0.584–0.642 升到 0.663–0.709，事件数从真值的 11–17 倍降到 2.5–4.2 倍。代价：相像的两件事偶尔被合在一起（[评测](#评测)）。
-- **Mac 端**：遮号码、截图涂号、文件的发送副本、钥匙和上锁、删除同步、「连接 iPhone」和打开封存条目；人物页和事件页不再显示被判为「不是人」的记录，事件页的人物行限数；换了新图标（还在选）。
-- **文档和评测**：README 和 `docs/` 全部更新到 v6；新的评测在 [docs/EVALUATION.md](docs/EVALUATION.md)，截止时的评测原样留在 [docs/EVALUATION-2026-09-29.md](docs/EVALUATION-2026-09-29.md)；截图换成 v6 整合版的真实 App 渲染，合成场景里个别和真实人物、公司或论文重名的名字换掉了，虚构的地名换成了真实的城市；征文按 v6 改写（[docs/ESSAY.md](docs/ESSAY.md)）。
+- **Mac 端**：遮号码、截图涂号、文件的发送副本、钥匙和上锁、删除同步、「连接 iPhone」和打开封存条目；人物页和事件页不再显示被判为「不是人」的记录，事件页的人物行限数；换了新图标「结绳记事」。
+- **文档和评测**：README 和 `docs/` 全部更新到 v6；新的评测在 [docs/EVALUATION.md](docs/EVALUATION.md)，截止时的评测原样留在 [docs/EVALUATION-2026-09-29.md](docs/EVALUATION-2026-09-29.md)；截图换成 v6 整合版的真实 App 渲染，合成场景里个别和真实人物、公司或论文重名的名字换掉了，虚构的地名换成了真实的城市；征文按 v6 改写，又补了 v7 一节：线索图、事和事的关系、Agent 读取和团队共享空间（[docs/ESSAY.md](docs/ESSAY.md)）。
 - **还没做到的**：合并后的整体版本没有在三个规模场景上重跑（各项数字在各自的分支上测得，整合版上跑的是全部测试和端到端）；真 iPhone；真实资料库；共享空间里录音片段的原音（现在只共享文字和说话人）；队友还要经 Spark 主人的 SSH 账户连进来；App 里的同意窗口和线索图只在测试和渲染里看过，没有在运行的 App 里看过。
 
 ## 一分钟看懂
@@ -386,7 +386,7 @@ H=eval/scenarios/holdout-week-v2/scenario.json
 - **黑客松期间（北京时间 2026-09-26 至 09-29 23:59 截止）**：
   - Spark 端全部新做（90 个提交）：整理服务、6 个在路由里的 Agent Skills 和 1 个占位、读图和读文件、长素材拆段、手机收件箱、评测驱动与评分器、小场景和三个规模场景、多轮评测与过拟合审计、System One、20 多个开放权重模型的对比。
   - Mac 端 52 个提交（188 个文件，+34,933 / −571 行）：Mac↔Spark 可撤销链路（端口归属核对、链路令牌、按修订号发送、合成数据闸门）；粘贴 / 拖入任何文件并带来源 App；会议逐字稿导入；视频关键帧；手机收件箱拉取；导出为纯文字；首页、事件页、人物页；规模场景的端到端 harness。
-- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 74 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；Mac 端 62 个提交：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标。
+- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 75 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；v7 的线索图和绳（matter-map、matter-group）、关系 v2、共享空间（签名的操作日志、钥匙包、每个空间一个加密整理库）。Mac 端 62 个提交：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标；v7 的线索图和首页的四个看法、Agent 读取（本机 MCP、同意、记录、Claude Code 插件）、共享空间的成员端。
 - 公开仓库不含私有仓库的历史：每次发布都是从私有仓库导出的一份快照提交（去掉个人数据工具、设备与签名信息和内部笔记）。
 
 ## 仓库结构
