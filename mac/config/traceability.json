@@ -300,7 +300,7 @@
         "TM-14"
       ],
       "scenarioIDs": [
-        "Matter map decoded, unmasked, laid out and drawn in four lenses",
+        "Matter map decoded, unmasked and laid out (the four lenses were removed in 41ae615 with MemoryLensTests)",
         "Agent reads within its grant only; shared-space matters labelled; audit without content",
         "Two synthetic Macs share one matter on a real organizing device; rotation; no plaintext",
         "Privacy and phone end-to-end rerun on the integrated build"
@@ -308,7 +308,6 @@
       "tests": [
         "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/RemoteOrganizerMapTests.swift",
         "Packages/BestASRCore/Tests/BestASRMemoryTests/MemoryMatterMapTests.swift",
-        "Packages/BestASRCore/Tests/BestASRMemoryUITests/MemoryLensTests.swift",
         "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentAccessServiceTests.swift",
         "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentSocketTests.swift",
         "Packages/BestASRCore/Tests/BestASRAgentAccessTests/AgentReviewFixTests.swift",
@@ -379,6 +378,37 @@
       ],
       "evidence": [
         "artifacts/evidence/v8/browser-extension-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "ENTRY-013"
+      ],
+      "threatIDs": ["TM-07", "TM-09", "TM-10", "TM-12"],
+      "scenarioIDs": [
+        "tmeet is built from the pinned source with its three patches, whose tests run in the build, and signed into Contents/Helpers",
+        "Only the whitelisted read commands can be run, with a fixed environment, descriptors 0-3 and the login key on descriptor 3",
+        "Connecting shows the QR code of Tencent's own authorization address; expiry, renewal and errors are one Settings line",
+        "Every viewable recording is fetched once by record file number, paged from the last paragraph given, and again only when its listing changes; deleted items never return",
+        "Recordings of meetings others host come from list-ended and, when it lists a meeting in part, from meeting get",
+        "A recording that keeps failing is tried daily while in the window and listed; server errors count as the network",
+        "can_apply and password recordings are listed per meeting for the owner; nothing is requested on the owner's behalf",
+        "The key goes only to the helper sealed into the running App; switching off removes the login on this Mac at once",
+        "Each transcript is a meeting record in Tencent's export format with the raw pages kept as its source file",
+        "One Tencent Meeting user number is one speaker name in every meeting; the owner is found by host number first",
+        "The daily request budget keeps a share for transcripts, wakes cannot use it up, and Tencent's limit pauses the entry until the next day"
+      ],
+      "tests": [
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingParsingTests.swift",
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingSyncTests.swift",
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingRunnerTests.swift",
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingLibraryTests.swift",
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingPassTests.swift",
+        "Packages/BestASRCore/Tests/MindloomTencentMeetingTests/TencentMeetingSafetyTests.swift",
+        "script/build_tmeet.sh"
+      ],
+      "evidence": [
+        "artifacts/evidence/v12/tencent-meeting-summary.json"
       ]
     },
     {
@@ -506,6 +536,47 @@
       ],
       "evidence": [
         "artifacts/evidence/v8/e2e-summary.json"
+      ]
+    },
+    {
+      "requirementIDs": [
+        "WATCH-001",
+        "WATCH-002",
+        "WATCH-003",
+        "WATCH-004",
+        "WATCH-005",
+        "WATCH-006",
+        "WATCH-007",
+        "WATCH-008",
+        "WATCH-009"
+      ],
+      "threatIDs": ["TM-16", "TM-17", "TM-18"],
+      "scenarioIDs": [
+        "A recording made while the iPhone is away waits on the watch and reaches the iPhone when it is back; the watch removes it only after the iPhone's stored",
+        "The iPhone keeps the original byte for byte (size and SHA-256 against the watch's copy), shows one Apple Watch item at once and sends only its text through the outbox",
+        "A copy WatchConnectivity reported delivered that the iPhone does not have is sent again as soon as the iPhone says so",
+        "A truncated, altered, conflicting or repeated transfer never replaces or duplicates an original, and a crash mid-recording keeps what was recorded",
+        "Tap to record and tap to stop on the watch; the complication link (mindloom://record) records at once in a running app and from a cold launch",
+        "A recording longer than a part goes on in the next part without a tap; each part is kept",
+        "A Mac before v12 opens an Apple Watch entry (a source it knows, with origin Apple Watch); a Mac from v12 shows the origin and keeps an unknown source name instead of deleting the entry",
+        "One recording that cannot be transcribed is marked failed and does not hold up later ones; the recognizer's time limit follows the file's own length",
+        "A delivered recording is not sent again on a timer; the iPhone answers holding once WatchConnectivity has handed over what it holds",
+        "An Apple Watch item stays sent after the outbox forgets its sent part",
+        "Deleting a recording removes its original and its item; a copy the watch sends again is confirmed, not stored",
+        "The iPhone's originals are in its own backups (staging is not), and an inbox an earlier build excluded is included again when opened, its originals and state unchanged",
+        "A received file that carries its own backup exclusion is stored as an original that is in backups, and any original found marked is included at the next open",
+        "The text a recording gave is kept with its original and deleted with it; after a restore from a backup every kept original gets its Home item again (waiting, with its text and not sent again, or without text and retriable) and can be deleted"
+      ],
+      "tests": [
+        "Packages/MindloomWatchHandoff/Tests/MindloomWatchHandoffTests/WatchHandoffTests.swift",
+        "Packages/MindloomPhoneKit/Tests/MindloomPhoneKitTests/PhoneWatchItemTests.swift",
+        "Packages/MindloomLink/Tests/MindloomLinkTests/InboxItemPayloadTests.swift",
+        "Packages/BestASRCore/Tests/BestASRRemoteOrganizerTests/PhoneLinkInboxTests.swift",
+        "iOS/Tests/MindloomPhoneTests/WatchRecordingTests.swift",
+        "iOS/Tests/MindloomWatchUITests/MindloomWatchUITests.swift"
+      ],
+      "evidence": [
+        "artifacts/evidence/v12/watch-summary.json"
       ]
     }
   ]

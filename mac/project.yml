@@ -1,7 +1,7 @@
 name: BestASR
 
 options:
-  bundleIdPrefix: com.bestasr
+  bundleIdPrefix: app.mindloom
   createIntermediateGroups: true
   defaultConfig: Debug
   deploymentTarget:
@@ -12,28 +12,58 @@ options:
 configs:
   Debug: debug
   Release: release
+  # Mindloom Preview (v11): a Release (optimized) build with its own identity
+  # (com.bestasr.mindloom.preview, kept on 10-6: a development identity, not
+  # the product's), defaults domain, URL scheme, extension IDs
+  # and data root, so it runs beside the installed bestASR app and never
+  # opens the real library. MINDLOOM_PREVIEW (not DEBUG) gates the preview's
+  # data root and its verification hooks (App/LiveShots.swift). See
+  # App/Info-Preview.plist and FOUNDATION.md.
+  Preview: release
 
 settings:
   base:
+    # The product's identity, set here only (owner's decision 2026-10-06:
+    # app.mindloom; com.mindloom.app was taken). The App, its share
+    # extension, inference worker and MCP helper derive their bundle ids from
+    # it; the development build adds .debug. The same value is
+    # MindloomIdentity.bundleID in the code and MINDLOOM_PHONE_BUNDLE_ID in
+    # iOS/project.yml (MindloomIdentityTests keeps them equal).
+    MINDLOOM_BUNDLE_ID: app.mindloom
     ARCHS: arm64
     BESTASR_GIT_REVISION: uncommitted
     CLANG_ENABLE_MODULES: YES
     CODE_SIGN_IDENTITY: "-"
     CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
-    CURRENT_PROJECT_VERSION: 2
+    CURRENT_PROJECT_VERSION: 3
     DEAD_CODE_STRIPPING: YES
     ENABLE_HARDENED_RUNTIME: YES
     MACOSX_DEPLOYMENT_TARGET: "14.2"
-    MARKETING_VERSION: 0.1.0
+    MARKETING_VERSION: 0.2.0
     ONLY_ACTIVE_ARCH: YES
     SWIFT_STRICT_CONCURRENCY: complete
     SWIFT_VERSION: "6.0"
+  configs:
+    # A stable signature, so Accessibility and Input Monitoring survive
+    # rebuilds of the preview (ad-hoc signing changes the hash every build).
+    # The signing team is never committed: pass DEVELOPMENT_TEAM=<team id> on
+    # the xcodebuild command line (script/signing_team.sh reads the paid team
+    # from Xcode's accounts; script/build_release.sh does this for Release).
+    Preview:
+      CODE_SIGN_IDENTITY: "Apple Development"
+      CODE_SIGN_STYLE: Manual
+      PROVISIONING_PROFILE_SPECIFIER: ""
 
 packages:
   BestASRCore:
     path: Packages/BestASRCore
   MindloomLink:
     path: Packages/MindloomLink
+  MindloomDesign:
+    path: Packages/MindloomDesign
+  # 「从网络补充信息」 (PRD LOOKUP-001–003): the web lookup and its one network exit.
+  MindloomLookup:
+    path: Packages/MindloomLookup
 
 targets:
   BestASR:
@@ -110,11 +140,28 @@ targets:
         product: MindloomAgentProtocol
       - package: MindloomLink
         product: MindloomSpaces
+      # The v10 design kit (tokens, type, motion, mark, listener).
+      - package: MindloomDesign
+        product: MindloomDesign
       # v8 entries (Settings → 入口, V8 contract §A).
       - package: BestASRCore
         product: BestASREntries
       - package: BestASRCore
         product: MindloomShareDrop
+      # 入口 › 腾讯会议 (ENTRY-013): the bundled tmeet, its login, fetching.
+      - package: BestASRCore
+        product: MindloomTencentMeeting
+      # v12: which library a launch opens, demo mode, the product time zone.
+      - package: BestASRCore
+        product: MindloomLibrary
+      # v12: 「从网络补充信息」 (PRD LOOKUP-001–003).
+      - package: MindloomLookup
+        product: MindloomLookup
+      # The switch from bestASR (10-6): the keychain items its helper hands over.
+      - package: BestASRCore
+        product: MindloomCarryOver
+      - package: MindloomLink
+        product: MindloomIdentity
       - target: InferenceWorker
         embed: true
       # The share extension 「收进织机」 (V8 contract A1), in Contents/PlugIns.
@@ -128,18 +175,66 @@ targets:
         copy:
           destination: wrapper
           subpath: Contents/Helpers
+    # tmeet (third_party/tencentmeeting-cli, ENTRY-013): TencentCloud's
+    # tencentmeeting-cli built from pinned source with Mindloom's patches,
+    # signed with the App's identity and the hardened runtime, at
+    # Contents/Helpers/tmeet. The Go build reads its module cache, so this
+    # target's scripts are not sandboxed.
+    postBuildScripts:
+      - name: Bundle tmeet
+        script: |
+          "${SRCROOT}/script/bundle_tmeet.sh"
+        inputFiles:
+          - $(SRCROOT)/script/bundle_tmeet.sh
+          - $(SRCROOT)/script/build_tmeet.sh
+          - $(SRCROOT)/third_party/tencentmeeting-cli/VERSION
+          - $(SRCROOT)/third_party/tencentmeeting-cli/upstream.sha256
+          - $(SRCROOT)/third_party/tencentmeeting-cli/patches/0001-disable-remote-crash-report.patch
+          - $(SRCROOT)/third_party/tencentmeeting-cli/patches/0002-keep-login-when-refresh-fails-on-network.patch
+          - $(SRCROOT)/third_party/tencentmeeting-cli/patches/0003-master-key-from-inherited-descriptor.patch
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/tmeet
+        basedOnDependencyAnalysis: true
     settings:
       base:
-        CODE_SIGN_ENTITLEMENTS: App/BestASR.entitlements
+        # The keychain-group variant (App/BestASR-KeychainGroup.entitlements) is chosen
+        # only through the two settings below, which script/build_release.sh sets when
+        # MINDLOOM_PROFILE_SPECIFIER names a Mac provisioning profile. They are read
+        # by this target alone: CODE_SIGN_ENTITLEMENTS and PROVISIONING_PROFILE_SPECIFIER
+        # are never passed on the command line, which would override every target
+        # (the sandboxed share extension, the worker and the MCP helper included).
+        CODE_SIGN_ENTITLEMENTS: App/BestASR$(MINDLOOM_ENTITLEMENTS_VARIANT).entitlements
+        MINDLOOM_ENTITLEMENTS_VARIANT: ""
+        MINDLOOM_APP_PROFILE_SPECIFIER: ""
+        PROVISIONING_PROFILE_SPECIFIER: $(MINDLOOM_APP_PROFILE_SPECIFIER)
+        ENABLE_USER_SCRIPT_SANDBOXING: NO
         ENABLE_APP_SANDBOX: NO
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: App/Info.plist
-        PRODUCT_NAME: bestASR
+        # The executable and the bundle are Mindloom (Activity Monitor, Finder);
+        # the Swift module keeps its internal name (tests import it).
+        PRODUCT_NAME: Mindloom
+        PRODUCT_MODULE_NAME: bestASR
+        MINDLOOM_DISPLAY_NAME: Mindloom
+        MINDLOOM_URL_SCHEME: mindloom
       configs:
+        # Debug (and any configuration but Release) never opens the owner's
+        # library by default (App/MindloomLaunch.swift) and has its own URL
+        # scheme, link state folder and share drop folder.
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.debug
+          PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID).debug
+          MINDLOOM_URL_SCHEME: mindloom-debug
         Release:
-          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app
+          PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID)
+          # The product: the only build that opens the owner's library by default.
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "MINDLOOM_RELEASE"
+        Preview:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom.preview
+          INFOPLIST_FILE: App/Info-Preview.plist
+          MINDLOOM_URL_SCHEME: mindloom-preview
+          # Synthetic, marked; never the real library (App/PreviewEnvironment.swift).
+          MINDLOOM_PREVIEW_DATA_ROOT: /Users/Shared/mindloom-demo/v11/env/preview-root
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: "MINDLOOM_PREVIEW"
 
   InferenceWorker:
     type: xpc-service
@@ -154,9 +249,12 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: InferenceWorker/Info.plist
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.inference-worker
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID).inference-worker
         PRODUCT_NAME: InferenceWorker
         SKIP_INSTALL: YES
+      configs:
+        Preview:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom.preview.inference-worker
 
   # mindloom-mcp: stdio MCP server that forwards to the running App over a
   # private Unix socket; bundled at Contents/Helpers/mindloom-mcp. The same
@@ -175,9 +273,12 @@ targets:
         # An embedded Info.plist gives the signature a stable identifier.
         CREATE_INFOPLIST_SECTION_IN_BINARY: YES
         GENERATE_INFOPLIST_FILE: YES
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom-mcp
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID).mcp
         PRODUCT_NAME: mindloom-mcp
         SKIP_INSTALL: YES
+      configs:
+        Preview:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom.preview.mcp
 
   # 收进织机: the macOS share extension (V8 contract A1). Sandboxed; it may
   # write only the library's share drop folder, which the App reads.
@@ -202,11 +303,29 @@ targets:
         PRODUCT_NAME: MindloomShare
         SKIP_INSTALL: YES
         APPLICATION_EXTENSION_API_ONLY: YES
+        MINDLOOM_URL_SCHEME: mindloom
+        # The name in the Share menu (the preview's says it is the preview:
+        # both can be registered at once; review of 10-6).
+        MINDLOOM_SHARE_DISPLAY_NAME: Mindloom
+        # Empty: the owner's library. The preview names its own root.
+        MINDLOOM_SHARE_DROP_ROOT: ""
       configs:
         Debug:
-          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.debug.share
+          PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID).debug.share
+          # Its own folder in the owner's home, never the owner's library.
+          CODE_SIGN_ENTITLEMENTS: ShareExtension/MindloomShare-Debug.entitlements
+          MINDLOOM_URL_SCHEME: mindloom-debug
+          MINDLOOM_SHARE_DROP_ROOT: "~/Library/Application Support/Mindloom-debug-share-drop"
         Release:
-          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app.share
+          PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_BUNDLE_ID).share
+        Preview:
+          PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.mindloom.preview.share
+          CODE_SIGN_ENTITLEMENTS: ShareExtension/MindloomShare-Preview.entitlements
+          MINDLOOM_URL_SCHEME: mindloom-preview
+          MINDLOOM_SHARE_DISPLAY_NAME: Mindloom 预览版
+          # Outside every data root: the canonical synthetic root is never
+          # written, and a preview on any copy of it reads this same folder.
+          MINDLOOM_SHARE_DROP_ROOT: /Users/Shared/mindloom-demo/v11/env/share-drop
 
   InferenceXPCProbe:
     type: application
@@ -337,7 +456,7 @@ targets:
         BUNDLE_LOADER: "$(TEST_HOST)"
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.app-tests
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/bestASR.app/Contents/MacOS/bestASR"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Mindloom.app/Contents/MacOS/Mindloom"
 
   BestASRUITests:
     type: bundle.ui-testing
@@ -387,6 +506,21 @@ schemes:
           parallelizable: false
         - name: BestASRUITests
           parallelizable: false
+
+  # Mindloom Preview (v11): the App alone, built with the Preview
+  # configuration. /Volumes/<build-volume>/mac-build/v11-preview.sh builds it.
+  Mindloom Preview:
+    build:
+      targets:
+        BestASR: all
+    run:
+      config: Preview
+    profile:
+      config: Preview
+    analyze:
+      config: Preview
+    archive:
+      config: Preview
 
   BenchCLI:
     build:

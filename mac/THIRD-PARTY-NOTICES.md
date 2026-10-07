@@ -67,11 +67,12 @@ The runtime source revision and license digests, every production model file siz
 
 ## MLX Swift LM 3.31.3
 
-- Use: exact-pinned local Qwen model construction and bounded generation.
+- Use: exact-pinned local Qwen model construction and bounded generation; the MLXEmbedders product for the meaning search model (v12 search).
 - Source revision: `1c05248bb0899e2a7a4962b84d319cf12f4e12aa`.
 - License: MIT; local text: `Legal/mlx-swift-lm-LICENSE-MIT.txt`.
 - Attribution: Copyright (c) 2024 ml-explore.
 - Model: Qwen3 1.7B MLX 4-bit at `21457c6f51ed54a7c16e988c0844db973815c137`, Apache-2.0, Copyright 2024 Alibaba Cloud. The normalized license snapshot is `Legal/Qwen3-LICENSE-Apache-2.0.txt`.
+- Model: Qwen3-Embedding 0.6B, MLX 4-bit (DWQ) conversion by mlx-community at `6c3ae70858513f1a78e9cdca3cae330d9075cd2a` (351,226,578 bytes), Apache-2.0 as declared in its model card, Copyright 2025 Alibaba Cloud; same license snapshot. Optional download with its own license toggle; search works by characters without it.
 
 The Qwen artifact is user-provisioned and verified file-by-file. Real generation was evaluated with outbound networking denied; the selected hybrid pipeline produced 0 factual failures, 0 generation failures, and 0 deterministic-repeat mismatches across 24 invocations.
 
@@ -199,3 +200,13 @@ The locally built probe binary digest, pinned ASR/model/tokenizer and SpeakerKit
 - Speaker models: the pyannote segmentation archive includes an MIT notice; the standalone 3D-Speaker embedding ONNX file has no adjacent authoritative license or notice, so redistribution is prohibited pending audit.
 
 The locally rebuilt macOS 14.2 arm64 probe digests, model archive/tree digests, deny-network behavior, and current non-shipping status are recorded in the candidate registries and recommended-memory smoke evidence. The downloaded prebuilt ONNX Runtime archive did not contain its license text; distribution remains prohibited until the authoritative license/NOTICE set is captured and verified.
+
+## tencentmeeting-cli (tmeet) v1.0.18
+
+- Use: production; bundled as `Contents/Helpers/tmeet` for the Tencent Meeting entry (PRD ENTRY-013), off by default. Built from the pinned source in `third_party/tencentmeeting-cli` with Mindloom's patches (no crash reports; keep the login on network failures; the login key from Mindloom's own Keychain item).
+- Source: <https://github.com/TencentCloud/tencentmeeting-cli/tree/v1.0.18> (commit e631b355da2b001d24b82f453b65d96f39c59865)
+- License: MIT (`Legal/tencentmeeting-cli-LICENSE-MIT.txt`)
+- Attribution: Copyright (C) 2026 Tencent. All rights reserved.
+- Statically linked Go code and its licenses (`Legal/tmeet-Go-LICENSES.txt`): the Go 1.25.6 standard library and runtime (BSD-3-Clause, The Go Authors), spf13/cobra 1.10.2 (Apache-2.0), spf13/pflag 1.0.10 (BSD-3-Clause), gorilla/websocket 1.5.3 (BSD-2-Clause), itchyny/gojq 0.12.17 (MIT), itchyny/timefmt-go 0.1.6 (MIT), zalando/go-keyring 0.2.8 (MIT), google.golang.org/protobuf 1.34.2 (BSD-3-Clause).
+
+The pin, patches, build, runtime/network behavior, minimum OS and distribution impact are recorded in `third_party/tencentmeeting-cli/README.md` and `config/dependencies.json`.

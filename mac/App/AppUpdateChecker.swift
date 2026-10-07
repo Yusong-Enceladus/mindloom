@@ -93,7 +93,7 @@ actor AppUpdateChecker {
     configuration.httpShouldSetCookies = false
     configuration.httpCookieAcceptPolicy = .never
     configuration.httpAdditionalHeaders = [
-      "User-Agent": "bestASR-app-update-check"
+      "User-Agent": "Mindloom-app-update-check"
     ]
     let session = URLSession(configuration: configuration)
     defer { session.finishTasksAndInvalidate() }

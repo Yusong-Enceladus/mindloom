@@ -1,116 +1,303 @@
 import AppKit
 import BestASRDictation
 import Foundation
+import MindloomDesign
+import SwiftUI
 
 public final class NonActivatingRecordingPanel: NSPanel {
   public override var canBecomeKey: Bool { false }
   public override var canBecomeMain: Bool { false }
 }
 
-/// What the dictation capsule shows for one rendered snapshot.
+/// What the dictation HUD shows for one rendered snapshot.
 public enum RecordingCapsuleMode: Equatable, Sendable {
   case hidden
   case listening
   case paused
   case processing
-  case inserted
-  case message(symbol: String, text: String, opensRecord: Bool)
+  /// The take ended. `notice` nil: it was typed in (or its answer is shown
+  /// in its own panel) and the HUD closes quietly; otherwise the one line
+  /// the HUD says in the capsule's place.
+  case finished(notice: FnHUDPresentation.Notice?)
+  /// Esc (or a chord macOS owns): closes quietly.
+  case cancelling
 
   public static func resolve(
     _ snapshot: DictationSessionSnapshot,
-    compactStatus: String
+    facts: FnHUDTakeFacts = FnHUDTakeFacts()
   ) -> RecordingCapsuleMode {
     switch snapshot.phase {
     case .preparing, .recording: .listening
     case .paused: .paused
     case .finalizing, .recognizing, .polishing, .inserting: .processing
-    case .completed where snapshot.insertion?.inserted == true: .inserted
-    case .completed:
-      .message(
-        symbol: "doc.on.clipboard",
-        text: compactStatus.isEmpty ? "已保存到资料库" : compactStatus,
-        opensRecord: true
-      )
-    case .failedRecoverable where snapshot.failure?.isSilentTake == true:
-      .message(
-        symbol: "mic.slash",
-        text: compactStatus.isEmpty ? "没有听到说话" : compactStatus,
-        opensRecord: false
-      )
-    case .failedRecoverable:
-      .message(
-        symbol: "exclamationmark.circle",
-        text: compactStatus.isEmpty ? "处理失败，原音已保存" : compactStatus,
-        opensRecord: true
-      )
-    case .cancelling: .message(symbol: "xmark", text: "已取消", opensRecord: false)
+    case .completed, .failedRecoverable:
+      .finished(notice: FnHUDPresentation.Notice.ending(for: snapshot, facts: facts))
+    case .cancelling: .cancelling
     case .idle, .cancelled: .hidden
     }
   }
 
   var isActiveCapture: Bool { self == .listening || self == .paused }
+}
 
-  var showsResultText: Bool {
-    switch self {
-    case .inserted: true
-    case .message(_, _, let opensRecord): opensRecord
-    default: false
-    }
-  }
+/// What the App knows about a finished take beyond its snapshot.
+public struct FnHUDTakeFacts: Equatable, Sendable {
+  /// The take's words were put on the clipboard (it was not typed in).
+  public var copied: Bool
+  /// What was copied is the live draft (processing failed before the end).
+  public var copiedDraft: Bool
+  /// A translation was asked for and this language is not installed: the
+  /// words went in as said, and the system's download is offered next.
+  public var untranslatedLanguage: String?
+  /// Demo mode (ALIGNMENT 根-10): the take's words reached the owner, so it
+  /// leaves the demo library; the HUD says so (review v12-B #7). A demo take
+  /// whose words did not reach the owner stays and says what any take says.
+  public var leavesLibrary: Bool
 
-  /// How long a finished state stays on screen before the capsule fades.
-  var dismissDelay: Duration? {
-    switch self {
-    case .inserted: .milliseconds(1_800)
-    case .message(_, _, let opensRecord): opensRecord ? .seconds(6) : .milliseconds(900)
-    default: nil
-    }
+  public init(
+    copied: Bool = false, copiedDraft: Bool = false, untranslatedLanguage: String? = nil,
+    leavesLibrary: Bool = false
+  ) {
+    self.copied = copied
+    self.copiedDraft = copiedDraft
+    self.untranslatedLanguage = untranslatedLanguage
+    self.leavesLibrary = leavesLibrary
   }
 }
 
-/// Lightweight dictation indicator: a small dark capsule at the bottom centre
-/// of the active screen. It never becomes key or main, shows a live input
-/// level while listening, and carries no controls at all: everything it could
-/// offer is already on the keyboard — the dictation key finishes, Esc cancels,
-/// and a result that did not reach its field is already on the clipboard for
-/// ⌘V. A button here would ask the user to aim a pointer at a 22-point target
-/// at the bottom of the screen while they are speaking.
+/// What letting go of the dictation key means (d54; ALIGNMENT 收1-21, decided
+/// 10/5): held at least 0.35 s it is push-to-talk and the release ends the
+/// take; a shorter tap leaves the take listening hands-free until the key is
+/// tapped again (which ends it) or Esc (which cancels it). A short tap never
+/// drops the take.
+public enum DictationKeyRelease: Equatable, Sendable {
+  case endsTake
+  case keepsListening
+
+  public static let holdThreshold: Duration = .milliseconds(350)
+
+  public static func after(held duration: Duration, threshold: Duration = holdThreshold) -> Self {
+    duration >= threshold ? .endsTake : .keepsListening
+  }
+
+  /// How long the key was held: by the key events' own times when both are
+  /// known, so main-thread work queued between press and release (the HUD's
+  /// first install, starting the microphone) never turns a tap into a hold
+  /// (review v12-B #11); else by when the two were handled.
+  public static func heldDuration(
+    pressedAt: TimeInterval?, releasedAt: TimeInterval?, handledApart: Duration
+  ) -> Duration {
+    if let pressedAt, let releasedAt, releasedAt >= pressedAt, releasedAt - pressedAt < 3_600 {
+      return .milliseconds(Int64(((releasedAt - pressedAt) * 1_000).rounded()))
+    }
+    return handledApart
+  }
+}
+
+/// The fn HUD's words, observed by the HUD's view (MAC-SPEC §8; v12 B1).
+@MainActor
+public final class FnHUDPresentation: ObservableObject {
+  public enum Hint: Equatable, Sendable {
+    /// 「麦克风没有打开 · 去设置」.
+    case microphoneOff
+    /// Mindloom Preview beside the user's bestASR App, which holds fn.
+    case fnTaken
+  }
+
+  /// The one line a finished take says in the capsule's place (ALIGNMENT
+  /// 收1-13): 「已复制 · ⌘V 粘贴」, 「没有听到」, or one plain sentence.
+  public struct Notice: Equatable, Sendable {
+    public enum Kind: Equatable, Sendable {
+      /// Not typed in; the words are on the clipboard.
+      case copied
+      /// No speech in the take.
+      case nothingHeard
+      /// Something went wrong, said in one sentence.
+      case failed
+      /// Typed in, with one thing to know (the language was not installed).
+      case note
+    }
+
+    public let kind: Kind
+    /// An SF Symbol name.
+    public let symbol: String
+    public let text: String
+    /// What the user can do, after 「 · 」 (「⌘V 粘贴」).
+    public let detail: String?
+    /// How long it stays.
+    public let seconds: Double
+
+    public init(kind: Kind, symbol: String, text: String, detail: String? = nil, seconds: Double) {
+      self.kind = kind
+      self.symbol = symbol
+      self.text = text
+      self.detail = detail
+      self.seconds = seconds
+    }
+
+    public static let copied = Notice(
+      kind: .copied, symbol: "doc.on.clipboard", text: "已拷贝", detail: "⌘V 粘贴", seconds: 2.5)
+    public static let copiedDraft = Notice(
+      kind: .copied, symbol: "doc.on.clipboard", text: "未能完成转写，已拷贝识别出的部分", detail: "⌘V 粘贴",
+      seconds: 3.6)
+    public static let nothingHeard = Notice(
+      kind: .nothingHeard, symbol: "mic.slash", text: "未检测到语音", seconds: 2.0)
+    public static let failed = Notice(
+      kind: .failed, symbol: "exclamationmark.circle", text: "无法转写，录音已保存。可以在“历史”中重试",
+      seconds: 3.6)
+    public static let notTypedIn = Notice(
+      kind: .failed, symbol: "exclamationmark.circle", text: "未能输入文字，文字已保存在“历史”中", seconds: 3.6)
+    /// The App asked for the words and they were not seen in the field, and
+    /// they are not on the clipboard (something else was copied since): the
+    /// words may have gone in, so this does not say they did not.
+    public static let unconfirmedNotCopied = Notice(
+      kind: .failed, symbol: "questionmark.circle", text: "无法确认文字是否已输入，文字已保存在“历史”中",
+      seconds: 3.6)
+
+    public static func untranslated(_ language: String) -> Notice {
+      Notice(kind: .note, symbol: "translate", text: "\(language)尚未下载，已输入原文", seconds: 3.0)
+    }
+
+    /// Demo mode, typed in: the take leaves the demo library.
+    public static let demoTypedIn = Notice(
+      kind: .note, symbol: "theatermasks", text: "演示中，此段不保存到历史", seconds: 2.2)
+    /// Demo mode, copied: the words are on the clipboard and the take leaves
+    /// the demo library.
+    public static let demoCopied = Notice(
+      kind: .copied, symbol: "doc.on.clipboard", text: "已拷贝；演示中，此段不保存到历史",
+      detail: "⌘V 粘贴", seconds: 3.2)
+
+    /// How a finished take ends. Typed in: quietly (nil). Never a quiet
+    /// close — which reads as success — when nothing was typed in, except an
+    /// 指令 whose answer is shown in its own panel.
+    public static func ending(for snapshot: DictationSessionSnapshot, facts: FnHUDTakeFacts)
+      -> Notice?
+    {
+      switch snapshot.phase {
+      case .completed where snapshot.insertion?.inserted == true:
+        return facts.untranslatedLanguage.map(untranslated)
+          ?? (facts.leavesLibrary ? demoTypedIn : nil)
+      case .completed:
+        if snapshot.insertion?.failureReason == .nothingToInsert { return nil }
+        guard facts.copied else {
+          return snapshot.insertion?.failureReason == .unconfirmed
+            ? unconfirmedNotCopied : notTypedIn
+        }
+        if facts.copiedDraft { return copiedDraft }
+        return facts.leavesLibrary ? demoCopied : copied
+      case .failedRecoverable where snapshot.failure?.isSilentTake == true:
+        return nothingHeard
+      case .failedRecoverable:
+        guard facts.copied else { return failed }
+        return facts.copiedDraft ? copiedDraft : copied
+      default:
+        return nil
+      }
+    }
+  }
+
+  /// The target language of 翻译 (「英」), or 「指令」, on the left of the
+  /// capsule while the take listens (ALIGNMENT 收1-9, 收1-10).
+  public struct Badge: Equatable, Sendable {
+    public let text: String
+    /// 「未下载」 when the language is not installed on this Mac.
+    public let note: String?
+    /// The spoken label (「翻译成英语」).
+    public let label: String
+
+    public init(text: String, note: String? = nil, label: String) {
+      self.text = text
+      self.note = note
+      self.label = label
+    }
+
+    public static let command = Badge(text: "指令", label: "指令")
+
+    public static func translation(into language: String, ready: Bool) -> Badge {
+      Badge(
+        text: shortName(language), note: ready ? nil : "未下载",
+        label: ready ? "翻译成\(language)" : "翻译成\(language)，\(language)尚未下载")
+    }
+
+    /// 「英语」 → 「英」, 「简体中文」 → 「简」.
+    public static func shortName(_ language: String) -> String {
+      switch language {
+      case "简体中文": "简"
+      case "繁体中文": "繁"
+      default: language.first.map(String.init) ?? language
+      }
+    }
+  }
+
+  /// The caption above the HUD is on (口述时显示文字).
+  @Published public internal(set) var captionShown = false
+  /// Words already committed (`ink`), then words still pending (`ink2`).
+  @Published public internal(set) var committed = ""
+  @Published public internal(set) var pending = ""
+  /// Where `committed`, once it is the final text, differs from the live
+  /// caption (offsets in characters; `CaptionRevision`).
+  @Published public internal(set) var revised: [Range<Int>] = []
+  @Published public internal(set) var hint: Hint?
+  @Published public internal(set) var notice: Notice?
+  @Published public internal(set) var badge: Badge?
+  /// The kit's listener: pressed, released and fed the microphone level.
+  public let listener: ListenerModel
+
+  init(listener: ListenerModel) { self.listener = listener }
+}
+
+/// The Mac fn HUD (MAC-SPEC §8, Mac r2; v12 B1): a borderless, click-through
+/// panel whose capsule sits 102 pt above the bottom of the active screen;
+/// the kit's knot ↔ line crossfade with one voice arch fed by the input
+/// level; the words above it while the take listens (口述时显示文字, on by
+/// default, also when a text field has focus), replaced by the final text at
+/// the end; the target language or 「指令」 on its left. How the take ends is
+/// said in the capsule's place: typed in → it closes quietly; only copied →
+/// 「已复制 · ⌘V 粘贴」 for 2.5 s; nothing heard → 「没有听到」; an error → one
+/// plain sentence. No controls: fn finishes, Esc cancels.
+///
+/// Nothing here asks Accessibility anything: the press only shows the HUD.
+///
+/// The App supplies the SwiftUI content (`makeContent`, the package's
+/// `FnHUDView` over `presentation`); without it nothing is drawn.
 @MainActor
 public final class RecordingStatusPanelController: NSObject {
   public let panel: NonActivatingRecordingPanel
   public private(set) var renderedSnapshot = DictationSessionSnapshot()
   public private(set) var renderedLiveText = ""
+  /// The live draft the caption showed last while the take was being heard.
+  private var liveDraft = ""
   public private(set) var renderedMode = RecordingCapsuleMode.hidden
-  /// Off by default: the live subtitle line shows whenever there is draft
-  /// text. When on, it appears only while the pointer hovers the capsule.
-  public var subtitlesRequireHover = false {
-    didSet { if renderedMode != .hidden { layoutCapsule() } }
+  public let presentation: FnHUDPresentation
+  /// Builds the HUD's view once (the App's `FnHUDView` host).
+  public var makeContent: ((FnHUDPresentation) -> AnyView)? {
+    didSet { installContent() }
   }
+  /// 设置 › 通用 › 口述时显示文字 (on by default): the words show above the
+  /// HUD during every take.
+  public var showsCaptions = true
+  /// The take's mode on the capsule's left (翻译 → 「英」, 指令); applied at
+  /// the next render, which the App makes as soon as ⇧ or Space changes it.
+  public var badge: FnHUDPresentation.Badge?
 
-  private let root = CapsuleRootView()
-  private let capsule = CapsuleSurfaceView()
-  private let draftBubble = CapsuleSurfaceView()
-  private let draftLabel = NSTextField(labelWithString: "")
-  private let waveform = CapsuleWaveformView()
-  private let processing = CapsuleProcessingView()
-  private let iconView = NSImageView()
-  private let statusLabel = NSTextField(labelWithString: "")
   private let onOpenRecord: @MainActor () -> Void
-  private var hovering = false
-  private var hoverExitTask: Task<Void, Never>?
-  private var terminalDismissTask: Task<Void, Never>?
+  private var hideTask: Task<Void, Never>?
+  private var hintTask: Task<Void, Never>?
 
-  private static let capsuleHeight: CGFloat = 30
-  private static let bottomInset: CGFloat = 18
-  private static let bubbleGap: CGFloat = 6
-  private static let maximumDraftWidth: CGFloat = 420
+  /// The panel (holds the 520 pt caption and the capsule's shadow) and where
+  /// the capsule's centre sits in it; must match the package's
+  /// `FnHUDGeometry`.
+  public static let panelSize = CGSize(width: 600, height: 172)
+  public static let hudCentreFromTop: CGFloat = 124
+  public static let hudAboveScreenBottom: CGFloat = 102
+  public static let listenerCanvas = CGSize(width: 240, height: 96)
 
-  public init(
-    onOpenRecord: @escaping @MainActor () -> Void = {}
-  ) {
+  public init(onOpenRecord: @escaping @MainActor () -> Void = {}) {
     self.onOpenRecord = onOpenRecord
+    presentation = FnHUDPresentation(
+      listener: ListenerModel(layout: .macHUD(size: Self.listenerCanvas)))
     panel = NonActivatingRecordingPanel(
-      contentRect: NSRect(x: 0, y: 0, width: 72, height: Self.capsuleHeight),
+      contentRect: NSRect(origin: .zero, size: Self.panelSize),
       styleMask: [.borderless, .nonactivatingPanel],
       backing: .buffered,
       defer: false
@@ -119,408 +306,254 @@ public final class RecordingStatusPanelController: NSObject {
     configurePanel()
   }
 
-  /// What the capsule says while it listens. Empty means an ordinary
-  /// dictation, which says "正在聆听"; a mode dictation names itself, because
-  /// nothing else on screen distinguishes 翻译 or 指令 from writing down what
-  /// you said, and the difference only becomes visible once it is too late.
-  public var listeningCaption = "" {
-    didSet { if renderedMode == .listening { layoutCapsule() } }
-  }
+  // MARK: - Rendering
 
   public func render(
     _ snapshot: DictationSessionSnapshot,
     liveText: String = "",
-    compactStatus: String = ""
+    facts: FnHUDTakeFacts = FnHUDTakeFacts()
   ) {
-    let previousMode = renderedMode
+    let previous = renderedMode
     renderedSnapshot = snapshot
     renderedLiveText = liveText
-    renderedMode = RecordingCapsuleMode.resolve(snapshot, compactStatus: compactStatus)
-    if renderedMode != previousMode {
-      waveform.reset()
-      announce(renderedMode)
+    // What the live caption showed, before the final text replaces it.
+    if [.recording, .paused, .finalizing, .recognizing].contains(snapshot.phase) {
+      liveDraft = liveText
     }
-    updateTerminalDismissal()
-    guard renderedMode != .hidden else {
-      panel.orderOut(nil)
-      return
+    renderedMode = RecordingCapsuleMode.resolve(snapshot, facts: facts)
+    let listener = presentation.listener
+    switch renderedMode {
+    case .listening, .paused:
+      if !previous.isActiveCapture || listener.pressedAt == nil || listener.releasedAt != nil {
+        begin()
+      }
+      presentation.badge = badge
+      words(liveText, committed: false)
+    case .processing:
+      if listener.pressedAt != nil, listener.releasedAt == nil { listener.release() }
+      presentation.badge = badge
+      words(liveText, committed: false)
+    case .finished(let notice):
+      // The same ending rendered again (a status refresh) changes nothing.
+      guard previous != renderedMode else { return }
+      // Only a take the HUD showed says how it ended: a record finished
+      // from the window (a retry) does not pop the HUD.
+      let live = previous.isActiveCapture || previous == .processing
+      finish(text: liveText, notice: live ? notice : nil)
+    case .cancelling:
+      guard previous != .cancelling else { return }
+      cancelTake()
+    case .hidden:
+      if listener.pressedAt != nil, listener.releasedAt == nil {
+        cancelTake()
+      } else if presentation.hint == nil, presentation.notice == nil, hideTask == nil {
+        orderOut()
+      }
     }
-    layoutCapsule()
-    panel.orderFrontRegardless()
   }
 
-  /// Feeds the live microphone level (0...1). Ignored unless listening.
+  /// The live microphone level as the capture reports it: 0…1 for
+  /// −50…−10 dBFS (`AVAudioEngineMicrophoneCapture.normalizedLevel`); turned
+  /// back into dBFS for the listener's own gate and span.
   public func updateInputLevel(_ level: Float) {
-    guard renderedMode == .listening else { return }
-    waveform.push(level: level)
+    presentation.listener.submitLevel(dBFS: Self.dBFS(fromNormalized: level))
+  }
+
+  public nonisolated static func dBFS(fromNormalized level: Float) -> Double {
+    level <= 0 ? -120 : Double(min(level, 1)) * 40 - 50
+  }
+
+  /// The live level as RMS dBFS (gate −50 dB, span 34 dB).
+  public func updateInputLevel(dBFS: Double) {
+    presentation.listener.submitLevel(dBFS: dBFS)
+  }
+
+  /// A hint capsule at the HUD's place (M19: 3.6 s).
+  public func showHint(_ hint: FnHUDPresentation.Hint) {
+    hideTask?.cancel()
+    hideTask = nil
+    presentation.listener.reset()
+    presentation.captionShown = false
+    presentation.notice = nil
+    presentation.badge = nil
+    presentation.hint = hint
+    // Only 去设置 takes a click.
+    panel.ignoresMouseEvents = hint != .microphoneOff
+    orderFront()
+    hintTask?.cancel()
+    hintTask = Task { @MainActor [weak self] in
+      try? await Task.sleep(for: .seconds(3.6))
+      guard !Task.isCancelled, let self else { return }
+      withAnimation(.timingCurve(0.16, 1, 0.3, 1, duration: 0.26)) {
+        self.presentation.hint = nil
+      }
+      try? await Task.sleep(for: .milliseconds(300))
+      guard !Task.isCancelled else { return }
+      self.panel.ignoresMouseEvents = true
+      if !self.renderedMode.isActiveCapture, self.presentation.notice == nil { self.orderOut() }
+    }
   }
 
   public func dismiss() {
-    terminalDismissTask?.cancel()
-    terminalDismissTask = nil
-    processing.stop()
+    hideTask?.cancel()
+    hideTask = nil
+    hintTask?.cancel()
+    hintTask = nil
+    presentation.listener.reset()
+    presentation.hint = nil
+    presentation.notice = nil
+    presentation.badge = nil
+    presentation.captionShown = false
     panel.orderOut(nil)
   }
 
-  /// Test and accessibility hook: behaves as if the pointer entered or left.
-  public func setHovering(_ hovering: Bool) {
-    hoverExitTask?.cancel()
-    hoverExitTask = nil
-    guard self.hovering != hovering else { return }
-    self.hovering = hovering
-    guard renderedMode != .hidden else { return }
-    layoutCapsule()
+  // MARK: - Stages
+
+  private func begin() {
+    hideTask?.cancel()
+    hideTask = nil
+    hintTask?.cancel()
+    presentation.hint = nil
+    presentation.notice = nil
+    panel.ignoresMouseEvents = true
+    presentation.listener.reset()
+    presentation.listener.press()
+    presentation.committed = ""
+    presentation.pending = ""
+    presentation.revised = []
+    liveDraft = ""
+    presentation.captionShown = showsCaptions
+    orderFront()
   }
 
-  // MARK: - Layout
+  private func words(_ text: String, committed: Bool) {
+    guard presentation.captionShown else { return }
+    let trimmed = Self.latestSentence(text, limit: 60)
+    if committed {
+      presentation.committed = trimmed
+      presentation.pending = ""
+      // Compared with the end of the live draft the caption last showed.
+      presentation.revised = CaptionRevision.revisedRanges(
+        live: String(liveDraft.suffix(trimmed.count * 2 + 8)), final: trimmed)
+    } else {
+      presentation.committed = ""
+      presentation.pending = trimmed
+      presentation.revised = []
+    }
+  }
+
+  /// The take ended: the line crossfades back to the knot; the caption shows
+  /// the final text (none when nothing was heard); the notice, if any, takes
+  /// the capsule's place. All of it goes after 1.6 s, or the notice's time.
+  private func finish(text: String, notice: FnHUDPresentation.Notice?) {
+    let listener = presentation.listener
+    if listener.pressedAt != nil, listener.releasedAt == nil { listener.release() }
+    presentation.badge = nil
+    if presentation.captionShown {
+      let said = text.trimmingCharacters(in: .whitespacesAndNewlines)
+      if notice?.kind == .nothingHeard || said.isEmpty {
+        presentation.captionShown = false
+      } else {
+        words(text, committed: true)
+      }
+    }
+    if let notice {
+      presentation.hint = nil
+      presentation.notice = notice
+      panel.ignoresMouseEvents = true
+      orderFront()
+    }
+    scheduleHide(after: max(1.6, notice?.seconds ?? 0))
+  }
+
+  /// Esc: the line goes, the caption goes, nothing is said.
+  private func cancelTake() {
+    let listener = presentation.listener
+    if listener.pressedAt != nil, listener.releasedAt == nil { listener.cancel() }
+    presentation.captionShown = false
+    presentation.badge = nil
+    presentation.notice = nil
+    scheduleHide(after: 1.25)
+  }
+
+  private func scheduleHide(after seconds: Double) {
+    hideTask?.cancel()
+    hideTask = Task { @MainActor [weak self] in
+      try? await Task.sleep(for: .seconds(seconds))
+      guard !Task.isCancelled, let self else { return }
+      self.hideTask = nil
+      guard !self.renderedMode.isActiveCapture else { return }
+      withAnimation(.timingCurve(0.16, 1, 0.3, 1, duration: 0.24)) {
+        self.presentation.captionShown = false
+        self.presentation.notice = nil
+      }
+      try? await Task.sleep(for: .milliseconds(260))
+      guard !Task.isCancelled, !self.renderedMode.isActiveCapture else { return }
+      self.presentation.listener.reset()
+      if self.presentation.hint == nil { self.orderOut() }
+    }
+  }
+
+  // MARK: - Panel
 
   private func configurePanel() {
     panel.isFloatingPanel = true
-    panel.level = .statusBar
+    panel.level = NSWindow.Level(rawValue: NSWindow.Level.screenSaver.rawValue - 1)
     panel.hidesOnDeactivate = false
     panel.becomesKeyOnlyIfNeeded = true
-    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
+    panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle, .stationary]
     panel.isMovableByWindowBackground = false
     panel.backgroundColor = .clear
     panel.isOpaque = false
     panel.hasShadow = false
+    panel.ignoresMouseEvents = true
     panel.animationBehavior = .none
     panel.setAccessibilityIdentifier("bestASR.recordingPanel")
-
-    root.wantsLayer = true
-    root.onHoverChange = { [weak self] inside in self?.pointerHoverChanged(inside) }
-    root.onClick = { [weak self] in self?.capsuleClicked() }
-    panel.contentView = root
-
-    draftLabel.font = .systemFont(ofSize: 12)
-    draftLabel.textColor = CapsuleSurfaceView.foreground
-    draftLabel.lineBreakMode = .byTruncatingHead
-    draftLabel.maximumNumberOfLines = 1
-    draftLabel.setAccessibilityIdentifier("bestASR.liveTranscript")
-    draftLabel.setAccessibilityLabel("本机实时草稿")
-    draftBubble.addSubview(draftLabel)
-    root.addSubview(draftBubble)
-
-    statusLabel.font = .systemFont(ofSize: 12, weight: .medium)
-    statusLabel.textColor = CapsuleSurfaceView.foreground
-    statusLabel.lineBreakMode = .byTruncatingTail
-    statusLabel.setAccessibilityIdentifier("bestASR.recordingState")
-    statusLabel.setAccessibilityLabel("口述状态")
-    iconView.contentTintColor = CapsuleSurfaceView.foreground
-    iconView.imageScaling = .scaleProportionallyDown
-
-    for view in [waveform, processing, iconView, statusLabel] {
-      capsule.addSubview(view)
-    }
-    capsule.setAccessibilityElement(true)
-    capsule.setAccessibilityRole(.group)
-    capsule.setAccessibilityLabel("织机口述")
-    root.addSubview(capsule)
+    panel.setAccessibilityLabel("Mindloom")
   }
 
-  private func layoutCapsule() {
-    let height = Self.capsuleHeight
-    let padding: CGFloat = 8
-    let spacing: CGFloat = 6
-    var items: [(NSView, CGFloat)] = []
+  private func installContent() {
+    guard let makeContent else { return }
+    let host = NSHostingView(rootView: makeContent(presentation))
+    host.frame = NSRect(origin: .zero, size: Self.panelSize)
+    host.autoresizingMask = [.width, .height]
+    panel.contentView = host
+  }
 
-    switch renderedMode {
-    case .listening:
-      items.append((waveform, 40))
-      statusLabel.stringValue = listeningCaption.isEmpty ? "正在聆听" : listeningCaption
-      if !listeningCaption.isEmpty {
-        items.append((statusLabel, min(240, textWidth(statusLabel))))
-      }
-    case .paused:
-      statusLabel.stringValue = "已暂停"
-      iconView.image = Self.symbol("pause.fill")
-      items += [(iconView, 12), (statusLabel, textWidth(statusLabel))]
-    case .processing:
-      statusLabel.stringValue = "正在整理"
-      items.append((processing, 28))
-    case .inserted:
-      statusLabel.stringValue = "已输入"
-      iconView.image = Self.symbol("checkmark")
-      items.append((iconView, 14))
-    case .message(let symbol, let text, _):
-      statusLabel.stringValue = text
-      iconView.image = Self.symbol(symbol)
-      items += [(iconView, 14), (statusLabel, min(300, textWidth(statusLabel)))]
-    case .hidden:
-      break
-    }
-    if renderedMode == .processing { processing.start() } else { processing.stop() }
+  private func orderFront() {
+    position()
+    panel.orderFrontRegardless()
+  }
 
-    let visible = Set(items.map { ObjectIdentifier($0.0) })
-    for view in capsule.subviews { view.isHidden = !visible.contains(ObjectIdentifier(view)) }
-    let contentWidth =
-      items.map(\.1).reduce(0, +) + spacing * CGFloat(max(0, items.count - 1))
-    let capsuleWidth = max(height, contentWidth + padding * 2)
-    var x = padding
-    for (view, width) in items {
-      let itemHeight = view is NSTextField ? 16 : min(height - 8, max(14, width))
-      view.frame = NSRect(
-        x: x, y: (height - itemHeight) / 2, width: width, height: itemHeight)
-      x += width + spacing
-    }
-    capsule.setAccessibilityValue(statusLabel.stringValue)
+  private func orderOut() {
+    panel.orderOut(nil)
+  }
 
-    let draft = renderedLiveText.trimmingCharacters(in: .whitespacesAndNewlines)
-    // While listening this is the live draft; once finished it is the text
-    // that was actually inserted or kept, so the user sees the final wording.
-    let showsDraft =
-      (renderedMode.isActiveCapture || renderedMode.showsResultText)
-      && (hovering || !subtitlesRequireHover) && !draft.isEmpty
-    draftLabel.stringValue = Self.latestSentence(draft)
-    let draftWidth = showsDraft ? min(Self.maximumDraftWidth, textWidth(draftLabel) + 20) : 0
-    let bubbleHeight: CGFloat = showsDraft ? 26 : 0
-
-    let panelWidth = max(capsuleWidth, draftWidth)
-    let panelHeight = height + (showsDraft ? Self.bubbleGap + bubbleHeight : 0)
-    capsule.frame = NSRect(x: (panelWidth - capsuleWidth) / 2, y: 0, width: capsuleWidth, height: height)
-    draftBubble.isHidden = !showsDraft
-    draftBubble.frame = NSRect(
-      x: (panelWidth - draftWidth) / 2, y: height + Self.bubbleGap,
-      width: draftWidth, height: bubbleHeight)
-    draftLabel.frame = NSRect(x: 10, y: 5, width: max(0, draftWidth - 20), height: 16)
-
-    let screenFrame = (NSScreen.main ?? NSScreen.screens.first)?.visibleFrame ?? .zero
+  /// Centred on the active screen (the one with the pointer), the capsule's
+  /// centre 102 pt above the screen's bottom edge.
+  private func position() {
+    let mouse = NSEvent.mouseLocation
+    let screen =
+      NSScreen.screens.first { $0.frame.contains(mouse) } ?? NSScreen.main ?? NSScreen.screens.first
+    guard let frame = screen?.frame else { return }
+    let size = Self.panelSize
+    let originY = frame.minY + Self.hudAboveScreenBottom - (size.height - Self.hudCentreFromTop)
     panel.setFrame(
-      NSRect(
-        x: (screenFrame.midX - panelWidth / 2).rounded(),
-        y: screenFrame.minY + Self.bottomInset,
-        width: panelWidth,
-        height: panelHeight
-      ),
-      display: true
-    )
+      NSRect(x: (frame.midX - size.width / 2).rounded(), y: originY.rounded(), width: size.width,
+        height: size.height),
+      display: true)
   }
 
-  /// Width the label needs for its current string, including cell insets.
-  private func textWidth(_ field: NSTextField) -> CGFloat {
-    ceil(field.cell?.cellSize.width ?? field.intrinsicContentSize.width) + 1
-  }
-
-  /// The tail of the live draft: its last sentence, or its last 40 characters.
-  public nonisolated static func latestSentence(_ text: String) -> String {
+  /// The tail of the live draft: its last sentence, or its last `limit`
+  /// characters.
+  public nonisolated static func latestSentence(_ text: String, limit: Int = 40) -> String {
+    let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard trimmed.count > limit else { return trimmed }
     let separators = CharacterSet(charactersIn: "。！？!?.\n")
-    let pieces = text.components(separatedBy: separators)
+    let pieces = trimmed.components(separatedBy: separators)
       .map { $0.trimmingCharacters(in: .whitespaces) }
       .filter { !$0.isEmpty }
-    let last = pieces.last ?? text
-    return last.count > 40 ? String(last.suffix(40)) : last
-  }
-
-  private static func symbol(_ name: String) -> NSImage? {
-    NSImage(systemSymbolName: name, accessibilityDescription: nil)?
-      .withSymbolConfiguration(.init(pointSize: 12, weight: .semibold))
-  }
-
-  // MARK: - Behaviour
-
-  private func pointerHoverChanged(_ inside: Bool) {
-    if inside {
-      setHovering(true)
-      return
-    }
-    // Resizing under the pointer can emit a transient exit; debounce it.
-    hoverExitTask?.cancel()
-    hoverExitTask = Task { @MainActor [weak self] in
-      try? await Task.sleep(for: .milliseconds(250))
-      guard !Task.isCancelled else { return }
-      self?.setHovering(false)
-    }
-  }
-
-  private func capsuleClicked() {
-    if case .message(_, _, true) = renderedMode {
-      onOpenRecord()
-    }
-  }
-
-  private func announce(_ mode: RecordingCapsuleMode) {
-    let text: String
-    switch mode {
-    case .listening: text = "正在聆听"
-    case .paused: text = "已暂停"
-    case .processing: text = "正在整理"
-    case .inserted: text = "已输入"
-    case .message(_, let message, _): text = message
-    case .hidden: return
-    }
-    NSAccessibility.post(
-      element: capsule,
-      notification: .announcementRequested,
-      userInfo: [.announcement: text, .priority: NSAccessibilityPriorityLevel.medium.rawValue]
-    )
-  }
-
-  private func updateTerminalDismissal() {
-    terminalDismissTask?.cancel()
-    terminalDismissTask = nil
-    guard let delay = renderedMode.dismissDelay else { return }
-    terminalDismissTask = Task { @MainActor [weak self] in
-      try? await Task.sleep(for: delay)
-      // Keep a finished result on screen while the pointer is on it, so the
-      // final wording can be read before it fades.
-      while !Task.isCancelled, self?.hovering == true {
-        try? await Task.sleep(for: .milliseconds(400))
-      }
-      guard !Task.isCancelled else { return }
-      self?.processing.stop()
-      self?.panel.orderOut(nil)
-      self?.terminalDismissTask = nil
-    }
-  }
-}
-
-// MARK: - Views
-
-/// Dark rounded surface shared by the capsule and the draft bubble.
-final class CapsuleSurfaceView: NSView {
-  static let foreground = NSColor(white: 0.95, alpha: 1)
-  private static let fill = NSColor(white: 0.08, alpha: 0.92)
-  private static let stroke = NSColor(white: 1, alpha: 0.16)
-
-  override var isOpaque: Bool { false }
-
-  override func draw(_ dirtyRect: NSRect) {
-    let radius = bounds.height / 2
-    let path = NSBezierPath(
-      roundedRect: bounds.insetBy(dx: 0.25, dy: 0.25), xRadius: radius, yRadius: radius)
-    Self.fill.setFill()
-    path.fill()
-    Self.stroke.setStroke()
-    path.lineWidth = 0.5
-    path.stroke()
-  }
-}
-
-/// Tracks the pointer across the whole panel and forwards plain clicks.
-final class CapsuleRootView: NSView {
-  var onHoverChange: ((Bool) -> Void)?
-  var onClick: (() -> Void)?
-  private var trackingArea: NSTrackingArea?
-
-  override func updateTrackingAreas() {
-    super.updateTrackingAreas()
-    if let trackingArea { removeTrackingArea(trackingArea) }
-    let area = NSTrackingArea(
-      rect: .zero,
-      options: [.mouseEnteredAndExited, .activeAlways, .inVisibleRect],
-      owner: self,
-      userInfo: nil
-    )
-    addTrackingArea(area)
-    trackingArea = area
-  }
-
-  override func mouseEntered(with event: NSEvent) { onHoverChange?(true) }
-  override func mouseExited(with event: NSEvent) { onHoverChange?(false) }
-  override func mouseUp(with event: NSEvent) { onClick?() }
-  override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
-}
-
-/// Borderless symbol button that responds to the first click without
-/// activating bestASR.
-final class CapsuleIconButton: NSButton {
-  override init(frame frameRect: NSRect) {
-    super.init(frame: frameRect)
-    isBordered = false
-    imagePosition = .imageOnly
-    title = ""
-    contentTintColor = CapsuleSurfaceView.foreground
-    focusRingType = .none
-  }
-
-  required init?(coder: NSCoder) { nil }
-
-  func setSymbol(_ name: String, label: String) {
-    image = NSImage(systemSymbolName: name, accessibilityDescription: label)?
-      .withSymbolConfiguration(.init(pointSize: 11, weight: .bold))
-    setAccessibilityLabel(label)
-    toolTip = label
-  }
-
-  override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
-}
-
-/// Five rounded bars driven by the smoothed microphone level.
-final class CapsuleWaveformView: NSView {
-  private static let weights: [CGFloat] = [0.45, 0.75, 1, 0.75, 0.45]
-  private var level: CGFloat = 0
-  private var phase: CGFloat = 0
-
-  func reset() {
-    level = 0
-    phase = 0
-    needsDisplay = true
-  }
-
-  func push(level newLevel: Float) {
-    let target = CGFloat(max(0, min(1, newLevel)))
-    // Fast attack, slower release keeps the bars readable.
-    level = target > level ? level + (target - level) * 0.6 : level + (target - level) * 0.2
-    if !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion { phase += 0.9 }
-    needsDisplay = true
-  }
-
-  override func draw(_ dirtyRect: NSRect) {
-    let barWidth: CGFloat = 3
-    let count = Self.weights.count
-    let gap = (bounds.width - barWidth * CGFloat(count)) / CGFloat(count - 1)
-    let minimum: CGFloat = 3
-    CapsuleSurfaceView.foreground.setFill()
-    for (index, weight) in Self.weights.enumerated() {
-      let wobble = 0.8 + 0.2 * sin(phase + CGFloat(index) * 1.3)
-      let height = minimum + (bounds.height - minimum) * level * weight * wobble
-      let rect = NSRect(
-        x: CGFloat(index) * (barWidth + gap),
-        y: (bounds.height - height) / 2,
-        width: barWidth,
-        height: height
-      )
-      NSBezierPath(roundedRect: rect, xRadius: barWidth / 2, yRadius: barWidth / 2).fill()
-    }
-  }
-}
-
-/// Three dots that pulse while the dictation is being recognized and inserted.
-final class CapsuleProcessingView: NSView {
-  private var step = 0
-  private var timer: Timer?
-
-  func start() {
-    guard timer == nil else { return }
-    guard !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion else { return }
-    timer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: true) { [weak self] _ in
-      MainActor.assumeIsolated {
-        guard let self else { return }
-        self.step = (self.step + 1) % 3
-        self.needsDisplay = true
-      }
-    }
-  }
-
-  func stop() {
-    timer?.invalidate()
-    timer = nil
-  }
-
-  override func draw(_ dirtyRect: NSRect) {
-    let diameter: CGFloat = 5
-    let gap = (bounds.width - diameter * 3) / 2
-    for index in 0..<3 {
-      let alpha: CGFloat = index == step ? 1 : 0.4
-      CapsuleSurfaceView.foreground.withAlphaComponent(alpha).setFill()
-      NSBezierPath(
-        ovalIn: NSRect(
-          x: CGFloat(index) * (diameter + gap),
-          y: (bounds.height - diameter) / 2,
-          width: diameter,
-          height: diameter
-        )
-      ).fill()
-    }
+    let last = pieces.last ?? trimmed
+    return last.count > limit ? String(last.suffix(limit)) : last
   }
 }

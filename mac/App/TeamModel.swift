@@ -131,7 +131,7 @@ final class TeamModel: ObservableObject {
     loadSchedules()
     refreshQuotas()
     guard let client = accessClient, let engine else {
-      status = "共享空间还没有准备好：先在「数据」里打开整理设备链路，或用邀请码加入团队"
+      status = "共享空间尚未就绪。请先打开 DGX Spark 连接，或使用邀请码加入团队"
       return
     }
     do {
@@ -146,11 +146,11 @@ final class TeamModel: ObservableObject {
           health = try await client.health()
           healthNote = nil
         } catch {
-          healthNote = "暂时读不到整理设备的状态"
+          healthNote = "暂时无法读取 DGX Spark 的状态"
         }
       } else {
         health = nil
-        healthNote = "只有整理设备的主人和组织管理员能看整理设备的状态"
+        healthNote = "仅 DGX Spark 的所有者和团队管理员可以查看 DGX Spark 的状态"
       }
       var lines: [(at: String, text: String)] = []
       for entry in (try? await client.audit(limit: 100))?.entries ?? [] {
@@ -233,15 +233,15 @@ final class TeamModel: ObservableObject {
   func joinTeam() {
     let text = joinCode.trimmingCharacters(in: .whitespacesAndNewlines)
     guard let code = try? AccessInviteCode.decode(text) else {
-      status = "邀请码看不懂或已过期"
+      status = "邀请码无法识别或已过期"
       return
     }
     guard let spaces, let engine, let stores = spaces.stores, let gate = stores.gateDirectory else {
-      status = "共享空间还没有准备好"
+      status = "共享空间尚未就绪"
       return
     }
     busy = true
-    status = "正在用邀请钥匙连上整理设备…"
+    status = "正在使用邀请密钥连接 DGX Spark…"
     Task {
       defer { busy = false }
       do {
@@ -255,7 +255,7 @@ final class TeamModel: ObservableObject {
         try await engine.setMemberIdentity(record.memberID)
         spaces.resetEngine()
         joinCode = ""
-        status = "已加入团队：这台 Mac 用自己的钥匙连整理设备" + (code.space == nil ? "" : "；正在申请加入共享空间")
+        status = "已加入团队：这台 Mac 用自己的密钥连 DGX Spark" + (code.space == nil ? "" : "；正在申请加入共享空间")
         if let space = code.space {
           spaces.actions(navigate: { _, _ in }).join(space, SpacesModel.myName)
         }
@@ -272,7 +272,7 @@ final class TeamModel: ObservableObject {
   /// spaces stay on this Mac until someone removes this device there.
   func leaveTeam() {
     guard let access, let client = accessClient else { return }
-    run("已断开这台 Mac：它的钥匙已从整理设备上删除") { [weak self] in
+    run("已断开这台 Mac：它的密钥已从 DGX Spark 上删除") { [weak self] in
       _ = try await client.unpair(access.accessID)
       try self?.spaces?.stores?.access.delete()
       await MainActor.run { self?.spaces?.resetEngine() }
@@ -376,7 +376,7 @@ final class TeamModel: ObservableObject {
       }
       await self?.reconcileRelay(force: true)
       let text =
-        "已断开那台 Mac" + (removed > 0 ? "，并从 \(removed) 个空间移除（空间都换了新钥匙）" : "")
+        "已断开那台 Mac" + (removed > 0 ? "，并从 \(removed) 个空间移除（空间都换了新密钥）" : "")
         + (left > 0 ? "；还有 \(left) 个空间要由那里的管理员移除它" : "")
       await MainActor.run { self?.status = text }
     }
@@ -404,7 +404,7 @@ final class TeamModel: ObservableObject {
   /// it), `org.device_add` in each org it should administer.
   func completeAdd(_ device: AccessDevicesView.Device) {
     guard let engine, let places = device.toAdd else { return }
-    run("已把那台 Mac 加进 \(places.spaces.count) 个空间和 \(places.orgs.count) 个组织") {
+    run("已把那台 Mac 加进 \(places.spaces.count) 个空间和 \(places.orgs.count) 个团队") {
       for space in places.spaces { try await engine.addDevice(space, device: device.publicRecord) }
       for org in places.orgs { try await engine.addOrgDevice(org, device: device.publicRecord) }
     }
@@ -414,7 +414,7 @@ final class TeamModel: ObservableObject {
   /// `org.device_remove` in each org.
   func completeRemove(_ device: AccessDevicesView.Device) {
     guard let engine, let places = device.toRemove else { return }
-    run("已把断开的 Mac 从 \(places.spaces.count) 个空间移除，空间都换了新钥匙") {
+    run("已把断开的 Mac 从 \(places.spaces.count) 个空间移除，空间都换了新密钥") {
       for space in places.spaces { try await engine.retireDevice(space, deviceID: device.deviceID) }
       for org in places.orgs { try await engine.retireOrgDevice(org, deviceID: device.deviceID) }
     }
@@ -431,7 +431,7 @@ final class TeamModel: ObservableObject {
     let states = (spaces?.screen.spaces ?? []).filter {
       $0.membership == .active && $0.orgID == orgID.lowercased()
     }
-    run("已添加组织管理员；组织空间的钥匙也托管给了他") {
+    run("已添加团队管理员；团队空间的密钥也托管给了他") {
       let device = states.lazy.compactMap { state in
         state.roster?.members[memberID]?.devices.values.filter(\.active)
           .sorted { $0.deviceID < $1.deviceID }.first?.publicRecord
@@ -443,7 +443,7 @@ final class TeamModel: ObservableObject {
 
   func setRecoveryAdmins(orgID: String, count: Int) {
     guard let engine else { return }
-    run("已更新：至少 \(count) 位组织管理员能找回每个组织空间") {
+    run("已更新：至少 \(count) 位团队管理员能找回每个团队空间") {
       try await engine.setRecoveryAdmins(orgID, count: count)
     }
   }
@@ -452,7 +452,7 @@ final class TeamModel: ObservableObject {
     guard let engine else { return }
     run(nil) { [weak self] in
       let n = try await engine.fillEscrow(spaceID)
-      await MainActor.run { self?.status = n > 0 ? "已补齐 \(n) 份托管钥匙" : "没有需要补的" }
+      await MainActor.run { self?.status = n > 0 ? "已补齐 \(n) 份托管密钥" : "没有需要补的" }
     }
   }
 
@@ -468,7 +468,7 @@ final class TeamModel: ObservableObject {
 
   func recover(orgID: String, spaceID: String) {
     guard let engine else { return }
-    run("已接管这个空间；你现在是它的管理员。记得把丢失的那台 Mac 移除（会换钥匙）") {
+    run("已接管此空间，你现在是它的管理员。请移除丢失的 Mac（将更换密钥）") {
       _ = try await engine.recover(orgID: orgID, spaceID: spaceID, displayName: SpacesModel.myName)
     }
   }
@@ -544,7 +544,7 @@ final class TeamModel: ObservableObject {
     panel.canChooseFiles = false
     panel.canCreateDirectories = true
     panel.prompt = "存到这里"
-    panel.message = "选一个文件夹（这台 Mac 上，或移动硬盘上）存放这个空间的加密备份"
+    panel.message = "选择一个文件夹（这台 Mac 上或外置磁盘上），用于存放此空间的加密备份"
     guard panel.runModal() == .OK, let url = panel.url else { return }
     var schedule = schedules[spaceID] ?? SpaceBackupSchedule()
     schedule.folder = url.path
@@ -569,7 +569,7 @@ final class TeamModel: ObservableObject {
     guard let engine, !backupRunning else { return }
     var schedule = schedules[spaceID] ?? SpaceBackupSchedule()
     guard let path = schedule.folder else {
-      status = "先选一个存放备份的文件夹"
+      status = "请先选择存放备份的文件夹"
       return
     }
     backupRunning = true
@@ -596,7 +596,7 @@ final class TeamModel: ObservableObject {
       schedule.lastSuccess = Date()
       schedule.lastError = nil
       let name = spaces?.screen.space(spaceID)?.name ?? ""
-      status = "已备份「\(name)」：\(SpaceUsage.megabytes(receipt.bytes))，只有空间管理员打得开"
+      status = "已备份“\(name)”：\(SpaceUsage.megabytes(receipt.bytes))，备份已加密，空间管理员可以打开"
     } catch let error as CocoaError where error.code == .fileNoSuchFile {
       schedule.lastError = "folder_missing"
       status = "备份文件夹不在（移动硬盘没有接上？）"
@@ -628,7 +628,7 @@ final class TeamModel: ObservableObject {
         receipt.spaceID, stream: stream, mode: "replace", keyWraps: receipt.keyWraps)
       let text =
         answer["applied"]?.string == "fill"
-        ? "已用 \(when) 的备份补回缺的内容；这个备份比现在的记录旧，之后的成员变动和换过的钥匙都保持现在的样子"
+        ? "已用 \(when) 的备份补全缺少的内容；此备份早于当前记录，之后的成员变动和密钥更换保持当前状态"
         : "已从 \(when) 的备份恢复了空间"
       await MainActor.run { self?.status = text }
     }

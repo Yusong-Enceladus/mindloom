@@ -27,45 +27,55 @@ public enum EntryKind: String, Codable, CaseIterable, Identifiable, Sendable {
   case git
   /// Zotero's local API on this Mac (A7).
   case zotero
+  /// Meeting transcripts from the owner's Tencent Meeting account, fetched
+  /// on this Mac through the bundled tmeet (ENTRY-013).
+  case tencentMeeting
 
   public var id: String { rawValue }
 
   /// Settings → 入口, in this order.
   public static let settingsOrder: [EntryKind] = [
     .shareSheet, .services, .browserExtension, .shortcuts, .commandLine, .folderWatch, .calendar,
-    .reminders, .git, .zotero,
+    .reminders, .git, .zotero, .tencentMeeting,
   ]
 
   /// Entries that take things in without the owner acting each time; off
   /// until the owner switches them on.
   public var capturesInBackground: Bool {
     switch self {
-    case .folderWatch, .calendar, .git, .zotero: true
+    case .folderWatch, .calendar, .git, .zotero, .tencentMeeting: true
     default: false
     }
   }
 
-  /// On by default: the ones the owner triggers by hand each time through
-  /// the system (share, Shortcuts) and the Reminders button, which writes
-  /// only when clicked. Services is off by default (review V8R-17): any app
-  /// can call a Services item programmatically. The command line is off by default: anything
-  /// running as the owner (an agent in a terminal too) could use it. The
-  /// Chrome extension is off until the owner installs its connection (the
-  /// host manifest) with a click in Settings.
+  /// On by default: the share sheet, which the owner triggers by hand each
+  /// time through the system, and the Reminders button, which writes only
+  /// when clicked. Services is off by default (review V8R-17): any app can
+  /// call a Services item programmatically. Shortcuts is off by default for
+  /// the same reason (v12 F10): any program can run a shortcut
+  /// (`shortcuts run`), and 「今天到期」 reads the owner's steps. The command
+  /// line is off by default: anything running as the owner (an agent in a
+  /// terminal too) could use it. The Chrome extension is off until the owner
+  /// installs its connection (the host manifest) with a click in Settings.
   public var isOnByDefault: Bool {
     switch self {
-    case .shareSheet, .shortcuts, .reminders: true
-    // Review V8R-17: any app on this Mac can invoke a Services item; off until
-    // the owner switches it on.
-    case .services, .browserExtension, .commandLine, .folderWatch, .calendar, .git, .zotero: false
+    case .shareSheet, .reminders: true
+    // Review V8R-17 and v12 F10: any app on this Mac can invoke a Services
+    // item or run a shortcut; off until the owner switches them on.
+    case .services, .shortcuts, .browserExtension, .commandLine, .folderWatch, .calendar, .git,
+      .zotero, .tencentMeeting:
+      false
     }
   }
 
+  /// What a shortcut answers while 快捷指令 is off in 设置 › 入口.
+  public static let shortcutsOffMessage = "快捷指令未打开。请在 Mindloom 的“设置”>“入口”中打开。"
+
   public var title: String {
     switch self {
-    case .shareSheet: "分享菜单「收进织机」"
-    case .services: "服务菜单「收进织机」"
-    case .browserExtension: "Chrome 扩展「收进织机」"
+    case .shareSheet: "共享菜单中的 Mindloom"
+    case .services: "服务菜单“添加到 Mindloom”"
+    case .browserExtension: "Chrome 扩展“添加到 Mindloom”"
     case .shortcuts: "快捷指令"
     case .commandLine: "命令行 mindloom"
     case .folderWatch: "文件夹"
@@ -73,6 +83,7 @@ public enum EntryKind: String, Codable, CaseIterable, Identifiable, Sendable {
     case .reminders: "提醒事项"
     case .git: "Git 仓库"
     case .zotero: "Zotero"
+    case .tencentMeeting: "腾讯会议"
     }
   }
 
@@ -80,25 +91,27 @@ public enum EntryKind: String, Codable, CaseIterable, Identifiable, Sendable {
   public var detail: String {
     switch self {
     case .shareSheet:
-      "在 Safari、邮件、备忘录、访达等的「分享」里选「收进织机」。链接只记下，不会打开。"
+      "在 Safari、邮件、备忘录、访达等 App 的“共享”菜单中选取 Mindloom。链接按文字添加。"
     case .services:
-      "选中文字后，在 App 菜单 → 服务 里选「收进织机」。打开后，本机任何 App 也能通过服务菜单把文字送进来，所以默认关着。"
+      "选中文字后，在 App 菜单 >“服务”中选取“添加到 Mindloom”。打开后，这台 Mac 上的任何 App 都可以通过服务菜单添加文字，因此默认关闭。"
     case .browserExtension:
-      "在 Chrome 里右键或点工具栏的织机按钮，把选中的文字或网页链接收进来。链接只记下，不会打开；扩展不联网。"
+      "在 Chrome 中右键点按或点按工具栏中的 Mindloom 按钮，将所选文字或网页链接添加到 Mindloom。链接按文字添加。"
     case .shortcuts:
-      "「添加到织机」收进文字、文件或链接；「织机：今天到期」只读本机内容。"
+      "“添加到 Mindloom”添加文字、文件或链接；“Mindloom：今天到期”将今天到期和已过期的下一步提供给快捷指令。打开后，这台 Mac 上的其他程序也可以运行这两个快捷指令，因此默认关闭。"
     case .commandLine:
-      "在终端里用 mindloom add / mindloom due。打开后，以你的身份运行的程序（包括终端里的 Agent）也能用它，算作你自己收进的内容。"
+      "在“终端”中使用 mindloom add / mindloom due。打开后，以你的身份运行的程序（包括“终端”中的 Agent）也可以使用它，添加的内容视为你本人添加。"
     case .folderWatch:
-      "你选的文件夹里新出现的文件会被收进来。可以设排除规则、大小上限，随时暂停。打开前已有的文件不收。"
+      "添加你所选文件夹中的新文件。可以设置排除规则和大小上限，也可以随时暂停。仅添加打开此入口之后的新文件。"
     case .calendar:
-      "读取你选的日历里的日程（标题、时间、参与人姓名、备注），收成来源为「日历」的条目。从不写日历。"
+      "读取你所选日历中的日程（标题、时间、参与人姓名、备注），添加为来源是“日历”的条目。"
     case .reminders:
-      "只在你点「把下一步加到提醒事项」时，写一条提醒事项。不会自动写。优先写进只在这台 Mac 上的列表；没有的话写进默认列表，那通常经 iCloud 同步，写完会告诉你。"
+      "点按“将下一步添加到提醒事项”时，创建一个提醒事项。优先添加到储存在这台 Mac 上的列表；没有此类列表时添加到默认列表，默认列表通常通过 iCloud 同步，添加后会告诉你。"
     case .git:
-      "本机仓库里所选分支的新提交：标题、说明、改动的文件名和数量。从不读取文件内容。Overleaf 的 git 仓库也可以。"
+      "读取本机仓库中所选分支的新提交：标题、说明、更改的文件名和数量。也支持 Overleaf 的 git 仓库。"
     case .zotero:
-      "Zotero 在本机开放接口时，新的文献、笔记和批注收成带引用的条目。只连本机，不联网。"
+      "Zotero 在这台 Mac 上开放接口时，将新的文献、笔记和批注添加为带引用的条目。"
+    case .tencentMeeting:
+      "会议结束后，自动添加你的腾讯会议账户可以查看的会议转写，包括其他人主持并向你共享转写的会议。在这台 Mac 上连接一次后，之后的会议都会自动添加。"
     }
   }
 }

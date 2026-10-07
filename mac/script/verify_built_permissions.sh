@@ -5,7 +5,7 @@ set -euo pipefail
 repository_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$repository_root/script/build_storage.sh"
 manifest_path="$repository_root/config/permissions.json"
-app_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Debug/bestASR.app"
+app_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Debug/Mindloom.app"
 summary_path="$repository_root/artifacts/evidence/permissions/built-app-summary.json"
 
 while (( $# > 0 )); do
@@ -82,6 +82,13 @@ else
       record_failure "built-missing-entitlement:$required_entitlement"
     fi
   done < <(jq -r '.requiredEntitlements[]' "$manifest_path")
+  # A profile-signed release (MINDLOOM_PROFILE_SPECIFIER) must carry the keychain group,
+  # and only that key beyond the required ones.
+  if [[ -n "${MINDLOOM_PROFILE_SPECIFIER:-}" \
+    && "$entitlements_dump" != *"<key>keychain-access-groups</key>"* ]]
+  then
+    record_failure "built-missing-entitlement:keychain-access-groups"
+  fi
   while IFS= read -r forbidden_entitlement; do
     if [[ "$entitlements_dump" == *"<key>$forbidden_entitlement</key>"* ]]; then
       record_failure "built-forbidden-entitlement:$forbidden_entitlement"
@@ -97,7 +104,7 @@ trap 'rm -f "$summary_temp"; rmdir "$summary_temp_directory" 2>/dev/null || true
 jq -n \
   --arg status "$app_permission_status" \
   --arg failedCheck "$failed_check" \
-  --arg appBundle "build-product://bestASR.app" \
+  --arg appBundle "build-product://Mindloom.app" \
   --arg bundleIdentifier "$bundle_identifier" \
   --argjson checkedUsageDescriptionCount "$checked_usage_keys" \
   --argjson checkedRequiredEntitlementCount "$checked_required_entitlements" \

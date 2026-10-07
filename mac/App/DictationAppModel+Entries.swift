@@ -35,12 +35,32 @@ extension DictationAppModel {
       folder.loadState(.calendar, as: CalendarSyncState.self) ?? CalendarSyncState()
     entries.gitState = folder.loadState(.git, as: GitWatchState.self) ?? GitWatchState()
     entries.zoteroState = folder.loadState(.zotero, as: ZoteroWatchState.self) ?? ZoteroWatchState()
-    entries.dropbox = ShareDropbox.inLibrary(dataRoot)
+    entries.dropbox = Self.shareDropbox(dataRoot: dataRoot)
     entries.calendarAccess = entries.calendarReader.access()
     refreshBrowserHostStatus()
+    configureTencentMeeting(dataRoot: dataRoot, folder: folder)
     entries.isReady = true
     EntryHub.shared.model = self
     applyEntrySettings()
+  }
+
+  /// The share extension's drop folder: the library's own, unless the
+  /// embedded extension names a folder of its own (`MindloomShareDropRoot`
+  /// in its Info.plist): Mindloom Preview's fixed folder outside every data
+  /// root (the canonical synthetic root is never written and a preview on a
+  /// copy still receives shares), a development build's folder in the
+  /// owner's home (it never drops into the owner's library).
+  static func shareDropbox(dataRoot: URL) -> ShareDropbox {
+    let plugins = Bundle.main.builtInPlugInsURL
+    let share = plugins.flatMap { Bundle(url: $0.appendingPathComponent("MindloomShare.appex")) }
+    let setting = share?.object(forInfoDictionaryKey: "MindloomShareDropRoot") as? String
+    return shareDropbox(dataRoot: dataRoot, extensionSetting: setting)
+  }
+
+  nonisolated static func shareDropbox(dataRoot: URL, extensionSetting: String?) -> ShareDropbox {
+    let setting = (extensionSetting ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    if !setting.isEmpty, let named = ShareDropbox.forRootSetting(setting) { return named }
+    return ShareDropbox.inLibrary(dataRoot)
   }
 
   /// The owner's command line (A3) and the Chrome extension's native
@@ -71,6 +91,10 @@ extension DictationAppModel {
     guard entries.isOn(kind) != on else { return }
     if kind == .browserExtension {
       setBrowserEntry(on: on)
+      return
+    }
+    if kind == .tencentMeeting {
+      setTencentMeeting(on: on)
       return
     }
     entries.settings.set(kind, on: on)
@@ -104,7 +128,7 @@ extension DictationAppModel {
     do {
       try entries.folder?.save(entries.settings)
     } catch {
-      intake.show("入口设置没能保存；请再试一次")
+      intake.show("未能保存入口设置。请重试。")
     }
   }
 
@@ -143,6 +167,9 @@ extension DictationAppModel {
       NotificationCenter.default.removeObserver(observer)
       entries.calendarObserver = nil
     }
+    applyTencentMeeting()
+    // The command line uses the same socket as other Apps (v12 F1).
+    updateAgentListening()
   }
 
   private func startEntryLoop(_ kind: EntryKind) {
@@ -180,7 +207,7 @@ extension DictationAppModel {
   ) async -> EntryCommitSummary {
     guard let processor = intakeProcessor, let repository else {
       var summary = EntryCommitSummary()
-      summary.rejected = ["资料库尚未打开；未收进来"]
+      summary.rejected = ["资料库尚未打开，未添加"]
       if announce { intake.show(summary.rejected[0]) }
       return summary
     }
@@ -227,7 +254,7 @@ extension DictationAppModel {
     guard let dropbox = entries.dropbox else { return }
     if entries.isOn(.shareSheet) {
       guard dropbox.prepareFolder() else {
-        entries.note(.shareSheet, "分享文件夹没能建立；分享暂时收不进来")
+        entries.note(.shareSheet, "未能创建共享文件夹，暂时无法通过共享添加内容")
         return
       }
       if entries.dropboxMonitor == nil {
@@ -269,9 +296,9 @@ extension DictationAppModel {
     let (pending, malformed) = await Self.readShares(dropbox)
     for share in pending {
       let (items, refused) = await Self.shareItems(share)
-      let source =
-        ItemSourceApplication(bundleID: share.entry.sourceBundleID, name: share.entry.sourceName)
-        ?? EntrySource.named(EntrySource.shareFallback)
+      // Any program can write the share folder and name any App there: the
+      // source is what Mindloom can check (F10).
+      let source = EntrySource.share(share.entry)
       let summary = await commitEntryItems(items, source: source, refused: refused, announce: true)
       // Taken (or refused for good): the drop is removed. A library that is
       // not open keeps it for later.
@@ -279,7 +306,7 @@ extension DictationAppModel {
       entries.note(.shareSheet, EntriesModel.took(summary.storedCount))
     }
     if malformed > 0 {
-      intake.show("有 \(malformed) 条分享读不出来，没有收进来")
+      intake.show("有 \(malformed) 条共享内容无法读取，未添加")
     }
   }
 
@@ -299,20 +326,19 @@ extension DictationAppModel {
 
   // MARK: Services menu (A1)
 
-  /// "收进织机" from another App's Services menu: the selected text, with that
-  /// App as the source.
+  /// "收进 Mindloom" from another App's Services menu: the selected text,
+  /// labelled 「本机其他程序」 (the caller cannot be checked).
   func receiveServicesText(_ text: String) {
     guard entries.isOn(.services) else {
-      intake.show("服务菜单「收进织机」没有打开：在设置 → 入口 里打开")
+      intake.show("服务菜单“添加到 Mindloom”未打开。请在“设置”>“入口”中打开。")
       return
     }
-    let front = NSWorkspace.shared.frontmostApplication
-    let source =
-      front?.bundleIdentifier == Bundle.main.bundleIdentifier
-      ? nil : ItemSourceApplication(bundleID: front?.bundleIdentifier, name: front?.localizedName)
+    // Any program can call the service while another App is in front: the
+    // caller cannot be checked (F10).
+    let source = EntrySource.services
     let items = HandEntries.servicesText(text, source: source, at: Date())
     guard !items.isEmpty else {
-      intake.show("选中的内容里没有文字，未收进来")
+      intake.show("所选内容中没有文字，未添加")
       return
     }
     Task { [weak self] in
@@ -324,15 +350,15 @@ extension DictationAppModel {
 
   /// 「添加到织机」.
   func addFromShortcut(text: String?, url: URL?, file: (Data, String, String?)?) async -> String {
-    guard entries.isOn(.shortcuts) else { return "快捷指令入口已在织机的 设置 → 入口 里关闭" }
+    guard entries.isOn(.shortcuts) else { return EntryKind.shortcutsOffMessage }
     let items: [EntryIntakeItem]
     do {
       items = try HandEntries.shortcut(
         text: text, url: url?.absoluteString, file: file.map { ($0.0, $0.1, $0.2) }, at: Date())
     } catch {
-      return "文件没能读出来，未收进来"
+      return "无法读取文件，未添加"
     }
-    guard !items.isEmpty else { return "没有要收进来的内容" }
+    guard !items.isEmpty else { return "没有要添加的内容" }
     let source = EntrySource.named(EntrySource.shortcuts)
     let summary = await commitEntryItems(items, source: source, announce: true)
     return confirmation(summary, source: source)
@@ -343,14 +369,15 @@ extension DictationAppModel {
     guard let inputs = await memoryProjectionInputs() else {
       return (OwnerChannel.notReadyMessage, [])
     }
-    let due = await Self.dueEntries(inputs, days: days)
+    // Due dates are counted in the product time zone (根-13).
+    let due = await Self.dueEntries(inputs, days: days, timeZone: productTimeZone)
     return DueList.render(due, days: days)
   }
 
-  private nonisolated static func dueEntries(_ inputs: MemoryProjectionInputs, days: Int) async
-    -> [DueEntry]
-  {
-    DueList.entries(inputs.projection(), now: inputs.now, days: days)
+  private nonisolated static func dueEntries(
+    _ inputs: MemoryProjectionInputs, days: Int, timeZone: TimeZone
+  ) async -> [DueEntry] {
+    DueList.entries(inputs.projection(), now: inputs.now, days: days, timeZone: timeZone)
   }
 
   // MARK: Command line (A3)
@@ -362,7 +389,7 @@ extension DictationAppModel {
     let summary = await commitEntryItems(
       items, source: source, refused: refused, announce: true)
     guard summary.storedCount > 0 || !summary.media.isEmpty else {
-      return .refused(summary.rejected.first ?? "没有可收进来的内容")
+      return .refused(summary.rejected.first ?? "没有可添加的内容")
     }
     return .reply(
       OwnerReply(message: confirmation(summary, source: source), stored: summary.storedCount))
@@ -383,7 +410,7 @@ extension DictationAppModel {
     board.setString(command, forType: .string)
     // 织机's own copy: ⌘V here does not take it in as an item.
     board.setData(Data(), forType: IntakePasteboardMarks.ownOrigin)
-    intake.show("已复制安装命令：在终端里运行，然后就能用 mindloom add …")
+    intake.show("已拷贝安装命令。在“终端”中运行后，即可使用 mindloom add …")
   }
 
   // MARK: Chrome extension (A6)
@@ -391,10 +418,11 @@ extension DictationAppModel {
   func ownerBrowserAdd(_ request: BrowserAddRequest) async -> OwnerOutcome {
     guard intakeProcessor != nil, repository != nil else { return .notReady }
     let items = HandEntries.browser(request, at: Date())
-    let source = EntrySource.named(EntrySource.browser)
+    // Chrome only when Chrome started the helper (F10).
+    let source = EntrySource.browser(request)
     let summary = await commitEntryItems(items, source: source, announce: true)
     guard summary.storedCount > 0 else {
-      return .refused(summary.rejected.first ?? "没有可收进来的内容")
+      return .refused(summary.rejected.first ?? "没有可添加的内容")
     }
     return .reply(
       OwnerReply(message: confirmation(summary, source: source), stored: summary.storedCount))
@@ -404,14 +432,14 @@ extension DictationAppModel {
   /// manifest; nothing else touches that file.
   func setBrowserEntry(on: Bool) {
     guard let manifest = BrowserHostManifest.chrome() else {
-      entries.note(.browserExtension, "找不到这个账户的用户文件夹")
+      entries.note(.browserExtension, "找不到此账户的用户文件夹")
       return
     }
     if on {
       do {
         try manifest.install(helperPath: agentAccess.helperPath)
         entries.settings.set(.browserExtension, on: true)
-        entries.note(.browserExtension, "已经连上 Chrome。在 Chrome 里装好扩展后，就能右键「收进织机」。")
+        entries.note(.browserExtension, "已连接 Chrome。在 Chrome 中安装扩展后，即可右键点按“添加到 Mindloom”。")
       } catch let error as BrowserHostManifest.ManifestError {
         entries.note(.browserExtension, Self.browserManifestProblem(error))
         refreshBrowserHostStatus()
@@ -427,11 +455,13 @@ extension DictationAppModel {
         try manifest.remove()
         entries.note(.browserExtension, nil)
       } catch {
-        entries.note(.browserExtension, "已关闭；但 Chrome 文件夹里的连接文件没能删掉，请稍后再关一次")
+        entries.note(.browserExtension, "已关闭，但未能删除 Chrome 文件夹中的连接文件。请稍后再次关闭。")
       }
     }
     saveEntrySettings()
     refreshBrowserHostStatus()
+    // The Chrome extension uses the same socket as other Apps (v12 F1).
+    updateAgentListening()
   }
 
   /// Re-writes the manifest for this copy of the App (it moved, or the file
@@ -440,7 +470,7 @@ extension DictationAppModel {
     guard let manifest = BrowserHostManifest.chrome() else { return }
     do {
       try manifest.install(helperPath: agentAccess.helperPath)
-      entries.note(.browserExtension, "已重新连上 Chrome")
+      entries.note(.browserExtension, "已重新连接 Chrome")
     } catch let error as BrowserHostManifest.ManifestError {
       entries.note(.browserExtension, Self.browserManifestProblem(error))
     } catch {
@@ -457,7 +487,7 @@ extension DictationAppModel {
       try manifest.remove()
       entries.note(.browserExtension, nil)
     } catch {
-      entries.note(.browserExtension, "Chrome 文件夹里的连接文件没能删掉")
+      entries.note(.browserExtension, "未能删除 Chrome 文件夹中的连接文件")
     }
     refreshBrowserHostStatus()
   }
@@ -474,7 +504,7 @@ extension DictationAppModel {
 
   func revealChromeExtension() {
     guard let folder = bundledChromeExtension else {
-      intake.show("这个版本的织机没有带 Chrome 扩展文件夹")
+      intake.show("此版本的 Mindloom 不包含 Chrome 扩展文件夹")
       return
     }
     NSWorkspace.shared.activateFileViewerSelecting([folder])
@@ -482,10 +512,10 @@ extension DictationAppModel {
 
   static func browserManifestProblem(_ error: BrowserHostManifest.ManifestError) -> String {
     switch error {
-    case .browserMissing: "这台 Mac 上没有找到 Chrome（先装好并打开一次 Chrome）"
-    case .helperMissing: "织机自带的连接程序不见了，请重新安装织机"
-    case .notAFile: "Chrome 文件夹里同名的东西不是文件，没有改动它"
-    case .write, .remove: "没能写入 Chrome 的连接文件"
+    case .browserMissing: "在这台 Mac 上找不到 Chrome。请先安装并打开一次 Chrome。"
+    case .helperMissing: "找不到 Mindloom 自带的连接程序。请重新安装 Mindloom。"
+    case .notAFile: "Chrome 文件夹中的同名项目不是文件，未作更改"
+    case .write, .remove: "未能写入 Chrome 的连接文件"
     }
   }
 
@@ -496,8 +526,8 @@ extension DictationAppModel {
     panel.canChooseDirectories = true
     panel.canChooseFiles = false
     panel.allowsMultipleSelection = true
-    panel.prompt = "监视这个文件夹"
-    panel.message = "选好的文件夹里新出现的文件会被收进织机。已有的文件不收。"
+    panel.prompt = "监视此文件夹"
+    panel.message = "所选文件夹中的新文件会添加到 Mindloom。已有的文件不添加。"
     guard panel.runModal() == .OK else { return }
     let protected = intakeProcessor?.pathPolicy
     for url in panel.urls {
@@ -505,7 +535,7 @@ extension DictationAppModel {
       guard !entries.settings.folders.contains(where: { $0.path == path }) else { continue }
       // A folder of the library itself is never watched.
       if let protected, protected.isProtected(url.appendingPathComponent("x")) {
-        intake.show("这是织机资料库里的文件夹，不能监视")
+        intake.show("这是 Mindloom 资料库中的文件夹，无法监视")
         continue
       }
       entries.settings.folders.append(WatchedFolder(path: path))
@@ -592,7 +622,7 @@ extension DictationAppModel {
       entries.settings.set(.calendar, on: false)
       saveEntrySettings()
       applyEntrySettings()
-      entries.note(.calendar, "没有得到日历权限；可以在 系统设置 → 隐私与安全性 → 日历 里允许织机")
+      entries.note(.calendar, "未获得日历访问权限。请在“系统设置”>“隐私与安全”>“日历”中允许 Mindloom。")
       return
     }
     entries.calendars = reader.calendars()
@@ -616,7 +646,7 @@ extension DictationAppModel {
     let reader = entries.calendarReader
     entries.calendarAccess = reader.access()
     guard entries.calendarAccess == .granted else {
-      entries.note(.calendar, "需要日历权限：系统设置 → 隐私与安全性 → 日历")
+      entries.note(.calendar, "需要日历访问权限：“系统设置”>“隐私与安全”>“日历”")
       return
     }
     entries.calendars = reader.calendars()
@@ -661,16 +691,16 @@ extension DictationAppModel {
       guard let self else { return }
       switch result {
       case .added(let list):
-        intake.show("已加到提醒事项「\(list)」（只在这台 Mac 上）")
-        entries.note(.reminders, "刚加了一条到「\(list)」")
+        intake.show("已添加到提醒事项“\(list)”（储存在这台 Mac 上）")
+        entries.note(.reminders, "已添加一条到“\(list)”")
       case .addedSynced(let list, let account):
         // V8R-18: say plainly that this one leaves the Mac through the account.
-        intake.show("已加到提醒事项「\(list)」：这个列表经「\(account)」同步，下一步的文字和事情名会跟着同步出去")
-        entries.note(.reminders, "刚加了一条到「\(list)」（经\(account)同步）")
+        intake.show("已添加到提醒事项“\(list)”。此列表通过“\(account)”同步，下一步的文字和事的名称也会同步")
+        entries.note(.reminders, "已添加一条到“\(list)”（通过\(account)同步）")
       case .denied:
-        intake.show("没有得到提醒事项权限；可以在 系统设置 → 隐私与安全性 → 提醒事项 里允许织机")
+        intake.show("未获得提醒事项访问权限。请在“系统设置”>“隐私与安全”>“提醒事项”中允许 Mindloom。")
       case .failed:
-        intake.show("没能加到提醒事项；请再试一次")
+        intake.show("未能添加到提醒事项。请重试。")
       }
     }
   }
@@ -682,17 +712,17 @@ extension DictationAppModel {
     panel.canChooseDirectories = true
     panel.canChooseFiles = false
     panel.allowsMultipleSelection = false
-    panel.prompt = "监视这个仓库"
-    panel.message = "选一个本机的 Git 仓库（也可以是 Overleaf 的 git 克隆）。只读提交记录，不读文件内容。"
+    panel.prompt = "监视此仓库"
+    panel.message = "选择这台 Mac 上的 Git 仓库（也可以是 Overleaf 的 git 克隆）。Mindloom 读取提交记录。"
     guard panel.runModal() == .OK, let url = panel.url else { return }
     guard let runner = entries.gitRunner else {
-      intake.show("这台 Mac 上没有找到 git（需要 Xcode 或命令行工具）")
+      intake.show("在这台 Mac 上找不到 git。请安装 Xcode 或命令行工具。")
       return
     }
     let path = url.standardizedFileURL.path
     guard !entries.settings.repositories.contains(where: { $0.path == path }) else { return }
     guard let branch = runner.currentBranch(in: url) else {
-      intake.show("这个文件夹不是 Git 仓库，或者没有检出分支")
+      intake.show("此文件夹不是 Git 仓库，或没有检出的分支")
       return
     }
     let repository = WatchedRepository(path: path, branches: [branch])
@@ -727,7 +757,7 @@ extension DictationAppModel {
   func syncGit() async {
     guard entries.isOn(.git) else { return }
     guard let runner = entries.gitRunner else {
-      entries.note(.git, "这台 Mac 上没有找到 git（需要 Xcode 或命令行工具）")
+      entries.note(.git, "在这台 Mac 上找不到 git。请安装 Xcode 或命令行工具。")
       return
     }
     var state = entries.gitState
@@ -763,7 +793,7 @@ extension DictationAppModel {
     switch outcome {
     case .unavailable:
       entries.note(
-        .zotero, "Zotero 没有在运行，或没有开放本地接口（Zotero 设置 → 高级 → 允许此电脑上的其他应用程序与 Zotero 通信）")
+        .zotero, "Zotero 未运行，或未开放本地接口（Zotero 设置 >“高级”>“允许此电脑上的其他应用程序与 Zotero 通信”）")
     case .items(let items):
       let summary = await commitEntryItems(
         items, source: EntrySource.named(EntrySource.zotero), announce: false)
@@ -783,6 +813,7 @@ extension DictationAppModel {
       case .calendar: await self?.syncCalendar()
       case .git: await self?.syncGit()
       case .zotero: await self?.syncZotero()
+      case .tencentMeeting: await self?.tencentPass(.checkNow)
       case .shareSheet: self?.pickUpShares()
       default: break
       }

@@ -18,7 +18,7 @@ enum LocalHistoryExportFormat: String, CaseIterable, Sendable {
     case .markdown: "Markdown"
     case .srt: "SRT 字幕"
     case .vtt: "VTT 字幕"
-    case .json: "结构化 JSON"
+    case .json: "JSON 数据"
     }
   }
 }
@@ -149,7 +149,7 @@ actor LocalHistoryExporter {
 
   private func markdown(_ context: LocalHistoryExportContext) -> String {
     var lines = [
-      "# 织机 记录",
+      "# Mindloom 记录",
       "",
       "- 时间：\(context.history.createdAt.ISO8601Format())",
       "- 来源：\(context.history.inputMode.rawValue)",
@@ -202,7 +202,7 @@ actor LocalHistoryExporter {
     }
     lines += [
       "---",
-      "此文件由织机在这台 Mac 上生成；导出未修改历史记录或保留的原始音频。",
+      "此文件由 Mindloom 在这台 Mac 上生成；导出时历史记录和保留的原始音频保持不变。",
       "",
     ]
     return lines.joined(separator: "\n")

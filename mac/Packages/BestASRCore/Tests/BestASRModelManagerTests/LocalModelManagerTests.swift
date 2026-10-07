@@ -1,4 +1,5 @@
 import CryptoKit
+import Darwin
 import Foundation
 import XCTest
 
@@ -313,6 +314,151 @@ final class LocalModelManagerTests: XCTestCase {
     }
   }
 
+  /// Only the current and the previous version of a model stay on disk
+  /// (ALIGNMENT 收1-4): activating a third removes the first, and leftover
+  /// quarantine and stale staging folders of that model go too, while a
+  /// model whose ID begins with this one's keeps its folders.
+  func testActivationKeepsOnlyTheCurrentAndThePreviousVersion() async throws {
+    let fixture = try makeFixture()
+    let sourceV3 = fixture.root.appendingPathComponent("source-v3", isDirectory: true)
+    try restore(
+      source: sourceV3,
+      contents: ["weights.bin": "fixture-v3-data", "nested/vocab.json": "vocab-v3"])
+    let v3 = try artifact(id: fixture.artifactID, version: "3.0.0", sequence: 3, source: sourceV3)
+    let registry = ManagedModelRegistry(
+      schemaVersion: 1, models: [fixture.v1, fixture.v2, v3], selectionStatus: "fixture")
+    let manager = try LocalModelManager(rootDirectory: fixture.store, registry: registry)
+    for (descriptor, source) in [
+      (fixture.v1, fixture.sourceV1), (fixture.v2, fixture.sourceV2), (v3, sourceV3),
+    ] {
+      _ = try await manager.activate(
+        artifactID: fixture.artifactID, version: descriptor.exactVersion, from: source,
+        healthCheck: PassingHealthCheck())
+    }
+    let versions = fixture.store.appendingPathComponent("versions/\(fixture.artifactID)")
+    XCTAssertEqual(
+      Set(try directoryEntries(versions).map(\.lastPathComponent)),
+      [fixture.v2.version, v3.version])
+    let active = try await manager.discoverActive(
+      artifactID: fixture.artifactID, healthCheck: PassingHealthCheck())
+    XCTAssertEqual(active.descriptor.version, v3.version)
+
+    // Leftovers: an old quarantined copy and a stale staging folder of this
+    // model, and the same of a model whose ID starts with this one's.
+    let quarantine = fixture.store.appendingPathComponent("quarantine")
+    let staging = fixture.store.appendingPathComponent("staging")
+    let mine = "\(fixture.artifactID)-\(fixture.v1.version)-\(UUID().uuidString)"
+    let other = "\(fixture.artifactID)-large-1.0.0-\(UUID().uuidString)"
+    for parent in [quarantine, staging] {
+      for name in [mine, other] {
+        try FileManager.default.createDirectory(
+          at: parent.appendingPathComponent(name), withIntermediateDirectories: true)
+      }
+    }
+    let removed = try await manager.pruneUnreferencedVersions(
+      artifactID: fixture.artifactID, now: Date().addingTimeInterval(7_200))
+    XCTAssertEqual(Set(removed), ["quarantine/\(mine)", "staging/\(mine)"])
+    XCTAssertEqual(try directoryEntries(quarantine).map(\.lastPathComponent), [other])
+    XCTAssertEqual(try directoryEntries(staging).map(\.lastPathComponent), [other])
+    // A fresh staging folder may belong to an install in progress.
+    try FileManager.default.createDirectory(
+      at: staging.appendingPathComponent(mine), withIntermediateDirectories: true)
+    let fresh = try await manager.pruneUnreferencedVersions(artifactID: fixture.artifactID)
+    XCTAssertEqual(fresh, [])
+    // The previous version is still there to go back to.
+    let restored = try await manager.restoreLastKnownGood(
+      artifactID: fixture.artifactID, healthCheck: PassingHealthCheck())
+    XCTAssertEqual(restored.descriptor.version, fixture.v2.version)
+  }
+
+  /// A retired model leaves the store at launch (ALIGNMENT 收1-4, adopted
+  /// 2026-10-06: Paraformer and Parakeet): its pointers, versions and
+  /// leftovers go; every model not named stays, including one this build
+  /// does not know (review 2026-10-07), and anything the store did not
+  /// write.
+  func testRetiredModelsAreRemovedAndEveryOtherModelStays() async throws {
+    let fixture = try makeFixture()
+    let retiredID = "fixture-paraformer"
+    let retired = try artifact(
+      id: retiredID, version: "1.0.0", sequence: 1, source: fixture.sourceV1)
+    let registry = ManagedModelRegistry(
+      schemaVersion: 1, models: [fixture.v1, fixture.v2, retired], selectionStatus: "fixture")
+    let manager = try LocalModelManager(rootDirectory: fixture.store, registry: registry)
+    for (descriptor, source) in [(fixture.v1, fixture.sourceV1), (fixture.v2, fixture.sourceV2)] {
+      _ = try await manager.activate(
+        artifactID: fixture.artifactID, version: descriptor.exactVersion, from: source,
+        healthCheck: PassingHealthCheck())
+    }
+    _ = try await manager.activate(
+      artifactID: retiredID, version: retired.exactVersion, from: fixture.sourceV1,
+      healthCheck: PassingHealthCheck())
+    let quarantine = fixture.store.appendingPathComponent("quarantine")
+    let leftover = "\(retiredID)-\(retired.version)-\(UUID().uuidString)"
+    try FileManager.default.createDirectory(
+      at: quarantine.appendingPathComponent(leftover), withIntermediateDirectories: true)
+    let unrelated = fixture.store.appendingPathComponent("personal-notes.txt")
+    try Data("kept".utf8).write(to: unrelated)
+    // A model a newer feature installed that this registry does not list.
+    let unknown = fixture.store.appendingPathComponent("versions/fixture-embedding/1.0.0")
+    try FileManager.default.createDirectory(at: unknown, withIntermediateDirectories: true)
+    try Data("weights".utf8).write(to: unknown.appendingPathComponent("model.safetensors"))
+
+    let removed = try await manager.removeArtifacts([retiredID, "fixture-never-installed"])
+
+    XCTAssertEqual(removed, [retiredID])
+    let store = FileManager.default
+    func exists(_ path: String) -> Bool {
+      store.fileExists(atPath: fixture.store.appendingPathComponent(path).path)
+    }
+    XCTAssertFalse(exists("versions/\(retiredID)"))
+    XCTAssertFalse(exists("active/\(retiredID).json"))
+    XCTAssertFalse(store.fileExists(atPath: quarantine.appendingPathComponent(leftover).path))
+    XCTAssertTrue(store.fileExists(atPath: unrelated.path))
+    XCTAssertTrue(exists("versions/fixture-embedding/1.0.0/model.safetensors"))
+    await assertFailure(.missingModel) {
+      _ = try await manager.discoverActive(artifactID: retiredID, healthCheck: PassingHealthCheck())
+    }
+    let kept = try await manager.discoverActive(
+      artifactID: fixture.artifactID, healthCheck: PassingHealthCheck())
+    XCTAssertEqual(kept.descriptor.version, fixture.v2.version)
+    let restored = try await manager.restoreLastKnownGood(
+      artifactID: fixture.artifactID, healthCheck: PassingHealthCheck())
+    XCTAssertEqual(restored.descriptor.version, fixture.v1.version)
+    let again = try await manager.removeArtifacts([retiredID])
+    XCTAssertEqual(again, [])
+  }
+
+  /// Hashing a model file keeps one chunk in memory, not the file
+  /// (regression 2026-10-06: every 1 MB chunk stayed until the autorelease
+  /// pool drained, and verifying the installed recognizer at launch added
+  /// about 2.4 GB to the App's footprint).
+  func testHashingAFileDoesNotKeepItsChunks() throws {
+    let file = FileManager.default.temporaryDirectory
+      .appendingPathComponent("hash-\(UUID().uuidString).bin")
+    let chunk = Data(repeating: 0x5A, count: 1_048_576)
+    FileManager.default.createFile(atPath: file.path, contents: nil)
+    let writer = try FileHandle(forWritingTo: file)
+    for _ in 0..<160 { try writer.write(contentsOf: chunk) }
+    try writer.close()
+    defer { try? FileManager.default.removeItem(at: file) }
+    func footprint() -> UInt64 {
+      var info = task_vm_info_data_t()
+      var count = mach_msg_type_number_t(
+        MemoryLayout<task_vm_info_data_t>.size / MemoryLayout<integer_t>.size)
+      _ = withUnsafeMutablePointer(to: &info) { pointer in
+        pointer.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
+          task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
+        }
+      }
+      return info.phys_footprint
+    }
+    let before = footprint()
+    let digest = try LocalModelManager.sha256(of: file)
+    let grown = footprint() > before ? footprint() - before : 0
+    XCTAssertEqual(digest.count, 64)
+    XCTAssertLessThan(grown, 48 * 1_048_576, "hashing 160 MB kept \(grown / 1_048_576) MB")
+  }
+
   func testProductionManagerContainsNoNetworkingOrImplicitDownloadPath() throws {
     let source = try String(
       contentsOf: repositoryRoot.appendingPathComponent(
@@ -418,9 +564,9 @@ final class LocalModelManagerTests: XCTestCase {
       exactVersion: version,
       activationSequence: sequence,
       downloadBaseURL:
-        "https://huggingface.co/bestasr/fixture/resolve/\(String(repeating: sequence == 1 ? "1" : "2", count: 40))",
-      sourceRevision: String(repeating: sequence == 1 ? "1" : "2", count: 40),
-      treeSHA256: String(repeating: sequence == 1 ? "a" : "b", count: 64),
+        "https://huggingface.co/bestasr/fixture/resolve/\(String(repeating: "\(min(sequence, 9))", count: 40))",
+      sourceRevision: String(repeating: "\(min(sequence, 9))", count: 40),
+      treeSHA256: String(repeating: ["a", "b", "d", "e"][Int(min(sequence, 4)) - 1], count: 64),
       license: "LicenseRef-Fixture",
       licenseFile: "Legal/fixture.txt",
       licenseSHA256: String(repeating: "c", count: 64),

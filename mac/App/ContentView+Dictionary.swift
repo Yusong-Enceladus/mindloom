@@ -89,7 +89,7 @@ private struct DictionaryPage: View {
       .accessibilityIdentifier("bestASR.dictionary.confirmDeleteSelected")
       Button("取消", role: .cancel) { pendingDeletion = [] }
     } message: {
-      Text("之后的识别和整理不再使用这些词；已有原音和逐字稿不会改变。")
+      Text("之后的识别和整理不再使用这些词；已有的录音和逐字稿保持不变。")
     }
   }
 
@@ -117,12 +117,12 @@ private struct DictionaryPage: View {
     ScrollView {
       if dictionary.entries.isEmpty {
         ContentUnavailableView(
-          dictionary.searchQuery.isEmpty ? "还没有词汇" : "没有匹配的词",
+          dictionary.searchQuery.isEmpty ? "尚无词汇" : "没有匹配的词",
           systemImage: "character.book.closed",
           description: Text(
             dictionary.searchQuery.isEmpty
               ? "添加你常说的人名、产品名或术语。"
-              : "试试更短的关键词，或添加一个新词。"
+              : "请尝试更短的关键词，或添加新词。"
           )
         )
         .frame(maxWidth: .infinity)
@@ -172,7 +172,7 @@ private struct DictionaryPage: View {
       Grid(alignment: .leading, horizontalSpacing: 14, verticalSpacing: 12) {
         GridRow {
           Text("写法").foregroundStyle(.secondary)
-          TextField("例如：织机、张明", text: $dictionary.canonicalDraft)
+          TextField("例如：Mindloom、张明", text: $dictionary.canonicalDraft)
             .textFieldStyle(.roundedBorder)
             .focused($canonicalIsFocused)
             .accessibilityIdentifier("bestASR.settings.dictionaryCanonical")

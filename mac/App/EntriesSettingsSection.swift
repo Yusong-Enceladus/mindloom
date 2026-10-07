@@ -17,7 +17,7 @@ struct EntriesSettingsSections: View {
   var body: some View {
     Section {
       Text(
-        "这些入口和粘贴、拖入一样：收进来的东西都记下来源和时间，走同一套规则（号码遮住再送去整理，音视频只在 Mac 上）。会在后台自动收东西的入口（文件夹、日历、Git、Zotero）默认关闭，打开后随时可以关。"
+        "这些入口与粘贴、拖放相同：添加的内容都会记录来源和时间，并按同一规则处理（隐藏号码后发送整理，音视频储存在这台 Mac 上）。在后台自动添加内容的入口（文件夹、日历、Git、Zotero）默认关闭，打开后可以随时关闭。"
       )
       .font(.callout)
       if !entries.isReady {
@@ -61,15 +61,15 @@ struct EntriesSettingsSections: View {
   private func details(_ kind: EntryKind) -> some View {
     switch kind {
     case .shareSheet:
-      Text("第一次用：系统设置 → 通用 → 登录项与扩展 → 共享 里勾上「收进织机」。")
+      Text("首次使用：请在“系统设置”>“通用”>“登录项与扩展”>“共享”中勾选“Mindloom”。")
         .font(.caption).foregroundStyle(.secondary)
     case .services:
-      Text("如果菜单里没有：系统设置 → 键盘 → 键盘快捷键 → 服务 → 文本 里勾上「收进织机」。")
+      Text("如果菜单中没有此项：请在“系统设置”>“键盘”>“键盘快捷键”>“服务”>“文本”中勾选“添加到 Mindloom”。")
         .font(.caption).foregroundStyle(.secondary)
     case .browserExtension:
       browserDetails
     case .shortcuts:
-      Text("在「快捷指令」App 里搜索“织机”就能看到这两个动作；也可以对 Siri 说“添加到织机”。")
+      Text("在“快捷指令”App 中搜索“Mindloom”即可找到这两个操作；也可以对 Siri 说“添加到 Mindloom”。")
         .font(.caption).foregroundStyle(.secondary)
     case .commandLine:
       if entries.isOn(.commandLine) {
@@ -78,7 +78,7 @@ struct EntriesSettingsSections: View {
             .lineLimit(2)
         }
         HStack {
-          Button("复制安装命令") { model.copyCommandLineInstall() }
+          Button("拷贝安装命令") { model.copyCommandLineInstall() }
           Spacer()
         }
         Text(
@@ -91,13 +91,16 @@ struct EntriesSettingsSections: View {
     case .calendar:
       if entries.isOn(.calendar) { calendarDetails }
     case .reminders:
-      Text("按钮在每件事的「线索」页右侧「下一步」下面。第一次点时系统会问提醒事项权限。")
+      Text("打开一件事后，按钮位于步骤中。首次点按时，系统会请求提醒事项权限。")
         .font(.caption).foregroundStyle(.secondary)
     case .git:
       if entries.isOn(.git) { gitDetails }
+    case .tencentMeeting:
+      Text("连接腾讯会议和查看状态：“设置”>“入口”>“腾讯会议”。")
+        .font(.caption).foregroundStyle(.secondary)
     case .zotero:
       if entries.isOn(.zotero) {
-        Text("需要 Zotero 7 在运行，并在 Zotero 设置 → 高级 里勾选「允许此电脑上的其他应用程序与 Zotero 通信」。打开前已有的条目不收。")
+        Text("需要 Zotero 7 正在运行，并在 Zotero 设置 >“高级”中勾选“允许此电脑上的其他应用程序与 Zotero 通信”。仅添加打开此入口之后的新条目。")
           .font(.caption).foregroundStyle(.secondary)
         HStack {
           Button("现在检查") { model.checkEntryNow(.zotero) }
@@ -114,27 +117,27 @@ struct EntriesSettingsSections: View {
     let on = entries.isOn(.browserExtension)
     switch (on, entries.browserHost) {
     case (true, .installed):
-      Text("Chrome 连接：已装好。打开开关时，织机在 Chrome 的设置文件夹里放了一个连接文件；关掉开关就删掉它。")
+      Text("Chrome 连接：已安装。打开开关时，Mindloom 会在 Chrome 的设置文件夹中添加一个连接文件；关闭开关时删除该文件。")
         .font(.caption).foregroundStyle(.secondary)
     case (true, .otherHelper), (true, .absent), (true, .unreadable):
-      Text("Chrome 连接文件不见了，或指向另一个位置的织机。")
+      Text("找不到 Chrome 连接文件，或连接文件指向其他位置的 Mindloom。")
         .font(.caption).foregroundStyle(.orange)
       HStack {
         Button("重新连接 Chrome") { model.reinstallBrowserHost() }
         Spacer()
       }
     case (false, .installed), (false, .otherHelper), (false, .unreadable):
-      Text("开关是关的，但 Chrome 文件夹里还留着织机的连接文件。")
+      Text("开关已关闭，但 Chrome 文件夹中仍有 Mindloom 的连接文件。")
         .font(.caption).foregroundStyle(.secondary)
       HStack {
-        Button("删掉连接文件") { model.removeBrowserHost() }
+        Button("删除连接文件") { model.removeBrowserHost() }
         Spacer()
       }
     case (false, .absent):
       EmptyView()
     }
     Text(
-      "装扩展：在 Chrome 打开 chrome://extensions，打开右上角「开发者模式」，点「加载已解压的扩展程序」，选下面这个文件夹。之后在网页上右键，或点工具栏的织机按钮。"
+      "安装扩展：在 Chrome 中打开 chrome://extensions，打开右上角的“开发者模式”，点按“加载已解压的扩展程序”，然后选择下方的文件夹。之后可以在网页上右键点按，或点按工具栏中的“添加到 Mindloom”按钮。"
     )
     .font(.caption).foregroundStyle(.secondary)
     .fixedSize(horizontal: false, vertical: true)
@@ -160,7 +163,7 @@ struct EntriesSettingsSections: View {
           model.entrySettingsChanged()
         }))
     if entries.settings.folders.isEmpty {
-      Text("还没有选文件夹。").font(.caption).foregroundStyle(.secondary)
+      Text("未选择文件夹。").font(.caption).foregroundStyle(.secondary)
     }
     ForEach(entries.settings.folders) { folder in
       FolderRow(
@@ -174,7 +177,7 @@ struct EntriesSettingsSections: View {
       Spacer()
     }
     if !entries.folderSkips.isEmpty {
-      DisclosureGroup("没有收进来的文件（\(entries.folderSkips.count)）") {
+      DisclosureGroup("未添加的文件（\(entries.folderSkips.count)）") {
         ForEach(Array(entries.folderSkips.enumerated()), id: \.offset) { _, line in
           Text(line).font(.caption).foregroundStyle(.secondary)
         }
@@ -190,7 +193,7 @@ struct EntriesSettingsSections: View {
     switch entries.calendarAccess {
     case .granted:
       if entries.calendars.isEmpty {
-        Text("没有可读的日历。").font(.caption).foregroundStyle(.secondary)
+        Text("没有可读取的日历。").font(.caption).foregroundStyle(.secondary)
       }
       ForEach(entries.calendars) { calendar in
         Toggle(
@@ -199,7 +202,7 @@ struct EntriesSettingsSections: View {
             get: { entries.settings.calendarIDs.contains(calendar.id) },
             set: { model.setCalendar(calendar.id, chosen: $0) }))
       }
-      Text("读取最近 7 天到未来 30 天的日程。只读：从不写日历。")
+      Text("读取过去 7 天到未来 30 天的日程。")
         .font(.caption).foregroundStyle(.secondary)
       HStack {
         Button("现在同步") { model.checkEntryNow(.calendar) }
@@ -208,7 +211,7 @@ struct EntriesSettingsSections: View {
     case .notDetermined:
       Button("允许读取日历…") { Task { await model.requestCalendarAccess() } }
     case .denied:
-      Text("织机没有日历权限。可以在 系统设置 → 隐私与安全性 → 日历 里允许。")
+      Text("Mindloom 没有日历访问权限。请在“系统设置”>“隐私与安全”>“日历”中允许。")
         .font(.caption).foregroundStyle(.orange)
     }
   }
@@ -218,7 +221,7 @@ struct EntriesSettingsSections: View {
   @ViewBuilder
   private var gitDetails: some View {
     if entries.gitRunner == nil {
-      Text("这台 Mac 上没有找到 git（需要 Xcode 或命令行工具）。")
+      Text("在这台 Mac 上找不到 git。请安装 Xcode 或命令行工具。")
         .font(.caption).foregroundStyle(.orange)
     }
     ForEach(entries.settings.repositories) { repository in
@@ -250,7 +253,7 @@ struct EntriesSettingsSections: View {
       Spacer()
     }
     .onAppear { model.loadRepositoryBranches() }
-    Text("只收打开之后的新提交。")
+    Text("添加打开此入口之后的新提交。")
       .font(.caption).foregroundStyle(.secondary)
   }
 }
@@ -283,7 +286,7 @@ private struct FolderRow: View {
       Text(folder.path).font(.caption2.monospaced()).foregroundStyle(.secondary)
         .lineLimit(1).truncationMode(.middle)
       HStack {
-        TextField("排除，例如 *.dmg, 私人*", text: $exclusions)
+        TextField("排除项，例如 *.dmg, 私人*", text: $exclusions)
           .font(.caption)
           .onSubmit { saveExclusions() }
         Stepper(

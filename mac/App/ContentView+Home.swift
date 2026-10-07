@@ -51,8 +51,8 @@ extension ContentView {
     } else {
       if shouldShowPermissionSetup {
         ZhijiSetupCard(
-          step: 1, stepTitle: "允许录音与回写", title: "让织机听见，并把结果送回原处",
-          detail: "麦克风只用于你主动开始的录音；辅助功能让快捷键在任何 App 中生效，并在结束后把文字写回原来的输入位置。"
+          step: 1, stepTitle: "允许录音与回写", title: "允许 Mindloom 录音，并将文字输入到原来的位置",
+          detail: "麦克风用于录制你开始的录音。“设备控制和数据访问”让快捷键在任何 App 中生效，并在结束后将文字输入到原来的位置。"
         ) {
           VStack(alignment: .leading, spacing: 10) {
             readinessCard(
@@ -64,7 +64,7 @@ extension ContentView {
               model.resolvePermission(.microphone)
             }
             readinessCard(
-              title: "辅助功能",
+              title: "设备控制和数据访问",
               state: model.onboarding.accessibilityPermission,
               symbol: "cursorarrow.motionlines",
               actionIdentifier: "bestASR.permission.accessibility"
@@ -78,9 +78,9 @@ extension ContentView {
           if model.capture.microphonePermission != .notDetermined
             || model.onboarding.accessibilityPermission != .notDetermined
           {
-            DisclosureGroup("系统设置里出现多个织机？") {
+            DisclosureGroup("“系统设置”中出现多个 Mindloom？") {
               VStack(alignment: .leading, spacing: 5) {
-                Text("只允许“应用程序”文件夹里的正式织机。")
+                Text("请仅允许“应用程序”文件夹中的 Mindloom。")
                 Text(model.permissionApplicationIdentity)
                   .font(.system(size: 11).monospaced())
                   .textSelection(.enabled)
@@ -116,8 +116,8 @@ extension ContentView {
         !modelSetupDeferred || !isOnboardingIncomplete
       {
         ZhijiSetupCard(
-          step: isOnboardingIncomplete ? 2 : nil, stepTitle: "准备离线能力",
-          title: "正在确认这台 Mac 是否已经可以离线识别…"
+          step: isOnboardingIncomplete ? 2 : nil, stepTitle: "准备本机能力",
+          title: "正在确认这台 Mac 是否已经可以在本机识别…"
         ) {
           ProgressView().controlSize(.small)
         }
@@ -128,8 +128,8 @@ extension ContentView {
           step: 3, stepTitle: "完成一次真实口述", title: "先在这里试一句",
           detail: onboardingPracticeReady
             ? "让光标留在下面的框里，按 \(model.startEndShortcutTitle) 开始，说一句话，再按一次结束。"
-              + "只有识别结果确实回到这里，练习才算完成。"
-            : "你可以先进入织机。准备好缺少的项目后，这个真实口述练习仍会在首页等你。"
+              + "识别结果输入到这里后，练习即完成。"
+            : "你可以先进入 Mindloom。准备好缺少的项目后，可以在首页继续此口述练习。"
         ) {
           if onboardingPracticeReady {
             TextEditor(text: $practiceText)
@@ -181,13 +181,13 @@ extension ContentView {
               }
               if model.onboarding.accessibilityPermission != .granted {
                 permissionAction(
-                  title: "辅助功能",
+                  title: "设备控制和数据访问",
                   state: model.onboarding.accessibilityPermission,
                   identifier: "bestASR.onboarding.practiceAccessibility"
                 ) { model.resolvePermission(.accessibility) }
               }
               if !model.models.modelRuntimeReady {
-                Button("准备离线能力") {
+                Button("准备本机能力") {
                   modelSetupDeferred = false
                 }
                 .accessibilityIdentifier("bestASR.onboarding.resumeModels")
@@ -233,7 +233,7 @@ extension ContentView {
           VStack(alignment: .leading, spacing: 2) {
             Text(ZhijiCopy.setupResume)
               .font(.system(size: 13, weight: .semibold))
-            Text("检查权限、离线语音和快捷键；不影响你先浏览或记录。")
+            Text("检查权限、本机语音和快捷键；不影响你先浏览或记录。")
               .font(.system(size: 11))
               .foregroundStyle(.secondary)
           }
@@ -258,11 +258,11 @@ extension ContentView {
       model.hotkeys.startEndHotkeyBinding.isFunctionAlone
       ? [
         ("口述", [startKey], "按住说话，松开写入光标处；轻按则开始，再轻按结束"),
-        ("翻译", [startKey, "⇧"], "说话时按一下 Shift，写入译文"),
-        ("指令", [startKey, "空格"], "选中文字就改写它，没选中就写入答案"),
+        ("翻译", [startKey, "⇧"], "说话时按 Shift 键，输入译文"),
+        ("指令", [startKey, "空格"], "选中文字就改写它，没选中就写入答案；选中写错的词并说出正确的写法，会更正它并添加到词典"),
       ]
       : [
-        ("口述", [startKey], "按一下开始，再按一下结束并写入")
+        ("口述", [startKey], "按一次开始，再按一次结束并输入")
       ]
     return VStack(alignment: .leading, spacing: 12) {
       Text("在任何 App 的输入框里使用")
@@ -413,7 +413,7 @@ extension ContentView {
         VStack(alignment: .leading, spacing: 3) {
           Text("确认麦克风")
             .font(.system(size: 13, weight: .semibold))
-          Text("选好设备后说一句话；音量只在本机显示，不会保存。")
+          Text("选择设备后说一句话；音量显示在这里，声音不保存。")
             .font(.system(size: 11))
             .foregroundStyle(.secondary)
         }
@@ -486,7 +486,7 @@ extension ContentView {
       practiceStatusMessage = "练习已暂停；继续后仍会回到这个框"
     case .finalizing, .recognizing, .polishing, .inserting:
       guard model.snapshot.sessionID == practiceSessionID else { return }
-      practiceStatusMessage = "录音已安全保存，正在本机识别并回写…"
+      practiceStatusMessage = "录音已保存，正在本机识别并回写…"
     case .completed:
       guard let sessionID = practiceSessionID,
         model.snapshot.sessionID == sessionID
@@ -513,7 +513,7 @@ extension ContentView {
         }
         guard practiceSessionID == sessionID else { return }
         practiceStatusMessage =
-          "这次文字已保存在资料库，但没有真正回到练习框。把光标放回框里再试一次。"
+          "文字已保存在资料库中，但未能输入到练习框。请将光标放回练习框后重试。"
         practiceFieldFocused = true
         practiceSessionID = nil
       }
@@ -525,7 +525,7 @@ extension ContentView {
     case .failedRecoverable:
       guard model.snapshot.sessionID == practiceSessionID else { return }
       practiceSessionID = nil
-      practiceStatusMessage = "这次没有完成；原音已安全保留，可以稍后从资料库恢复"
+      practiceStatusMessage = "这次没有完成；原音已保留，可以稍后从资料库恢复"
     case .idle:
       break
     case .cancelling:
@@ -569,10 +569,10 @@ extension ContentView {
     state: DictationPermissionState
   ) -> String {
     switch state {
-    case .granted: "\(title)已允许"
-    case .notDetermined: "允许\(title)"
-    case .denied, .revoked: "打开\(title)设置"
-    case .restricted: "\(title)受系统限制"
+    case .granted: "“\(title)”已允许"
+    case .notDetermined: "允许“\(title)”"
+    case .denied, .revoked: "打开“\(title)”设置"
+    case .restricted: "“\(title)”受系统限制"
     case .restartRequired: "重新打开后生效"
     }
   }
@@ -621,15 +621,15 @@ extension ContentView {
 
   var localSetupCard: some View {
     ZhijiSetupCard(
-      step: isOnboardingIncomplete ? 2 : nil, stepTitle: "准备离线能力", title: "准备离线语音",
-      detail: "只需完成一次。之后转文字、分清谁在说话和整理文字都在这台 Mac 上完成。"
+      step: isOnboardingIncomplete ? 2 : nil, stepTitle: "准备本机能力", title: "准备本机语音",
+      detail: "只需完成一次。之后的转写、说话人识别和文字整理都在这台 Mac 上进行。"
     ) {
       VStack(alignment: .leading, spacing: 14) {
 
         HStack(spacing: 10) {
           setupComponent(
             "语音转文字",
-            detail: "中英混输与原音时间对齐 · 约 4.82 GB",
+            detail: "中英混输与原音时间对齐 · 约 3.98 GB",
             symbol: "waveform"
           )
           setupComponent(
@@ -641,7 +641,7 @@ extension ContentView {
         }
 
         Label(
-          "人物声纹默认只在本机用于把不同记录中的同一人物归到一起，不用于登录、支付或解锁，也不会上传；可随时在设置中关闭并删除声纹特征，原音和文字不会随之删除。",
+          "人物声纹用于在这台 Mac 上将不同记录中的同一人物归到一起。可以随时在设置中关闭并删除声纹特征，录音和文字会保留。",
           systemImage: "person.crop.circle.badge.checkmark"
         )
         .font(.system(size: 11))
@@ -686,7 +686,7 @@ extension ContentView {
               )!
             )
             Link(
-              "文字整理组件许可",
+              "文字整理模型许可",
               destination: URL(
                 string:
                   "https://huggingface.co/Qwen/Qwen3-1.7B-MLX-4bit/blob/21457c6f51ed54a7c16e988c0844db973815c137/LICENSE"
@@ -697,7 +697,7 @@ extension ContentView {
         }
 
         Toggle(
-          "我已阅读并接受上述三项离线能力的许可与署名要求",
+          "我已阅读并接受上述三项本机能力的许可与署名要求",
           isOn: Binding(
             get: { model.recommendedComponentLicensesAccepted },
             set: { model.setRecommendedComponentLicensesAccepted($0) }
@@ -730,7 +730,7 @@ extension ContentView {
         }
         if model.models.recommendedModelInstallInProgress {
           ProgressView(value: model.models.recommendedModelProgress)
-            .accessibilityLabel("离线能力下载进度")
+            .accessibilityLabel("本机能力下载进度")
             .accessibilityValue("\(Int(model.models.recommendedModelProgress * 100))%")
         }
         Text(model.models.recommendedModelProgressMessage)

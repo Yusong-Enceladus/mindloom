@@ -6,7 +6,7 @@
   "releaseEligible": false,
   "deliveryStatus": "incomplete",
   "gatesSHA256": "e5dad9fc0147a4d9fdd7acebdbb38d836b6433be4c3181f955e1035bbfaa89e9",
-  "tasksSHA256": "3b764f32731b65a84d7c51237647903b10823ea70b6a0af727b6857ea1979064",
+  "tasksSHA256": "431e8f318dd1beb087897fb86e4f1ed77aad2bbc18f22d8afa19c3dbf309c7e2",
   "gateCounts": {
     "pass": 15,
     "fail": 0,
@@ -57,7 +57,7 @@
       "blocker": "Conditional journal evidence must remain visible until live device and physical storage boundaries are resolved.",
       "status": "conditional",
       "observedValue": "conditional",
-      "evidenceSHA256": "e5c9378509b9b85dff3d539b4f7c87478156dae1557ff25f0690010e4efd5533"
+      "evidenceSHA256": "00ce570821d907e1d1f9c5480a7550f9c1e5a061c77e07282c333e230835da53"
     },
     {
       "id": "two-hour-recording",
@@ -127,7 +127,7 @@
       "blocker": "The XPC decision remains conditional until real-model, 16 GB, and signed-release measurements pass.",
       "status": "conditional",
       "observedValue": "conditional",
-      "evidenceSHA256": "d5610d24f2d4646ec2335d8f54b22d2edab8a7545d04c67215bc57d72791eefe"
+      "evidenceSHA256": "97d7c270324df1883f6c75769ee29e38a2b4547ce405712feaa5331000f70367"
     },
     {
       "id": "asr-release-device-matrix",
@@ -226,7 +226,7 @@
       "blocker": "Required usage descriptions and the minimal entitlement set must pass fail-closed linting.",
       "status": "pass",
       "observedValue": "pass",
-      "evidenceSHA256": "d972cf8c09669ec3fff6f6c1de2a928be671fcb4e9626e3e7d229a3afd6fa4db"
+      "evidenceSHA256": "60322c13057a1bb676bf1aa675c62d75ae14f89831fae0eb34f7aeb09b6ad140"
     },
     {
       "id": "signed-notarized-release",
@@ -240,7 +240,7 @@
       "blocker": "Developer ID signing, notarization, stapling, and Gatekeeper require authorized release credentials.",
       "status": "conditional",
       "observedValue": false,
-      "evidenceSHA256": "695060dd5b294a7be323458944248da85c02b22e6af9840141f3c8a059bf5712"
+      "evidenceSHA256": "db835063b26ef434f5ce171bed6f1c98740f4c43d72a4118c9cdffe65297f0f6"
     },
     {
       "id": "release-package-supply-chain",
@@ -254,7 +254,7 @@
       "blocker": "Every packaged binary, model, resource, and digest must match the frozen release manifest.",
       "status": "pass",
       "observedValue": "pass",
-      "evidenceSHA256": "0e87b4e5e71ac75fa0b139795cd4087f37afea4e9c9f5e4f1115ca7a92c63928"
+      "evidenceSHA256": "99355ee12ede61723f4ce5b39670d2685624e9ca57a470345f46c577e9beebdd"
     },
     {
       "id": "update-signature-and-rollback",
@@ -296,7 +296,7 @@
       "blocker": "PRD/threat/scenario/test/evidence references must resolve without missing evidence.",
       "status": "pass",
       "observedValue": "pass",
-      "evidenceSHA256": "d8a3ed514eb69855ef21e13ccae35bafa804441ca4647fad0ce9cbba54a23b8a"
+      "evidenceSHA256": "ebc8e45171e536b3eeab4c5a35979a6a221cae6d8aec1515c6fac762318501da"
     },
     {
       "id": "product-consistency",
@@ -310,7 +310,7 @@
       "blocker": "The five frozen MVP/V1 invariants must agree across requirements, design, ADRs, and code configuration.",
       "status": "pass",
       "observedValue": "pass",
-      "evidenceSHA256": "917d853744750962092d38a53e349b8765b791069ede4154553cd43ef8a8f09f"
+      "evidenceSHA256": "71c2a312c30289e65dcc2de97eff2164f8d8b5f695c22a1e70dc3c80b57b2dd8"
     }
   ],
   "pendingTasks": [

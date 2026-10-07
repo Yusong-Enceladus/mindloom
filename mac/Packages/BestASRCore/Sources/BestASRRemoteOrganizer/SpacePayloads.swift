@@ -340,13 +340,21 @@ public enum SpaceShareContent {
     return kindTitle(item.kind)
   }
 
-  /// The first non-empty line of a text, at most 24 characters.
+  /// The first non-empty line of a text, at most 24 characters: a longer
+  /// line ends at its last phrase break within them, never with 「…」 (§2.3;
+  /// the views fade what does not fit).
   static func firstWords(_ text: String) -> String? {
     let line =
       text.split(whereSeparator: \.isNewline).lazy
       .map { $0.trimmingCharacters(in: .whitespaces) }.first { !$0.isEmpty } ?? ""
     guard !line.isEmpty else { return nil }
-    return line.count > 24 ? String(line.prefix(24)) + "…" : line
+    guard line.count > 24 else { return line }
+    let head = Array(line.prefix(24))
+    let breaks: Set<Character> = ["，", "。", "、", "；", "：", "？", "！", ",", ".", ";", ":", "?", "!", " "]
+    if let last = head.lastIndex(where: { breaks.contains($0) }), last >= 8 {
+      return String(head[..<last])
+    }
+    return String(head)
   }
 
   static func kindTitle(_ kind: String) -> String {
@@ -356,7 +364,7 @@ public enum SpaceShareContent {
     case "meeting_offline": return "线下录音"
     case "meeting_online": return "电脑内录"
     case "imported_media": return "导入媒体"
-    default: return "素材"
+    default: return "共享的内容"
     }
   }
 
@@ -384,7 +392,8 @@ public enum SpaceShareContent {
 
   static func preview(_ text: String) -> String {
     let flat = text.replacingOccurrences(of: "\n", with: " ")
-    return flat.count > 60 ? String(flat.prefix(60)) + "…" : flat
+    // No 「…」 (§2.3): the row that shows it fades its end.
+    return flat.count > 60 ? String(flat.prefix(60)) : flat
   }
 
   static func clock(_ ms: Int) -> String {

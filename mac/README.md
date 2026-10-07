@@ -1,8 +1,20 @@
 # bestASR：织机 Mindloom 的 Mac 客户端
 
-> 这是 [织机 Mindloom](../README.md) 的 Mac 客户端。代码、工程名和 Bundle ID（`com.bestasr.app`）沿用开发代号 bestASR；整体介绍、架构和评测见仓库根目录的 README。
+> 这是 [织机 Mindloom](../README.md) 的 Mac 客户端。代码和工程名沿用开发代号 bestASR，App 的显示名和 Bundle ID 是 Mindloom 和 `app.mindloom`；整体介绍、架构和评测见仓库根目录的 README。
 
 本地运行的 macOS 语音输入 App：按住 Fn 说话，松手后把识别并整理好的文字写进当前光标处。识别、整理、翻译都在本机完成；录音、声纹和词典永不出设备（你主动拖进来的其他文件不超过 25 MiB 时原样发送，见根目录的 [docs/PRIVACY.md](../docs/PRIVACY.md)）。只有在用户明确开启、可随时撤销的 SSH 加密链路后，逐字稿和用户提供的资料才会发到用户自己的 DGX Spark 做整理（见 PRD §0.3），没有云端路径。
+
+## v11 与 v12（2026-10）
+
+决赛前的更新（根目录 README 的[决赛更新](../README.md#决赛更新2026-10)有完整说明和验证程度）：
+
+- **原生重做的 Mindloom**：Mac 界面按新的设计规格用 SwiftUI 重写，App 的显示名和 Bundle ID 是 Mindloom 和 `app.mindloom`；两端共用的设计规则在 `Packages/MindloomDesign`（含按时段轮换的标语 `MindloomTaglines`）；「Mindloom Preview」构建配置默认打开合成演示资料库。
+- **Apple Watch**：`iOS/Watch` 只录音，交给 iPhone（`Packages/MindloomWatchHandoff`）；iPhone 保存原件、在手机上识别、经发件箱送到 Mac。
+- **腾讯会议入口（默认关）**：`Packages/BestASRCore/Sources/MindloomTencentMeeting` 管着腾讯官方的 tmeet（`third_party/tencentmeeting-cli`：固定源码加三个补丁，许可见 `THIRD-PARTY-NOTICES.md`），把账户可以查看的转写取回来。
+- **从网络补充信息（默认关）**：`Packages/MindloomLookup`，只有一个出网口，发出前先过本机检查。
+- **按意思找**：历史页的搜索同时按字和按意思，向量模型和索引都在本机；评测工具 `Tools/SearchEval/`，评测集是合成的。
+- **口述与存储**：本机的口述指标、模型常驻和内存压力策略、逐句时间后补；录音先保留原样、做完任务后留 16 kHz 的主文件、30 天后压成无损。
+- 这几项的开发日志含真实计数和设备信息，不在公开仓库里；`IMPLEMENTATION_STATUS.md` 只保留到 v8。
 
 ## v8 整合（2026-10-01）
 
@@ -51,7 +63,6 @@ Safari 不需要单独的扩展：用分享菜单收网页链接，用服务菜�
 
 | 文档 | 内容 |
 |---|---|
-| [AGENTS.md](AGENTS.md) | 仓库规则：隐私不变量、工程约束、质量门槛（人和 AI 都要遵守） |
 | [PRODUCT_REQUIREMENTS.md](PRODUCT_REQUIREMENTS.md) | 需求与验收场景 |
 | [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) | 当前做到哪、实测证据 |
 | [DICTATION_ARCHITECTURE.md](DICTATION_ARCHITECTURE.md) | 口述链路（录音 → 识别 → 整理 → 投递）的现行设计 |
@@ -97,18 +108,22 @@ script/build_and_run.sh --build-only # 只构建
 script/check.sh                      # 完整检查：自检、工程漂移、静态检查、包测试、构建、单元/UI 测试、隐私扫描
 ```
 
-装成日常使用的正式版（放到 `~/Applications/bestASR.app`）：
+装成日常使用的正式版（放到 `~/Applications/Mindloom.app`，bundle id `app.mindloom`，2026-10-06 定；身份只在 `script/identity.sh`、`project.yml` 的 `MINDLOOM_BUNDLE_ID` 和代码的 `MindloomIdentity` 里写一次）：
 
 ```bash
-script/build_release.sh     # 需要干净的工作区和一个 “Apple Development” 签名身份（Xcode → Settings → Accounts 登录 Apple ID 即可生成）
-script/install_local_app.sh # 校验签名后原子替换已安装版本，并保留上一版用于回滚
+script/build_release.sh     # 需要干净的工作区和一个 “Apple Development” 签名身份（Xcode → Settings → Accounts 登录 Apple ID 即可生成）；
+                            # 签名团队在构建时传入（MINDLOOM_TEAM，或 script/signing_team.sh 从 Xcode 的账户读付费团队），不进仓库；
+                            # 产物另拷一份为 $BESTASR_BUILD_ROOT/release/Mindloom.app，并打印它的指定要求（designated requirement）
+script/install_local_app.sh # 校验签名后原子替换：按 bundle id app.mindloom 找到已装的副本，正常退出后放进备份目录，装成 Mindloom.app（不动 bestASR）
 ```
 
-用稳定签名身份是为了让 macOS 的麦克风、辅助功能授权在每次重装后仍然有效。
+用稳定签名身份是为了让 macOS 的麦克风、设备控制和数据访问（辅助功能）授权以及钥匙串条目的访问在每次重装后仍然有效：只要新包的指定要求和已装的一样（同一 bundle id、同一张 Apple Development 证书），这些授权就不用重给。
+
+第一次从 bestASR（`com.bestasr.app`）换成 Mindloom 用构建目录里的换装脚本 `mindloom-switch.sh`，回退用 `mindloom-rollback.sh`。换装先在内置盘上把整个资料库用 APFS 克隆备份一份（外接盘接着时再多存一份加密映像），再把资料库文件夹从 `~/Library/Application Support/bestASR` 改名移到 `~/Library/Application Support/Mindloom`；Mindloom 第一次打开时导入 bestASR 的偏好设置，并从一个签成 bestASR 身份的一次性交接程序（`script/build_carry_over_helper.sh`）接过钥匙串条目，不弹密码框；bestASR 的“登录时打开”由 Mindloom 接替。身份换了，macOS 要重新允许麦克风和设备控制和数据访问（用到时还有录屏与系统录音、日历、提醒事项）；“隐私与安全”里 bestASR 的条目可以移除。
 
 ## 首次启动
 
-1. 首页点 **“下载并开始使用”**。App 从 Hugging Face 按固定 revision 下载模型（Qwen3-ASR 1.7B 8-bit 等，约 5 GB），校验大小与摘要后装到 `~/Library/Application Support/bestASR/`。
+1. 首页点 **“下载并开始使用”**。App 从 Hugging Face 按固定 revision 下载模型（Qwen3-ASR 1.7B 8-bit 等，约 5 GB），校验大小与摘要后装到 `~/Library/Application Support/Mindloom/`。
 2. 按提示授权 **麦克风**（录音）和 **辅助功能**（监听 Fn、把文字粘贴进其他 App）。
 3. 在任意输入框里按住 Fn 说话、松手即写入。Fn+Shift 翻译后写入；Fn+空格 把口述当指令（改写选中文字或直接生成）。翻译用系统 Translation 框架，语言包在设置里下载。
 

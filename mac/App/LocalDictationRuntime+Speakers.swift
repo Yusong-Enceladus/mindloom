@@ -173,6 +173,8 @@ extension LocalDictationRuntime {
         return
       }
       do {
+        heavyWork.begin()
+        defer { heavyWork.end() }
         try await processSpeakerJob(input, runtime: speakerRuntime)
       } catch {
         let failure = Self.speakerJobFailure(for: error)

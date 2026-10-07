@@ -107,7 +107,7 @@ public enum FolderWatchDecision: Equatable, Sendable {
 public enum FolderWatchEngine {
   public static let tooLargeReason = "超过大小上限"
   public static let excludedReason = "符合排除规则"
-  public static let protectedReason = "织机资料库里的文件"
+  public static let protectedReason = "Mindloom 资料库中的文件"
 
   /// One look at one folder. The first look (or any look while paused)
   /// only records what is there. A new or changed file waits for a second

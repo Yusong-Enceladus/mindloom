@@ -28,6 +28,8 @@ public enum SpaceSheet: Identifiable, Equatable, Sendable {
   case propose(spaceID: String, eventID: String)
   /// 交接: hand a matter's 负责人 to another member, with a handover pack.
   case handover(spaceID: String, eventID: String)
+  /// 邀请到「{space}」 (v11).
+  case invite(spaceID: String)
 
   public var id: String {
     switch self {
@@ -40,6 +42,7 @@ public enum SpaceSheet: Identifiable, Equatable, Sendable {
     case .audit(let s): "audit-\(s)"
     case .propose(let s, let e): "propose-\(s)-\(e)"
     case .handover(let s, let e): "handover-\(s)-\(e)"
+    case .invite(let s): "invite-\(s)"
     }
   }
 }
@@ -124,15 +127,15 @@ public struct SpaceMatterInfo: Equatable, Sendable {
         let left = SpaceRules.withdrawWindowRemaining(
           policy: state.policy, firstShared: item.firstSharedAt, now: now)
       {
-        note = left > 0 ? "还能撤回 \(max(1, Int(left / 3_600))) 小时" : nil
+        note = left > 0 ? "可在 \(max(1, Int(left / 3_600))) 小时内撤回" : nil
       }
       let fields = item.fields
       let originals = state.policy.originalsForMembers ? item.blobs : []
       let snapshot = item.snapshot.map { ref in
-        "冻结的摘要\(ref.cites.isEmpty ? "" : "，引用 \(ref.cites.count) 条素材；它们被撤回时这条也会下架")"
+        "固定的摘要\(ref.cites.isEmpty ? "" : "，引用 \(ref.cites.count) 条原文；引用的原文撤回时，此条也将撤回")"
       }
       return SpaceItemRow(
-        itemID: id, title: fields?.title ?? "共享的素材",
+        itemID: id, title: fields?.title ?? "共享的内容",
         preview: String((fields?.text ?? fields?.reading ?? "").prefix(80)),
         contributor: state.name(of: item.contributor), isMine: mine, sharedAt: item.firstSharedAt,
         kindLabel: SpaceWords.kind(item.kind),
@@ -193,6 +196,11 @@ public struct SpaceShareDraft: Equatable, Sendable {
   public var snapshotText: String = ""
   /// The member edited the text: ticking items no longer rewrites it.
   public var snapshotEdited = false
+  /// v11 「查看会共享什么」: each candidate's kind (the App knows the items'
+  /// sources; unknown ones are told by their wire kind).
+  public var kindOf: [String: ShareKind] = [:]
+  /// 「进展和接下来的事」's count: the matter's dated steps.
+  public var progressCount = 0
 
   /// The snapshot text from the ticked items (unless the member edited it).
   public mutating func refreshSnapshot() {
@@ -221,6 +229,50 @@ public struct SpaceShareDraft: Equatable, Sendable {
     lhs.eventID == rhs.eventID && lhs.destination == rhs.destination
       && lhs.review == rhs.review && lhs.scale == rhs.scale && lhs.picked == rhs.picked
       && lhs.rope?.id == rhs.rope?.id && lhs.snapshotText == rhs.snapshotText
+  }
+}
+
+/// What a shared matter carries, by kind (MAC-SPEC §7.4 「查看会共享什么」).
+public enum ShareKind: String, CaseIterable, Hashable, Sendable {
+  /// 进展和接下来的事 (the matter's steps; always part of a shared matter).
+  case progress
+  /// 相关的聊天和会议记录.
+  case chats
+  /// 相关的邮件.
+  case mail
+  /// 相关的文件和网页.
+  case files
+  /// 你的口述 — never shared.
+  case dictation
+
+  public var title: String {
+    switch self {
+    case .progress: "进展和接下来的事"
+    case .chats: "相关的聊天和会议记录"
+    case .mail: "相关的邮件"
+    case .files: "相关的文件和网页"
+    case .dictation: "你的口述"
+    }
+  }
+
+  public var symbol: String {
+    switch self {
+    case .progress: "clock"
+    case .chats: "bubble.left"
+    case .mail: "envelope"
+    case .files: "doc"
+    case .dictation: "mic.slash"
+    }
+  }
+
+  /// A candidate's kind from its wire kind when the App did not say.
+  public static func of(wireKind: String) -> ShareKind {
+    switch wireKind {
+    case "dictation": .dictation
+    case "audio_segment", "text", "meeting", "chat", "transcript": .chats
+    case "mail", "email": .mail
+    default: .files
+    }
   }
 }
 
@@ -320,7 +372,7 @@ public struct SpacesScreenState {
   public var spaces: [SpaceLocalState] = []
   /// The link to the organizing device is up (spaces sync through it).
   public var linkReady = false
-  public var hostLabel = "你的整理设备"
+  public var hostLabel = "你的 DGX Spark"
   public var status: String?
   public var busy = false
   public var myFingerprint = ""
@@ -349,13 +401,16 @@ public struct SpacesScreenState {
   public var handover: SpaceHandoverDisplay?
   /// The audio part playing now.
   public var playingItem: String?
+  /// The name this Mac's user goes by in a space they join (the account's
+  /// full name; editable in the join request).
+  public var myName = ""
 
   public init() {}
 
   /// "2 条等联网后发出" for a space, or nil.
   public func outboxLine(_ spaceID: String) -> String? {
     guard let waiting = outbox[spaceID]?.entries.count, waiting > 0 else { return nil }
-    return linkReady ? "\(waiting) 条正在发出" : "\(waiting) 条等联网后发出"
+    return linkReady ? "\(waiting) 条正在发送" : "\(waiting) 条将在连接后发送"
   }
 
   public func space(_ id: String?) -> SpaceLocalState? {
@@ -507,22 +562,22 @@ public enum SpaceWords {
   public static let all = "全部"
   public static let newSpace = "新建共享空间"
   public static let joinSpace = "用邀请码加入"
-  public static let allNote = "你自己的事和共享空间里的事叠在一起看；别人的素材用另一种颜色画在线上。"
-  public static let linkOff = "整理设备没有连上：共享空间会在连上后同步；你自己的记录不受影响。"
+  public static let allNote = "你自己的事和共享空间中的事合并显示；他人的内容以另一种颜色显示。"
+  public static let linkOff = "DGX Spark 未连接：共享空间将在连接后同步；你自己的记录保持不变。"
   public static let promise =
-    "整理设备只看到遮住号码的文字；成员看到你勾选的原样内容。录音只共享归进这件事的片段，声纹、词典和个人识别习惯永远不离开这台 Mac。"
-  public static let keysNote = "空间的钥匙只发给你同意了的成员的 Mac，并且锁在那台 Mac 上；邀请码本身打不开空间。"
+    "DGX Spark 接收隐藏号码后的文字；成员看到你选择的原始内容。录音以这件事中的片段共享；声纹、词典和个人识别习惯储存在这台 Mac 上。"
+  public static let keysNote = "空间密钥发送到你同意的成员的 Mac，并加密储存在该 Mac 上；邀请码本身无法打开空间。"
 
   public static func action(_ action: SpaceRules.ItemAction) -> String {
     switch action {
     case .withdraw: "撤回"
     case .delete: "删除…"
-    case .requestPrivacyTakedown: "因隐私申请下架…"
+    case .requestPrivacyTakedown: "因隐私申请撤回…"
     case .remove: "移除"
-    case .hide: "只对我隐藏"
+    case .hide: "对我隐藏"
     case .unhide: "取消隐藏"
-    case .fork: "存一份到我的空间"
-    case .unfork: "不再保留副本"
+    case .fork: "储存副本到我的空间"
+    case .unfork: "移除副本"
     }
   }
 
@@ -537,7 +592,7 @@ public enum SpaceWords {
     case "document": "文档"
     case "file": "文件"
     case "link": "链接"
-    case "snapshot": "摘要（冻结）"
+    case "snapshot": "摘要（固定）"
     default: "文字"
     }
   }
@@ -545,27 +600,27 @@ public enum SpaceWords {
   /// An audit record's action in words (records hold ids and counts only).
   public static func audit(_ action: String) -> String {
     let words: [String: String] = [
-      "space.create": "建了空间", "space.meta": "改了空间名", "space.policy": "改了空间设置",
-      "space.archive": "归档设置", "invite.create": "发了邀请", "invite.revoke": "收回邀请",
+      "space.create": "新建空间", "space.meta": "更改空间名称", "space.policy": "更改空间设置",
+      "space.archive": "归档设置", "invite.create": "发送邀请", "invite.revoke": "撤销邀请",
       "join.request": "申请加入", "join.approve": "同意加入", "join.reject": "拒绝加入",
-      "member.role": "改了角色", "member.remove": "移除成员", "member.leave": "离开空间",
-      "epoch.rotate": "换了钥匙", "member.profile": "更新名字", "device.add": "添加设备",
-      "device.remove": "移除设备", "item.share": "共享素材", "item.withdraw": "撤回素材",
-      "item.delete": "删除素材", "item.remove": "移除素材", "item.hide": "隐藏素材",
-      "item.fork": "存了副本", "item.unfork": "删了副本", "takedown.request": "申请下架",
-      "takedown.resolve": "处理下架", "takedown.withdraw": "撤回下架申请",
+      "member.role": "更改角色", "member.remove": "移除成员", "member.leave": "退出空间",
+      "epoch.rotate": "更换密钥", "member.profile": "更新姓名", "device.add": "添加设备",
+      "device.remove": "移除设备", "item.share": "共享内容", "item.withdraw": "撤回内容",
+      "item.delete": "删除内容", "item.remove": "移除内容", "item.hide": "隐藏内容",
+      "item.fork": "储存副本", "item.unfork": "删除副本", "takedown.request": "申请撤回",
+      "takedown.resolve": "处理撤回", "takedown.withdraw": "撤回撤回申请",
       "matter.share": "共享一件事", "matter.unshare": "停止共享一件事",
-      "share_rule.set": "设了共享规则", "share_rule.clear": "取消共享规则",
-      "proposal.create": "提了修改", "proposal.resolve": "处理提议", "proposal.withdraw": "撤回提议",
+      "share_rule.set": "设定共享规则", "share_rule.clear": "取消共享规则",
+      "proposal.create": "提出修改", "proposal.resolve": "处理提议", "proposal.withdraw": "撤回提议",
       "matter.handover": "交接负责人", "agent.access": "Agent 读取", "organizer.lease": "开始整理",
       "organizer.lock": "整理上锁", "organizer.decisions": "直接修改", "organizer.answer": "回答整理提问",
-      "item_keys.rewrap": "钥匙重新包装", "system.remove": "到期自动下架",
-      "escrow.wrap": "补了钥匙托管", "space.recover": "组织管理员接管", "space.backup": "导出备份",
-      "space.restore": "从备份恢复", "org.create": "建了组织", "org.admin_add": "添加组织管理员",
-      "org.admin_remove": "移出组织管理员", "org.device_add": "添加组织设备",
-      "org.device_remove": "退掉组织设备", "org.policy": "改了钥匙托管规则",
-      "access.ticket": "发了门钥匙邀请", "access.enroll": "一台 Mac 加入", "access.revoke": "断开一台 Mac",
-      "access.ticket_revoke": "收回邀请", "access.ticket_expired": "邀请过期",
+      "item_keys.rewrap": "重新加密密钥", "system.remove": "到期自动撤回",
+      "escrow.wrap": "补充密钥托管", "space.recover": "团队管理员接管", "space.backup": "导出备份",
+      "space.restore": "从备份恢复", "org.create": "新建团队", "org.admin_add": "添加团队管理员",
+      "org.admin_remove": "移出团队管理员", "org.device_add": "添加团队设备",
+      "org.device_remove": "移除团队设备", "org.policy": "更改密钥托管规则",
+      "access.ticket": "发送设备邀请", "access.enroll": "一台 Mac 加入", "access.revoke": "断开一台 Mac",
+      "access.ticket_revoke": "撤销邀请", "access.ticket_expired": "邀请过期",
     ]
     return words[action] ?? action
   }

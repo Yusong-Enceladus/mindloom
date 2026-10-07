@@ -1,190 +1,361 @@
 {
-  "tools": [
+  "tools" : [
     {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "找事"
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "查看今天"
       },
-      "description": "在织机里按关键词找事（标题、现在到哪一步、人名和原始资料都会搜）。返回事的 id、标题、现在到哪一步、最近的截止日期和所属的绳。只会看到主人允许的范围。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "limit": {
-            "default": 10,
-            "maximum": 20,
-            "minimum": 1,
-            "type": "integer"
-          },
-          "query": {
-            "description": "关键词，例如“真机实验”或一个人名",
-            "maxLength": 200,
-            "minLength": 1,
-            "type": "string"
-          },
-          "space": {
-            "description": "只在这个空间里找：“我的”或共享空间的 id；不填就是所有允许的空间",
-            "type": "string"
-          }
+      "description" : "今天的概况：今天和明天到期的、已经过期的、昨天以来有新进展的事，每件一句；开头有一段能直接念出来的两句话。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+
         },
-        "required": [
-          "query"
-        ],
-        "type": "object"
+        "type" : "object"
       },
-      "name": "search_matters",
-      "title": "找事"
+      "name" : "today",
+      "title" : "查看今天"
     },
     {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "读一件事"
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "搜索"
       },
-      "description": "读一件事：现在到哪一步、已经定下的事实、分线（如果有）、人物，以及原始资料的摘录（每条带条目 id，正文以“> ”开头）。format 为 json 时返回同样内容的结构化数据。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "format": {
-            "default": "text",
-            "enum": [
+      "description" : "用一句话或几个词在 Mindloom 里找：事、人、原文都会找，词序不限，同音错字、空格、大小写和繁简不影响；句中的时间（上周、9月25日）、来源（微信、会议）和人名会当作条件。返回事的 id、标题、现在到哪一步，以及为什么找到它。“为什么找到”只是一小段摘录：要确认是谁说的、前后怎么说，用 get_matter 加 item_id（摘录后的〔条目 …〕）和 around（这段摘录）只读那一条，带说话人和前后两句；不必为此读整件事的全文。只会看到主人允许的范围。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "limit" : {
+            "default" : 8,
+            "maximum" : 20,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "query" : {
+            "description" : "要找的东西，一句话或几个词，例如“上周和韩策定的实验时间”",
+            "maxLength" : 200,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "space" : {
+            "description" : "只在这个空间里找：“我的”或共享空间的 id；不填就是所有允许的空间",
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "query"
+        ],
+        "type" : "object"
+      },
+      "name" : "search",
+      "title" : "搜索"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "读取一件事"
+      },
+      "description" : "读一件事。默认是简短版：现在到哪一步、接下来要做的（带步骤 id 和日期）、已过期和待定的、人物、最近一次变化，几百字以内。detail 为 full 时另附原文摘录（每条带条目 id），最新的在前，按页给，每页一万字以内；回答末尾写着第几页、共几页，用 page 翻页。给了 item_id 时只读那一条原文：来源和时间，最接近 around 的一句和前后两句（会议和聊天的每句前面是说话人）；找一句话时这样读比翻全文省得多。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "around" : {
+            "description" : "和 item_id 一起用：要看的那段话（例如 search 给的摘录）；返回最接近它的一句和前后两句",
+            "maxLength" : 200,
+            "type" : "string"
+          },
+          "detail" : {
+            "default" : "brief",
+            "description" : "brief：简短版；full：另附原文摘录",
+            "enum" : [
+              "brief",
+              "full"
+            ],
+            "type" : "string"
+          },
+          "format" : {
+            "default" : "text",
+            "enum" : [
               "text",
               "json"
             ],
-            "type": "string"
+            "type" : "string"
           },
-          "id": {
-            "description": "事的 id（search_matters 返回的）",
-            "minLength": 1,
-            "type": "string"
+          "id" : {
+            "description" : "事的 id（search、today 等返回的）",
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "item_id" : {
+            "description" : "只读这一条原文：条目 id（search 的〔条目 …〕，或 detail=full 里的 [条目 …]）",
+            "maxLength" : 128,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "page" : {
+            "default" : 1,
+            "description" : "和 detail=full 一起用：原文的第几页（最新的在前；回答末尾写着共几页）",
+            "minimum" : 1,
+            "type" : "integer"
           }
         },
-        "required": [
+        "required" : [
           "id"
         ],
-        "type": "object"
+        "type" : "object"
       },
-      "name": "get_matter",
-      "title": "读一件事"
+      "name" : "get_matter",
+      "title" : "读取一件事"
     },
     {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "近期截止"
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "查找人物"
       },
-      "description": "列出接下来若干天（最多 30 天）内有日期的计划，按日期排序；最近 7 天内已过期还没完成的也会列出，标为已过期。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "days": {
-            "default": 14,
-            "maximum": 30,
-            "minimum": 1,
-            "type": "integer"
-          }
-        },
-        "type": "object"
-      },
-      "name": "list_deadlines",
-      "title": "近期截止"
-    },
-    {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "最近有动静的事"
-      },
-      "description": "列出最近若干天（最多 14 天）内有新进展或新资料的事，最近的在前。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "days": {
-            "default": 7,
-            "maximum": 14,
-            "minimum": 1,
-            "type": "integer"
+      "description" : "按名字找一个人：他参与的事（默认前 10 件，limit 最多 50），以及他最近说过的几句话（只来自允许范围内的事）。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "limit" : {
+            "default" : 10,
+            "maximum" : 50,
+            "minimum" : 1,
+            "type" : "integer"
           },
-          "space": {
-            "description": "“我的”或共享空间的 id；不填就是所有允许的空间",
-            "type": "string"
+          "name" : {
+            "maxLength" : 64,
+            "minLength" : 1,
+            "type" : "string"
           }
         },
-        "type": "object"
-      },
-      "name": "list_recent",
-      "title": "最近有动静的事"
-    },
-    {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": true,
-        "openWorldHint": false,
-        "readOnlyHint": true,
-        "title": "找人"
-      },
-      "description": "按名字找一个人：他参与的事，以及他最近说过的几句话（只来自允许范围内的事）。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "name": {
-            "maxLength": 64,
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "required": [
+        "required" : [
           "name"
         ],
-        "type": "object"
+        "type" : "object"
       },
-      "name": "get_person",
-      "title": "找人"
+      "name" : "get_person",
+      "title" : "查找人物"
     },
     {
-      "annotations": {
-        "destructiveHint": false,
-        "idempotentHint": false,
-        "openWorldHint": false,
-        "readOnlyHint": false,
-        "title": "提一条建议"
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "查看近期截止日期"
       },
-      "description": "向织机的 Agent 收件箱提一条建议（例如交接说明、整理好的结论）。主人收下之前什么都不会归档；收下后来源标为这个 Agent，不算主人自己说的话。",
-      "inputSchema": {
-        "additionalProperties": false,
-        "properties": {
-          "matter_hint": {
-            "description": "它可能属于哪件事：事的 id 或标题（只是提示，归到哪里由织机和主人决定）",
-            "maxLength": 200,
-            "type": "string"
+      "description" : "列出接下来若干天（最多 30 天）内有日期的计划，按日期排序；最近 7 天内已过期还没完成的也会列出，标为已过期。默认前 10 条，回答里写着还有多少；limit 最多 50。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "days" : {
+            "default" : 14,
+            "maximum" : 30,
+            "minimum" : 1,
+            "type" : "integer"
           },
-          "text": {
-            "description": "建议的正文，纯文字",
-            "maxLength": 20000,
-            "minLength": 1,
-            "type": "string"
-          },
-          "title": {
-            "description": "一句话标题，让主人一眼看懂这是什么",
-            "maxLength": 80,
-            "type": "string"
+          "limit" : {
+            "default" : 10,
+            "maximum" : 50,
+            "minimum" : 1,
+            "type" : "integer"
           }
         },
-        "required": [
+        "type" : "object"
+      },
+      "name" : "list_deadlines",
+      "title" : "查看近期截止日期"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : true,
+        "openWorldHint" : false,
+        "readOnlyHint" : true,
+        "title" : "查看最近有进展的事"
+      },
+      "description" : "列出最近若干天（最多 14 天）内有新进展或新资料的事，最近的在前。默认前 10 件，回答里写着还有多少；limit 最多 50。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "days" : {
+            "default" : 7,
+            "maximum" : 14,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "limit" : {
+            "default" : 10,
+            "maximum" : 50,
+            "minimum" : 1,
+            "type" : "integer"
+          },
+          "space" : {
+            "description" : "“我的”或共享空间的 id；不填就是所有允许的空间",
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "name" : "list_recent",
+      "title" : "查看最近有进展的事"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : false,
+        "openWorldHint" : false,
+        "readOnlyHint" : false,
+        "title" : "添加内容"
+      },
+      "description" : "主人明确要你把一段内容记进 Mindloom 时使用：将一段文字添加到 Mindloom，与其他新添加的内容一样整理，来源写成你的名字，不算主人自己说的话。给了 matter_id 时直接放进那件事。马上生效；主人能在 Mac 上看到并撤销。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "matter_id" : {
+            "description" : "放进哪件事（事的 id）；不填则与其他新添加的内容一样等待整理",
+            "maxLength" : 128,
+            "type" : "string"
+          },
+          "text" : {
+            "description" : "正文，纯文字",
+            "maxLength" : 20000,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "title" : {
+            "description" : "一句话标题，让主人一眼看懂这是什么",
+            "maxLength" : 80,
+            "type" : "string"
+          }
+        },
+        "required" : [
           "text"
         ],
-        "type": "object"
+        "type" : "object"
       },
-      "name": "add_to_inbox",
-      "title": "提一条建议"
+      "name" : "add_note",
+      "title" : "添加内容"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : false,
+        "openWorldHint" : false,
+        "readOnlyHint" : false,
+        "title" : "更改归属"
+      },
+      "description" : "主人明确要你挪动一条原文时使用：把它从一件事移到另一件事；不给 to_matter_id 就是把它从这件事里拿出来（它回到“最近添加”）。马上生效；主人能在 Mac 上看到并撤销。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "from_matter_id" : {
+            "description" : "它现在所在的事的 id",
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "item_id" : {
+            "description" : "条目 id（get_matter detail=full 里的 [条目 …]）",
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "to_matter_id" : {
+            "description" : "移到哪件事；不填就是把它从这件事里拿出来",
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "item_id",
+          "from_matter_id"
+        ],
+        "type" : "object"
+      },
+      "name" : "move_item",
+      "title" : "更改归属"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : false,
+        "openWorldHint" : false,
+        "readOnlyHint" : false,
+        "title" : "重新命名事"
+      },
+      "description" : "主人明确要你给一件事改名时使用。马上生效；主人能在 Mac 上看到并撤销。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "matter_id" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "title" : {
+            "description" : "新的名字",
+            "maxLength" : 60,
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "matter_id",
+          "title"
+        ],
+        "type" : "object"
+      },
+      "name" : "rename_matter",
+      "title" : "重新命名事"
+    },
+    {
+      "annotations" : {
+        "destructiveHint" : false,
+        "idempotentHint" : false,
+        "openWorldHint" : false,
+        "readOnlyHint" : false,
+        "title" : "标记为完成"
+      },
+      "description" : "主人明确要你标记一步时使用：把一件事里的一步标为完成（done），或把一个待定的问题标为已经定了（settled）。步骤 id 来自 get_matter。马上生效；主人能在 Mac 上看到并撤销。",
+      "inputSchema" : {
+        "additionalProperties" : false,
+        "properties" : {
+          "matter_id" : {
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "state" : {
+            "default" : "done",
+            "description" : "done：完成；settled：待定的问题已经定了",
+            "enum" : [
+              "done",
+              "settled"
+            ],
+            "type" : "string"
+          },
+          "step_id" : {
+            "description" : "get_matter 里〔步骤 …〕的 id",
+            "minLength" : 1,
+            "type" : "string"
+          }
+        },
+        "required" : [
+          "matter_id",
+          "step_id"
+        ],
+        "type" : "object"
+      },
+      "name" : "mark_step",
+      "title" : "标记为完成"
     }
   ]
 }

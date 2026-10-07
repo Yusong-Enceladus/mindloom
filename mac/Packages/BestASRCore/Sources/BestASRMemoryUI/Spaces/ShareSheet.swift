@@ -1,27 +1,34 @@
+import MindloomDesign
 import MindloomSpaces
 import SwiftUI
 
-/// 共享这件事: where to, how much (只这一条 / 这件事 / 整根绳), and the review
-/// list — every item or part that would go, private dictations and items
-/// with numbers unticked until the user ticks them.
+// OWNER: mac-capture. 共享 (MAC-SPEC §7.4, shots `share`, `share-look`,
+// `share-shared`): 「共享「{title}」给 {space ⇕}」, one sentence, 「查看会共享
+// 什么」 (each kind with its count and a tick; 你的口述 never), 取消 · 共享. A
+// matter already shared there: 「「{title}」已共享到「{space}」」, 停止共享 · 完成.
+// Wired to the v8 share (`SpacesActions.share` / `unshare`).
+
 struct ShareSheet: View {
-  @Environment(\.zhiji) private var palette
   let state: SpacesScreenState
   let actions: SpacesActions
   @State private var draft: SpaceShareDraft?
+  @State private var looking: Bool
 
-  init(state: SpacesScreenState, actions: SpacesActions) {
+  init(state: SpacesScreenState, actions: SpacesActions, looking: Bool = false) {
     self.state = state
     self.actions = actions
     _draft = State(initialValue: state.shareDraft)
+    _looking = State(initialValue: looking)
   }
 
   var body: some View {
-    SpaceSheetFrame(title: "共享这件事", actions: actions) {
+    Group {
       if let draft = Binding($draft) {
         content(draft)
-      } else if state.shareDraft == nil {
-        Text("正在列出这件事的素材…").font(.zhiji(13)).foregroundStyle(palette.secondary)
+      } else {
+        MindloomSheetChrome(width: 480) {
+          ProgressView().controlSize(.small).frame(maxWidth: .infinity).padding(.vertical, 20)
+        }
       }
     }
     .onAppear { if draft == nil { draft = state.shareDraft } }
@@ -33,229 +40,235 @@ struct ShareSheet: View {
   @ViewBuilder
   private func content(_ draft: Binding<SpaceShareDraft>) -> some View {
     let value = draft.wrappedValue
-    Text(value.title).font(.zhiji(15, .semibold))
-    if value.destinations.isEmpty {
-      VStack(alignment: .leading, spacing: 8) {
-        Text("你还没有能共享进去的空间").font(.zhiji(14, .semibold))
-        Text("先建一个空间（或请管理员把你设为贡献者），再把这件事放进去。")
-          .font(.zhiji(12)).foregroundStyle(palette.secondary)
-        Button(SpaceWords.newSpace) { actions.present(.newSpace) }
-          .buttonStyle(ZhijiCapsuleButtonStyle(prominent: true))
-      }
+    let spaceID = value.destination ?? value.destinations.first?.spaceID
+    if let space = value.destinations.first(where: { $0.spaceID == spaceID }) {
+      ShareSheetContent(
+        draft: draft, spaces: value.destinations.map { ($0.spaceID, $0.name) },
+        selected: space.spaceID,
+        memberCount: space.activeMembers.filter { $0.memberID != space.memberID }.count,
+        alreadyShared: value.sharedIn[space.spaceID] != nil, looking: $looking,
+        canShare: !state.busy && state.linkReady, actions: actions)
     } else {
-      SpaceSection(title: "共享到") {
-        ZhijiSegmented(
-          options: value.destinations.map { ($0.spaceID, $0.name) },
-          selection: Binding(
-            get: { draft.wrappedValue.destination ?? value.destinations[0].spaceID },
-            set: { draft.wrappedValue.destination = $0 }),
-          height: 26, fontSize: 13, horizontalPadding: 12)
-        if let space = value.destinations.first(where: {
-          $0.spaceID == (value.destination ?? value.destinations[0].spaceID)
-        }) {
-          Text(
-            "成员：" + space.activeMembers.map { space.name(of: $0.memberID) }.joined(separator: "、")
-              + "。素材只是加进空间，你自己的空间里一条也不少。"
-              + (value.sharedIn[space.spaceID] != nil ? "这件事已经在「\(space.name)」里。" : "")
-          )
-          .font(.zhiji(12)).foregroundStyle(palette.secondary)
-          if !space.policy.originalsForMembers {
-            Text("这个空间只留文字：截图、文件和录音片段的原件留在你的 Mac 上。")
-              .font(.zhiji(12)).foregroundStyle(palette.secondary)
-          }
+      MindloomSheetChrome(width: 480) {
+        SheetTitle("尚无共享空间")
+        SheetText("请先新建共享空间并邀请他人加入，然后共享这件事。")
+        SheetActions {
+          Button("取消") { actions.present(nil) }.buttonStyle(MLButtonStyle(.standard))
+          Button("新建共享空间…") { actions.present(.newSpace) }
+            .buttonStyle(MLButtonStyle(.primary))
         }
       }
-      SpaceSection(title: "共享多大范围") {
-        scaleOption(draft, .item, "只这一条", "挑一条素材放进空间，别的不动。")
-        scaleOption(
-          draft, .matter(rule: .ask), "这件事（含以后的新素材）",
-          "你勾选的素材，加上你起的标题和做过的更正，作为团队整理时的提示。")
-        if case .matter(let rule) = value.scale {
-          HStack(spacing: 8) {
-            Text("以后归进来的新素材").font(.zhiji(12)).foregroundStyle(palette.secondary)
-            ZhijiSegmented(
-              options: [(.ask, "每次先问我"), (.auto, "自动共享"), (.off, "不跟进")],
-              selection: Binding(
-                get: { rule }, set: { draft.wrappedValue.scale = .matter(rule: $0) }),
-              height: 24, fontSize: 12, horizontalPadding: 10)
-          }
-          .padding(.leading, 24)
-        }
-        if let rope = value.rope {
-          scaleOption(
-            draft, .rope(rule: .ask), "整根绳「\(rope.title)」",
-            "绳上现在有 \(rope.matters) 件事；以后放到这根绳上的事也会共享（每次先问你，或自动）。")
-        }
-        scaleOption(
-          draft, .snapshot, "一份摘要（冻结）",
-          "把这件事现在的标题、进展和要点写成一条新的摘要放进空间，署你的名字；之后不会跟着变。它引用的空间素材被撤回时，摘要也会下架。")
+    }
+  }
+}
+
+/// The two states of the share sheet, from plain values (still images build
+/// it without a space's keys).
+struct ShareSheetContent: View {
+  @Binding var draft: SpaceShareDraft
+  let spaces: [(String, String)]
+  let selected: String
+  /// The other members of the selected space.
+  let memberCount: Int
+  let alreadyShared: Bool
+  @Binding var looking: Bool
+  let canShare: Bool
+  let actions: SpacesActions
+
+  private var spaceName: String { spaces.first { $0.0 == selected }?.1 ?? "" }
+
+  var body: some View {
+    if alreadyShared { shared } else { share }
+  }
+
+  private var share: some View {
+    MindloomSheetChrome(width: 480) {
+      HStack(alignment: .firstTextBaseline, spacing: 0) {
+        Text("共享“\(MLAutospace.apply(draft.title))”给 ").mlFont(\.title2)
+        SpacePopup(spaces: spaces, selected: selected) { id in draft.destination = id }
       }
-      if isScale(value.scale, .snapshot) {
-        // Review V8R-11: the exact text members will get, editable; it is made
-        // only of what rests on the items ticked below.
-        SpaceSection(title: "摘要的内容（发出去就是这样，可以改）") {
-          TextEditor(
-            text: Binding(
-              get: { draft.wrappedValue.snapshotText },
-              set: {
-                draft.wrappedValue.snapshotText = $0
-                draft.wrappedValue.snapshotEdited = true
-              })
-          )
-          .font(.zhiji(13)).frame(minHeight: 120)
-          .accessibilityIdentifier("bestASR.spaces.snapshotText")
-          Text("只用下面勾选的素材里的要点；没勾的私人口述和带号码的素材不会被摘进去。进展一句只在全部勾选时才写。")
-            .font(.zhiji(12)).foregroundStyle(palette.secondary)
-          if SpaceSnapshotText.hasNumbers(value.snapshotText) {
-            Text("摘要里有像电话、卡号、证件号的数字：每位成员都会看到原样的数字，确认再共享。")
-              .font(.zhiji(12, .semibold)).foregroundStyle(palette.label)
-          }
-        }
+      .padding(.bottom, 6)
+      .fixedSize(horizontal: false, vertical: true)
+      SheetText("成员可以看到这件事的进展和你选择的原文。")
+      if looking {
+        ShareIncludes(draft: $draft).padding(.top, 12).transition(.opacity)
       }
-      SpaceSection(
-        title: isScale(value.scale, .snapshot)
-          ? "摘要可以用到的素材 · \(value.review.ticked.count)/\(value.review.candidates.count)"
-          : "会共享的素材 · \(value.review.ticked.count)/\(value.review.candidates.count)"
-      ) {
-        ForEach(value.review.candidates) { candidate in
-          reviewRow(draft, candidate)
+      SheetActions {
+        Button(looking ? "折叠" : "查看共享内容") {
+          withAnimation(.timingCurve(0.16, 1, 0.3, 1, duration: 0.24)) { looking.toggle() }
         }
-        if value.review.candidates.isEmpty {
-          Text("这件事里没有可以共享的素材（录音只能按片段共享）。")
-            .font(.zhiji(12)).foregroundStyle(palette.secondary)
+        .buttonStyle(MLButtonStyle(.plain))
+      } trailing: {
+        Button("取消") { actions.present(nil) }
+          .buttonStyle(MLButtonStyle(.standard))
+          .keyboardShortcut(.cancelAction)
+        Button("共享") {
+          var final = draft
+          final.destination = selected
+          final.scale = .matter(rule: .ask)
+          actions.share(final)
         }
-      }
-      SpaceNote(text: SpaceWords.promise)
-      HStack {
-        if let space = value.destination ?? value.destinations.first?.spaceID,
-          value.sharedIn[space] != nil
-        {
-          Button("停止跟进这件事") { actions.unshare(space, value.eventID) }
-            .buttonStyle(ZhijiCapsuleButtonStyle())
-        }
-        Spacer()
-        Button("取消") { actions.present(nil) }.buttonStyle(ZhijiCapsuleButtonStyle())
-        Button(shareTitle(value)) { actions.share(draft.wrappedValue) }
-          .buttonStyle(ZhijiCapsuleButtonStyle(prominent: true))
-          .disabled(selectedCount(value) == 0 || state.busy || !state.linkReady)
-          .accessibilityIdentifier("bestASR.spaces.doShare")
-      }
-      if !state.linkReady {
-        Text(SpaceWords.linkOff).font(.zhiji(12)).foregroundStyle(palette.secondary)
+        .buttonStyle(MLButtonStyle(.primary))
+        .disabled(!canShare)
+        .keyboardShortcut(.defaultAction)
       }
     }
   }
 
-  private func selectedCount(_ value: SpaceShareDraft) -> Int {
-    if case .item = value.scale { return value.picked == nil ? 0 : 1 }
-    if case .snapshot = value.scale {
-      return value.snapshotText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0 : 1
-    }
-    return value.review.ticked.count
-  }
-
-  private func shareTitle(_ value: SpaceShareDraft) -> String {
-    if case .snapshot = value.scale { return "共享这份摘要" }
-    let audio = value.review.audio.intersection(value.review.ticked).count
-    return "共享 \(selectedCount(value)) 条" + (audio > 0 ? "（含 \(audio) 段原音）" : "")
-  }
-
-  private func isScale(_ a: SpaceShareScale, _ b: SpaceShareScale) -> Bool {
-    switch (a, b) {
-    case (.item, .item), (.matter, .matter), (.rope, .rope), (.snapshot, .snapshot): true
-    default: false
+  private var shared: some View {
+    MindloomSheetChrome(width: 460) {
+      SheetTitle("“\(MLAutospace.apply(draft.title))”已共享到“\(spaceName)”")
+      SheetText("\(spaceName)的 \(memberCount) 位成员可以看到它的进展和你选择的原文。")
+      SheetActions {
+        Button("停止共享") { actions.unshare(selected, draft.eventID) }
+          .buttonStyle(MLButtonStyle(.destructive))
+      } trailing: {
+        Button("完成") { actions.present(nil) }
+          .buttonStyle(MLButtonStyle(.primary))
+          .keyboardShortcut(.defaultAction)
+      }
     }
   }
+}
 
-  private func scaleOption(
-    _ draft: Binding<SpaceShareDraft>, _ scale: SpaceShareScale, _ title: String, _ detail: String
+/// The space popup in the title (24 high, `surface`, 0.5 ring, radius 7, name
+/// + chevron.up.chevron.down 12), a menu of spaces with a checkmark.
+struct SpacePopup: View {
+  @Environment(\.zhijiSnapshot) private var snapshot
+  let spaces: [(String, String)]
+  let selected: String
+  let choose: (String) -> Void
+
+  var body: some View {
+    if snapshot {
+      SpacePopupLabel(name: spaces.first { $0.0 == selected }?.1 ?? "")
+    } else {
+      menu
+    }
+  }
+
+  private var menu: some View {
+    Menu {
+      ForEach(spaces, id: \.0) { id, name in
+        Button {
+          choose(id)
+        } label: {
+          if id == selected { Label(name, systemImage: "checkmark") } else { Text(name) }
+        }
+      }
+    } label: {
+      SpacePopupLabel(name: spaces.first { $0.0 == selected }?.1 ?? "")
+    }
+    // The label as drawn (name, chevron, ring); `.borderlessButton` on
+    // macOS 27 drops its background and puts the chevron first.
+    .menuStyle(.button)
+    .buttonStyle(.plain)
+    .menuIndicator(.hidden)
+    .fixedSize()
+  }
+}
+
+struct SpacePopupLabel: View {
+  let name: String
+
+  var body: some View {
+    HStack(spacing: 6) {
+      Text(name).mlFont(\.control).foregroundStyle(MLColor.ink)
+      Image(systemName: "chevron.up.chevron.down").font(.system(size: 10, weight: .semibold))
+        .foregroundStyle(MLColor.ink2)
+    }
+    .padding(.leading, 10)
+    .padding(.trailing, 8)
+    .frame(height: 24)
+    .background(MLColor.surface, in: RoundedRectangle(cornerRadius: 7, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 7, style: .continuous).strokeBorder(
+        MLColor.rule2, lineWidth: 0.5))
+  }
+}
+
+/// 「查看会共享什么」: one row per kind with its count and a tick (a kind with
+/// nothing says 没有 and cannot be ticked); 你的口述 · 不共享 last.
+struct ShareIncludes: View {
+  @Binding var draft: SpaceShareDraft
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 2) {
+      kindRow(.progress, count: draft.progressCount, ticked: true, locked: true)
+      ForEach([ShareKind.chats, .mail, .files], id: \.self) { kind in
+        let ids = ids(kind)
+        kindRow(
+          kind, count: ids.count, ticked: !ids.isEmpty && ids.allSatisfy(draft.review.ticked.contains),
+          locked: ids.isEmpty
+        ) { on in
+          for id in ids where draft.review.ticked.contains(id) != on { draft.review.toggle(id) }
+        }
+      }
+      HStack(spacing: 8) {
+        Image(systemName: ShareKind.dictation.symbol).font(.system(size: 12)).frame(width: 16)
+        Text(ShareKind.dictation.title)
+        Spacer(minLength: 8)
+        Text("不包括")
+      }
+      .mlFont(\.callout)
+      .foregroundStyle(MLColor.ink2)
+      .padding(.leading, 21)
+      .frame(minHeight: 28)
+    }
+    .padding(.vertical, 8)
+    .padding(.horizontal, 12)
+    .background(MLColor.paper2, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+  }
+
+  /// The candidates of a kind (dictation never; the App's kinds first).
+  private func ids(_ kind: ShareKind) -> [String] {
+    draft.review.candidates.filter {
+      !$0.isPrivateDictation && (draft.kindOf[$0.id] ?? ShareKind.of(wireKind: $0.wireKind)) == kind
+    }.map(\.id)
+  }
+
+  private func kindRow(
+    _ kind: ShareKind, count: Int, ticked: Bool, locked: Bool, set: ((Bool) -> Void)? = nil
   ) -> some View {
-    let selected = isScale(draft.wrappedValue.scale, scale)
-    return Button {
-      if !selected { draft.wrappedValue.scale = scale }
-    } label: {
-      HStack(alignment: .top, spacing: 10) {
-        Image(systemName: selected ? "largecircle.fill.circle" : "circle")
-          .foregroundStyle(selected ? palette.accent : palette.tertiary)
-        VStack(alignment: .leading, spacing: 2) {
-          Text(title).font(.zhiji(13, .semibold)).foregroundStyle(palette.label)
-          Text(detail).font(.zhiji(12)).foregroundStyle(palette.secondary)
-        }
-        Spacer(minLength: 0)
-      }
-      .contentShape(Rectangle())
+    HStack(spacing: 8) {
+      ShareCheckbox(on: ticked && count > 0, enabled: count > 0) { if !locked { set?(!ticked) } }
+      Image(systemName: kind.symbol).font(.system(size: 12)).foregroundStyle(MLColor.ink2)
+        .frame(width: 16)
+      Text(kind.title).foregroundStyle(MLColor.ink)
+      Spacer(minLength: 8)
+      Text(count > 0 ? "\(count) 条" : "无").monospacedDigit().foregroundStyle(MLColor.ink2)
     }
-    .buttonStyle(.plain)
-    .accessibilityAddTraits(selected ? .isSelected : [])
+    .mlFont(\.callout)
+    .frame(minHeight: 28)
+    .accessibilityElement(children: .combine)
+    .accessibilityAddTraits(ticked ? .isSelected : [])
   }
+}
 
-  private func reviewRow(_ draft: Binding<SpaceShareDraft>, _ candidate: SpaceShareCandidate)
-    -> some View
-  {
-    let single = isScale(draft.wrappedValue.scale, .item)
-    let on =
-      single
-      ? draft.wrappedValue.picked == candidate.id
-      : draft.wrappedValue.review.ticked.contains(candidate.id)
-    return Button {
-      if single {
-        draft.wrappedValue.picked = candidate.id
-      } else {
-        draft.wrappedValue.review.toggle(candidate.id)
-        draft.wrappedValue.refreshSnapshot()
-      }
-    } label: {
-      HStack(alignment: .top, spacing: 10) {
-        Image(
-          systemName: single
-            ? (on ? "largecircle.fill.circle" : "circle")
-            : (on ? "checkmark.square.fill" : "square")
+/// A 14 pt checkbox in `accentFill`.
+struct ShareCheckbox: View {
+  let on: Bool
+  let enabled: Bool
+  let toggle: () -> Void
+
+  var body: some View {
+    Button(action: toggle) {
+      RoundedRectangle(cornerRadius: 3.5, style: .continuous)
+        .fill(on ? MLColor.accentFill : MLColor.surface)
+        .overlay(
+          RoundedRectangle(cornerRadius: 3.5, style: .continuous).strokeBorder(
+            on ? MLColor.accentFill : MLColor.ink3, lineWidth: on ? 0.5 : 1)
         )
-        .foregroundStyle(on ? palette.accent : palette.tertiary)
-        VStack(alignment: .leading, spacing: 2) {
-          HStack(spacing: 6) {
-            Text(SpaceWords.kind(candidate.wireKind)).font(.zhiji(11))
-              .padding(.horizontal, 6).frame(height: 18)
-              .background(palette.quietFill, in: Capsule())
-            Text(candidate.title).font(.zhiji(13)).lineLimit(1)
-          }
-          if !candidate.preview.isEmpty {
-            Text(candidate.preview).font(.zhiji(12)).foregroundStyle(palette.secondary).lineLimit(1)
-          }
-          if let reason = candidate.untickedReason {
-            Text(reason).font(.zhiji(11)).foregroundStyle(palette.mateInk)
-          }
-          if on, !single, candidate.audioPossible {
-            audioToggle(draft, candidate)
+        .overlay {
+          if on {
+            Image(systemName: "checkmark").font(.system(size: 9, weight: .bold))
+              .foregroundStyle(MLColor.onAccent)
           }
         }
-        Spacer(minLength: 0)
-      }
-      .foregroundStyle(palette.label)
-      .contentShape(Rectangle())
+        .frame(width: 14, height: 14)
+        .opacity(enabled ? 1 : 0.4)
     }
     .buttonStyle(.plain)
-    .accessibilityLabel("\(candidate.title)，\(on ? "已勾选" : "未勾选")")
-  }
-
-  /// 附上这段原音: off by default; only members can hear it, the organizing
-  /// device stores it locked and cannot open it.
-  private func audioToggle(_ draft: Binding<SpaceShareDraft>, _ candidate: SpaceShareCandidate)
-    -> some View
-  {
-    let on = draft.wrappedValue.review.audio.contains(candidate.id)
-    return Button {
-      draft.wrappedValue.review.toggleAudio(candidate.id)
-    } label: {
-      HStack(spacing: 6) {
-        Image(systemName: on ? "checkmark.square.fill" : "square")
-          .foregroundStyle(on ? palette.accent : palette.tertiary)
-        Text("附上这段原音（只有成员能听；整理设备只存锁好的文件，打不开）")
-          .font(.zhiji(11)).foregroundStyle(palette.secondary)
-      }
-    }
-    .buttonStyle(.plain)
-    .accessibilityIdentifier("bestASR.spaces.attachAudio")
-    .accessibilityLabel("附上这段原音，\(on ? "已勾选" : "未勾选")")
+    .disabled(!enabled)
   }
 }

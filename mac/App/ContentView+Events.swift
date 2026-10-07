@@ -25,12 +25,12 @@ extension ContentView {
     VStack(alignment: .leading, spacing: 16) {
       HStack {
         VStack(alignment: .leading, spacing: 4) {
-          Text("事件").font(.largeTitle.bold())
-          Text("把不同来源的语音按真实事情组织起来，并保留每条原始证据。")
+          Text("事情").font(.largeTitle.bold())
+          Text("把不同来源的语音按真实的事归在一起，并保留每条原始证据。")
             .foregroundStyle(.secondary)
         }
         Spacer()
-        Button("新事件") {
+        Button("新的事") {
           creatingEvent = true
           model.beginNewEvent()
         }
@@ -49,7 +49,7 @@ extension ContentView {
       }
 
       HStack(spacing: 10) {
-        TextField("搜索事件、人物、记录或语义内容", text: $model.history.eventSearchQuery)
+        TextField("搜索事情、人物、记录或语义内容", text: $model.history.eventSearchQuery)
           .textFieldStyle(.roundedBorder)
           .onSubmit { model.applyEventSearch() }
           .onChange(of: model.history.eventSearchQuery) { _, _ in
@@ -64,12 +64,12 @@ extension ContentView {
 
       if !model.events.candidates.isEmpty {
         ReviewDisclosure(
-          title: "待确认事件线索（\(model.events.candidates.count)）",
+          title: "待确认的归类（\(model.events.candidates.count)）",
           expanded: $showsEventReview,
           identifier: "bestASR.events.reviewQueue"
         ) {
           VStack(alignment: .leading, spacing: 9) {
-            Text("系统只提出本机线索，不会替你强制归类。先听来源原音，再确认是不是同一件事。")
+            Text("Mindloom 在本机给出归类，由你确认。请先听来源录音，再确认是否为同一件事。")
               .font(.caption)
               .foregroundStyle(.secondary)
             // No nested scroll area inside a page that already scrolls.
@@ -88,7 +88,7 @@ extension ContentView {
                         .accessibilityIdentifier("bestASR.events.candidate.title")
                       Text(
                         candidate.candidateEventID == nil
-                          ? "建议建立新事件" : "建议归入已有事件"
+                          ? "可以新建一件事" : "可以归进已有的事"
                       )
                       .font(.caption)
                       .foregroundStyle(.secondary)
@@ -120,7 +120,7 @@ extension ContentView {
                         "bestASR.events.candidate.open.\(candidate.id.rawValue.uuidString)"
                       )
                       Menu("更多") {
-                        Button("忽略这条线索") {
+                        Button("忽略这条归类") {
                           model.dismissEventCandidate(candidate)
                         }
                         .accessibilityIdentifier(
@@ -143,7 +143,7 @@ extension ContentView {
       if model.filteredEventSummaries.isEmpty,
         model.events.selectedEventID == nil, creatingEvent
       {
-        GroupBox("建立事件") {
+        GroupBox("新建一件事") {
           eventCreationForm
             .padding(8)
         }
@@ -154,11 +154,11 @@ extension ContentView {
       {
         VStack(spacing: 14) {
           ContentUnavailableView(
-            "还没有事件",
+            "尚无事",
             systemImage: "point.3.connected.trianglepath.dotted",
-            description: Text("确认上方建议，或手动选择历史记录建立事件。")
+            description: Text("确认上方的归类，或手动选择历史记录新建一件事。")
           )
-          Button("建立第一个事件") {
+          Button("新建第一件事") {
             creatingEvent = true
             model.beginNewEvent()
           }
@@ -176,9 +176,9 @@ extension ContentView {
             ) {
               if model.filteredEventSummaries.isEmpty {
                 ContentUnavailableView(
-                  "还没有事件",
+                  "尚无事",
                   systemImage: "point.3.connected.trianglepath.dotted",
-                  description: Text("确认上方建议，或手动选择历史记录建立事件。")
+                  description: Text("确认上方的归类，或手动选择历史记录新建一件事。")
                 )
                 .padding(.top, 30)
               }
@@ -252,8 +252,8 @@ extension ContentView {
 
           GroupBox(
             creatingEvent
-              ? "建立事件"
-              : (model.events.selectedEventID == nil ? "事件" : "事件详情")
+              ? "新建一件事"
+              : (model.events.selectedEventID == nil ? "事情" : "详情")
           ) {
             if let selected = model.selectedEventSummary {
               ScrollView {
@@ -281,8 +281,8 @@ extension ContentView {
                       }
                     }
                     Spacer()
-                    Menu("复制这件事") {
-                      Button("复制为文本") { model.copySelectedLocalEventText() }
+                    Menu("拷贝这件事") {
+                      Button("拷贝为文本") { model.copySelectedLocalEventText() }
                       Button("导出为文本…") { model.exportSelectedLocalEventText() }
                     }
                     .fixedSize()
@@ -291,11 +291,11 @@ extension ContentView {
 
                   DisclosureGroup("编辑名称与备注") {
                     VStack(alignment: .leading, spacing: 9) {
-                      TextField("事件名称", text: $model.events.titleDraft)
+                      TextField("名称", text: $model.events.titleDraft)
                         .textFieldStyle(.roundedBorder)
                         .accessibilityIdentifier("bestASR.events.name")
                       TextField(
-                        "备注（不会改写原始逐字稿）",
+                        "备注（原始逐字稿保持不变）",
                         text: $model.events.notesDraft,
                         axis: .vertical
                       )
@@ -325,10 +325,10 @@ extension ContentView {
                     }
                   }
 
-                  GroupBox("事件主题与整理") {
+                  GroupBox("主题与整理") {
                     VStack(alignment: .leading, spacing: 10) {
                       Menu {
-                        Button("事件摘要") {
+                        Button("摘要") {
                           model.generateEventDocument(.structuredSummary)
                         }
                         Button("主题演变") {
@@ -341,7 +341,7 @@ extension ContentView {
                           model.generateEventDocument(.actionItems)
                         }
                       } label: {
-                        Label("生成事件整理", systemImage: "wand.and.stars")
+                        Label("生成整理", systemImage: "wand.and.stars")
                       }
                       .buttonStyle(.borderedProminent)
                       .disabled(model.events.generatingEventDocumentTaskID != nil)
@@ -361,7 +361,7 @@ extension ContentView {
                         $0.state == .stale
                       }.count
                       if staleCount > 0 {
-                        Text("保留 \(staleCount) 个旧整理版本；事件关系变化后不会把旧结果冒充当前结论。")
+                        Text("保留 \(staleCount) 个旧整理版本；关系变化后，旧结果标记为过期。")
                           .font(.caption)
                           .foregroundStyle(.secondary)
                       }
@@ -369,9 +369,9 @@ extension ContentView {
                     .padding(.top, 4)
                   }
 
-                  GroupBox("事件时间线与来源记录") {
+                  GroupBox("进展与来源记录") {
                     if model.history.selectedEventHistoryItems.isEmpty {
-                      Text("这个事件还没有记录")
+                      Text("这件事尚无记录")
                         .foregroundStyle(.secondary)
                         .padding(8)
                     } else {
@@ -411,9 +411,9 @@ extension ContentView {
                   }
                   .accessibilityIdentifier("bestASR.events.timeline")
 
-                  DisclosureGroup("管理事件分组") {
+                  DisclosureGroup("管理分组") {
                     VStack(alignment: .leading, spacing: 10) {
-                      Text("勾选事件中的记录后，可以拆分、移出或移动；所有操作都保留原音和逐字稿，并可撤销最近一次修改。")
+                      Text("勾选这件事中的记录后，可以拆分、移出或移动；所有操作都保留原音和逐字稿，并可撤销最近一次修改。")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
@@ -445,21 +445,21 @@ extension ContentView {
                         }
                       }
 
-                      TextField("拆分后的新事件名称", text: $model.events.newEventTitleDraft)
+                      TextField("拆出来的事的名称", text: $model.events.newEventTitleDraft)
                         .textFieldStyle(.roundedBorder)
                         .accessibilityIdentifier("bestASR.events.splitName")
                       HStack {
-                        Button("拆成新事件") {
+                        Button("拆成一件新的事") {
                           model.splitSelectedEventSessions()
                         }
-                        Button("从当前事件移出") {
+                        Button("从这件事移出") {
                           model.removeSelectedSessionsFromEvent()
                         }
                       }
                       .disabled(model.events.sessionSelection.isEmpty)
 
                       Picker("移动到", selection: $model.events.moveTargetEventID) {
-                        Text("选择目标事件…").tag(Optional<EventID>.none)
+                        Text("选择要移到的事…").tag(Optional<EventID>.none)
                         ForEach(model.events.summaries.filter { $0.id != selected.id }) {
                           Text($0.event.title).tag(Optional($0.id))
                         }
@@ -470,17 +470,17 @@ extension ContentView {
                             || model.events.moveTargetEventID == nil
                         )
 
-                      Picker("合并事件", selection: $model.events.mergeTargetEventID) {
-                        Text("选择事件…").tag(Optional<EventID>.none)
+                      Picker("合并", selection: $model.events.mergeTargetEventID) {
+                        Text("选择一件事…").tag(Optional<EventID>.none)
                         ForEach(model.events.summaries.filter { $0.id != selected.id }) {
                           Text($0.event.title).tag(Optional($0.id))
                         }
                       }
-                      Button("合并到当前事件") { model.mergeSelectedEvent() }
+                      Button("合并到这件事") { model.mergeSelectedEvent() }
                         .disabled(model.events.mergeTargetEventID == nil)
 
                       Divider()
-                      Button("删除事件关系…", role: .destructive) {
+                      Button("删除这件事…", role: .destructive) {
                         confirmRetireEvent = true
                       }
                     }
@@ -494,9 +494,9 @@ extension ContentView {
                 .padding(6)
             } else {
               ContentUnavailableView(
-                "选择一个事件",
+                "选择一件事",
                 systemImage: "point.3.connected.trianglepath.dotted",
-                description: Text("从左侧选择事件查看时间线、人物、来源和整理结果。")
+                description: Text("从左侧选择一件事，查看进展、人物、来源和整理结果。")
               )
               .accessibilityIdentifier("bestASR.events.selectionPlaceholder")
             }
@@ -512,7 +512,7 @@ extension ContentView {
       }
     }
     .padding(32)
-    .navigationTitle("事件")
+    .navigationTitle("事情")
     .onAppear { ensureVisibleEventSelection() }
     .onChange(of: model.events.selectedEventID) { _, selectedEventID in
       if selectedEventID != nil { creatingEvent = false }
@@ -535,10 +535,10 @@ extension ContentView {
 
   var eventCreationForm: some View {
     VStack(alignment: .leading, spacing: 12) {
-      TextField("事件名称", text: $model.events.newEventTitleDraft)
+      TextField("名称", text: $model.events.newEventTitleDraft)
         .textFieldStyle(.roundedBorder)
         .accessibilityIdentifier("bestASR.events.createTitle")
-      Text("可以先建立空事件，也可以勾选未归类记录。所有原音、逐字稿和人物证据仍各自保留。")
+      Text("可以先新建一件空的事，也可以勾选未归类记录。所有原音、逐字稿和人物证据仍各自保留。")
         .font(.caption)
         .foregroundStyle(.secondary)
       ScrollView {
@@ -562,7 +562,7 @@ extension ContentView {
         }
       }
       HStack {
-        Button("建立事件") { model.createEventFromSelection() }
+        Button("新建一件事") { model.createEventFromSelection() }
           .buttonStyle(.borderedProminent)
           .disabled(
             model.events.newEventTitleDraft.trimmingCharacters(
@@ -583,7 +583,7 @@ extension ContentView {
     if candidate.evidence.temporalScore >= 0.45 { reasons.append("时间接近") }
     if candidate.evidence.sourceScore >= 0.45 { reasons.append("来源相同") }
     return reasons.isEmpty
-      ? "线索还不够明确，需要你确认"
+      ? "还不够明确，需要你确认"
       : "因为" + reasons.joined(separator: "、")
   }
 
@@ -685,10 +685,10 @@ extension ContentView {
   }
 
   var historyTimelineDetails: some View {
-    GroupBox("录制时间线") {
+    GroupBox("录制经过") {
       VStack(alignment: .leading, spacing: 7) {
         if model.history.selectedHistoryTimelineEvents.isEmpty {
-          Text("这条记录没有暂停、设备切换或音源中断事件。")
+          Text("这条记录没有暂停、设备切换或音源中断。")
             .foregroundStyle(.secondary)
         } else {
           ForEach(model.history.selectedHistoryTimelineEvents, id: \.id) { event in
@@ -747,8 +747,8 @@ extension ContentView {
   fileprivate var sparkEventsView: some View {
     VStack(alignment: .leading, spacing: 16) {
       VStack(alignment: .leading, spacing: 4) {
-        Text("事件").font(.largeTitle.bold())
-        Text("由你的整理设备整理；每条来源记录和你的修改都先保存在这台 Mac 上。")
+        Text("事情").font(.largeTitle.bold())
+        Text("由你的 DGX Spark 整理；每条来源记录和你的修改都先保存在这台 Mac 上。")
           .foregroundStyle(.secondary)
       }
       // The page's only scroll area.
@@ -758,7 +758,7 @@ extension ContentView {
       .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
     .padding(32)
-    .navigationTitle("事件")
+    .navigationTitle("事情")
   }
 
   fileprivate var remoteOrganizerSection: some View {
@@ -769,7 +769,7 @@ extension ContentView {
       if let projection = model.events.remoteProjection {
         if !projection.unacceptedDecisions.isEmpty {
           VStack(alignment: .leading, spacing: 8) {
-            Text("整理设备未接受").font(.headline)
+            Text("DGX Spark 没有接受").font(.headline)
             ForEach(projection.unacceptedDecisions) { issue in
               HStack {
                 Text(DictationAppModel.remoteDecisionIssueTitle(issue))
@@ -801,7 +801,7 @@ extension ContentView {
           }
         }
         if projection.events.isEmpty {
-          Text("还没有整理设备的结果；开启后开始的记录完成后会在这里出现。")
+          Text("尚无 DGX Spark 的结果。开启后，新记录完成整理时会显示在这里。")
             .foregroundStyle(.secondary)
         } else {
           LazyVGrid(
@@ -833,7 +833,7 @@ private struct RemoteOrganizerEventCard: View {
         Spacer()
         if event.pinned { Image(systemName: "pin.fill").foregroundStyle(.tint) }
       }
-      Text(event.statusLine.isEmpty ? "正在整理进度" : event.statusLine)
+      Text(event.statusLine.isEmpty ? "整理进度" : event.statusLine)
         .font(.callout)
         .lineLimit(3)
       Text("\(event.itemIDs.count) 条来源记录")
@@ -850,7 +850,7 @@ private struct RemoteOrganizerEventCard: View {
           renaming = true
         }
         Menu("更多") {
-          Button("复制这件事") { model.copyRemoteEventText(event) }
+          Button("拷贝这件事") { model.copyRemoteEventText(event) }
           Button("导出为文本…") { model.exportRemoteEventText(event) }
           Divider()
           Button("减少推荐") {
@@ -858,7 +858,7 @@ private struct RemoteOrganizerEventCard: View {
               .init(kind: "feature_less", eventID: event.eventID)
             )
           }
-          Button("删除事件", role: .destructive) {
+          Button("删除这件事", role: .destructive) {
             model.recordRemoteDecision(
               .init(kind: "delete_event", eventID: event.eventID)
             )
@@ -870,7 +870,7 @@ private struct RemoteOrganizerEventCard: View {
     .padding(12)
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(.quaternary.opacity(0.4), in: RoundedRectangle(cornerRadius: 10))
-    .alert("修改事件标题", isPresented: $renaming) {
+    .alert("修改标题", isPresented: $renaming) {
       TextField("标题", text: $titleDraft)
       Button("保存") {
         let title = titleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -881,7 +881,7 @@ private struct RemoteOrganizerEventCard: View {
       }
       Button("取消", role: .cancel) {}
     } message: {
-      Text("最多 \(RemoteOrganizerDecision.maximumTitleScalars) 个字；超出时不会保存。")
+      Text("最多 \(RemoteOrganizerDecision.maximumTitleScalars) 个字；超出时无法保存。")
     }
   }
 }

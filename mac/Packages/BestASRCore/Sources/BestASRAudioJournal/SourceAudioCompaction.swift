@@ -43,14 +43,17 @@ public enum SourceAudioCompactionError: Error, Equatable, Sendable {
 ///
 /// Capture stores what the microphone hands over — 44.1 kHz float32, about
 /// 173 KB per second. Nothing reads it that way: recognition converts every
-/// chunk to 16 kHz mono through `BoundedPCMConverter` before it sees a sample,
-/// and playback is speech. Keeping the wide original costs about five and a
-/// half times the disk for audio nobody consumes at that rate, so a sealed
-/// session's chunks are replaced by that same conversion, quantized to 16-bit
-/// — the exact format the recognizer's evaluation set is stored in.
+/// chunk to 16 kHz mono before it sees a sample, and playback is speech.
+/// Keeping the wide original costs about five and a half times the disk for
+/// audio nobody consumes at that rate, so a sealed session's chunks are
+/// replaced by a 16 kHz mono copy, quantized to 16-bit — the exact format the
+/// recognizer's evaluation set is stored in. The copy is made with a
+/// band-limited resampler (`BandLimitedResampler`), so the 0–7 kHz band is
+/// kept as recorded and nothing from above 8 kHz folds into it.
 ///
-/// Chunks that were contiguous in time become one file, so a pause stays a
-/// gap and the recorded duration does not change. Compaction runs only on a
+/// Chunks that were contiguous in time become one file (cut every five
+/// minutes, `maximumPieceNanoseconds`), so a pause stays a gap and the
+/// recorded duration does not change. Compaction runs only on a
 /// sealed session, verifies every source digest before reading it, and writes
 /// the replacements before deleting anything.
 public enum SourceAudioCompaction {
@@ -69,6 +72,21 @@ public enum SourceAudioCompaction {
     dryRun: Bool = false,
     fileManager: FileManager = .default
   ) async throws -> SourceAudioCompactionOutcome {
+    let (outcome, staged) = try await stage(
+      sessionID: sessionID, assetRoot: assetRoot, dryRun: dryRun, fileManager: fileManager)
+    try staged?.commit(fileManager: fileManager)
+    return outcome
+  }
+
+  /// Builds and checks the rewritten journal beside the live one and leaves
+  /// the exchange to the caller (nil when there is nothing to exchange: a
+  /// dry run, or a session already compact).
+  public static func stage(
+    sessionID: SessionID,
+    assetRoot: URL,
+    dryRun: Bool = false,
+    fileManager: FileManager = .default
+  ) async throws -> (SourceAudioCompactionOutcome, StagedJournalRewrite?) {
     let journalRoot = journalRootURL(sessionID: sessionID, assetRoot: assetRoot)
     let metadata = try decode(
       ProductionAudioJournalMetadata.self,
@@ -80,75 +98,88 @@ public enum SourceAudioCompaction {
     let descriptors = metadata.trackDescriptors ?? [descriptor(from: metadata)]
     let originalBytes = manifest.committedChunks.reduce(UInt64(0)) { $0 + $1.byteCount }
     guard descriptors.contains(where: { !isCompact($0) }) else {
-      return SourceAudioCompactionOutcome(
-        sessionID: sessionID,
-        originalByteCount: originalBytes,
-        compactedByteCount: originalBytes,
-        runs: [],
-        tracks: descriptors,
-        alreadyCompact: true
+      // Already rewritten. The runs it holds now are returned all the same:
+      // a crash between the rewrite and the index update leaves the index
+      // naming the old files, and applying these again repairs it.
+      return (
+        SourceAudioCompactionOutcome(
+          sessionID: sessionID,
+          originalByteCount: originalBytes,
+          compactedByteCount: originalBytes,
+          runs: currentRuns(manifest, sessionID: sessionID),
+          tracks: descriptors,
+          alreadyCompact: true
+        ), nil
       )
     }
     guard descriptors.allSatisfy({ $0.interleaved }) else {
       throw SourceAudioCompactionError.unsupportedSource
     }
 
+    // The replacement is built whole beside the live journal and exchanged
+    // with it in one step (`JournalRewrite`): a crash at any point leaves
+    // either the original recording or the rewritten one, never both. Each
+    // piece is written as soon as it is converted, so memory holds one piece
+    // (at most `maximumPieceNanoseconds` of 16 kHz audio) at a time.
+    let staging =
+      dryRun
+      ? nil : try JournalRewrite.prepareStaging(journalRoot: journalRoot, fileManager: fileManager)
     var runs: [CompactedSourceAudioRun] = []
-    var written: [(url: URL, bytes: Data)] = []
-    for track in descriptors.sorted(by: { $0.id.rawValue.uuidString < $1.id.rawValue.uuidString }) {
-      let entries = manifest.committedChunks
-        .filter { $0.trackID == track.id.rawValue.uuidString }
-        .sorted { $0.sequence < $1.sequence }
-      // The journal requires chunks/<track>-<sequence>.pcm and rejects anything
-      // else on replay, so the runs continue the track's numbering instead of
-      // restarting it: their files cannot then land on a source still to be
-      // read, and a crash before the swap leaves every original in place.
-      let nextSequence = (entries.map(\.sequence).max() ?? 0) + 1
-      for (index, run) in contiguousRuns(entries).enumerated() {
-        let converted = try await samples(of: run, track: track, journalRoot: journalRoot)
-        guard !converted.isEmpty else { continue }
-        let bytes = int16LittleEndian(converted)
-        let sequence = nextSequence + UInt64(index)
-        let relativePath = "chunks/\(track.id.rawValue.uuidString)-\(sequence).pcm"
-        written.append((journalRoot.appendingPathComponent(relativePath), bytes))
-        runs.append(
-          CompactedSourceAudioRun(
-            trackID: track.id,
-            sequence: sequence,
-            assetReference: assetReference(
-              sessionID: sessionID, relativePath: relativePath),
-            monotonicStartNanoseconds: run[0].monotonicStartNanoseconds,
-            monotonicEndNanoseconds: end(of: run[run.count - 1]),
-            frameCount: UInt32(converted.count),
-            byteCount: UInt64(bytes.count),
-            contentDigest: digest(bytes),
-            replacedAssetReferences: run.map {
-              assetReference(sessionID: sessionID, relativePath: $0.relativePath)
-            }
+    let compactTracks = descriptors.map(compacted(_:))
+    do {
+      let ordered = descriptors.sorted { $0.id.rawValue.uuidString < $1.id.rawValue.uuidString }
+      for track in ordered {
+        let entries = manifest.committedChunks
+          .filter { $0.trackID == track.id.rawValue.uuidString }
+          .sorted { $0.sequence < $1.sequence }
+        // The journal requires chunks/<track>-<sequence>.pcm and rejects
+        // anything else on replay, so the pieces continue the track's
+        // numbering instead of restarting it: their files cannot then land on
+        // a source still to be read.
+        let nextSequence = (entries.map(\.sequence).max() ?? 0) + 1
+        for (index, piece) in contiguousRuns(entries).flatMap(pieces(of:)).enumerated() {
+          let converted = try await samples(of: piece, track: track, journalRoot: journalRoot)
+          guard !converted.isEmpty else { continue }
+          let bytes = int16LittleEndian(converted)
+          let sequence = nextSequence + UInt64(index)
+          let relativePath = "chunks/\(track.id.rawValue.uuidString)-\(sequence).pcm"
+          if let staging {
+            try ProductionDurableFileIO.atomicWrite(
+              bytes, to: staging.appendingPathComponent(relativePath))
+          }
+          runs.append(
+            CompactedSourceAudioRun(
+              trackID: track.id,
+              sequence: sequence,
+              assetReference: assetReference(
+                sessionID: sessionID, relativePath: relativePath),
+              monotonicStartNanoseconds: piece[0].monotonicStartNanoseconds,
+              monotonicEndNanoseconds: end(of: piece[piece.count - 1]),
+              frameCount: UInt32(converted.count),
+              byteCount: UInt64(bytes.count),
+              contentDigest: digest(bytes),
+              replacedAssetReferences: piece.map {
+                assetReference(sessionID: sessionID, relativePath: $0.relativePath)
+              }
+            )
           )
-        )
+        }
       }
+    } catch {
+      JournalRewrite.discardLeftover(journalRoot: journalRoot, fileManager: fileManager)
+      throw error
     }
 
     let compactedBytes = runs.reduce(UInt64(0)) { $0 + $1.byteCount }
-    let compactTracks = descriptors.map(compacted(_:))
-    guard !dryRun else {
-      return SourceAudioCompactionOutcome(
-        sessionID: sessionID,
-        originalByteCount: originalBytes,
-        compactedByteCount: compactedBytes,
-        runs: runs,
-        tracks: compactTracks,
-        alreadyCompact: false
-      )
-    }
-
-    // Write the replacements first: a crash here leaves the originals, their
-    // manifest and their index untouched, and the next run starts over.
-    for file in written {
-      try ProductionDurableFileIO.atomicWrite(file.bytes, to: file.url)
-    }
-    let replaced = Set(manifest.committedChunks.map(\.relativePath))
+    let outcome = SourceAudioCompactionOutcome(
+      sessionID: sessionID,
+      originalByteCount: originalBytes,
+      compactedByteCount: compactedBytes,
+      runs: runs,
+      tracks: compactTracks,
+      alreadyCompact: false
+    )
+    guard let staging else { return (outcome, nil) }
     manifest.committedChunks = runs.map { run in
       AudioJournalChunkEntry(
         trackID: run.trackID.rawValue.uuidString,
@@ -161,40 +192,41 @@ public enum SourceAudioCompaction {
         contentDigest: run.contentDigest
       )
     }
-    try write(manifest, to: journalRoot.appendingPathComponent("manifest.json"))
-    // The commit log is replayed into the manifest on every open and rejects
-    // an entry that disagrees with it, so it has to say the same thing.
-    try writeCommitLog(
-      manifest.committedChunks, to: journalRoot.appendingPathComponent("commits.jsonl"))
-    try write(
-      compacted(metadata, tracks: compactTracks),
-      to: journalRoot.appendingPathComponent("production-metadata.json"))
-    for path in replaced.subtracting(manifest.committedChunks.map(\.relativePath)) {
-      try? fileManager.removeItem(at: journalRoot.appendingPathComponent(path))
+    do {
+      // The commit log is replayed into the manifest on every open and
+      // rejects an entry that disagrees with it, so it says the same thing.
+      try JournalRewrite.finishStaging(
+        staging, liveJournal: journalRoot, manifest: manifest,
+        metadata: compacted(metadata, tracks: compactTracks), fileManager: fileManager)
+    } catch {
+      JournalRewrite.discardLeftover(journalRoot: journalRoot, fileManager: fileManager)
+      throw error
     }
-
-    return SourceAudioCompactionOutcome(
-      sessionID: sessionID,
-      originalByteCount: originalBytes,
-      compactedByteCount: compactedBytes,
-      runs: runs,
-      tracks: compactTracks,
-      alreadyCompact: false
-    )
+    return (outcome, StagedJournalRewrite(staging: staging, journalRoot: journalRoot))
   }
 
   // MARK: - Reading
 
-  /// The run's samples at 16 kHz mono, through the same converter the
-  /// recognizer is fed by, so what is stored is what recognition already saw.
+  /// The run's samples at 16 kHz mono through `BandLimitedResampler`: the
+  /// same mono mix the recognizer is fed (channels averaged, peaks bounded to
+  /// full scale), low-passed before the rate is lowered so nothing above
+  /// 8 kHz folds into what is kept (review 10-6 S4). The original is removed
+  /// once this copy is in place, so this is the recording from then on.
   private static func samples(
     of run: [AudioJournalChunkEntry],
     track: CaptureTrackDescriptor,
     journalRoot: URL
   ) async throws -> [Float] {
-    let converter = try BoundedPCMConverter(maximumBufferedSourceFrames: 1 << 22)
+    guard let rate = run.first?.sampleRateHertz, rate > 0, track.channelCount > 0,
+      run.allSatisfy({ $0.sampleRateHertz == rate })
+    else { throw SourceAudioCompactionError.unsupportedSource }
+    var resampler = try BandLimitedResampler(sourceRateHertz: Int(rate))
     var output: [Float] = []
+    output.reserveCapacity(
+      BandLimitedResampler.outputCount(
+        sourceFrames: run.reduce(0) { $0 + Int($1.frameCount) }, sourceRateHertz: Int(rate)))
     for entry in run {
+      try Task.checkCancellation()
       let url = journalRoot.appendingPathComponent(entry.relativePath)
       guard let bytes = try? Data(contentsOf: url, options: [.mappedIfSafe]) else {
         throw SourceAudioCompactionError.sourceChunkMissing(entry.relativePath)
@@ -202,22 +234,45 @@ public enum SourceAudioCompaction {
       guard digest(bytes) == entry.contentDigest.lowercased() else {
         throw SourceAudioCompactionError.sourceChunkCorrupt(entry.relativePath)
       }
-      let converted = try await converter.convert(
-        CapturedPCMChunk(
-          trackID: track.id,
-          sequence: entry.sequence,
-          monotonicStartNanoseconds: entry.monotonicStartNanoseconds,
-          frameCount: UInt64(entry.frameCount),
-          sampleRateHertz: entry.sampleRateHertz,
-          channelCount: track.channelCount,
-          encoding: track.encoding,
-          interleaved: track.interleaved,
-          bytes: bytes
-        )
-      )
-      output.append(contentsOf: floats(converted.bytes))
+      let mono = try monoSamples(
+        bytes, frames: Int(entry.frameCount), channels: Int(track.channelCount),
+        encoding: track.encoding, chunk: entry.relativePath)
+      output.append(contentsOf: resampler.append(mono))
     }
+    output.append(contentsOf: resampler.finish())
     return output
+  }
+
+  /// One interleaved chunk as mono: channels averaged and bounded to full
+  /// scale, as `BoundedPCMConverter` does for recognition.
+  static func monoSamples(
+    _ bytes: Data, frames: Int, channels: Int, encoding: PCMEncoding, chunk: String
+  ) throws -> [Float] {
+    let bytesPerSample = encoding == .float32LittleEndian ? 4 : 2
+    guard bytes.count == frames * channels * bytesPerSample else {
+      throw SourceAudioCompactionError.sourceChunkCorrupt(chunk)
+    }
+    var mono = [Float](repeating: 0, count: frames)
+    try bytes.withUnsafeBytes { raw in
+      for frame in 0..<frames {
+        var sum: Float = 0
+        for channel in 0..<channels {
+          let offset = (frame * channels + channel) * bytesPerSample
+          switch encoding {
+          case .float32LittleEndian:
+            let value = Float(
+              bitPattern: raw.loadUnaligned(fromByteOffset: offset, as: UInt32.self).littleEndian)
+            guard value.isFinite else { throw SourceAudioCompactionError.sourceChunkCorrupt(chunk) }
+            sum += value
+          case .int16LittleEndian:
+            let bits = raw.loadUnaligned(fromByteOffset: offset, as: UInt16.self).littleEndian
+            sum += Float(Int16(bitPattern: bits)) / Float(Int16.max)
+          }
+        }
+        mono[frame] = min(1, max(-1, sum / Float(channels)))
+      }
+    }
+    return mono
   }
 
   /// Chunks split at the gaps between them. Merging across a pause would turn
@@ -245,7 +300,33 @@ public enum SourceAudioCompaction {
     return runs
   }
 
-  private static func end(of entry: AudioJournalChunkEntry) -> UInt64 {
+  /// Longest a rewritten file may be. A meeting recorded without a pause is
+  /// one run; kept as one file, every playback, export and Opus step would
+  /// hold all of it in memory (a two-hour meeting is 460 MB of samples), so
+  /// a run is cut into pieces of about five minutes, at its own chunk
+  /// boundaries (no transcript range is split: each lies within a chunk).
+  public static let maximumPieceNanoseconds: UInt64 = 300 * 1_000_000_000
+
+  /// `run` in consecutive pieces of at most `maximumPieceNanoseconds` (one
+  /// chunk longer than that is a piece of its own).
+  public static func pieces(of run: [AudioJournalChunkEntry]) -> [[AudioJournalChunkEntry]] {
+    var pieces: [[AudioJournalChunkEntry]] = []
+    var current: [AudioJournalChunkEntry] = []
+    for entry in run {
+      if let first = current.first,
+        end(of: entry) - min(end(of: entry), first.monotonicStartNanoseconds)
+          > maximumPieceNanoseconds
+      {
+        pieces.append(current)
+        current = []
+      }
+      current.append(entry)
+    }
+    if !current.isEmpty { pieces.append(current) }
+    return pieces
+  }
+
+  public static func end(of entry: AudioJournalChunkEntry) -> UInt64 {
     entry.monotonicStartNanoseconds
       + UInt64(
         (Double(entry.frameCount) * 1_000_000_000 / Double(entry.sampleRateHertz)).rounded())
@@ -318,16 +399,27 @@ public enum SourceAudioCompaction {
     return data
   }
 
-  private static func floats(_ data: Data) -> [Float] {
-    var output = [Float]()
-    output.reserveCapacity(data.count / 4)
-    data.withUnsafeBytes { raw in
-      for index in stride(from: 0, to: data.count - 3, by: 4) {
-        let bits = raw.loadUnaligned(fromByteOffset: index, as: UInt32.self).littleEndian
-        output.append(Float(bitPattern: bits))
-      }
+  /// The runs a session holds now, described the way a rewrite reports
+  /// them (nothing replaced).
+  static func currentRuns(
+    _ manifest: AudioJournalManifest, sessionID: SessionID
+  ) -> [CompactedSourceAudioRun] {
+    manifest.committedChunks.sorted {
+      ($0.trackID, $0.sequence) < ($1.trackID, $1.sequence)
+    }.compactMap { entry in
+      guard let track = UUID(uuidString: entry.trackID) else { return nil }
+      return CompactedSourceAudioRun(
+        trackID: TrackID(track),
+        sequence: entry.sequence,
+        assetReference: assetReference(sessionID: sessionID, relativePath: entry.relativePath),
+        monotonicStartNanoseconds: entry.monotonicStartNanoseconds,
+        monotonicEndNanoseconds: end(of: entry),
+        frameCount: entry.frameCount,
+        byteCount: entry.byteCount,
+        contentDigest: entry.contentDigest,
+        replacedAssetReferences: []
+      )
     }
-    return output
   }
 
   // MARK: - Paths and files
@@ -340,40 +432,22 @@ public enum SourceAudioCompaction {
       .appendingPathComponent("journal", isDirectory: true)
   }
 
-  private static func assetPrefix(_ sessionID: SessionID) -> String {
+  static func assetPrefix(_ sessionID: SessionID) -> String {
     "sessions/\(sessionID.rawValue.uuidString.lowercased())/journal/"
   }
 
-  private static func assetReference(sessionID: SessionID, relativePath: String) -> String {
+  static func assetReference(sessionID: SessionID, relativePath: String) -> String {
     assetPrefix(sessionID) + relativePath
   }
 
-  private static func digest(_ data: Data) -> String {
+  static func digest(_ data: Data) -> String {
     SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
   }
 
-  private static func decode<Value: Decodable>(_: Value.Type, at url: URL) throws -> Value {
+  static func decode<Value: Decodable>(_: Value.Type, at url: URL) throws -> Value {
     try JSONDecoder().decode(Value.self, from: Data(contentsOf: url))
   }
 
-  private static func write(_ value: some Encodable, to url: URL) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
-    try ProductionDurableFileIO.atomicWrite(encoder.encode(value), to: url)
-  }
-
-  private static func writeCommitLog(
-    _ entries: [AudioJournalChunkEntry], to url: URL
-  ) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    var data = Data()
-    for entry in entries {
-      data.append(try encoder.encode(entry))
-      data.append(0x0A)
-    }
-    try ProductionDurableFileIO.atomicWrite(data, to: url)
-  }
 }
 
 extension Comparable {

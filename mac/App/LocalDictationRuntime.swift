@@ -7,6 +7,7 @@ import BestASRInference
 import BestASRDelivery
 import BestASRLocalText
 import BestASRMLXRuntime
+import BestASRMemory
 import BestASRModelManager
 import BestASRPersistence
 import BestASRProcessing
@@ -16,9 +17,10 @@ import BestASRSpeakerRouting
 import CryptoKit
 import Foundation
 import OSLog
+import MindloomIdentity
 
 let localDictationRuntimeLogger = Logger(
-  subsystem: "com.bestasr.app",
+  subsystem: MindloomIdentity.logSubsystem,
   category: "local-dictation-runtime"
 )
 
@@ -47,7 +49,7 @@ enum HistorySpeakerRefreshOutcome: Equatable, Sendable {
     case .completed:
       "文字与说话人已重新识别；旧文字版本和原音仍保留"
     case .queued:
-      "文字已更新；人物处理已排队，组件就绪后会继续，原音和旧版本仍保留"
+      "文字已更新；人物处理已排队，模型就绪后会继续，原音和旧版本仍保留"
     case .failed:
       "文字已更新，人物处理未完成；原人物结果、原音和旧文字仍保留，可重试"
     case .preservedHumanDecisions:
@@ -60,6 +62,8 @@ enum LocalModelComponent: String, CaseIterable, Identifiable, Sendable {
   case speech
   case speaker
   case localText
+  /// v12 search: finding records by meaning.
+  case meaning
 
   var id: String { rawValue }
 
@@ -68,6 +72,7 @@ enum LocalModelComponent: String, CaseIterable, Identifiable, Sendable {
     case .speech: "语音识别"
     case .speaker: "多人人物识别"
     case .localText: "本地文字整理"
+    case .meaning: "按意思搜索"
     }
   }
 }
@@ -149,14 +154,52 @@ struct LateDictationPolish: Sendable {
   let configHash: BestASRDomain.SHA256Digest
 }
 
+/// The stage durations of one dictation's processing, filled in by the timed
+/// adapters as they run and read once when the dictation is recorded
+/// (`DictationMetricsStore`). Numbers only.
+final class DictationStageClock: @unchecked Sendable {
+  struct Times: Equatable, Sendable {
+    var recognition: Duration?
+    var cleanup: Duration?
+    var transform: Duration?
+    var delivery: Duration?
+    /// When the words were written or kept: the end of key-up-to-text.
+    var deliveredAt: ContinuousClock.Instant?
+    var footprintBytes: UInt64?
+    var peakFootprintBytes: UInt64?
+    /// The recognizer was not in memory when the dictation started.
+    var recognizerWasCold = false
+  }
+
+  private let lock = NSLock()
+  private var times = Times()
+
+  var snapshot: Times {
+    lock.lock()
+    defer { lock.unlock() }
+    return times
+  }
+
+  func update(_ change: (inout Times) -> Void) {
+    lock.lock()
+    change(&times)
+    lock.unlock()
+  }
+}
+
 struct TimedDictationASR: DictationASRPort {
   let base: any DictationASRPort
+  var clock: DictationStageClock?
 
   func recognize(_ request: DictationASRRequest) async throws
     -> DictationTranscriptResult
   {
     let started = ContinuousClock.now
-    defer { logDictationStage("final-asr", since: started) }
+    defer {
+      let elapsed = ContinuousClock.now - started
+      clock?.update { $0.recognition = elapsed }
+      logDictationStage("final-asr", since: started)
+    }
     return try await base.recognize(request)
   }
 }
@@ -169,6 +212,25 @@ struct TimedDictationPolish: DictationPolishPort {
   {
     let started = ContinuousClock.now
     defer { logDictationStage("model-polish", since: started) }
+    return try await base.polish(request)
+  }
+}
+
+/// How long the insertion path waited for cleanup: the time-boxed model
+/// call as the processing coordinator sees it, including a budget that ran
+/// out.
+struct ClockedDictationPolish: DictationPolishPort {
+  let base: any DictationPolishPort
+  let clock: DictationStageClock
+
+  func polish(_ request: DictationPolishRequest) async throws
+    -> DictationPolishResult
+  {
+    let started = ContinuousClock.now
+    defer {
+      let elapsed = ContinuousClock.now - started
+      clock.update { $0.cleanup = elapsed }
+    }
     return try await base.polish(request)
   }
 }
@@ -203,6 +265,7 @@ typealias DictationDeliveryTransform =
 struct TimedDictationInsertion: DictationInsertionPort {
   let base: any DictationInsertionPort
   let deliver: DictationDeliveryTransform?
+  var clock: DictationStageClock?
 
   func captureTarget() async throws -> DictationTargetSnapshot {
     try await base.captureTarget()
@@ -212,9 +275,23 @@ struct TimedDictationInsertion: DictationInsertionPort {
     -> DictationInsertionResult
   {
     let started = ContinuousClock.now
-    defer { logDictationStage("insertion", since: started) }
+    defer {
+      let footprint = ProcessFootprint.current()
+      clock?.update {
+        $0.deliveredAt = ContinuousClock.now
+        $0.footprintBytes = footprint?.bytes
+        $0.peakFootprintBytes = footprint?.peakBytes
+      }
+      logDictationStage("insertion", since: started)
+    }
     var request = request
-    switch await deliver?(request.sessionID, request.text) ?? .asIs {
+    let transformStarted = ContinuousClock.now
+    let delivery = await deliver?(request.sessionID, request.text) ?? .asIs
+    if deliver != nil {
+      let elapsed = ContinuousClock.now - transformStarted
+      clock?.update { $0.transform = elapsed }
+    }
+    switch delivery {
     case .asIs:
       break
     case .replaced(let text):
@@ -240,7 +317,10 @@ struct TimedDictationInsertion: DictationInsertionPort {
         failureReason: .unavailable
       )
     }
+    let deliveryStarted = ContinuousClock.now
     let result = try await base.insert(request)
+    let deliveryElapsed = ContinuousClock.now - deliveryStarted
+    clock?.update { $0.delivery = deliveryElapsed }
     let app = request.target?.bundleIdentifier ?? "-"
     localDictationRuntimeLogger.notice(
       "dictation insertion app=\(app, privacy: .public) inserted=\(result.inserted, privacy: .public) reason=\(result.failureReason?.rawValue ?? "-", privacy: .public)"
@@ -280,9 +360,28 @@ struct AppFormattingPolishAdapter: DictationPolishPort {
 }
 
 actor LocalDictationRuntime: DictationCommittedChunkObserver {
+  /// The model registry bundled with the App (`model-artifacts.json`).
+  static func bundledModelRegistry(bundle: Bundle = .main) throws -> ManagedModelRegistry {
+    guard let url = bundle.url(forResource: "model-artifacts", withExtension: "json") else {
+      throw LocalDictationRuntimeError.bundledRegistryMissing
+    }
+    return try ManagedModelRegistry.decode(Data(contentsOf: url))
+  }
+
+  /// The model manager of a data root: its `models` folder under the
+  /// bundled registry. The runtime makes its own with this, and so does
+  /// Mindloom Preview's headless model import (`HeadlessModelImport`).
+  static func makeModelManager(
+    applicationRoot: URL, registry: ManagedModelRegistry
+  ) throws -> LocalModelManager {
+    try LocalModelManager(
+      rootDirectory: applicationRoot.appendingPathComponent("models", isDirectory: true),
+      registry: registry)
+  }
+
   let journal: ProductionAudioJournal
   let repository: GRDBDictationStore
-  let insertion: any DictationInsertionPort
+  var insertion: any DictationInsertionPort
   let modelManager: LocalModelManager
   let modelRegistry: ManagedModelRegistry
   let modelDistribution: ModelDistributionCoordinator
@@ -297,6 +396,10 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
   var englishFinalASREngine: LazyManagedASREngine?
   var multilingualFinalASREngine: LazyManagedASREngine?
   var finalASRPrewarmTask: Task<Void, Never>?
+  /// Recognition, speaker matching, 整理 or a recognition model's load in
+  /// progress: the meaning search waits while it is busy (v12 search,
+  /// HIST-009). Read from any thread.
+  nonisolated let heavyWork = BusyGauge()
   var polishAdapter: (any DictationPolishPort)?
   var personalCleanup: PersonalDictationCleanupAdapter?
   /// The generic local model, held directly as well as behind the versioned
@@ -323,6 +426,10 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
   var defaultPolishEnabled = true
   var personalCleanupEnabled = true
   var sessionsAwaitingInsertion: Set<SessionID> = []
+  /// Recordings the App is playing; see `setAudioInUse`.
+  var audioInUseSessionIDs: Set<SessionID> = []
+  /// Recordings whose 16 kHz or Opus rewrite failed its check in this run.
+  var rewriteRefusedSessionIDs: Set<SessionID> = []
   var finalASRWarmupRuntime: QwenASRRuntime?
   var finalASRWarmupTask: Task<Void, Never>?
   var idleModelReleaseTask: Task<Void, Never>?
@@ -332,6 +439,45 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
   var deferredLatePolish: [SessionID: LateDictationPolish] = [:]
   var appPolicies: [String: AppTextPolicy] = [:]
   var speakerMemoryEnabled = true
+  /// Each dictation's stage durations until the App records them.
+  var stageClocks: [SessionID: DictationStageClock] = [:]
+  /// Whether the final recognizer's weights are in memory now.
+  var recognizerResident = false
+  /// How many times the recognizer has been released, so a warm-up that a
+  /// release overtook does not mark it resident.
+  var recognizerReleases = 0
+  /// The recognizer's hour runs from the last dictation; an App launched and
+  /// not dictated into lets every model go after the shorter wait.
+  var dictationEndedSinceLaunch = false
+  /// Whether it was, when each live dictation started (cold dictations).
+  var recognizerColdAtStart: [SessionID: Bool] = [:]
+  /// The system asked for memory while a dictation was in flight: release
+  /// these as soon as it ends.
+  var pendingMemoryPressureRelease: Set<ModelResidencyPolicy.Model> = []
+  var memoryPressureSource: DispatchSourceMemoryPressure?
+  /// The system's reports, in the order it sent them, to the one task that
+  /// handles them (`startMemoryPressureWatch`).
+  var memoryPressureEvents: AsyncStream<ModelResidencyPolicy.MemoryPressure>.Continuation?
+  var memoryPressureConsumer: Task<Void, Never>?
+  /// What the system last reported.
+  var memoryPressure: ModelResidencyPolicy.MemoryPressure = .normal
+  /// Releases the recognizer when a warning outlasts
+  /// `residency.recognizerPressureGrace`.
+  var recognizerPressureTask: Task<Void, Never>?
+  /// Which warning `recognizerPressureTask` belongs to: every report moves
+  /// it on, so a grace timer from an earlier warning never acts on a later
+  /// one.
+  var memoryPressureGeneration = 0
+  /// Times the sentences of dictations recognized without word timings
+  /// (`DeferredWordAlignment`); at most one at a time.
+  var wordAlignmentTask: Task<Int, Never>?
+  /// Pending windows the aligner could not time in this launch; they stay
+  /// one segment and are tried again after the next launch.
+  var wordAlignmentFailures: Set<DeferredWindowKey> = []
+  var modelHousekeepingStarted = false
+  /// The residency timers this runtime follows; `defaultResidency` except
+  /// in tests (`useResidency`).
+  var residency = LocalDictationRuntime.defaultResidency
 
   init(
     applicationRoot: URL,
@@ -362,13 +508,8 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     candidateManifest = try ASRCandidateManifest.decode(
       Data(contentsOf: candidateRegistryURL)
     )
-    let manager = try LocalModelManager(
-      rootDirectory: applicationRoot.appendingPathComponent(
-        "models",
-        isDirectory: true
-      ),
-      registry: modelRegistry
-    )
+    let manager = try Self.makeModelManager(
+      applicationRoot: applicationRoot, registry: modelRegistry)
     modelManager = manager
     self.modelRegistry = modelRegistry
     modelDistribution = try ModelDistributionCoordinator(
@@ -419,6 +560,15 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     )
   }
 
+
+  #if DEBUG
+    /// The dictation metrics probe only (check app, synthetic data root):
+    /// words go to a port that writes nowhere, so a probe run never pastes
+    /// into whatever application is in front (`DictationMetricsProbe`).
+    func replaceInsertionForProbe(_ port: any DictationInsertionPort) {
+      insertion = port
+    }
+  #endif
 
   func configureUserPreferences(
     defaultPolishEnabled: Bool,
@@ -613,11 +763,15 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     )
   }
 
-  /// How long the models stay resident after the last dictation. Loading them
-  /// again costs a second or two, which the warm-up at the start of the next
-  /// dictation covers; holding about 4 GB of GPU memory for an App the user
-  /// is not dictating into does not.
-  static let idleModelReleaseDelay: Duration = .seconds(600)
+  /// How long the models stay resident after the last dictation
+  /// (ALIGNMENT recommendation 8): the recognizer an hour, the cleanup and
+  /// text models ten minutes; under a memory-pressure warning the others
+  /// at once and the recognizer after a minute, under critical pressure
+  /// everything at once. Until 2026-10-06 everything left after ten
+  /// minutes, and the dictations after a pause of ten minutes to an hour
+  /// reloaded the recognizer: about half a second more from release to
+  /// text each (`ModelResidencyPolicy`). Tests shorten it (`residency`).
+  static let defaultResidency = ModelResidencyPolicy.standard
   /// The general text model serves the occasional instruction, not every
   /// dictation, so it leaves a minute after the last one rather than riding
   /// the recogniser's ten-minute timer.
@@ -630,6 +784,21 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
   /// seconds, but this runs on the user's Mac while they are doing something
   /// else, so it takes a bite and leaves the rest for the next idle period.
   static let idleCompactionLimit = 40
+
+  /// Recordings older than this are kept in `archiveFormat` (PRD §0.3 item
+  /// 17, STORE-001).
+  static let archivalAge: TimeInterval = 30 * 24 * 60 * 60
+
+  /// Apple Lossless: the 16-bit master bit for bit, in less space. Opus
+  /// 24 kbps is built, tested and measured (TECHNICAL_DESIGN.md「录音压缩的
+  /// 测量」) but one of the conditions set before measuring was not met, so
+  /// it stays off until the user agrees; switching this to `.opus` then also
+  /// converts recordings already kept losslessly.
+  static let archiveFormat: RetainedAudioArchiveFormat = .lossless
+
+  /// Encoding and checking each file costs more than the 16 kHz rewrite, so
+  /// one idle pass takes fewer.
+  static let idleArchivalLimit = 20
 
 
 
@@ -654,6 +823,9 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     sessionID: SessionID,
     inputMode: SessionInputMode
   ) {
+    if inputMode == .dictation {
+      recognizerColdAtStart[sessionID] = !recognizerResident
+    }
     beginFinalASRPrewarm()
     liveSpeakerTasks[sessionID]?.cancel()
     liveSpeakerTasks[sessionID] = nil
@@ -770,7 +942,8 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     configHash: BestASRDomain.SHA256Digest,
     languageEvidenceText: String,
     languageEvidenceHints: [String],
-    permitsEmptyResult: Bool
+    permitsEmptyResult: Bool,
+    defersWordAlignment: Bool = false
   ) throws -> AutomaticLanguageRoutedASRAdapter {
     guard let asrEngine else {
       throw LocalDictationRuntimeError.modelNotReady
@@ -784,7 +957,8 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
         audio: audio,
         configHash: configHash,
         policy: try BoundedDictationASRPolicy(
-          permitsEmptyFinalResultForReconciliation: true
+          permitsEmptyFinalResultForReconciliation: true,
+          defersWordAlignment: defersWordAlignment
         )
       )
     }
@@ -1046,6 +1220,8 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     taskID: LocalTextTaskID,
     expectedInputRevision: UInt64? = nil
   ) async throws -> LocalTextDocumentRecord {
+    heavyWork.begin()
+    defer { heavyWork.end() }
     guard
       [
         .structuredSummary,
@@ -1601,6 +1777,8 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
         return "audio-source-chunk-empty"
       case .unsupportedSourceExport:
         return "audio-unsupported-source-export"
+      case .recordingInUse:
+        return "audio-recording-in-use"
       }
     }
     if error is LocalDictationRuntimeError {
@@ -1658,7 +1836,7 @@ actor LocalDictationRuntime: DictationCommittedChunkObserver {
     case .roomMicrophone: mode = "线下录音"
     case .systemAudio: mode = "电脑内录"
     case .importedMedia: mode = "文件导入"
-    case .userItem: mode = "收进来的内容"
+    case .userItem: mode = "添加的内容"
     case nil: mode = "语音记录"
     }
     // Automatic titles can predate a user correction. They are navigation
@@ -1869,6 +2047,7 @@ struct MappedInferenceAudioPort: DictationInferenceAudioPort {
     case .sourceRangeMismatch: "audio-source-range-mismatch"
     case .sourceChunkEmpty: "audio-source-chunk-empty"
     case .unsupportedSourceExport: "audio-source-export-unsupported"
+    case .recordingInUse: "audio-recording-in-use"
     }
   }
 }

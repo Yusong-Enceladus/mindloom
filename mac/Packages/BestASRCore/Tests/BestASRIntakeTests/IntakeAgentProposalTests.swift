@@ -38,4 +38,17 @@ final class IntakeAgentProposalTests: XCTestCase {
     XCTAssertEqual(plain.source?.name, "agent:未知")
     XCTAssertEqual(plain.text, "只有正文")
   }
+
+  /// v12 end-to-end check: pages and agents read the source in plain words,
+  /// 「Claude Code（其他 App）」, never the stored 「agent:Claude Code」.
+  func testAnAgentsItemIsShownAsAnotherApp() {
+    XCTAssertEqual(
+      SourceLabel.label(inputMode: .userItem, bundleID: nil, displayName: "agent:Claude Code"),
+      "Claude Code（其他 App）")
+    XCTAssertEqual(
+      SourceLabel.label(inputMode: .userItem, bundleID: nil, displayName: "agent: "),
+      "未知（其他 App）")
+    XCTAssertEqual(
+      SourceLabel.label(inputMode: .userItem, bundleID: nil, displayName: "微信"), "微信")
+  }
 }

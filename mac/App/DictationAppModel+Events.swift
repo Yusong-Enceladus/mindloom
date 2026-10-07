@@ -48,6 +48,11 @@ extension DictationAppModel {
     }
   }
 
+  /// 重新整理 (the old 事件 page's explicit command only): the on-device
+  /// organizer over the whole library — sentence embeddings, two cores and
+  /// about 4 GB. v12 (ALIGNMENT 理1-4): nothing runs it by itself any more;
+  /// page visits and library changes only read the library again
+  /// (`reloadEventMemory`).
   func refreshEvents() {
     if fixtureMode, eventReviewUIFixture != nil {
       history.eventAvailableHistoryItems = history.historyItems
@@ -60,6 +65,16 @@ extension DictationAppModel {
     eventMemoryWanted = true
     Task { [weak self] in
       await self?.refreshEventMemory(organize: true)
+    }
+  }
+
+  /// A page appeared (at most once a minute) or the library changed: its
+  /// events, candidates and records are read again. Never organizes.
+  func reloadEventMemory() {
+    guard !(fixtureMode && eventReviewUIFixture != nil) else { return }
+    eventMemoryWanted = true
+    Task { [weak self] in
+      await self?.refreshEventMemory(organize: false)
     }
   }
 
@@ -121,7 +136,7 @@ extension DictationAppModel {
     events.addSessionID = nil
     events.textDocuments = []
     events.documentTextDrafts = [:]
-    events.eventStatusMessage = "选择零条或多条未归类记录，然后建立事件"
+    events.eventStatusMessage = "选择零条或多条未归类记录，然后新建一件事"
   }
 
   func openEventPerson(_ personID: PersonID) {
@@ -145,10 +160,10 @@ extension DictationAppModel {
     guard let repository else { return }
     let title = events.newEventTitleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !title.isEmpty else {
-      events.eventStatusMessage = "请先输入事件名称"
+      events.eventStatusMessage = "请先输入名称"
       return
     }
-    events.eventStatusMessage = "正在建立本地事件…"
+    events.eventStatusMessage = "正在新建…"
     let sessionIDs = Array(events.sessionSelection)
     Task { [weak self] in
       guard let self else { return }
@@ -167,9 +182,9 @@ extension DictationAppModel {
         if let summary = events.summaries.first(where: { $0.id == created.id }) {
           beginEditingEvent(summary)
         }
-        events.eventStatusMessage = "事件已建立；原音、逐字稿和人物证据保持独立可追溯"
+        events.eventStatusMessage = "已新建；原音、逐字稿和人物证据保持独立可追溯"
       } catch {
-        events.eventStatusMessage = "事件未能建立；现有记录没有变化"
+        events.eventStatusMessage = "未能新建；现有记录没有变化"
       }
     }
   }
@@ -178,10 +193,10 @@ extension DictationAppModel {
     guard let repository, let selectedEventID = events.selectedEventID else { return }
     let title = events.titleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !title.isEmpty else {
-      events.eventStatusMessage = "事件名称不能为空"
+      events.eventStatusMessage = "名称不能为空"
       return
     }
-    events.eventStatusMessage = "正在保存事件…"
+    events.eventStatusMessage = "正在保存…"
     Task { [weak self] in
       guard let self else { return }
       do {
@@ -191,9 +206,9 @@ extension DictationAppModel {
           notes: events.notesDraft
         )
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "事件名称和备注已保存在本机"
+        events.eventStatusMessage = "名称和备注已保存在本机"
       } catch {
-        events.eventStatusMessage = "事件未能保存；原内容没有变化"
+        events.eventStatusMessage = "未能保存；原内容没有变化"
       }
     }
   }
@@ -202,16 +217,16 @@ extension DictationAppModel {
     guard let repository, let primaryID = events.selectedEventID,
       let mergedID = events.mergeTargetEventID, primaryID != mergedID
     else { return }
-    events.eventStatusMessage = "正在合并事件关系…"
+    events.eventStatusMessage = "正在合并…"
     Task { [weak self] in
       guard let self else { return }
       do {
         try await repository.mergeEvents(primaryID: primaryID, mergedID: mergedID)
         events.mergeTargetEventID = nil
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "事件已合并；可以撤销，任何原音和逐字稿都没有被改写"
+        events.eventStatusMessage = "已合并；可以撤销，任何原音和逐字稿都没有被改写"
       } catch {
-        events.eventStatusMessage = "事件合并失败；现有关系没有变化"
+        events.eventStatusMessage = "合并失败；现有关系没有变化"
       }
     }
   }
@@ -225,10 +240,10 @@ extension DictationAppModel {
     }
     let title = events.newEventTitleDraft.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !title.isEmpty else {
-      events.eventStatusMessage = "请为拆分后的事件输入名称"
+      events.eventStatusMessage = "请为拆出来的事输入名称"
       return
     }
-    events.eventStatusMessage = "正在拆分事件…"
+    events.eventStatusMessage = "正在拆分…"
     Task { [weak self] in
       guard let self else { return }
       do {
@@ -244,9 +259,9 @@ extension DictationAppModel {
         if let summary = events.summaries.first(where: { $0.id == created.id }) {
           beginEditingEvent(summary)
         }
-        events.eventStatusMessage = "所选记录已拆成新事件；可以撤销"
+        events.eventStatusMessage = "所选记录已拆成一件新的事；可以撤销"
       } catch {
-        events.eventStatusMessage = "事件拆分失败；现有关系没有变化"
+        events.eventStatusMessage = "拆分失败；现有关系没有变化"
       }
     }
   }
@@ -256,10 +271,10 @@ extension DictationAppModel {
       let targetID = events.moveTargetEventID,
       !events.sessionSelection.isEmpty
     else {
-      events.eventStatusMessage = "请选择记录和目标事件"
+      events.eventStatusMessage = "请选择记录和要移到的事"
       return
     }
-    events.eventStatusMessage = "正在移动事件记录…"
+    events.eventStatusMessage = "正在移动记录…"
     Task { [weak self] in
       guard let self else { return }
       do {
@@ -272,7 +287,7 @@ extension DictationAppModel {
         events.sessionSelection = []
         events.moveTargetEventID = nil
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "记录已移动到目标事件；可以撤销"
+        events.eventStatusMessage = "记录已移过去；可以撤销"
       } catch {
         events.eventStatusMessage = "记录移动失败；现有关系没有变化"
       }
@@ -283,7 +298,7 @@ extension DictationAppModel {
     guard let repository, let selectedEventID = events.selectedEventID,
       !events.sessionSelection.isEmpty
     else { return }
-    events.eventStatusMessage = "正在从事件中移除所选关系…"
+    events.eventStatusMessage = "正在从这件事中移除所选关系…"
     Task { [weak self] in
       guard let self else { return }
       do {
@@ -311,9 +326,9 @@ extension DictationAppModel {
         events.textDocuments = []
         events.documentTextDrafts = [:]
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "事件已删除；其中的记录、人物、原音和逐字稿全部保留"
+        events.eventStatusMessage = "这件事已删除；其中的记录、人物、原音和逐字稿全部保留"
       } catch {
-        events.eventStatusMessage = "事件未能删除；现有内容没有变化"
+        events.eventStatusMessage = "未能删除；现有内容没有变化"
       }
     }
   }
@@ -321,7 +336,7 @@ extension DictationAppModel {
   func undoLastEventEdit() {
     if fixtureMode, eventReviewUIFixture != nil {
       guard let previous = eventReviewUIFixtureUndoStack.popLast() else {
-        events.eventStatusMessage = "没有可撤销的事件修改"
+        events.eventStatusMessage = "没有可撤销的修改"
         return
       }
       events.summaries = previous.summaries
@@ -334,17 +349,17 @@ extension DictationAppModel {
       } else {
         history.selectedEventHistoryItems = []
       }
-      events.eventStatusMessage = "最近一次事件修改已撤销"
+      events.eventStatusMessage = "最近一次修改已撤销"
       return
     }
     guard let repository else { return }
-    events.eventStatusMessage = "正在撤销最近一次事件修改…"
+    events.eventStatusMessage = "正在撤销最近一次修改…"
     Task { [weak self] in
       guard let self else { return }
       do {
         let changed = try await repository.undoLastEventEdit()
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = changed ? "最近一次事件修改已撤销" : "没有可撤销的事件修改"
+        events.eventStatusMessage = changed ? "最近一次修改已撤销" : "没有可撤销的修改"
       } catch {
         events.eventStatusMessage = "撤销失败；现有内容没有变化"
       }
@@ -364,24 +379,24 @@ extension DictationAppModel {
       events.selectedEventID = fixture.acceptedSummary.id
       events.activeEventReviewCandidateID = nil
       beginEditingEvent(fixture.acceptedSummary)
-      events.eventStatusMessage = "事件线索已确认；时间线已更新，可以撤销"
-      history.detailStatusMessage = "已确认归入事件；原音和逐字稿没有改变"
+      events.eventStatusMessage = "归类已确认；进展已更新，可以撤销"
+      history.detailStatusMessage = "已确认归进这件事；原音和逐字稿没有改变"
       return
     }
     guard let repository else { return }
-    events.eventStatusMessage = "正在确认事件建议…"
+    events.eventStatusMessage = "正在确认归类…"
     Task { [weak self] in
       guard let self else { return }
       do {
         events.selectedEventID = try await repository.acceptEventCandidate(id: candidate.id)
         if events.activeEventReviewCandidateID == candidate.id {
           events.activeEventReviewCandidateID = nil
-          history.detailStatusMessage = "已确认归入事件；原音和逐字稿没有改变"
+          history.detailStatusMessage = "已确认归进这件事；原音和逐字稿没有改变"
         }
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "事件线索已确认；时间线已更新，可以撤销"
+        events.eventStatusMessage = "归类已确认；进展已更新，可以撤销"
       } catch {
-        events.eventStatusMessage = "事件建议未能确认；现有内容没有变化"
+        events.eventStatusMessage = "归类未能确认；现有内容没有变化"
       }
     }
   }
@@ -393,8 +408,8 @@ extension DictationAppModel {
       saveEventReviewUIFixtureUndoState()
       events.candidates.removeAll { $0.id == candidate.id }
       events.activeEventReviewCandidateID = nil
-      events.eventStatusMessage = "已忽略这条事件线索；可以撤销"
-      history.detailStatusMessage = "已忽略这条事件线索；原始记录没有改变"
+      events.eventStatusMessage = "已忽略这条归类；可以撤销"
+      history.detailStatusMessage = "已忽略这条归类；原始记录没有改变"
       return
     }
     guard let repository else { return }
@@ -404,12 +419,12 @@ extension DictationAppModel {
         try await repository.dismissEventCandidate(id: candidate.id)
         if events.activeEventReviewCandidateID == candidate.id {
           events.activeEventReviewCandidateID = nil
-          history.detailStatusMessage = "已忽略这条事件线索；原始记录没有改变"
+          history.detailStatusMessage = "已忽略这条归类；原始记录没有改变"
         }
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "已忽略这条事件线索；可以撤销"
+        events.eventStatusMessage = "已忽略这条归类；可以撤销"
       } catch {
-        events.eventStatusMessage = "未能忽略这条建议"
+        events.eventStatusMessage = "未能忽略这条归类"
       }
     }
   }
@@ -436,7 +451,7 @@ extension DictationAppModel {
         $0.sessionID == candidate.sessionID
       })
     else {
-      events.eventStatusMessage = "这条建议的来源记录当前不可用；请刷新后重试"
+      events.eventStatusMessage = "这条归类的来源记录当前不可用；请刷新后重试"
       return
     }
     beginHistoryNavigation(
@@ -463,13 +478,13 @@ extension DictationAppModel {
       ) {
         playHistoryTranscriptSegment(segment)
         history.detailStatusMessage =
-          "正在播放这条事件线索最相关的原音片段；请听过后再确认"
+          "正在播放最相关的原音片段；请听过后再确认"
       } else if !playback.playbackTrackIDs.isEmpty {
         seekHistoryPlayback(to: 0)
         if !playback.playbackIsPlaying { toggleHistoryPlayback() }
         history.detailStatusMessage = "正在从来源原音开头播放；这条旧记录没有分段逐字稿"
       } else {
-        history.detailStatusMessage = "已打开事件线索的来源记录；当前没有可播放的原音索引"
+        history.detailStatusMessage = "已打开来源记录；当前没有可播放的原音索引"
       }
     }
   }
@@ -508,11 +523,11 @@ extension DictationAppModel {
   func generateEventDocument(_ taskID: LocalTextTaskID) {
     guard let selectedEventID = events.selectedEventID, events.generatingEventDocumentTaskID == nil else { return }
     guard polishRuntimeReady, let localRuntime, let repository else {
-      events.eventStatusMessage = "请先安装并校验本地文字整理组件"
+      events.eventStatusMessage = "请先安装并校验本地文字整理模型"
       return
     }
     events.generatingEventDocumentTaskID = taskID
-    events.eventStatusMessage = "正在这台 Mac 上整理整个事件的\(Self.localTextTaskTitle(taskID))…"
+    events.eventStatusMessage = "正在这台 Mac 上整理这件事的\(Self.localTextTaskTitle(taskID))…"
     Task { [weak self] in
       guard let self else { return }
       defer { events.generatingEventDocumentTaskID = nil }
@@ -531,10 +546,10 @@ extension DictationAppModel {
             ($0.id, $0.result.outputText)
           }
         )
-        events.eventStatusMessage = "事件整理已保存；每条内容都保留到来源记录和时间戳的引用"
+        events.eventStatusMessage = "整理已保存；每条内容都保留到来源记录和时间戳的引用"
       } catch {
         if self.events.selectedEventID == selectedEventID {
-          events.eventStatusMessage = "事件整理未完成；所有原始记录和已有结果保持不变"
+          events.eventStatusMessage = "整理未完成；所有原始记录和已有结果保持不变"
         }
       }
     }
@@ -550,7 +565,7 @@ extension DictationAppModel {
       default: document.result.outputText
     ].trimmingCharacters(in: .whitespacesAndNewlines)
     guard !text.isEmpty else {
-      events.eventStatusMessage = "事件整理结果不能为空"
+      events.eventStatusMessage = "整理结果不能为空"
       return
     }
     let sourceIDs = Array(
@@ -608,7 +623,7 @@ extension DictationAppModel {
         events.eventStatusMessage = "编辑已另存为新版本；来源记录和旧整理结果均未覆盖"
       } catch {
         if events.selectedEventID == document.eventID {
-          events.eventStatusMessage = "事件编辑未保存；现有结果没有变化"
+          events.eventStatusMessage = "修改未保存；现有结果没有变化"
         }
       }
     }
@@ -634,7 +649,7 @@ extension DictationAppModel {
       item,
       returningTo: HistoryNavigationOrigin(
         kind: .event,
-        title: selectedEventSummary?.event.title ?? "当前事件"
+        title: selectedEventSummary?.event.title ?? "当前这件事"
       )
     )
     Task { [weak self] in
@@ -726,7 +741,7 @@ extension DictationAppModel {
         candidateCount: candidates.count
       )
     } catch {
-      self.events.eventStatusMessage = "无法整理本地事件；历史记录和原音没有变化"
+      self.events.eventStatusMessage = "无法在本机整理；历史记录和原音没有变化"
     }
   }
 
@@ -800,7 +815,7 @@ extension DictationAppModel {
       id: eventID,
       revision: try Revision(1),
       title: candidate.proposedTitle,
-      notes: "跨记录保留原音、逐字稿和进展线索",
+      notes: "跨记录保留原音、逐字稿和进展",
       startAt: existingItem.createdAt,
       endAt: existingItem.updatedAt,
       titleIsUserEdited: true,

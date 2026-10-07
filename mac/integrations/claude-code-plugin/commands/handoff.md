@@ -1,16 +1,16 @@
 ---
-description: 为织机里的一件事写交接说明，并作为建议交回织机
-argument-hint: "<事的名字或关键词>"
+description: 为 Mindloom 中的一件事写交接说明；允许更改时，添加到这件事
+argument-hint: "<事的名字或一句话>"
 ---
 
-使用 `mindloom` skill。目标：为「$ARGUMENTS」写一份交接说明，并交回织机的 Agent 收件箱。
+使用 `mindloom` skill。目标：为「$ARGUMENTS」写一份交接说明。
 
-1. 用 `search_matters` 找到这件事（有多件时请主人选），用 `get_matter` 读它；需要时用 `list_deadlines` 看它的截止。
+1. 用 `search` 找到这件事（有几件都像时请主人选），用 `get_matter` 读它；需要原话时，用 `item_id` 只读那一条，或加 `detail: "full"`。
 2. 写交接说明（纯文字，简洁）：
    - 这件事是什么、现在到哪一步；
    - 已经定下的事和依据的条目 id；
    - 接下来要做什么、谁负责、什么时候到期；
-   - 还没解决的问题和风险；
-   - 需要找谁、去哪里找资料（写条目 id，不要抄号码；占位符原样保留）。
+   - 还没解决的问题；
+   - 需要找谁、去哪里找资料（写条目 id，号码占位符原样保留）。
 3. 先把说明给主人看。
-4. 用 `add_to_inbox` 提交：`title` 写成「交接：<事的标题>」，`text` 是说明正文，`matter_hint` 填这件事的 id。告诉主人它在织机的 Agent 收件箱里等决定；如果工具说只能读，就只把说明给主人。
+4. 如果工具列表里有 `add_note`（主人选择了“允许更改”），问主人要不要添加到 Mindloom 里的这件事；主人同意后用 `add_note`：`title` 写「交接：<事的标题>」，`text` 是说明正文，`matter_id` 填这件事的 id。告诉主人它在 Mindloom 里能看到这条，也能撤销。没有 `add_note` 时，只把说明给主人。回答主人时写 Mindloom。

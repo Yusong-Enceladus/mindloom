@@ -22,6 +22,7 @@ import Foundation
 import OSLog
 import ServiceManagement
 import UniformTypeIdentifiers
+import MindloomIdentity
 
 // Capture: moved out of DictationAppModel.swift without change; see
 // DICTATION_ARCHITECTURE.md §13.5.
@@ -37,6 +38,7 @@ extension DictationAppModel {
   ) -> EarlyMicrophoneStart? {
     guard let device = try? MicrophoneDeviceCatalog.defaultDevice() else { return nil }
     firstAudioPendingSince = startRequested
+    pressToRecording = nil
     let sessionID = SessionID()
     let capture = makeDictationCapture(deviceUID: device.uid, sessionID: sessionID)
     // Detached: the microphone must not wait for the main actor, which is
@@ -139,7 +141,7 @@ extension DictationAppModel {
     )
     roomLevelMonitor = monitor
     capture.roomLevelPreviewActive = true
-    capture.roomStatusMessage = "正在本机预览输入音量；不会保存预览音频"
+    capture.roomStatusMessage = "正在检查输入音量；检查结束后，声音即被丢弃"
     if fixtureMode {
       capture.roomInputLevel = 0.42
       return
@@ -155,7 +157,7 @@ extension DictationAppModel {
       } catch {
         capture.roomLevelPreviewActive = false
         capture.roomInputLevel = 0
-        capture.roomStatusMessage = "音量预览无法启动；请刷新设备或检查权限"
+        capture.roomStatusMessage = "无法检查音量；请刷新设备或检查权限"
       }
     }
   }
@@ -170,7 +172,7 @@ extension DictationAppModel {
     capture.roomInputLevel = 0
     Task { await monitor?.stop() }
     if announce, wasActive {
-      capture.roomStatusMessage = "已停止音量预览；可以开始线下录音"
+      capture.roomStatusMessage = "已停止检查音量；可以开始线下录音"
     }
   }
 
@@ -246,7 +248,7 @@ extension DictationAppModel {
   ) -> Bool {
     guard resolvesToApplication,
       activationPolicy != .prohibited,
-      !bundleID.hasPrefix("com.bestasr.app")
+      !bundleID.hasPrefix(MindloomIdentity.bundleID)
     else { return false }
 
     // Apple menu-bar agents and login/system UI components are technically
@@ -316,12 +318,7 @@ extension DictationAppModel {
   }
 
   static func isLikelyMeetingSource(_ source: SystemAudioSource) -> Bool {
-    let identity = "\(source.bundleID ?? "") \(source.displayName)".lowercased()
-    return [
-      "wemeet", "tencentmeeting", "tencent meeting", "腾讯会议",
-      "zoom.us", "zoom", "microsoft teams", "webex", "feishu",
-      "lark", "dingtalk", "钉钉", "飞书",
-    ].contains(where: identity.contains)
+    MeetingAudioSourcePolicy.isLikelyMeeting(source)
   }
 
   func refineAutomaticMicrophonePreference(
@@ -360,8 +357,8 @@ extension DictationAppModel {
     guard self.capture.systemAudioPermission == .granted else {
       self.capture.systemAudioStatusMessage =
         self.capture.systemAudioPermission == .restartRequired
-        ? "系统已授权；请退出并重新打开织机后再预听"
-        : "请先允许“屏幕与系统音频录制”权限"
+        ? "系统已授权；请\(MindloomLaunch.reopenWords)后再预听"
+        : "请先允许“录屏与系统录音”权限"
       resolvePermission(.systemAudioCapture)
       return
     }
@@ -418,7 +415,7 @@ extension DictationAppModel {
     self.capture.systemAudioPreviewLevel = 0
     Task { await capture?.cancel() }
     if announce, wasActive {
-      self.capture.systemAudioStatusMessage = "已停止电脑输出音量预览；可以开始电脑内录"
+      self.capture.systemAudioStatusMessage = "已停止检查电脑输出音量；可以开始电脑内录"
     }
   }
 
@@ -429,7 +426,7 @@ extension DictationAppModel {
   func chooseAndImportMedia() {
     guard !capture.importInProgress, importOpenPanel == nil else { return }
     guard models.modelRuntimeReady else {
-      capture.importStatusMessage = "请先完成本地语音识别组件准备"
+      capture.importStatusMessage = "请先完成本地语音识别模型准备"
       return
     }
     guard !snapshot.phase.isActive, !capture.roomSnapshot.phase.isActive,
@@ -485,7 +482,7 @@ extension DictationAppModel {
       return
     }
     guard models.modelRuntimeReady else {
-      capture.importStatusMessage = "请先完成本地语音识别组件准备"
+      capture.importStatusMessage = "请先完成本地语音识别模型准备"
       return
     }
     guard !snapshot.phase.isActive, !capture.roomSnapshot.phase.isActive,
@@ -506,14 +503,14 @@ extension DictationAppModel {
 
   func toggleImportPause() {
     guard capture.importInProgress, capture.importPauseControlAvailable else {
-      capture.importStatusMessage = "源音频已安全提取；当前本地识别阶段会自动完成，也可停止后从资料库继续"
+      capture.importStatusMessage = "源音频已提取；当前本地识别阶段会自动完成，也可停止后从资料库继续"
       return
     }
     let wantsPaused = importPauseIntent.toggle()
     capture.importPaused = wantsPaused
     capture.importStatusMessage =
       wantsPaused
-      ? "正在暂停；已完成的导入进度不会丢失…"
+      ? "正在暂停；已完成的导入进度会保留…"
       : "正在继续同一份本地导入…"
     enqueueImportPauseSynchronization()
   }
@@ -529,7 +526,7 @@ extension DictationAppModel {
     recoveryItemCount = startupRecoverySessionIDs.count
     capture.importStatusMessage =
       capture.importCanDiscard
-      ? "正在取消未完成的导入；原始外部文件不会被修改…"
+      ? "正在取消未完成的导入；原始文件保持不变…"
       : "正在停止本地处理；已保留的原文件、音频与进度会留在资料库…"
     capture.importPauseControlAvailable = false
     importPauseIntent.reset()
@@ -611,7 +608,7 @@ extension DictationAppModel {
           capture.importPaused = false
           capture.importPauseControlAvailable = false
           capture.importStatusMessage =
-            "源音频已安全提取；正在完成本地识别与整理，可停止后从资料库继续"
+            "源音频已提取；正在完成本地识别与整理，可停止后从资料库继续"
         }
         return current
       }
@@ -633,7 +630,7 @@ extension DictationAppModel {
         capture.importStatusMessage =
           actuallyPaused
           ? "导入已经暂停；状态记录尚未完全写入，原文件和已完成进度仍保留"
-          : "暂停状态未能保存；处理已安全继续"
+          : "暂停状态未能保存；处理已继续"
       }
       return actual
     }
@@ -683,7 +680,7 @@ extension DictationAppModel {
     capture.importProgress = 0
     capture.importedFilename = nil
     history.historyStatusMessage = "正在从已校验的本地原文件继续导入…"
-    capture.importStatusMessage = "正在恢复上次安全落盘的位置…"
+    capture.importStatusMessage = "正在恢复上次保存的位置…"
     importTask = Task { [weak self] in
       guard let self else { return }
       await importPauseGate.setPaused(false)
@@ -853,7 +850,7 @@ extension DictationAppModel {
         }
         capture.importStatusMessage =
           (error as? CocoaError)?.code == .fileWriteOutOfSpace
-          ? "可用空间仍低于 1 GB 安全线；恢复尚未开始，原文件和进度完整保留"
+          ? "可用空间仍不到 1 GB；恢复尚未开始，原文件和进度完整保留"
           : "恢复中断；本地原文件和已提交进度仍保留，可再次继续"
         history.historyStatusMessage = "恢复未完成；源文件和进度仍保留"
         await refreshHistoryItems(
@@ -897,7 +894,7 @@ extension DictationAppModel {
           self.capture.roomSnapshot = try await coordinator.pause()
           if captureFailure?.code == "disk-hard-stop" {
             self.capture.roomStatusMessage =
-              "可用空间已到安全下限；线下录音已自动暂停，所有已提交音频完整保留。释放空间后可继续，或直接结束处理"
+              "可用空间已到下限；线下录音已自动暂停，所有已提交音频完整保留。释放空间后可继续，或直接结束处理"
           } else if !deviceStillPresent,
             let replacement = try? MicrophoneDeviceCatalog.defaultDevice()
           {
@@ -1030,7 +1027,7 @@ extension DictationAppModel {
           do {
             self.capture.systemAudioSnapshot = try await coordinator.pause()
             self.capture.systemAudioStatusMessage =
-              "可用空间已到安全下限；电脑内录已自动暂停，所有已提交音轨完整保留。释放空间后可继续，或直接结束处理"
+              "可用空间已到下限；电脑内录已自动暂停，所有已提交音轨完整保留。释放空间后可继续，或直接结束处理"
           } catch {
             self.capture.systemAudioStatusMessage =
               "空间不足导致采集停止；所有已提交音轨仍保留，请结束后从历史恢复"
@@ -1207,6 +1204,8 @@ extension DictationAppModel {
     // panel keeps its filename as the label.
     let intakeSource = pendingImportSourceApplication
     pendingImportSourceApplication = nil
+    let hashed = pendingImportHashed
+    pendingImportHashed = nil
     let sessionID = SessionID()
     let actor = DictationSessionActor()
     importSessionID = sessionID
@@ -1296,7 +1295,8 @@ extension DictationAppModel {
 
         let retained = try await fileStore.stage(
           source: source,
-          sessionID: sessionID
+          sessionID: sessionID,
+          hashed: hashed
         )
         try await repository.saveRetainedSourceAsset(retained)
         guard case .relativePath(let retainedPath) = retained.assetReference else {
@@ -1389,7 +1389,7 @@ extension DictationAppModel {
       } catch {
         if (error as? CocoaError)?.code == .fileWriteOutOfSpace {
           capture.importStatusMessage =
-            "空间不足以同时保留原文件、解码音频和 1 GB 安全余量；没有删除或覆盖任何已有数据"
+            "空间不足以同时保留原文件、解码音频和 1 GB 余量；没有删除或覆盖任何已有数据"
           await refreshHistoryItems()
           return
         }
@@ -1401,7 +1401,7 @@ extension DictationAppModel {
             snapshot: durable
           )
           capture.importStatusMessage =
-            "导入中断；已复制的原始文件和处理进度保留在本机，可从历史恢复"
+            "导入中断；已拷贝的原始文件和处理进度保留在本机，可从历史恢复"
           await presentCaptureWorkspaceHandoff(
             sessionID: sessionID,
             inputMode: .importedMedia,

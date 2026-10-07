@@ -42,7 +42,7 @@ func browserApp(_ switches: BrowserSwitches, root: URL, drafts: BrowserDrafts) -
     browserAdd: { request in
       let summary = await committer.commit(HandEntries.browser(request, at: Date()))
       guard summary.storedCount > 0 else {
-        return .refused(summary.rejected.first ?? "没有可收进来的内容")
+        return .refused(summary.rejected.first ?? "没有可添加的内容")
       }
       return .reply(
         OwnerReply(
@@ -61,7 +61,10 @@ func browserServer(root: URL, owner: OwnerEntryChannel) throws -> (
     memory: FixedMemory(snapshot: try AgentFixture.snapshot()), records: records,
     secrets: MemoryAgentGrantSecretStore(), consent: consent, timeZone: AgentFixture.timeZone,
     clock: { AgentFixture.now })
-  return (AgentSocketServer(dataRoot: root, service: service, owner: owner), consent, records)
+  return (
+    AgentSocketServer(dataRoot: root, service: service, gate: .anyProcessOfThisUser, owner: owner),
+    consent, records
+  )
 }
 
 /// The helper built next to the tests (or `MINDLOOM_MCP_HELPER`, e.g. the
@@ -204,7 +207,7 @@ final class BrowserHostTests: XCTestCase {
       run.replies.map { $0["ok"] }, [true, true, false, false, false])
     XCTAssertEqual(
       run.replies.map { $0["reason"] }, [nil, nil, "malformed", "empty", "malformed"])
-    XCTAssertEqual(run.replies[0]["message"]?.stringValue, "已收进来 · 来自 Chrome")
+    XCTAssertEqual(run.replies[0]["message"]?.stringValue, "已添加 · 来自 Chrome")
     XCTAssertEqual(run.replies[0]["stored"]?.intValue, 1)
     XCTAssertEqual(run.replies[3]["message"]?.stringValue, BrowserCopy.empty)
     XCTAssertEqual(
@@ -213,7 +216,8 @@ final class BrowserHostTests: XCTestCase {
         "周三组会改到下午三点\n带上 Twin-7 的曲线\n\n实验记录\nhttps://example.test/notes/7",
         "十月计划\nhttps://example.test/plan",
       ])
-    XCTAssertEqual(Set(drafts.all.compactMap(\.source?.name)), ["Chrome"])
+    // v12 F10: this host was started by the test, not by Chrome.
+    XCTAssertEqual(Set(drafts.all.compactMap(\.source?.name)), ["本机其他程序"])
     XCTAssertEqual(
       drafts.all.map(\.extractor), [EntryExtractor.browserSelection, EntryExtractor.browserPage])
     // The host says nothing about content on stderr.

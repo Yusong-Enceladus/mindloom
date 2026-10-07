@@ -34,8 +34,8 @@ public struct IntakePathPolicy: Sendable {
 /// images, and stages files. Runs off the main actor; it only reads the
 /// user's files and never opens a network location.
 public struct IntakeProcessor: Sendable {
-  public static let protectedFileMessage = "这是织机资料库里的文件，未收进来"
-  public static let tooMuchTextMessage = "文字超过 16 MB，未收进来"
+  public static let protectedFileMessage = "这是 Mindloom 资料库中的文件，未添加"
+  public static let tooMuchTextMessage = "文字超过 16 MB，未添加"
 
   public let assetStore: IntakeAssetStore
   public let normalizer: ImageNormalizer
@@ -68,7 +68,7 @@ public struct IntakeProcessor: Sendable {
         guard !Self.exceedsTextLimit(text) else { return .rejected(Self.tooMuchTextMessage) }
         let cleaned = IntakeTextExtractor.sanitized(text)
         guard !cleaned.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-          return .rejected("没有可收进来的文字")
+          return .rejected("没有可添加的文字")
         }
         return context.item(kind: .text, text: cleaned, extractor: extractor)
       case .imageData(let data, let typeIdentifier):
@@ -97,10 +97,10 @@ public struct IntakeProcessor: Sendable {
       }
     } catch IntakeAssetStore.StoreError.tooLarge {
       assetStore.discard(sessionID: id)
-      return .rejected("文件超过 200 MB，未收进来")
+      return .rejected("文件超过 200 MB，未添加")
     } catch IntakeTextExtractor.ExtractionError.empty {
       assetStore.discard(sessionID: id)
-      return .rejected("没有可读的文字，未收进来")
+      return .rejected("没有可读的文字，未添加")
     } catch IntakeTextExtractor.ExtractionError.tooLong {
       assetStore.discard(sessionID: id)
       return .rejected(Self.tooMuchTextMessage)
@@ -108,10 +108,10 @@ public struct IntakeProcessor: Sendable {
       // A PDF that needs a password: kept as a file, never opened here.
       assetStore.discard(sessionID: id)
       return (try? lockedPDF(candidate, context: context))
-        ?? .rejected("无法读取这个内容，未收进来")
+        ?? .rejected("无法读取这个内容，未添加")
     } catch {
       assetStore.discard(sessionID: id)
-      return .rejected("无法读取这个内容，未收进来")
+      return .rejected("无法读取这个内容，未添加")
     }
   }
 
@@ -142,19 +142,19 @@ public struct IntakeProcessor: Sendable {
   private func file(_ url: URL, context: Context) throws -> IntakeOutcome {
     // A web link dragged from a browser is not a file; reading it would go
     // online (AVFoundation fetches remote media). Checked before anything.
-    guard url.isFileURL else { return .rejected("只收本机文件，链接未收进来") }
+    guard url.isFileURL else { return .rejected("仅支持这台 Mac 上的文件，链接未添加") }
     guard !pathPolicy.isProtected(url) else { return .rejected(Self.protectedFileMessage) }
     let values = try? url.resourceValues(forKeys: [
       .isDirectoryKey, .isRegularFileKey, .fileSizeKey, .isSymbolicLinkKey,
     ])
-    guard values?.isSymbolicLink != true else { return .rejected("无法读取这个文件，未收进来") }
+    guard values?.isSymbolicLink != true else { return .rejected("无法读取这个文件，未添加") }
     let fileClass = IntakeFileClass.classify(url)
     if values?.isDirectory == true {
       // A Pages/Numbers/Keynote package is a folder: its own preview is kept.
-      guard fileClass == .iWork else { return .rejected("不支持文件夹，未收进来") }
+      guard fileClass == .iWork else { return .rejected("不支持文件夹，未添加") }
       return try iWorkPackage(url, context: context)
     }
-    guard values?.isRegularFile == true else { return .rejected("无法读取这个文件，未收进来") }
+    guard values?.isRegularFile == true else { return .rejected("无法读取这个文件，未添加") }
     let filename = url.lastPathComponent
     let ext = url.pathExtension.lowercased()
     let uniformType = IntakeFileClass.uniformType(url)
@@ -166,14 +166,14 @@ public struct IntakeProcessor: Sendable {
     if fileClass.isMedia || sniffedMedia {
       if fileClass.isMedia, Self.canDecodeMedia(url) { return .media(url) }
       guard UInt64(values?.fileSize ?? 0) <= assetStore.maximumBytes else {
-        return .rejected("文件超过 200 MB，未收进来")
+        return .rejected("文件超过 200 MB，未添加")
       }
       return try localOnlyItem(
         original: .file(url), filename: filename, uniformType: uniformType,
         mediaType: mediaType, context: context)
     }
     guard UInt64(values?.fileSize ?? 0) <= assetStore.maximumBytes else {
-      return .rejected("文件超过 200 MB，未收进来")
+      return .rejected("文件超过 200 MB，未添加")
     }
     // A picture under another name (a screenshot renamed `.xlsx`) is taken in
     // as the picture it is: normalized, read here, and redacted when sent
@@ -257,7 +257,7 @@ public struct IntakeProcessor: Sendable {
         original: .file(url), filename: filename, uniformType: uniformType,
         mediaType: mediaType, localText: local, context: context)
     case .audio, .video:
-      return .rejected("无法读取这个文件，未收进来")
+      return .rejected("无法读取这个文件，未添加")
     }
     guard !Self.exceedsTextLimit(extracted.text) else { return .rejected(Self.tooMuchTextMessage) }
     return try document(
@@ -357,14 +357,14 @@ public struct IntakeProcessor: Sendable {
         localText: local.flatMap { $0.text.isEmpty || Self.exceedsTextLimit($0.text) ? nil : $0 },
         context: context)
     }
-    return .rejected("这个 \(url.pathExtension) 文件没有可读的预览，未收进来")
+    return .rejected("这个 \(url.pathExtension) 文件没有可读的预览，未添加")
   }
 
   /// A PDF that needs a password: kept byte for byte as a file.
   private func lockedPDF(_ candidate: IntakeCandidate, context: Context) throws -> IntakeOutcome {
     switch candidate {
     case .pdfData(let data):
-      guard PDFLock.isLocked(data: data) else { return .rejected("无法读取这个内容，未收进来") }
+      guard PDFLock.isLocked(data: data) else { return .rejected("无法读取这个内容，未添加") }
       return try fileItem(
         original: .data(data), filename: "pasted.pdf", uniformType: UTType.pdf.identifier,
         mediaType: "application/pdf", localText: nil, context: context)
@@ -372,13 +372,13 @@ public struct IntakeProcessor: Sendable {
       guard PDFLock.isLocked(fileURL: url),
         UInt64((try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
           <= assetStore.maximumBytes
-      else { return .rejected("无法读取这个文件，未收进来") }
+      else { return .rejected("无法读取这个文件，未添加") }
       return try fileItem(
         original: .file(url), filename: url.lastPathComponent,
         uniformType: UTType.pdf.identifier, mediaType: "application/pdf", localText: nil,
         context: context)
     default:
-      return .rejected("无法读取这个内容，未收进来")
+      return .rejected("无法读取这个内容，未添加")
     }
   }
 

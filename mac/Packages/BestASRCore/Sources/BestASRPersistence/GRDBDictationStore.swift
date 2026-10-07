@@ -1756,20 +1756,26 @@ extension GRDBDictationStore {
     }
   }
 
+  /// Moves some of a person's speech to a new person: named `newDisplayName`,
+  /// or unnamed when it is nil (v12 「不是他」: the sentences go to a voice
+  /// nobody named yet). `newPersonID` lets the caller choose the new ID (the
+  /// pages show it before the change is written); a fresh one otherwise.
   @discardableResult
   public func splitPersonOccurrences(
     sourcePersonID: PersonID,
     occurrenceIDs: [SpeakerOccurrenceID],
-    newDisplayName: String,
+    newDisplayName: String?,
+    newPersonID: PersonID? = nil,
     originDeviceID: UUID,
     now: Date = Date()
   ) async throws -> Person {
-    let name = newDisplayName.trimmingCharacters(in: .whitespacesAndNewlines)
+    let trimmed = newDisplayName?.trimmingCharacters(in: .whitespacesAndNewlines)
+    let name: String? = trimmed?.isEmpty == false ? trimmed : nil
     let uniqueIDs = Array(Set(occurrenceIDs)).sorted {
       $0.rawValue.uuidString < $1.rawValue.uuidString
     }
-    guard !name.isEmpty, name.utf8.count <= 256,
-      !uniqueIDs.isEmpty, uniqueIDs.count <= 5_000
+    guard newDisplayName == nil || name != nil, (name?.utf8.count ?? 0) <= 256,
+      !uniqueIDs.isEmpty, uniqueIDs.count <= 5_000, newPersonID != sourcePersonID
     else { throw BestASRPersistenceError.invalidSnapshot }
     let database = try requirePool()
     return try await database.write { db in
@@ -1799,7 +1805,12 @@ extension GRDBDictationStore {
       guard rows.count == values.count else {
         throw BestASRPersistenceError.processingCommitConflict
       }
-      let newPersonID = PersonID()
+      let newPersonID = newPersonID ?? PersonID()
+      guard
+        try Bool.fetchOne(
+          db, sql: "SELECT EXISTS(SELECT 1 FROM persons WHERE id = ?)",
+          arguments: [newPersonID.rawValue.uuidString]) == false
+      else { throw BestASRPersistenceError.processingCommitConflict }
       try db.execute(
         sql: """
           INSERT INTO persons (
@@ -4362,17 +4373,28 @@ public actor GRDBDictationStore:
   public let databaseURL: URL
 
   private var pool: DatabasePool?
-  private let clock: any DictationClock
+  let clock: any DictationClock
   /// The zone whose offset item times carry when sent to the organizer
   /// (`started_at` with the local UTC offset). Follows later zone changes of
   /// a long-running App by default; injected by tests.
   public nonisolated let remoteItemTimeZone: TimeZone
 
+  /// The backup made before this open migrated an older library, if any.
+  public nonisolated let migrationBackup: LibraryMigrationBackupRecord?
+
+  /// Opens (creating if needed) and migrates the library database. An
+  /// existing database from an older schema is first cloned into the
+  /// library's `backups` folder and checked (`migrationBackup`, default
+  /// `.besideDatabase`); when that fails the database is left as it was and
+  /// this throws `LibraryMigrationBackupError`.
   public init(
     databaseURL: URL,
     clock: any DictationClock = SystemDictationClock(),
     fileManager: FileManager = .default,
-    remoteItemTimeZone: TimeZone = .autoupdatingCurrent
+    remoteItemTimeZone: TimeZone = .autoupdatingCurrent,
+    migrationBackup backupPolicy: LibraryMigrationBackupPolicy? = nil,
+    openDeadline: Date? = nil,
+    busyTimeout: TimeInterval = LibraryOpenRetry.busyTimeoutSeconds
   ) throws {
     self.databaseURL = databaseURL
     self.clock = clock
@@ -4384,6 +4406,12 @@ public actor GRDBDictationStore:
     var configuration = Configuration()
     configuration.label = "bestASR.persistence"
     configuration.maximumReaderCount = 4
+    // Another program reading or checking the file waits us out briefly
+    // instead of failing this open (REHEARSAL.md §8); while this open is in
+    // progress, never past its deadline (review 10-5d R6).
+    let busyWait = LibraryBusyWait(timeout: busyTimeout, openDeadline: openDeadline)
+    defer { busyWait.openFinished() }
+    configuration.busyMode = .callback(busyWait.callback)
     configuration.prepareDatabase { database in
       try database.execute(sql: "PRAGMA foreign_keys = ON")
       let mode = (try String.fetchOne(database, sql: "PRAGMA journal_mode = WAL") ?? "")
@@ -4396,15 +4424,72 @@ public actor GRDBDictationStore:
       path: databaseURL.path,
       configuration: configuration
     )
+    var backup: LibraryMigrationBackupRecord?
     do {
-      try BestASRPersistenceSchema.migrator().migrate(openedPool)
+      let migrator = BestASRPersistenceSchema.migrator()
+      let policy = backupPolicy ?? .besideDatabase(databaseURL)
+      // On the writer: its waits follow this open's deadline (a reader of
+      // the pool waits up to ten seconds, whatever the deadline).
+      if case .cloneInto(let folder, _) = policy,
+        try openedPool.writeWithoutTransaction({
+          try LibraryMigrationBackup.needsBackup($0, migrator: migrator)
+        })
+      {
+        backup = try LibraryMigrationBackup.backUp(
+          pool: openedPool, databaseURL: databaseURL, migrator: migrator, into: folder)
+      }
+      try migrator.migrate(openedPool)
+      // Older backups go only after a migration finished, so repeated
+      // failures never push out the copy made before the first attempt.
+      if backup != nil, case .cloneInto(let folder, let keep) = policy {
+        LibraryMigrationBackup.prune(folder, keep: keep)
+      }
       try openedPool.write { database in
         try BestASRPersistenceSchema.installHistorySearchIndex(in: database)
+        try BestASRPersistenceSchema.installRecordSearchIndex(in: database)
+        try BestASRPersistenceSchema.installRecordMeaningIndex(in: database)
       }
       pool = openedPool
     } catch {
       try? openedPool.close()
       throw error
+    }
+    migrationBackup = backup
+  }
+
+  /// Opens the library like `init`, waiting while another program has the
+  /// database busy (SQLITE_BUSY, SQLITE_BUSY_RECOVERY) and trying again after
+  /// a bounded backoff (`LibraryOpenRetry`) instead of failing the App's
+  /// startup (REHEARSAL.md §8). Any other error is thrown at once. The whole
+  /// open ends by `retry.maximumSeconds` after it began, waits included
+  /// (review 10-5d R6).
+  public static func openWaitingWhileBusy(
+    databaseURL: URL,
+    clock: any DictationClock = SystemDictationClock(),
+    remoteItemTimeZone: TimeZone = .autoupdatingCurrent,
+    migrationBackup backupPolicy: LibraryMigrationBackupPolicy? = nil,
+    retry: LibraryOpenRetry = .standard,
+    sleep: (TimeInterval) -> Void = { Thread.sleep(forTimeInterval: $0) }
+  ) throws -> GRDBDictationStore {
+    try retry.run(sleep: sleep) { (deadline: Date) in
+      try GRDBDictationStore(
+        databaseURL: databaseURL, clock: clock, remoteItemTimeZone: remoteItemTimeZone,
+        migrationBackup: backupPolicy, openDeadline: deadline, busyTimeout: retry.busyTimeout)
+    }
+  }
+
+  /// Ends this store's use of the file when the App quits: `checkpointAndClose`,
+  /// true when it closed (or was closed already). The App bounds how long it
+  /// waits for this (`LibraryQuit.close(within:)`, review 10-5d R6).
+  @discardableResult
+  public func closeForQuit() async -> Bool {
+    // The meaning vectors held in memory for this library go with it.
+    forgetRecordMeaningMatrix()
+    do {
+      try await checkpointAndClose()
+      return true
+    } catch {
+      return false
     }
   }
 
@@ -4620,16 +4705,30 @@ public actor GRDBDictationStore:
     }
   }
 
-  /// Finished dictations still holding their recording at the capture device's
-  /// rate, oldest first, for `SourceAudioCompaction` to rewrite when the App
-  /// is idle. A session being written to has no finished state yet, so it is
-  /// not in this list.
+  /// No job that still reads this session's audio is waiting or running:
+  /// recognition (`dictation_job_sessions`) and the speaker model
+  /// (`speaker_job_inputs`). A rewrite before they finish would leave them
+  /// pointing at files that are gone. `s` is the session alias.
+  static let noPendingAudioJobsSQL = """
+    NOT EXISTS (
+      SELECT 1 FROM durable_jobs j
+      WHERE j.state IN ('queued', 'running', 'retryableFailed')
+        AND (j.id IN (SELECT job_id FROM dictation_job_sessions WHERE session_id = s.id)
+          OR j.id IN (SELECT job_id FROM speaker_job_inputs WHERE session_id = s.id))
+    )
+    """
+
+  /// Finished recordings still holding their audio at the capture device's
+  /// rate, oldest first, for `SourceAudioCompaction` to rewrite at 16 kHz,
+  /// 16-bit when the App is idle. A session being written to has no finished
+  /// state yet, so it is not in this list.
   ///
-  /// Dictation only. 16 kHz mono is the whole band of a person talking into
-  /// their own microphone, and it is what every speech model reads. A room
-  /// recording or a capture of the computer's own output may hold music, a
-  /// room, several people at once — material later features will want to
-  /// analyse, and narrowing it to speech bandwidth cannot be undone.
+  /// Dictation as soon as it is finished, as before. Room-microphone,
+  /// system-audio and imported recordings once they are completed and no
+  /// recognition or speaker job is still waiting to read them (PRD §0.3
+  /// item 19, accepted 2026-10-05): 16 kHz mono is what every speech and
+  /// speaker model reads, so nothing a model could use is lost, and a
+  /// meeting drops from 0.6–1.4 GB to about 115 MB an hour.
   public func sessionsWithUncompactedSourceAudio(limit: Int) async throws -> [SessionID] {
     let bounded = max(1, min(limit, 1_000))
     let database = try requirePool()
@@ -4640,13 +4739,51 @@ public actor GRDBDictationStore:
           SELECT DISTINCT s.id FROM sessions s
           JOIN tracks t ON t.session_id = s.id
           WHERE s.source_audio_retention = 'retainedUntilExplicitDeletion'
-            AND s.state IN ('completed', 'failedRecoverable')
-            AND s.input_mode = 'dictation'
+            AND ((s.input_mode = 'dictation' AND s.state IN ('completed', 'failedRecoverable'))
+              OR (s.input_mode IN ('roomMicrophone', 'systemAudio', 'importedMedia')
+                AND s.state = 'completed'))
             AND (t.sample_rate_hz <> ? OR t.channel_count <> 1)
+            AND \(Self.noPendingAudioJobsSQL)
           ORDER BY s.created_at, s.id LIMIT ?
           """,
         // The rate every reader converts to; SourceAudioCompaction stores it.
         arguments: [Int64(16_000), bounded]
+      ).map {
+        guard let id = UUID(uuidString: $0) else { throw BestASRPersistenceError.storedDataCorrupt }
+        return SessionID(id)
+      }
+    }
+  }
+
+  /// Recordings made before `cutoff` (30 days ago in the App) that are kept
+  /// at 16 kHz, 16-bit and still hold PCM — or, `includingLossless` (the
+  /// Opus format), chunks kept losslessly — oldest first, for
+  /// `SourceAudioArchival`. Only once nothing is waiting to read them
+  /// (`noPendingAudioJobsSQL`); a session the user deleted the audio of has
+  /// no chunks and is never listed.
+  public func sessionsReadyForArchival(
+    recordedBefore cutoff: Date, limit: Int, includingLossless: Bool = false
+  ) async throws -> [SessionID] {
+    let bounded = max(1, min(limit, 1_000))
+    let database = try requirePool()
+    return try await database.read { db in
+      try String.fetchAll(
+        db,
+        sql: """
+          SELECT DISTINCT s.id FROM sessions s
+          JOIN audio_chunks a ON a.session_id = s.id
+          WHERE s.source_audio_retention = 'retainedUntilExplicitDeletion'
+            AND s.state IN ('completed', 'failedRecoverable')
+            AND s.created_at <= ?
+            AND (a.asset_reference LIKE '%.pcm'
+              OR (? AND a.asset_reference LIKE '%.lossless.caf'))
+            AND NOT EXISTS (
+              SELECT 1 FROM tracks t WHERE t.session_id = s.id
+                AND (t.sample_rate_hz <> ? OR t.channel_count <> 1))
+            AND \(Self.noPendingAudioJobsSQL)
+          ORDER BY s.created_at, s.id LIMIT ?
+          """,
+        arguments: [cutoff.timeIntervalSince1970, includingLossless, Int64(16_000), bounded]
       ).map {
         guard let id = UUID(uuidString: $0) else { throw BestASRPersistenceError.storedDataCorrupt }
         return SessionID(id)
@@ -5243,7 +5380,7 @@ public actor GRDBDictationStore:
     try await loadHistory(limit: limit, sessionIDs: nil)
   }
 
-  private func loadHistory(
+  func loadHistory(
     limit: Int,
     sessionIDs: [SessionID]?
   ) async throws -> [DictationHistoryItem] {
@@ -5528,46 +5665,44 @@ public actor GRDBDictationStore:
       if !normalized.isEmpty {
         if normalized.count >= 3 {
           let phrase = "\"\(normalized.replacingOccurrences(of: "\"", with: "\"\""))\""
-          predicates.append(
-            """
-            (
-              EXISTS (
-                SELECT 1 FROM history_search_fts
-                WHERE history_search_fts.session_id = s.id
-                  AND history_search_fts MATCH ?
-              ) OR EXISTS (
-                SELECT 1 FROM history_search_fts
-                JOIN speaker_occurrences o
-                  ON o.person_id = history_search_fts.person_id
-                JOIN persons p ON p.id = o.person_id
-                WHERE history_search_fts.source_kind = 'person'
-                  AND o.session_id = s.id AND p.retired_at IS NULL
-                  AND o.association_status IN (
-                    'anonymousIdentity', 'automaticMatch', 'userConfirmed'
-                  )
-                  AND history_search_fts MATCH ?
-              ) OR EXISTS (
-                SELECT 1 FROM history_search_fts
-                JOIN event_sessions es
-                  ON es.event_id = history_search_fts.source_id
-                JOIN events e ON e.id = es.event_id
-                WHERE history_search_fts.source_kind = 'event'
-                  AND es.session_id = s.id AND e.retired_at IS NULL
-                  AND history_search_fts MATCH ?
-              ) OR EXISTS (
-                SELECT 1 FROM history_search_fts
-                JOIN event_text_documents etd
-                  ON etd.id = history_search_fts.source_id
-                JOIN event_sessions es ON es.event_id = etd.event_id
-                JOIN events e ON e.id = es.event_id
-                WHERE history_search_fts.source_kind = 'event_text'
-                  AND es.session_id = s.id AND e.retired_at IS NULL
-                  AND etd.state = 'current'
-                  AND history_search_fts MATCH ?
+          // One MATCH for the whole query (B4 §1.2: a MATCH per session row
+          // took 1.39 s on the demo library for a common word): the index
+          // rows that match, then the sessions they stand for (a record's
+          // own text, a person heard in it, an event or event text holding
+          // it).
+          let matched = try String.fetchAll(
+            db,
+            sql: """
+              WITH hit AS MATERIALIZED (
+                SELECT session_id, person_id, source_kind, source_id
+                FROM history_search_fts WHERE history_search_fts MATCH ?
               )
-            )
-            """)
-          arguments += [phrase, phrase, phrase, phrase]
+              SELECT session_id FROM hit WHERE session_id IS NOT NULL
+              UNION
+              SELECT o.session_id FROM hit
+              JOIN speaker_occurrences o ON o.person_id = hit.person_id
+              JOIN persons p ON p.id = o.person_id
+              WHERE hit.source_kind = 'person' AND p.retired_at IS NULL
+                AND o.association_status IN (
+                  'anonymousIdentity', 'automaticMatch', 'userConfirmed'
+                )
+              UNION
+              SELECT es.session_id FROM hit
+              JOIN event_sessions es ON es.event_id = hit.source_id
+              JOIN events e ON e.id = es.event_id
+              WHERE hit.source_kind = 'event' AND e.retired_at IS NULL
+              UNION
+              SELECT es.session_id FROM hit
+              JOIN event_text_documents etd ON etd.id = hit.source_id
+              JOIN event_sessions es ON es.event_id = etd.event_id
+              JOIN events e ON e.id = es.event_id
+              WHERE hit.source_kind = 'event_text' AND e.retired_at IS NULL
+                AND etd.state = 'current'
+              """,
+            arguments: [phrase])
+          let encoded = try JSONEncoder().encode(matched)
+          predicates.append("s.id IN (SELECT value FROM json_each(?))")
+          arguments += [String(decoding: encoded, as: UTF8.self)]
         } else {
           let pattern = "%\(normalized)%"
           predicates.append(
@@ -8030,6 +8165,7 @@ public actor GRDBDictationStore:
     }
     let database = try requirePool()
     return try await database.read { db in
+      let replacementOnly = try Self.replacementOnlyDictionaryEntryIDs(db)
       let rows = try Row.fetchAll(
         db,
         sql: """
@@ -8039,9 +8175,16 @@ public actor GRDBDictationStore:
           LIMIT 256
           """
       )
+      // Words the recognizer is told to expect first, then words learned
+      // from a single correction (replacements only), so the limit never
+      // pushes out the user's own words.
+      let entries = try rows.map(Self.dictionaryEntry)
+      let ordered =
+        entries.filter { !replacementOnly.contains($0.id) }
+        + entries.filter { replacementOnly.contains($0.id) }
       var selected: [DictionaryEntry] = []
       var usedBytes = 0
-      for entry in try rows.map(Self.dictionaryEntry) {
+      for entry in ordered {
         let entryBytes =
           entry.canonicalForm.utf8.count
           + entry.spokenForms.reduce(0) { $0 + $1.utf8.count }
@@ -8050,7 +8193,10 @@ public actor GRDBDictationStore:
         usedBytes += entryBytes
         if selected.count == entryLimit { break }
       }
-      return try DictionaryContextProjection(entries: selected)
+      return try DictionaryContextProjection(
+        entries: selected, replacementOnlyEntryIDs: replacementOnly,
+        learnedEntryIDs: try Self.learnedDictionaryEntryIDs(db),
+        learnedForms: try Self.learnedForms(db))
     }
   }
 
@@ -8152,6 +8298,16 @@ public actor GRDBDictationStore:
           current: current.revision.value,
           expected: expectedRevision.value
         )
+      }
+      if case .delete = mutation {
+        // A word the user deleted is not learned again from the same
+        // correction (收1-8): its pairs stay, marked, and teach nothing.
+        try db.execute(
+          sql: """
+            UPDATE learned_corrections SET dismissed_at = ?
+            WHERE dictionary_entry_id = ? AND dismissed_at IS NULL
+            """,
+          arguments: [now.timeIntervalSince1970, updated.id.rawValue.uuidString])
       }
       try Self.invalidateCurrentDerivations(in: db)
       return updated
@@ -8302,7 +8458,9 @@ public actor GRDBDictationStore:
     if state.schemaVersion == BestASRPersistenceSchema.currentUserVersion {
       return state
     }
-    let currentOrder = portableTableOrder
+    // Archives before v26 end where the v26 user-organizing tables begin.
+    let currentOrder = Array(
+      portableTableOrder.dropLast(userOrganizingPortableEmptyTables.count))
     let version = state.schemaVersion
     var tables = state.tables
     let names = tables.map(\.name)
@@ -8337,10 +8495,16 @@ public actor GRDBDictationStore:
       guard names == Array(currentOrder.dropLast(1)) else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }
-    case 22, 23, 24:
+    case 22, 23, 24, 25:
       // v23 widened a portable table in place; v24 and v25 added only local
       // tables.
       guard names == currentOrder else {
+        throw BestASRPersistenceError.portableArchiveInvalidSchema
+      }
+    case 26, 27:
+      // v27 added only local tables (the agent changes), v28 only the
+      // learned corrections.
+      guard names == portableTableOrder else {
         throw BestASRPersistenceError.portableArchiveInvalidSchema
       }
     default:
@@ -8348,6 +8512,7 @@ public actor GRDBDictationStore:
     }
     if version <= 18 { tables.append(remoteOrganizerPortableEmptyTable) }
     if version <= 21 { tables.append(userItemDetailsPortableEmptyTable) }
+    if version <= 25 { tables.append(contentsOf: userOrganizingPortableEmptyTables) }
     // Columns added by later migrations are appended at the end of the live
     // table, so older rows gain a trailing NULL in the same position.
     if version < 17 {
@@ -8407,13 +8572,20 @@ public actor GRDBDictationStore:
       rows: []
     )
 
+  /// Ends this store's use of the file: the WAL is checkpointed into the
+  /// database (and truncated when no other program is reading it), and the
+  /// connections are closed after the accesses in progress finish. A
+  /// checkpoint that cannot complete does not stop the close. The next open
+  /// then has no WAL to recover (REHEARSAL.md §8: 26 MB left behind). Later
+  /// calls on this store throw `databaseAlreadyClosed`. The one way a store
+  /// is closed (the App's quit and the tools alike, review 10-5d R6).
   public func checkpointAndClose() async throws {
     guard let database = pool else { return }
-    _ = try await database.writeWithoutTransaction { db in
+    pool = nil
+    _ = try? await database.writeWithoutTransaction { db in
       try db.checkpoint(.truncate)
     }
     try database.close()
-    pool = nil
   }
 
   func requirePool() throws -> DatabasePool {
@@ -8461,6 +8633,30 @@ public actor GRDBDictationStore:
     "event_edit_operations",
     "remote_organizer_decisions",
     "user_item_details",
+    // v26 (v11): pins, user groups and step overrides, made by hand on this Mac.
+    "user_pins",
+    "user_groups",
+    "user_group_members",
+    "user_step_overrides",
+  ]
+
+  /// The v26 user-organizing tables, empty, for an archive written before them.
+  private nonisolated static let userOrganizingPortableEmptyTables = [
+    PortableDatabaseTable(
+      name: "user_pins", columns: ["event_id", "pinned_at", "revision", "deleted_at"], rows: []),
+    PortableDatabaseTable(
+      name: "user_groups",
+      columns: [
+        "group_id", "name", "sort_order", "created_at", "updated_at", "revision", "deleted_at",
+      ],
+      rows: []),
+    PortableDatabaseTable(
+      name: "user_group_members",
+      columns: ["group_id", "event_id", "added_at", "revision", "deleted_at"], rows: []),
+    PortableDatabaseTable(
+      name: "user_step_overrides",
+      columns: ["event_id", "step_id", "state", "created_at", "revision", "deleted_at"],
+      rows: []),
   ]
 
   private nonisolated static let userItemDetailsPortableEmptyTable =
@@ -8867,7 +9063,7 @@ public actor GRDBDictationStore:
     )
   }
 
-  private static func sqliteInt(_ value: UInt64) throws -> Int64 {
+  static func sqliteInt(_ value: UInt64) throws -> Int64 {
     guard value <= UInt64(Int64.max) else {
       throw BestASRPersistenceError.numericOverflow
     }
@@ -9236,7 +9432,7 @@ public actor GRDBDictationStore:
     }
   }
 
-  private static func dictionaryEntry(_ row: Row) throws -> DictionaryEntry {
+  static func dictionaryEntry(_ row: Row) throws -> DictionaryEntry {
     guard let uuid = UUID(uuidString: row["id"]) else {
       throw BestASRPersistenceError.storedDataCorrupt
     }
@@ -9269,7 +9465,7 @@ public actor GRDBDictationStore:
     }
   }
 
-  private static func dictionaryJSONValue(_ values: [String]) throws -> String {
+  static func dictionaryJSONValue(_ values: [String]) throws -> String {
     let encoder = JSONEncoder()
     encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
     let data = try encoder.encode(values)
@@ -9279,7 +9475,7 @@ public actor GRDBDictationStore:
     return value
   }
 
-  private static func databaseDate(_ value: Date) -> Date {
+  static func databaseDate(_ value: Date) -> Date {
     Date(
       timeIntervalSince1970: (value.timeIntervalSince1970 * 1_000).rounded(.down) / 1_000
     )

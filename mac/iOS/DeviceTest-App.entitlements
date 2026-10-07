@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  The app.
+  Device builds signed by a team whose profiles carry no App Group (a free Personal Team on a Mac
+  where Xcode cannot register one): iOS/script/device_build.sh signs each target with its own
+  DeviceTest-*.entitlements (MINDLOOM_ENTITLEMENTS_*). Free profiles allow keychain-access-groups
+  <team>.*:
+  - <bundle id>          the app only: the phone's SSH key (PhoneKeyKeychain)
+  - <bundle id>.shared   app, keyboard, share: the voice link and the share item list
+  - <bundle id>.sharekey app and share: the pairing and key handed to the share extension
+  The first group is the target's default group.
+-->
+<plist version="1.0">
+<dict>
+	<key>keychain-access-groups</key>
+	<array>
+		<string>$(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID)</string>
+		<string>$(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).shared</string>
+		<string>$(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).sharekey</string>
+	</array>
+</dict>
+</plist>

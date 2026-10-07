@@ -243,7 +243,7 @@ if arguments.contains("--check") {
   // For the docs' "is it connected?" step; says nothing about the library.
   if let socketPath, let descriptor = AgentSocketClient.connectVerified(socketPath, log: { _ in }) {
     close(descriptor)
-    print("织机在运行，可以连接")
+    print("Mindloom 在运行，可以连接")
     exit(0)
   }
   print(AgentCopy.notRunning)
@@ -252,14 +252,15 @@ if arguments.contains("--check") {
 if arguments.contains("--help") {
   print(
     """
-    mindloom-mcp：织机的 MCP 服务（stdio）。由 Claude Code、Claude Desktop 等启动，不需要手动运行。
-      --check    检查织机是否在运行
+    mindloom-mcp：Mindloom 的 MCP 服务（stdio）。由 Claude Code、Claude Desktop、Codex 等启动，无需手动运行。
+    需要先在 Mindloom 的“设置”>“其他 App”中打开“允许其他 App 读取”。
+      --check    检查 Mindloom 是否在运行
       --version  版本
-    同一个程序也是你自己的命令行入口（需要在设置 → 入口里打开）：
+    同一个程序也是你自己的命令行入口（需要在“设置”>“入口”中打开）：
       mindloom-mcp add "文字" / --file 路径 / 管道输入；mindloom-mcp due
       以 mindloom 的名字链接它之后：mindloom add …、mindloom due
-    它也是 Chrome 扩展「收进织机」的本机连接程序，由 Chrome 启动（需要在设置 → 入口里打开「Chrome 扩展」）。
-    环境变量 MINDLOOM_DATA_ROOT：开发版使用的另一个数据目录（绝对路径）。
+    它也是 Chrome 扩展“添加到 Mindloom”的本机连接程序，由 Chrome 启动（需要在“设置”>“入口”中打开“Chrome 扩展”）。
+    环境变量 MINDLOOM_DATA_ROOT：演示库或开发版使用的另一个数据目录（绝对路径）。
     """)
   exit(0)
 }

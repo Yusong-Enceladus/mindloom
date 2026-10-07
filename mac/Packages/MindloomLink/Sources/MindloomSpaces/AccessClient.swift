@@ -384,7 +384,7 @@ public struct InfraHealth: Decodable, Equatable, Sendable {
     case "embed_down": return "向量模型没有响应"
     case "disk_low": return "磁盘剩余不到 5%"
     case "memory_low": return "可用内存不到 2 GB"
-    default: return "整理设备报告：\(code)"
+    default: return "DGX Spark 报告：\(code)"
     }
   }
 }

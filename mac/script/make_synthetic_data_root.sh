@@ -1,12 +1,13 @@
 #!/bin/zsh
 
-# Creates a separate, explicitly synthetic bestASR data root for demos and
+# Creates a separate, explicitly synthetic Mindloom data root for demos and
 # own-device organizer tests, then prints how to launch the app on it.
 #
 # The app starts the Spark organizer link only from a data root that holds the
 # SYNTHETIC_DATA_ROOT marker (PRD §0.3.8). This script never creates, reads, or
-# modifies the owner's real library and refuses any path that is, contains, or
-# sits inside it. Put only fabricated data in the new root.
+# modifies the owner's real library (Mindloom's folder, and bestASR's where it was
+# before 2026-10-06) and refuses any path that is, contains, or sits inside either.
+# Put only fabricated data in the new root.
 
 set -euo pipefail
 
@@ -25,16 +26,17 @@ support_parent="$HOME/Library/Application Support"
 if [[ -d "$support_parent" ]]; then
   support_parent="$(cd "$support_parent" && pwd -P)"
 fi
-real_library="${support_parent}/bestASR"
+real_libraries=("${support_parent}/Mindloom" "${support_parent}/bestASR")
 
 refuse_if_overlapping() {
-  local candidate="${1:l}"
-  local real="${real_library:l}"
+  local candidate="${1:l}" real
   candidate="${candidate%/}"
-  if [[ "$candidate/" == "$real/"* || "$real/" == "$candidate/"* ]]; then
-    print -u2 "error: refusing a path that overlaps the real bestASR library"
-    exit 65
-  fi
+  for real in "${(@L)real_libraries}"; do
+    if [[ "$candidate/" == "$real/"* || "$real/" == "$candidate/"* ]]; then
+      print -u2 "error: refusing a path that overlaps the owner's library"
+      exit 65
+    fi
+  done
 }
 
 # Magic prefixes (/.nofollow, /.resolve, /.vol) reach any directory under
@@ -64,9 +66,9 @@ resolved="$(cd "$target" && pwd -P)"
 refuse_if_overlapping "$resolved"
 
 marker="$resolved/SYNTHETIC_DATA_ROOT"
-print -r -- "Synthetic bestASR data root. Only fabricated data belongs here." > "$marker"
+print -r -- "Synthetic Mindloom data root. Only fabricated data belongs here." > "$marker"
 /bin/chmod 0644 "$marker"
 
 print "Synthetic data root ready: $resolved"
-print "Launch bestASR on it with:"
-print "  open -n <path to bestASR.app> --args -BestASRDataRoot \"$resolved\""
+print "Launch Mindloom on it with:"
+print "  open -n <path to Mindloom.app> --args -BestASRDataRoot \"$resolved\""

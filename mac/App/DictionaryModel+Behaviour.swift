@@ -77,7 +77,7 @@ extension DictionaryModel {
       guard let self else { return }
       defer { saveInProgress = false }
       guard let repository else {
-        dictionaryStatusMessage = "本机词典存储暂不可用"
+        dictionaryStatusMessage = "暂时无法读取词典"
         return
       }
       do {
@@ -205,12 +205,12 @@ extension DictionaryModel {
 
   func exportFile(_ format: LocalDictionaryTransferFormat) {
     guard let repository else {
-      dictionaryStatusMessage = "本地词典存储暂不可用"
+      dictionaryStatusMessage = "暂时无法读取词典"
       return
     }
     let panel = NSSavePanel()
     panel.allowedContentTypes = format == .csv ? [.commaSeparatedText] : [.json]
-    panel.nameFieldStringValue = "bestASR-dictionary.\(format.rawValue)"
+    panel.nameFieldStringValue = "Mindloom 词典.\(format.rawValue)"
     guard panel.runModal() == .OK, let destination = panel.url else { return }
     dictionaryStatusMessage = "正在导出本地词典…"
     Task { [weak self] in

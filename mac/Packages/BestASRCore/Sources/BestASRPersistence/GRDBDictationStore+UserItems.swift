@@ -265,6 +265,12 @@ extension GRDBDictationStore {
                  d.item_kind, d.page_count, d.uniform_type, d.parent_session_id, d.frame_ms,
                  d.extractor,
                  tr.id AS transcript_id, tr.content, tr.created_at AS text_updated_at,
+                 (SELECT dt.output_text FROM derived_text_revisions dt
+                  WHERE dt.session_id = s.id AND dt.state = 'current'
+                    AND dt.source_transcript_id = tr.id
+                    AND dt.model_artifact_id IS NOT '\(Self.userItemReadingArtifactID)'
+                  ORDER BY dt.source_revision DESC, dt.created_at DESC, dt.id DESC
+                  LIMIT 1) AS delivered_text,
                  -- The reading describes the image, so a later caption edit
                  -- of the item's text does not retire it.
                  (SELECT dt.output_text FROM derived_text_revisions dt
@@ -350,6 +356,11 @@ extension GRDBDictationStore {
           .flatMap(UUID.init(uuidString:)).map(SessionID.init)
         record.frameMilliseconds = row["frame_ms"]
         record.keptOnMac = (row["extractor"] as String?) == UserItemLimits.localOnlyExtractor
+        if mode != .userItem, let delivered = row["delivered_text"] as String?,
+          !delivered.isEmpty, delivered != (row["content"] as String?)
+        {
+          record.deliveredText = delivered
+        }
         if mode == .importedMedia {
           record.keyframes = try Self.memoryKeyframes(db, parentSessionID: id)
         }

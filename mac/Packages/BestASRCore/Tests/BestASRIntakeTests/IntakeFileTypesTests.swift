@@ -224,7 +224,7 @@ final class IntakeFileTypesTests: XCTestCase {
     try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
     XCTAssertEqual(
       processor.prepare(.file(folder), capturedAt: at, source: nil, origin: .finder),
-      .rejected("不支持文件夹，未收进来"))
+      .rejected("不支持文件夹，未添加"))
   }
 
   // MARK: - Size caps
@@ -237,7 +237,7 @@ final class IntakeFileTypesTests: XCTestCase {
     let big = try write(Data(repeating: 7, count: 1_001), "大.xlsx")
     XCTAssertEqual(
       small.prepare(.file(big), capturedAt: at, source: nil, origin: .finder),
-      .rejected("文件超过 200 MB，未收进来"))
+      .rejected("文件超过 200 MB，未添加"))
     XCTAssertFalse(
       FileManager.default.fileExists(
         atPath: root.appendingPathComponent("small-assets/sessions").path))

@@ -108,13 +108,6 @@ final class MemoryShownPeopleTests: XCTestCase {
     XCTAssertTrue(
       EventPlainTextFormatter(timeZone: TimeZone(identifier: "Asia/Shanghai")!).format(detail)
         .contains("人物：虚构丁、虚构甲、虚构乙\n"))
-    // The loom lane draws the same people.
-    let loom = MemoryLoom(
-      projection: projection, home: home, span: .twoWeeks,
-      calendar: Calendar(identifier: .gregorian))
-    for lane in loom.lanes {
-      XCTAssertTrue(Set(lane.people.map(\.name)).isDisjoint(with: hidden), lane.title)
-    }
   }
 
   func testWhatReadsAsAPersonsName() {

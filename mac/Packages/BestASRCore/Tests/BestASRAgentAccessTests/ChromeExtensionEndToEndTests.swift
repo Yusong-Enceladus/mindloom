@@ -112,12 +112,12 @@ final class ChromeExtensionEndToEndTests: XCTestCase {
         pageUrl: "https://example.test/notes/7"}, {id: -1, title: "实验记录"})
       """)
     XCTAssertEqual(reply["ok"], true, reply.serialized)
-    XCTAssertEqual(reply["message"]?.stringValue, "已收进来 · 来自 Chrome")
+    XCTAssertEqual(reply["message"]?.stringValue, "已收好 · 来自 Chrome")
     // The button says so: a check mark, and the answer as its tooltip.
     var badge = try await devtools.evaluate(
       "Promise.all([chrome.action.getBadgeText({}), chrome.action.getTitle({})]).then(v => v.join('|'))"
     )
-    XCTAssertEqual(badge.stringValue, "✓|已收进来 · 来自 Chrome")
+    XCTAssertEqual(badge.stringValue, "✓|已收好 · 来自 Chrome")
     // The context menu on the page, and the toolbar button with no selection.
     reply = try await devtools.evaluate(
       """

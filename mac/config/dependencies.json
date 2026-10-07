@@ -38,7 +38,7 @@
       "runtimeBehavior": "Production local SQLite access, migrations, WAL, transactions, recovery, history, dictionary storage, and FTS; no telemetry or remote services.",
       "distributionImpact": "Exact-pinned Swift source is statically linked into the bestASR executable. The license snapshot and attribution ship with the app notices.",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true
     },
@@ -96,7 +96,7 @@
       "runtimeBehavior": "Exact-pinned Swift/Core ML source used by the external evidence probe and the dedicated production runtime target. Production code must load only model-manager-verified local files and must not call FluidAudio automatic-download APIs.",
       "distributionImpact": "Exact-pinned Swift/Core ML source is statically linked into the bestASR executable; model files are separately governed by config/model-artifacts.json and remain user-provisioned in the current package.",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true
     },
@@ -119,7 +119,7 @@
       "runtimeBehavior": "Exact-pinned MLX tensor, neural-network, optimizer, CPU, and Metal kernels execute local model inference.",
       "distributionImpact": "Statically linked into bestASR with the MLX Metal resource bundle. The recorded size is the tracked Git blob total and the SHA-256 is over the normalized Git tree listing.",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -139,11 +139,11 @@
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "sizeBytes": 2569716,
       "sha256": "2f37c1bc596d610bdc8b93738d5ee191581fc197a3d116fa2a20bbc6a6ebf79b",
-      "networkBehavior": "The selected production path calls only the local-directory model factory; downloader and Hub integration products are not imported.",
-      "runtimeBehavior": "Exact-pinned Qwen model construction, bounded KV cache, generation, and decoding behind the BestASR local-text protocol.",
+      "networkBehavior": "The selected production path calls only the local-directory model factories (LLM and embedders); downloader and Hub integration products are not imported.",
+      "runtimeBehavior": "Exact-pinned Qwen model construction, bounded KV cache, generation, and decoding behind the BestASR local-text protocol. The MLXEmbedders product of the same pinned package (v12 search) runs the meaning search model (Qwen3-Embedding 0.6B) from a verified local directory on its own utility queue; its vectors stay in the library database.",
       "distributionImpact": "Statically linked into bestASR. The recorded size is the tracked Git blob total and the SHA-256 is over the normalized Git tree listing.",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -167,7 +167,7 @@
       "distributionImpact": "Tokenizers and its statically linked closure are included in bestASR. The recorded size is the tracked Git blob total and the SHA-256 is over the normalized Git tree listing.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -191,7 +191,7 @@
       "distributionImpact": "Statically linked MLX transitive dependency. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -215,7 +215,7 @@
       "distributionImpact": "Statically linked tokenizer transitive dependency. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -239,7 +239,7 @@
       "distributionImpact": "Statically linked transitive dependency; its network capability is explicitly risk-recorded and deny-network tested. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -263,7 +263,7 @@
       "distributionImpact": "Statically linked tokenizer transitive dependency. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -287,7 +287,7 @@
       "distributionImpact": "Statically linked transitive dependency including vendored cryptographic code; upstream NOTICE is retained. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -311,7 +311,7 @@
       "distributionImpact": "Statically linked tokenizer transitive dependency. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -335,7 +335,7 @@
       "distributionImpact": "Statically linked network-capable transitive code is explicitly inventoried; local generation passes deny-network evidence. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -359,7 +359,7 @@
       "distributionImpact": "Statically linked network-capable transitive code is explicitly inventoried; upstream NOTICE is retained. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -383,7 +383,7 @@
       "distributionImpact": "Statically linked transitive dependency. Digest fields use the normalized tracked Git tree.",
       "hardware": "Architecture-independent Swift/C source compiled for Apple Silicon arm64; evaluated on Apple M4 Pro",
       "packagePaths": [
-        "Contents/MacOS/bestASR"
+        "Contents/MacOS/Mindloom"
       ],
       "shipped": true,
       "productionCandidate": true
@@ -515,7 +515,7 @@
       "runtimeBehavior": "BestASRQwenRuntime and AlphaASREvalCLI link MLXAudioSTT/Core/Codecs/VAD. Actor-owned public forward calls provide bounded final ASR with token cancellation and natural source-aligned phrases, without SDK detached producers. Shared MLX 0.31.3, MLX Swift LM 3.31.3 and Transformers 1.3.3 stay exact. This entry's size/digest remain the historical first developer-evaluator build identity, not the SDK marginal size or the shipping binary; the release-package manifest records actual bundle files.",
       "distributionImpact": "Statically linked native Swift/MLX code and retained MIT license ship in the App. Models are separately managed local downloads. Source, build output and redownloadable caches remain external. No Python/Homebrew/CLI runtime is required on the user's machine.",
       "productionCandidate": true,
-      "packagePaths": ["Contents/MacOS/bestASR"],
+      "packagePaths": ["Contents/MacOS/Mindloom"],
       "shipped": true
     },
     {
@@ -551,6 +551,30 @@
       "distributionImpact": "Probe binaries and models remain outside the repository and release package. Distribution is blocked until the 3D-Speaker embedding license, linked ONNX Runtime NOTICE inventory, and release matrix pass.",
       "packagePaths": [],
       "shipped": false
+    },
+    {
+      "id": "tencentmeeting-cli-tmeet",
+      "exactVersion": "1.0.18 (Mindloom build v1.0.18-mindloom3)",
+      "source": "https://github.com/TencentCloud/tencentmeeting-cli/releases/tag/v1.0.18",
+      "sourceRevision": "e631b355da2b001d24b82f453b65d96f39c59865",
+      "license": "MIT",
+      "licenseSource": "https://github.com/TencentCloud/tencentmeeting-cli/blob/e631b355da2b001d24b82f453b65d96f39c59865/LICENSE",
+      "licenseFile": "Legal/tencentmeeting-cli-LICENSE-MIT.txt",
+      "licenseSHA256": "477e7cca2b7c7a5ad4ab49e6d569c297a7ea7796caea9c70584ab91e46afb0e7",
+      "productionCandidate": true,
+      "requiredAttribution": "Copyright (C) 2026 Tencent. All rights reserved.",
+      "noticeHeading": "tencentmeeting-cli (tmeet) v1.0.18",
+      "minimumOS": "macOS 12 (Go 1.25 binary, LC_BUILD_VERSION minos 12.0); bestASR target remains macOS 14.2",
+      "hardware": "Apple Silicon arm64 static Go binary (CGO off)",
+      "sizeBytes": 1229965,
+      "sha256": "e932f45752c639484e862b6dab31fb870ef1d0c5cae9c0107bef1de80a641c4a",
+      "networkBehavior": "Only while the Tencent Meeting entry is on: connects to api.meeting.qq.com, work.medialab.qq.com and meeting.tencent.com with the owner's Tencent Meeting login to read meeting lists and transcripts the account may view. Sends the login token, meeting and recording numbers, time windows, and request headers (openId with a random device number, macOS version, CLI version, command name; agent and model names empty). Never sends library content; crash reports are disabled by patch 0001. Go modules are fetched through the Go module proxy only at build time and verified against go.sum.",
+      "runtimeBehavior": "Started by the App with posix_spawn for one whitelisted command at a time (auth login --no-browser, auth status, record list, meeting list-ended, meeting get, record transcript-get), each run only after checking the helper is the code sealed into the running App, with a fixed environment, descriptors 0-3 only, and a time limit; the login master key arrives on descriptor 3 (patch 0003) and the system Keychain is never touched. Writes only <library>/entries/tencent-meeting/ (encrypted login, random device number, 7-day local command log; a reconnection makes the new login in tencent-meeting-new/ beside it). No background process is left running.",
+      "distributionImpact": "Built from the vendored pinned source plus patches (third_party/tencentmeeting-cli, verified against upstream.sha256), signed with the App identity and hardened runtime at Contents/Helpers/tmeet, sealed and notarized with the App. The sha256 and sizeBytes here describe the vendored source tree manifest and its files. License snapshots ship in Legal/ (tencentmeeting-cli and the linked Go code).",
+      "packagePaths": [
+        "Contents/Helpers/tmeet"
+      ],
+      "shipped": true
     }
   ]
 }

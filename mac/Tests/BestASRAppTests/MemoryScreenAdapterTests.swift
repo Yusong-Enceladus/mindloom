@@ -57,7 +57,7 @@ final class MemoryScreenAdapterTests: XCTestCase {
       [loose.sessionID.rawValue.uuidString, room.sessionID.rawValue.uuidString])
     let questions = model.localMemoryQuestions()
     // It names the item, as the organizing device's questions do.
-    XCTAssertEqual(questions.map(\.prompt), ["这条「虚构 2」和「虚构事件」是同一件事吗？"])
+    XCTAssertEqual(questions.map(\.prompt), ["这条“虚构 2”和“虚构事件”是同一件事吗？"])
     XCTAssertEqual(questions.first?.kind, .itemIntoEvent)
     XCTAssertEqual(questions.first?.origin, .local)
     XCTAssertEqual(questions.first?.b, eventID.rawValue.uuidString)
@@ -129,15 +129,17 @@ final class MemoryScreenAdapterTests: XCTestCase {
         cursor: 1, events: [], questions: [], persons: [],
         unacceptedDecisions: [rejected, unknown]))
     XCTAssertEqual(issues.map(\.deliveryUnknown), [false, true])
-    XCTAssertEqual(issues.first?.title, "整理设备未接受：改标题（整理设备拒绝了这次修改）")
+    XCTAssertEqual(issues.first?.title, "DGX Spark 未接受：更改标题（DGX Spark 拒绝了这次修改）")
     XCTAssertEqual(issues.first?.id, rejected.decisionID.uuidString)
   }
 
-  func testPinAndFeatureLessNeedTheOrganizingDevice() {
+  func testCorrectionsWithoutALibraryDoNothing() async {
     let model = DictationAppModel(preview: true)
-    // No link and no projection: nothing is recorded and nothing crashes.
-    model.memoryPin("ev", pinned: true)
-    model.memoryFeatureLess("ev")
+    // No link, no projection, no library: nothing is recorded and nothing
+    // crashes.
+    await model.memoryCommit(.pin(eventID: "ev", pinned: true))
+    await model.memoryCommit(.markStep(eventID: "ev", stepID: "k1", state: .done, previous: nil))
+    await model.memoryCommit(.rename(eventID: "ev", from: "a", to: "b"))
     XCTAssertNil(model.events.remoteProjection)
   }
 }

@@ -34,12 +34,11 @@ final class SpokenModeTests: XCTestCase {
   /// ordinary one, and by the time the difference shows it has already been
   /// delivered. The capsule names the mode while it is still listening.
   func testCapsuleNamesOnlyTheModesThatChangeTheOutcome() {
+    XCTAssertNil(DictationAppModel.hudBadge(.dictate, language: "英语"))
+    XCTAssertEqual(DictationAppModel.hudBadge(.translate, language: "日语")?.text, "日")
     XCTAssertEqual(
-      DictationAppModel.capsuleListeningCaption(.dictate, language: "英语"), "")
-    XCTAssertEqual(
-      DictationAppModel.capsuleListeningCaption(.translate, language: "日语"), "翻译成日语")
-    XCTAssertEqual(
-      DictationAppModel.capsuleListeningCaption(.command, language: "英语"), "指令")
+      DictationAppModel.hudBadge(.translate, language: "日语", languageReady: false)?.note, "未下载")
+    XCTAssertEqual(DictationAppModel.hudBadge(.command, language: "英语")?.text, "指令")
   }
 
   /// Shift entering 翻译 and Shift pressed again are the same key doing the

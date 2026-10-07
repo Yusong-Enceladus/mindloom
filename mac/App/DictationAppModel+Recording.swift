@@ -61,7 +61,7 @@ extension DictationAppModel {
 
   func startOrEndRoomRecording() {
     if lifecycleCommands.queueIfInFlight(.end, for: .roomRecording) {
-      capture.roomStatusMessage = "当前操作完成后立即结束，并处理已经安全保存的录音"
+      capture.roomStatusMessage = "当前操作完成后立即结束，并处理已保存的录音"
       return
     }
     if [.recording, .paused].contains(capture.roomSnapshot.phase) {
@@ -90,9 +90,87 @@ extension DictationAppModel {
     }
   }
 
+  // MARK: - 开始记录会议 (menu bar)
+
+  /// The meeting the menu bar follows: a system-audio recording when one is
+  /// under way, the room microphone's otherwise.
+  var meetingUsesComputerSound: Bool {
+    capture.systemAudioSnapshot.phase.isActive
+  }
+
+  var meetingSnapshot: DictationSessionSnapshot {
+    meetingUsesComputerSound ? capture.systemAudioSnapshot : capture.roomSnapshot
+  }
+
+  var meetingCanPauseOrResume: Bool {
+    meetingUsesComputerSound ? systemAudioCanPauseOrResume : roomCanPauseOrResume
+  }
+
+  var meetingCanCancel: Bool {
+    meetingUsesComputerSound ? systemAudioCanCancel : roomCanCancel
+  }
+
+  /// 开始记录会议 / 结束并保存 (v12 1C, ALIGNMENT 收2-2). Starting records
+  /// like the old meeting mode: with the 屏幕与系统录音 permission, the
+  /// computer's sound (the meeting App that is playing sound, chosen by
+  /// itself, or what 「录：… ›」 chose; the other people in an online meeting,
+  /// even on headphones) and the microphone as two tracks of one recording;
+  /// without it, the room microphone, and the menu and the item say 「只录了
+  /// 麦克风」. The permission is asked once, with the system's own prompt,
+  /// the first time a meeting starts; the meeting starts at once either way.
+  /// The source audio is journaled and kept until the user deletes it.
+  func startOrEndMeetingRecording() {
+    if capture.systemAudioSnapshot.phase.isActive {
+      startOrEndSystemAudioRecording()
+      return
+    }
+    if capture.roomSnapshot.phase.isActive {
+      startOrEndRoomRecording()
+      return
+    }
+    Task { [weak self] in
+      guard let self else { return }
+      // A read (CGPreflightScreenCaptureAccess) …
+      var state = await permissionService?.state(for: .systemAudioCapture) ?? .notDetermined
+      // … and, never asked before, the system's prompt, once.
+      if MeetingCapturePlan.asksFirst(state), !fixtureMode, let permissionService {
+        state = await permissionService.request(.systemAudioCapture)
+      }
+      capture.systemAudioPermission = state
+      guard !capture.roomSnapshot.phase.isActive, !capture.systemAudioSnapshot.phase.isActive
+      else { return }
+      if MeetingCapturePlan.plan(systemAudio: state) == .computerSound, !fixtureMode {
+        let meeting = MeetingState.shared
+        meeting.readSources()
+        meetingComputerSound = meeting.pick
+        meeting.recordingPick = meeting.pick
+        startOrEndSystemAudioRecording()
+      } else {
+        MeetingState.shared.recordingPick = nil
+        startOrEndRoomRecording()
+      }
+    }
+  }
+
+  func pauseOrResumeMeetingRecording() {
+    if meetingUsesComputerSound {
+      pauseOrResumeSystemAudioRecording()
+    } else {
+      pauseOrResumeRoomRecording()
+    }
+  }
+
+  func cancelMeetingRecording() {
+    if meetingUsesComputerSound {
+      cancelSystemAudioRecording()
+    } else {
+      cancelRoomRecording()
+    }
+  }
+
   func pauseOrResumeRoomRecording() {
     if lifecycleCommands.queueIfInFlight(.pauseOrResume, for: .roomRecording) {
-      capture.roomStatusMessage = "当前操作完成后立即暂停；已经保存的音频不会丢失"
+      capture.roomStatusMessage = "当前操作完成后立即暂停；已保存的音频会保留"
       return
     }
     performLifecycleCommand(mode: .roomRecording, intent: .pauseOrResume) { [weak self] in
@@ -122,7 +200,7 @@ extension DictationAppModel {
         capture.roomStatusMessage =
           capture.roomSnapshot.phase == .paused
           ? "录音已暂停；继续后仍属于同一条记录"
-          : "正在使用本机麦克风录音，原始音频持续安全保存"
+          : "正在使用本机麦克风录音，原始音频持续保存"
       } catch {
         capture.roomStatusMessage = "暂停或继续失败；已经保存的音频不受影响"
       }
@@ -149,7 +227,7 @@ extension DictationAppModel {
         capture.roomLiveTranscriptStatus = "录音开始后会显示本机实时逐字稿"
         capture.roomStatusMessage = "已取消这次未提交的录音"
       } catch {
-        capture.roomStatusMessage = "取消需要在下次启动时恢复；已保存音频不会被误删"
+        capture.roomStatusMessage = "取消将在下次启动时完成；已保存的音频会保留"
       }
     }
   }
@@ -164,7 +242,7 @@ extension DictationAppModel {
 
   func startOrEndSystemAudioRecording() {
     if lifecycleCommands.queueIfInFlight(.end, for: .systemAudio) {
-      capture.systemAudioStatusMessage = "当前操作完成后立即结束，并处理已经安全保存的音轨"
+      capture.systemAudioStatusMessage = "当前操作完成后立即结束，并处理已保存的音轨"
       return
     }
     if [.recording, .paused].contains(capture.systemAudioSnapshot.phase) {
@@ -195,7 +273,7 @@ extension DictationAppModel {
 
   func pauseOrResumeSystemAudioRecording() {
     if lifecycleCommands.queueIfInFlight(.pauseOrResume, for: .systemAudio) {
-      capture.systemAudioStatusMessage = "当前操作完成后立即暂停；已经保存的音轨不会丢失"
+      capture.systemAudioStatusMessage = "当前操作完成后立即暂停；已保存的音轨会保留"
       return
     }
     performLifecycleCommand(mode: .systemAudio, intent: .pauseOrResume) { [weak self] in
@@ -203,14 +281,15 @@ extension DictationAppModel {
       do {
         if capture.systemAudioSnapshot.phase == .paused {
           let devices = (try? MicrophoneDeviceCatalog.devices()) ?? []
-          if history.includeMicrophoneInSystemRecording,
+          if activeSystemIncludesMicrophone,
             !devices.contains(where: { $0.uid == activeSystemMicrophoneUID })
           {
             let replacement = try MicrophoneDeviceCatalog.defaultDevice()
             let scope: SystemAudioCaptureScope =
-              capture.selectedSystemAudioSourceID == "entire-system"
-              ? .entireSystem
-              : .application(identity: capture.selectedSystemAudioSourceID)
+              activeSystemScope
+              ?? (capture.selectedSystemAudioSourceID == "entire-system"
+                ? .entireSystem
+                : .application(identity: capture.selectedSystemAudioSourceID))
             capture.systemAudioSnapshot = try await coordinator.replacePausedCapture(
               with: SystemAudioWithMicrophoneCapture(
                 scope: scope,
@@ -228,7 +307,7 @@ extension DictationAppModel {
         } else if capture.systemAudioSnapshot.phase == .recording {
           capture.systemAudioSnapshot = try await coordinator.pause()
           stopSystemAudioLifecycleMonitoring()
-          capture.systemAudioStatusMessage = "电脑内录已暂停；已经录下的音频已安全保存"
+          capture.systemAudioStatusMessage = "电脑内录已暂停；已经录下的音频已保存"
         }
       } catch {
         capture.systemAudioStatusMessage =
@@ -266,7 +345,7 @@ extension DictationAppModel {
         capture.systemAudioLiveTranscriptStatus = "录制开始后会显示本机实时逐字稿"
         capture.systemAudioStatusMessage = "已取消这次未提交的电脑内录"
       } catch {
-        capture.systemAudioStatusMessage = "取消需要在下次启动时恢复；已保存音频不会被误删"
+        capture.systemAudioStatusMessage = "取消将在下次启动时完成；已保存的音频会保留"
       }
     }
   }
@@ -301,7 +380,7 @@ extension DictationAppModel {
     if let disk = try? await journal.diskSpaceDecision(),
       disk.state == .hardStop
     {
-      capture.roomStatusMessage = "本机可用空间不足 1 GB；为保护长录音，已拒绝开始。请先管理存储"
+      capture.roomStatusMessage = "这台 Mac 的可用空间不足 1 GB，无法开始录音。请先管理储存空间"
       return
     }
     stopRoomLevelPreview()
@@ -334,8 +413,8 @@ extension DictationAppModel {
       capture.roomLiveTranscriptText = ""
       capture.roomLiveTranscriptStatus =
         models.modelRuntimeReady
-        ? "正在等待第一段已安全落盘的音频…"
-        : "正在安全保存音频；本地识别准备完成后可从资料库转写"
+        ? "正在保存第一段音频…"
+        : "正在保存音频；本地识别准备完成后可从资料库转写"
       capture.roomSnapshot = try await roomCoordinator.start(
         sessionID: sessionID,
         target: nil
@@ -357,7 +436,7 @@ extension DictationAppModel {
       capture.roomStatusMessage =
         models.modelRuntimeReady
         ? "正在录音；原始音频会持续保存在这台 Mac 上"
-        : "正在录音并安全保存原音；本地识别就绪后可从资料库继续处理"
+        : "正在录音并保存原音；本地识别就绪后可从资料库继续处理"
     } catch {
       stopRoomLifecycleMonitoring()
       activeRoomMicrophoneUID = ""
@@ -372,11 +451,13 @@ extension DictationAppModel {
     do {
       let finalization = try await roomCoordinator.end()
       capture.roomSnapshot = finalization.snapshot
+      MeetingState.shared.ended(.saving)
       guard models.modelRuntimeReady else {
+        MeetingState.shared.ended(.waitingForModels)
         self.roomCoordinator = nil
         activeRoomMicrophoneUID = ""
         capture.roomLiveTranscriptStatus = "原始音频已保留；本地识别就绪后可恢复转写"
-        capture.roomStatusMessage = "录音已安全保存；完成本地组件准备后可在资料库继续处理"
+        capture.roomStatusMessage = "录音已保存；完成本地模型准备后可在资料库继续处理"
         await presentCaptureWorkspaceHandoff(
           sessionID: finalization.snapshot.sessionID,
           inputMode: .roomMicrophone,
@@ -386,8 +467,9 @@ extension DictationAppModel {
         )
         return
       }
-      capture.roomStatusMessage = "录音已安全保存，正在本地识别和整理…"
+      capture.roomStatusMessage = "录音已保存，正在本地识别和整理…"
       guard let localRuntime else {
+        MeetingState.shared.ended(.waitingForModels)
         capture.roomStatusMessage = "录音已保存；本地识别服务恢复后可继续处理"
         await presentCaptureWorkspaceHandoff(
           sessionID: finalization.snapshot.sessionID,
@@ -401,6 +483,7 @@ extension DictationAppModel {
       let outcome = try await localRuntime.process(finalization)
       try await roomCoordinator.synchronizeProcessingSnapshot(outcome.snapshot)
       capture.roomSnapshot = outcome.snapshot
+      Self.meetingEnded(outcome.snapshot)
       self.roomCoordinator = nil
       activeRoomMicrophoneUID = ""
       capture.roomLiveTranscriptStatus = "最终逐字稿已保存；可在资料库查看和校对"
@@ -421,6 +504,7 @@ extension DictationAppModel {
         try? await roomCoordinator.synchronizeProcessingSnapshot(durable)
       }
       capture.roomStatusMessage = "音频已保留；可在历史记录中重试处理"
+      MeetingState.shared.ended(.failed)
       await presentCaptureWorkspaceHandoff(
         sessionID: capture.roomSnapshot.sessionID,
         inputMode: .roomMicrophone,
@@ -432,6 +516,11 @@ extension DictationAppModel {
   }
 
   func startSystemAudioRecording(sessionID: SessionID) async {
+    // Read once, first: an early return below never leaves it set for a
+    // later 电脑内录 started from its own page.
+    let meetingPick = meetingComputerSound
+    let meeting = meetingPick != nil
+    meetingComputerSound = nil
     defer {
       if self.capture.systemAudioSnapshot.phase == .preparing {
         self.capture.systemAudioSnapshot = DictationSessionSnapshot()
@@ -459,18 +548,24 @@ extension DictationAppModel {
     guard self.capture.systemAudioPermission == .granted else {
       self.capture.systemAudioStatusMessage =
         self.capture.systemAudioPermission == .restartRequired
-        ? "系统已授权；请退出并重新打开织机，使电脑内录权限生效"
-        : "需要“屏幕与系统音频录制”权限；已为你打开系统授权"
+        ? "系统已授权；请\(MindloomLaunch.reopenWords)，使电脑内录权限生效"
+        : "需要“录屏与系统录音”权限；已为你打开系统授权"
       resolvePermission(.systemAudioCapture)
       return
     }
     if let disk = try? await journal.diskSpaceDecision(),
       disk.state == .hardStop
     {
-      self.capture.systemAudioStatusMessage = "本机可用空间不足 1 GB；为保护音轨，已拒绝开始。请先管理存储"
+      self.capture.systemAudioStatusMessage = "这台 Mac 的可用空间不足 1 GB，无法开始录制。请先管理储存空间"
       return
     }
-    if history.includeMicrophoneInSystemRecording,
+    // 开始记录会议: the whole computer's sound, with the microphone as a
+    // second track when it is allowed (the meeting's own voice).
+    let includeMicrophone =
+      meeting
+      ? self.capture.microphonePermission == .granted
+      : history.includeMicrophoneInSystemRecording
+    if includeMicrophone,
       self.capture.microphonePermission != .granted
     {
       self.capture.systemAudioStatusMessage = "勾选麦克风分轨时需要麦克风权限；已为你打开授权入口"
@@ -478,11 +573,14 @@ extension DictationAppModel {
       return
     }
     let scope: SystemAudioCaptureScope =
-      self.capture.selectedSystemAudioSourceID == "entire-system"
-      ? .entireSystem
-      : .application(identity: self.capture.selectedSystemAudioSourceID)
+      meetingPick?.scope
+      ?? (self.capture.selectedSystemAudioSourceID == "entire-system"
+        ? .entireSystem
+        : .application(identity: self.capture.selectedSystemAudioSourceID))
+    // The source the recording names: the meeting's pick, else the page's.
+    let sourceID = meetingPick?.sourceID ?? self.capture.selectedSystemAudioSourceID
     let systemMicrophoneUID: String?
-    if history.includeMicrophoneInSystemRecording {
+    if includeMicrophone {
       guard
         let device = try? MicrophoneDeviceCatalog.device(
           uid: self.capture.selectedSystemMicrophoneUID.isEmpty
@@ -499,8 +597,10 @@ extension DictationAppModel {
       systemMicrophoneUID = nil
     }
     self.capture.captureWorkspaceHandoff = nil
+    activeSystemScope = scope
+    activeSystemIncludesMicrophone = includeMicrophone
     let capture: any MicrophoneCapturePort =
-      history.includeMicrophoneInSystemRecording
+      includeMicrophone
       ? SystemAudioWithMicrophoneCapture(
         scope: scope,
         microphoneDeviceUID: systemMicrophoneUID
@@ -519,8 +619,8 @@ extension DictationAppModel {
       self.capture.systemAudioLiveTranscriptText = ""
       self.capture.systemAudioLiveTranscriptStatus =
         models.modelRuntimeReady
-        ? "正在等待第一段已安全落盘的音频…"
-        : "正在安全保存音轨；本地识别准备完成后可从资料库转写"
+        ? "正在保存第一段音频…"
+        : "正在保存音轨；本地识别准备完成后可从资料库转写"
       self.capture.systemAudioSourceContextMessage = ""
       lastSystemSourceContextFingerprint = ""
       lastSystemSourceContextPollNanoseconds = 0
@@ -534,13 +634,13 @@ extension DictationAppModel {
           sessionID: sessionID,
           inputMode: .systemAudio
         )
-        let source = self.capture.systemAudioSources.first(where: {
-          $0.id == self.capture.selectedSystemAudioSourceID
+        let source = (self.capture.systemAudioSources + MeetingState.shared.sources).first(where: {
+          $0.id == sourceID
         })
         try await repository.setSessionSourceMetadata(
           sessionID: sessionID,
           sourceKind: SessionInputMode.systemAudio.rawValue,
-          sourceIdentifier: self.capture.selectedSystemAudioSourceID,
+          sourceIdentifier: sourceID,
           sourceDisplayName: source?.displayName ?? "整个 Mac 的输出",
           sourceBundleID: source?.bundleID
         )
@@ -562,11 +662,11 @@ extension DictationAppModel {
       if models.modelRuntimeReady {
         self.capture.systemAudioStatusMessage =
           history.includeMicrophoneInSystemRecording
-          ? "正在录制电脑输出和独立麦克风音轨；原始音频持续安全保存"
-          : "正在录制电脑输出；原始音频持续安全保存"
+          ? "正在录制电脑输出和独立麦克风音轨；原始音频持续保存"
+          : "正在录制电脑输出；原始音频持续保存"
       } else {
         self.capture.systemAudioStatusMessage =
-          "正在录制并安全保存原始音轨；本地识别就绪后可从资料库继续处理"
+          "正在录制并保存原始音轨；本地识别就绪后可从资料库继续处理"
       }
     } catch {
       stopSystemAudioLifecycleMonitoring()
@@ -580,8 +680,16 @@ extension DictationAppModel {
       let detail = String(describing: error)
       self.capture.systemAudioStatusMessage =
         detail.contains("permission") || detail.contains("denied")
-        ? "系统音频权限尚未允许；请在系统设置中允许织机后重试"
+        ? "未允许录制系统音频。请在“系统设置”中允许 Mindloom 后重试。"
         : "电脑内录未能开始；请刷新来源并确认所选应用仍在运行"
+      if meeting {
+        // A meeting is recorded whatever happens to the computer's sound
+        // (durability first): the microphone alone, and it says so. Started
+        // once this start command has finished (one command at a time).
+        self.capture.systemAudioSnapshot = DictationSessionSnapshot()
+        MeetingState.shared.recordingPick = nil
+        Task { @MainActor [weak self] in self?.startOrEndRoomRecording() }
+      }
     }
   }
 
@@ -591,12 +699,14 @@ extension DictationAppModel {
     do {
       let finalization = try await coordinator.end()
       capture.systemAudioSnapshot = finalization.snapshot
+      MeetingState.shared.ended(.saving)
       guard models.modelRuntimeReady else {
+        MeetingState.shared.ended(.waitingForModels)
         systemAudioCoordinator = nil
         activeSystemMicrophoneUID = ""
         activeSystemOutputDeviceID = nil
         capture.systemAudioLiveTranscriptStatus = "原始音轨已保留；本地识别就绪后可恢复转写"
-        capture.systemAudioStatusMessage = "音轨已安全保存；完成本地组件准备后可在资料库继续处理"
+        capture.systemAudioStatusMessage = "音轨已保存；完成本地模型准备后可在资料库继续处理"
         await presentCaptureWorkspaceHandoff(
           sessionID: finalization.snapshot.sessionID,
           inputMode: .systemAudio,
@@ -606,8 +716,9 @@ extension DictationAppModel {
         )
         return
       }
-      capture.systemAudioStatusMessage = "音轨已安全保存，正在本地识别和匹配人物…"
+      capture.systemAudioStatusMessage = "音轨已保存，正在本地识别和匹配人物…"
       guard let localRuntime else {
+        MeetingState.shared.ended(.waitingForModels)
         capture.systemAudioStatusMessage = "音频已保存；本地识别服务恢复后可继续处理"
         await presentCaptureWorkspaceHandoff(
           sessionID: finalization.snapshot.sessionID,
@@ -621,6 +732,7 @@ extension DictationAppModel {
       let outcome = try await localRuntime.process(finalization)
       try await coordinator.synchronizeProcessingSnapshot(outcome.snapshot)
       capture.systemAudioSnapshot = outcome.snapshot
+      Self.meetingEnded(outcome.snapshot)
       systemAudioCoordinator = nil
       activeSystemMicrophoneUID = ""
       activeSystemOutputDeviceID = nil
@@ -643,6 +755,7 @@ extension DictationAppModel {
         try? await coordinator.synchronizeProcessingSnapshot(durable)
       }
       capture.systemAudioStatusMessage = "音频已保留；可在历史记录中重试处理"
+      MeetingState.shared.ended(.failed)
       await presentCaptureWorkspaceHandoff(
         sessionID: capture.systemAudioSnapshot.sessionID,
         inputMode: .systemAudio,
@@ -650,6 +763,16 @@ extension DictationAppModel {
         detail: capture.systemAudioStatusMessage,
         organizeEvents: false
       )
+    }
+  }
+
+  /// The caption strip's ending once the whole meeting was recognised
+  /// again: the recomputed text, or 没能转成文字.
+  static func meetingEnded(_ snapshot: DictationSessionSnapshot) {
+    if snapshot.phase == .completed {
+      MeetingState.shared.ended(.saved, text: snapshot.transcript?.text ?? "")
+    } else {
+      MeetingState.shared.ended(.failed)
     }
   }
 
@@ -664,22 +787,28 @@ extension DictationAppModel {
       return
     }
     let renderedSnapshot = override ?? snapshot
-    if recordingPanel.subtitlesRequireHover != capsuleSubtitlesRequireHover {
-      recordingPanel.subtitlesRequireHover = capsuleSubtitlesRequireHover
-    }
-    recordingPanel.listeningCaption = Self.capsuleListeningCaption(
+    installFnHUD()
+    recordingPanel.showsCaptions = dictationCaptionsEnabled
+    // Set before every render, so ⇧ (the next language) or Space shows on
+    // the capsule at once.
+    recordingPanel.badge = Self.hudBadge(
       dictationMode, language: spoken.activeTranslationLanguage,
       languageReady: translationEngineReady(for: spoken.activeTranslationLanguage))
     recordingPanel.render(
       renderedSnapshot,
       liveText: recordingPanelText(for: renderedSnapshot),
-      compactStatus: recordingPanelCompactStatus(for: renderedSnapshot)
+      facts: recordingPanelFacts(for: renderedSnapshot)
     )
   }
 
   func recordingPanelText(
     for renderedSnapshot: DictationSessionSnapshot
   ) -> String {
+    if renderedSnapshot.phase == .completed, let delivered = deliveredDictationText,
+      delivered.session == renderedSnapshot.sessionID
+    {
+      return delivered.text
+    }
     switch renderedSnapshot.phase {
     case .polishing, .inserting, .completed, .failedRecoverable:
       return renderedSnapshot.polish?.text

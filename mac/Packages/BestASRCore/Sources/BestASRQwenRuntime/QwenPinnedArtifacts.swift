@@ -1,4 +1,5 @@
 import BestASRInference
+import Foundation
 
 public enum QwenASRPinnedArtifact {
   public static let candidateID = "qwen3-asr-aligned-final"
@@ -6,7 +7,35 @@ public enum QwenASRPinnedArtifact {
   public static let sourceRevision = "a8379a2e2f9e313c9292cdf1af4055ab56d50d55"
   public static let treeSHA256 = "78e581bde728363d93dc3afc5e3b2bceae0acc2ee65805bb94d9f61e43a3edd1"
   public static let runtimeRevision = "cae704f53bc32a3d0b606823828fbc5bedaaf388"
-  public static let pipelineRevision = "qwen-native-final-v2-digital-silence-natural-phrases"
+  public static let pipelineRevision =
+    "qwen-native-final-v3-digital-silence-natural-phrases-dictionary-terms-under-5s"
+  /// Dictionary terms go into the recognizer's prompt, and words that merely
+  /// look or sound like a term are rewritten to it, only for audio shorter
+  /// than this. On the locked evaluation set (2026-10-06, 240 items, 48
+  /// verified) the user's 41 terms everywhere gave 4.06% CER; terms in the
+  /// prompt only under five seconds 3.15%; near matches only under five
+  /// seconds as well 2.87%. That is in-sample: the rule and its cutoff were
+  /// chosen on those 48 items, and audio under five seconds is unchanged by
+  /// construction. On the 192 unverified items, against the Typeless text,
+  /// the long-audio half holds (dictionary words not in the Typeless text on
+  /// audio of five seconds or more 26 → 3, English terms 185 → 198 of 245);
+  /// keeping the dictionary under five seconds is not shown either way (too
+  /// few items). The entries' spoken forms and own spellings apply to every
+  /// result (DICTATION_ARCHITECTURE §15.5).
+  public static let dictionaryPromptMaximumSamples = 5 * 16_000
+
+  /// An evaluation's dictionary length limit, in samples, from its argument
+  /// (seconds): the App's limit when none is given, nil (every length) for
+  /// `none`, and a thrown error for anything else. Evaluations that do not
+  /// say otherwise measure what ships (review 2026-10-06).
+  public static func dictionaryLimitSamples(argument: String?) throws -> Int? {
+    guard let argument else { return dictionaryPromptMaximumSamples }
+    if argument == "none" { return nil }
+    guard let seconds = Double(argument), seconds > 0, seconds.isFinite else {
+      throw CocoaError(.formatting)
+    }
+    return Int((seconds * 16_000).rounded())
+  }
   public static let totalSizeBytes: UInt64 = 2_467_857_511
   public static let maximumSamples = 30 * 16_000
 

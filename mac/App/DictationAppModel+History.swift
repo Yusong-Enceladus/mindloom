@@ -25,6 +25,31 @@ import UniformTypeIdentifiers
 // History: moved out of DictationAppModel.swift without change; see
 // DICTATION_ARCHITECTURE.md §13.5.
 extension DictationAppModel {
+  /// Whether `transcript` is a dictation, or the user's edit of one, whose
+  /// sentences are not timed yet (`DeferredWordAlignment`,
+  /// DICTATION_ARCHITECTURE §15.7).
+  nonisolated static func hasUntimedSentences(
+    _ transcript: DictationPersistedTranscriptRecord
+  ) -> Bool {
+    (transcript.kind == .final || transcript.kind == .userEdit)
+      && transcript.segments.contains { DeferredWordAlignment.isPending($0.id) }
+  }
+
+  /// A dictation from the last hour has its sentences timed once the
+  /// recognizer leaves memory. Opening it in History times them now only
+  /// when the recognizer is not in memory (the aligner must be alone,
+  /// review 2026-10-07); the record shows them when done. Until then it
+  /// reads, plays and follows as one sentence.
+  func timeSelectedDictationSentences(sessionID: SessionID) {
+    guard let runtime = localRuntime,
+      history.selectedHistoryTranscripts.contains(where: Self.hasUntimedSentences)
+    else { return }
+    Task { [weak self] in
+      guard await runtime.alignDeferredWords(sessionID: sessionID) > 0 else { return }
+      await self?.refreshSelectedSpeakerDetails(sessionID: sessionID)
+    }
+  }
+
   /// Clicking a finished capsule opens the main window at that record.
   func openFinishedDictationRecord() {
     let mainWindow = NSApplication.shared.windows.first {
@@ -50,10 +75,10 @@ extension DictationAppModel {
     guard !hasActiveCapture, !models.recommendedModelInstallInProgress,
       !export.archiveOperationInProgress, let repository, let journal
     else {
-      storageStatusMessage = "请先结束录音、导入、组件下载或归档操作"
+      storageStatusMessage = "请先结束录音、导入、模型下载或归档操作"
       return
     }
-    storageStatusMessage = "正在安全暂存并删除\(Self.storageModeTitle(mode))记录…"
+    storageStatusMessage = "正在暂存并删除\(Self.storageModeTitle(mode))记录…"
     Task { [weak self] in
       guard let self else { return }
       var staged: [StagedSessionDeletion] = []
@@ -326,13 +351,13 @@ extension DictationAppModel {
     guard !text.isEmpty else { return }
     let requestID = UUID()
     historyDetailCopyRequestID = requestID
-    history.detailStatusMessage = "正在复制\(label)…"
+    history.detailStatusMessage = "正在拷贝\(label)…"
     Task { [weak self] in
       guard let self else { return }
       let copied = pasteboardWriter.write(text)
       guard historyDetailCopyRequestID == requestID else { return }
       history.detailStatusMessage =
-        copied ? "已复制\(label)" : "复制失败；本地记录没有变化"
+        copied ? "已拷贝\(label)" : "未能拷贝；本地记录没有变化"
     }
   }
 
@@ -382,7 +407,7 @@ extension DictationAppModel {
         )
         self.events.addSessionID = nil
         await refreshEventMemory(organize: false)
-        events.eventStatusMessage = "记录已关联到当前事件；它仍可同时属于其他相关事件"
+        events.eventStatusMessage = "记录已归进当前这件事；它仍可同时属于其他相关的事"
       } catch {
         events.eventStatusMessage = "记录未能关联；现有关系没有变化"
       }
@@ -394,7 +419,7 @@ extension DictationAppModel {
       item,
       returningTo: HistoryNavigationOrigin(
         kind: .event,
-        title: selectedEventSummary?.event.title ?? "当前事件"
+        title: selectedEventSummary?.event.title ?? "当前这件事"
       )
     )
   }
@@ -487,7 +512,7 @@ extension DictationAppModel {
       let segment = segments.first(where: { $0.id == segmentID })
     else {
       history.detailStatusMessage =
-        "已打开匹配记录；命中来自标题、人物、事件、来源或无时间戳文字"
+        "已打开匹配记录；命中来自标题、人物、事情、来源或无时间戳文字"
       return
     }
     locateHistoryTranscriptSegment(segment)
@@ -559,12 +584,12 @@ extension DictationAppModel {
 
   func copyHistoryItem(_ item: DictationHistoryItem) {
     guard let text = item.preferredText, !text.isEmpty else {
-      history.historyStatusMessage = "这条记录尚没有可复制的完成文字"
+      history.historyStatusMessage = "这条记录尚没有可拷贝的完成文字"
       return
     }
     let requestID = UUID()
     historyListCopyRequestID = requestID
-    history.historyStatusMessage = "正在复制…"
+    history.historyStatusMessage = "正在拷贝…"
     let repository = self.repository
     Task { [weak self] in
       // A long item's list row holds only a preview; copy its full text.
@@ -579,11 +604,14 @@ extension DictationAppModel {
       let copied = pasteboardWriter.write(fullText)
       guard historyListCopyRequestID == requestID else { return }
       history.historyStatusMessage =
-        copied ? "已复制所选本地口述" : "复制失败；口述内容仍保留在本机"
+        copied ? "已拷贝所选本地口述" : "未能拷贝；口述内容仍保留在本机"
     }
   }
 
-  func deleteHistoryItem(_ item: DictationHistoryItem) {
+  /// `deleted` runs once the record is gone (历史 drops its row at once).
+  func deleteHistoryItem(
+    _ item: DictationHistoryItem, deleted: (@MainActor () -> Void)? = nil
+  ) {
     guard canDeleteHistoryItem(item), let journal, let repository else {
       history.historyStatusMessage = "仍在本次运行中处理的记录不能删除"
       return
@@ -638,6 +666,7 @@ extension DictationAppModel {
         startupRecoverySessionIDs.remove(item.sessionID)
         recoveryItemCount = startupRecoverySessionIDs.count
         history.historyStatusMessage = "记录、派生结果和保留原音已从这台 Mac 删除"
+        deleted?()
         await refreshHistoryItems(preserveStatus: true)
       } catch {
         history.historyStatusMessage = "删除未完成；记录和原始音频已恢复到原位置"
@@ -656,7 +685,7 @@ extension DictationAppModel {
     if history.selectedHistorySessionID == item.sessionID {
       stopHistoryPlayback()
     }
-    history.historyStatusMessage = "正在仅删除保留原音；文字版本、人物和时间线会保留…"
+    history.historyStatusMessage = "正在仅删除保留原音；文字版本、人物和时间会保留…"
     Task { [weak self] in
       guard let self else { return }
       do {
@@ -704,7 +733,7 @@ extension DictationAppModel {
       return
     }
     guard models.modelRuntimeReady else {
-      history.historyStatusMessage = "请等待本地语音识别组件就绪后再恢复"
+      history.historyStatusMessage = "请等待本地语音识别模型就绪后再恢复"
       return
     }
     if item.inputMode == .importedMedia,
@@ -957,8 +986,10 @@ extension DictationAppModel {
     )
     await task?.value
     if refreshOverview { scheduleHistoryOverviewRefresh() }
+    // v12 (理1-4): a change reads the events again; the whole-library local
+    // organizer runs only on its explicit command (`refreshEvents`).
     if organizeEvents, eventMemoryWanted {
-      await refreshEventMemory(organize: true)
+      await refreshEventMemory(organize: false)
     }
   }
 
@@ -1041,7 +1072,7 @@ extension DictationAppModel {
     let noun = searching ? "条结果" : "条记录"
     history.historyStatusMessage =
       history.historyItems.isEmpty
-      ? (searching ? "没有结果" : "还没有符合条件的本机记录")
+      ? (searching ? "没有结果" : "没有符合条件的本机记录")
       : "\(history.historyItems.count) \(noun)"
   }
 

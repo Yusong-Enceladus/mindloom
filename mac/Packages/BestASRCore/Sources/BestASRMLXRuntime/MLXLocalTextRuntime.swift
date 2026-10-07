@@ -5,6 +5,7 @@ import CryptoKit
 import Foundation
 import MLXLLM
 import MLXLMCommon
+import MindloomIdentity
 import Tokenizers
 
 public struct MLXLocalTextRuntimePolicy: Codable, Equatable, Sendable {
@@ -795,7 +796,7 @@ private actor MLXModelTextGenerator: MLXTextGenerating {
   /// pool is what stops it from delaying the dictation that is still being
   /// inserted. See `QwenASRBackend` for the measurement.
   private let computeQueue = DispatchSerialQueue(
-    label: "com.bestasr.app.mlx-text", qos: .userInitiated)
+    label: MindloomIdentity.queueLabel("mlx-text"), qos: .userInitiated)
 
   nonisolated var unownedExecutor: UnownedSerialExecutor {
     computeQueue.asUnownedSerialExecutor()
@@ -893,7 +894,7 @@ private actor MLXModelTextGenerator: MLXTextGenerating {
   }
 }
 
-private struct TransformersTokenizerLoader: MLXLMCommon.TokenizerLoader {
+struct TransformersTokenizerLoader: MLXLMCommon.TokenizerLoader {
   func load(from directory: URL) async throws -> any MLXLMCommon.Tokenizer {
     let tokenizer = try await Tokenizers.AutoTokenizer.from(
       modelFolder: directory
@@ -902,7 +903,7 @@ private struct TransformersTokenizerLoader: MLXLMCommon.TokenizerLoader {
   }
 }
 
-private struct TransformersTokenizerBridge: MLXLMCommon.Tokenizer {
+struct TransformersTokenizerBridge: MLXLMCommon.Tokenizer {
   private let upstream: any Tokenizers.Tokenizer
 
   init(_ upstream: any Tokenizers.Tokenizer) {

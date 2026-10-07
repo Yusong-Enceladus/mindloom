@@ -25,7 +25,7 @@ enum BestASRSection: String, CaseIterable, Identifiable {
     case .home: "首页"
     case .history: "历史记录"
     case .people: "人物"
-    case .events: "事件"
+    case .events: "事情"
     case .dictionary: "词典"
     case .roomRecording: "线下录音"
     case .systemAudio: "电脑内录"
@@ -73,7 +73,7 @@ enum HistoryWorkspaceTab: String, CaseIterable, Identifiable {
     switch self {
     case .transcript: "逐字稿"
     case .notes: "整理"
-    case .memory: "人物与事件"
+    case .memory: "人和事"
     case .source: "来源"
     }
   }
@@ -136,10 +136,15 @@ enum MemoryDocumentPresentation {
 struct ContentView: View {
   @ObservedObject var model: DictationAppModel
   @Environment(\.openWindow) var openWindow
+  @Environment(\.openSettings) var openSettingsAction
   @State var selection = BestASRSection.home
   @StateObject var memoryScreen = MemoryScreenModel()
+  /// 历史: every record, and what the search field finds (v12 find).
+  @StateObject var historySearch = HistorySearchModel()
   @StateObject var spaces = SpacesModel()
   @State var memoryNavigation = MemoryNavigation()
+  /// Files are being dragged over the window (the drop overlay).
+  @State var dropTargeted = false
   /// Which capture page the indicator (or a menu) opens when none is running.
   @State var captureSection: BestASRSection?
   @State var captureStartedAt: Date?
@@ -184,15 +189,44 @@ struct ContentView: View {
   @FocusState var practiceFieldFocused: Bool
   @FocusState var historyFocusedField: HistoryFocusedField?
 
+  /// The pages, or why the library did not open instead of an empty window.
+  private var windowContent: some View {
+    memoryShell.overlay {
+      if !model.startupFailureMessage.isEmpty {
+        StartupRefusalView(message: model.startupFailureMessage)
+      }
+    }
+    // fn needs 设备控制和数据访问: said here until it is allowed (review of 10-6).
+    .overlay(alignment: .bottom) {
+      FnAccessibilityBar(model: model, onboarding: model.onboarding)
+    }
+  }
+
   var body: some View {
-    memoryShell
+    windowContent
+    // No title bar band; the traffic lights in the sidebar card (§3.3).
+    .mindloomWindowChrome()
     // ⌘V with no text field focused takes the clipboard in as an item.
     .background(IntakePasteKeyMonitor { model.receivePasteboard() })
+    // ⌘F focuses the search field before the system's 查找… sees it.
+    .background(MindloomFindKeyMonitor())
+    // The sidebar's tagline is picked as the window comes on screen.
+    .background(
+      WindowShownMonitor { [memoryScreen, model] in
+        memoryScreen.showTagline(app: model)
+      }
+    )
     // Anything dropped on the window: text, images, documents, audio/video.
-    .onDrop(of: IntakePasteKeyMonitor.dropTypes, isTargeted: nil) { providers in
+    .onDrop(of: IntakePasteKeyMonitor.dropTypes, isTargeted: $dropTargeted) { providers in
       model.receiveDrop(providers)
     }
-    .frame(minWidth: 1000, minHeight: 680)
+    .frame(minWidth: 900, minHeight: 600)
+    .focusedSceneValue(\.mindloomCommands, commandContext)
+    #if MINDLOOM_PREVIEW
+      // The preview's live verification run (App/LiveShots.swift).
+      .liveShotsProbe()
+      .task { await runLiveShots() }
+    #endif
     .onAppear {
       if ProcessInfo.processInfo.arguments.contains("--onboarding-ui-testing") {
         practiceCompleted = false
@@ -205,27 +239,28 @@ struct ContentView: View {
         practiceSessionID = nil
         practiceStatusMessage = ""
       }
+      SettingsRouter.shared.opener = openSettingsAction
       model.refreshHistoryIfStale()
       memoryScreen.attach(to: model)
+      historySearch.attach(to: model) { [memoryScreen, model] in
+        memoryScreen.state(app: model, capture: nil)
+      }
       spaces.attach(to: model, memory: memoryScreen)
       trackCaptureStart()
       followRequestedNavigation(model.requestedNavigationSectionID)
     }
+    .onDisappear { memoryScreen.windowClosed() }
     .sheet(item: $spaces.sheet) { sheet in
       SpaceSheetHost(sheet: sheet, state: spaces.screen, actions: spacesActions)
     }
     .onChange(of: model.capture.roomSnapshot.phase) { _, _ in trackCaptureStart() }
     .onChange(of: model.capture.systemAudioSnapshot.phase) { _, _ in trackCaptureStart() }
-    .onChange(of: memoryNavigation.search) { _, query in
-      // In 全部 the header search is the history search.
-      if memoryNavigation.homeMode == .all { model.history.searchQuery = query }
-    }
-    .onChange(of: memoryNavigation.homeMode) { _, mode in
-      if mode == .all {
-        model.history.detailPresented = false
-        model.history.searchQuery = memoryNavigation.search
-        model.refreshHistoryIfStale()
-      }
+    .onChange(of: memoryNavigation.root) { _, root in followSpaceScope(root) }
+    // A matter opened without a map asks the DGX Spark to draw one (also
+    // when the link comes up with the page open); the next pull shows 进展.
+    .onChange(of: memoryNavigation.path) { _, path in requestMapForOpenMatter(path) }
+    .onChange(of: model.remoteOrganizerLinkIsConnected) { _, up in
+      if up { requestMapForOpenMatter(memoryNavigation.path) }
     }
     .onReceive(
       NotificationCenter.default.publisher(
@@ -246,26 +281,33 @@ struct ContentView: View {
       }
     }
     .confirmationDialog(
-      "永久删除这条记录？",
+      "删除这条记录？",
       isPresented: historyDeletionIsPresented,
       titleVisibility: .visible
     ) {
       if let item = pendingHistoryDeletion {
         // A pasted or dragged item has no audio to delete on its own.
-        if item.sourceAudioRetained, item.inputMode != .userItem {
-          Button("仅删除保留原音，保留文字与人物", role: .destructive) {
+        let hasAudio = item.sourceAudioRetained && item.inputMode != .userItem
+        if hasAudio {
+          Button("删除录音，保留文字", role: .destructive) {
             pendingHistoryDeletion = nil
             model.deleteHistorySourceAudio(item)
           }
         }
-        Button("删除记录和保留原音", role: .destructive) {
+        Button(hasAudio ? "删除记录和录音" : "删除记录", role: .destructive) {
           pendingHistoryDeletion = nil
-          model.deleteHistoryItem(item)
+          model.deleteHistoryItem(item) { [historySearch] in
+            historySearch.forgetRow(item.sessionID.rawValue.uuidString.uppercased())
+          }
         }
       }
       Button("取消", role: .cancel) { pendingHistoryDeletion = nil }
     } message: {
-      Text("你可以只删除占空间的原音并保留逐字稿版本、摘要、人物和时间线；也可以永久删除整条记录。两种操作都不能撤销。")
+      Text(
+        Self.historyDeletionMessage(
+          hasAudio: pendingHistoryDeletion.map {
+            $0.sourceAudioRetained && $0.inputMode != .userItem
+          } ?? false))
     }
     .confirmationDialog(
       "删除当前口述？",
@@ -278,7 +320,7 @@ struct ContentView: View {
       .accessibilityIdentifier("bestASR.main.confirmCancel")
       Button("继续保留口述", role: .cancel) {}
     } message: {
-      Text("只会删除这次尚未提交的口述录音和临时文字；资料库中已完成的记录、原音和人物信息不会改变。")
+      Text("将删除此次尚未提交的口述录音和临时文字；资料库中已完成的记录、录音和人物信息保持不变。")
     }
     .confirmationDialog(
       "删除当前线下录音？",
@@ -290,7 +332,7 @@ struct ContentView: View {
       }
       Button("继续保留录音", role: .cancel) {}
     } message: {
-      Text("只有这次尚未提交的线下录音会被删除；已完成的历史和其他原音不受影响。")
+      Text("将删除此次尚未提交的线下录音；已完成的历史记录和其他录音保持不变。")
     }
     .confirmationDialog(
       "删除当前电脑内录？",
@@ -302,7 +344,7 @@ struct ContentView: View {
       }
       Button("继续保留录音", role: .cancel) {}
     } message: {
-      Text("只有这次尚未提交的系统/麦克风音轨会被删除；已完成的历史不受影响。")
+      Text("将删除此次尚未提交的系统与麦克风音轨；已完成的历史记录保持不变。")
     }
     .confirmationDialog(
       model.capture.importCanDiscard
@@ -323,26 +365,26 @@ struct ContentView: View {
     } message: {
       Text(
         model.capture.importCanDiscard
-          ? "只会移除织机为这次导入创建的未完成进度；你选择的原始音视频文件不会被修改，资料库中已有内容也不会改变。"
-          : "源文件和已提取音频已经安全保存在本机。停止后这条记录会留在资料库，可稍后继续识别和整理。"
+          ? "将移除 Mindloom 为此次导入创建的未完成进度；你选择的原始音视频文件和资料库中已有的内容保持不变。"
+          : "源文件和已提取音频已保存在本机。停止后这条记录会留在资料库，可稍后继续识别和整理。"
       )
     }
     .confirmationDialog(
-      "删除这个事件？",
+      "删除这件事？",
       isPresented: $confirmRetireEvent,
       titleVisibility: .visible
     ) {
-      Button("仅删除事件关系", role: .destructive) {
+      Button("仅删除这件事", role: .destructive) {
         model.retireSelectedEvent()
       }
       Button("取消", role: .cancel) {}
     } message: {
       if let summary = model.selectedEventSummary {
         Text(
-          "将解除 \(summary.sessionIDs.count) 条记录和 \(summary.personIDs.count) 个人物的事件关系。历史记录、原始音频、逐字稿、人物与单条记录的整理结果全部保留。"
+          "将解除 \(summary.sessionIDs.count) 条记录和 \(summary.personIDs.count) 个人物与这件事的关系。历史记录、原始音频、逐字稿、人物与单条记录的整理结果全部保留。"
         )
       } else {
-        Text("只会删除事件名称、备注和分组关系。历史记录、原始音频、逐字稿与人物全部保留。")
+        Text("将删除这件事的名称、备注和分组关系。历史记录、原始音频、逐字稿和人物都会保留。")
       }
     }
     .confirmationDialog(
@@ -363,9 +405,22 @@ struct ContentView: View {
         pendingStructuredItemDeletion = nil
       }
     } message: {
-      Text("只会从当前整理版本中删除这条摘要、决定或待办；原始音频、逐字稿、其他整理内容和人物关系都会保留。")
+      Text("将从当前整理版本中删除此摘要、决定或待办；原始音频、逐字稿、其他整理内容和人物关系都会保留。")
     }
 
+  }
+
+  /// The menu bar's view of this window (MindloomCommands).
+  var commandContext: MindloomCommandContext {
+    let screen = memoryScreen
+    let spacesModel = spaces
+    return MindloomCommandContext(
+      undoTitle: screen.corrections?.undoState?.menuTitle,
+      undo: { screen.undo() },
+      navigation: $memoryNavigation,
+      newSpace: { spacesModel.sheet = .newSpace },
+      joinSpace: { spacesModel.sheet = .join },
+      openAbout: { SettingsRouter.shared.open(.about) })
   }
 
   var structuredItemDeletionIsPresented: Binding<Bool> {
@@ -387,16 +442,16 @@ struct ContentView: View {
 
   var recordingDetail: String {
     switch model.snapshot.phase {
-    case .recording: "再次按快捷键结束；安全目标仍有效时插入，否则结果保存在历史记录。"
+    case .recording: "再次按快捷键结束；原输入位置仍可用时输入文字，否则保存在历史记录中。"
     case .paused: "继续后仍属于同一条记录。"
     case .failedRecoverable: "原始音频没有丢失，请到历史记录中恢复。"
     default:
       if model.isReadyForDictation {
-        "在任何应用按快捷键即可开始；有安全输入位置时自动插入，否则保存在历史记录。"
+        "在任何 App 中按快捷键即可开始；有可用的输入位置时自动输入，否则保存在历史记录中。"
       } else if model.canStartDictationCapture {
-        "识别还没准备好；仍可安全录音，准备好后会接着转写。"
+        "识别尚未就绪；仍可录音，就绪后继续转写。"
       } else {
-        "先允许麦克风；识别组件可在上方一次准备完成。"
+        "先允许麦克风；识别模型可在上方一次准备完成。"
       }
     }
   }

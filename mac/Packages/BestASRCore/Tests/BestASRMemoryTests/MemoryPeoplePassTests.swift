@@ -124,10 +124,6 @@ final class MemoryPeoplePassTests: XCTestCase {
     XCTAssertEqual(byID["报销"]?.participantIDs, [key(1)])
     // 虚构乙 is only named ("虚构乙说…", "虚构乙订了票").
     XCTAssertEqual(byID["旅行"]?.participantIDs, [])
-    XCTAssertEqual(projection.related(to: "装修").map(\.eventID), ["报销"])
-    XCTAssertEqual(projection.related(to: "报销").map(\.eventID), ["装修"])
-    // 报销 and 旅行 share 虚构乙, who is only named in both: not related.
-    XCTAssertEqual(projection.related(to: "旅行"), [])
     // Still a person on both pages and in 虚构乙's matters.
     let yi = try XCTUnwrap(projection.people().first { $0.personID == key(2) })
     XCTAssertEqual(Set(yi.events.map(\.eventID)), ["报销", "旅行"])
@@ -141,7 +137,11 @@ final class MemoryPeoplePassTests: XCTestCase {
       ],
       records: [recording(1, speakers: [5]), recording(2, speakers: [5], at: 60)],
       now: base)
-    XCTAssertEqual(projection.related(to: "会议甲").map(\.eventID), ["会议乙"])
+    let home = projection.home()
+    XCTAssertEqual(
+      home.first { $0.eventID == "会议甲" }?.participantIDs,
+      home.first { $0.eventID == "会议乙" }?.participantIDs)
+    XCTAssertFalse(home.first { $0.eventID == "会议甲" }?.participantIDs.isEmpty ?? true)
   }
 
   /// A local event's people: most recordings spoken in first.

@@ -2,10 +2,11 @@ import AppKit
 import BestASRDictation
 import Carbon
 import Foundation
+import MindloomIdentity
 import OSLog
 
 private let hotkeyLogger = Logger(
-  subsystem: "com.bestasr.app",
+  subsystem: MindloomIdentity.logSubsystem,
   category: "global-hotkey"
 )
 
@@ -16,8 +17,10 @@ public enum NativeHotkeyRegistrationStatus: Equatable, Sendable {
 }
 
 public enum NativeHotkeyEvent: Equatable, Sendable {
-  case identifier(UInt32)
-  case identifierReleased(UInt32)
+  /// `at`: when the key moved, in seconds since the Mac started (the key
+  /// event's own time, not when it was handled), when known.
+  case identifier(UInt32, at: TimeInterval? = nil)
+  case identifierReleased(UInt32, at: TimeInterval? = nil)
   case escape
   /// Another key went down while an Fn-alone shortcut was physically held,
   /// carrying that key's code so a chord the user meant — Fn Space, Fn Shift —
@@ -33,17 +36,24 @@ public struct NativeHotkeyTransition: Equatable, Sendable {
   public let isFunctionChord: Bool
   /// The key that was chorded with Fn, when `isFunctionChord`.
   public let chordKeyCode: UInt32?
+  /// When the key moved (seconds since the Mac started), from the key event
+  /// itself: a tap is told from a hold by these times, so main-thread work
+  /// queued between press and release never counts as holding the key
+  /// (review v12-B #11). Nil when unknown.
+  public let keyTime: TimeInterval?
 
   public init(
     action: GlobalHotkeyAction,
     isPressed: Bool,
     isFunctionChord: Bool = false,
-    chordKeyCode: UInt32? = nil
+    chordKeyCode: UInt32? = nil,
+    keyTime: TimeInterval? = nil
   ) {
     self.action = action
     self.isPressed = isPressed
     self.isFunctionChord = isFunctionChord
     self.chordKeyCode = chordKeyCode
+    self.keyTime = keyTime
   }
 }
 
@@ -100,7 +110,7 @@ public actor NativeGlobalHotkeyProvider: GlobalHotkeyPort {
       let task = Task {
         for await event in nativeEvents {
           switch event {
-          case .identifier(let identifier):
+          case .identifier(let identifier, _):
             if let action = GlobalHotkeyAction(rawValue: identifier) {
               hotkeyLogger.info(
                 "provider delivered action \(action.rawValue, privacy: .public)"
@@ -125,16 +135,16 @@ public actor NativeGlobalHotkeyProvider: GlobalHotkeyPort {
       let task = Task {
         for await event in nativeEvents {
           switch event {
-          case .identifier(let identifier):
+          case .identifier(let identifier, let at):
             if let action = GlobalHotkeyAction(rawValue: identifier) {
               continuation.yield(
-                NativeHotkeyTransition(action: action, isPressed: true)
+                NativeHotkeyTransition(action: action, isPressed: true, keyTime: at)
               )
             }
-          case .identifierReleased(let identifier):
+          case .identifierReleased(let identifier, let at):
             if let action = GlobalHotkeyAction(rawValue: identifier) {
               continuation.yield(
-                NativeHotkeyTransition(action: action, isPressed: false)
+                NativeHotkeyTransition(action: action, isPressed: false, keyTime: at)
               )
             }
           case .escape:
@@ -297,25 +307,41 @@ public final class CarbonHotkeyBackend: NativeHotkeyBackend, @unchecked Sendable
     }
   }
 
-  func emit(identifier: UInt32) {
-    emit(.identifier(identifier))
+  func emit(identifier: UInt32, at: TimeInterval? = nil) {
+    emit(.identifier(identifier, at: at))
   }
 
-  func emitCarbon(identifier: UInt32, isPressed: Bool) {
+  func emitCarbon(identifier: UInt32, isPressed: Bool, at: TimeInterval? = nil) {
     if isPressed {
       guard pressedIdentifiers.insert(identifier).inserted else { return }
       preflightHandler?(identifier)
-      emit(.identifier(identifier))
+      emit(.identifier(identifier, at: at))
     } else {
       guard pressedIdentifiers.remove(identifier) != nil else { return }
-      emit(.identifierReleased(identifier))
+      emit(.identifierReleased(identifier, at: at))
     }
+  }
+
+  /// Seconds since the Mac started for a key event's own timestamp
+  /// (`CGEvent.timestamp`). The field is documented as nanoseconds but
+  /// carries mach_absolute_time ticks on Apple silicon; read as ticks, a key
+  /// event that just happened lands within a minute of now, read as
+  /// nanoseconds it does not (and on Intel the two are the same).
+  public nonisolated static func keySeconds(
+    _ timestamp: UInt64, nowTicks: UInt64 = mach_absolute_time()
+  ) -> TimeInterval {
+    var base = mach_timebase_info_data_t()
+    mach_timebase_info(&base)
+    let scale = Double(base.numer) / Double(base.denom)
+    let asTicks = Double(timestamp) * scale
+    let now = Double(nowTicks) * scale
+    return (abs(now - asTicks) < 60e9 ? asTicks : Double(timestamp)) / 1e9
   }
 
   /// Returns true when the event matches a registered binding and must not be
   /// delivered to the foreground app. The event tap is the primary path when
   /// Accessibility is granted; Carbon remains registered as a fail-safe.
-  func handleKeyDown(keyCode: UInt32, flags: CGEventFlags) -> Bool {
+  func handleKeyDown(keyCode: UInt32, flags: CGEventFlags, at: TimeInterval? = nil) -> Bool {
     if functionShortcutHeld, keyCode != 63 {
       // The two chords this app owns stay armed, so pressing Space or Shift
       // again while the key is still held means something again — that is how
@@ -355,18 +381,18 @@ public final class CarbonHotkeyBackend: NativeHotkeyBackend, @unchecked Sendable
     }
     preflightHandler?(identifier)
     pressedIdentifiers.insert(identifier)
-    emit(identifier: identifier)
+    emit(identifier: identifier, at: at)
     return true
   }
 
-  func handleKeyUp(keyCode: UInt32, flags: CGEventFlags) -> Bool {
+  func handleKeyUp(keyCode: UInt32, flags: CGEventFlags, at: TimeInterval? = nil) -> Bool {
     guard
       let identifier = pressedIdentifiers.first(where: {
         bindings[$0]?.keyCode == keyCode
       })
     else { return false }
     pressedIdentifiers.remove(identifier)
-    emit(.identifierReleased(identifier))
+    emit(.identifierReleased(identifier, at: at))
     return true
   }
 
@@ -378,7 +404,7 @@ public final class CarbonHotkeyBackend: NativeHotkeyBackend, @unchecked Sendable
   public nonisolated static let leftShiftKeyCode: UInt32 = 56
   public nonisolated static let rightShiftKeyCode: UInt32 = 60
 
-  func handleFlagsChanged(keyCode: UInt32, flags: CGEventFlags) {
+  func handleFlagsChanged(keyCode: UInt32, flags: CGEventFlags, at: TimeInterval? = nil) {
     // Shift produces no key-down, so an Fn Shift chord is only visible here.
     if functionShortcutHeld, flags.contains(.maskShift),
       keyCode == Self.leftShiftKeyCode || keyCode == Self.rightShiftKeyCode
@@ -399,7 +425,7 @@ public final class CarbonHotkeyBackend: NativeHotkeyBackend, @unchecked Sendable
       preflightHandler?(identifier)
       pressedIdentifiers.insert(identifier)
       functionShortcutHeld = true
-      emit(identifier: identifier)
+      emit(identifier: identifier, at: at)
     } else if !isDown, functionKeyDown {
       functionShortcutHeld = false
       // Release whichever Fn press is actually outstanding, the same way
@@ -413,7 +439,7 @@ public final class CarbonHotkeyBackend: NativeHotkeyBackend, @unchecked Sendable
         })
       else { return }
       pressedIdentifiers.remove(identifier)
-      emit(.identifierReleased(identifier))
+      emit(.identifierReleased(identifier, at: at))
     }
   }
 
@@ -596,11 +622,14 @@ private func bestASRHotkeyEventTapCallback(
     }
     return Unmanaged.passUnretained(event)
   }
+  // When the key moved, by the event's own clock: the callback itself runs
+  // on the main run loop and waits behind whatever the main thread is doing.
+  let at = CarbonHotkeyBackend.keySeconds(event.timestamp)
   if type == .flagsChanged {
     let keyCode = UInt32(event.getIntegerValueField(.keyboardEventKeycode))
     let flags = event.flags
     MainActor.assumeIsolated {
-      backend.handleFlagsChanged(keyCode: keyCode, flags: flags)
+      backend.handleFlagsChanged(keyCode: keyCode, flags: flags, at: at)
     }
     return Unmanaged.passUnretained(event)
   }
@@ -608,13 +637,13 @@ private func bestASRHotkeyEventTapCallback(
   let flags = event.flags
   if type == .keyUp {
     let handled = MainActor.assumeIsolated {
-      backend.handleKeyUp(keyCode: keyCode, flags: flags)
+      backend.handleKeyUp(keyCode: keyCode, flags: flags, at: at)
     }
     return handled ? nil : Unmanaged.passUnretained(event)
   }
   guard type == .keyDown else { return Unmanaged.passUnretained(event) }
   let handled = MainActor.assumeIsolated {
-    backend.handleKeyDown(keyCode: keyCode, flags: flags)
+    backend.handleKeyDown(keyCode: keyCode, flags: flags, at: at)
   }
   if handled {
     hotkeyLogger.info("event tap consumed registered shortcut")
@@ -644,8 +673,10 @@ private func carbonHotkeyEventHandler(
     .takeUnretainedValue()
   let identifier = hotkeyID.id
   let isPressed = GetEventKind(event) == UInt32(kEventHotKeyPressed)
+  // Carbon's own event time: seconds since the Mac started.
+  let at = GetEventTime(event)
   Task { @MainActor in
-    backend.emitCarbon(identifier: identifier, isPressed: isPressed)
+    backend.emitCarbon(identifier: identifier, isPressed: isPressed, at: at > 0 ? at : nil)
   }
   return noErr
 }

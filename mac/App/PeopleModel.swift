@@ -31,7 +31,7 @@ final class PeopleModel: ObservableObject {
   @Published var speakerRuntimeReady = false
 
   @Published var speakerReadinessMessage =
-    "尚未安装本地多人识别组件"
+    "尚未安装本地多人识别模型"
 
   @Published var selectedSessionSpeakers: [SessionSpeakerSummary] = []
 
@@ -49,7 +49,7 @@ final class PeopleModel: ObservableObject {
 
   @Published var mergeTargetPersonID: PersonID?
 
-  @Published var peopleStatusMessage = "人物资料只保存在这台 Mac 上"
+  @Published var peopleStatusMessage = "人物资料保存在这台 Mac 上"
 
   @Published var splitPersonNameDraft = ""
 

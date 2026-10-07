@@ -12,9 +12,26 @@ protocol AudioSink: AnyObject, Sendable {
 /// Hands buffers to the open utterance, or drops them. Between utterances
 /// there is no sink and every buffer is discarded the moment it arrives:
 /// nothing is kept, measured or written (PHONE-CONTRACT §2).
+///
+/// While a press is waiting for its recognizer (`arm()`), up to two seconds of
+/// buffers are kept in memory only, so the first words are not lost; they go to
+/// the utterance when it attaches and are dropped on `disarm()`.
 final class AudioRouter: @unchecked Sendable {
+  /// At most this much audio is held while armed (a press waiting for its recognizer, or for the
+  /// next analyzer to be prepared after a quick second press).
+  static let preRollSeconds: Double = 4
   private let lock = NSLock()
   private var sink: (any AudioSink)?
+  private var armed = false
+  private var preRoll: [AVAudioPCMBuffer] = []
+  private var preRollFrames: AVAudioFrameCount = 0
+
+  /// True while buffers are wanted (an utterance is open or a press is armed).
+  var isListening: Bool {
+    lock.lock()
+    defer { lock.unlock() }
+    return sink != nil || armed
+  }
 
   var hasSink: Bool {
     lock.lock()
@@ -22,10 +39,41 @@ final class AudioRouter: @unchecked Sendable {
     return sink != nil
   }
 
+  /// A press started: keep what is said until the utterance attaches.
+  func arm() {
+    lock.lock()
+    armed = true
+    preRoll = []
+    preRollFrames = 0
+    lock.unlock()
+  }
+
+  /// Arms unless already armed: keeps what an earlier `arm()` is holding (a speak-bar press that
+  /// is still waiting for the recognizer).
+  func armKeepingHeld() {
+    lock.lock()
+    armed = true
+    lock.unlock()
+  }
+
+  /// The press ended without an utterance: drop the held audio.
+  func disarm() {
+    lock.lock()
+    armed = false
+    preRoll = []
+    preRollFrames = 0
+    lock.unlock()
+  }
+
   func attach(_ sink: any AudioSink) {
     lock.lock()
     self.sink = sink
+    let held = preRoll
+    armed = false
+    preRoll = []
+    preRollFrames = 0
     lock.unlock()
+    for buffer in held { sink.append(buffer) }
   }
 
   /// Detaches `sink` if it is still the current one.
@@ -38,6 +86,9 @@ final class AudioRouter: @unchecked Sendable {
   func detachAll() {
     lock.lock()
     sink = nil
+    armed = false
+    preRoll = []
+    preRollFrames = 0
     lock.unlock()
   }
 
@@ -45,49 +96,89 @@ final class AudioRouter: @unchecked Sendable {
   func route(_ buffer: AVAudioPCMBuffer) -> Bool {
     lock.lock()
     let current = sink
+    if current == nil, armed, let copy = Self.copy(buffer) {
+      preRoll.append(copy)
+      preRollFrames += copy.frameLength
+      let limit = AVAudioFrameCount(buffer.format.sampleRate * Self.preRollSeconds)
+      while preRollFrames > limit, let first = preRoll.first {
+        preRollFrames -= first.frameLength
+        preRoll.removeFirst()
+      }
+      lock.unlock()
+      return true
+    }
     lock.unlock()
     guard let current else { return false }
     current.append(buffer)
     return true
   }
+
+  private static func copy(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer? {
+    guard let copy = AVAudioPCMBuffer(pcmFormat: buffer.format, frameCapacity: buffer.frameLength)
+    else { return nil }
+    copy.frameLength = buffer.frameLength
+    let source = UnsafeMutableAudioBufferListPointer(
+      UnsafeMutablePointer(mutating: buffer.audioBufferList))
+    let target = UnsafeMutableAudioBufferListPointer(copy.mutableAudioBufferList)
+    for (from, to) in zip(source, target) {
+      if let src = from.mData, let dst = to.mData {
+        memcpy(dst, src, Int(min(from.mDataByteSize, to.mDataByteSize)))
+      }
+    }
+    return copy
+  }
 }
 
-/// Turns buffers into the waveform level (0…1), written to the App Group
-/// about 20 times a second, only while an utterance is open.
+/// The microphone level while listening (PHONE-SPEC §7.9): RMS → dBFS per
+/// buffer (≈ 21 ms), handed to the in-app listening animation as dBFS and
+/// written to the App Group as raw ℓ = clamp((dBFS + 50) / 34) at ≥ 30 Hz for
+/// the keyboard, which runs the envelope and spring itself. Only while an
+/// utterance is open or a press is armed; no audio is kept.
 final class LevelMeter: @unchecked Sendable {
   private let channel: VoiceChannel
   private let lock = NSLock()
   private var lastWrite: CFAbsoluteTime = 0
-  private var smoothed: Float = 0
+  private var handler: (@Sendable (Double) -> Void)?
 
   init(channel: VoiceChannel) {
     self.channel = channel
   }
 
-  func feed(_ buffer: AVAudioPCMBuffer) {
-    guard let data = buffer.floatChannelData, buffer.frameLength > 0 else { return }
+  /// Receives dBFS for every buffer, on the audio thread.
+  func setHandler(_ handler: (@Sendable (Double) -> Void)?) {
+    lock.lock()
+    self.handler = handler
+    lock.unlock()
+  }
+
+  static func decibels(_ buffer: AVAudioPCMBuffer) -> Double? {
+    guard let data = buffer.floatChannelData, buffer.frameLength > 0 else { return nil }
     let frames = Int(buffer.frameLength)
     var sum: Float = 0
     let samples = data[0]
     for index in 0..<frames { sum += samples[index] * samples[index] }
     let rms = sqrt(sum / Float(frames))
-    let decibels = 20 * log10(max(rms, 1e-7))
-    // −55 dB (room) … −12 dB (close speech).
-    let level = max(0, min(1, (decibels + 55) / 43))
+    return Double(20 * log10(max(rms, 1e-7)))
+  }
+
+  /// ℓ = clamp((dBFS + 50) / 34): gate −50 dBFS, span 34 dB.
+  static func level(fromDecibels db: Double) -> Float {
+    Float(max(0, min(1, (db + 50) / 34)))
+  }
+
+  func feed(_ buffer: AVAudioPCMBuffer) {
+    guard let db = Self.decibels(buffer) else { return }
     lock.lock()
-    smoothed = level > smoothed ? level * 0.6 + smoothed * 0.4 : level * 0.2 + smoothed * 0.8
     let now = CFAbsoluteTimeGetCurrent()
-    let due = now - lastWrite >= 0.05
+    let due = now - lastWrite >= 1.0 / 40
     if due { lastWrite = now }
-    let value = smoothed
+    let handler = handler
     lock.unlock()
-    if due { channel.writeLevel(value) }
+    handler?(db)
+    if due { channel.writeLevel(Self.level(fromDecibels: db)) }
   }
 
   func reset() {
-    lock.lock()
-    smoothed = 0
-    lock.unlock()
     channel.writeLevel(0)
   }
 }
@@ -119,12 +210,18 @@ final class VoiceAudio {
   private(set) var isRunning = false
   /// The microphone's format (or the file's), for choosing the recognizer's.
   private(set) var inputFormat: AVAudioFormat?
-  var onInterruption: ((_ began: Bool) -> Void)?
+  /// An interruption began, or ended; `recovered` says whether the engine runs again.
+  var onInterruption: ((_ began: Bool, _ recovered: Bool) -> Void)?
+  #if DEBUG
+    /// DEBUG bench only: the file the next utterance plays instead of the
+    /// launch file. Must have the launch file's format.
+    var debugNextFile: URL?
+  #endif
 
-  private let engine = AVAudioEngine()
+  private var engine = AVAudioEngine()
   private var fileFeeder: Task<Void, Never>?
   private var observers: [NSObjectProtocol] = []
-  private let log = Logger(subsystem: "com.bestasr.phone", category: "voice-audio")
+  private let log = Logger(subsystem: PhoneNames.appLog, category: "voice-audio")
 
   init(channel: VoiceChannel, source: Source) {
     self.meter = LevelMeter(channel: channel)
@@ -193,7 +290,11 @@ final class VoiceAudio {
   /// An utterance opened: in file mode, start playing the file into it.
   func utteranceDidBegin(_ sink: any AudioSink) {
     router.attach(sink)
-    guard case .file(let url, let paced) = source else { return }
+    guard case .file(let launchFile, let paced) = source else { return }
+    var url = launchFile
+    #if DEBUG
+      if let next = debugNextFile { url = next }
+    #endif
     fileFeeder?.cancel()
     let router = router
     let meter = meter
@@ -219,7 +320,7 @@ final class VoiceAudio {
   {
     { buffer, _ in
       // Between utterances the buffer is dropped right here.
-      guard router.hasSink else { return }
+      guard router.isListening else { return }
       meter.feed(buffer)
       router.route(buffer)
     }
@@ -234,13 +335,17 @@ final class VoiceAudio {
     }
   }
 
-  /// DEBUG file feed: 100 ms chunks, as long as `sink` is the open utterance.
+  /// DEBUG file feed: microphone-sized chunks (1024 frames, ≈ 21 ms at 48 kHz) in
+  /// real time when paced, as long as `sink` is the open utterance.
   private nonisolated static func feed(
     file url: URL, paced: Bool, to sink: any AudioSink, router: AudioRouter, meter: LevelMeter
   ) async {
     guard let file = try? AVAudioFile(forReading: url) else { return }
     let format = file.processingFormat
-    let chunk = AVAudioFrameCount(format.sampleRate / 10)
+    let chunk: AVAudioFrameCount = 1024
+    let pace = Double(chunk) / format.sampleRate
+    let started = CFAbsoluteTimeGetCurrent()
+    var fed = 0.0
     while !Task.isCancelled {
       guard let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: chunk) else { return }
       do {
@@ -252,7 +357,11 @@ final class VoiceAudio {
       guard router.hasSink else { return }
       meter.feed(buffer)
       sink.append(buffer)
-      if paced { try? await Task.sleep(for: .milliseconds(100)) }
+      fed += pace
+      if paced {
+        let ahead = fed - (CFAbsoluteTimeGetCurrent() - started)
+        if ahead > 0 { try? await Task.sleep(for: .seconds(ahead)) }
+      }
     }
   }
 
@@ -270,6 +379,12 @@ final class VoiceAudio {
       })
     observers.append(
       center.addObserver(
+        forName: AVAudioSession.mediaServicesWereResetNotification, object: nil, queue: .main
+      ) { [weak self] _ in
+        MainActor.assumeIsolated { self?.rebuildAfterMediaReset() }
+      })
+    observers.append(
+      center.addObserver(
         forName: .AVAudioEngineConfigurationChange, object: engine, queue: .main
       ) { [weak self] _ in
         MainActor.assumeIsolated { self?.restartAfterConfigurationChange() }
@@ -277,10 +392,44 @@ final class VoiceAudio {
   }
 
   private func handleInterruption(began: Bool) {
-    onInterruption?(began)
-    if !began, isRunning, !engine.isRunning {
-      try? AVAudioSession.sharedInstance().setActive(true)
-      try? engine.start()
+    if began {
+      onInterruption?(true, false)
+      return
+    }
+    // Restart first, then report what really happened: restarting input from the background
+    // after a call often fails (cannotStartRecording), and a dead engine must not look ready.
+    if isRunning, !engine.isRunning {
+      do {
+        try AVAudioSession.sharedInstance().setActive(true)
+        try engine.start()
+      } catch {
+        log.error("restart after interruption failed: \(String(describing: error), privacy: .public)")
+      }
+    }
+    onInterruption?(false, !isRunning || engine.isRunning)
+  }
+
+  /// Media services were reset: every audio object is dead (while `isRunning` would still say
+  /// true). Tear down, build a new engine and start again if anything was listening; the router
+  /// keeps the open utterance's sink.
+  private func rebuildAfterMediaReset() {
+    let wasRunning = isRunning
+    log.notice("media services reset")
+    for observer in observers { NotificationCenter.default.removeObserver(observer) }
+    observers = []
+    fileFeeder?.cancel()
+    fileFeeder = nil
+    if source == .microphone { engine.inputNode.removeTap(onBus: 0) }
+    engine.stop()
+    isRunning = false
+    engine = AVAudioEngine()
+    guard wasRunning else { return }
+    do {
+      try start()
+      onInterruption?(false, true)
+    } catch {
+      log.error("restart after media reset failed: \(String(describing: error), privacy: .public)")
+      onInterruption?(false, false)
     }
   }
 

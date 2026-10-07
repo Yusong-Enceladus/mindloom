@@ -47,8 +47,7 @@ extension DictationAppModel {
     do {
       let settings = try PhonePairingSettings(
         sparkHost: host,
-        inboxCommand: LocalPreferenceStore.string(
-          Self.phoneInboxCommandPreferenceKey,
+        inboxCommand: LibraryIdentity.organizerInboxCommand(
           default: PhoneLinkSSHCommand.defaultInboxCommand))
       phoneLink.service = PhonePairingService(
         settings: settings, runner: ProcessPhoneLinkCommandRunner(),
@@ -67,7 +66,7 @@ extension DictationAppModel {
 
   func connectIPhone() {
     guard remoteOrganizerEnabled else {
-      phoneLink.statusMessage = "先打开上面的整理设备链路，再连接 iPhone"
+      phoneLink.statusMessage = "请先连接 DGX Spark，再连接 iPhone"
       return
     }
     guard let service = phoneLink.service, !phoneLink.working else { return }
@@ -89,7 +88,7 @@ extension DictationAppModel {
           try? await service.revoke(pairing.state)
           if previous != nil { try? phoneLink.stateFile?.clear() }
           phoneLink.paired = nil
-          phoneLink.statusMessage = "这台 Mac 记不下配对信息；没有连接 iPhone"
+          phoneLink.statusMessage = "这台 Mac 无法保存配对信息，未连接 iPhone"
           phoneLink.working = false
           return
         }
@@ -123,7 +122,7 @@ extension DictationAppModel {
     item.setData(Data(), forType: IntakePasteboardMarks.concealed)
     item.setData(Data(), forType: IntakePasteboardMarks.ownOrigin)
     pasteboard.writeObjects([item])
-    phoneLink.statusMessage = "配对码已复制；在 iPhone 的织机里粘贴"
+    phoneLink.statusMessage = "已拷贝配对码。请在 iPhone 上的 Mindloom 中粘贴"
   }
 
   /// Closes the pairing code window; the code (and the phone's private key
@@ -144,7 +143,7 @@ extension DictationAppModel {
         try? phoneLink.stateFile?.clear()
         phoneLink.paired = nil
         phoneLink.pairingCode = nil
-        phoneLink.statusMessage = "已断开 iPhone；它的钥匙已从整理设备上删除"
+        phoneLink.statusMessage = "已断开 iPhone"
       } catch {
         self?.phoneLink.statusMessage = Self.phonePairingMessage(error)
       }
@@ -164,34 +163,34 @@ extension DictationAppModel {
   }
 
   static func phonePairingMessage(_ error: any Error) -> String {
-    guard let error = error as? PhonePairingError else { return "没有连接 iPhone；请稍后再试" }
+    guard let error = error as? PhonePairingError else { return "未连接 iPhone。请稍后再试。" }
     switch error {
     case .invalidConfiguration:
       return "iPhone 的连接设置无效，无法连接 iPhone"
     case .sshConfigUnreadable(.spark):
-      return "读不到这台 Mac 连整理设备的 SSH 设置"
+      return "无法读取这台 Mac 连接 DGX Spark 的设置"
     case .sshConfigUnreadable(.relay):
-      return "读不到这台 Mac 连中转主机的 SSH 设置"
+      return "无法读取这台 Mac 连接中间设备的设置"
     case .unsupportedProxy:
-      return "SSH 设置里的中转方式手机用不了（只支持一层 ProxyJump）"
+      return "iPhone 不支持当前的连接方式（经过多台中间设备）"
     case .invalidEndpoint:
-      return "整理设备的主机名或用户名不能交给手机使用"
+      return "DGX Spark 的地址或用户名无法用于 iPhone"
     case .hostKeyMissing(.spark):
-      return "known_hosts 里没有整理设备的 ed25519 或 ECDSA 钥匙；先用 ssh 连一次再配对"
+      return "这台 Mac 尚未记录 DGX Spark 的身份。请先在这台 Mac 上连接一次 DGX Spark，然后再配对"
     case .hostKeyMissing(.relay):
-      return "known_hosts 里没有中转主机的 ed25519 或 ECDSA 钥匙；先用 ssh 连一次再配对"
+      return "这台 Mac 尚未记录中间设备的身份。请先在这台 Mac 上连接一次，然后再配对"
     case .sealKeyUnavailable:
-      return "钥匙串暂不可用；没有连接 iPhone"
+      return "这台 Mac 暂时无法保存，未连接 iPhone"
     case .previousNotRevoked:
-      return "之前那台 iPhone 的钥匙没能删除，新的没有装上；请稍后再试"
+      return "未能移除之前那台 iPhone 的访问权限，也未添加新的。请稍后再试。"
     case .authorizeFailed(.spark):
-      return "没能把 iPhone 的钥匙装到整理设备上；请确认链路能连上"
+      return "未能在 DGX Spark 上添加 iPhone 的访问权限。请确认 DGX Spark 已连接。"
     case .authorizeFailed(.relay):
-      return "没能把 iPhone 的钥匙装到中转主机上；整理设备上的也已撤回"
+      return "未能在中间设备上添加 iPhone 的访问权限；DGX Spark 上的访问权限也已撤销"
     case .revokeFailed(.spark):
-      return "未能断开：整理设备暂时连不上；iPhone 的钥匙仍然有效，请稍后再试"
+      return "未能断开连接：暂时无法连接 DGX Spark，iPhone 的访问权限仍然有效。请稍后再试。"
     case .revokeFailed(.relay):
-      return "未能断开：中转主机暂时连不上；iPhone 的钥匙仍然有效，请稍后再试"
+      return "未能断开连接：暂时无法连接中间设备，iPhone 的访问权限仍然有效。请稍后再试。"
     }
   }
 }

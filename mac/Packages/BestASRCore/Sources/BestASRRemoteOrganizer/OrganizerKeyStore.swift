@@ -1,6 +1,7 @@
 import BestASRDomain
 import Darwin
 import Foundation
+import MindloomIdentity
 import Security
 
 /// Where one library's organizing-link key lives (privacy contract §1). The
@@ -42,10 +43,10 @@ public enum OrganizerDataRootIdentity {
 }
 
 /// The key as a generic password in the user's login Keychain: service
-/// `com.bestasr.organizer-key`, account = the data root's identity hash,
+/// `app.mindloom.organizer-key`, account = the data root's identity hash,
 /// this device only (never synchronized).
 public struct KeychainOrganizerKeyStore: OrganizerKeyStore {
-  public static let service = "com.bestasr.organizer-key"
+  public static let service = MindloomIdentity.keychainService("organizer-key")
 
   public let account: String
 

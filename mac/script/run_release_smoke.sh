@@ -4,8 +4,8 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$repository_root/script/build_storage.sh"
-app_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app"
-dmg_path="$BESTASR_RELEASE_ARTIFACT_ROOT/bestASR-0.1.0.dmg"
+app_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/Mindloom.app"
+dmg_path="$BESTASR_RELEASE_ARTIFACT_ROOT/Mindloom.dmg"
 summary_path="$repository_root/artifacts/evidence/release/release-smoke-summary.json"
 signing_enabled="${BESTASR_RELEASE_SIGNING_ENABLED:-0}"
 developer_id_identity="${BESTASR_DEVELOPER_IDENTITY:-}"
@@ -61,7 +61,7 @@ done
 
 work_root="$(mktemp -d "${TMPDIR:-/tmp}/bestasr-release-smoke.XXXXXX")"
 staging_root="$work_root/staging"
-staged_app="$staging_root/bestASR.app"
+staged_app="$staging_root/Mindloom.app"
 notary_result="$work_root/notary-result.json"
 trap 'rm -rf "$work_root"' EXIT
 mkdir -p "$staging_root" "$(dirname "$dmg_path")"
@@ -132,7 +132,7 @@ else
   record_failure "hardened-runtime"
 fi
 
-app_architectures="$(/usr/bin/lipo -archs "$staged_app/Contents/MacOS/bestASR")"
+app_architectures="$(/usr/bin/lipo -archs "$staged_app/Contents/MacOS/Mindloom")"
 xpc_architectures="$(/usr/bin/lipo -archs "$xpc_path/Contents/MacOS/InferenceWorker")"
 if [[ "$app_architectures" == "arm64" && "$xpc_architectures" == "arm64" ]]; then
   architecture_status="pass"
@@ -141,7 +141,7 @@ else
   record_failure "architecture"
 fi
 
-app_build_version="$(xcrun vtool -show-build "$staged_app/Contents/MacOS/bestASR" 2>/dev/null || true)"
+app_build_version="$(xcrun vtool -show-build "$staged_app/Contents/MacOS/Mindloom" 2>/dev/null || true)"
 xpc_build_version="$(xcrun vtool -show-build "$xpc_path/Contents/MacOS/InferenceWorker" 2>/dev/null || true)"
 if [[ "$app_build_version" == *"minos 14.2"* \
   && "$xpc_build_version" == *"minos 14.2"* ]]
@@ -157,7 +157,7 @@ if [[ "$release_smoke_status" == "pass" ]]; then
     -ov \
     -fs HFS+ \
     -format UDZO \
-    -volname bestASR \
+    -volname Mindloom \
     -srcfolder "$staging_root" \
     "$dmg_path" >/dev/null
   if /usr/bin/hdiutil verify "$dmg_path" >/dev/null; then
@@ -242,9 +242,9 @@ jq -n \
     smokeStatus: $smokeStatus,
     releaseEligible: ($status == "pass"),
     failedCheck: $failedCheck,
-    package: "build-product://bestASR.app",
+    package: "build-product://Mindloom.app",
     dmg: {
-      path: "build-product://bestASR-0.1.0.dmg",
+      path: "build-product://Mindloom.dmg",
       sizeBytes: $dmgSizeBytes,
       sha256: $dmgSHA256
     },

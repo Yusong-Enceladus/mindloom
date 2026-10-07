@@ -13,6 +13,10 @@ public struct BoundedDictationASRPolicy: Codable, Equatable, Sendable {
   public let maximumTranscriptCharacters: Int
   public let timeoutNanoseconds: UInt64
   public let permitsEmptyFinalResultForReconciliation: Bool
+  /// Ask the recognizer for text without word timings
+  /// (`ASRRecognitionContext.deferWordAlignment`); dictation's sentences are
+  /// timed later (`DeferredWordAlignment`).
+  public let defersWordAlignment: Bool
 
   public init(
     maximumPreparedRanges: Int = 512,
@@ -22,7 +26,8 @@ public struct BoundedDictationASRPolicy: Codable, Equatable, Sendable {
     maximumLanguageHints: Int = 8,
     maximumTranscriptCharacters: Int = 1_000_000,
     timeoutNanoseconds: UInt64 = 30_000_000_000,
-    permitsEmptyFinalResultForReconciliation: Bool = false
+    permitsEmptyFinalResultForReconciliation: Bool = false,
+    defersWordAlignment: Bool = false
   ) throws {
     guard
       maximumPreparedRanges > 0,
@@ -48,6 +53,32 @@ public struct BoundedDictationASRPolicy: Codable, Equatable, Sendable {
     self.timeoutNanoseconds = timeoutNanoseconds
     self.permitsEmptyFinalResultForReconciliation =
       permitsEmptyFinalResultForReconciliation
+    self.defersWordAlignment = defersWordAlignment
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case maximumPreparedRanges, maximumRangeNanoseconds, maximumDictionaryTerms
+    case maximumPriorSegments, maximumLanguageHints, maximumTranscriptCharacters
+    case timeoutNanoseconds, permitsEmptyFinalResultForReconciliation, defersWordAlignment
+  }
+
+  /// A policy encoded before `defersWordAlignment` existed decodes as not
+  /// deferring.
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    try self.init(
+      maximumPreparedRanges: container.decode(Int.self, forKey: .maximumPreparedRanges),
+      maximumRangeNanoseconds: container.decode(UInt64.self, forKey: .maximumRangeNanoseconds),
+      maximumDictionaryTerms: container.decode(Int.self, forKey: .maximumDictionaryTerms),
+      maximumPriorSegments: container.decode(Int.self, forKey: .maximumPriorSegments),
+      maximumLanguageHints: container.decode(Int.self, forKey: .maximumLanguageHints),
+      maximumTranscriptCharacters: container.decode(
+        Int.self, forKey: .maximumTranscriptCharacters),
+      timeoutNanoseconds: container.decode(UInt64.self, forKey: .timeoutNanoseconds),
+      permitsEmptyFinalResultForReconciliation: container.decode(
+        Bool.self, forKey: .permitsEmptyFinalResultForReconciliation),
+      defersWordAlignment: container.decodeIfPresent(Bool.self, forKey: .defersWordAlignment)
+        ?? false)
   }
 }
 
@@ -173,9 +204,13 @@ public actor BoundedDictationASRAdapter: VersionedDictationASRPort {
             }
             .prefix(32)
         )
+        // `explicitOnly` (a word learned from one correction, replacement
+        // only) has to survive the bounding, or the runtime would also look
+        // for it among similar text.
         return ASRDictionaryHint(
           canonicalForm: canonical,
-          spokenForms: spoken
+          spokenForms: spoken,
+          explicitOnly: hint.explicitOnly
         )
       }.prefix(policy.maximumDictionaryTerms)
     )
@@ -232,7 +267,8 @@ public actor BoundedDictationASRAdapter: VersionedDictationASRPort {
         recognitionContext: ASRRecognitionContext(
           dictionaryTerms: dictionaryTerms,
           dictionaryHints: dictionaryHints,
-          priorStableSegments: priorSegments
+          priorStableSegments: priorSegments,
+          deferWordAlignment: policy.defersWordAlignment
         ),
         supersedesRevisionID: versioned.supersedesRevisionID?.rawValue
       )

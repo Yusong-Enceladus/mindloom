@@ -1,11 +1,13 @@
 {
   "schemaVersion": 1,
-  "packageIdentifier": "com.bestasr.app",
-  "packageVersion": "0.1.0",
+  "packageIdentifier": "app.mindloom",
+  "packageVersion": "0.2.0",
   "buildConfiguration": "Release",
   "allowSymlinks": false,
   "firstPartyMachOPaths": [
-    "Contents/MacOS/bestASR",
+    "Contents/Helpers/mindloom-mcp",
+    "Contents/MacOS/Mindloom",
+    "Contents/PlugIns/MindloomShare.appex/Contents/MacOS/MindloomShare",
     "Contents/XPCServices/InferenceWorker.xpc/Contents/MacOS/InferenceWorker"
   ],
   "modelFileExtensions": [

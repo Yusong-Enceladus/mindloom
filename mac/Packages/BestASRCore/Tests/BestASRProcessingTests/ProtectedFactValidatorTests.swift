@@ -129,4 +129,46 @@ final class ProtectedFactValidatorTests: XCTestCase {
     XCTAssertFalse(result.passed)
     XCTAssertTrue(result.violatedCategories.contains(.dictionaryTerm))
   }
+
+  /// Regression (DICTATION_ARCHITECTURE §15): with the user's whole
+  /// dictionary the gate compiled and ran a few hundred expressions per
+  /// dictation, a steady ~100 ms between recognition and paste in every one
+  /// of 65 real dictations. Terms that occur in neither text are skipped now.
+  func testAFullDictionaryCostsNothingForWordsNotSaid() {
+    let dictionary =
+      (0..<60).map { "Term\($0)Name" } + ["Claude", "Mindloom", "张明", "预算会"]
+    let source = "嗯我们明天下午三点跟张明过一下预算，然后我会把 Claude 的结果发给你"
+    let candidate = "我们明天下午三点跟张明过一下预算，然后我会把 Claude 的结果发给你。"
+    XCTAssertTrue(
+      DictationProtectedFactValidator.validate(
+        source: source, candidate: candidate, dictionaryTerms: dictionary
+      ).passed)
+    var durations: [Duration] = []
+    for _ in 0..<15 {
+      let started = ContinuousClock.now
+      _ = DictationProtectedFactValidator.validate(
+        source: source, candidate: candidate, dictionaryTerms: dictionary)
+      durations.append(ContinuousClock.now - started)
+    }
+    let median = durations.sorted()[durations.count / 2]
+    XCTAssertLessThan(median, .milliseconds(15), "median \(median)")
+  }
+
+  /// The skipping must not hide a change: a term or actor that occurs in
+  /// only one of the two texts is still compared.
+  func testSkippingTermsStillSeesTermsInEitherText() {
+    let dictionary = (0..<60).map { "Term\($0)Name" } + ["Claude", "张明"]
+    let dropped = DictationProtectedFactValidator.validate(
+      source: "把结果发给 Claude", candidate: "把结果发给", dictionaryTerms: dictionary)
+    XCTAssertTrue(dropped.violatedCategories.contains(.dictionaryTerm))
+    let added = DictationProtectedFactValidator.validate(
+      source: "把结果发给他", candidate: "把结果发给 Claude", dictionaryTerms: dictionary)
+    XCTAssertTrue(added.violatedCategories.contains(.dictionaryTerm))
+    let owner = DictationProtectedFactValidator.validate(
+      source: "张明负责审核预算", candidate: "张明负责预算", dictionaryTerms: dictionary)
+    XCTAssertTrue(owner.violatedCategories.contains(.actionOwner))
+    let fixedActor = DictationProtectedFactValidator.validate(
+      source: "we will ship it", candidate: "they will ship it", dictionaryTerms: dictionary)
+    XCTAssertFalse(fixedActor.passed)
+  }
 }

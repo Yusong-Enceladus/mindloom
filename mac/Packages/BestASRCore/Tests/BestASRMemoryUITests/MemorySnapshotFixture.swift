@@ -294,16 +294,6 @@ enum MemorySnapshotFixture {
     MemoryIssue(id: "d-2", title: "确认同一件事：关闭链路时正在发送，可能已送达；重试以确认", deliveryUnknown: true),
   ]
 
-  static var personReviews: [String: [MemoryPersonReview]] {
-    [
-      wang.uppercased(): [
-        MemoryPersonReview(
-          id: "r-1", prompt: "这段声音是王姐吗？", meta: "9月25日 18:20 · 当面 · 「新家宽带」",
-          itemID: item(13), origin: .voiceMatch("speaker-1"), startNanoseconds: 0,
-          endNanoseconds: 3_000_000_000)
-      ]
-    ]
-  }
 
   /// Screenshot stand-ins drawn in code.
   static func thumbnail(_ path: String) -> NSImage? {

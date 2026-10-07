@@ -2,6 +2,7 @@ import BestASRDomain
 import CryptoKit
 import Darwin
 import Foundation
+import MindloomIdentity
 import Security
 
 /// Where one library's phone seal key lives (PHONE-CONTRACT §3): an X25519
@@ -45,10 +46,10 @@ enum PhoneSealKeyBytes {
 }
 
 /// The seal key as a generic password in the user's login Keychain: service
-/// `com.bestasr.phone-seal-key`, account = the data root's identity hash
+/// `app.mindloom.phone-seal-key`, account = the data root's identity hash
 /// (the same account as the organizing-link key), this device only.
 public struct KeychainPhoneSealKeyStore: PhoneSealKeyStore {
-  public static let service = "com.bestasr.phone-seal-key"
+  public static let service = MindloomIdentity.keychainService("phone-seal-key")
 
   public let account: String
 

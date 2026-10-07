@@ -12,8 +12,6 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   case language
   case data
   case entries
-  case agents
-  case team
 
   var id: String { rawValue }
 
@@ -21,22 +19,22 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
   /// deployment, verification and rollback, per-App text policies — is
   /// operator tooling, kept whole but reached from 更多 → 高级 instead of
   /// sitting beside the microphone picker.
-  static let primary: [Self] = [
-    .general, .shortcuts, .recording, .data, .team, .entries, .agents,
+  static let primary: [Self] = [.general, .shortcuts, .recording, .entries, .data]
+  /// v11: Settings is the package's four panes; this window (高级, from
+  /// Settings › 关于) keeps the older knobs.
+  static let advanced: [Self] = [
+    .general, .shortcuts, .recording, .entries, .models, .language, .data,
   ]
-  static let advanced: [Self] = [.models, .language]
 
   var title: String {
     switch self {
     case .general: "通用"
     case .shortcuts: "快捷键"
     case .recording: "麦克风"
-    case .models: "识别组件"
+    case .models: "识别模型"
     case .language: "文字格式"
     case .data: "数据"
-    case .entries: "入口"
-    case .agents: "Agent"
-    case .team: "团队与整理设备"
+    case .entries: "入口细节"
     }
   }
 
@@ -48,9 +46,7 @@ private enum DictationSettingsCategory: String, CaseIterable, Identifiable, Hash
     case .models: "shippingbox"
     case .language: "character.book.closed"
     case .data: "lock.shield"
-    case .entries: "tray.and.arrow.down"
-    case .agents: "person.badge.key"
-    case .team: "person.3"
+    case .entries: "square.and.arrow.down"
     }
   }
 }
@@ -70,8 +66,6 @@ struct DictationSettingsView: View {
   let scope: DictationSettingsScope
   @State private var selectedCategory = DictationSettingsCategory.general
   @State private var confirmSpeakerMemoryDeletion = false
-  @State private var confirmSparkForget = false
-  @State private var confirmPhoneDisconnect = false
   @State private var confirmRebuildableCacheDeletion = false
   @State private var pendingHistoryClearMode: SessionInputMode?
   @State private var pendingAppPolicyDeletion: AppTextPolicy?
@@ -90,88 +84,18 @@ struct DictationSettingsView: View {
     _selectedCategory = State(initialValue: scope == .advanced ? .models : .general)
   }
 
-  /// "连接 iPhone" / "断开 iPhone" (PHONE-CONTRACT §4). Connecting is offered
-  /// only while the link above is on; disconnecting whenever a phone is
-  /// paired, so a lost phone can always be cut off.
-  @ViewBuilder private var phoneLinkSection: some View {
-    let phone = model.phoneLink
-    if let paired = phone.paired {
-      Text("已连接 iPhone · \(paired.pairedAt.formatted(date: .abbreviated, time: .shortened))")
-        .accessibilityIdentifier("bestASR.settings.phonePaired")
-    } else {
-      Text("没有连接 iPhone")
-    }
-    Text(
-      "iPhone 上用织机键盘说的话、用「收进织机」分享的文字、链接、图片和文件，会在手机上锁好，只有这台 Mac 打得开；经你的整理设备转交，这台 Mac 取走后整理设备就删掉。手机的钥匙只能往收件箱里放东西。"
-    )
-    .font(.caption)
-    .foregroundStyle(.secondary)
-    HStack {
-      Button(phone.paired == nil ? "连接 iPhone" : "重新连接 iPhone") {
-        model.connectIPhone()
-      }
-      .disabled(!model.canConnectIPhone)
-      .accessibilityIdentifier("bestASR.settings.phoneConnect")
-      if phone.paired != nil {
-        Button("断开 iPhone", role: .destructive) {
-          confirmPhoneDisconnect = true
-        }
-        .disabled(phone.working || phone.service == nil)
-        .accessibilityIdentifier("bestASR.settings.phoneDisconnect")
-      }
-      if phone.working {
-        ProgressView().controlSize(.small)
-      }
-    }
-    .sheet(
-      isPresented: Binding(
-        get: { model.phoneLink.pairingCode != nil },
-        set: { if !$0 { model.finishPhonePairingCode() } }
-      )
-    ) {
-      if let code = model.phoneLink.pairingCode {
-        PhonePairingCodeSheet(
-          code: code, copy: { model.copyPhonePairingCode() },
-          done: { model.finishPhonePairingCode() })
-      }
-    }
-    .confirmationDialog(
-      "断开 iPhone？", isPresented: $confirmPhoneDisconnect, titleVisibility: .visible
-    ) {
-      Button("断开", role: .destructive) { model.disconnectIPhone() }
-      Button("取消", role: .cancel) {}
-    } message: {
-      Text("这台 iPhone 的钥匙会从整理设备和中转主机上删除，之后它送出的内容不再被接收。已经收进这台 Mac 的内容不受影响。")
-    }
-    if !model.remoteOrganizerEnabled, phone.paired == nil {
-      Text("先打开上面的整理设备链路，再连接 iPhone。")
-        .font(.caption)
-        .foregroundStyle(.secondary)
-    }
-    if let status = phone.statusMessage {
-      Text(status)
-        .font(.caption)
-        .foregroundStyle(.secondary)
-        .accessibilityIdentifier("bestASR.settings.phoneStatus")
-    }
-    if !phone.droppedNotices.isEmpty {
-      HStack(alignment: .firstTextBaseline) {
-        VStack(alignment: .leading, spacing: 2) {
-          ForEach(phone.droppedNotices, id: \.self) { notice in
-            Text(notice)
-          }
-        }
-        .font(.caption)
-        .foregroundStyle(.orange)
-        Spacer()
-        Button("知道了") { model.dismissPhoneDropNotices() }
-          .controlSize(.small)
-      }
-      .accessibilityIdentifier("bestASR.settings.phoneDropped")
-    }
-  }
+
 
   var body: some View {
+    settingsBody
+      // The device lists are read here, not at launch (live-mac).
+      .onAppear {
+        model.refreshMicrophoneDevices()
+        model.refreshSystemAudioSources(announce: false)
+      }
+  }
+
+  private var settingsBody: some View {
     HStack(spacing: 0) {
       VStack(alignment: .leading, spacing: 12) {
         Text(scope == .advanced ? "高级" : "设置")
@@ -246,7 +170,7 @@ struct DictationSettingsView: View {
                     Text("翻译")
                     Text("Fn ⇧")
                       .font(.system(size: 12, weight: .medium, design: .monospaced))
-                    Text("按住 Fn 说话时按一下 Shift，写入的是译文")
+                    Text("按住 Fn 键说话时按 Shift 键，输入译文")
                       .font(.caption)
                       .foregroundStyle(.secondary)
                   }
@@ -254,7 +178,7 @@ struct DictationSettingsView: View {
                     Text("指令")
                     Text("Fn 空格")
                       .font(.system(size: 12, weight: .medium, design: .monospaced))
-                    Text("说出要做的事；选中了文字就改写它，没选中就给出答案")
+                    Text("说出要执行的操作：选中文字时改写所选文字，未选中时直接给出回答")
                       .font(.caption)
                       .foregroundStyle(.secondary)
                   }
@@ -288,8 +212,8 @@ struct DictationSettingsView: View {
                   }
                   Text(
                     model.spoken.translationTargetLanguageNames.count > 1
-                      ? "说话时每多按一下 Shift，就换到下一个语言。"
-                      : "最多选 3 个；选了多个时，说话时每多按一下 Shift 就换一个。"
+                      ? "说话时每按一次 Shift 键，切换到下一种语言。"
+                      : "最多选择 3 种；选择多种时，说话时每按一次 Shift 键切换一种。"
                   )
                   .font(.caption)
                   .foregroundStyle(.secondary)
@@ -316,11 +240,11 @@ struct DictationSettingsView: View {
                             .accessibilityIdentifier(
                               "bestASR.settings.installTranslation.\(target)")
                         }
-                        Text("下载前按原文写入")
+                        Text("下载完成前输入原文")
                           .font(.caption)
                           .foregroundStyle(.secondary)
                       case .unsupported, .unavailable, .none:
-                        Text("系统不支持这一对")
+                        Text("系统不支持此语言组合")
                           .font(.caption)
                           .foregroundStyle(.secondary)
                       }
@@ -334,11 +258,11 @@ struct DictationSettingsView: View {
                   model.refreshTranslationEngineStatus()
                 }
                 .accessibilityIdentifier("bestASR.settings.translationLanguage")
-                Text("翻译用系统自带的翻译引擎。")
+                Text("翻译使用系统自带的翻译功能。")
                   .font(.caption)
                   .foregroundStyle(.secondary)
               } else {
-                Text("把口述快捷键设为 Fn 单键后，可以用 Fn ⇧ 翻译、Fn 空格 下指令。")
+                Text("将口述快捷键设为 Fn 单键后，可以使用 Fn ⇧ 翻译、Fn 空格 执行指令。")
                   .font(.caption)
                   .foregroundStyle(.secondary)
                   .accessibilityIdentifier("bestASR.settings.spokenModesUnavailable")
@@ -350,7 +274,7 @@ struct DictationSettingsView: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .accessibilityIdentifier("bestASR.settings.hotkeyStatus")
-              Text("点选输入框后直接按新组合；支持 Fn 单键、Fn + 按键及常规修饰键组合。快捷键与其他应用冲突时会保留原设置。")
+              Text("点按输入框后直接按新的组合键；支持 Fn 单键、Fn + 按键及常规修饰键组合。快捷键与其他 App 冲突时将保留原设置。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
               if model.hotkeys.globeKeyConflictsWithStartShortcut {
@@ -359,10 +283,10 @@ struct DictationSettingsView: View {
                     "按 Fn 时，macOS 也会执行 🌐 键操作（切换输入法或弹出表情）",
                     systemImage: "exclamationmark.triangle"
                   )
-                  Text("请在 系统设置 → 键盘 中，把“按下 🌐 键时”设为“不执行任何操作”。织机不会替你修改系统设置。")
+                  Text("请在“系统设置”>“键盘”中，将“按下🌐︎键时”设为“不执行任何操作”。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
-                  Button("打开键盘设置") { model.openKeyboardSettings() }
+                  Button("打开“键盘”设置") { model.openKeyboardSettings() }
                     .accessibilityIdentifier("bestASR.settings.openKeyboardSettings")
                 }
                 .accessibilityIdentifier("bestASR.settings.globeKeyConflict")
@@ -394,22 +318,16 @@ struct DictationSettingsView: View {
                     set: { model.setPersonalCleanupEnabled($0) }
                   )
                 )
-                Text("去掉语气词、重复和改口；改动过多时退回规则整理。")
+                Text("移除语气词、重复和改口；改动过多时改用规则整理。")
                   .font(.caption)
                   .foregroundStyle(.secondary)
               }
               // Push-to-talk was a switch explaining that, with it off, the
               // key already behaved that way. Holding to talk and tapping to
               // toggle is now how every shortcut behaves, so there is nothing
-              // left to choose.
-              Toggle(
-                "只在鼠标悬停时显示实时字幕",
-                isOn: Binding(
-                  get: { model.capsuleSubtitlesRequireHover },
-                  set: { model.setCapsuleSubtitlesRequireHover($0) }
-                )
-              )
-              .accessibilityIdentifier("bestASR.settings.subtitlesHoverOnly")
+              // left to choose. 「只在鼠标悬停时显示实时字幕」 is gone too: the
+              // v11 HUD had no hover, so it did nothing; the real switch is
+              // 设置 › 通用 › 口述时显示文字.
               Text(model.preferencesStatusMessage)
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -468,25 +386,25 @@ struct DictationSettingsView: View {
           }
           if selectedCategory == .shortcuts {
             Section("权限") {
-              Text("Fn 单键和写入其他 App 需要辅助功能权限。")
+              Text("Fn 单键和输入到其他 App 需要“设备控制和数据访问”权限。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
               permissionRow("麦克风", state: model.capture.microphonePermission) {
                 model.resolvePermission(.microphone)
               }
-              permissionRow("辅助功能", state: model.onboarding.accessibilityPermission) {
+              permissionRow("设备控制和数据访问", state: model.onboarding.accessibilityPermission) {
                 model.resolvePermission(.accessibility)
               }
               permissionRow(
-                "屏幕与系统音频录制",
+                "录屏与系统录音",
                 state: model.capture.systemAudioPermission
               ) {
                 model.resolvePermission(.systemAudioCapture)
               }
               Button("刷新状态") { model.refreshPermissions() }
-              DisclosureGroup("系统设置里有多个织机？") {
+              DisclosureGroup("“系统设置”中有多个 Mindloom？") {
                 VStack(alignment: .leading, spacing: 6) {
-                  Text("只保留并允许“应用程序”文件夹里的正式织机。当前运行身份如下：")
+                  Text("请仅允许“应用程序”文件夹中的 Mindloom。当前运行的版本如下：")
                   Text(model.permissionApplicationIdentity)
                     .font(.caption.monospaced())
                     .textSelection(.enabled)
@@ -498,11 +416,11 @@ struct DictationSettingsView: View {
           }
         }
         if selectedCategory == .models {
-          Section("识别组件") {
+          Section("识别模型") {
             Text("推荐配置")
               .font(.headline)
             Text(
-              "中英混输识别与时间对齐组件约 4.82 GB，多人人物识别组件约 22 MB，文字整理组件约 930 MB。只补充缺失组件；安装后可离线使用，录音、文字、词典、人物信息和当前应用信息不会离开这台 Mac。"
+              "中英混输识别与时间对齐模型约 3.98 GB，说话人识别模型约 22 MB，文字整理模型约 930 MB。仅下载缺少的模型；安装后在这台 Mac 上运行。"
             )
             .font(.callout)
             .fixedSize(horizontal: false, vertical: true)
@@ -540,16 +458,24 @@ struct DictationSettingsView: View {
               )
               .accessibilityIdentifier("bestASR.settings.speakerLicense")
               Link(
-                "查看文字整理组件许可",
+                "查看文字整理模型许可",
                 destination: URL(
                   string:
                     "https://huggingface.co/Qwen/Qwen3-1.7B-MLX-4bit/blob/21457c6f51ed54a7c16e988c0844db973815c137/LICENSE"
                 )!
               )
               .accessibilityIdentifier("bestASR.settings.qwenLicense")
+              Link(
+                "查看按意思搜索模型许可（Apache 2.0）",
+                destination: URL(
+                  string:
+                    "https://huggingface.co/mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ/blob/6c3ae70858513f1a78e9cdca3cae330d9075cd2a/README.md"
+                )!
+              )
+              .accessibilityIdentifier("bestASR.settings.meaningLicense")
             }
             Toggle(
-              "我接受基础语音识别组件许可与署名要求",
+              "我接受基础语音识别模型许可与署名要求",
               isOn: Binding(
                 get: { model.models.modelLicenseAccepted },
                 set: { model.setSpeechModelLicenseAccepted($0) }
@@ -557,7 +483,7 @@ struct DictationSettingsView: View {
             )
             .accessibilityIdentifier("bestASR.settings.modelLicenseAccepted")
             Toggle(
-              "我接受上方多人识别组件许可与署名要求",
+              "我接受上方多人识别模型许可与署名要求",
               isOn: Binding(
                 get: { model.models.speakerModelLicenseAccepted },
                 set: { model.setSpeakerModelLicenseAccepted($0) }
@@ -565,14 +491,22 @@ struct DictationSettingsView: View {
             )
             .accessibilityIdentifier("bestASR.settings.speakerModelLicenseAccepted")
             Toggle(
-              "我接受上方文字整理组件许可",
+              "我接受上方文字整理模型许可",
               isOn: Binding(
                 get: { model.models.polishModelLicenseAccepted },
                 set: { model.setPolishModelLicenseAccepted($0) }
               )
             )
             .accessibilityIdentifier("bestASR.settings.polishModelLicenseAccepted")
-            Button("下载并准备推荐组件") {
+            Toggle(
+              "我接受上方按意思搜索模型许可",
+              isOn: Binding(
+                get: { model.models.meaningModelLicenseAccepted },
+                set: { model.setMeaningModelLicenseAccepted($0) }
+              )
+            )
+            .accessibilityIdentifier("bestASR.settings.meaningModelLicenseAccepted")
+            Button("下载推荐模型") {
               model.downloadRecommendedModels()
             }
             .buttonStyle(.borderedProminent)
@@ -583,7 +517,7 @@ struct DictationSettingsView: View {
             .accessibilityIdentifier("bestASR.settings.downloadRecommendedModels")
             if model.models.recommendedModelInstallInProgress {
               ProgressView(value: model.models.recommendedModelProgress)
-                .accessibilityLabel("推荐组件下载进度")
+                .accessibilityLabel("推荐模型下载进度")
                 .accessibilityValue(
                   "百分之 \(Int(model.models.recommendedModelProgress * 100))"
                 )
@@ -622,14 +556,14 @@ struct DictationSettingsView: View {
             }
 
             Toggle(
-              "允许联网下载识别组件",
+              "允许通过网络下载识别模型",
               isOn: Binding(
                 get: { model.models.allowModelDownloads },
                 set: { model.setAllowModelDownloads($0) }
               )
             )
             Toggle(
-              "自动检查并安装已验证的组件更新",
+              "自动检查并安装已验证的模型更新",
               isOn: Binding(
                 get: { model.models.automaticModelUpdates },
                 set: { model.setAutomaticModelUpdates($0) }
@@ -637,7 +571,7 @@ struct DictationSettingsView: View {
             )
             .disabled(!model.models.allowModelDownloads)
             HStack {
-              Button("校验已安装组件") { model.verifyInstalledModels() }
+              Button("校验已安装的模型") { model.verifyInstalledModels() }
               Menu("恢复上一可用版本") {
                 ForEach(LocalModelComponent.allCases) { component in
                   Button(component.title) {
@@ -650,7 +584,7 @@ struct DictationSettingsView: View {
               .font(.caption)
               .foregroundStyle(.secondary)
 
-            DisclosureGroup("高级诊断与离线部署") {
+            DisclosureGroup("高级诊断与本机部署") {
               VStack(alignment: .leading, spacing: 10) {
                 Text("语音识别")
                   .font(.headline)
@@ -668,13 +602,13 @@ struct DictationSettingsView: View {
                   }
                 }
                 Text(
-                  "仅用于高级离线部署：这里安装混输与实时识别基线。完整推荐安装还会自动准备中文和英文终稿组件，普通用户无需选择。"
+                  "仅用于高级本机部署：在此安装混输与实时识别的基础模型。推荐安装会同时准备中文和英文终稿模型，一般无需选择。"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
                 Divider()
-                Text("安全文字整理")
+                Text("文字整理模型")
                   .font(.headline)
                 Text(model.polishReadinessMessage)
                   .accessibilityIdentifier("bestASR.settings.polishReadiness")
@@ -692,7 +626,7 @@ struct DictationSettingsView: View {
                   }
                 }
                 Text(
-                  "应用会在本机校验精确匹配的 930.3 MB Qwen3 文件。组件不可用时仍会保留原始识别文字，并使用安全标点整理。"
+                  "Mindloom 会在这台 Mac 上校验 930.3 MB 的 Qwen3 文件。模型不可用时，保留原始识别文字并仅添加标点。"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -702,7 +636,7 @@ struct DictationSettingsView: View {
                   .font(.headline)
                 Text(model.people.speakerReadinessMessage)
                 HStack {
-                  Button("选择多人识别组件文件夹…") {
+                  Button("选择说话人识别模型文件夹…") {
                     model.chooseAndInstallSpeakerModel()
                   }
                   .disabled(
@@ -715,7 +649,7 @@ struct DictationSettingsView: View {
                   }
                 }
                 Text(
-                  "应用会在本机逐项校验固定版本的约 21.6 MB Core ML 文件；运行时不会自动联网补文件。"
+                  "Mindloom 会在这台 Mac 上逐项校验固定版本、约 21.6 MB 的模型文件。"
                 )
                 .font(.caption)
                 .foregroundStyle(.secondary)
@@ -738,7 +672,7 @@ struct DictationSettingsView: View {
                 }
                 .help(policy.bundleIdentifier)
                 Spacer()
-                Text(policy.polishEnabled ? "整理文字" : "仅安全标点")
+                Text(policy.polishEnabled ? "整理文字" : "仅添加标点")
                   .foregroundStyle(.secondary)
                 Text(policy.formattingStyle.title)
                   .foregroundStyle(.secondary)
@@ -805,60 +739,6 @@ struct DictationSettingsView: View {
           }
         }
         if selectedCategory == .data {
-          Section("我的整理设备") {
-            Toggle(
-              "通过 SSH 发送整理所需的文字到我的整理设备",
-              isOn: Binding(
-                get: { model.remoteOrganizerEnabled },
-                set: { model.setRemoteOrganizerEnabled($0) }
-              )
-            )
-            .accessibilityIdentifier("bestASR.settings.sparkOrganizer")
-            Text(model.events.remoteStatusMessage)
-              .font(.caption)
-              .foregroundStyle(.secondary)
-            if let clock = model.events.remoteServiceClock, clock != "wall" {
-              // An eval or test configuration of the organizer, not production.
-              Text("整理设备在测试配置下运行")
-                .font(.caption)
-                .foregroundStyle(.orange)
-                .accessibilityIdentifier("bestASR.settings.organizerTestClock")
-            }
-            Text(
-              "开启后只发送开启后开始的记录的文字、分段、人物名称和来源 App，以及你在事件页做的整理决定；发送前，手机号、邮箱、证件号、银行卡号、验证码、密码和密钥会先换成占位符，截图里的这些号码会被涂掉，结果回到 Mac 时再换回原文。录音、声纹、词典、原始文件和音视频始终留在 Mac。整理设备上的内容用只存在这台 Mac 钥匙串里的钥匙锁住，图片和文件读完即删；你在 Mac 上删除的记录，整理设备上也会删除。关闭会先让整理设备锁上，再停止一切发送、断开 SSH 隧道并清空待发队列；关闭期间的记录和修改不会在重新开启后自动补发。从归档导入会关闭链路，导入的内容不会自动发送。"
-            )
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            Button(
-              model.remoteOrganizerHoldsOtherKey ? "让整理设备忘掉旧内容" : "让整理设备忘掉我的内容",
-              role: .destructive
-            ) {
-              confirmSparkForget = true
-            }
-            .disabled(!model.remoteOrganizerCanForget || model.remoteOrganizerForgetting)
-            .accessibilityIdentifier("bestASR.settings.sparkForget")
-            .confirmationDialog(
-              model.remoteOrganizerHoldsOtherKey ? "让整理设备忘掉旧内容？" : "让整理设备忘掉你的内容？",
-              isPresented: $confirmSparkForget,
-              titleVisibility: .visible
-            ) {
-              Button(
-                model.remoteOrganizerHoldsOtherKey ? "忘掉旧内容" : "忘掉并销毁钥匙", role: .destructive
-              ) {
-                model.forgetRemoteOrganizerContent()
-              }
-              Button("取消", role: .cancel) {}
-            } message: {
-              Text(
-                model.remoteOrganizerHoldsOtherKey
-                  ? "整理设备会删除用另一把钥匙保存的全部内容；这台 Mac 上的记录不受影响。"
-                  : "整理设备会删除它为你保存的全部内容，这台 Mac 上的钥匙也会销毁；Mac 上的记录和整理结果都保留，之后只发送新的或改过的记录。"
-              )
-            }
-          }
-          Section("iPhone") {
-            phoneLinkSection
-          }
           Section("人物与声纹隐私") {
             Toggle(
               "在本机记住人物声纹，用于之后的自动匹配",
@@ -874,7 +754,7 @@ struct DictationSettingsView: View {
               )
             )
             Text(
-              "关闭会删除全部声纹向量并停止新的自动匹配；不会删除原音、逐字稿、人物名称或你人工确认的关系。"
+              "关闭后将删除所有声纹特征并停止自动匹配；原始录音、逐字稿、人物名称和你确认的关系会保留。"
             )
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -882,11 +762,11 @@ struct DictationSettingsView: View {
               model.reevaluateAutomaticPersonMatches()
             }
             .disabled(!model.people.speakerMemoryEnabled || !model.people.speakerRuntimeReady)
-            Text("只会从保留原音重新计算自动匹配；人工确认、明确拒绝和人物名称不会被覆盖。")
+            Text("根据保留的原始录音重新计算自动匹配；你确认或拒绝的关系和人物名称保持不变。")
               .font(.caption)
               .foregroundStyle(.secondary)
               .confirmationDialog(
-                "删除全部本机声纹向量？",
+                "删除这台 Mac 上的所有声纹特征？",
                 isPresented: $confirmSpeakerMemoryDeletion,
                 titleVisibility: .visible
               ) {
@@ -898,7 +778,7 @@ struct DictationSettingsView: View {
                 Text("原音、文字、人物名称和人工确认关系会保留。")
               }
           }
-          Section("本机存储") {
+          Section("本机储存空间") {
             LabeledContent("数据位置") {
               Text(model.localDataLocation)
                 .font(.caption.monospaced())
@@ -914,7 +794,7 @@ struct DictationSettingsView: View {
               value: DictationAppModel.byteCountTitle(model.storageSnapshot.sourceAudioBytes)
             )
             LabeledContent(
-              "已安装的识别组件",
+              "已安装的识别模型",
               value: DictationAppModel.byteCountTitle(model.storageSnapshot.modelBytes)
             )
             LabeledContent(
@@ -951,7 +831,7 @@ struct DictationSettingsView: View {
               .padding(.top, 6)
             }
             HStack {
-              Button("在 Finder 中显示") { model.revealLocalDataFolder() }
+              Button("在访达中显示") { model.revealLocalDataFolder() }
               Button("刷新用量") { model.refreshStorageUsage() }
               Button("清理可重新下载缓存…") {
                 confirmRebuildableCacheDeletion = true
@@ -1000,7 +880,7 @@ struct DictationSettingsView: View {
               }
               Button("取消", role: .cancel) { pendingHistoryClearMode = nil }
             } message: {
-              Text("这会永久删除该类型的逐字稿、整理结果、人物出现关系和保留原音；其他类型、词典、人物名称和识别组件不会删除。")
+              Text("将永久删除此类型的逐字稿、整理结果、人物出现关系和保留的原始录音；其他类型、词典、人物名称和识别模型会保留。此操作无法撤销。")
             }
             Text(model.storageStatusMessage)
               .font(.caption)
@@ -1008,7 +888,7 @@ struct DictationSettingsView: View {
           }
           Section("完整备份与恢复") {
             Text(
-              "归档覆盖全部可迁移历史、原始音频、逐字稿版本、人物/声纹关系、词典、整理结果和可迁移设置；可重新下载的识别组件、缓存、索引和日志不会写入归档。"
+              "归档包括所有可迁移的历史记录、原始音频、逐字稿版本、人物与声纹关系、词典、整理结果和可迁移设置；可重新下载的识别模型、缓存、索引和日志不包括在内。"
             )
             .font(.callout)
             .fixedSize(horizontal: false, vertical: true)
@@ -1034,7 +914,7 @@ struct DictationSettingsView: View {
               }
             }
             Text(
-              "口令不会保存到钥匙串、日志或归档中。没有来源 Mac 的钥匙串也可在另一台 Mac 恢复；忘记口令则无法解密。"
+              "恢复时需要输入此口令，可以在任何 Mac 上恢复。忘记口令将无法解密。"
             )
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -1045,7 +925,7 @@ struct DictationSettingsView: View {
           }
           Section("隐私诊断") {
             Text(
-              "产品遥测和远程崩溃上报默认关闭。诊断摘要只含版本、权限、组件是否就绪和存储总量，不含音频、逐字稿、词典、人物、App 或窗口信息。"
+              "产品遥测和远程崩溃报告默认关闭。诊断摘要包含版本、权限、模型状态和储存空间用量。"
             )
             .font(.caption)
             .foregroundStyle(.secondary)
@@ -1063,12 +943,6 @@ struct DictationSettingsView: View {
         if selectedCategory == .entries {
           EntriesSettingsSections(model: model)
         }
-        if selectedCategory == .agents {
-          AgentSettingsSections(model: model)
-        }
-        if selectedCategory == .team {
-          TeamSettingsSections(model: model)
-        }
       }
       .formStyle(.grouped)
       .scrollContentBackground(.hidden)
@@ -1078,12 +952,6 @@ struct DictationSettingsView: View {
       .padding(.bottom, 12)
     }
     .frame(width: 920, height: 720)
-    // A proposal's notification opens this page.
-    .onReceive(model.agentAccess.$showAgentSettings) { show in
-      guard show, categories.contains(.agents) else { return }
-      selectedCategory = .agents
-      model.agentAccess.showAgentSettings = false
-    }
     .confirmationDialog(
       "清理可重新下载的缓存？",
       isPresented: $confirmRebuildableCacheDeletion,
@@ -1094,7 +962,7 @@ struct DictationSettingsView: View {
       }
       Button("取消", role: .cancel) {}
     } message: {
-      Text("只会删除可重新下载或重新生成的临时缓存；已安装组件、原始音频、逐字稿、人物、事件、词典和设置都会保留。")
+      Text("将删除可重新下载或重新生成的临时缓存；已安装的模型、原始音频、逐字稿、人物、事、词典和设置都会保留。")
     }
     .confirmationDialog(
       "删除这个 App 的专属文字策略？",
@@ -1112,7 +980,7 @@ struct DictationSettingsView: View {
       }
       Button("取消", role: .cancel) { pendingAppPolicyDeletion = nil }
     } message: {
-      Text("这个 App 将恢复使用默认文字格式；不会删除任何口述、录音、逐字稿或词典。")
+      Text("此 App 将恢复使用默认文字格式；口述、录音、逐字稿和词典都会保留。")
     }
   }
 
@@ -1134,7 +1002,7 @@ struct DictationSettingsView: View {
       if state == .notDetermined {
         Button("允许", action: open)
       } else if state == .denied || state == .revoked {
-        Button("打开系统设置", action: open)
+        Button("打开“系统设置”", action: open)
       }
     }
   }
@@ -1148,54 +1016,5 @@ struct DictationSettingsView: View {
     case .revoked: "权限已关闭"
     case .restartRequired: "已允许，重新打开 App 后生效"
     }
-  }
-}
-
-/// The pairing code for the phone right after "连接 iPhone": a QR code to scan
-/// with 织机 on the iPhone, and "复制配对码" to paste there instead. The code
-/// holds the phone's private key; closing this window forgets it.
-private struct PhonePairingCodeSheet: View {
-  let code: String
-  let copy: () -> Void
-  let done: () -> Void
-  @State private var image: CGImage?
-  @State private var copied = false
-
-  var body: some View {
-    VStack(spacing: 14) {
-      Text("用 iPhone 上的织机扫这个码")
-        .font(.title3.bold())
-      Group {
-        if let image {
-          Image(decorative: image, scale: 1)
-            .interpolation(.none)
-            .resizable()
-            .scaledToFit()
-        } else {
-          ProgressView()
-        }
-      }
-      .frame(width: 280, height: 280)
-      .accessibilityLabel("配对二维码")
-      .accessibilityIdentifier("bestASR.settings.phonePairingCode")
-      Text(
-        "也可以复制配对码，在 iPhone 的织机里粘贴。配对码里有这台 iPhone 的钥匙，只给你自己的 iPhone 用；关掉这个窗口后，这台 Mac 不再保留它。"
-      )
-      .font(.caption)
-      .foregroundStyle(.secondary)
-      .multilineTextAlignment(.center)
-      .frame(maxWidth: 320)
-      HStack {
-        Button(copied ? "已复制" : "复制配对码") {
-          copy()
-          copied = true
-        }
-        .accessibilityIdentifier("bestASR.settings.phoneCopyPairingCode")
-        Button("完成", action: done)
-          .keyboardShortcut(.defaultAction)
-      }
-    }
-    .padding(24)
-    .task { image = PhonePairingQRCode.image(for: code) }
   }
 }

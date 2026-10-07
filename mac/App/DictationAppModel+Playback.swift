@@ -54,7 +54,7 @@ extension DictationAppModel {
         playback.selectedHistoryPlaybackTrackID
       ]
     else {
-      playback.playbackStatusMessage = "这条记录还没有可播放的本地音频"
+      playback.playbackStatusMessage = "这条记录没有可播放的本地音频"
       return
     }
     let ranges = selectedHistoryPlaybackRanges()

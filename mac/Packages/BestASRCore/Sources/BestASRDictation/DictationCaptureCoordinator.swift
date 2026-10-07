@@ -29,6 +29,9 @@ public actor DictationCaptureCoordinator {
   private let repository: any DictationRepositoryPort
   private let inputMode: SessionInputMode
   private let committedChunkObserver: (any DictationCommittedChunkObserver)?
+  /// False for a take that must never reach the organizing device (a
+  /// dictation in demo mode, which is not kept): eligibility is not granted.
+  private let grantsRemoteEligibility: Bool
   private var drainTask: Task<Void, Error>?
   private var captureStream: AsyncStream<CapturedPCMChunk>?
   private var activeSessionID: SessionID?
@@ -42,7 +45,8 @@ public actor DictationCaptureCoordinator {
     journal: any DictationJournalPort,
     repository: any DictationRepositoryPort,
     inputMode: SessionInputMode = .dictation,
-    committedChunkObserver: (any DictationCommittedChunkObserver)? = nil
+    committedChunkObserver: (any DictationCommittedChunkObserver)? = nil,
+    grantsRemoteEligibility: Bool = true
   ) {
     self.sessionActor = sessionActor
     self.capture = capture
@@ -50,6 +54,7 @@ public actor DictationCaptureCoordinator {
     self.repository = repository
     self.inputMode = inputMode
     self.committedChunkObserver = committedChunkObserver
+    self.grantsRemoteEligibility = grantsRemoteEligibility
   }
 
   public func start(
@@ -91,7 +96,9 @@ public actor DictationCaptureCoordinator {
     }
     // Only this live path grants organizer eligibility. A failure leaves the
     // session local-only (fail closed) and never stops the recording.
-    if let eligibility = repository as? any LiveCaptureRemoteEligibilityPort {
+    if grantsRemoteEligibility,
+      let eligibility = repository as? any LiveCaptureRemoteEligibilityPort
+    {
       try? await eligibility.markLiveCaptureRemoteEligible(sessionID: sessionID)
     }
     do {

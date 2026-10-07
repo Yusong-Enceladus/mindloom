@@ -9,7 +9,7 @@ public enum SpaceOwnerKind: String, Codable, Equatable, Sendable {
   /// An organization's space: contributions are the organization's assets.
   case org
 
-  public var title: String { self == .org ? "组织空间" : "小组空间" }
+  public var title: String { self == .org ? "机构空间" : "小组空间" }
 }
 
 public enum SpaceRules {

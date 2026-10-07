@@ -54,4 +54,8 @@ final class PlaybackModel: ObservableObject {
 
   /// Set by the memory pages' play-a-stretch; any other seek or play clears it.
   var stopAt: StopPoint?
+
+  /// The person whose 「听一段」 is playing (v12, 理3-1): the pages show its
+  /// button as playing.
+  @Published var voicePersonID: String?
 }

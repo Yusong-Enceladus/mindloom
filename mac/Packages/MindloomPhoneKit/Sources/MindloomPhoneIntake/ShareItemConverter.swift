@@ -57,9 +57,9 @@ public enum ShareRefusal: Error, Equatable, Sendable {
     switch self {
     case .audioOrVideo: "音视频请在 Mac 上导入"
     case .fileTooLarge: "超过 25 MB，请在 Mac 上导入"
-    case .imageUnreadable: "这张图片打不开"
-    case .empty: "没有可收进的内容"
-    case .unreadable: "这个文件读不出来"
+    case .imageUnreadable: "这张图片无法打开"
+    case .empty: "没有可添加的内容"
+    case .unreadable: "无法读取此文件"
     }
   }
 }

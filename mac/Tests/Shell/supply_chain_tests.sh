@@ -4,7 +4,7 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "$0")/../.." && pwd)"
 test_root="$(mktemp -d "${TMPDIR:-/tmp}/bestasr-supply-chain-tests.XXXXXX")"
-package_root="$test_root/bestASR.app"
+package_root="$test_root/Mindloom.app"
 summary_root="$test_root/summaries"
 trap 'rm -rf "$test_root"' EXIT
 

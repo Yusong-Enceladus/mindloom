@@ -132,7 +132,7 @@ public struct ManagedModelRegistry: Codable, Equatable, Sendable {
     }
   }
 
-  fileprivate static func safeComponent(_ value: String) -> Bool {
+  static func safeComponent(_ value: String) -> Bool {
     !value.isEmpty
       && value.count <= 128
       && value.range(
@@ -427,6 +427,9 @@ public actor LocalModelManager {
       throw ModelManagerError(.fileSystem, code: "model-pointer-commit-failed")
     }
 
+    // Only the version now active and the one before it stay on disk.
+    _ = try? pruneUnreferencedVersions(artifactID: artifactID)
+
     return ModelActivationResult(
       artifactID: artifactID,
       version: descriptor.version,
@@ -501,13 +504,120 @@ public actor LocalModelManager {
     return verified
   }
 
+  /// Removes what this store holds of `artifactID` beyond the current and
+  /// the previous version: version folders neither the active nor the
+  /// last-known-good pointer names, quarantined copies, and staging folders
+  /// left by an install that stopped more than an hour ago. Nothing is
+  /// removed while a pointer cannot be read: an unreadable pointer may name
+  /// any folder. Returns the removed folders' names.
+  @discardableResult
+  public func pruneUnreferencedVersions(artifactID: String, now: Date = Date()) throws
+    -> [String]
+  {
+    guard ManagedModelRegistry.safeComponent(artifactID) else {
+      throw ModelManagerError(.unsafePath, code: "model-artifact-id-unsafe")
+    }
+    var kept: Set<String> = []
+    for kind in [PointerKind.active, .lastKnownGood] {
+      let url = pointerURL(kind, artifactID: artifactID)
+      guard fileManager.fileExists(atPath: url.path) else { continue }
+      kept.insert(try readPointer(kind, artifactID: artifactID).relativePath)
+    }
+    guard !kept.isEmpty else { return [] }
+    var removed: [String] = []
+    let versions = rootDirectory.appendingPathComponent(
+      "versions/\(artifactID)", isDirectory: true)
+    for entry in (try? fileManager.contentsOfDirectory(atPath: versions.path)) ?? [] {
+      guard ManagedModelRegistry.safeComponent(entry),
+        !kept.contains("versions/\(artifactID)/\(entry)")
+      else { continue }
+      try fileManager.removeItem(at: versions.appendingPathComponent(entry, isDirectory: true))
+      removed.append("versions/\(artifactID)/\(entry)")
+    }
+    // Quarantine and staging folders are named <id>-<version>-<UUID>; an
+    // artifact whose ID begins another's must not take the other's folders.
+    let prefixes = registry.models.filter { $0.id == artifactID }.map {
+      "\(artifactID)-\($0.version)-"
+    }
+    for folder in ["quarantine", "staging"] {
+      let parent = rootDirectory.appendingPathComponent(folder, isDirectory: true)
+      for entry in (try? fileManager.contentsOfDirectory(atPath: parent.path)) ?? []
+      where prefixes.contains(where: { entry.hasPrefix($0) }) {
+        let url = parent.appendingPathComponent(entry, isDirectory: true)
+        if folder == "staging" {
+          let modified =
+            (try? fileManager.attributesOfItem(atPath: url.path)[.modificationDate] as? Date)
+            ?? now
+          guard now.timeIntervalSince(modified) > 3_600 else { continue }
+        }
+        try fileManager.removeItem(at: url)
+        removed.append("\(folder)/\(entry)")
+      }
+    }
+    return removed
+  }
+
+  /// Removes the models named in `retired` from this store: their active
+  /// and last-known-good pointers, their version folders, and their
+  /// quarantined and staging folders. The App passes the models it has
+  /// retired by name (ALIGNMENT 收1-4, adopted 2026-10-06: Paraformer and
+  /// Parakeet, 0.84 GB, a fallback that produced none of the owner's 6,027
+  /// final transcripts). Every other model stays, including one this build
+  /// does not know (review 2026-10-07: an allowlist of the models this build
+  /// uses would delete a model a newer feature installs into the same store,
+  /// such as the meaning-search embedding model). Returns the IDs something
+  /// was removed for.
+  @discardableResult
+  public func removeArtifacts(_ retired: Set<String>) throws -> [String] {
+    var removed: [String] = []
+    let versions = rootDirectory.appendingPathComponent("versions", isDirectory: true)
+    for artifactID in retired.sorted()
+    where !artifactID.hasPrefix(".") && ManagedModelRegistry.safeComponent(artifactID) {
+      var found = false
+      for kind in [PointerKind.active, .lastKnownGood] {
+        let pointer = pointerURL(kind, artifactID: artifactID)
+        if fileManager.fileExists(atPath: pointer.path) {
+          try fileManager.removeItem(at: pointer)
+          found = true
+        }
+      }
+      let folder = versions.appendingPathComponent(artifactID, isDirectory: true)
+      if fileManager.fileExists(atPath: folder.path) {
+        try fileManager.removeItem(at: folder)
+        found = true
+      }
+      // `<id>-<version>-<UUID>`; only versions the registry knows, so an ID
+      // that begins another's never takes the other's folders.
+      let prefixes = registry.models.filter { $0.id == artifactID }.map {
+        "\(artifactID)-\($0.version)-"
+      }
+      for parentName in ["quarantine", "staging"] {
+        let parent = rootDirectory.appendingPathComponent(parentName, isDirectory: true)
+        for entry in (try? fileManager.contentsOfDirectory(atPath: parent.path)) ?? []
+        where prefixes.contains(where: { entry.hasPrefix($0) }) {
+          try fileManager.removeItem(at: parent.appendingPathComponent(entry, isDirectory: true))
+          found = true
+        }
+      }
+      if found { removed.append(artifactID) }
+    }
+    return removed
+  }
+
+  /// Each chunk is released as soon as it is hashed. Without the pool every
+  /// 1 MB chunk stayed until the enclosing autorelease pool drained: every
+  /// launch verifies the installed models, and the recognizer alone left
+  /// about 2.4 GB in the App's footprint (2026-10-06, DICTATION_ARCHITECTURE
+  /// §15.6).
   public static func sha256(of fileURL: URL) throws -> String {
     let handle = try FileHandle(forReadingFrom: fileURL)
     defer { try? handle.close() }
     var hasher = SHA256()
-    while let data = try handle.read(upToCount: 1_048_576), !data.isEmpty {
+    while try autoreleasepool(invoking: {
+      guard let data = try handle.read(upToCount: 1_048_576), !data.isEmpty else { return false }
       hasher.update(data: data)
-    }
+      return true
+    }) {}
     return hasher.finalize().map { String(format: "%02x", $0) }.joined()
   }
 

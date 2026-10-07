@@ -20,14 +20,13 @@ public struct DeliveryTarget: Codable, Equatable, Sendable {
 }
 
 /// What became of a delivery. There are two answers, and both are observed
-/// rather than inferred: the application asked the pasteboard for the text,
-/// or it did not.
+/// rather than inferred: the text was seen to land in a field, or it was not.
 public enum DeliveryOutcome: Equatable, Sendable {
-  /// The application took the text. `evidence` says what showed it, and the
-  /// wait is how long that took.
+  /// The text landed. `evidence` says what showed it, and the wait is how
+  /// long that took.
   case delivered(evidence: DeliveryEvidence, waitMilliseconds: Int)
-  /// The text was not taken. It is on the clipboard as plain text, so a
-  /// late paste still lands the right words, and the capsule says 已复制.
+  /// The text was not seen to land. It is on the clipboard as plain text, so
+  /// a late paste still lands the right words, and the HUD says 已复制.
   case kept(DeliveryKeptReason)
 }
 
@@ -44,11 +43,29 @@ public struct FocusedText: Equatable, Sendable {
   public let value: String?
   public let selectionLocation: Int?
   public let selectionLength: Int?
+  /// The element this was read from, so the read after ⌘V asks the same
+  /// one rather than whichever has the keyboard by then. Not compared.
+  let element: FocusedElementHandle?
 
   public init(value: String?, selectionLocation: Int?, selectionLength: Int?) {
+    self.init(
+      value: value, selectionLocation: selectionLocation, selectionLength: selectionLength,
+      element: nil)
+  }
+
+  init(
+    value: String?, selectionLocation: Int?, selectionLength: Int?,
+    element: FocusedElementHandle?
+  ) {
     self.value = value
     self.selectionLocation = selectionLocation
     self.selectionLength = selectionLength
+    self.element = element
+  }
+
+  public static func == (lhs: FocusedText, rhs: FocusedText) -> Bool {
+    lhs.value == rhs.value && lhs.selectionLocation == rhs.selectionLocation
+      && lhs.selectionLength == rhs.selectionLength
   }
 
   /// Whether there is anything here that a paste could be seen to change.
@@ -63,14 +80,17 @@ public struct FocusedText: Equatable, Sendable {
   }
 }
 
-/// What proved a delivery landed.
+/// What proved a delivery landed. Only something seen in the target counts:
+/// the application asking the pasteboard for the text is necessary but never
+/// enough (2026-10-05, ALIGNMENT 收1-12), because Chromium asks whether or not
+/// a field has the keyboard.
 public enum DeliveryEvidence: String, Equatable, Sendable {
-  /// The application asked the pasteboard for the text, and named no
-  /// focused element that could be watched.
-  case pasteboard
-  /// The application asked for the text and the focused field then showed
-  /// different text.
+  /// The application asked for the text and the field that had the keyboard
+  /// before ⌘V then showed the words themselves (`LandingEvidence`): one more
+  /// occurrence of them, or its caret moved on by exactly their length.
   case field
+  /// The text was written straight into this App's own focused field.
+  case ownField = "own-field"
 }
 
 public enum DeliveryKeptReason: String, Equatable, Sendable {
@@ -82,4 +102,10 @@ public enum DeliveryKeptReason: String, Equatable, Sendable {
   case applicationChanged
   /// The system does not let this app post keystrokes.
   case permissionDenied
+  /// The application asked for the text, and the words were not seen in the
+  /// field: it names no focused element (WeChat; Claude or a browser with no
+  /// caret), shows no text there, or did not show the words in time. The
+  /// words may have landed or not: they stay on the clipboard and are
+  /// reported as copied, never as typed in and never as aimed at nowhere.
+  case unconfirmed
 }

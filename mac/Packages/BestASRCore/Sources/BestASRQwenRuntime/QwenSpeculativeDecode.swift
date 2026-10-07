@@ -15,11 +15,14 @@ import Foundation
 /// recording — misses and decodes normally, so a reused result always
 /// describes the same speech the final request carries.
 public actor QwenSpeculativeDecodeCache {
+  /// Text only: since 2026-10-06 nothing is aligned while the user speaks
+  /// (the aligner must not sit in memory next to the recognizer during a
+  /// dictation, DICTATION_ARCHITECTURE §15.7). A request that wants word
+  /// timings aligns the decode it takes.
   struct Decoded: Sendable {
     let samples: [Float]
     let dictionaryTerms: [String]
     let recognized: QwenRecognizedText
-    let words: [TranscriptAlignmentWord]
   }
 
   private struct Pending {

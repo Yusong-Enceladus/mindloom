@@ -2,6 +2,7 @@ import BestASRDomain
 import CryptoKit
 import Darwin
 import Foundation
+import MindloomIdentity
 import MindloomSpaces
 import Security
 
@@ -50,6 +51,29 @@ public struct SpaceStores: Sendable {
       gateDirectory: dataRoot.appendingPathComponent("team-gate", isDirectory: true))
   }
 
+  /// The stores of the library the App has open (review 10-5d R12). On a
+  /// root marked synthetic whose device keys are not in the Keychain
+  /// already — every fresh demo clone, every check or end-to-end run — the
+  /// secrets are 0600 files in the root (`space-keys/`), as the agent grant
+  /// secret is (`FileAgentGrantSecretStore`): a clone removed after a run
+  /// leaves nothing in the login Keychain. A synthetic root whose device
+  /// keys an earlier build put in the Keychain keeps using them there, so
+  /// its spaces still know this Mac. The real library always uses the
+  /// Keychain. `keychainHasDevice` looks at the item's attributes only.
+  public static func forLibrary(
+    dataRoot: URL, sealKeys: any PhoneSealKeyStore,
+    realLibraryRoot: URL? = BestASRDataRootSelection.ownerRealLibraryRoot(),
+    keychainHasDevice: (String) -> Bool = KeychainSpaceDeviceStore.exists(account:)
+  ) -> SpaceStores {
+    let account = OrganizerDataRootIdentity.hash(of: dataRoot)
+    if !keychainHasDevice(account),
+      let files = try? synthetic(dataRoot: dataRoot, realLibraryRoot: realLibraryRoot)
+    {
+      return files
+    }
+    return keychain(dataRoot: dataRoot, sealKeys: sealKeys)
+  }
+
   /// File stores for a synthetic root only (refused anywhere else).
   public static func synthetic(
     dataRoot: URL, realLibraryRoot: URL? = BestASRDataRootSelection.ownerRealLibraryRoot()
@@ -90,10 +114,10 @@ public struct SpaceStores: Sendable {
 }
 
 /// Space keys as one generic password per space: service
-/// `com.bestasr.space-key`, account `<root hash>|<space id>`, the value a
+/// `app.mindloom.space-key`, account `<root hash>|<space id>`, the value a
 /// JSON map epoch → hex key; this device only, never synchronized.
 public struct KeychainSpaceKeyStore: SpaceKeyStore {
-  public static let service = "com.bestasr.space-key"
+  public static let service = MindloomIdentity.keychainService("space-key")
   public let account: String
 
   public init(account: String) { self.account = account }
@@ -148,10 +172,10 @@ public struct KeychainSpaceKeyStore: SpaceKeyStore {
   }
 }
 
-/// The device's signing key and id: service `com.bestasr.space-device-key`,
+/// The device's signing key and id: service `app.mindloom.space-device-key`,
 /// account = the root hash. Its seal key is the library's phone seal key.
 public struct KeychainSpaceDeviceStore: SpaceDeviceStore {
-  public static let service = "com.bestasr.space-device-key"
+  public static let service = MindloomIdentity.keychainService("space-device-key")
   public let account: String
   private let sealKeys: any PhoneSealKeyStore
 
@@ -162,6 +186,17 @@ public struct KeychainSpaceDeviceStore: SpaceDeviceStore {
 
   private var query: [CFString: Any] {
     [kSecClass: kSecClassGenericPassword, kSecAttrService: Self.service, kSecAttrAccount: account]
+  }
+
+  /// Whether the login Keychain has device keys for this account, from the
+  /// item's attributes only: no secret is read, so nothing is asked.
+  public static func exists(account: String) -> Bool {
+    let request: [CFString: Any] = [
+      kSecClass: kSecClassGenericPassword, kSecAttrService: service, kSecAttrAccount: account,
+      kSecReturnAttributes: true, kSecMatchLimit: kSecMatchLimitOne,
+    ]
+    var result: CFTypeRef?
+    return SecItemCopyMatching(request as CFDictionary, &result) == errSecSuccess
   }
 
   public func load() throws -> SpaceDeviceKeys? {
@@ -200,10 +235,10 @@ public struct KeychainSpaceDeviceStore: SpaceDeviceStore {
 }
 
 /// This Mac's own access record to the team Spark (credential, the seed of
-/// its SSH key, the route): service `com.bestasr.member-access`, account =
+/// its SSH key, the route): service `app.mindloom.member-access`, account =
 /// the root hash; this device only, never synchronized.
 public struct KeychainMemberAccessStore: MemberAccessStore {
-  public static let service = "com.bestasr.member-access"
+  public static let service = MindloomIdentity.keychainService("member-access")
   public let account: String
 
   public init(account: String) { self.account = account }

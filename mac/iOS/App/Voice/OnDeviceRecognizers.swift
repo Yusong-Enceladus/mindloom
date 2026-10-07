@@ -153,14 +153,17 @@ enum TranscriberAssets {
 }
 
 /// SpeechAnalyzer-based recognizer. Each utterance gets its own analyzer,
-/// prepared ahead of time so a key press starts transcribing at once.
+/// prepared ahead of time so a key press starts transcribing at once. A press that comes while the
+/// next analyzer is still being prepared (a quick second press) is never refused: its audio is held
+/// (`AudioRouter` pre-roll) and it starts as soon as an analyzer is ready.
 @MainActor
 final class AnalyzerRecognizer: VoiceRecognizing {
   let choice: RecognizerChoice
   let audio: VoiceAudio
   var kindName: String { choice.kindName }
   private var spare: AnalyzerUtterance?
-  private let log = Logger(subsystem: "com.bestasr.phone", category: "recognizer")
+  private var refilling: Task<Void, Never>?
+  private let log = Logger(subsystem: PhoneNames.appLog, category: "recognizer")
 
   init(choice: RecognizerChoice, audio: VoiceAudio) {
     self.choice = choice
@@ -175,15 +178,76 @@ final class AnalyzerRecognizer: VoiceRecognizing {
   func beginUtterance(onPartial: @escaping @MainActor (String) -> Void) throws
     -> any VoiceUtterance
   {
-    guard let utterance = spare else { throw RecognizerSetupError.unavailable }
-    spare = nil
+    if let utterance = spare {
+      spare = nil
+      start(utterance, onPartial: onPartial)
+      return utterance
+    }
+    // No analyzer ready yet: keep what is said and start when one is.
+    audio.router.armKeepingHeld()
+    let pending = PendingAnalyzerUtterance(router: audio.router)
+    pending.opening = Task { [weak self] () -> AnalyzerUtterance? in
+      guard let self, let made = await self.takeAnalyzer() else { return nil }
+      guard !pending.isCancelled else {
+        if self.spare == nil { self.spare = made } else { made.cancel() }
+        return nil
+      }
+      self.start(made, onPartial: onPartial)
+      return made
+    }
+    return pending
+  }
+
+  private func start(_ utterance: AnalyzerUtterance, onPartial: @escaping @MainActor (String) -> Void) {
     utterance.begin(onPartial: onPartial)
     audio.utteranceDidBegin(utterance)
-    Task { [weak self] in
-      guard let self else { return }
-      self.spare = try? await self.makeUtterance()
+    refill()
+  }
+
+  /// The spare analyzer, the one being prepared, or a new one (one retry).
+  private func takeAnalyzer() async -> AnalyzerUtterance? {
+    if let made = spare {
+      spare = nil
+      return made
     }
-    return utterance
+    if let refilling {
+      await refilling.value
+      if let made = spare {
+        spare = nil
+        return made
+      }
+    }
+    for attempt in 0..<2 {
+      do {
+        return try await makeUtterance()
+      } catch {
+        log.error(
+          "analyzer not ready (attempt \(attempt + 1, privacy: .public)): \(String(describing: error), privacy: .public)"
+        )
+      }
+    }
+    return nil
+  }
+
+  /// Prepares the next analyzer in the background; retries once after a failure.
+  private func refill() {
+    guard spare == nil, refilling == nil else { return }
+    refilling = Task { [weak self] in
+      for attempt in 0..<2 {
+        guard let self else { return }
+        do {
+          let made = try await self.makeUtterance()
+          if self.spare == nil { self.spare = made } else { made.cancel() }
+          break
+        } catch {
+          self.log.error(
+            "analyzer refill failed (attempt \(attempt + 1, privacy: .public)): \(String(describing: error), privacy: .public)"
+          )
+          try? await Task.sleep(for: .milliseconds(500))
+        }
+      }
+      self?.refilling = nil
+    }
   }
 
   private func makeUtterance() async throws -> AnalyzerUtterance {
@@ -198,6 +262,34 @@ final class AnalyzerRecognizer: VoiceRecognizing {
       options: SpeechAnalyzer.Options(priority: .userInitiated, modelRetention: .lingering))
     try await analyzer.prepareToAnalyze(in: format)
     return AnalyzerUtterance(analyzer: analyzer, module: module, format: format, audio: audio)
+  }
+}
+
+/// A press that is waiting for its analyzer: the router holds the audio meanwhile.
+@MainActor
+final class PendingAnalyzerUtterance: VoiceUtterance {
+  var opening: Task<AnalyzerUtterance?, Never>?
+  private(set) var isCancelled = false
+  private let router: AudioRouter
+
+  init(router: AudioRouter) {
+    self.router = router
+  }
+
+  func finish() async -> String? {
+    guard let utterance = await opening?.value else {
+      router.disarm()
+      return nil
+    }
+    return await utterance.finish()
+  }
+
+  func cancel() {
+    guard !isCancelled else { return }
+    isCancelled = true
+    router.disarm()
+    let opening = opening
+    Task { await opening?.value?.cancel() }
   }
 }
 
@@ -245,17 +337,41 @@ final class AnalyzerUtterance: VoiceUtterance, AudioSink {
     continuation.yield(AnalyzerInput(buffer: converted))
   }
 
+  /// How long the analyzer may take to finish after the release before what was already heard is
+  /// returned (the legacy recognizer has the same bound).
+  static let finishTimeout: TimeInterval = 6
+
   func finish() async -> String? {
     audio?.utteranceDidEnd(self)
     continuation.finish()
-    do {
-      try await analyzer.finalizeAndFinishThroughEndOfInput()
-    } catch {
-      resultsTask?.cancel()
-      return nil
+    let analyzer = analyzer
+    let outcome = await Deadline.race(seconds: Self.finishTimeout) { () -> Bool in
+      do {
+        try await analyzer.finalizeAndFinishThroughEndOfInput()
+        return true
+      } catch {
+        return false
+      }
     }
-    await resultsTask?.value
-    return transcript.text
+    let heard = { [transcript] in transcript.text.isEmpty ? nil : transcript.text }
+    switch outcome {
+    case .some(true):
+      // The results stream ends with the analyzer; bounded all the same.
+      let results = resultsTask
+      _ = await Deadline.race(seconds: 2) { await results?.value }
+      resultsTask?.cancel()
+      return transcript.text
+    case .some(false):
+      // Finalizing failed: keep what was already recognized.
+      resultsTask?.cancel()
+      return heard()
+    case .none:
+      Logger(subsystem: PhoneNames.appLog, category: "recognizer").error(
+        "analyzer did not finish in time")
+      resultsTask?.cancel()
+      Task { await analyzer.cancelAndFinishNow() }
+      return heard()
+    }
   }
 
   func cancel() {
@@ -264,6 +380,38 @@ final class AnalyzerUtterance: VoiceUtterance, AudioSink {
     resultsTask?.cancel()
     let analyzer = analyzer
     Task { await analyzer.cancelAndFinishNow() }
+  }
+}
+
+/// Races an operation against a deadline without waiting for the operation to stop (a hung
+/// analyzer must not hold the caller): nil when the deadline came first.
+enum Deadline {
+  static func race<T: Sendable>(
+    seconds: TimeInterval, _ operation: @escaping @Sendable () async -> T
+  ) async -> T? {
+    await withCheckedContinuation { (continuation: CheckedContinuation<T?, Never>) in
+      let once = OnceResume(continuation)
+      Task { once.resume(await operation()) }
+      Task {
+        try? await Task.sleep(for: .seconds(seconds))
+        once.resume(nil)
+      }
+    }
+  }
+
+  private final class OnceResume<T: Sendable>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<T?, Never>?
+
+    init(_ continuation: CheckedContinuation<T?, Never>) { self.continuation = continuation }
+
+    func resume(_ value: T?) {
+      lock.lock()
+      let pending = continuation
+      continuation = nil
+      lock.unlock()
+      pending?.resume(returning: value)
+    }
   }
 }
 
@@ -282,13 +430,13 @@ final class TranscriptAccumulator: @unchecked Sendable {
     } else {
       volatile = text
     }
-    return finalized + volatile
+    return PhoneTextRules.tidy(finalized + volatile)
   }
 
   var text: String {
     lock.lock()
     defer { lock.unlock() }
-    return (finalized + volatile).trimmingCharacters(in: .whitespacesAndNewlines)
+    return PhoneTextRules.tidy(finalized + volatile).trimmingCharacters(in: .whitespacesAndNewlines)
   }
 }
 
@@ -409,7 +557,7 @@ final class LegacyUtterance: VoiceUtterance, AudioSink {
           if recognized.isFinal { self.complete(text) }
         } else if let error = error as NSError? {
           // Content-free: the domain and code only.
-          Logger(subsystem: "com.bestasr.phone", category: "recognizer").error(
+          Logger(subsystem: PhoneNames.appLog, category: "recognizer").error(
             "on-device recognition error \(error.domain, privacy: .public) \(error.code, privacy: .public)"
           )
           self.lastErrorCode = "\(error.domain)#\(error.code)"

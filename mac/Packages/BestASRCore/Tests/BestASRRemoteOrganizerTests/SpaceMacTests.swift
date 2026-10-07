@@ -2,6 +2,7 @@ import BestASRDomain
 import BestASRMemory
 import BestASRPersistence
 import BestASRRemoteOrganizer
+import CryptoKit
 import Foundation
 import GRDB
 import MindloomSpaces
@@ -580,4 +581,61 @@ final class SpaceMacTests: XCTestCase {
       at: plain.appendingPathComponent(RemoteOrganizerDataProvenance.syntheticMarkerFileName))
     XCTAssertThrowsError(try stores.device.load())
   }
+
+  /// Regression (review 10-5d R12): the App kept the space secrets of every
+  /// library in the login Keychain, so each demo clone a check or
+  /// end-to-end run made and removed left its device keys there. A
+  /// synthetic root now keeps them in its own files, unless an earlier
+  /// build already put this root's device keys in the Keychain; any other
+  /// root uses the Keychain. Nothing here touches the Keychain.
+  func testTheAppKeepsASyntheticRootsSpaceSecretsInItsOwnFiles() throws {
+    let real = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "space-real-\(UUID().uuidString)")
+    let clone = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "space-clone-\(UUID().uuidString)")
+    try FileManager.default.createDirectory(at: real, withIntermediateDirectories: true)
+    try FileManager.default.createDirectory(at: clone, withIntermediateDirectories: true)
+    defer {
+      try? FileManager.default.removeItem(at: real)
+      try? FileManager.default.removeItem(at: clone)
+    }
+    let seal = MemorySealKeys()
+    var asked: [String] = []
+    func stores(_ root: URL, inKeychain: Bool) -> SpaceStores {
+      SpaceStores.forLibrary(
+        dataRoot: root, sealKeys: seal, realLibraryRoot: real,
+        keychainHasDevice: { account in
+          asked.append(account)
+          return inKeychain
+        })
+    }
+    // Not marked: the Keychain.
+    XCTAssertTrue(stores(clone, inKeychain: false).keys is KeychainSpaceKeyStore)
+    XCTAssertTrue(stores(real, inKeychain: false).keys is KeychainSpaceKeyStore)
+    FileManager.default.createFile(
+      atPath: clone.appendingPathComponent(RemoteOrganizerDataProvenance.syntheticMarkerFileName)
+        .path, contents: Data())
+    // A marked clone: its own files.
+    let files = stores(clone, inKeychain: false)
+    XCTAssertTrue(files.keys is FileSpaceSecretStore)
+    XCTAssertTrue(files.device is FileSpaceSecretStore)
+    XCTAssertEqual(asked.last, OrganizerDataRootIdentity.hash(of: clone))
+    let device = try files.loadOrCreateDevice()
+    XCTAssertTrue(
+      FileManager.default.fileExists(
+        atPath: clone.appendingPathComponent("space-keys/space-device.json").path))
+    XCTAssertEqual(
+      try stores(clone, inKeychain: false).loadOrCreateDevice().deviceID, device.deviceID)
+    // A marked root whose device keys an earlier build kept in the Keychain
+    // goes on using them.
+    XCTAssertTrue(stores(clone, inKeychain: true).device is KeychainSpaceDeviceStore)
+  }
+}
+
+/// A phone seal key in memory, for choosing stores without the Keychain.
+private struct MemorySealKeys: PhoneSealKeyStore {
+  let key = Curve25519.KeyAgreement.PrivateKey()
+  func load() throws -> Curve25519.KeyAgreement.PrivateKey? { key }
+  func save(_ key: Curve25519.KeyAgreement.PrivateKey) throws {}
+  func delete() throws {}
 }

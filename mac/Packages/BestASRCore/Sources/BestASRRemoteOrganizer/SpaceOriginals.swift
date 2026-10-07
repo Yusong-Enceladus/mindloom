@@ -57,7 +57,11 @@ public struct SpaceOriginalsFolder: Sendable {
       chmod(url.path, 0o700)
     }
     let url = folder.appendingPathComponent(parts[2] + (safeExt.isEmpty ? "" : ".\(safeExt)"))
-    try data.write(to: url, options: [.atomic, .completeFileProtection])
+    // Not `.completeFileProtection`: an unsandboxed Mac process gets EPERM
+    // writing class A on the Data volume (every 打开原件 failed), and the
+    // viewer App reads the file while the user is logged in anyway. The
+    // 0700 folders, the 0600 file and the purge at launch and quit stay.
+    try data.write(to: url, options: [.atomic, .completeFileProtectionUntilFirstUserAuthentication])
     try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: url.path)
     return url
   }

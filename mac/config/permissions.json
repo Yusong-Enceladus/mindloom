@@ -23,7 +23,7 @@
         "PRD-18.1"
       ],
       "usageDescriptionKey": "NSMicrophoneUsageDescription",
-      "usageDescription": "织机 uses the microphone only for recordings you start.",
+      "usageDescription": "Mindloom uses the microphone to record the dictation and meetings you start.",
       "runtimeAuthorizationAPI": "AVCaptureDevice.authorizationStatus/requestAccess",
       "requestTiming": "on-demand",
       "deniedBehavior": "Keep import, history, and system-audio-independent features available; show a System Settings recovery action without reprompting in a loop."
@@ -35,7 +35,7 @@
         "SYS-001..012"
       ],
       "usageDescriptionKey": "NSAudioCaptureUsageDescription",
-      "usageDescription": "织机 records audio only from the app or Mac output you choose for a recording.",
+      "usageDescription": "Mindloom records audio from the app or Mac output you choose for a recording.",
       "runtimeAuthorizationAPI": "Core Audio Process Tap authorization at tap creation",
       "requestTiming": "on-demand",
       "deniedBehavior": "Create no tap or aggregate device, retain prior recordings, and show a System Settings recovery action without widening the selected source."
@@ -59,7 +59,7 @@
         "ENTRY-007"
       ],
       "usageDescriptionKey": "NSCalendarsFullAccessUsageDescription",
-      "usageDescription": "织机 reads only the calendars you choose in Settings, and never writes to them.",
+      "usageDescription": "Mindloom reads events from the calendars you choose in Settings.",
       "runtimeAuthorizationAPI": "EKEventStore.requestFullAccessToEvents",
       "requestTiming": "on-demand",
       "deniedBehavior": "Keep the calendar entry off, read nothing, and show the System Settings path; every other entry and capture keeps working."
@@ -71,7 +71,7 @@
         "ENTRY-008"
       ],
       "usageDescriptionKey": "NSRemindersFullAccessUsageDescription",
-      "usageDescription": "织机 adds a reminder only when you click to add a next step to Reminders.",
+      "usageDescription": "Mindloom adds a reminder when you add a next step to Reminders.",
       "runtimeAuthorizationAPI": "EKEventStore.requestFullAccessToReminders (at the first click of 把下一步加到提醒事项)",
       "requestTiming": "on-demand",
       "deniedBehavior": "Write nothing and show the System Settings path; the matter page is unchanged."

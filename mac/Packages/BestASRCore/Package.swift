@@ -81,6 +81,14 @@ let package = Package(
     // command line, folders, calendar, Reminders, Git, Zotero.
     .library(name: "BestASREntries", targets: ["BestASREntries"]),
     .library(name: "MindloomShareDrop", targets: ["MindloomShareDrop"]),
+    // The Tencent Meeting entry (ENTRY-013): the bundled tmeet, its login,
+    // fetching transcripts into the library.
+    .library(name: "MindloomTencentMeeting", targets: ["MindloomTencentMeeting"]),
+    // v12: which library a launch opens (demo mode, development builds), the
+    // library's own settings (product time zone) and the demo root's profile.
+    .library(name: "MindloomLibrary", targets: ["MindloomLibrary"]),
+    .library(name: "MindloomCarryOver", targets: ["MindloomCarryOver"]),
+    .executable(name: "mindloom-carry-over", targets: ["MindloomCarryOverHelper"]),
     .library(name: "MindloomAgentProtocol", targets: ["MindloomAgentProtocol"]),
     // The MCP helper bundled in the App (Contents/Helpers/mindloom-mcp) and a
     // synthetic-root harness for its end-to-end test (AGENT-CONTRACT §1, §4).
@@ -242,9 +250,14 @@ let package = Package(
       targets: ["SourceAudioCompactionCLI"]
     ),
     .executable(
+      name: "AudioArchiveEvalCLI",
+      targets: ["AudioArchiveEvalCLI"]
+    ),
+    .executable(
       name: "DictationEvalCLI",
       targets: ["DictationEvalCLI"]
     ),
+    .executable(name: "MeaningEvalCLI", targets: ["MeaningEvalCLI"]),
   ],
   dependencies: [
     .package(
@@ -282,6 +295,9 @@ let package = Package(
     // (`mlseal1`) and the pairing payload (`mlpair1`), shared with the iPhone
     // app (PHONE-CONTRACT §3–§4, ADR-0007).
     .package(path: "../MindloomLink"),
+    // In-repo, SwiftUI only: the v10 design kit (tokens, type, motion, mark,
+    // wordmark, title cinch, listener, components) for the Mac pages and HUD.
+    .package(path: "../MindloomDesign"),
   ],
   targets: [
     .target(name: "BestASRCore"),
@@ -296,6 +312,7 @@ let package = Package(
         "BestASRDictation",
         "BestASRDomain",
         "BestASRInference",
+        "BestASRMemory",
         .product(name: "GRDB", package: "GRDB.swift"),
       ]
     ),
@@ -307,6 +324,7 @@ let package = Package(
         "BestASRDictation",
         "BestASRDomain",
         "BestASRInference",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .target(
@@ -318,7 +336,7 @@ let package = Package(
       dependencies: [
         "BestASRDictation",
         "BestASRDomain",
-        "BestASRProcessTapProbe",
+        "BestASRProcessTapProbe", .product(name: "MindloomIdentity", package: "MindloomLink"),
       ],
       linkerSettings: [
         .linkedFramework("AVFoundation"),
@@ -327,7 +345,14 @@ let package = Package(
     ),
     .target(
       name: "BestASRDelivery",
-      dependencies: ["BestASRDictation"],
+      dependencies: [
+        "BestASRDictation", "BestASRDomain",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ],
+      // The delivery probe drives other applications with the App's
+      // permission: compiled into debug builds only (the check app is made
+      // from one), never into the product or the preview (review 10-5c P4).
+      swiftSettings: [.define("MINDLOOM_DELIVERY_PROBE", .when(configuration: .debug))],
       linkerSettings: [
         .linkedFramework("AppKit"),
         .linkedFramework("ApplicationServices"),
@@ -344,7 +369,10 @@ let package = Package(
     ),
     .target(
       name: "BestASRMacUI",
-      dependencies: ["BestASRDictation"],
+      dependencies: [
+        "BestASRDictation", .product(name: "MindloomDesign", package: "MindloomDesign"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ],
       linkerSettings: [
         .linkedFramework("AppKit"),
         .linkedFramework("Carbon"),
@@ -355,7 +383,7 @@ let package = Package(
       dependencies: [
         "BestASRDictation",
         "BestASRDomain",
-        "BestASRInference",
+        "BestASRInference", .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .target(
@@ -405,6 +433,7 @@ let package = Package(
         .product(name: "MLXNN", package: "mlx-swift"),
         .product(name: "Tokenizers", package: "swift-transformers"),
         .product(name: "Hub", package: "swift-transformers"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .target(
@@ -450,6 +479,7 @@ let package = Package(
         "BestASRMemory",
         .product(name: "MindloomLink", package: "MindloomLink"),
         .product(name: "MindloomSpaces", package: "MindloomLink"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     // Paste/drag intake (PRD §0.3.2): pasteboard and file reading, local text
@@ -462,6 +492,7 @@ let package = Package(
       dependencies: [
         "BestASRDomain",
         .product(name: "MindloomLink", package: "MindloomLink"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ],
       linkerSettings: [
         .linkedFramework("AppKit"),
@@ -475,11 +506,14 @@ let package = Package(
     // and the plain-text event export. Foundation only.
     // Agents reading 织机 (AGENT-CONTRACT): hand-rolled MCP (JSON-RPC 2.0 over
     // newline-delimited stdio / a Unix socket), Foundation only (ADR-0008).
-    .target(name: "MindloomAgentProtocol"),
+    .target(
+      name: "MindloomAgentProtocol",
+      dependencies: [.product(name: "MindloomIdentity", package: "MindloomLink")]),
     .target(
       name: "BestASRAgentAccess",
       dependencies: [
         "BestASRDomain", "BestASRMemory", "BestASRRemoteOrganizer", "MindloomAgentProtocol",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .executableTarget(
@@ -488,7 +522,36 @@ let package = Package(
     ),
     // The share extension's hand-over to the App (V8 contract A1):
     // Foundation only, so the sandboxed extension links nothing else.
-    .target(name: "MindloomShareDrop"),
+    .target(
+      name: "MindloomShareDrop",
+      dependencies: [.product(name: "MindloomIdentity", package: "MindloomLink")]),
+    // v12 phase B: which library a launch opens, the library's own settings
+    // (product time zone) and the demo root's profile. Foundation only.
+    .target(
+      name: "MindloomLibrary",
+      dependencies: [
+        "BestASRAudioJournal", "BestASRDictation", "BestASRDomain", "BestASRPersistence",
+        "BestASRRemoteOrganizer",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
+    ),
+    // The switch from bestASR (2026-10-06): the keychain items handed over
+    // by a one-shot helper signed as bestASR, over a private socket with both
+    // signatures checked. Apple frameworks only, so the helper stays small.
+    .target(
+      name: "MindloomCarryOver",
+      dependencies: [
+        "MindloomAgentProtocol",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
+    ),
+    .executableTarget(
+      name: "MindloomCarryOverHelper",
+      dependencies: [
+        "MindloomCarryOver",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
+    ),
     // Every other way into 织机 (V8 contract §A): the same intake rules as
     // paste and drop. EventKit for the calendar (read) and the Reminders
     // button (write on click); git and Zotero's loopback API for research.
@@ -499,6 +562,22 @@ let package = Package(
         "MindloomAgentProtocol", "MindloomShareDrop",
       ],
       linkerSettings: [.linkedFramework("EventKit")]
+    ),
+    .target(
+      name: "MindloomTencentMeeting",
+      dependencies: [
+        "BestASRDomain", "BestASREntries", "BestASRIntake", "BestASRMemory",
+        "BestASRRemoteOrganizer", .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
+    ),
+    // Developer probe: one pass of the Tencent Meeting entry into a marked
+    // synthetic library, printing counts only (never the real library).
+    .executableTarget(
+      name: "TencentMeetingProbeCLI",
+      dependencies: [
+        "BestASRDomain", "BestASRIntake", "BestASRMemory", "BestASRPersistence",
+        "BestASRRemoteOrganizer", "MindloomTencentMeeting",
+      ]
     ),
     .executableTarget(
       name: "MindloomAgentTestHost",
@@ -519,6 +598,9 @@ let package = Package(
       dependencies: [
         "BestASRDomain", "BestASRMemory",
         .product(name: "MindloomSpaces", package: "MindloomLink"),
+        .product(name: "MindloomDesign", package: "MindloomDesign"),
+        // The welcome window's and the sidebar's taglines (docs/TAGLINES.md).
+        .product(name: "MindloomTaglines", package: "MindloomDesign"),
       ]
     ),
     .target(
@@ -535,12 +617,17 @@ let package = Package(
         "BestASRDictation",
         "BestASRInference",
         "BestASRLocalText",
+        "BestASRMemory",
         "BestASRModelManager",
         "BestASRProcessing",
         .product(name: "MLX", package: "mlx-swift"),
+        // v12 search: the meaning index's embedding model (same pinned
+        // package as MLXLLM; no new dependency).
+        .product(name: "MLXEmbedders", package: "mlx-swift-lm"),
         .product(name: "MLXLLM", package: "mlx-swift-lm"),
         .product(name: "MLXLMCommon", package: "mlx-swift-lm"),
         .product(name: "Tokenizers", package: "swift-transformers"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .target(
@@ -604,7 +691,9 @@ let package = Package(
       name: "BestASRInferenceQueueProbe",
       dependencies: ["BestASRAudioJournalProbe"]
     ),
-    .target(name: "BestASRInferenceXPCProtocol"),
+    .target(
+      name: "BestASRInferenceXPCProtocol",
+      dependencies: [.product(name: "MindloomIdentity", package: "MindloomLink")]),
     .executableTarget(
       name: "PortableMigrationProbeCLI",
       dependencies: [
@@ -742,6 +831,18 @@ let package = Package(
         .product(name: "GRDB", package: "GRDB.swift"),
       ]
     ),
+    // Measures the 30-day Opus step against recognition and the speaker
+    // model before it runs (TECHNICAL_DESIGN.md「录音压缩」).
+    .executableTarget(
+      name: "AudioArchiveEvalCLI",
+      dependencies: [
+        "BestASRAudioJournal",
+        "BestASRFluidRuntime",
+        "BestASRInference",
+        "BestASRModelManager",
+        "BestASRSpeakerRouting",
+      ]
+    ),
     .executableTarget(
       name: "SourceAudioCompactionCLI",
       dependencies: [
@@ -750,6 +851,21 @@ let package = Package(
         "BestASRDomain",
         "BestASRPersistence",
       ]
+    ),
+    // Scores search on a synthetic library against a versioned query set
+    // (Corpus/product-synthetic/search-demo-v1.json).
+    // v12 search: chooses the meaning model and the way the two searches
+    // combine (synthetic set, and a private set on a copy of a library).
+    .executableTarget(
+      name: "MeaningEvalCLI",
+      dependencies: [
+        "BestASRDomain", "BestASRMemory", "BestASRMLXRuntime", "BestASRPersistence",
+        .product(name: "MLX", package: "mlx-swift"),
+      ]
+    ),
+    .executableTarget(
+      name: "SearchEvalCLI",
+      dependencies: ["BestASRDomain", "BestASRMemory", "BestASRPersistence"]
     ),
     .executableTarget(
       name: "DictationEvalCLI",
@@ -782,6 +898,21 @@ let package = Package(
         "BestASRDomain",
         "BestASRInference",
         "BestASRPersistence",
+      ]
+    ),
+    .testTarget(
+      name: "MindloomLibraryTests",
+      dependencies: [
+        "BestASRAudioJournal", "BestASRDictation", "BestASRDomain", "BestASRInference",
+        "BestASRMacUI", "BestASRPersistence", "BestASRRemoteOrganizer", "MindloomLibrary",
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
+    ),
+    .testTarget(
+      name: "MindloomCarryOverTests",
+      dependencies: [
+        "BestASRAgentAccess", "BestASRRemoteOrganizer", "MindloomAgentProtocol",
+        "MindloomCarryOver", .product(name: "MindloomIdentity", package: "MindloomLink"),
       ]
     ),
     .testTarget(
@@ -831,7 +962,8 @@ let package = Package(
     ),
     .testTarget(
       name: "BestASRDeliveryTests",
-      dependencies: ["BestASRDelivery", "BestASRDictation", "BestASRDomain"]
+      dependencies: ["BestASRDelivery", "BestASRDictation", "BestASRDomain"],
+      swiftSettings: [.define("MINDLOOM_DELIVERY_PROBE", .when(configuration: .debug))]
     ),
     .testTarget(
       name: "BestASRMacPermissionsTests",
@@ -937,7 +1069,8 @@ let package = Package(
     .testTarget(
       name: "BestASRIntakeTests",
       dependencies: [
-        "BestASRDomain", "BestASRIntake", "BestASRPersistence", "BestASRRemoteOrganizer",
+        "BestASRDomain", "BestASRIntake", "BestASRMemory", "BestASRPersistence",
+        "BestASRRemoteOrganizer",
       ]
     ),
     .testTarget(
@@ -958,6 +1091,14 @@ let package = Package(
       ]
     ),
     .testTarget(
+      name: "MindloomTencentMeetingTests",
+      dependencies: [
+        "BestASRDomain", "BestASREntries", "BestASRIntake", "BestASRMemory", "BestASRPersistence",
+        "BestASRRemoteOrganizer", "MindloomTencentMeeting",
+      ],
+      resources: [.copy("Fixtures")]
+    ),
+    .testTarget(
       name: "BestASRMemoryTests",
       dependencies: ["BestASRDomain", "BestASRMemory"]
     ),
@@ -966,6 +1107,8 @@ let package = Package(
       dependencies: [
         "BestASRDomain", "BestASRMemory", "BestASRMemoryUI",
         .product(name: "MindloomSpaces", package: "MindloomLink"),
+        .product(name: "MindloomDesign", package: "MindloomDesign"),
+        .product(name: "MindloomTaglines", package: "MindloomDesign"),
       ]
     ),
     // Opt-in end-to-end run on the owner's own Spark: a fresh synthetic data

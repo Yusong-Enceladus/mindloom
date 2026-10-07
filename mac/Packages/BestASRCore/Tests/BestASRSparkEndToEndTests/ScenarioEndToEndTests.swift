@@ -311,7 +311,7 @@ final class ScenarioEndToEndTests: XCTestCase {
       }
       var scenes: [(String, MemoryNavigation)] = [("home", MemoryNavigation())]
       for (rank, entry) in model.home.prefix(3).enumerated() {
-        scenes.append(("event-\(rank + 1)", MemoryNavigation(path: [.event(entry.eventID)])))
+        scenes.append(("event-\(rank + 1)", MemoryNavigation(path: [.matter(entry.eventID)])))
       }
       if let split = sources.first(where: { !$0.segments.isEmpty }),
         let detail = model.projection.event(id: split.eventID)
@@ -320,7 +320,7 @@ final class ScenarioEndToEndTests: XCTestCase {
         scenes.append(
           (
             "event-split",
-            MemoryNavigation(path: [.event(split.eventID)], expandedItems: Set(parts))
+            MemoryNavigation(path: [.matter(split.eventID)], expandedItems: Set(parts))
           ))
       } else {
         errors.append("no event holds a part of a split item")
@@ -333,7 +333,6 @@ final class ScenarioEndToEndTests: XCTestCase {
       } else {
         errors.append("no person to show")
       }
-      scenes.append(("unfiled", MemoryNavigation(path: [.unfiled])))
       for (name, navigation) in scenes {
         for dark in [false, true] {
           let file = "\(name)-\(dark ? "dark" : "light").png"
@@ -385,7 +384,7 @@ final class ScenarioEndToEndTests: XCTestCase {
         }
         let name = ScenarioThreads.fileSafe(truth)
         var pages: [(String, MemoryNavigation)] = [
-          ("thread-\(name)", MemoryNavigation(path: [.event(eventID)]))
+          ("thread-\(name)", MemoryNavigation(path: [.matter(eventID)]))
         ]
         if let detail = model.projection.event(id: eventID) {
           let own = Set(members.map(\.id))
@@ -395,7 +394,7 @@ final class ScenarioEndToEndTests: XCTestCase {
             pages.append(
               (
                 "thread-\(name)-part",
-                MemoryNavigation(path: [.event(eventID)], expandedItems: [part.id])
+                MemoryNavigation(path: [.matter(eventID)], expandedItems: [part.id])
               ))
           }
         }
@@ -449,11 +448,11 @@ final class ScenarioEndToEndTests: XCTestCase {
           guard let eventID = choice.eventID else { continue }
           let name = ScenarioThreads.fileSafe(truth)
           matters[name] = eventID
-          for lens in MemoryEventLens.allCases {
+          for tab in MatterTab.allCases {
             pages.append(
               (
-                "matter-\(name)-\(lens.rawValue)",
-                MemoryNavigation(path: [.event(eventID)], eventLens: lens), lensHeight
+                "matter-\(name)-\(tab.rawValue)",
+                MemoryNavigation(path: [.matter(eventID)], matterTab: tab), lensHeight
               ))
           }
           let knot = live.first { $0.eventID == eventID }?.map?.knots
@@ -461,9 +460,8 @@ final class ScenarioEndToEndTests: XCTestCase {
           if let knot {
             pages.append(
               (
-                "matter-\(name)-strands-knot",
-                MemoryNavigation(
-                  path: [.event(eventID)], eventLens: .strands, focusedKnot: knot.id),
+                "matter-\(name)-step",
+                MemoryNavigation(path: [.matter(eventID)], popover: .step(knot.id)),
                 lensHeight
               ))
           }
@@ -473,8 +471,8 @@ final class ScenarioEndToEndTests: XCTestCase {
         }) {
           pages.append(
             (
-              "matter-nomap-strands",
-              MemoryNavigation(path: [.event(plain.eventID)], eventLens: .strands), 900
+              "matter-nomap-progress",
+              MemoryNavigation(path: [.matter(plain.eventID)]), 900
             ))
         }
         var lensFiles: [String] = []
@@ -532,10 +530,8 @@ final class ScenarioEndToEndTests: XCTestCase {
           "events_live": live.count, "maps": live.filter { $0.map != nil }.count,
           "ropes": remote.ropes.count, "crossings": remote.relations.filter(\.isCross).count,
           "blocks": remote.relations.filter(\.isBlocks).count,
-          "home_bands": model.lenses.bands.count,
-          "home_unroped": model.lenses.unroped.count,
-          "ladder": Dictionary(
-            uniqueKeysWithValues: model.lenses.rungs.map { ($0.kind.rawValue, $0.deadlines.count) }),
+          "deadlines": model.digest.deadlines.count,
+          "steps": model.digest.matters.reduce(0) { $0 + $1.steps.count },
           "timings_ms": timings, "render_scale": Double(SparkEndToEndTests.renderScale),
         ]
         try JSONSerialization.data(

@@ -661,7 +661,7 @@ actor LocalEventOrganizer {
       case "fileImport": "文件内容"
       // Pasted or dragged text, screenshots, and documents are organized as
       // text sources; their content is data, never an instruction.
-      case "userItem": "收进来的内容"
+      case "userItem": "添加的内容"
       default: "语音记录"
       }
     let formatter = DateFormatter()

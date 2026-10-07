@@ -51,7 +51,7 @@ extension ContentView {
 
       if !model.people.personReviewCandidates.isEmpty {
         ReviewDisclosure(
-          title: "待确认人物线索（\(model.people.personReviewCandidates.count)）",
+          title: "待确认的人物（\(model.people.personReviewCandidates.count)）",
           expanded: $showsPersonReview,
           identifier: "bestASR.people.reviewQueue"
         ) {
@@ -109,7 +109,7 @@ extension ContentView {
           ) {
             if model.filteredPersonSummaries.isEmpty {
               ContentUnavailableView(
-                "还没有人物",
+                "尚无人物",
                 systemImage: "person.2.slash",
                 description: Text("完成含语音的记录后，人物会在这里统一出现。")
               )
@@ -259,25 +259,9 @@ extension ContentView {
                   .padding(.top, 7)
                 }
 
-                if !model.selectedPersonRelatedEvents.isEmpty {
-                  GroupBox("相关事件") {
-                    ScrollView(.horizontal) {
-                      HStack(spacing: 8) {
-                        ForEach(model.selectedPersonRelatedEvents) { event in
-                          Button(event.event.title) {
-                            model.beginEditingEvent(event)
-                            navigate(to: .events)
-                          }
-                          .buttonStyle(.bordered)
-                        }
-                      }
-                    }
-                  }
-                }
-
-                GroupBox("相关记录与出现时间线") {
+                GroupBox("相关记录与出现时间") {
                   if selectedPersonOccurrenceGroups.isEmpty {
-                    Text("还没有可显示的出现记录")
+                    Text("尚无可显示的出现记录")
                       .foregroundStyle(.secondary)
                       .padding(8)
                   } else {
@@ -334,7 +318,7 @@ extension ContentView {
 
                 DisclosureGroup("管理人物") {
                   VStack(alignment: .leading, spacing: 10) {
-                    Text("合并、删除声纹或解除身份关系不会删除任何历史、逐字稿或原音；合并可撤销。")
+                    Text("合并、删除声纹或解除身份关系后，历史记录、逐字稿和录音都会保留；合并可以撤销。")
                       .font(.caption)
                       .foregroundStyle(.secondary)
                     Picker("要合并的人物", selection: $model.people.mergeTargetPersonID) {
@@ -382,7 +366,7 @@ extension ContentView {
                     } message: {
                       if let summary = model.selectedPersonSummary {
                         Text(
-                          "将删除 \(summary.embeddingCount) 份声纹特征，并解除 \(summary.sessionCount) 条记录中的人物关联；不会删除任何历史、逐字稿或原音。"
+                          "将删除 \(summary.embeddingCount) 份声纹特征，并解除 \(summary.sessionCount) 条记录中的人物关联；历史记录、逐字稿和录音都会保留。"
                         )
                       }
                     }
@@ -780,7 +764,7 @@ extension ContentView {
               )
             }
           } else {
-            Text("这条记录还没有带时间戳的逐字稿分段；原文和原音仍然保留。")
+            Text("这条记录尚无带时间戳的逐字稿分段；原文和录音仍保留。")
               .foregroundStyle(.secondary)
           }
         }
@@ -899,7 +883,7 @@ extension ContentView {
     switch speaker.associationStatus {
     case .anonymousIdentity: return "跨记录保留为待命名人物"
     case .automaticMatch: return "系统自动匹配"
-    case .candidate: return "建议匹配，等待确认"
+    case .candidate: return "可能匹配，等待确认"
     case .userConfirmed: return "已人工确认"
     case .rejected: return "已明确排除"
     case .unknown: return "未知人物"

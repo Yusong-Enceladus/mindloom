@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- The development build's share extension: sandboxed, and it may write
+       only the development build's own share drop folder in the owner's home
+       (~/Library/Application Support/Mindloom-debug-share-drop), never the
+       owner's library; no network. -->
+  <key>com.apple.security.app-sandbox</key>
+  <true/>
+  <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
+  <array>
+    <string>/Library/Application Support/Mindloom-debug-share-drop/entries/share-inbox/</string>
+  </array>
+</dict>
+</plist>

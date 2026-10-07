@@ -1,25 +1,25 @@
 {
   "conclusion" : "conditional",
-  "generatedAt" : "2026-08-30T03:49:29Z",
+  "generatedAt" : "2026-10-07T08:07:54Z",
   "kind" : "runtime-boundary-comparison",
   "rollback" : "Keep the same InferenceService contract and switch the scheduler adapter to the in-process actor if Developer ID packaging or real-model latency fails its release gate.",
-  "runID" : "AB7D2FF1-3B0C-42B9-805F-AD7BE81F37DA",
+  "runID" : "535E9A22-0538-45B1-99AB-52BAD675F6D2",
   "scenarios" : [
     {
       "metrics" : {
-        "inProcessP50Nanoseconds" : "25115459",
+        "inProcessP50Nanoseconds" : "27570292",
         "workloadBytes" : "33554432",
-        "xpcProtocolOverheadNanoseconds" : "167459",
-        "xpcRoundTripNanoseconds" : "25400709",
-        "xpcWorkerP50Nanoseconds" : "25385250"
+        "xpcProtocolOverheadNanoseconds" : "169541",
+        "xpcRoundTripNanoseconds" : "24317541",
+        "xpcWorkerP50Nanoseconds" : "23987416"
       },
       "scenarioID" : "same-model-load-workload",
       "status" : "pass"
     },
     {
       "metrics" : {
-        "hostResidentAfterWorkerRestartBytes" : "43859968",
-        "hostResidentBeforeWorkerExitBytes" : "43859968",
+        "hostResidentAfterWorkerRestartBytes" : "44187648",
+        "hostResidentBeforeWorkerExitBytes" : "44187648",
         "inProcessPeakDeltaBytes" : "33587200",
         "inProcessRetainedDeltaBytes" : "33587200",
         "workerProcessExitObserved" : "true",

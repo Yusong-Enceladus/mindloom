@@ -47,10 +47,10 @@ public enum OwnerChannel {
   }
 
   public static let disabledMessage =
-    "命令行入口没有打开：在织机的 设置 → 入口 里打开「命令行 mindloom」"
-  public static let notReadyMessage = "织机的资料库还没有打开，请稍后再试"
+    "命令行入口未打开。请在 Mindloom 的“设置”>“入口”中打开“命令行 mindloom”"
+  public static let notReadyMessage = "Mindloom 的资料库尚未打开。请稍后再试"
   public static let browserDisabledMessage =
-    "Chrome 扩展没有连上：在织机的 设置 → 入口 里打开「Chrome 扩展」"
+    "Chrome 扩展未连接。请在 Mindloom 的“设置”>“入口”中打开“Chrome 扩展”"
 }
 
 /// `mindloom add`: text, files (absolute paths, read by the App under the same
@@ -224,7 +224,7 @@ public enum OwnerCommand: Equatable, Sendable {
         request.text = piped
       }
       guard !request.isEmpty else {
-        return .failure(.usage("没有要收进来的内容：mindloom add \"文字\"、--file 路径，或者用管道输入"))
+        return .failure(.usage("没有要添加的内容：mindloom add \"文字\"、--file 路径，或使用管道输入"))
       }
       return .success(.add(request))
     default:
@@ -240,12 +240,12 @@ public enum OwnerCommand: Equatable, Sendable {
   }
 
   public static let usage = """
-    mindloom：把内容收进织机（你自己的入口，和粘贴、拖入一样）。
-      mindloom add "一段文字"         收进一段文字
-      mindloom add --file 路径        收进一个文件（可以写多个 --file）
-      mindloom add --url 链接 [--title 标题]   收进一个链接（只记下链接，不会打开它）
-      echo 文字 | mindloom add        从管道收进文字
-      mindloom due [--days N] [--json]  看今天（或接下来 N 天）到期的事，只读
-    需要先在织机的 设置 → 入口 里打开「命令行 mindloom」，并且织机在运行。
+    mindloom：将内容添加到 Mindloom（你自己的入口，与粘贴、拖放相同）。
+      mindloom add "一段文字"         添加一段文字
+      mindloom add --file 路径        添加文件（可以使用多个 --file）
+      mindloom add --url 链接 [--title 标题]   添加链接（按文字添加）
+      echo 文字 | mindloom add        从管道添加文字
+      mindloom due [--days N] [--json]  查看今天（或接下来 N 天）到期的事
+    需要先在 Mindloom 的“设置”>“入口”中打开“命令行 mindloom”，并且 Mindloom 正在运行。
     """
 }

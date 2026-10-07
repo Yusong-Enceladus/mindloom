@@ -1,17 +1,35 @@
 #!/bin/zsh
+# Installs a verified Release build as the one product App:
+# <applications dir>/Mindloom.app, bundle id app.mindloom (script/identity.sh; owner's decision
+# 2026-10-06).
+#
+# Every installed copy of the product in the applications folder is found by its bundle
+# id (LaunchServices, then the name Mindloom.app), quit gracefully by bundle id when it runs
+# from that folder (never killed), unregistered and kept as Mindloom-backup-*.rollback in the
+# backup folder (no .app suffix, so LaunchServices and TCC never see an old copy as a
+# second App). A Mindloom.app with another bundle id (Mindloom Preview) is not replaced:
+# the installer stops and says so (the switch script moves the preview aside first).
+#
+# bestASR (com.bestasr.app) is not this installer's: the switch from bestASR
+# (mindloom-switch.sh) quits it, moves its library and hands its keychain items over. This
+# installer moves no library, preferences or login item; the App repairs 「登录时打开」 on its
+# first launch from a new place.
 
 set -euo pipefail
 
 repository_root="${0:A:h:h}"
 source "$repository_root/script/build_storage.sh"
+source "$repository_root/script/identity.sh"
 
-source_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app"
+product_id="$MINDLOOM_BUNDLE_ID"
+source_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/$MINDLOOM_APP_NAME"
 applications_dir="$HOME/Applications"
 backup_dir="$BESTASR_BUILD_ROOT/installation-backups"
 expected_revision="$(git -C "$repository_root" rev-parse HEAD)"
 launch_after_install=true
 positional_source_seen=false
 allow_ad_hoc=false
+lsregister="${BESTASR_LSREGISTER_PATH:-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister}"
 
 while (( $# > 0 )); do
   case "$1" in
@@ -19,6 +37,7 @@ while (( $# > 0 )); do
     --applications-dir) applications_dir="$2"; shift 2 ;;
     --backup-dir) backup_dir="$2"; shift 2 ;;
     --expected-revision) expected_revision="$2"; shift 2 ;;
+    --product-id) product_id="$2"; shift 2 ;;
     --no-launch) launch_after_install=false; shift ;;
     --allow-ad-hoc-for-tests) allow_ad_hoc=true; shift ;;
     --*) print -u2 "error: unknown argument: $1"; exit 64 ;;
@@ -34,16 +53,13 @@ while (( $# > 0 )); do
   esac
 done
 
-destination_app="$applications_dir/bestASR.app"
-destination_executable="$destination_app/Contents/MacOS/bestASR"
+applications_dir="${applications_dir:A}"
+[[ "$product_id" =~ '^[A-Za-z0-9.-]+$' ]] || { print -u2 "error: invalid product id"; exit 64; }
+[[ "$applications_dir" != *[\'\\]* ]] || { print -u2 "error: unsupported applications folder path"; exit 64; }
+destination_app="$applications_dir/Mindloom.app"
 timestamp="$(date +%Y%m%d-%H%M%S)"
-# Keep the previous signed bundle byte-for-byte recoverable without giving it
-# an .app extension. Mounted .app backups are registered by LaunchServices and
-# appear as separate TCC permission targets, which can make macOS show or grant
-# permissions for an old test copy instead of the single installed product.
-backup_app="$backup_dir/bestASR-backup-$timestamp-$$.rollback"
-staging_app="$applications_dir/.bestASR-installing-$timestamp-$$.app"
-destination_moved=0
+staging_app="$applications_dir/.Mindloom-installing-$timestamp-$$.app"
+typeset -a moved_from moved_to
 install_succeeded=0
 
 remove_tree() {
@@ -52,35 +68,76 @@ remove_tree() {
   find "$target" -depth -delete
 }
 
-prune_generated_rollbacks() {
-  local keep_count=2
-  local count excess target
-  count="$(find "$backup_dir" -mindepth 1 -maxdepth 1 -type d \
-    -name 'bestASR-backup-*.rollback' | wc -l | tr -d ' ')"
-  (( count > keep_count )) || return 0
-  excess=$(( count - keep_count ))
-  while IFS= read -r target; do
-    [[ "$target:h" == "$backup_dir" \
-      && "$target:t" == bestASR-backup-*.rollback ]] || {
-      print -u2 "warning: refused unexpected rollback cleanup target"
-      return 1
+bundle_id_of() {
+  /usr/bin/plutil -extract CFBundleIdentifier raw -o - "$1/Contents/Info.plist" 2>/dev/null || true
+}
+
+# The product's copies directly in the applications folder: what LaunchServices knows
+# by bundle id, then its name.
+installed_copies() {
+  local found
+  found="$(/usr/bin/osascript -l JavaScript -e "
+    ObjC.import('AppKit');
+    const urls = \$.NSWorkspace.sharedWorkspace.URLsForApplicationsWithBundleIdentifier('$product_id');
+    const out = [];
+    for (let i = 0; i < urls.count; i++) out.push(urls.objectAtIndex(i).path.js);
+    out.join('\n');
+  " 2>/dev/null || true)"
+  {
+    print -r -- "$found"
+    print -r -- "$applications_dir/Mindloom.app"
+  } | while IFS= read -r candidate; do
+    [[ -n "$candidate" && -d "$candidate" ]] || continue
+    [[ "${candidate:A:h}" == "$applications_dir" ]] || continue
+    [[ "$(bundle_id_of "$candidate")" == "$product_id" ]] || continue
+    print -r -- "${candidate:A}"
+  done | /usr/bin/awk '!seen[$0]++'
+}
+
+# Running copies of the product launched from the applications folder (copies elsewhere,
+# such as a build folder, are not this installation's).
+running_count() {
+  /usr/bin/osascript -l JavaScript -e "
+    ObjC.import('AppKit');
+    const apps = \$.NSRunningApplication.runningApplicationsWithBundleIdentifier('$product_id');
+    let n = 0;
+    for (let i = 0; i < apps.count; i++) {
+      const url = apps.objectAtIndex(i).bundleURL;
+      if (!url.isNil() && url.path.js.startsWith('$applications_dir/')) n++;
     }
-    remove_tree "$target"
-  done < <(
-    find "$backup_dir" -mindepth 1 -maxdepth 1 -type d \
-      -name 'bestASR-backup-*.rollback' | sort | head -n "$excess"
-  )
+    n;
+  " 2>/dev/null || print 0
+}
+
+# Asks those copies to quit (as 退出 in the App's menu does) and waits; never kills.
+quit_product() {
+  (( $(running_count) > 0 )) || return 0
+  /usr/bin/osascript -l JavaScript -e "
+    ObjC.import('AppKit');
+    const apps = \$.NSRunningApplication.runningApplicationsWithBundleIdentifier('$product_id');
+    for (let i = 0; i < apps.count; i++) {
+      const app = apps.objectAtIndex(i);
+      if (!app.bundleURL.isNil() && app.bundleURL.path.js.startsWith('$applications_dir/')) app.terminate;
+    }
+  " >/dev/null 2>&1 || true
+  for _ in {1..100}; do
+    (( $(running_count) == 0 )) && return 0
+    sleep 0.2
+  done
+  return 1
 }
 
 rollback() {
   local exit_status=$?
   if (( install_succeeded == 0 )); then
     remove_tree "$staging_app"
-    if (( destination_moved == 1 )) && [[ -d "$backup_app" ]]; then
-      remove_tree "$destination_app"
-      mv "$backup_app" "$destination_app"
-      print -u2 "restored previous app after failed installation"
-    fi
+    local i
+    for (( i = ${#moved_to[@]}; i >= 1; i-- )); do
+      if [[ -d "${moved_to[$i]}" && ! -e "${moved_from[$i]}" ]]; then
+        mv "${moved_to[$i]}" "${moved_from[$i]}"
+        print -u2 "restored ${moved_from[$i]} after failed installation"
+      fi
+    done
   fi
   exit "$exit_status"
 }
@@ -96,9 +153,9 @@ source_info="$source_app/Contents/Info.plist"
   exit 1
 }
 
-bundle_identifier="$(plutil -extract CFBundleIdentifier raw -o - "$source_info" 2>/dev/null || true)"
+bundle_identifier="$(bundle_id_of "$source_app")"
 source_revision="$(plutil -extract BestASRBuildRevision raw -o - "$source_info" 2>/dev/null || true)"
-if [[ "$bundle_identifier" != "com.bestasr.app" ]]; then
+if [[ "$bundle_identifier" != "$product_id" ]]; then
   print -u2 "error: refusing non-Release bundle identifier: ${bundle_identifier:-missing}"
   exit 1
 fi
@@ -123,6 +180,12 @@ if [[ "$allow_ad_hoc" != true ]]; then
   fi
 fi
 
+if [[ -e "$destination_app" && "$(bundle_id_of "$destination_app")" != "$product_id" ]]; then
+  print -u2 "error: $destination_app is another App ($(bundle_id_of "$destination_app")); move it aside first"
+  print -u2 "       (the switch script mindloom-switch.sh keeps Mindloom Preview in its backup folder)"
+  exit 1
+fi
+
 mkdir -p "$applications_dir" "$backup_dir"
 remove_tree "$staging_app"
 ditto "$source_app" "$staging_app"
@@ -136,39 +199,33 @@ if [[ "$staging_designated_requirement" != "$source_designated_requirement" ]]; 
   exit 1
 fi
 
-if [[ -x "$destination_executable" ]]; then
-  running_pid_lines="$(ps -axo pid=,command= | awk -v executable="$destination_executable" '$2 == executable {print $1}')"
-  if [[ -n "$running_pid_lines" ]]; then
-    while IFS= read -r running_pid; do
-      kill -TERM "$running_pid"
-    done <<< "$running_pid_lines"
-    for _ in {1..50}; do
-      still_running="$(ps -axo command= | awk -v executable="$destination_executable" '$1 == executable {found=1} END {if (found) print executable}')"
-      [[ -z "$still_running" ]] && break
-      sleep 0.1
-    done
-    still_running="$(ps -axo command= | awk -v executable="$destination_executable" '$1 == executable {found=1} END {if (found) print executable}')"
-    if [[ -n "$still_running" ]]; then
-      print -u2 "error: installed app did not exit; existing bundle was left untouched"
-      exit 1
-    fi
-  fi
+if ! quit_product; then
+  print -u2 "error: the installed app did not quit; nothing was replaced (quit it from its menu and retry)"
+  exit 1
 fi
 
-# App replacement does not migrate runtime caches. Cache relocation remains
-# an explicit, separate operation through configure_runtime_cache.sh.
-
-if [[ -d "$destination_app" ]]; then
-  mv "$destination_app" "$backup_app"
-  destination_moved=1
-fi
+# Every installed copy goes to the backup folder, unregistered first.
+n=0
+for copy in ${(f)"$(installed_copies)"}; do
+  [[ -n "$copy" && -d "$copy" ]] || continue
+  n=$(( n + 1 ))
+  backup_app="$backup_dir/Mindloom-backup-$timestamp-$$-$n.rollback"
+  "$lsregister" -u "$copy" >/dev/null 2>&1 || true
+  mv "$copy" "$backup_app"
+  moved_from+=("$copy")
+  moved_to+=("$backup_app")
+done
+[[ ! -e "$destination_app" ]] || {
+  print -u2 "error: $destination_app is still there after the backup"
+  exit 1
+}
 mv "$staging_app" "$destination_app"
 
 installed_info="$destination_app/Contents/Info.plist"
 installed_revision="$(plutil -extract BestASRBuildRevision raw -o - "$installed_info")"
-installed_identifier="$(plutil -extract CFBundleIdentifier raw -o - "$installed_info")"
+installed_identifier="$(bundle_id_of "$destination_app")"
 codesign --verify --deep --strict "$destination_app"
-if [[ "$installed_identifier" != "com.bestasr.app" || "$installed_revision" != "$expected_revision" ]]; then
+if [[ "$installed_identifier" != "$product_id" || "$installed_revision" != "$expected_revision" ]]; then
   print -u2 "error: installed bundle identity does not match the verified source"
   exit 1
 fi
@@ -176,11 +233,10 @@ fi
 if [[ "$launch_after_install" == true ]]; then
   open "$destination_app"
   for _ in {1..50}; do
-    running="$(ps -axo command= | awk -v executable="$destination_executable" '$1 == executable {found=1} END {if (found) print executable}')"
-    [[ -n "$running" ]] && break
+    (( $(running_count) > 0 )) && break
     sleep 0.1
   done
-  if [[ -z "${running:-}" ]]; then
+  if (( $(running_count) == 0 )); then
     print -u2 "error: installed app did not launch from the standard location"
     exit 1
   fi
@@ -188,13 +244,32 @@ fi
 
 install_succeeded=1
 trap - EXIT INT TERM
+prune_generated_rollbacks() {
+  local keep_count=2
+  local count excess target
+  count="$(find "$backup_dir" -mindepth 1 -maxdepth 1 -type d \
+    -name 'Mindloom-backup-*.rollback' | wc -l | tr -d ' ')"
+  (( count > keep_count )) || return 0
+  excess=$(( count - keep_count ))
+  while IFS= read -r target; do
+    [[ "$target:h" == "$backup_dir" \
+      && "$target:t" == Mindloom-backup-*.rollback ]] || {
+      print -u2 "warning: refused unexpected rollback cleanup target"
+      return 1
+    }
+    remove_tree "$target"
+  done < <(
+    find "$backup_dir" -mindepth 1 -maxdepth 1 -type d \
+      -name 'Mindloom-backup-*.rollback' | sort | head -n "$excess"
+  )
+}
 prune_generated_rollbacks ||
   print -u2 "warning: installed successfully but old rollback cleanup was incomplete"
-if [[ "$source_app" == "$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app" ]]; then
+if [[ "$source_app" == "$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/$MINDLOOM_APP_NAME" ]]; then
   "$repository_root/script/unregister_build_app.sh" --hide-product "$source_app"
 fi
 print "installed: $destination_app"
 print "revision: $installed_revision"
-if [[ -d "$backup_app" ]]; then
+for backup_app in "${moved_to[@]}"; do
   print "backup: $backup_app"
-fi
+done

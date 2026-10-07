@@ -2,6 +2,7 @@ import BestASRDomain
 import CryptoKit
 import Darwin
 import Foundation
+import MindloomIdentity
 
 /// The user's "on" choice for one data root, kept outside the library's
 /// database. The link resumes at launch only when this marker AND the
@@ -34,12 +35,7 @@ public final class RemoteOrganizerLinkIntentFile: RemoteOrganizerLinkIntentStore
   /// The data root's identity hash: its kernel-canonical path, hashed. Also
   /// the Keychain account of the root's organizing-link key.
   public nonisolated static func rootIdentity(_ dataRoot: URL) -> String {
-    let standardized = dataRoot.standardizedFileURL.path
-    let canonical =
-      BestASRDataRootSelection.kernelPath(ofExisting: standardized)
-      ?? dataRoot.standardizedFileURL.resolvingSymlinksInPath().path
-    return SHA256.hash(data: Data(canonical.utf8))
-      .prefix(16).map { String(format: "%02x", $0) }.joined()
+    LibraryRootIdentity.hash(of: dataRoot)
   }
 
   public var onRecorded: Bool { FileManager.default.fileExists(atPath: url.path) }

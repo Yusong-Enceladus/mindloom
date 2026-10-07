@@ -475,7 +475,7 @@ struct HistoryListRow: View {
             .accessibilityIdentifier("bestASR.history.play")
         }
         if let onCopy {
-          rowButton("doc.on.doc", help: "复制", action: onCopy)
+          rowButton("doc.on.doc", help: "拷贝", action: onCopy)
             .accessibilityIdentifier("bestASR.history.copy")
         }
         rowButton("chevron.right", help: "打开详情", action: onOpen)
@@ -502,7 +502,7 @@ struct HistoryListRow: View {
       Button("保存") { onChangeSource?(sourceDraft) }
       Button("取消", role: .cancel) {}
     } message: {
-      Text("只改这条内容的来源标签；内容本身不会改变。")
+      Text("更改此内容的来源标签；内容本身保持不变。")
     }
   }
 

@@ -67,7 +67,7 @@
             "uniqueItems": true,
             "items": {
               "type": "string",
-              "pattern": "^(Packages|Tests|Spikes|script)/[A-Za-z0-9._/-]+$"
+              "pattern": "^(Packages|Tests|Spikes|script|iOS/Tests)/[A-Za-z0-9._/-]+$"
             }
           },
           "evidence": {

@@ -19,7 +19,7 @@ final class SkeletonTests: XCTestCase {
 
   func testAppIdentity() {
     XCTAssertEqual(app.bundleIdentifier, PhoneAppGroup.appBundleID)
-    XCTAssertEqual(app.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "织机")
+    XCTAssertEqual(app.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "Mindloom")
     let modes = app.object(forInfoDictionaryKey: "UIBackgroundModes") as? [String] ?? []
     XCTAssertTrue(modes.contains("audio"), "the voice session keeps running for the keyboard")
     XCTAssertTrue(modes.contains("fetch"), "BGAppRefreshTask sends the outbox")
@@ -29,7 +29,7 @@ final class SkeletonTests: XCTestCase {
   func testKeyboardExtension() throws {
     let keyboard = try plugin("MindloomKeyboard")
     XCTAssertEqual(keyboard.bundleIdentifier, PhoneAppGroup.keyboardBundleID)
-    XCTAssertEqual(keyboard.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "织机键盘")
+    XCTAssertEqual(keyboard.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "Mindloom")
     let info = try extensionInfo(keyboard)
     XCTAssertEqual(info["NSExtensionPointIdentifier"] as? String, "com.apple.keyboard-service")
     let attributes = try XCTUnwrap(info["NSExtensionAttributes"] as? [String: Any])
@@ -40,17 +40,17 @@ final class SkeletonTests: XCTestCase {
   func testShareExtension() throws {
     let share = try plugin("MindloomShare")
     XCTAssertEqual(share.bundleIdentifier, PhoneAppGroup.shareBundleID)
-    XCTAssertEqual(share.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "收进织机")
+    XCTAssertEqual(share.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String, "Mindloom")
     let info = try extensionInfo(share)
     XCTAssertEqual(info["NSExtensionPointIdentifier"] as? String, "com.apple.share-services")
     let attributes = try XCTUnwrap(info["NSExtensionAttributes"] as? [String: Any])
     let rule = try XCTUnwrap(attributes["NSExtensionActivationRule"] as? [String: Any])
     XCTAssertNotNil(
       rule["NSExtensionActivationSupportsMovieWithMaxCount"],
-      "videos open 收进织机 so it can say 音视频请在 Mac 上导入")
+      "videos open the share extension so it can refuse them")
   }
 
-  /// 织机键盘's "打开织机开始语音" opens this URL.
+  /// The keyboard's 「轻点开启语音」 opens this URL.
   func testAppHandlesTheStartVoiceURL() throws {
     let types = try XCTUnwrap(
       app.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]])
@@ -79,5 +79,16 @@ final class SkeletonTests: XCTestCase {
       PhoneAppGroup.outboxDirectory(in: container).standardizedFileURL)
     let values = try store.root.resourceValues(forKeys: [.isExcludedFromBackupKey])
     XCTAssertEqual(values.isExcludedFromBackup, true)
+  }
+
+  /// With the App Group the app's launch has already looked at its private Application Support
+  /// (where a build without the group kept its files) and left the marker there.
+  func testLaunchMigratedThePrivateStorage() throws {
+    XCTAssertNotNil(PhoneAppGroup.containerURL())
+    let legacy = try XCTUnwrap(PhoneAppGroup.privateApplicationSupport())
+    XCTAssertTrue(PhoneStorageMigration.isDone(from: legacy))
+    XCTAssertFalse(
+      FileManager.default.fileExists(atPath: PhoneAppGroup.pairingRecordFile(in: legacy).path),
+      "no pairing left behind in the private place")
   }
 }

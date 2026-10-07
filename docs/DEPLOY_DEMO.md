@@ -116,9 +116,9 @@ If `spark/pyproject.toml` gained dependencies, install them into the demo venv f
 The bestASR app has no settings UI for the link target yet. Write these preferences and relaunch the app. The host has no built-in default: until `preferences.spark-organizer-host` is written, the app keeps the link off and sends nothing. The bundle id is `com.bestasr.app` for Release and `com.bestasr.app.debug` for Debug.
 
 ```bash
-defaults write com.bestasr.app preferences.spark-organizer-host YOUR_SPARK
-defaults write com.bestasr.app preferences.spark-organizer-socket-path '~/hack/zhiji-demo/data/organizer.sock'
-defaults write com.bestasr.app preferences.spark-organizer-token-path '~/hack/zhiji-demo/data/link_token'
+defaults write app.mindloom preferences.spark-organizer-host YOUR_SPARK
+defaults write app.mindloom preferences.spark-organizer-socket-path '~/hack/zhiji-demo/data/organizer.sock'
+defaults write app.mindloom preferences.spark-organizer-token-path '~/hack/zhiji-demo/data/link_token'
 ```
 
 - **Quoting:** keep the single quotes. The `~` is resolved on the Spark, not on the Mac.

@@ -127,7 +127,7 @@ final class BestASRUITests: XCTestCase {
     let status = app.staticTexts["bestASR.history.status"]
     XCTAssertTrue(status.waitForExistence(timeout: 2))
     XCTAssertTrue(
-      status.waitForValue("已复制所选本地口述", timeout: 2),
+      status.waitForValue("已拷贝所选本地口述", timeout: 2),
       "History copy must complete without freezing the installed UI."
     )
 
@@ -444,7 +444,7 @@ final class BestASRUITests: XCTestCase {
     ]
     XCTAssertTrue(
       speakerStatus.waitForValue(
-        "已拒绝这个人物候选；本次记录不会再关联到该人物",
+        "已拒绝此人物候选；本次记录将不再关联到该人物",
         timeout: 3
       )
     )
@@ -674,11 +674,11 @@ final class BestASRUITests: XCTestCase {
     )
     XCTAssertEqual(
       app.staticTexts["bestASR.settings.modelReadiness"].value as? String,
-      "本机语音识别测试组件已就绪"
+      "本机语音识别测试模型已就绪"
     )
     XCTAssertEqual(
       app.staticTexts["bestASR.settings.speakerReadiness"].value as? String,
-      "本机多人识别测试组件已就绪"
+      "本机多人识别测试模型已就绪"
     )
   }
 
@@ -900,7 +900,7 @@ final class BestASRUITests: XCTestCase {
     save.click()
     XCTAssertTrue(
       app.staticTexts["bestASR.dictionary.status"]
-        .waitForValue("本机词典存储暂不可用", timeout: 2)
+        .waitForValue("暂时无法读取词典", timeout: 2)
     )
     XCTAssertTrue(
       canonical.exists,
@@ -1082,7 +1082,7 @@ final class BestASRUITests: XCTestCase {
     XCTAssertEqual(app.windows.count, 1)
     let runningApplication = try XCTUnwrap(NSWorkspace.shared.frontmostApplication)
     XCTAssertTrue(
-      ["com.bestasr.app.debug", "com.bestasr.app"].contains(
+      ["app.mindloom.debug", "app.mindloom"].contains(
         runningApplication.bundleIdentifier ?? ""
       )
     )

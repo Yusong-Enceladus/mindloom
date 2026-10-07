@@ -16,7 +16,7 @@ struct HandoverSheet: View {
       if let display = state.handover {
         content(display)
       } else {
-        Text("正在读这件事的成员…").font(.zhiji(13)).foregroundStyle(palette.secondary)
+        Text("正在读取这件事的成员…").font(.zhiji(13)).foregroundStyle(palette.secondary)
       }
     }
   }
@@ -24,11 +24,11 @@ struct HandoverSheet: View {
   @ViewBuilder
   private func content(_ display: SpaceHandoverDisplay) -> some View {
     Text(display.matterTitle).font(.zhiji(15, .semibold))
-    Text(display.currentLead.map { "现在的负责人：\($0)" } ?? "这件事还没有指定负责人")
+    Text(display.currentLead.map { "现在的负责人：\($0)" } ?? "这件事尚未指定负责人")
       .font(.zhiji(12)).foregroundStyle(palette.secondary)
     SpaceSection(title: "交给") {
       if display.members.isEmpty {
-        Text("空间里还没有别的成员。").font(.zhiji(12)).foregroundStyle(palette.secondary)
+        Text("空间中尚无其他成员。").font(.zhiji(12)).foregroundStyle(palette.secondary)
       } else {
         Picker(
           "交给",
@@ -44,7 +44,7 @@ struct HandoverSheet: View {
     }
     SpaceSection(title: "交接包") {
       Text(
-        "现在到哪了、谁还欠着什么、截止日、定下的事（带原话）、还没答案的问题、接手先做什么——每一句都标出处。由整理设备上的模型写，可能漏掉事情，接手前请和原负责人核对。"
+        "当前进展、各人待办、截止日期、已确定的事（附原话）、未解决的问题、接手后的第一步，每句都注明出处。由 DGX Spark 上的模型生成，可能有遗漏，接手前请与原负责人核对。"
       )
       .font(.zhiji(12)).foregroundStyle(palette.secondary)
       HStack {
@@ -66,12 +66,12 @@ struct HandoverSheet: View {
         HStack {
           Button("导出 Markdown…") { actions.handoverStep(.export) }
             .buttonStyle(ZhijiCapsuleButtonStyle())
-          Button(display.packItemID == nil ? "作为快照分享到空间" : "已分享到空间") {
+          Button(display.packItemID == nil ? "作为快照共享到空间" : "已共享到空间") {
             actions.handoverStep(.shareSnapshot)
           }
           .buttonStyle(ZhijiCapsuleButtonStyle())
           .disabled(display.packItemID != nil || display.working)
-          Text("引用 \(display.sources) 条素材").font(.zhiji(11)).foregroundStyle(palette.secondary)
+          Text("引用 \(display.sources) 条内容").font(.zhiji(11)).foregroundStyle(palette.secondary)
         }
       }
     }
@@ -81,7 +81,7 @@ struct HandoverSheet: View {
     HStack {
       Spacer()
       Button("取消") { actions.present(nil) }.buttonStyle(ZhijiCapsuleButtonStyle())
-      Button(display.packItemID == nil ? "转交负责人" : "转交负责人（附交接包）") {
+      Button(display.packItemID == nil ? "交给负责人" : "交给负责人（附交接包）") {
         actions.handoverStep(.handOver)
       }
       .buttonStyle(ZhijiCapsuleButtonStyle(prominent: true))
@@ -102,9 +102,9 @@ struct SpaceV8Notices: View {
   var body: some View {
     ForEach(space.pendingRecoveries ?? []) { recovery in
       VStack(alignment: .leading, spacing: 6) {
-        Text("「\(space.name(of: recovery.memberID))」以组织管理员身份接管了这个空间").font(.zhiji(13, .semibold))
+        Text("“\(space.name(of: recovery.memberID))”以团队管理员身份接管了此空间").font(.zhiji(13, .semibold))
         Text(
-          "这台 Mac 看不到组织的签名记录，核对不了。请当面或打电话核对对方的设备指纹：\(recovery.fingerprint)。核对一致再点「承认接管」；在那之前，对方之后的操作这台 Mac 一概不认。"
+          "这台 Mac 无法读取团队的签名记录，无法核对。请当面或通过电话核对对方的设备指纹：\(recovery.fingerprint)。核对一致后点按“承认接管”；在此之前，这台 Mac 不接受对方之后的操作。"
         )
         .font(.zhiji(12)).foregroundStyle(palette.secondary)
         Button("承认接管") { actions.confirmRecovery(space.spaceID, recovery.device.deviceID) }
@@ -114,7 +114,7 @@ struct SpaceV8Notices: View {
       .background(palette.surface, in: RoundedRectangle(cornerRadius: 8))
     }
     if let line = state.outboxLine(space.spaceID) {
-      Text(line + "：内容先锁好存在这台 Mac 上，连上后按原样发出，不会重复。不想发了可以取消。")
+      Text(line + "：内容已暂存在这台 Mac 上，连接后按原样发送。可以取消发送。")
         .font(.zhiji(12)).foregroundStyle(palette.secondary)
       ForEach(state.outbox[space.spaceID]?.entries ?? []) { entry in
         HStack(spacing: 8) {
@@ -122,37 +122,37 @@ struct SpaceV8Notices: View {
           Spacer(minLength: 4)
           Button("取消") { actions.cancelOutbox(space.spaceID, entry.entryID) }
             .buttonStyle(ZhijiCapsuleButtonStyle())
-            .accessibilityLabel("取消发出 \(entry.label)")
+            .accessibilityLabel("取消发送 \(entry.label)")
         }
       }
     }
     if let failures = state.outbox[space.spaceID]?.failures, !failures.isEmpty {
       VStack(alignment: .leading, spacing: 4) {
-        Text("没有发出去的：").font(.zhiji(12, .semibold))
+        Text("未发送的内容：").font(.zhiji(12, .semibold))
         ForEach(failures) { failure in
           Text("· \(failure.label)（\(SpaceV8Notices.refusal(failure.code))）").font(.zhiji(12))
         }
-        Button("知道了") { actions.dismissOutbox(space.spaceID) }
+        Button("好") { actions.dismissOutbox(space.spaceID) }
           .buttonStyle(ZhijiCapsuleButtonStyle())
       }
     }
     if let usage = space.usage {
-      Text("你在这个空间里的存储：\(usage.text)").font(.zhiji(12)).foregroundStyle(palette.secondary)
+      Text("你在此空间中使用的储存空间：\(usage.text)").font(.zhiji(12)).foregroundStyle(palette.secondary)
     }
   }
 
   static func refusal(_ code: String) -> String {
     switch code {
-    case "quota_exceeded": return "你在这个空间的存储满了"
-    case "one_part_per_recording": return "同一段录音只能附一段原音"
-    case "whole_recording": return "整段录音不能共享"
-    case "audio_too_large": return "这段原音太大"
-    case "audio_not_allowed": return "这个空间不收原音"
-    case "snapshot_frozen": return "摘要是冻结的，请另分享一份"
-    case "unknown_items": return "引用的素材已经不在空间里"
-    case "never_shared": return "这类内容永远不共享"
-    case "forbidden": return "你的角色不能这样做"
-    case "item_gone": return "这条已经不在空间里"
+    case "quota_exceeded": return "你在此空间中的储存空间已满"
+    case "one_part_per_recording": return "同一段录音最多附带一段原始录音"
+    case "whole_recording": return "无法共享整段录音"
+    case "audio_too_large": return "此段录音过大"
+    case "audio_not_allowed": return "此空间不接受录音"
+    case "snapshot_frozen": return "摘要已固定，请另行共享一份"
+    case "unknown_items": return "引用的内容已不在空间中"
+    case "never_shared": return "此类内容不可共享"
+    case "forbidden": return "你的角色无权执行此操作"
+    case "item_gone": return "此条已不在空间中"
     default: return code
     }
   }

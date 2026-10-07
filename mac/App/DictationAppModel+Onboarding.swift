@@ -80,8 +80,8 @@ extension DictationAppModel {
         resolvedState == .granted
         ? "权限已允许"
         : resolvedState == .restartRequired
-          ? "系统已允许；请退出并重新打开织机使系统音频权限生效"
-          : "请在系统提示或系统设置中允许织机"
+          ? "系统已允许；请\(MindloomLaunch.reopenWords)"
+          : "请在系统提示或“系统设置”中允许 Mindloom"
       if resolvedState != .granted && resolvedState != .restartRequired {
         beginPermissionRefreshMonitoring(kind)
       }
@@ -139,6 +139,8 @@ extension DictationAppModel {
     if !refreshHotkeysWhenGranted { publishIdleReadinessStatus() }
     guard refreshHotkeysWhenGranted,
       !hasActiveCapture,
+      // v11: not while fn is held by the user's bestASR App or switched off.
+      FnGuard.shared.shouldArm,
       let hotkeyController
     else { return }
     // Explicit refreshes and App re-activation also retry the native event

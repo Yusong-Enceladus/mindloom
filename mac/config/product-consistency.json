@@ -165,14 +165,14 @@
     },
     {
       "id": "offline-and-recording-first",
-      "description": "Capture, recognition, insertion, and search are offline; organizing input leaves the Mac only to the user's own device over an explicit SSH link, never audio, voiceprints, or dictionaries; capture/journal durability outranks inference work.",
+      "description": "Capture, recognition, insertion, and search are offline; organizing input leaves the Mac only to the user's own device over an explicit SSH link, never audio, voiceprints, or dictionaries; audio leaves the Mac only as the on-device-encrypted copy in the owner's own iCloud private database once sync exists (owner's decision 2026-10-06), and voiceprints and dictionaries never; capture/journal durability outranks inference work.",
       "sources": [
         {
           "path": "PRODUCT_REQUIREMENTS.md",
           "requiredLiterals": [
             "收集、识别、插入和搜索默认完全离线",
             "该链路不可用时，收集、识别、插入和搜索照常工作",
-            "音频、声纹/说话人特征和词典永不离开 Mac",
+            "声纹/说话人特征和词典永不离开 Mac。音频只有一种出去的方式",
             "只经用户显式启用、可随时撤销的 SSH 加密链路"
           ],
           "forbiddenLiterals": [

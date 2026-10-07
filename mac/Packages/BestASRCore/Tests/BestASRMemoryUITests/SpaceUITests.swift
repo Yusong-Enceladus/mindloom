@@ -61,7 +61,7 @@ final class SpaceUITests: XCTestCase {
       state: Self.space(.org, role: .write), itemIDs: ids, contributionLine: nil, now: Self.now)
     XCTAssertEqual(
       info.items.map(\.actions), [[.withdraw, .delete], [.hide, .requestPrivacyTakedown]])
-    XCTAssertEqual(info.items.first?.windowNote, "还能撤回 22 小时")
+    XCTAssertEqual(info.items.first?.windowNote, "可在 22 小时内撤回")
     XCTAssertEqual(info.items.last?.contributor, "韩策")
     // Past the window my item can only be deleted (a takedown request).
     info = SpaceMatterInfo.make(
@@ -186,8 +186,8 @@ final class SpaceUITests: XCTestCase {
       ("space-home-mine", base, nil, MemoryNavigation()),
       ("space-home-space", inSpace, nil, MemoryNavigation()),
       ("space-home-all", all, nil, MemoryNavigation()),
-      ("space-event-mine-badge", base, nil, MemoryNavigation(path: [.event("ev-rent")])),
-      ("space-event-in-space", inSpace, nil, MemoryNavigation(path: [.event("ev-rent")])),
+      ("space-event-mine-badge", base, nil, MemoryNavigation(path: [.matter("ev-rent")])),
+      ("space-event-in-space", inSpace, nil, MemoryNavigation(path: [.matter("ev-rent")])),
       ("space-sheet-share", share, .share(eventID: "ev-rent"), MemoryNavigation()),
       ("space-sheet-share-snapshot", snapshot, .share(eventID: "ev-rent"), MemoryNavigation()),
       (
@@ -243,9 +243,9 @@ final class SpaceUITests: XCTestCase {
     var screen = SpacesScreenState()
     screen.outbox[state.spaceID] = SpaceOutboxContents(
       entries: [SpaceOutboxEntry(entryID: "e", kind: .share, label: "x", createdAt: Self.now)])
-    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条等联网后发出")
+    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条将在连接后发送")
     screen.linkReady = true
-    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条正在发出")
+    XCTAssertEqual(screen.outboxLine(state.spaceID), "1 条正在发送")
     // Audio goes only with a ticked part that may carry it.
     var review = SpaceShareReview(candidates: [
       SpaceShareCandidate(
@@ -291,14 +291,8 @@ final class SpaceUITests: XCTestCase {
           size = CGSize(width: 560, height: 900)
         } else {
           content = AnyView(
-            ZhijiShell(
-              navigation: .constant(navigation), state: memory, actions: .inert,
-              slots: MemoryShellSlots(
-                homeAccessory: { AnyView(SpaceSwitcherBar(state: spaces, actions: .inert)) },
-                eventAccessory: { id in
-                  SpaceMatterBar.shows(eventID: id, state: spaces)
-                    ? AnyView(SpaceMatterBar(eventID: id, state: spaces, actions: .inert)) : nil
-                })))
+            MindloomShell(
+              navigation: .constant(navigation), state: memory, actions: .inert, spaces: spaces))
           size = CGSize(width: 1280, height: 900)
         }
         let view =

@@ -34,7 +34,7 @@ struct OwnerCommandLineRunner {
         return nil
       })
     if inputTooLong {
-      Self.fail("管道输入的文字超过 6 MB；请存成文件后用 --file 收进来", code: ExitCode.usage)
+      Self.fail("管道输入的文字超过 6 MB。请保存为文件后使用 --file 添加", code: ExitCode.usage)
     }
     switch parsed {
     case .failure(.usage(let message)):
@@ -81,9 +81,9 @@ struct OwnerCommandLineRunner {
     case .notRunning:
       Self.fail(AgentCopy.notRunning, code: ExitCode.notRunning)
     case .noAnswer:
-      Self.fail("织机没有回答（可能已经退出）", code: ExitCode.notRunning)
+      Self.fail("Mindloom 没有回应（可能已退出）", code: ExitCode.notRunning)
     case .unreadable:
-      Self.fail("织机的回答看不懂", code: ExitCode.refused)
+      Self.fail("无法识别 Mindloom 的回应", code: ExitCode.refused)
     case .reply(let reply):
       if json {
         print(reply.json.serialized)

@@ -7,6 +7,8 @@ manifest_path="$repository_root/config/permissions.json"
 project_path="$repository_root/project.yml"
 info_plist_path="$repository_root/App/Info.plist"
 entitlements_path="$repository_root/App/BestASR.entitlements"
+variant_entitlements_path="$repository_root/App/BestASR-KeychainGroup.entitlements"
+release_script_path="$repository_root/script/build_release.sh"
 summary_path="$repository_root/artifacts/evidence/permissions/permission-lint-summary.json"
 
 while (( $# > 0 )); do
@@ -25,6 +27,14 @@ while (( $# > 0 )); do
       ;;
     --entitlements)
       entitlements_path="$2"
+      shift 2
+      ;;
+    --variant-entitlements)
+      variant_entitlements_path="$2"
+      shift 2
+      ;;
+    --release-script)
+      release_script_path="$2"
       shift 2
       ;;
     --summary)
@@ -134,8 +144,16 @@ if [[ "$permission_status" == "pass" ]]; then
   if [[ "$(project_setting CODE_SIGN_INJECT_BASE_ENTITLEMENTS)" != "NO" ]]; then
     record_failure "CODE_SIGN_INJECT_BASE_ENTITLEMENTS"
   fi
-  if [[ "$(project_setting CODE_SIGN_ENTITLEMENTS)" != "$(jq -r .entitlementsFile "$manifest_path")" ]]; then
+  # The keychain-group variant is chosen through this one setting (empty by default).
+  signed_entitlements="$(project_setting CODE_SIGN_ENTITLEMENTS)"
+  variant_token='$(MINDLOOM_ENTITLEMENTS_VARIANT)'
+  signed_entitlements="${signed_entitlements//"$variant_token"/}"
+  if [[ "$signed_entitlements" != "$(jq -r .entitlementsFile "$manifest_path")" ]]; then
     record_failure "CODE_SIGN_ENTITLEMENTS"
+  fi
+  # Both names are read by the App target only; neither may be a command-line override.
+  if grep -Eq '^[[:space:]]*(CODE_SIGN_ENTITLEMENTS|PROVISIONING_PROFILE_SPECIFIER)=' "$release_script_path"; then
+    record_failure "release-signing-override"
   fi
 fi
 
@@ -170,6 +188,23 @@ elif [[ "$permission_status" == "pass" ]]; then
     <<< "$entitlement_json" >/dev/null
   then
     record_failure "entitlement-minimum"
+  fi
+fi
+
+# The opt-in keychain-group variant is the base entitlements plus exactly
+# keychain-access-groups, so a profile-signed release is held to the same minimum.
+if [[ "$permission_status" == "pass" ]]; then
+  if [[ ! -f "$variant_entitlements_path" ]] || ! plutil -lint "$variant_entitlements_path" >/dev/null; then
+    record_failure "variant-entitlements-plist"
+  elif ! jq -e \
+    --argjson base "$entitlement_json" \
+    --argjson variant "$(plutil -convert json -o - "$variant_entitlements_path")" \
+    '(($base | keys) + ["keychain-access-groups"] | sort) == ($variant | keys | sort) and
+      ($variant | del(."keychain-access-groups")) == $base and
+      ($variant."keychain-access-groups" | type) == "array" and
+      ($variant."keychain-access-groups" | length) == 1' <<< 'null' >/dev/null
+  then
+    record_failure "variant-entitlements-minimum"
   fi
 fi
 

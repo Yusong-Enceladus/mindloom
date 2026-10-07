@@ -56,7 +56,7 @@ final class OwnerChannelTests: XCTestCase {
         var summary = await committer.commit(items)
         summary.rejected = refused + summary.rejected
         guard summary.storedCount > 0 else {
-          return .refused(summary.rejected.first ?? "没有可收进来的内容")
+          return .refused(summary.rejected.first ?? "没有可添加的内容")
         }
         return .reply(
           OwnerReply(
@@ -92,7 +92,8 @@ final class OwnerChannelTests: XCTestCase {
     let app = FakeApp()
     let drafts = Drafts()
     let server = AgentSocketServer(
-      dataRoot: root, service: service, owner: channel(app, root: root, drafts: drafts))
+      dataRoot: root, service: service, gate: .anyProcessOfThisUser,
+      owner: channel(app, root: root, drafts: drafts))
     try server.start()
     defer { server.stop() }
     let add = #"{"jsonrpc":"2.0","id":1,"method":"mindloom/owner.add","params":{"text":"终端里的一句话"}}"#
@@ -116,7 +117,7 @@ final class OwnerChannelTests: XCTestCase {
     // An MCP method on an owner connection is not served.
     let mcp = try JSONValue.parse(try XCTUnwrap(readLine(descriptor)))
     close(descriptor)
-    XCTAssertEqual(on["result"]?["message"]?.stringValue, "已收进来 · 来自 命令行")
+    XCTAssertEqual(on["result"]?["message"]?.stringValue, "已添加 · 来自 命令行")
     XCTAssertEqual(on["result"]?["stored"]?.intValue, 1)
     XCTAssertEqual(mcp["error"]?["code"]?.intValue, Int64(MCPErrorCode.methodNotFound))
     XCTAssertEqual(drafts.all.map(\.source?.name), ["命令行"])
@@ -148,7 +149,7 @@ final class OwnerChannelTests: XCTestCase {
     let root = try makeSyntheticRoot()
     defer { try? FileManager.default.removeItem(at: root) }
     let (service, _, _) = try service()
-    let server = AgentSocketServer(dataRoot: root, service: service)
+    let server = AgentSocketServer(dataRoot: root, service: service, gate: .anyProcessOfThisUser)
     try server.start()
     defer { server.stop() }
     let descriptor = try XCTUnwrap(
@@ -215,7 +216,8 @@ final class OwnerChannelTests: XCTestCase {
     let app = FakeApp()
     let drafts = Drafts()
     let server = AgentSocketServer(
-      dataRoot: root, service: service, owner: channel(app, root: root, drafts: drafts))
+      dataRoot: root, service: service, gate: .anyProcessOfThisUser,
+      owner: channel(app, root: root, drafts: drafts))
 
     // The App is not running.
     let offline = try run(binary, ["add", "一句话"], root: root)
@@ -227,12 +229,12 @@ final class OwnerChannelTests: XCTestCase {
     // Running, but the owner has not switched the command line on.
     let disabled = try run(binary, ["add", "一句话"], root: root)
     XCTAssertEqual(disabled.status, 3)
-    XCTAssertTrue(disabled.error.contains("设置 → 入口"))
+    XCTAssertTrue(disabled.error.contains("“设置”>“入口”"))
 
     await app.set(enabled: true)
     let added = try run(binary, ["add", "下午", "三点", "组会"], root: root)
     XCTAssertEqual(added.status, 0, added.error)
-    XCTAssertEqual(added.output, "已收进来 · 来自 命令行\n")
+    XCTAssertEqual(added.output, "已添加 · 来自 命令行\n")
     // Piped text, and a file given by a relative path.
     let piped = try run(binary, ["add"], root: root, input: "从管道收进来的纪要\n第二行")
     XCTAssertEqual(piped.status, 0, piped.error)

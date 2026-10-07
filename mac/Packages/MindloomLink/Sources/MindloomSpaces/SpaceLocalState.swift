@@ -491,7 +491,7 @@ public struct SpaceLocalState: Codable, Equatable, Identifiable, Sendable {
 
   /// A member's name as this Mac knows it; "成员" until they named themselves.
   public func name(of memberID: String?) -> String {
-    guard let memberID else { return "整理设备" }
+    guard let memberID else { return "DGX Spark" }
     let id = memberID.lowercased()
     if let name = member(id)?.displayName ?? knownNames[id], !name.isEmpty { return name }
     return id == self.memberID ? "我" : "成员"

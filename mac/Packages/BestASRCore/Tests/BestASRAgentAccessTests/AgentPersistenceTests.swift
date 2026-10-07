@@ -13,7 +13,7 @@ final class AgentPersistenceTests: XCTestCase {
     let url = root.appendingPathComponent("history.sqlite")
     let store = try GRDBDictationStore(databaseURL: url)
     let terms = AgentGrantTerms(
-      spaces: ["personal", "lab"], range: .ropes(["r-research"]), canPropose: true,
+      spaces: ["personal", "lab"], range: .ropes(["r-research"]), canChange: true,
       duration: .today, showNumbers: false, askForNewMatters: true)
     let grant = AgentGrantRecord(
       grantID: UUID(), clientKey: "abc", clientName: "Claude Code", clientPath: "/x/*",
@@ -22,6 +22,16 @@ final class AgentPersistenceTests: XCTestCase {
     try await store.saveAgentGrant(grant)
     let loaded = try await store.agentGrants()
     XCTAssertEqual(loaded, [grant])
+    // v11 「这个分组」 grants round-trip too (a rope grant above still decodes).
+    let groups = AgentGrantRecord(
+      grantID: UUID(), clientKey: "def", clientName: "Codex", clientPath: "/y",
+      terms: AgentGrantTerms(
+        range: .groups(["00000000-0000-4000-8000-0000000000b1"]), duration: .always),
+      createdAt: Date(timeIntervalSince1970: 1_000), expiresAt: nil, mac: "m2")
+    try await store.saveAgentGrant(groups)
+    let withGroups = try await store.agentGrants()
+    XCTAssertTrue(withGroups.contains(groups))
+    try await store.deleteAgentGrant(groups.grantID)
     XCTAssertEqual(loaded.first?.canonicalText, grant.canonicalText)
     // 这一次 is never written.
     let once = AgentGrantRecord(

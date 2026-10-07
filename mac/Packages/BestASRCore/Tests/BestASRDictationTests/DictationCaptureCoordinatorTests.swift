@@ -47,6 +47,32 @@ final class DictationCaptureCoordinatorTests: XCTestCase {
     try await repository.checkpointAndClose()
   }
 
+  /// A take started for a dictation that is not kept (demo mode) is never
+  /// granted organizer eligibility, even with the link on; an ordinary one is.
+  func testATakeThatIsNotKeptIsNeverMadeRemoteEligible() async throws {
+    let root = try captureTemporaryDirectory()
+    defer { try? FileManager.default.removeItem(at: root) }
+    let repository = try GRDBDictationStore(
+      databaseURL: root.appendingPathComponent("history.sqlite")
+    )
+    try await repository.enableRemoteLink(at: Date(timeIntervalSince1970: 1_000))
+    let journal = try ProductionAudioJournal(assetRootURL: root.appendingPathComponent("assets"))
+    for (grants, id) in [(false, testUUID(895)), (true, testUUID(896))] {
+      let coordinator = DictationCaptureCoordinator(
+        sessionActor: DictationSessionActor(clock: FixedDictationClock(value: 70)),
+        capture: FixtureMicrophoneCapture(chunkCount: 1),
+        journal: journal,
+        repository: repository,
+        grantsRemoteEligibility: grants
+      )
+      _ = try await coordinator.start(sessionID: SessionID(id), target: testTarget())
+      _ = try await coordinator.end()
+      let eligible = try await repository.isRemoteEligible(sessionID: SessionID(id))
+      XCTAssertEqual(eligible, grants)
+    }
+    try await repository.checkpointAndClose()
+  }
+
   func testMicrophoneStartsBeforePersistenceWithoutLosingEarlyChunks() async throws {
     let root = try captureTemporaryDirectory()
     defer { try? FileManager.default.removeItem(at: root) }

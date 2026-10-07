@@ -103,7 +103,7 @@ final class MemorySegmentProjectionTests: XCTestCase {
     XCTAssertTrue(text.contains(EventPlainTextFormatter.preambleWithSegments), text)
     XCTAssertTrue(
       text.contains(
-        "14:00 · 来源：腾讯会议 · 周会.txt\n节选：仓库搬家清单；同一段记录还涉及：「秋季展会」\n"
+        "14:00 · 来源：腾讯会议 · 周会.txt\n节选：仓库搬家清单；同一段记录还涉及：“秋季展会”\n"
           + "> 苗青禾（00:01:20）：另一件事，仓库下月搬家，周五前把清单给我。\n"
           + "> 欧阳帆（00:02:05）：好，我列一下要搬的货架。\n"), text)
     XCTAssertFalse(text.contains("二号馆"), text)

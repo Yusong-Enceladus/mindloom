@@ -34,7 +34,7 @@ final class SpokenJobProducerTests: XCTestCase {
 
   func testAHighlightWithoutAPackIsToldNotSilentlyWrittenBack() async {
     let result = await producer().produce(.translate("三二一", to: "英语", replacing: true))
-    XCTAssertEqual(result.delivery, .shown("需要先下载英语语言包，下载后再试一次"))
+    XCTAssertEqual(result.delivery, .shown("需要先下载英语语言包，下载后请重试"))
     XCTAssertEqual(result.languagePackNeeded, "英语")
   }
 

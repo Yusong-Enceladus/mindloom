@@ -1,10 +1,11 @@
 import BestASRDomain
 import Foundation
 
-/// Accepting a proposal from the Agent 收件箱 (AGENT-CONTRACT §2): it becomes a
-/// user item like a paste, with the source `agent:<client name>`, so it never
+/// An agent's note (v12 `add_note`; before v12 a proposal the owner accepted
+/// from the Agent 收件箱): it becomes a user item like a paste, with the
+/// source `agent:<client name>` (pages read 「<name>（其他 App）」), so it never
 /// counts as the owner's own words and goes through the normal organizing
-/// (masked) path. Only the owner's 收下 calls this; the agent cannot.
+/// (masked) path. The App calls this only for a grant with 也可以改.
 extension IntakeProcessor {
   public static let agentProposalExtractor = "agent-inbox-v1"
 

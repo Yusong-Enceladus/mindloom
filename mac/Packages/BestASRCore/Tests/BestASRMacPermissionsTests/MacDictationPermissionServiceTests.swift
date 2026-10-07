@@ -161,6 +161,33 @@ final class MacDictationPermissionServiceTests: XCTestCase {
     XCTAssertTrue(persisted)
   }
 
+  /// The App's own entitlements stay minimal (the permission lint). The one
+  /// variant, for a build with a provisioning profile, adds only the keychain
+  /// group of the App's own bundle id for 「从网络补充信息」 search keys; without a
+  /// profile that entitlement stops the App from launching, so it is never in
+  /// the default file.
+  func testTheKeychainGroupVariantAddsOnlyTheAppsOwnGroup() throws {
+    let root = URL(fileURLWithPath: #filePath)
+      .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+      .deletingLastPathComponent().deletingLastPathComponent()
+    func entitlements(_ name: String) throws -> [String: Any] {
+      let data = try Data(contentsOf: root.appendingPathComponent("App/\(name)"))
+      return try XCTUnwrap(
+        PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any])
+    }
+    let base = try entitlements("BestASR.entitlements")
+    let variant = try entitlements("BestASR-KeychainGroup.entitlements")
+    XCTAssertNil(base["keychain-access-groups"])
+    XCTAssertEqual(
+      Set(variant.keys), Set(base.keys).union(["keychain-access-groups"]))
+    XCTAssertEqual(
+      variant["keychain-access-groups"] as? [String],
+      ["$(AppIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)"])
+    for key in base.keys {
+      XCTAssertEqual(variant[key] as? Bool, base[key] as? Bool)
+    }
+  }
+
   func testShippingConfigurationSupportsAlphaWithoutSystemAudioRequestAPI() throws {
     let repositoryRoot = URL(fileURLWithPath: #filePath)
       .deletingLastPathComponent()

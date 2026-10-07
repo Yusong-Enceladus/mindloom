@@ -1,0 +1,6 @@
+# The same project without the Apple Watch app, for a device build that leaves it out
+# (iOS/script/device_build.sh with PHONE_WATCH=NO). Generated next to the main project as
+# MindloomPhoneNoWatch.xcodeproj (not committed).
+include:
+  - path: project.yml
+name: MindloomPhoneNoWatch

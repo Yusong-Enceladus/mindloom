@@ -34,7 +34,10 @@ public enum BestASRPersistenceSchema {
   public static let userItemFilesMigrationID = "v23-user-item-files"
   public static let remotePrivacyMigrationID = "v24-remote-privacy"
   public static let agentAccessMigrationID = "v25-agent-access"
-  public static let currentUserVersion = 25
+  public static let userOrganizingMigrationID = "v26-user-organizing"
+  public static let agentChangesMigrationID = "v27-agent-changes"
+  public static let learnedCorrectionsMigrationID = "v28-learned-corrections"
+  public static let currentUserVersion = 28
   public static let minimumPortableImportUserVersion = 12
 
   public static func supportsPortableImport(userVersion: Int) -> Bool {
@@ -125,6 +128,15 @@ public enum BestASRPersistenceSchema {
     migrator.registerMigration(agentAccessMigrationID) { database in
       try database.execute(sql: agentAccessSQL)
     }
+    migrator.registerMigration(userOrganizingMigrationID) { database in
+      try database.execute(sql: userOrganizingSQL)
+    }
+    migrator.registerMigration(agentChangesMigrationID) { database in
+      try database.execute(sql: agentChangesSQL)
+    }
+    migrator.registerMigration(learnedCorrectionsMigrationID) { database in
+      try database.execute(sql: learnedCorrectionsSQL)
+    }
     return migrator
   }
 
@@ -205,6 +217,171 @@ public enum BestASRPersistenceSchema {
     CREATE INDEX user_item_details_parent_index
       ON user_item_details(parent_session_id) WHERE parent_session_id IS NOT NULL;
     PRAGMA user_version = 23;
+    """
+
+  /// v11 (Mindloom): what the user organizes by hand on this Mac. 置顶
+  /// (`user_pins`), 分组 (`user_groups` + `user_group_members`, a matter in at
+  /// most one live group) and 标为完成 / 已经定了 on a step the organizer
+  /// derived (`user_step_overrides`). `event_id` is the ID the pages use (a
+  /// Spark event UUID or a local event ID); `step_id` is a map knot ID or a
+  /// status-line step ID. Stable IDs, revisions and tombstones (`deleted_at`)
+  /// as AGENTS.md requires for a future sync. Portable user data; never sent
+  /// to the DGX Spark and never cleared by 让它忘掉我的内容. A member whose
+  /// matter no longer exists is hidden by the pages, not deleted.
+  ///
+  /// `agent_grants` is rebuilt so a grant may cover user groups (range kind
+  /// `groups`, the consent panel's 「这个分组」); `ropes` stays readable so
+  /// stored v8 grants still decode.
+  public static let userOrganizingSQL = """
+    CREATE TABLE user_pins (
+      event_id TEXT PRIMARY KEY NOT NULL CHECK (length(event_id) BETWEEN 1 AND 128),
+      pinned_at REAL NOT NULL,
+      revision INTEGER NOT NULL CHECK (revision > 0),
+      deleted_at REAL
+    );
+    CREATE TABLE user_groups (
+      group_id TEXT PRIMARY KEY NOT NULL CHECK (length(group_id) = 36),
+      name TEXT NOT NULL CHECK (length(name) BETWEEN 1 AND 200),
+      sort_order INTEGER NOT NULL,
+      created_at REAL NOT NULL,
+      updated_at REAL NOT NULL,
+      revision INTEGER NOT NULL CHECK (revision > 0),
+      deleted_at REAL
+    );
+    CREATE TABLE user_group_members (
+      group_id TEXT NOT NULL REFERENCES user_groups(group_id) ON DELETE RESTRICT,
+      event_id TEXT NOT NULL CHECK (length(event_id) BETWEEN 1 AND 128),
+      added_at REAL NOT NULL,
+      revision INTEGER NOT NULL CHECK (revision > 0),
+      deleted_at REAL,
+      PRIMARY KEY (group_id, event_id)
+    );
+    CREATE INDEX user_group_members_event
+      ON user_group_members(event_id) WHERE deleted_at IS NULL;
+    CREATE TABLE user_step_overrides (
+      event_id TEXT NOT NULL CHECK (length(event_id) BETWEEN 1 AND 128),
+      step_id TEXT NOT NULL CHECK (length(step_id) BETWEEN 1 AND 128),
+      state TEXT NOT NULL CHECK (state IN ('done', 'settled')),
+      created_at REAL NOT NULL,
+      revision INTEGER NOT NULL CHECK (revision > 0),
+      deleted_at REAL,
+      PRIMARY KEY (event_id, step_id)
+    );
+    CREATE TABLE agent_grants_v26 (
+      grant_id TEXT PRIMARY KEY NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      client_path TEXT NOT NULL,
+      spaces_json TEXT NOT NULL,
+      range_kind TEXT NOT NULL CHECK (range_kind IN ('all', 'ropes', 'matters', 'groups')),
+      range_ids_json TEXT NOT NULL,
+      can_propose INTEGER NOT NULL CHECK (can_propose IN (0, 1)),
+      duration TEXT NOT NULL CHECK (duration IN ('today', 'always')),
+      show_numbers INTEGER NOT NULL CHECK (show_numbers IN (0, 1)),
+      ask_new_matters INTEGER NOT NULL CHECK (ask_new_matters IN (0, 1)),
+      created_at REAL NOT NULL,
+      expires_at REAL,
+      mac TEXT NOT NULL
+    );
+    INSERT INTO agent_grants_v26 (
+      grant_id, client_key, client_name, client_path, spaces_json, range_kind,
+      range_ids_json, can_propose, duration, show_numbers, ask_new_matters,
+      created_at, expires_at, mac
+    )
+    SELECT grant_id, client_key, client_name, client_path, spaces_json, range_kind,
+      range_ids_json, can_propose, duration, show_numbers, ask_new_matters,
+      created_at, expires_at, mac
+    FROM agent_grants;
+    DROP TABLE agent_grants;
+    ALTER TABLE agent_grants_v26 RENAME TO agent_grants;
+    CREATE INDEX agent_grants_client ON agent_grants(client_key);
+    PRAGMA user_version = 26;
+    """
+
+  /// v12 (phase B, ALIGNMENT 用-7, 用-8): what other Apps changed through 也可以改
+  /// and the hourly limit. `agent_changes` keeps one row per change (what,
+  /// which matters, the item, how to take it back, a one-line summary, and
+  /// whether the owner undid it); `agent_audit` is rebuilt to allow the
+  /// outcome `limited`. Local only: never portable, never sent.
+  ///
+  /// `agent_grants.can_propose` now means 也可以改 (apply changes at once).
+  /// Up to v10 the consent sheet stored 1 there for 「可以提建议（写进收件箱）」,
+  /// which the owner approved as proposals only: every grant made before v27
+  /// loses it here (review v12-B #2). Their v1 MACs no longer check out
+  /// either (`AgentGrantRecord.canonicalVersion`), so the owner is asked again.
+  public static let agentChangesSQL = """
+    UPDATE agent_grants SET can_propose = 0;
+    CREATE TABLE agent_changes (
+      change_id TEXT PRIMARY KEY NOT NULL,
+      at REAL NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      grant_id TEXT,
+      kind TEXT NOT NULL CHECK (
+        kind IN ('add_note', 'move_item', 'take_out', 'rename_matter', 'mark_step')
+      ),
+      matter_ids_json TEXT NOT NULL,
+      item_id TEXT,
+      payload_json TEXT NOT NULL,
+      summary TEXT NOT NULL,
+      state TEXT NOT NULL CHECK (state IN ('applied', 'undone')),
+      undone_at REAL
+    );
+    CREATE INDEX agent_changes_client ON agent_changes(client_key, at);
+    CREATE TABLE agent_audit_v27 (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      at REAL NOT NULL,
+      client_key TEXT NOT NULL,
+      client_name TEXT NOT NULL,
+      grant_id TEXT,
+      tool TEXT NOT NULL,
+      outcome TEXT NOT NULL CHECK (
+        outcome IN (
+          'allowed', 'denied', 'pending', 'not_found', 'invalid', 'failed', 'limited'
+        )
+      ),
+      matter_ids_json TEXT NOT NULL,
+      byte_count INTEGER NOT NULL CHECK (byte_count >= 0)
+    );
+    INSERT INTO agent_audit_v27 (
+      id, at, client_key, client_name, grant_id, tool, outcome, matter_ids_json, byte_count
+    )
+    SELECT id, at, client_key, client_name, grant_id, tool, outcome, matter_ids_json, byte_count
+    FROM agent_audit;
+    DROP TABLE agent_audit;
+    ALTER TABLE agent_audit_v27 RENAME TO agent_audit;
+    CREATE INDEX agent_audit_client ON agent_audit(client_key, at);
+    PRAGMA user_version = 27;
+    """
+
+  /// Words learned from the user's corrections (ALIGNMENT 收1-8): one row
+  /// per (written by dictation, corrected to) pair, how many times it was
+  /// seen and where last (a field after insertion, a selection said again
+  /// with fn+space, an edit in history), and the dictionary word it keeps.
+  /// `created_entry` is 1 when learning made that word (it is listed under
+  /// 自动添加 and is a replacement only until a pair of it is seen twice);
+  /// 0 when the word was the user's own and only gained a heard form.
+  /// `dismissed_at` is set when the user deleted the word: the pair is kept
+  /// only so the same correction is not learned again.
+  /// Local only: never portable, never sent; the dictionary word itself is
+  /// an ordinary portable `dictionary_entries` row.
+  public static let learnedCorrectionsSQL = """
+    CREATE TABLE learned_corrections (
+      id TEXT PRIMARY KEY NOT NULL,
+      heard TEXT NOT NULL CHECK (length(heard) BETWEEN 1 AND 256),
+      written TEXT NOT NULL CHECK (length(written) BETWEEN 1 AND 256),
+      pair_key TEXT NOT NULL UNIQUE,
+      times INTEGER NOT NULL CHECK (times >= 1),
+      last_source TEXT NOT NULL CHECK (last_source IN ('field', 'selection', 'history')),
+      dictionary_entry_id TEXT NOT NULL,
+      created_entry INTEGER NOT NULL CHECK (created_entry IN (0, 1)),
+      first_at REAL NOT NULL,
+      last_at REAL NOT NULL,
+      dismissed_at REAL
+    );
+    CREATE INDEX learned_corrections_entry_index
+      ON learned_corrections(dictionary_entry_id);
+    PRAGMA user_version = 28;
     """
 
   /// Agents reading 织机 (AGENT-CONTRACT §2), all local and never portable

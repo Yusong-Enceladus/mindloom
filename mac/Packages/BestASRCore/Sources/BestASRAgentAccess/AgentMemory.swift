@@ -70,6 +70,15 @@ public struct AgentMemorySnapshot: Sendable {
   /// Matter ID (upper-case) → its strands, when a map exists.
   public let strands: [String: [AgentStrand]]
   public let timeZone: TimeZone
+  /// Matter ID (upper-case) → the user-made group it is in (v11 「这个分组」
+  /// grants; a matter is in at most one group).
+  public var groupOfMatter: [String: String] = [:]
+  /// The owner's own marks (标为完成, 已经定了), so steps read as the pages
+  /// show them and `mark_step` knows what it changes.
+  public var user: UserOrganizingSnapshot = .empty
+  /// The pages' digest of the matters (steps with their IDs), when the App
+  /// made it; the reader makes its own otherwise.
+  public var digest: MemoryDigest?
 
   public init(
     projection: MemoryProjection, spaces: [AgentSpace] = [.personal], ropes: [AgentRope] = [],
@@ -225,10 +234,41 @@ extension AgentMemorySnapshot {
   }
 }
 
-/// The App (or a harness) hands the service what 织机 holds.
+/// The App (or a harness) hands the service what Mindloom holds.
 public protocol AgentMemoryProviding: Sendable {
   /// Nil while the library is not open.
   func agentSnapshot() async -> AgentMemorySnapshot?
+  /// Something changed (an agent's change was applied): the next snapshot
+  /// must be fresh.
+  func invalidate() async
+}
+
+extension AgentMemoryProviding {
+  public func invalidate() async {}
+}
+
+// MARK: - Changes (v12, 也可以改)
+
+/// What an agent asked Mindloom to do, already checked against its grant.
+public enum AgentChange: Equatable, Sendable {
+  /// A note that enters like any other item, with the agent as its source;
+  /// filed straight into `matterID` when given.
+  case addNote(title: String, text: String, matterID: String?)
+  /// A move, a take-out, a rename or a step mark, exactly as the owner's own
+  /// correction on the pages.
+  case correction(MemoryCorrection)
+}
+
+/// The App applies an agent's change as the owner's own correction would be
+/// applied (the organizer decision, or the local organizer, or the user's
+/// own marks). Returns the ID of the item a note became (nil otherwise);
+/// throws when nothing was changed.
+public protocol AgentChangeApplying: Sendable {
+  func apply(_ change: AgentChange, client: AgentClientIdentity) async throws -> String?
+}
+
+public enum AgentChangeError: Error, Equatable, Sendable {
+  case notApplied
 }
 
 // MARK: - Consent
@@ -247,21 +287,46 @@ public struct AgentConsentOptions: Equatable, Sendable {
   }
 }
 
-/// 「Claude Code 想读取织机」.
+/// An App the owner allowed before under the same name, when the one asking
+/// now is a different program (v12 F3): the card says so.
+public struct AgentLookalike: Equatable, Sendable {
+  public let name: String
+  /// Where the one allowed before is.
+  public let path: String
+
+  public init(name: String, path: String) {
+    self.name = name
+    self.path = path
+  }
+}
+
+/// 「Claude Code 想读 Mindloom」.
 public struct AgentConsentRequest: Equatable, Sendable, Identifiable {
   public let id: UUID
   public let client: AgentClientIdentity
   public let options: AgentConsentOptions
   public let requestedAt: Date
+  /// The matter the agent's first call named, when it named one (v11: the
+  /// owner is asked 「让 {app} 读「{matter}」？」).
+  public let requestedMatter: AgentMatterOption?
+  /// Set when an App of the same name was allowed before but this is
+  /// another program (another signature or place).
+  public let lookalike: AgentLookalike?
+  /// The first call wants to change something (a change tool).
+  public let wantsToChange: Bool
 
   public init(
     id: UUID = UUID(), client: AgentClientIdentity, options: AgentConsentOptions,
-    requestedAt: Date
+    requestedAt: Date, requestedMatter: AgentMatterOption? = nil,
+    lookalike: AgentLookalike? = nil, wantsToChange: Bool = false
   ) {
     self.id = id
     self.client = client
     self.options = options
     self.requestedAt = requestedAt
+    self.requestedMatter = requestedMatter
+    self.lookalike = lookalike
+    self.wantsToChange = wantsToChange
   }
 }
 
@@ -292,8 +357,13 @@ public protocol AgentConsentPresenting: Sendable {
   func requestConsent(_ request: AgentConsentRequest) async -> AgentConsentAnswer?
   /// Matter ID → allowed, for the matters the owner answered.
   func approveMatters(_ request: AgentMatterApprovalRequest) async -> [String: Bool]
-  func proposalArrived(_ proposal: AgentInboxProposal) async
-  /// Grants, the audit or the inbox changed (for the Settings page).
+  /// An agent changed something (also-可以改): the App tells the owner, who
+  /// can undo it.
+  func changeMade(_ change: AgentChangeRecord) async
+  /// A grant went over its hourly limit and is paused until the hour passes
+  /// (told once per pause).
+  func limitReached(clientName: String) async
+  /// Grants, the audit or the changes changed (for the Settings page).
   func accessChanged() async
   /// One call was audited (ids, counts and the outcome; never content). The
   /// App records reads of a shared space in that space's log as
@@ -303,6 +373,8 @@ public protocol AgentConsentPresenting: Sendable {
 
 extension AgentConsentPresenting {
   public func accessRecorded(_ record: AgentAuditRecord) async {}
+  public func changeMade(_ change: AgentChangeRecord) async {}
+  public func limitReached(clientName: String) async {}
 }
 
 /// What one audited agent call tells a shared space's log (`agent.access`,

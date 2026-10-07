@@ -56,12 +56,12 @@ extension DictationAppModel {
         true,
         forKey: "preferences.speaker-memory-enabled"
       )
-      preferencesStatusMessage = "已启用本机人物匹配；新的声纹证据只保存在这台 Mac 上"
+      preferencesStatusMessage = "已启用本机人物匹配；新的声纹证据保存在这台 Mac 上"
       applyRuntimePreferences()
       return
     }
     guard let repository else {
-      preferencesStatusMessage = "人物存储暂不可用"
+      preferencesStatusMessage = "暂时无法读取人物数据"
       return
     }
     preferencesStatusMessage = "正在删除本机声纹向量…"
@@ -89,14 +89,14 @@ extension DictationAppModel {
 
   func chooseAndInstallSpeakerModel() {
     guard models.speakerModelLicenseAccepted, !models.speakerModelInstallInProgress else {
-      people.speakerReadinessMessage = "请先阅读并接受多人识别组件的 CC BY 4.0 许可"
+      people.speakerReadinessMessage = "请先阅读并接受多人识别模型的 CC BY 4.0 许可"
       return
     }
     let panel = NSOpenPanel()
-    panel.title = "选择已固定版本的多人识别组件文件夹"
-    panel.prompt = "安装本地组件"
+    panel.title = "选择已固定版本的多人识别模型文件夹"
+    panel.prompt = "安装本地模型"
     panel.message =
-      "请选择包含 Segmentation、Embedding、FBank、PldaRho 和 plda-parameters.json 的文件夹。应用只在本机复制并逐项校验。"
+      "请选择包含 Segmentation、Embedding、FBank、PldaRho 和 plda-parameters.json 的文件夹。Mindloom 会在这台 Mac 上拷贝并逐项校验。"
     panel.canChooseFiles = false
     panel.canChooseDirectories = true
     panel.allowsMultipleSelection = false
@@ -104,7 +104,7 @@ extension DictationAppModel {
 
     models.speakerModelInstallInProgress = true
     people.speakerRuntimeReady = false
-    people.speakerReadinessMessage = "正在校验并安装本地多人识别组件…"
+    people.speakerReadinessMessage = "正在校验并安装本地多人识别模型…"
     Task { [weak self] in
       guard let self else { return }
       defer { models.speakerModelInstallInProgress = false }
@@ -112,11 +112,11 @@ extension DictationAppModel {
         guard let localRuntime else { return }
         try await localRuntime.installSpeakerModel(from: source)
         people.speakerRuntimeReady = true
-        people.speakerReadinessMessage = "本地多人识别组件已就绪"
+        people.speakerReadinessMessage = "本地多人识别模型已就绪"
       } catch {
         people.speakerRuntimeReady = false
         people.speakerReadinessMessage =
-          "组件被拒绝：文件夹、版本、大小、摘要或 Core ML 加载检查不匹配"
+          "模型被拒绝：文件夹、版本、大小、摘要或 Core ML 加载检查不匹配"
       }
     }
   }
@@ -228,8 +228,8 @@ extension DictationAppModel {
     if personCount == 0, reviewCount == 0 {
       return "人物会在本机识别到足够的说话证据后出现在这里"
     }
-    let review = reviewCount == 0 ? "没有待确认线索" : "\(reviewCount) 条待确认线索"
-    return "\(personCount) 个人物 · \(review)；声纹和出现记录只保存在本机"
+    let review = reviewCount == 0 ? "没有待确认的内容" : "\(reviewCount) 条待确认"
+    return "\(personCount) 个人物 · \(review)；声纹和出现记录保存在这台 Mac 上"
   }
 
   func openPersonReviewCandidate(
@@ -240,7 +240,7 @@ extension DictationAppModel {
         $0.sessionID == candidate.sessionID
       })
     else {
-      people.peopleStatusMessage = "这条人物线索的来源记录当前不可用；请刷新后重试"
+      people.peopleStatusMessage = "这条人物信息的来源记录当前不可用；请刷新后重试"
       return
     }
     let candidateName = candidate.candidateDisplayName?
@@ -531,7 +531,7 @@ extension DictationAppModel {
         )
       }
       people.speakerIdentityStatusMessage =
-        "已拒绝这个人物候选；本次记录不会再关联到该人物"
+        "已拒绝此人物候选；本次记录将不再关联到该人物"
       return
     }
     guard let repository else {
@@ -548,7 +548,7 @@ extension DictationAppModel {
           originDeviceID: Self.localOriginDeviceID()
         )
         people.speakerIdentityStatusMessage =
-          "已拒绝这个人物候选；本次记录不会再自动关联到该人物"
+          "已拒绝此人物候选；本次记录将不再自动关联到该人物"
         await refreshSelectedSpeakerDetails(sessionID: sessionID)
         await refreshPeopleNow()
       } catch {
@@ -672,7 +672,7 @@ extension DictationAppModel {
         people.peopleStatusMessage =
           count == 0
           ? "没有需要重新评估的自动匹配"
-          : "已重新评估 \(count) 条记录；人工确认和拒绝不会被覆盖"
+          : "已重新评估 \(count) 条记录；你确认和拒绝的关系保持不变"
       } catch {
         people.peopleStatusMessage = "重新评估未完成；现有人工关系没有变化"
       }
@@ -773,15 +773,16 @@ extension DictationAppModel {
   func publishSpeakerReadiness(_ ready: Bool) {
     if ready {
       people.speakerRuntimeReady = true
-      people.speakerReadinessMessage = "本地多人识别组件已就绪"
+      people.speakerReadinessMessage = "本地多人识别模型已就绪"
     } else {
       people.speakerRuntimeReady = false
-      people.speakerReadinessMessage = "尚未安装本地多人识别组件"
+      people.speakerReadinessMessage = "尚未安装本地多人识别模型"
     }
   }
 
   func refreshSelectedSpeakerDetails(sessionID: SessionID) async {
     guard history.selectedHistorySessionID == sessionID else { return }
+    publishAudioInUse()
     if let fixture = historyPlaybackUIFixture,
       fixture.sessionID == sessionID
     {
@@ -837,6 +838,7 @@ extension DictationAppModel {
     }
     selectedSessionOccurrences = loaded.2 ?? []
     history.selectedHistoryTranscripts = loaded.3 ?? []
+    timeSelectedDictationSentences(sessionID: sessionID)
     if historyTranscriptEditSessionID != sessionID
       || history.transcriptEditDraft == previousTranscriptText
     {
@@ -862,8 +864,23 @@ extension DictationAppModel {
     history.selectedHistoryTimelineEvents = loaded.6 ?? []
     history.selectedHistorySourceContexts = loaded.7 ?? []
 
-    let descriptors = loaded.8 ?? []
-    let ranges = loaded.9 ?? []
+    var descriptors = loaded.8 ?? []
+    var ranges = loaded.9 ?? []
+    // A record with no journal whose audio is the file it was imported as
+    // (Typeless's Ogg recordings) plays from that file.
+    if descriptors.isEmpty || ranges.isEmpty,
+      let original = (loaded.5 ?? []).lazy.compactMap({
+        asset -> (descriptor: CaptureTrackDescriptor, ranges: [AudioRangeInput])? in
+        guard case .relativePath(let path) = asset.assetReference else { return nil }
+        return RetainedOriginalPlayback.source(
+          sessionID: sessionID.rawValue, assetID: asset.id,
+          assetReference: path, digest: asset.digest.value,
+          mediaType: asset.mediaType, durationNanoseconds: asset.durationNanoseconds)
+      }).first
+    {
+      descriptors = [original.descriptor]
+      ranges = original.ranges
+    }
     if !descriptors.isEmpty, !ranges.isEmpty {
       historyPlaybackAssetRootURL = playbackJournal?.assetRootURL
       playback.playbackTrackRoles = Dictionary(
@@ -919,7 +936,7 @@ extension DictationAppModel {
       ? "人物信息暂时无法读取；原音与逐字稿不受影响"
       : self.people.selectedSessionSpeakers.isEmpty
         ? "多人识别仍在本机处理中，完成后可命名人物"
-        : "所有人物和声纹证据只保存在这台 Mac 上"
+        : "所有人物和声纹证据保存在这台 Mac 上"
   }
 
   static func personReviewCandidates(

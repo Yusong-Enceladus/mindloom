@@ -135,6 +135,22 @@ final class IntakePasteboardTests: XCTestCase {
       .candidates([.text("别人的回复", extractor: "pasteboard-text-v1")]))
   }
 
+  /// review finish-ship: words selected in Mindloom and copied with ⌘C (the
+  /// system's copy) get the origin mark added, keeping what was copied.
+  func testASystemCopyMarkedAsOwnKeepsItsTextAndIsNotTakenIn() {
+    XCTAssertFalse(IntakePasteboardMarks.markOwn(pasteboard))
+    pasteboard.clearContents()
+    pasteboard.setString("虚构的原文片段", forType: .string)
+    pasteboard.setString("<b>虚构的原文片段</b>", forType: .html)
+    XCTAssertTrue(IntakePasteboardMarks.markOwn(pasteboard))
+    XCTAssertTrue(IntakePasteboardMarks.markOwn(pasteboard))
+    XCTAssertEqual(pasteboard.string(forType: .string), "虚构的原文片段")
+    XCTAssertEqual(pasteboard.string(forType: .html), "<b>虚构的原文片段</b>")
+    XCTAssertEqual(
+      IntakePasteboardReader(pasteboard: pasteboard).read(),
+      .refused(IntakePasteboardMarks.ownMessage))
+  }
+
   func testTextAboveTheStoredLimitIsRefusedBeforeSanitizing() {
     pasteboard.setString(
       String(repeating: "a", count: UserItemLimits.maximumStoredTextBytes + 1), forType: .string)
@@ -210,17 +226,17 @@ final class IntakeInteractionTests: XCTestCase {
     XCTAssertEqual(
       IntakeConfirmation.text(
         stored: 1, mediaStarted: false, mediaWaiting: 0, rejected: [], source: wechat),
-      "已收进来 · 来自 微信")
+      "已添加 · 来自 微信")
     XCTAssertEqual(
       IntakeConfirmation.text(
         stored: 2, mediaStarted: true, mediaWaiting: 2, rejected: ["不支持 .xyz，未收进来", "x"],
         source: nil),
-      "已收进来 2 条；已开始导入音视频文件，另 2 个等待中（退出 App 会取消等待，需重新拖入）；"
-        + "不支持 .xyz，未收进来（另有 1 项未收进来）")
+      "已添加 2 条；已开始导入音视频文件，另有 2 个等待导入（退出 Mindloom 将取消等待，需要重新拖入）；"
+        + "不支持 .xyz，未收进来（另有 1 项未添加）")
     XCTAssertEqual(
       IntakeConfirmation.text(
         stored: 0, mediaStarted: false, mediaWaiting: 1, rejected: [], source: nil),
-      "1 个音视频文件等待导入（退出 App 会取消等待，需重新拖入）")
+      "1 个音视频文件等待导入（退出 Mindloom 将取消等待，需要重新拖入）")
     XCTAssertEqual(
       IntakeConfirmation.text(
         stored: 0, mediaStarted: true, mediaWaiting: 0, rejected: [], source: nil),
@@ -228,7 +244,7 @@ final class IntakeInteractionTests: XCTestCase {
     XCTAssertEqual(
       IntakeConfirmation.text(
         stored: 0, mediaStarted: false, mediaWaiting: 0, rejected: [], source: nil),
-      "没有可收进来的内容")
+      "没有可添加的内容")
   }
 }
 
@@ -530,7 +546,7 @@ final class IntakeFileTests: XCTestCase {
     for link in ["https://example.invalid/talk.mp4", "https://example.invalid/a.pdf"] {
       XCTAssertEqual(
         processor.prepare(.file(URL(string: link)!), capturedAt: at, source: nil, origin: .finder),
-        .rejected("只收本机文件，链接未收进来"))
+        .rejected("仅支持这台 Mac 上的文件，链接未添加"))
     }
     let audio = root.appendingPathComponent("real.m4a")
     try Data([1, 2, 3]).write(to: audio)
@@ -538,7 +554,7 @@ final class IntakeFileTests: XCTestCase {
     try FileManager.default.createSymbolicLink(at: link, withDestinationURL: audio)
     XCTAssertEqual(
       processor.prepare(.file(link), capturedAt: at, source: nil, origin: .finder),
-      .rejected("无法读取这个文件，未收进来"), "a symlinked media file is refused too")
+      .rejected("无法读取这个文件，未添加"), "a symlinked media file is refused too")
     XCTAssertEqual(
       processor.prepare(
         .text(
@@ -550,7 +566,7 @@ final class IntakeFileTests: XCTestCase {
 
   func testFilesInsideTheRealLibraryAreRefusedBeforeAnyCopy() throws {
     // A fake owner library with the same shape as the real one.
-    let realLibrary = root.appendingPathComponent("Application Support/bestASR", isDirectory: true)
+    let realLibrary = root.appendingPathComponent("Application Support/Mindloom", isDirectory: true)
     let sessionSource = realLibrary.appendingPathComponent(
       "assets/sessions/\(UUID().uuidString.lowercased())/source", isDirectory: true)
     try FileManager.default.createDirectory(at: sessionSource, withIntermediateDirectories: true)
@@ -625,17 +641,17 @@ final class SourceApplicationTrackerTests: XCTestCase {
   }
 
   func testPasteUsesTheAppBeforeBestASR() {
-    var state = SourceApplicationTrackerState(ownBundleID: "com.bestasr.app")
+    var state = SourceApplicationTrackerState(ownBundleID: "app.mindloom")
     XCTAssertEqual(state.sourceForPaste().1, .unknown)
     state.activated(app("com.tencent.xinWeChat", "微信"))
-    state.activated(app("com.bestasr.app", "bestASR"))
+    state.activated(app("app.mindloom", "Mindloom"))
     let (source, origin) = state.sourceForPaste()
     XCTAssertEqual(source, ItemSourceApplication(bundleID: "com.tencent.xinWeChat", name: "微信"))
     XCTAssertEqual(origin, .previousFrontmost)
   }
 
   func testDropUsesTheFrontmostDragSourceAndNamesFinder() {
-    var state = SourceApplicationTrackerState(ownBundleID: "com.bestasr.app")
+    var state = SourceApplicationTrackerState(ownBundleID: "app.mindloom")
     state.activated(app("com.tencent.xinWeChat", "微信"))
     state.activated(app("com.apple.finder", "访达"))
     let finder = state.sourceForDrop(ownAppIsActive: false, containsFiles: true)
@@ -645,7 +661,7 @@ final class SourceApplicationTrackerTests: XCTestCase {
     let safari = state.sourceForDrop(ownAppIsActive: false, containsFiles: false)
     XCTAssertEqual(safari.0?.bundleID, "com.apple.Safari")
     XCTAssertEqual(safari.1, .dragSource)
-    state.activated(app("com.bestasr.app", "bestASR"))
+    state.activated(app("app.mindloom", "Mindloom"))
     let active = state.sourceForDrop(ownAppIsActive: true, containsFiles: false)
     XCTAssertEqual(active.0?.bundleID, "com.apple.Safari")
     XCTAssertEqual(active.1, .previousFrontmost)
@@ -657,14 +673,14 @@ final class SourceApplicationTrackerTests: XCTestCase {
   }
 
   func testLaunchersAndPanelsNeverBecomeTheSource() {
-    var state = SourceApplicationTrackerState(ownBundleID: "com.bestasr.app")
+    var state = SourceApplicationTrackerState(ownBundleID: "app.mindloom")
     state.activated(app("com.tencent.xinWeChat", "微信"))
     // Copy in WeChat, then switch to bestASR through a launcher.
     state.activated(
       TrackedApplication(
         bundleID: "dev.synthetic.launcher", name: "虚构启动器",
         activatedAt: Date(timeIntervalSince1970: 2), isRegular: false))
-    state.activated(app("com.bestasr.app", "bestASR"))
+    state.activated(app("app.mindloom", "Mindloom"))
     XCTAssertEqual(state.sourceForPaste().0?.name, "微信")
     // A drop while an accessory panel is frontmost uses the App before it.
     state.activated(

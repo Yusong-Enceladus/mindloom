@@ -25,7 +25,41 @@ import UniformTypeIdentifiers
 
 // Dictation: moved out of DictationAppModel.swift without change; see
 // DICTATION_ARCHITECTURE.md §13.5.
+
+/// What the App measured of a dictation before handing it to the runtime:
+/// when the key came up (the key event's own time when known), how long
+/// sealing the audio took, how long from the key going down to recording,
+/// and which of the three presses it was.
+struct DictationTimingInputs: Sendable {
+  let releasedAt: ContinuousClock.Instant
+  let seal: Duration
+  let pressToRecording: Duration?
+  let mode: SpokenMode
+}
+
 extension DictationAppModel {
+  /// A key event's own time (seconds since the Mac started, as the event
+  /// tap reports it; `NativeHotkeyTransition.keyTime`) on the continuous
+  /// clock. Nil when unknown, or not from the last few seconds.
+  nonisolated static func keyEventInstant(
+    _ keyTime: TimeInterval?, now: ContinuousClock.Instant = .now,
+    uptime: TimeInterval = ProcessInfo.processInfo.systemUptime
+  ) -> ContinuousClock.Instant? {
+    guard let keyTime else { return nil }
+    let age = uptime - keyTime
+    guard age > -0.05, age < 5 else { return nil }
+    return now - .seconds(max(0, age))
+  }
+
+  /// Where a timing starts: the key event when it is recent and not later
+  /// than `now`, else `now`.
+  nonisolated static func dictationAnchor(
+    _ keyEvent: ContinuousClock.Instant?, now: ContinuousClock.Instant
+  ) -> ContinuousClock.Instant {
+    guard let keyEvent, keyEvent <= now, now - keyEvent < .seconds(5) else { return now }
+    return keyEvent
+  }
+
   /// The volume "important usage" capacity query takes tens of milliseconds,
   /// so dictation start uses a result refreshed in the background (launch and
   /// after each dictation). A cached hard stop is always re-checked, and the
@@ -74,6 +108,9 @@ extension DictationAppModel {
   func receiveDictationInputLevel(_ level: Float) {
     if let since = firstAudioPendingSince {
       firstAudioPendingSince = nil
+      // Logged only: the first buffer arrives a buffer's length after
+      // recording started, so the timing table's press-to-recording is taken
+      // when the capture starts (the definition 收1-19 is judged by).
       logDictationStage("start-to-first-audio", since: since)
     }
     recordingPanel.updateInputLevel(level)
@@ -108,11 +145,13 @@ extension DictationAppModel {
     [.idle, .cancelled, .completed, .failedRecoverable].contains(phase)
   }
 
-  func setCapsuleSubtitlesRequireHover(_ enabled: Bool) {
-    capsuleSubtitlesRequireHover = enabled
-    LocalPreferenceStore.defaults.set(
-      enabled, forKey: "preferences.capsule-subtitles-hover-only")
-    recordingPanel.subtitlesRequireHover = enabled
+  nonisolated static let dictationCaptionsKey = "preferences.dictation-captions"
+
+  /// 设置 › 通用 › 口述时显示文字: the words above the HUD during every take.
+  func setDictationCaptions(_ enabled: Bool) {
+    dictationCaptionsEnabled = enabled
+    LocalPreferenceStore.defaults.set(enabled, forKey: Self.dictationCaptionsKey)
+    recordingPanel.showsCaptions = enabled
   }
 
   /// A dictation whose audio held no speech (usually a stray key press) is
@@ -185,19 +224,23 @@ extension DictationAppModel {
     return DictationCaptureFinalization(snapshot: current, audio: ranges)
   }
 
+  /// A hold of at least 0.35 s is push-to-talk; a shorter tap leaves the
+  /// take listening hands-free (`DictationKeyRelease`).
   nonisolated static func functionReleaseEndsDictation(heldFor duration: Duration) -> Bool {
-    duration >= functionHoldThreshold
+    DictationKeyRelease.after(held: duration, threshold: functionHoldThreshold) == .endsTake
   }
 
-  nonisolated static func capsuleListeningCaption(
+  /// The mode beside the HUD's capsule: 「英」 (翻译, with 「未下载」 when the
+  /// language is not installed), 「指令」, nothing for plain dictation.
+  nonisolated static func hudBadge(
     _ mode: DictationSpokenMode,
     language: String,
     languageReady: Bool = true
-  ) -> String {
+  ) -> FnHUDPresentation.Badge? {
     switch mode {
-    case .dictate: ""
-    case .translate: languageReady ? "翻译成\(language)" : "\(language)语言包未下载 · 按原文写入"
-    case .command: "指令"
+    case .dictate: nil
+    case .translate: .translation(into: language, ready: languageReady)
+    case .command: .command
     }
   }
 
@@ -225,6 +268,12 @@ extension DictationAppModel {
       translationLanguage: Self.translationLanguage(at: plan.languageIndex, among: chosen),
       targetForSelection: { Self.defaultTranslationTarget(forSelection: $0, chosen: chosen) }
     )
+    if case .correct(let heard, let written) = job,
+      CorrectionLearning.isLearnable(heard: heard, written: written)
+    {
+      learnCorrections(
+        [LearnedCorrectionCandidate(heard: heard, written: written)], source: .selection)
+    }
     let runtime = localRuntime
     let started = ContinuousClock.now
     let produced = await SpokenJobProducer(
@@ -238,6 +287,11 @@ extension DictationAppModel {
     if job != .write { logDictationStage("produce", since: started) }
     if let answer = produced.answerForPanel { commandAnswers[sessionID] = answer }
     if let language = produced.languagePackNeeded { translationInstallNeeded = language }
+    // The HUD's caption ends with what was written (the translation or the
+    // answer), not with what was said.
+    if case .replaced(let written) = produced.delivery {
+      deliveredDictationText = (sessionID, written)
+    }
     return produced.delivery
   }
 
@@ -269,18 +323,18 @@ extension DictationAppModel {
     if capture.microphonePermission != .granted {
       statusMessage = "需要麦克风权限；允许后即可开始录音"
     } else if !models.modelDiscoveryComplete {
-      statusMessage = "正在检查本地语音识别组件…"
+      statusMessage = "正在检查本地语音识别模型…"
     } else if !models.modelRuntimeReady {
       statusMessage =
-        "麦克风已就绪；可先安全录音，完成本地组件准备后从资料库转写"
+        "麦克风已就绪；可先录音，完成本地模型准备后从资料库转写"
     } else if !hotkeyRegistrationAvailable {
       statusMessage = "本地口述已就绪；快捷键暂不可用，可以先使用窗口或菜单栏"
     } else if hotkeys.globeKeyConflictsWithStartShortcut {
       statusMessage =
-        "按 Fn 时系统也会执行 🌐 键操作：请在 系统设置 → 键盘 把“按下 🌐 键时”设为“不执行任何操作”"
+        "按下 fn 键时，系统也会执行🌐︎键的操作。请在“系统设置”>“键盘”中将“按下🌐︎键时”设为“不执行任何操作”。"
     } else if onboarding.accessibilityPermission != .granted {
       statusMessage =
-        "本地口述已就绪；允许辅助功能后可自动插入任意 App，否则结果保存在历史"
+        "本地口述已就绪；允许“设备控制和数据访问”后可将文字输入到任意 App，否则结果保存在“历史”中"
     } else {
       statusMessage = "已就绪——按 \(startEndShortcutTitle) 开始本地口述"
     }
@@ -293,7 +347,8 @@ extension DictationAppModel {
     _ finalization: DictationCaptureFinalization,
     coordinator: DictationCaptureCoordinator,
     runtime: LocalDictationRuntime,
-    endRequested: ContinuousClock.Instant
+    endRequested: ContinuousClock.Instant,
+    measured: DictationTimingInputs? = nil
   ) {
     guard let sessionID = finalization.snapshot.sessionID else { return }
     finalizingSessionIDs.insert(sessionID)
@@ -309,7 +364,8 @@ extension DictationAppModel {
         coordinator: coordinator,
         runtime: runtime,
         endRequested: endRequested,
-        sessionID: sessionID
+        sessionID: sessionID,
+        measured: measured
       )
     }
   }
@@ -319,17 +375,26 @@ extension DictationAppModel {
     coordinator: DictationCaptureCoordinator,
     runtime: LocalDictationRuntime,
     endRequested: ContinuousClock.Instant,
-    sessionID: SessionID
+    sessionID: SessionID,
+    measured: DictationTimingInputs? = nil
   ) async {
     defer { finalizingSessionIDs.remove(sessionID) }
     let onScreen = { [weak self] in self?.snapshot.sessionID == sessionID }
     do {
       let outcome = try await runtime.process(finalization)
       logDictationStage("end-to-inserted", since: endRequested)
+      if let measured {
+        recordDictationTiming(
+          sessionID, measured: measured, runtime: runtime,
+          outcome: outcome.snapshot.insertion?.inserted == true ? .written : .kept,
+          audio: finalization.audio)
+      }
       // Only now, with the dictation delivered and the keyboard back in the
-      // user's field, may the system's download prompt take the screen.
+      // user's field, may the system's download prompt take the screen. The
+      // HUD says the words went in as said (收1-9).
       if let language = translationInstallNeeded {
         translationInstallNeeded = nil
+        untranslatedDictation = (sessionID, language)
         installTranslationLanguage(language)
       }
       // An answer the target would not take is shown rather than lost. The
@@ -350,6 +415,11 @@ extension DictationAppModel {
         snapshot = outcome.snapshot
         publishSnapshotStatus()
       }
+      // Demo mode: a take whose words reached the owner leaves the demo
+      // library; any other stays like a kept take (根-10, review v12-B #1).
+      if !keepsDictations, await settleDemoDictation(outcome.snapshot, sessionID: sessionID) {
+        return
+      }
       // The history query and event organization take seconds on a large
       // library. They are bookkeeping for a dictation that has already been
       // inserted, so they must not hold up the next one.
@@ -368,6 +438,11 @@ extension DictationAppModel {
       // Speech detection is an inference result, never permission to delete
       // captured audio. A silent take ends normally and remains in the library.
       let silent = recovered.failure?.isSilentTake == true
+      if let measured {
+        recordDictationTiming(
+          sessionID, measured: measured, runtime: runtime,
+          outcome: silent ? .noSpeech : .failed, audio: finalization.audio)
+      }
       let detail = silent ? "没有听到说话" : "音频已保留；可以重试完成处理"
       copyUninsertedDictationIfNeeded(
         recovered, draft: onScreen() ? liveTranscriptText : "")
@@ -375,6 +450,11 @@ extension DictationAppModel {
         snapshot = recovered
         statusMessage = detail
         publishSnapshotStatus()
+      }
+      // Demo mode: a failed take stays in the demo library with its audio,
+      // as the HUD says (review v12-B #1).
+      if !keepsDictations, await settleDemoDictation(recovered, sessionID: sessionID) {
+        return
       }
       recordFinishedDictation(
         recovered,
@@ -482,7 +562,7 @@ extension DictationAppModel {
           self.snapshot = try await coordinator.pause()
           if failure.code == "disk-hard-stop" {
             self.statusMessage =
-              "可用空间已到安全下限；口述已自动暂停，所有已提交音频都已保留。释放空间后可继续，或直接结束处理现有内容"
+              "可用空间已到下限；口述已自动暂停，所有已提交音频都已保留。释放空间后可继续，或直接结束处理现有内容"
           } else if failure.category == .targetUnavailable {
             if let replacementDevice = try? MicrophoneDeviceCatalog.defaultDevice() {
               self.snapshot = try await coordinator.replacePausedCapture(
@@ -539,7 +619,7 @@ extension DictationAppModel {
   func publishSnapshotStatus() {
     switch snapshot.phase {
     case .preparing:
-      statusMessage = "正在准备麦克风；不会改变当前输入焦点"
+      statusMessage = "正在准备麦克风"
       liveTranscriptStatus = statusMessage
     case .recording:
       statusMessage = "正在使用默认麦克风聆听"
@@ -551,7 +631,7 @@ extension DictationAppModel {
       statusMessage = "已暂停——可继续同一段口述"
       liveTranscriptStatus = statusMessage
     case .finalizing: statusMessage = "正在保存已确认的音频"
-    case .recognizing: statusMessage = "正在等待本地转写"
+    case .recognizing: statusMessage = "本地转写尚未完成"
     case .polishing: statusMessage = "正在进行受保护的本地格式整理"
     case .inserting: statusMessage = "正在插入到原输入位置"
     case .completed:
@@ -559,7 +639,7 @@ extension DictationAppModel {
         snapshot.insertion?.method == .retainedForCopy
         ? retainedInsertionStatus(snapshot.insertion?.failureReason)
         : "本地口述已完成"
-    case .cancelling: statusMessage = "正在取消；不会插入任何文字"
+    case .cancelling: statusMessage = "正在取消；取消后不输入文字"
     case .cancelled: statusMessage = "已取消；临时会话已移除"
     case .failedRecoverable:
       statusMessage =
@@ -585,7 +665,23 @@ extension DictationAppModel {
     if let sessionID = finished.sessionID, answeredSessionIDs.remove(sessionID) != nil {
       return
     }
-    guard let text = Self.uninsertedClipboardText(finished, draft: draft) else { return }
+    // A translation or an answer that was not typed in is copied as written,
+    // not as said: the HUD's caption shows it, and ⌘V must paste the same.
+    let written = deliveredDictationText.flatMap {
+      $0.session == finished.sessionID ? $0.text : nil
+    }
+    guard let text = Self.uninsertedClipboardText(finished, draft: draft, written: written)
+    else { return }
+    // The delivery left the words on the clipboard, and something else has
+    // been copied since: that copy is the user's and stays (review 10-5c
+    // S5). The HUD then says the words are in the library, not on the
+    // clipboard.
+    if let key = finished.insertion?.idempotencyKey,
+      insertionService?.clipboardTakenSinceDelivery(
+        key, currentChangeCount: NSPasteboard.general.changeCount) == true
+    {
+      return
+    }
     // Marked as bestASR's own copy: ⌘V in the main window does not take it in
     // again as an item labelled with another App.
     if IntakePasteboardMarks.writeOwnText(text.value, to: .general) {
@@ -596,11 +692,17 @@ extension DictationAppModel {
 
   nonisolated static func uninsertedClipboardText(
     _ finished: DictationSessionSnapshot,
-    draft: String
+    draft: String,
+    written: String? = nil
   ) -> (value: String, isDraft: Bool)? {
     guard finished.insertion?.inserted != true,
       finished.phase == .completed || finished.phase == .failedRecoverable
     else { return nil }
+    if finished.phase == .completed, let written,
+      !written.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    {
+      return (written, false)
+    }
     if let final = finished.polish?.text ?? finished.transcript?.text,
       !final.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     {
@@ -617,7 +719,7 @@ extension DictationAppModel {
     let cause: String
     switch reason {
     case .permissionDenied:
-      cause = "辅助功能权限未开启"
+      cause = "未开启“设备控制和数据访问”权限"
     case .secureInput:
       cause = "密码框不接收口述"
     case .applicationChanged:
@@ -626,12 +728,14 @@ extension DictationAppModel {
       cause = "本机引擎没有给出结果"
     case .ambiguousReservation:
       cause = "为避免重复插入没有再次写入"
+    case .unconfirmed:
+      cause = "无法确认文字是否已输入"
     case .nowhere, .nothingToInsert, .none:
       cause = "没有找到输入位置"
     }
     return retainedTextWasCopied
-      ? "\(cause)；文字已复制，按 ⌘V 粘贴"
-      : "\(cause)；结果已保存在资料库"
+      ? "\(cause)；文字已拷贝，按 ⌘V 粘贴"
+      : "\(cause)；文字已保存在“历史”中"
   }
 
   func externalInsertionTarget(
@@ -644,8 +748,11 @@ extension DictationAppModel {
     )
   }
 
-  /// A dictation aimed at this app's own window is aimed at nowhere, unless
-  /// the onboarding practice field is up and waiting for it.
+  /// A dictation started in this app's own window has no other App to aim
+  /// at, unless the onboarding practice field is up and waiting for it. This
+  /// is only the start's hint: where the words go is decided when they are
+  /// ready, and one of this App's own focused fields then takes them
+  /// directly (`AppKitOwnTextInput`).
   nonisolated static func externalInsertionTarget(
     _ target: DictationTargetSnapshot?,
     ownBundleIdentifier: String?,
@@ -658,6 +765,66 @@ extension DictationAppModel {
       return nil
     }
     return target
+  }
+
+  /// Adds this dictation's numbers to the local timing table (收1-2, 收1-5):
+  /// stage durations, audio length and memory; never text, audio or where it
+  /// went. Runs off the main actor; a failed write loses one row, nothing
+  /// else.
+  func recordDictationTiming(
+    _ sessionID: SessionID, measured: DictationTimingInputs, runtime: LocalDictationRuntime,
+    outcome: DictationTiming.Outcome, audio: [AudioRangeInput]
+  ) {
+    guard let store = dictationMetricsStore else { return }
+    Task {
+      let times = await runtime.takeStageTimes(sessionID: sessionID)
+      let timing = Self.dictationTiming(
+        measured: measured, times: times, outcome: outcome, audio: audio, now: Date())
+      try? await store.record(timing)
+    }
+  }
+
+  /// One row of the timing table from what the App and the runtime measured.
+  /// Key up to text is counted only when there is text: written or kept.
+  nonisolated static func dictationTiming(
+    measured: DictationTimingInputs, times: DictationStageClock.Times?,
+    outcome: DictationTiming.Outcome, audio: [AudioRangeInput], now: Date
+  ) -> DictationTiming {
+    func ms(_ duration: Duration?) -> Int? {
+      duration.map {
+        Int($0.components.seconds * 1_000 + $0.components.attoseconds / 1_000_000_000_000_000)
+      }
+    }
+    let hasText = outcome == .written || outcome == .kept
+    let releaseToText =
+      hasText ? ms(times?.deliveredAt.map { $0 - measured.releasedAt }) : nil
+    let audioNanoseconds = audio.reduce(UInt64(0)) {
+      $0 + ($1.monotonicEndNanoseconds &- $1.monotonicStartNanoseconds)
+    }
+    let mode: DictationTiming.Mode =
+      switch measured.mode {
+      case .dictate: .dictate
+      case .translate: .translate
+      case .command: .command
+      }
+    let seal = ms(measured.seal)
+    let recognition = ms(times?.recognition)
+    let cleanup = ms(times?.cleanup)
+    let transform = ms(times?.transform)
+    let delivery = ms(times?.delivery)
+    return DictationTiming(
+      recordedAt: now, mode: mode, outcome: outcome,
+      recognizerWasCold: times?.recognizerWasCold ?? false,
+      audioMilliseconds: audio.isEmpty ? nil : Int(audioNanoseconds / 1_000_000),
+      pressToRecordingMilliseconds: ms(measured.pressToRecording),
+      releaseToTextMilliseconds: releaseToText, sealMilliseconds: seal,
+      recognitionMilliseconds: recognition, cleanupMilliseconds: cleanup,
+      transformMilliseconds: transform, deliveryMilliseconds: delivery,
+      queueMilliseconds: DictationTiming.queue(
+        releaseToText: releaseToText, seal: seal, recognition: recognition, cleanup: cleanup,
+        transform: transform, delivery: delivery),
+      footprintMegabytes: times?.footprintBytes.map(ProcessFootprint.megabytes),
+      peakFootprintMegabytes: times?.peakFootprintBytes.map(ProcessFootprint.megabytes))
   }
 
   static func fixtureTarget() -> DictationTargetSnapshot {

@@ -61,7 +61,7 @@ extension DictationAppModel {
       memorySearch.searchHistoryItems = []
       memorySearch.searchPersonSummaries = []
       memorySearch.searchEventSummaries = []
-      memorySearch.searchStatusMessage = "搜索逐字稿、整理、人物、事件和来源"
+      memorySearch.searchStatusMessage = "搜索逐字稿、整理、人、事情和来源"
       return
     }
     if fixtureMode {

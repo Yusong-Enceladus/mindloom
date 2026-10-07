@@ -183,9 +183,6 @@ final class MemoryMatterMapTests: XCTestCase {
     XCTAssertEqual(status.flag?.daysAway, 2)
     XCTAssertEqual(status.commitments.map(\.knotID), ["k4"])
     XCTAssertEqual(status.questions.map(\.id), ["k3"])
-    XCTAssertEqual(status.waitsOn.map(\.title), ["集群维护"])
-    XCTAssertEqual(status.waitsOn.first?.quote, "等集群修好")
-    XCTAssertEqual(status.waitedBy.map(\.eventID), ["ev-c"])
     // A passed step is the flag only when nothing is ahead.
     let passed = MemoryMatterStatus(
       model: model, statusLine: "",
@@ -207,91 +204,6 @@ final class MemoryMatterMapTests: XCTestCase {
     XCTAssertEqual(late.flag?.daysAway, -2)
   }
 
-  // MARK: - Layout
-
-  func testTheLayoutIsDeterministicAndNothingTouches() throws {
-    let relations = [RemoteOrganizerRelation(kind: "cross", a: "ev-a", b: "ev-c", count: 3)]
-    let model = try XCTUnwrap(
-      MemoryStrandModel(
-        projection: projection(map: map, relations: relations), eventID: "ev-a", now: now,
-        calendar: calendar))
-    let touches = [
-      MemoryStrandLayout.TouchInput(id: "cross|ev-a|ev-c", label: "交叉 3 次", title: "开放日", day: 8)
-    ]
-    let layout = MemoryStrandLayout(model: model, width: 760, calendar: calendar, touches: touches)
-    XCTAssertEqual(
-      layout, MemoryStrandLayout(model: model, width: 760, calendar: calendar, touches: touches))
-    // The first strand above the main thread, the second below.
-    XCTAssertEqual(layout.strands.map(\.y), [layout.yMain - 88, layout.yMain + 88])
-    XCTAssertEqual(layout.yMain, MemoryStrandLayout.axisTop + 76 + 88)
-    // Knots on their line and day; a second knot the same day moves right.
-    let k1 = try XCTUnwrap(layout.knots.first { $0.id == "k1" })
-    let k5 = try XCTUnwrap(layout.knots.first { $0.id == "k5" })
-    XCTAssertEqual(k1.center, CGPoint(x: layout.x(model.knot("k1")!.day), y: layout.yMain - 88))
-    XCTAssertEqual(k5.center.x, k1.center.x + MemoryStrandLayout.sameDayStep)
-    XCTAssertEqual(layout.knots.first { $0.id == "k3" }?.center.y, layout.yMain)
-    // The open strand runs to now; the closed one rejoins the main thread.
-    XCTAssertEqual(layout.strands[0].endX, layout.xNow)
-    XCTAssertNil(layout.strands[0].rejoinX)
-    XCTAssertNotNil(layout.strands[1].rejoinX)
-    XCTAssertEqual(layout.strands[0].futureX, layout.x(model.knot("k4")!.day))
-    // Every knot has its label here, and no two labels, names or knots touch.
-    XCTAssertEqual(Set(layout.labels.map(\.id)), Set(model.allKnots.map(\.id)))
-    let boxes =
-      layout.labels.map(\.frame) + layout.names.map(\.frame)
-      + layout.knots.map { CGRect(x: $0.center.x - 7, y: $0.center.y - 7, width: 14, height: 14) }
-    for (i, a) in boxes.enumerated() {
-      for b in boxes[(i + 1)...] {
-        XCTAssertFalse(a.intersects(b), "\(a) touches \(b)")
-      }
-    }
-    for label in layout.labels {
-      XCTAssertGreaterThanOrEqual(label.frame.minY, MemoryStrandLayout.axisTop)
-      XCTAssertLessThanOrEqual(label.frame.maxY, layout.lineBottom)
-      XCTAssertGreaterThanOrEqual(label.frame.minX, 4)
-      XCTAssertLessThanOrEqual(label.frame.maxX, 756)
-    }
-    // A planned knot's label says when.
-    XCTAssertEqual(layout.labels.first { $0.id == "k4" }?.dayWord, "后天")
-    // One touch row under the lines; the height counts it.
-    XCTAssertEqual(layout.touches.count, 1)
-    XCTAssertEqual(layout.height, layout.lineBottom + 22 + 34)
-    // The height does not depend on the width (the page sizes it before it
-    // knows the width).
-    XCTAssertEqual(
-      MemoryStrandLayout(model: model, width: 520, calendar: calendar, touches: touches).height,
-      layout.height)
-  }
-
-  // MARK: - 网, ropes, lenses
-
-  func testTheNetIsDeterministicWithItsRopeAndWaiting() {
-    let ropes = [
-      RemoteOrganizerRope(id: "r1", title: "实验", children: ["ev-a", "ev-c"], proposed: true)
-    ]
-    let relations = [
-      RemoteOrganizerRelation(kind: "blocks", a: "ev-b", b: "ev-a", quote: "等集群修好"),
-      RemoteOrganizerRelation(kind: "cross", a: "ev-a", b: "ev-c", count: 3),
-    ]
-    let projection = projection(map: map, ropes: ropes, relations: relations)
-    let net = MemoryMatterNet(projection: projection, eventID: "ev-a")
-    XCTAssertEqual(net, MemoryMatterNet(projection: projection, eventID: "ev-a"))
-    XCTAssertEqual(net.nodes.first?.kind, .center)
-    XCTAssertEqual(net.nodes.first.map { [$0.x, $0.y] }, [0, 0])
-    XCTAssertEqual(Set(net.nodes.map(\.id)), ["ev-a", "rope:r1", "ev-b", "ev-c"])
-    XCTAssertEqual(net.nodes.first { $0.id == "rope:r1" }?.proposed, true)
-    XCTAssertTrue(net.nodes.filter { $0.hop == 1 }.allSatisfy { abs(hypot($0.x, $0.y) - 1) < 1e-9 })
-    // b blocks a: the edge runs from the matter waited on.
-    func isBlocks(_ kind: MemoryMatterNet.EdgeKind) -> Bool {
-      if case .blocks = kind { return true }
-      return false
-    }
-    XCTAssertTrue(net.edges.contains { $0.from == "ev-b" && $0.to == "ev-a" && isBlocks($0.kind) })
-    XCTAssertTrue(net.edges.contains { $0.from == "ev-a" && $0.to == "rope:r1" })
-    XCTAssertTrue(net.edges.contains { $0.from == "ev-c" && $0.to == "rope:r1" })
-    XCTAssertTrue(MemoryMatterNet(projection: self.projection(map: nil), eventID: "ev-a").isEmpty)
-  }
-
   func testRopesAsShown() {
     let ropes = [
       RemoteOrganizerRope(id: "top", title: "科研", children: ["ev-a", "gone"]),
@@ -308,41 +220,6 @@ final class MemoryMatterMapTests: XCTestCase {
     XCTAssertNil(shown[2].parent, "a loop is broken at the top")
     // A matter is on one rope: ev-a stays on the first that lists it.
     XCTAssertFalse(shown.contains { $0.id == "loop2" })
-  }
-
-  func testHomeLenses() throws {
-    let ropes = [
-      RemoteOrganizerRope(id: "top", title: "科研", children: ["ev-a"], proposed: true),
-      RemoteOrganizerRope(id: "inner", title: "论文", parent: "top", children: ["ev-b"]),
-    ]
-    let facts = [
-      MemoryStatusFact(
-        text: "明天交", state: .planned, day: DateComponents(year: 2026, month: 9, day: 13)),
-      MemoryStatusFact(
-        text: "上周该交", state: .planned, day: DateComponents(year: 2026, month: 9, day: 8)),
-      MemoryStatusFact(
-        text: "很早以前", state: .planned, day: DateComponents(year: 2026, month: 8, day: 1)),
-    ]
-    let model = MemoryReadModel(
-      projection(map: map, facts: facts, ropes: ropes), calendar: calendar)
-    let lenses = model.lenses
-    XCTAssertEqual(lenses.bands.map(\.rope.id), ["top"])
-    XCTAssertEqual(lenses.bands.first?.children.map(\.rope.id), ["inner"])
-    XCTAssertEqual(lenses.bands.first?.total, 2)
-    XCTAssertEqual(lenses.unroped.map(\.eventID), ["ev-c"])
-    func rung(_ kind: MemoryHomeLenses.Rung.Kind) -> [String] {
-      lenses.rungs.first { $0.kind == kind }?.deadlines.map(\.text) ?? []
-    }
-    // 9/12 is today; the map's 9/14 commitment is this week.
-    XCTAssertEqual(rung(.tomorrow), ["明天交"])
-    XCTAssertEqual(rung(.justPassed), ["上周该交"])
-    XCTAssertEqual(rung(.thisWeek), ["跑 baseline"])
-    XCTAssertEqual(rung(.later), [])
-    XCTAssertEqual(lenses.rungs.first { $0.kind == .thisWeek }?.deadlines.first?.fromMap, true)
-    let strip = try XCTUnwrap(lenses.activity["ev-a"])
-    XCTAssertEqual(strip.days.values.reduce(0, +), 12)
-    XCTAssertEqual(strip.lastDay, lenses.todayIndex)
-    XCTAssertTrue(strip.flags.contains(lenses.todayIndex + 1))
   }
 
   func testAQuoteInsideItsText() {

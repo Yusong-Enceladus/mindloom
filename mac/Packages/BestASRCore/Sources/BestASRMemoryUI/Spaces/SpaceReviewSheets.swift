@@ -17,7 +17,7 @@ struct SpaceItemsSheet: View {
   var body: some View {
     let info = state.matters[eventID]
     let space = state.space(spaceID)
-    SpaceSheetFrame(title: "素材和权限", actions: actions) {
+    SpaceSheetFrame(title: "内容和权限", actions: actions) {
       if let space {
         Text(rulesLine(space)).font(.zhiji(12)).foregroundStyle(palette.secondary)
       }
@@ -26,11 +26,11 @@ struct SpaceItemsSheet: View {
           HStack(spacing: 6) {
             Text(row.kindLabel).font(.zhiji(11))
               .padding(.horizontal, 6).frame(height: 18)
-              .background(row.isMine ? palette.quietFill : palette.mateFill, in: Capsule())
+              .background(row.isMine ? palette.quietFill : palette.quietFill, in: Capsule())
             Text(row.title).font(.zhiji(13, .semibold)).lineLimit(1)
             Spacer()
             Text(row.isMine ? "你共享的" : "\(row.contributor) 共享的")
-              .font(.zhiji(11)).foregroundStyle(row.isMine ? palette.secondary : palette.mateInk)
+              .font(.zhiji(11)).foregroundStyle(row.isMine ? palette.secondary : palette.label)
           }
           if !row.preview.isEmpty {
             Text(row.preview).font(.zhiji(12)).foregroundStyle(palette.secondary).lineLimit(2)
@@ -43,7 +43,7 @@ struct SpaceItemsSheet: View {
           }
           HStack(spacing: 6) {
             if let audio = row.audio {
-              Button(state.playingItem == row.itemID ? "停止" : "听这段原音") {
+              Button(state.playingItem == row.itemID ? "停止" : "播放此段录音") {
                 actions.playAudio(spaceID, row.itemID, audio)
               }
               .buttonStyle(ZhijiCapsuleButtonStyle())
@@ -74,16 +74,16 @@ struct SpaceItemsSheet: View {
         .background(palette.surface, in: RoundedRectangle(cornerRadius: 8))
       }
       if info?.items.isEmpty ?? true {
-        Text("这件事在空间里还没有素材。").font(.zhiji(12)).foregroundStyle(palette.secondary)
+        Text("这件事在空间中尚无内容。").font(.zhiji(12)).foregroundStyle(palette.secondary)
       }
     }
   }
 
   private func rulesLine(_ space: SpaceLocalState) -> String {
     let withdraw =
-      space.policy.withdrawWindowHours.map { "共享后 \($0) 小时内可以撤回，之后删除会变成下架申请" }
-      ?? "共享的人随时可以撤回或删除"
-    return "\(space.ownerKind.title)：\(withdraw)。别人的素材你不能删，可以只对自己隐藏，或因隐私申请下架。你是\(space.role.title)。"
+      space.policy.withdrawWindowHours.map { "共享后 \($0) 小时内可以撤回，之后删除将提交撤回申请" }
+      ?? "共享者可以随时撤回或删除"
+    return "\(space.ownerKind.title)：\(withdraw)。你无法删除他人的内容，但可以对自己隐藏，或因隐私申请撤回。你是\(space.role.title)。"
   }
 
   @ViewBuilder
@@ -93,23 +93,23 @@ struct SpaceItemsSheet: View {
     VStack(alignment: .leading, spacing: 8) {
       switch action {
       case .delete:
-        Text("删除这条素材？").font(.zhiji(13, .semibold))
+        Text("删除这条内容？").font(.zhiji(13, .semibold))
         Text(
           row.windowNote == nil && space?.policy.withdrawWindowHours != nil
-            ? "已经过了撤回期限：会向维护者提出下架申请，他们同意后才会从空间里移除。你自己的空间里它还在。"
-            : "它会从空间里消失，成员的 Mac 也会删掉它的副本；你自己的空间里它还在。"
+            ? "已过撤回期限：将向维护者提出撤回申请，维护者同意后从空间中移除。它会保留在你自己的空间中。"
+            : "它将从空间中移除，成员 Mac 上的副本也会删除；它会保留在你自己的空间中。"
         )
         .font(.zhiji(12)).foregroundStyle(palette.secondary)
       case .requestPrivacyTakedown:
-        Text("因隐私申请下架").font(.zhiji(13, .semibold))
+        Text("因隐私申请撤回").font(.zhiji(13, .semibold))
         Text(
-          "维护者要在 \(space?.policy.takedownWindowHours ?? 72) 小时内处理：可以写明理由不同意；没人处理会到期自动下架。理由只给维护者看。"
+          "维护者要在 \(space?.policy.takedownWindowHours ?? 72) 小时内处理：维护者可以注明理由拒绝；逾期未处理将自动撤回。理由仅维护者可见。"
         )
         .font(.zhiji(12)).foregroundStyle(palette.secondary)
-        TextField("理由（可不填）", text: $reason).textFieldStyle(.roundedBorder)
+        TextField("理由（可选）", text: $reason).textFieldStyle(.roundedBorder)
       default:
-        Text("移除这条素材？").font(.zhiji(13, .semibold))
-        Text("它会从空间里移除并清除，署名留在记录里。共享的人自己的空间里它还在。")
+        Text("移除这条内容？").font(.zhiji(13, .semibold))
+        Text("它将从空间中移除并清除，署名保留在记录中。它会保留在共享者自己的空间中。")
           .font(.zhiji(12)).foregroundStyle(palette.secondary)
       }
       HStack {
@@ -123,7 +123,7 @@ struct SpaceItemsSheet: View {
       }
     }
     .padding(10)
-    .background(palette.mateFill, in: RoundedRectangle(cornerRadius: 8))
+    .background(palette.quietFill, in: RoundedRectangle(cornerRadius: 8))
   }
 }
 
@@ -142,7 +142,7 @@ struct SpaceReviewSheet: View {
     let titles = state.matterTitles[spaceID] ?? [:]
     SpaceSheetFrame(title: "待处理", actions: actions) {
       if !maintainer {
-        Text("维护者和管理员处理这里的提议和下架申请；你可以看到自己提过的。")
+        Text("维护者和管理员在这里处理提议和撤回申请；你可以查看自己提交的内容。")
           .font(.zhiji(12)).foregroundStyle(palette.secondary)
       }
       SpaceSection(title: "成员的提议") {
@@ -152,13 +152,13 @@ struct SpaceReviewSheet: View {
           let local = space?.proposals[proposal.proposalID]
           VStack(alignment: .leading, spacing: 6) {
             Text(proposalLine(proposal, local: local, titles: titles)).font(.zhiji(13))
-            Text("\(space?.name(of: proposal.author) ?? "成员") 提的").font(.zhiji(11))
+            Text("\(space?.name(of: proposal.author) ?? "成员") 提出").font(.zhiji(11))
               .foregroundStyle(palette.secondary)
             if maintainer {
               HStack {
                 Button("采纳") { actions.resolveProposal(spaceID, proposal.proposalID, true) }
                   .buttonStyle(ZhijiCapsuleButtonStyle(prominent: true))
-                Button("不采纳") { actions.resolveProposal(spaceID, proposal.proposalID, false) }
+                Button("拒绝") { actions.resolveProposal(spaceID, proposal.proposalID, false) }
                   .buttonStyle(ZhijiCapsuleButtonStyle())
               }
             }
@@ -167,7 +167,7 @@ struct SpaceReviewSheet: View {
           .background(palette.surface, in: RoundedRectangle(cornerRadius: 8))
         }
       }
-      SpaceSection(title: "整理设备的提议") {
+      SpaceSection(title: "DGX Spark 的提议") {
         let organizer = state.proposals[spaceID]?.organizer ?? []
         if organizer.isEmpty { empty }
         ForEach(organizer, id: \.proposalID) { proposal in
@@ -181,7 +181,7 @@ struct SpaceReviewSheet: View {
           .background(palette.surface, in: RoundedRectangle(cornerRadius: 8))
         }
       }
-      SpaceSection(title: "下架申请") {
+      SpaceSection(title: "撤回申请") {
         let takedowns = state.takedowns[spaceID] ?? []
         if takedowns.isEmpty { empty }
         ForEach(takedowns, id: \.takedownID) { takedown in
@@ -189,8 +189,8 @@ struct SpaceReviewSheet: View {
           let reason = space?.takedowns[takedown.takedownID]?.reason
           VStack(alignment: .leading, spacing: 6) {
             Text(
-              (takedown.kind == "privacy" ? "因隐私申请下架：" : "共享的人想删除：")
-                + (item?.fields?.title ?? "一条素材")
+              (takedown.kind == "privacy" ? "因隐私申请撤回：" : "共享者请求删除：")
+                + (item?.fields?.title ?? "一条内容")
             )
             .font(.zhiji(13))
             Text(
@@ -198,17 +198,17 @@ struct SpaceReviewSheet: View {
                 "\(space?.name(of: takedown.requester) ?? "成员") 提出",
                 reason.map { "理由：\($0)" },
                 takedown.dueAt.flatMap(SpaceTime.date).map {
-                  "须在 \(MemoryDateText.day($0, calendar: .current, now: Date())) \(MemoryDateText.time($0, calendar: .current)) 前处理，否则自动下架"
+                  "须在 \(MemoryDateText.day($0, calendar: .current, now: Date())) \(MemoryDateText.time($0, calendar: .current)) 前处理，逾期将自动撤回"
                 },
               ].compactMap { $0 }.joined(separator: " · ")
             )
             .font(.zhiji(11)).foregroundStyle(palette.secondary)
             if maintainer {
               HStack {
-                Button("同意下架") { actions.resolveTakedown(spaceID, takedown.takedownID, true) }
+                Button("同意撤回") { actions.resolveTakedown(spaceID, takedown.takedownID, true) }
                   .buttonStyle(ZhijiCapsuleButtonStyle(prominent: true))
                 if takedown.kind != "privacy" {
-                  Button("不同意") { actions.resolveTakedown(spaceID, takedown.takedownID, false) }
+                  Button("拒绝") { actions.resolveTakedown(spaceID, takedown.takedownID, false) }
                     .buttonStyle(ZhijiCapsuleButtonStyle())
                 }
               }
@@ -219,13 +219,13 @@ struct SpaceReviewSheet: View {
                 let reasonText = rejectReasons[takedown.takedownID] ?? ""
                 HStack {
                   TextField(
-                    "不同意的理由（申请人会看到）",
+                    "拒绝理由（申请人可见）",
                     text: Binding(
                       get: { rejectReasons[takedown.takedownID] ?? "" },
                       set: { rejectReasons[takedown.takedownID] = $0 })
                   )
                   .textFieldStyle(.roundedBorder)
-                  Button("不同意") {
+                  Button("拒绝") {
                     actions.rejectTakedown(
                       spaceID, takedown.takedownID,
                       reasonText.trimmingCharacters(in: .whitespacesAndNewlines))
@@ -245,24 +245,24 @@ struct SpaceReviewSheet: View {
   }
 
   private var empty: some View {
-    Text("没有。").font(.zhiji(12)).foregroundStyle(palette.secondary)
+    Text("无。").font(.zhiji(12)).foregroundStyle(palette.secondary)
   }
 
   private func proposalLine(
     _ proposal: SpaceProposalRecord, local: SpaceProposal?, titles: [String: String]
   ) -> String {
     let matters = proposal.targets?["matter_ids"]?.array?.compactMap(\.string) ?? []
-    let names = matters.map { titles[$0].map { "「\($0)」" } ?? "一件事" }
+    let names = matters.map { titles[$0].map { "“\($0)”" } ?? "一件事" }
     let detail = local?.details
     switch proposal.kind {
     case "rename":
-      return "把\(names.first ?? "这件事")改名为「\(detail?["title"]?.string ?? "…")」"
+      return "将\(names.first ?? "这件事")重新命名为“\(detail?["title"]?.string ?? "…")”"
     case "merge":
-      return "把\(names.joined(separator: "和"))合成一件事"
+      return "将\(names.joined(separator: "和"))合并为一件事"
     case "split":
-      return "把\(names.first ?? "这件事")拆开" + (detail?["note"]?.string.map { "：\($0)" } ?? "")
+      return "将\(names.first ?? "这件事")拆分" + (detail?["note"]?.string.map { "：\($0)" } ?? "")
     case "move_to_rope":
-      return "把\(names.first ?? "这件事")移到另一根绳上"
+      return "将\(names.first ?? "这件事")移到另一件事中"
     default:
       return detail?["note"]?.string ?? "一项修改"
     }
@@ -279,10 +279,10 @@ struct SpaceAuditSheet: View {
   var body: some View {
     let space = state.space(spaceID)
     SpaceSheetFrame(title: "空间记录", actions: actions) {
-      SpaceNote(text: "记录里只有谁、在什么时候、做了什么和数量；没有任何内容，管理员也看不到素材本身。")
+      SpaceNote(text: "记录包含操作者、时间、操作和数量，不包含内容本身。")
       let records = (state.audit[spaceID] ?? []).reversed()
       if records.isEmpty {
-        Text("还没有记录。").font(.zhiji(12)).foregroundStyle(palette.secondary)
+        Text("尚无记录。").font(.zhiji(12)).foregroundStyle(palette.secondary)
       }
       ForEach(Array(records)) { record in
         HStack(alignment: .firstTextBaseline, spacing: 10) {
@@ -293,7 +293,7 @@ struct SpaceAuditSheet: View {
           )
           .font(.zhiji(11)).monospacedDigit().foregroundStyle(palette.secondary)
           .frame(width: 110, alignment: .leading)
-          Text(record.actorMember.map { space?.name(of: $0) ?? "成员" } ?? "整理设备")
+          Text(record.actorMember.map { space?.name(of: $0) ?? "成员" } ?? "DGX Spark")
             .font(.zhiji(12, .semibold)).frame(width: 80, alignment: .leading)
           Text(SpaceWords.audit(record.action) + counts(record.target)).font(.zhiji(12))
           Spacer(minLength: 0)
@@ -309,7 +309,7 @@ struct SpaceAuditSheet: View {
       guard let n = value.int, !key.hasSuffix("_id"), key != "epoch" || n > 1 else { return nil }
       let words = [
         "count": "条", "items": "条", "applied": "项生效", "rejected": "项未生效", "purged": "条清除",
-        "withdrawn": "条撤回", "epoch": "号钥匙", "blobs": "个原件",
+        "withdrawn": "条撤回", "epoch": "号密钥", "blobs": "个原件",
       ]
       return "\(n) \(words[key] ?? key)"
     }
@@ -334,24 +334,24 @@ struct SpaceProposeSheet: View {
     SpaceSheetFrame(title: maintainer ? "修改共享的事" : "提议修改", actions: actions) {
       Text(
         maintainer
-          ? "你是维护者：修改直接生效，并留在空间记录里。"
-          : "提议会交给维护者，他们采纳后才生效。你自己的空间不受影响。"
+          ? "你是维护者：修改直接生效，并记录在空间记录中。"
+          : "提议将提交给维护者，采纳后生效。你自己的空间保持不变。"
       )
       .font(.zhiji(12)).foregroundStyle(palette.secondary)
       Picker("", selection: $kind) {
-        Text("改名").tag("rename")
-        Text("和另一件事合并").tag("merge")
-        Text("拆开").tag("split")
+        Text("重新命名").tag("rename")
+        Text("与另一件事合并").tag("merge")
+        Text("拆分").tag("split")
         Text("其他").tag("other")
       }
       .pickerStyle(.segmented)
       .labelsHidden()
       switch kind {
       case "rename":
-        TextField("新的名字", text: $text).textFieldStyle(.roundedBorder)
+        TextField("新名称", text: $text).textFieldStyle(.roundedBorder)
       case "merge":
-        Picker("和哪件事合并", selection: $other) {
-          Text("选一件事").tag(String?.none)
+        Picker("与哪件事合并", selection: $other) {
+          Text("选择一件事").tag(String?.none)
           ForEach(
             titles.sorted(by: { $0.value < $1.value }).filter { $0.key != eventID }, id: \.key
           ) {

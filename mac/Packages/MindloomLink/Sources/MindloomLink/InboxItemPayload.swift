@@ -9,9 +9,45 @@ public enum InboxItemKind: String, Codable, Sendable, CaseIterable {
 }
 
 /// Where on the phone it came from; the Mac shows this as the source app.
-public enum InboxItemSource: String, Codable, Sendable, CaseIterable {
-  case keyboard = "iPhone 键盘"
-  case share = "iPhone 分享"
+///
+/// A name, not a closed list: phones send one of `allCases` (the names every Mac since v11
+/// knows), and a Mac decodes any well-formed name (`isWellFormedName`), so an entry from a newer
+/// phone is shown under its name instead of failing to open. Before v12 a Mac decoded `source` as a
+/// closed list and deleted an entry with a name it did not know from the organizing device
+/// (acknowledged as unusable), so a phone never puts a new name here: a finer source travels in
+/// `InboxItemPayload.origin`, which those Macs skip.
+public struct InboxItemSource: RawRepresentable, Codable, Hashable, Sendable, CaseIterable {
+  public let rawValue: String
+
+  public init(rawValue: String) {
+    self.rawValue = rawValue
+  }
+
+  public static let keyboard = InboxItemSource(rawValue: "iPhone 键盘")
+  public static let share = InboxItemSource(rawValue: "iPhone 分享")
+  /// Said into the iPhone app's own speak bar (「口述」, v11), or recorded on Apple Watch and
+  /// transcribed on the iPhone (with `origin` "Apple Watch", WATCH-005).
+  public static let voice = InboxItemSource(rawValue: "iPhone 口述")
+
+  /// The names a phone sends.
+  public static let allCases: [InboxItemSource] = [.keyboard, .share, .voice]
+
+  public static let maximumNameCharacters = 64
+
+  /// 1–64 characters, not only spaces, no control characters (no line breaks).
+  public static func isWellFormedName(_ name: String) -> Bool {
+    let scalars = name.unicodeScalars
+    return !scalars.isEmpty && scalars.count <= maximumNameCharacters
+      && !name.trimmingCharacters(in: .whitespaces).isEmpty
+      && !scalars.contains(where: { $0.properties.generalCategory == .control })
+  }
+}
+
+/// Where an item was captured when that is not the iPhone itself (`InboxItemPayload.origin`).
+public enum InboxItemOrigin: String, Sendable, CaseIterable {
+  /// Recorded on Apple Watch, transcribed on the iPhone it is paired with (WATCH-005). The item's
+  /// time is when recording started on the watch.
+  case appleWatch = "Apple Watch"
 }
 
 /// Limits for what one inbox entry may carry. They match what the Spark
@@ -35,19 +71,25 @@ public enum InboxLimits {
 /// The plaintext of one sealed inbox entry (PHONE-CONTRACT §3):
 ///
 /// ```
-/// {"v":1,"kind":"text"|"link"|"image"|"file","source":"iPhone 键盘"|"iPhone 分享",
+/// {"v":1,"kind":"text"|"link"|"image"|"file",
+///  "source":"iPhone 键盘"|"iPhone 分享"|"iPhone 口述","origin":"Apple Watch",
 ///  "created_at":"<ISO-8601 with local offset>","text":…,"url":…,"title":…,
 ///  "filename":…,"mime":…,"bytes_b64":…}
 /// ```
 ///
 /// Absent fields are omitted from the JSON. `validate()` runs on every encode
 /// and decode, so neither side ever handles an entry that breaks the rules.
+/// Unknown keys are skipped (as every Mac since v11 does), which is how
+/// `origin` reaches an older Mac without harm.
 public struct InboxItemPayload: Codable, Equatable, Sendable {
   public static let currentVersion = 1
 
   public let v: Int
   public let kind: InboxItemKind
   public let source: InboxItemSource
+  /// Where it was captured when that is not the iPhone itself ("Apple Watch"). A Mac from v12 on
+  /// shows it as the source (`shownSource`); an older Mac skips the key and shows `source`.
+  public let origin: String?
   public let createdAt: String
   public let text: String?
   public let url: String?
@@ -76,22 +118,25 @@ public struct InboxItemPayload: Codable, Equatable, Sendable {
     /// A field that does not belong to this kind is set.
     case unexpectedField(String)
     case malformedJSON
+    /// `source` or `origin` is not a well-formed name (`InboxItemSource.isWellFormedName`).
+    case invalidSource
   }
 
   enum CodingKeys: String, CodingKey {
-    case v, kind, source, text, url, title, filename, mime
+    case v, kind, source, origin, text, url, title, filename, mime
     case createdAt = "created_at"
     case bytesB64 = "bytes_b64"
   }
 
   init(
-    kind: InboxItemKind, source: InboxItemSource, createdAt: String,
-    text: String? = nil, url: String? = nil, title: String? = nil,
+    kind: InboxItemKind, source: InboxItemSource, origin: InboxItemOrigin? = nil,
+    createdAt: String, text: String? = nil, url: String? = nil, title: String? = nil,
     filename: String? = nil, mime: String? = nil, bytesB64: String? = nil
   ) {
     self.v = Self.currentVersion
     self.kind = kind
     self.source = source
+    self.origin = origin?.rawValue
     self.createdAt = createdAt
     self.text = text
     self.url = url
@@ -104,11 +149,11 @@ public struct InboxItemPayload: Codable, Equatable, Sendable {
   // MARK: - Builders (validated)
 
   public static func text(
-    _ text: String, source: InboxItemSource, createdAt: Date = Date(),
-    timeZone: TimeZone = .current
+    _ text: String, source: InboxItemSource, origin: InboxItemOrigin? = nil,
+    createdAt: Date = Date(), timeZone: TimeZone = .current
   ) throws -> InboxItemPayload {
     let payload = InboxItemPayload(
-      kind: .text, source: source,
+      kind: .text, source: source, origin: origin,
       createdAt: InboxTimestamp.string(from: createdAt, timeZone: timeZone), text: text)
     try payload.validate()
     return payload
@@ -185,6 +230,9 @@ public struct InboxItemPayload: Codable, Equatable, Sendable {
 
   public var createdDate: Date? { InboxTimestamp.date(from: createdAt) }
 
+  /// The source the Mac shows: `origin` when there is one, else `source`.
+  public var shownSource: String { origin ?? source.rawValue }
+
   /// A short text-only preview for the phone's "已送出" list. Images have
   /// none: the phone keeps no copy of a shared image.
   public var preview: String? {
@@ -211,6 +259,9 @@ public struct InboxItemPayload: Codable, Equatable, Sendable {
 
   public func validate() throws {
     guard v == Self.currentVersion else { throw ValidationError.unsupportedVersion(v) }
+    guard InboxItemSource.isWellFormedName(source.rawValue),
+      origin.map(InboxItemSource.isWellFormedName) ?? true
+    else { throw ValidationError.invalidSource }
     guard createdAt.contains("T"), InboxTimestamp.date(from: createdAt) != nil else {
       throw ValidationError.invalidCreatedAt
     }

@@ -3,6 +3,7 @@ import BestASRDictation
 import BestASRDomain
 import Dispatch
 import Foundation
+import MindloomIdentity
 import OSLog
 
 public enum MacMicrophoneCaptureError: Error, Equatable, Sendable {
@@ -268,7 +269,7 @@ enum MicrophonePCMBufferCopier {
 }
 
 private let microphoneTimingLogger = Logger(
-  subsystem: "com.bestasr.app", category: "microphone-capture")
+  subsystem: MindloomIdentity.logSubsystem, category: "microphone-capture")
 
 /// Content-free stage timing for microphone startup.
 private func logMicrophoneStage(_ stage: String, since start: ContinuousClock.Instant) {

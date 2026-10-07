@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import MindloomIdentity
 
 /// The Chrome extension 「收进织机」 (V8 contract A6) and the one way it can
 /// reach the App: Chrome's native messaging, with the bundled helper as the
@@ -16,9 +17,22 @@ public enum BrowserExtension {
   /// The only origin the host answers (the host manifest's `allowed_origins`).
   public static let origin = "chrome-extension://\(extensionID)/"
   /// The native messaging host name (the manifest file's name and `name`).
-  public static let hostName = "com.bestasr.mindloom"
-  /// The source label of everything the extension hands in.
+  public static let hostName = MindloomIdentity.nativeMessagingHost
+  /// The source label of what the extension hands in, when the App checked
+  /// that Chrome started the helper (v12 F10).
   public static let sourceName = "Chrome"
+  /// Google's developer team, which signs Chrome.
+  public static let googleTeamID = "EQHXZ8M8AV"
+
+  /// True when a signer (as `AgentClientIdentity.signer` reads it from the
+  /// kernel) is Google's Chrome: stable, Beta, Dev or Canary.
+  public static func isChrome(signer: String?) -> Bool {
+    guard let signer else { return false }
+    let prefix = "team:\(googleTeamID):"
+    guard signer.hasPrefix(prefix) else { return false }
+    let identifier = signer.dropFirst(prefix.count)
+    return identifier == "com.google.Chrome" || identifier.hasPrefix("com.google.Chrome.")
+  }
 
   /// True when `argument` is how Chrome starts a native messaging host (an
   /// extension origin as the first argument), whichever extension it is.
@@ -57,7 +71,7 @@ public enum NativeMessaging {
     if payload.count > maximumOutgoingBytes {
       payload =
         JSONValue.object([
-          "ok": false, "reason": "tooLarge", "message": "回答太长，没能送回浏览器",
+          "ok": false, "reason": "tooLarge", "message": "回应过长，未能发送到浏览器",
         ]).serializedData
     }
     var length = UInt32(payload.count)
@@ -124,6 +138,10 @@ public struct BrowserAddRequest: Equatable, Sendable {
   public var text: String?
   public var url: String?
   public var title: String?
+  /// Set by the App from the kernel, never from the request: the helper that
+  /// carried it was started by Google's Chrome (v12 F10). Otherwise its
+  /// source is 「本机其他程序」.
+  public var startedByChrome = false
 
   public init(kind: Kind, text: String? = nil, url: String? = nil, title: String? = nil) {
     self.kind = kind
@@ -248,8 +266,8 @@ public struct BrowserReply: Equatable, Sendable {
 
 /// Plain Chinese for the extension to show.
 public enum BrowserCopy {
-  public static let notOurExtension = "这个扩展不是织机的「收进织机」，没有收任何内容"
-  public static let malformed = "看不懂浏览器发来的内容，没有收进来"
-  public static let empty = "没有选中文字，也没有链接，没有收进来"
-  public static let tooLong = "选中的文字太长，请分几次收"
+  public static let notOurExtension = "此扩展不是 Mindloom 的“添加到 Mindloom”，未添加内容"
+  public static let malformed = "无法识别浏览器发来的内容，未添加"
+  public static let empty = "没有选中文字，也没有链接，未添加"
+  public static let tooLong = "所选文字过长，请分几次添加"
 }

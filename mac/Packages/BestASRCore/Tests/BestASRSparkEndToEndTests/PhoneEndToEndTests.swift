@@ -1093,7 +1093,8 @@ final class PhoneEndToEndTests: XCTestCase {
     let process = Process()
     process.executableURL = URL(fileURLWithPath: "/usr/bin/xcrun")
     process.arguments = [
-      "simctl", "get_app_container", simulator, "com.bestasr.phone", "group.com.bestasr.phone",
+      // The phone's identity in iOS/project.yml (MINDLOOM_PHONE_BUNDLE_ID, MINDLOOM_APP_GROUP).
+      "simctl", "get_app_container", simulator, "app.mindloom", "group.app.mindloom",
     ]
     let output = Pipe()
     process.standardOutput = output

@@ -47,12 +47,15 @@ final class ModelsModel: ObservableObject {
 
   @Published var speakerModelLicenseAccepted = false
 
+  /// v12 search: optional; the other models do not wait for it.
+  @Published var meaningModelLicenseAccepted = false
+
   @Published var recommendedModelInstallInProgress = false
 
   @Published var recommendedModelProgress = 0.0
 
   @Published var recommendedModelProgressMessage =
-    "总计约 5.77 GB；已安装组件不会重复下载，运行所需模型保留在本机，临时下载文件使用缓存目录"
+    "总计约 4.94 GB；已安装的模型无需重新下载，所需模型保存在这台 Mac 上，临时文件使用缓存目录"
 
   @Published var translationInstallInProgress: String?
 
@@ -86,5 +89,5 @@ final class ModelsModel: ObservableObject {
   @Published var availableAppUpdateURL: URL?
 
   @Published var modelManagementStatusMessage =
-    "本地组件会逐文件校验；更新失败时保留上一可用版本"
+    "本地模型会逐文件校验；更新失败时保留上一可用版本"
 }

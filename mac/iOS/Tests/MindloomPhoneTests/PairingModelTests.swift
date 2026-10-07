@@ -17,7 +17,7 @@ final class PairingModelTests: XCTestCase {
     root = FileManager.default.temporaryDirectory.appendingPathComponent(
       "pairing-\(UUID().uuidString)", isDirectory: true)
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
-    keychain = PhoneKeyKeychain(service: "com.bestasr.phone.tests.\(UUID().uuidString)")
+    keychain = PhoneKeyKeychain(service: "app.mindloom.tests.\(UUID().uuidString)")
   }
 
   override func tearDown() async throws {
@@ -83,8 +83,8 @@ final class PairingModelTests: XCTestCase {
   func testRefusedCodesAreExplained() throws {
     let model = makeModel()
     for (text, expected) in [
-      ("hello", "这不是织机的配对码"),
-      ("mlpair1.@@@", "配对码不完整，请在 Mac 上重新复制"),
+      ("hello", "这不是 Mindloom 的配对码。"),
+      ("mlpair1.@@@", "配对码不完整。请在 Mac 上重新拷贝。"),
     ] {
       XCTAssertThrowsError(try model.pair(text: text)) { error in
         XCTAssertEqual(PairingModel.message(for: error), expected)
@@ -106,10 +106,86 @@ final class PairingModelTests: XCTestCase {
       .replacingOccurrences(of: "=", with: "")
     XCTAssertThrowsError(try model.pair(text: text)) { error in
       XCTAssertEqual(error as? PairingPayload.PairingError, .invalidHostKey)
-      XCTAssertTrue(PairingModel.message(for: error).contains("Spark 的身份"))
+      XCTAssertEqual(PairingModel.message(for: error), "配对码无法使用。请在 Mac 上重新拷贝。")
     }
     XCTAssertFalse(model.isPaired)
     XCTAssertNil(keychain.load())
+  }
+}
+
+/// The review fixes of the App Group move (appgroup-fix): what waits for pairing is sealed once a
+/// pairing exists, and the Live Activity's content goes stale when the app stops renewing it.
+@MainActor
+final class AppGroupFixTests: XCTestCase {
+  private var root: URL!
+  private var keychain: PhoneKeyKeychain!
+  private var suite: String!
+
+  override func setUp() async throws {
+    root = FileManager.default.temporaryDirectory.appendingPathComponent(
+      "appgroup-fix-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    keychain = PhoneKeyKeychain(service: "app.mindloom.tests.\(UUID().uuidString)")
+    suite = "mindloom-tests-\(UUID().uuidString)"
+  }
+
+  override func tearDown() async throws {
+    keychain.delete()
+    UserDefaults().removePersistentDomain(forName: suite)
+    try? FileManager.default.removeItem(at: root)
+  }
+
+  /// Shared before the app had moved its pairing into the App Group: the item waits for pairing
+  /// although the phone is paired. The launch (and every activation) seals it, once.
+  func testSealPendingSealsWhatWaitedOnceAPairingExists() throws {
+    let recordStore = PairingRecordStore(file: root.appendingPathComponent("pairing.json"))
+    let collector = PhoneItemCollector(
+      items: try PhoneItemStore(root: root.appendingPathComponent("items")),
+      outbox: try OutboxStore(root: root.appendingPathComponent("outbox")),
+      pairing: recordStore, signaling: nil)
+    let waiting = try collector.collect(
+      PhoneItem(createdAt: Date(), kind: .text, source: .share, text: "合成：等配对"),
+      payloads: [try InboxItemPayload.text("合成：等配对", source: .share, createdAt: Date())])
+    XCTAssertTrue(waiting.awaitingPairing)
+    let pairing = PairingModel(recordStore: recordStore, keychain: keychain)
+    let delivery = DeliveryService(
+      collector: collector, pairing: pairing,
+      settings: PhoneSettings(defaults: try XCTUnwrap(UserDefaults(suiteName: suite)), isShared: false))
+
+    delivery.sealPending()
+    XCTAssertTrue(try XCTUnwrap(collector.items.item(id: waiting.id)).awaitingPairing, "unpaired: waits")
+
+    try pairing.pair(text: SyntheticPairing.payload().encodedText())
+    delivery.sealPending()
+    let sealed = try XCTUnwrap(collector.items.item(id: waiting.id))
+    XCTAssertFalse(sealed.awaitingPairing)
+    XCTAssertEqual(sealed.entryIDs.count, 1)
+    XCTAssertEqual(try collector.outbox.queued().map(\.entryID), sealed.entryIDs)
+    XCTAssertEqual(try collector.outbox.queued().first?.sealKeyID, pairing.record?.sealKeyID)
+    delivery.sealPending()
+    XCTAssertEqual(try collector.outbox.queued().count, 1, "a second call seals nothing more")
+    delivery.refresh()
+    XCTAssertEqual(delivery.rows.map(\.id), [waiting.id])
+    XCTAssertTrue(delivery.rows[0].onPhone)
+  }
+
+  func testLiveActivityGoesStaleWithinTwoMinutesOrAtTheEnd() {
+    let now = Date(timeIntervalSince1970: 1_790_730_902)
+    XCTAssertEqual(
+      VoiceLiveActivity.staleDate(endsAt: nil, now: now), now.addingTimeInterval(120),
+      "charging (no countdown): stale two minutes ahead, renewed while the session runs")
+    XCTAssertEqual(
+      VoiceLiveActivity.staleDate(endsAt: now.addingTimeInterval(600), now: now),
+      now.addingTimeInterval(120))
+    XCTAssertEqual(
+      VoiceLiveActivity.staleDate(endsAt: now.addingTimeInterval(30), now: now),
+      now.addingTimeInterval(30))
+  }
+
+  /// A build without the App Group after one with it: Home says the data is elsewhere.
+  func testTheDataElsewhereNoticeIsPlainWords() {
+    XCTAssertFalse(HomeList.dataElsewhereNotice.contains("App Group"))
+    XCTAssertTrue(HomeList.dataElsewhereNotice.hasPrefix("之前的配对和内容"))
   }
 }
 

@@ -59,7 +59,7 @@ struct BrowserHostRunner {
     case .notRunning, .noAnswer:
       return .failure(.notRunning, AgentCopy.notRunning)
     case .unreadable:
-      return .failure(.refused, "织机的回答看不懂")
+      return .failure(.refused, "无法识别 Mindloom 的回应")
     case .reply(let reply):
       return BrowserReply(ok: true, message: reply.message, stored: reply.stored)
     case .error(let code, let message):

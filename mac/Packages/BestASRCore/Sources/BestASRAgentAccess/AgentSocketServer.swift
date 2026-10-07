@@ -14,7 +14,9 @@ public protocol OwnerChannelHandling: Sendable {
 /// socket at `<data root>/agent/mindloom.sock`, the folder 0700 and the
 /// socket 0600, both this user's. Each accepted connection is checked with
 /// the kernel's peer credentials and libproc (the peer must be a process of
-/// this user) before a single byte is read; then it is one MCP session, or,
+/// this user) and then against the bundled helper's code signature
+/// (`AgentHelperGate`, v12 F8) before a single byte is read; then it is one
+/// MCP session, or,
 /// when its first line is an owner request (`OwnerChannel`), the owner's
 /// command line, which never opens an agent session.
 public final class AgentSocketServer: @unchecked Sendable {
@@ -27,19 +29,30 @@ public final class AgentSocketServer: @unchecked Sendable {
   private let service: AgentAccessService
   private let owner: (any OwnerChannelHandling)?
   private let peerCheck: @Sendable (AgentPeer) -> Bool
+  private let gate: AgentHelperGate
+  /// 允许其他 App 读 (v12 F1). While false, the socket serves only the owner's
+  /// own entries (the command line, the Chrome extension); an agent's
+  /// connection is told the switch is off and gets no session.
+  private let agentsAllowed: @Sendable () -> Bool
   private let lock = NSLock()
   private var listener: Int32 = -1
   private var connections: Set<Int32> = []
   private var rejected = 0
   private var accepted = 0
 
+  /// - Parameter gate: who may connect besides being this user's process:
+  ///   the App passes `.bundled(helper:)`; only tests pass
+  ///   `.anyProcessOfThisUser`.
   public init(
-    dataRoot: URL, service: AgentAccessService,
+    dataRoot: URL, service: AgentAccessService, gate: AgentHelperGate,
     peerCheck: @escaping @Sendable (AgentPeer) -> Bool = { AgentProcessInspector.peerIsOwner($0) },
-    owner: (any OwnerChannelHandling)? = nil
+    owner: (any OwnerChannelHandling)? = nil,
+    agentsAllowed: @escaping @Sendable () -> Bool = { true }
   ) {
     socketURL = AgentSocketLocation.socketURL(dataRoot: dataRoot)
     self.service = service
+    self.gate = gate
+    self.agentsAllowed = agentsAllowed
     self.peerCheck = peerCheck
     self.owner = owner
   }
@@ -108,7 +121,7 @@ public final class AgentSocketServer: @unchecked Sendable {
       }
       var on: Int32 = 1
       setsockopt(connection, SOL_SOCKET, SO_NOSIGPIPE, &on, socklen_t(MemoryLayout<Int32>.size))
-      guard let peer = AgentPeer.of(connection), peerCheck(peer),
+      guard let peer = AgentPeer.of(connection), peerCheck(peer), gate.admits(peer),
         let inspected = AgentConnectionPeer.inspect(connection)
       else {
         lock.withLock { rejected += 1 }
@@ -148,6 +161,7 @@ public final class AgentSocketServer: @unchecked Sendable {
     let writeLock = NSLock()
     let service = service
     let owner = owner
+    let agentsAllowed = agentsAllowed
     Task { [weak self] in
       let write: @Sendable (String?) -> Void = { reply in
         guard let reply else { return }
@@ -163,8 +177,19 @@ public final class AgentSocketServer: @unchecked Sendable {
             write(await Self.ownerReply(current, owner: owner, peer: peer)?.serialized)
             line = await iterator.next()
           }
+        } else if !agentsAllowed() {
+          // 允许其他 App 读 is off: every request is told so; no session,
+          // no grant, no consent card.
+          var line: String? = first
+          while let current = line {
+            write(
+              AgentOfflineResponder.switchedOffReply(to: MCPMessage.decode(current))?.serialized)
+            line = await iterator.next()
+          }
         } else {
-          let session = await service.openSession(peer: peer)
+          // The service may also write on its own (`notifications/tools/
+          // list_changed` once a grant changes what the client may do).
+          let session = await service.openSession(peer: peer, push: { write($0) })
           await withTaskGroup(of: Void.self) { group in
             var line: String? = first
             while let current = line {

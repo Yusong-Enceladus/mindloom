@@ -6,11 +6,12 @@ import Observation
 import Security
 
 /// The phone's SSH key in the Keychain (PHONE-CONTRACT §4). Only the app
-/// reads it; the extensions never need it. Available after first unlock so
+/// reads it; the keyboard never can. (Without the App Group the share extension gets its own copy
+/// through `ShareHandoff`, in a group the keyboard does not have.) Available after first unlock so
 /// a background refresh can send, and never synced or backed up to another
 /// device.
 struct PhoneKeyKeychain: Sendable {
-  var service = "com.bestasr.phone.pairing"
+  var service = PhoneNames.pairingService
   var account = "phone-key"
 
   enum KeychainError: Error, Equatable {
@@ -40,13 +41,19 @@ struct PhoneKeyKeychain: Sendable {
     SecItemDelete(baseQuery as CFDictionary)
   }
 
+  /// The app's own keychain group, named explicitly when the build is signed by a team, so the key
+  /// never lands in a group an extension shares (a build without the App Group lists several).
+  var accessGroup: String? = PhoneLink.teamKeychainGroup(infoKey: PhoneLink.privateGroupInfoKey)
+
   private var baseQuery: [String: Any] {
-    [
+    var query: [String: Any] = [
       kSecClass as String: kSecClassGenericPassword,
       kSecAttrService as String: service,
       kSecAttrAccount as String: account,
       kSecUseDataProtectionKeychain as String: true,
     ]
+    if let accessGroup { query[kSecAttrAccessGroup as String] = accessGroup }
+    return query
   }
 }
 
@@ -111,15 +118,13 @@ final class PairingModel {
   /// Plain words for a pairing text that was refused.
   static func message(for error: Error) -> String {
     guard let error = error as? PairingPayload.PairingError else {
-      return "没能保存配对，请再试一次"
+      return "未能连接。请重试。"
     }
     switch error {
-    case .notAPairingCode: return "这不是织机的配对码"
-    case .malformed: return "配对码不完整，请在 Mac 上重新复制"
-    case .unsupportedVersion: return "这个配对码来自更新版本的织机，请先更新手机上的织机"
-    case .invalidHostKey:
-      return "配对码里缺少 Spark 的身份，无法确认连接对象。请在 Mac 上重新生成"
-    default: return "配对码无效，请在 Mac 上重新生成"
+    case .notAPairingCode: return "这不是 Mindloom 的配对码。"
+    case .malformed: return "配对码不完整。请在 Mac 上重新拷贝。"
+    case .unsupportedVersion: return "此配对码来自更新版本的 Mindloom。请先更新 iPhone 上的 Mindloom。"
+    default: return "配对码无法使用。请在 Mac 上重新拷贝。"
     }
   }
 }

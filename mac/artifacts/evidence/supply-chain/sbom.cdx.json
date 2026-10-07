@@ -312,11 +312,11 @@
         },
         {
           "name": "bestasr:network-behavior",
-          "value": "The selected production path calls only the local-directory model factory; downloader and Hub integration products are not imported."
+          "value": "The selected production path calls only the local-directory model factories (LLM and embedders); downloader and Hub integration products are not imported."
         },
         {
           "name": "bestasr:runtime-behavior",
-          "value": "Exact-pinned Qwen model construction, bounded KV cache, generation, and decoding behind the BestASR local-text protocol."
+          "value": "Exact-pinned Qwen model construction, bounded KV cache, generation, and decoding behind the BestASR local-text protocol. The MLXEmbedders product of the same pinned package (v12 search) runs the meaning search model (Qwen3-Embedding 0.6B) from a verified local directory on its own utility queue; its vectors stay in the library database."
         },
         {
           "name": "bestasr:distribution-impact",
@@ -942,7 +942,7 @@
       "version": "600.0.1"
     },
     {
-      "bom-ref": "dependency:swift-compatibility-span-runtime@Swift 6.2 compatibility runtime from Xcode 26.6 (17F113)",
+      "bom-ref": "dependency:swift-compatibility-span-runtime@Swift 6.2 compatibility runtime from Xcode 27.0 (27A266a)",
       "externalReferences": [
         {
           "type": "distribution",
@@ -952,7 +952,7 @@
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "78d57570ff3c5e67a3ca4b626035ce465a4895c7cd1fb23257e3cf0baca476c2"
+          "content": "7f7418f09c5503f3b90fb4ad556f90e1d253969b7a263874edda901b1e01decd"
         }
       ],
       "licenses": [
@@ -986,7 +986,7 @@
         }
       ],
       "type": "library",
-      "version": "Swift 6.2 compatibility runtime from Xcode 26.6 (17F113)"
+      "version": "Swift 6.2 compatibility runtime from Xcode 27.0 (27A266a)"
     },
     {
       "bom-ref": "dependency:argmax-oss-whisperkit-asr-probe@1.0.0+25c62997041c134b03ca82731ce2f6fd2cae1eb9",
@@ -1175,6 +1175,53 @@
       ],
       "type": "library",
       "version": "1.13.2+13d0ae6c539d2809d32f5eaa3ef1db0c459d0b24"
+    },
+    {
+      "bom-ref": "dependency:tencentmeeting-cli-tmeet@1.0.18 (Mindloom build v1.0.18-mindloom3)",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://github.com/TencentCloud/tencentmeeting-cli/releases/tag/v1.0.18"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e932f45752c639484e862b6dab31fb870ef1d0c5cae9c0107bef1de80a641c4a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "MIT"
+          }
+        }
+      ],
+      "name": "tencentmeeting-cli-tmeet",
+      "properties": [
+        {
+          "name": "bestasr:required-attribution",
+          "value": "Copyright (C) 2026 Tencent. All rights reserved."
+        },
+        {
+          "name": "bestasr:network-behavior",
+          "value": "Only while the Tencent Meeting entry is on: connects to api.meeting.qq.com, work.medialab.qq.com and meeting.tencent.com with the owner's Tencent Meeting login to read meeting lists and transcripts the account may view. Sends the login token, meeting and recording numbers, time windows, and request headers (openId with a random device number, macOS version, CLI version, command name; agent and model names empty). Never sends library content; crash reports are disabled by patch 0001. Go modules are fetched through the Go module proxy only at build time and verified against go.sum."
+        },
+        {
+          "name": "bestasr:runtime-behavior",
+          "value": "Started by the App with posix_spawn for one whitelisted command at a time (auth login --no-browser, auth status, record list, meeting list-ended, meeting get, record transcript-get), each run only after checking the helper is the code sealed into the running App, with a fixed environment, descriptors 0-3 only, and a time limit; the login master key arrives on descriptor 3 (patch 0003) and the system Keychain is never touched. Writes only <library>/entries/tencent-meeting/ (encrypted login, random device number, 7-day local command log; a reconnection makes the new login in tencent-meeting-new/ beside it). No background process is left running."
+        },
+        {
+          "name": "bestasr:distribution-impact",
+          "value": "Built from the vendored pinned source plus patches (third_party/tencentmeeting-cli, verified against upstream.sha256), signed with the App identity and hardened runtime at Contents/Helpers/tmeet, sealed and notarized with the App. The sha256 and sizeBytes here describe the vendored source tree manifest and its files. License snapshots ship in Legal/ (tencentmeeting-cli and the linked Go code)."
+        },
+        {
+          "name": "bestasr:shipped",
+          "value": "true"
+        }
+      ],
+      "type": "library",
+      "version": "1.0.18 (Mindloom build v1.0.18-mindloom3)"
     },
     {
       "bom-ref": "model:qwen3-asr-1.7b-8bit-a8379a2e@a8379a2e2f9e313c9292cdf1af4055ab56d50d55",
@@ -1703,6 +1750,85 @@
       "version": "21457c6f51ed54a7c16e988c0844db973815c137"
     },
     {
+      "bom-ref": "model:qwen3-4b-mlx-4bit-52a5ab34@52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://huggingface.co/Qwen/Qwen3-4B-MLX-4bit/tree/52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "34448b82c17d60fec9b65b1f093c115ddbaadc04beb1b0140b6bfed2e012a930"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "832dd9e00a68dd83b3c3fb9f5588dad7dcf337a0db50f7d9483f310cd292e92e"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "a3ac01d2a1fff2f02be25e1d2e9160f03db51dbee2cc17f13b774f646648adf9"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "76eae114d67a444c7296be7a6bc0409ecc15c340e113f1bac7572cb7d0928b6f"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e56a94b846a2dce7d1cc154ce58b9cfc4b8d99e8ffb74bfe256a265f4cbc7fb9"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "278844a566da15beab6e9068c57f606c50a99c440d4515206b871a8b5282b3de"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "d5d09f07b48c3086c508b30d1c9114bd1189145b74e982a265350c923acd8101"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "qwen3-4b-mlx-4bit-52a5ab34",
+      "properties": [
+        {
+          "name": "bestasr:required-attribution",
+          "value": "Qwen3 model by Alibaba Cloud. Retain the Apache License 2.0 text and the Alibaba Cloud copyright notice."
+        },
+        {
+          "name": "bestasr:network-behavior",
+          "value": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Audio, transcripts, dictionaries, speaker data, and app context never enter model requests. The runtime receives only the verified local directory and has no network access."
+        },
+        {
+          "name": "bestasr:runtime-behavior",
+          "value": "Qwen3 4B 4-bit generation through exact-pinned MLX Swift. Pinned for measurement only (SpokenModeProbeCLI --artifact large); the App loads the 1.7B, which measured better on Chinese rewrites."
+        },
+        {
+          "name": "bestasr:distribution-impact",
+          "value": "The 2,153,299,972-byte model is not stored in Git or bundled in the current app. The app can copy an explicitly provisioned exact folder into Application Support after license acceptance and digest verification; a future installer may stage only these declared files."
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495"
+    },
+    {
       "bom-ref": "model:fluid-speaker-diarization-coreml-1ed7a662@1ed7a662fdc7109e36d822db793ee6eebdaf8594",
       "externalReferences": [
         {
@@ -1828,14 +1954,89 @@
       ],
       "type": "machine-learning-model",
       "version": "1ed7a662fdc7109e36d822db793ee6eebdaf8594"
+    },
+    {
+      "bom-ref": "model:qwen3-embedding-0.6b-mlx-4bit-6c3ae708@6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://huggingface.co/mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ/tree/6c3ae70858513f1a78e9cdca3cae330d9075cd2a"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "e7dfa5b73fb2a03cbc8fb40c394e95b99f03348e237f7f28e7a1daf56a2169bb"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "3d773d5ee582eda445daeee23f7a2b76124011796df244ddb45e22638fdb7cde"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "90d82744cdb6b7d093f0b812fc21a49b6ffa9d0084a45428f0cfd01eb4adbe12"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0"
+        },
+        {
+          "alg": "SHA-256",
+          "content": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "name": "Apache-2.0"
+          }
+        }
+      ],
+      "name": "qwen3-embedding-0.6b-mlx-4bit-6c3ae708",
+      "properties": [
+        {
+          "name": "bestasr:required-attribution",
+          "value": "Qwen3-Embedding model by Alibaba Cloud (Apache License 2.0, declared in the model card); MLX 4-bit conversion by the mlx-community organization. Retain the Apache License 2.0 text and the Alibaba Cloud copyright notice."
+        },
+        {
+          "name": "bestasr:network-behavior",
+          "value": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Record text, queries, audio, dictionaries and speaker data never enter model requests. The runtime receives only the verified local directory and has no network access."
+        },
+        {
+          "name": "bestasr:runtime-behavior",
+          "value": "Qwen3-Embedding 0.6B 4-bit through the exact-pinned MLX Swift embedders library: last-token pooling, unit vectors, 512 tokens per piece. Loaded only while the search index is built or a search runs, on its own utility queue, paused while dictation or a recording is captured or recognized; released after two idle minutes. Vectors are derived data in the library database (16-bit floats), rebuilt when the model changes, never exported."
+        },
+        {
+          "name": "bestasr:distribution-impact",
+          "value": "The 351,226,578-byte model is not stored in Git or bundled in the current app. It is an optional download (its own license toggle); search works by characters without it."
+        }
+      ],
+      "type": "machine-learning-model",
+      "version": "6c3ae70858513f1a78e9cdca3cae330d9075cd2a"
     }
   ],
   "metadata": {
     "component": {
-      "bom-ref": "application:bestASR@0.1.0",
-      "name": "bestASR",
+      "bom-ref": "application:Mindloom@0.2.0",
+      "name": "Mindloom",
       "type": "application",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     "properties": [
       {

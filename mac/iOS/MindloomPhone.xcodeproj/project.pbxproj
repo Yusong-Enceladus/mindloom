@@ -7,49 +7,100 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0F27E0AB26FD854C04F8E789 /* MindloomPhoneIntake in Frameworks */ = {isa = PBXBuildFile; productRef = 9A2CFA4A8ECB36DC293B4ED9 /* MindloomPhoneIntake */; };
-		167BB83F2143F70A0961FCFC /* KeyboardCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2355B4C822163C7B871DDF2D /* KeyboardCard.swift */; };
-		1BD3AE4FC4FE605303430214 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BE1C2737CC7AB78799E6724 /* HomeView.swift */; };
+		03EFB7F6D9D3DD5101574E5F /* RecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E679F0E10E0A1FBB2BE8B474 /* RecordView.swift */; };
+		067A80478FF588C00DBC8334 /* ShareStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802F45543E4A9790AA6E744 /* ShareStore.swift */; };
+		08CB2937A6F776F4A4ED3836 /* PhoneRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E068D9710E4E0CDDC8047900 /* PhoneRulesTests.swift */; };
+		0F27E0AB26FD854C04F8E789 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7B93D145978A727D13A87CDC /* MindloomPhoneKit */; };
+		1255DEB144AE20CA3BAD89D2 /* PhoneTitleFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9734FDCF7C175E5CD6F201DF /* PhoneTitleFont.swift */; };
+		151F318850121EBA5E2A88E1 /* DebugVoiceBench.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C49760089B7AABD0C2DAD88 /* DebugVoiceBench.swift */; };
+		16A5CCA3C2BC43851D35358E /* WatchRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D77628A19D9D4B913C503D /* WatchRecorder.swift */; };
+		16F14E5B4F95411D3DEC970A /* SettingsViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BEC07EE4D4AFE2BBE40A4C5 /* SettingsViews.swift */; };
+		1A03655DD858E3A7096FEBA8 /* StartRecordingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF66CB3840DB8BC6013C27D /* StartRecordingIntent.swift */; };
 		1C26BD9DEEA7DCEC94083639 /* DebugScriptedRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C47FBB5B4BA58A38C8A16BF /* DebugScriptedRecognizer.swift */; };
-		1C42ECEC127AF6887FA61C65 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 3F73F92C77B5B936AB4989E1 /* MindloomLink */; };
-		1DFEB8ACAB41C1C363F0DDFE /* PairingDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4A8EC9F272F48C455A58C0 /* PairingDetailView.swift */; };
-		2660AE1FC0C175CAF5703933 /* PrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4014BBF1B93BD93579CCC7BB /* PrivacyView.swift */; };
+		1C42ECEC127AF6887FA61C65 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 085674F2908B0289ED1CED54 /* MindloomDesign */; };
+		1FC17C057E88C4F2C53969F9 /* VoiceLiveActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F886DE3BE55962EA6EED003D /* VoiceLiveActivity.swift */; };
+		2281A3C50DC5FA6FB17B5F1F /* MindloomWatchHandoff in Frameworks */ = {isa = PBXBuildFile; productRef = 64A1FD15ABC139C1A6F9FA77 /* MindloomWatchHandoff */; };
+		2372C774CCA91F2DD314345E /* MindloomWatchWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 817FA34ED5E992772724547B /* MindloomWatchWidgets.swift */; };
+		29AC3C8701DBB618E773602C /* ItemViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF44EF4F2CD700FDD7D546 /* ItemViews.swift */; };
 		2AB9F714A8AF6532F0D855A2 /* KeyboardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BABB97D15E52818A900AE4CB /* KeyboardModel.swift */; };
 		2AFCCEA08DDE00B6C50662C2 /* VoiceOnDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF24E2DE04E6EB924A3E937 /* VoiceOnDeviceTests.swift */; };
+		2C83CCAAAAD596F05004070D /* WatchLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CCB7E53626DF5F5D3377C52 /* WatchLink.swift */; };
+		2F8A698D1422158746033D72 /* WatchRecordingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203E1F5755DEF64030594FC6 /* WatchRecordingTests.swift */; };
 		30A0F7DC9CEF9E2182AA379F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9D53C159FB4954D895530E88 /* Assets.xcassets */; };
-		394FD45DE693A4AEA092EC7C /* LoomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523364137647734AF486596A /* LoomTheme.swift */; };
+		37F5179674ECE93AFD5DC385 /* MindloomWatchHandoff in Frameworks */ = {isa = PBXBuildFile; productRef = 34EE79C97344006DD20AE5A6 /* MindloomWatchHandoff */; };
+		3860443AABD14A70782D3F4B /* PermissionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B305DA39D6A9D36A1708F70 /* PermissionsView.swift */; };
+		3F6AEA7AD2C7702DE798BD6D /* PairView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BE89C14102F1BFD5B752DEC /* PairView.swift */; };
+		4018ED1083187717C54C62E4 /* MindloomPhoneIntake in Frameworks */ = {isa = PBXBuildFile; productRef = 9A2CFA4A8ECB36DC293B4ED9 /* MindloomPhoneIntake */; };
+		44FBF73D17184E9CC19E2F45 /* MindloomPhoneIntake in Frameworks */ = {isa = PBXBuildFile; productRef = 84545AA819AAF59174DB1EAA /* MindloomPhoneIntake */; };
+		454E7E4B04FB9E795C2D1F11 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 540A43FA4B51847C9C410FA1 /* HomeView.swift */; };
 		4814639A838DF8842C7369FC /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65DD5F9C31A41270B6BA5776 /* ShareViewController.swift */; };
+		4A085B9DF553E8A9B4720FD8 /* VoiceActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AF517ED26300BAAEA77EEA /* VoiceActivity.swift */; };
+		4C242176D43DEDAD274A5B78 /* TextRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB4680D742BDBADB57952BCC /* TextRules.swift */; };
+		4C74068F2D47535EC3249D51 /* WatchShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4436E5D1316DB981802D2A06 /* WatchShortcuts.swift */; };
+		4EE0B6B3AC4F152B414EB821 /* MindloomInboxSSH in Frameworks */ = {isa = PBXBuildFile; productRef = EE9264EC9133ED1DECABA75D /* MindloomInboxSSH */; };
+		584D361924D1BA285D3AE69D /* MindloomActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B13DEC44090DA9ED2A5E4C /* MindloomActivityWidget.swift */; };
 		5B68126431BE16E2AF062EB3 /* OnDeviceRecognizers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699BD17910AF296C6529998 /* OnDeviceRecognizers.swift */; };
-		60470B20300675B44324F4AA /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7B93D145978A727D13A87CDC /* MindloomPhoneKit */; };
-		64F7273C936DB51093AE86A9 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = B3198176EB9D851D29B5B166 /* MindloomLink */; };
-		69283C1BA550B4B29A40D4A3 /* LoomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523364137647734AF486596A /* LoomTheme.swift */; };
+		5DE126A3414C21A8C562F62B /* WatchRecordings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B0DB22A5D6063978E45A0E4 /* WatchRecordings.swift */; };
+		60470B20300675B44324F4AA /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 3F73F92C77B5B936AB4989E1 /* MindloomLink */; };
+		62A76CDA8F919D60CAC57F38 /* MindloomWatch.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 763B0DE2642F0A132BEEED70 /* MindloomWatch.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		63365DCB934290C3CADA4959 /* DebugLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC749DFE8E563A631406BCB /* DebugLaunch.swift */; };
+		64F7273C936DB51093AE86A9 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 8EE38236583AE1AFAB7952FA /* MindloomDesign */; };
+		68B8FAD255CB93D51C2E856D /* PhoneWatchLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = A92D5E99EA2940D2D7B71F1A /* PhoneWatchLink.swift */; };
 		6A3AB91B0E349BF2249C2D75 /* VoiceSessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E326EF2F54D20432FAC4034 /* VoiceSessionModel.swift */; };
-		7C7020895F54CEB406C56A99 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFE4A94CB19582B935D64BDC /* MindloomPhoneKit */; };
+		6C8E7422AEFC13343DAB5BB5 /* StartRecordingIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AF66CB3840DB8BC6013C27D /* StartRecordingIntent.swift */; };
+		71FE5F61B53A26A009A53871 /* PhoneTitleFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9734FDCF7C175E5CD6F201DF /* PhoneTitleFont.swift */; };
+		750C6EC2FF9B5C3C0BE566FB /* MindloomActivity.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6C42D9A6663CA28EAEAD9D19 /* MindloomActivity.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7C7020895F54CEB406C56A99 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = B3198176EB9D851D29B5B166 /* MindloomLink */; };
 		7DDDFEF5A159F13716674A9E /* Acknowledgements.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6926734E60C5983D18E6E648 /* Acknowledgements.txt */; };
-		7E4D9C5C763FBC55D9261D60 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D1D882D9373FE78178BA33E /* MindloomPhoneKit */; };
-		7ECBDFFFFB2C445A2C2DCE66 /* MindloomInboxSSH in Frameworks */ = {isa = PBXBuildFile; productRef = CBE14B0E757E97857296296C /* MindloomInboxSSH */; };
-		850B032292647F965A6568D7 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 550AA0166DDA0F40FD71FD5D /* MindloomLink */; };
-		86FB072D613DE965589D2B21 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = DE6968301F800D12FA6EB0EC /* MindloomPhoneKit */; };
-		8EA42EE24A8500DD210CEB79 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 036BF41C1B4CB2C621ED9EC0 /* MindloomLink */; };
-		9925EA8D73E2AEDCBB3C6D2D /* LoomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 523364137647734AF486596A /* LoomTheme.swift */; };
+		7E4D9C5C763FBC55D9261D60 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 550AA0166DDA0F40FD71FD5D /* MindloomLink */; };
+		7ECBDFFFFB2C445A2C2DCE66 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = DFE4A94CB19582B935D64BDC /* MindloomPhoneKit */; };
+		820400E6A8A88F952E989F21 /* MindloomWatchWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B639DD76594425C84A2873AD /* MindloomWatchWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		83182A4945FB6860DF33F058 /* MindloomWatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D531F5CAB55A8758F38B7553 /* MindloomWatchApp.swift */; };
+		850B032292647F965A6568D7 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 885201A0B6BAB970B527DC0B /* MindloomDesign */; };
+		86FB072D613DE965589D2B21 /* MindloomLink in Frameworks */ = {isa = PBXBuildFile; productRef = 036BF41C1B4CB2C621ED9EC0 /* MindloomLink */; };
+		896AA76C932DCD66408D69B0 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2843CB832B855987199AD6E1 /* RootView.swift */; };
+		8CA9DAC9CE9C092437A0F34F /* MindloomWatchUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DE72ABC579B809DC972167F /* MindloomWatchUITests.swift */; };
+		8EA42EE24A8500DD210CEB79 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = CEEB47C04C0040DA079F3922 /* MindloomDesign */; };
+		9053D0424976E87C42FD4AEE /* SpeakBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97C615DC791942B83EFD2ABD /* SpeakBar.swift */; };
+		92470B326110FE88E1B4E6AF /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7825B383B695298F296CF5E7 /* WelcomeView.swift */; };
+		93FF778EC3DAC047F960B136 /* PhoneUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6ED0C6EC60D882E5B95E850D /* PhoneUI.swift */; };
+		999D2B36406F9D1753ED8FF4 /* PhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C66DADAB9C56E47E769607 /* PhotoViewer.swift */; };
 		9F588A12A89FEE17E1AB066C /* SyntheticSpeech.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F61DC9FE12CC7BB6148955D /* SyntheticSpeech.swift */; };
 		A25501D519BE6207991146E3 /* VoiceAudio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C96EE72B113829B5EF2E22C /* VoiceAudio.swift */; };
+		A3C09AA148B0C82359E18890 /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = DE6968301F800D12FA6EB0EC /* MindloomPhoneKit */; };
 		A5C3F50EF59ACF11567BA53E /* PairingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44E9CFFF4D3276E2A972AFF7 /* PairingModelTests.swift */; };
+		A7AD15D99D1E6AB1DEB4EEC4 /* TitleFontTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDD610B4091FF633A2E18A29 /* TitleFontTests.swift */; };
 		A8A0D29B3B2144826661B328 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C2AE23B6D7244B55DC30B21 /* KeyboardView.swift */; };
+		A8E749130FC8803087A5E27E /* WatchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC579620EF949DF92146AB26 /* WatchModel.swift */; };
+		A92855819C968996259A4803 /* SharedLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85EB8EEACCC5F70628EDC32 /* SharedLinkTests.swift */; };
 		AAA0AC953BB589A0A02C1C96 /* MindloomKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB7D8E11D18162FD70126F13 /* MindloomKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B3FD705CBCFB1BF3ACB1C5A2 /* MindloomInboxSSH in Frameworks */ = {isa = PBXBuildFile; productRef = CBE14B0E757E97857296296C /* MindloomInboxSSH */; };
+		B65686A65503992662F1D448 /* HomeStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0A7D9755CE7FEA205DB1683 /* HomeStatus.swift */; };
+		BB121BD8BD899D04B9FA5182 /* TalkController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B32EB6207DFFF95786417B42 /* TalkController.swift */; };
 		BC9BC4DAABFFCE827F9FB20C /* PairingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 276172C1A5EEBA4BDDAA0341 /* PairingModel.swift */; };
 		C2EEFB9FC12378D3537198DA /* SkeletonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 560E7948442F8F8E384E83C8 /* SkeletonTests.swift */; };
-		C4BA17404144C001C0AC19A7 /* OutboxTimeLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10D98E2A94D1D9F19EBFABF9 /* OutboxTimeLabelTests.swift */; };
-		CB9D38FFE4EE95A7532123CB /* PairingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA7D5D5A5C91A6F3479EC8D /* PairingView.swift */; };
 		CDD4855EC508D687304834F2 /* KeyboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C24133396899039C499789 /* KeyboardViewController.swift */; };
 		CE4D188C053FA078314AB7A1 /* RecognizerProbeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 874E89204C15D2154A62332D /* RecognizerProbeTests.swift */; };
+		CF769C7D3B56B874346A34A6 /* FrozenKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A40C1FC1E027EBE95724A04 /* FrozenKeyboard.swift */; };
+		D0510DAD8CAEBEF600DDD336 /* VoiceActivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6AF517ED26300BAAEA77EEA /* VoiceActivity.swift */; };
 		D2773F68EA6A9AAD0ECAF449 /* MindloomShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 97989A960D5D736C890DE471 /* MindloomShare.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		DDDC1717D4953B82DC40BCCE /* MindloomPhoneIntake in Frameworks */ = {isa = PBXBuildFile; productRef = 84545AA819AAF59174DB1EAA /* MindloomPhoneIntake */; };
+		DDDC1717D4953B82DC40BCCE /* MindloomPhoneKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6D1D882D9373FE78178BA33E /* MindloomPhoneKit */; };
+		E130A5BCF7679647B839A546 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 47A041623D1609E1C07FE3B4 /* MindloomDesign */; };
+		E172E9BC8906694BBFCA9D65 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 131B4D391496F02A7A646BF4 /* Assets.xcassets */; };
+		E1A0DBD9F928242ED5B2CA7C /* MindloomWatchHandoff in Frameworks */ = {isa = PBXBuildFile; productRef = 4EA636EB90EEF8EADBDDADCA /* MindloomWatchHandoff */; };
+		E8DA38B5197BA8D3A0294DDF /* WatchTranscriber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BC3898F5CEE566275E4D32 /* WatchTranscriber.swift */; };
 		F4C383919A8F0025B6F3B8FB /* DeliveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EE8B9F2B8C18A2FF059530F /* DeliveryService.swift */; };
 		F588106162F299DD0F3589AB /* MindloomPhoneApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC8B76F8F7B6E4CD53E55F5 /* MindloomPhoneApp.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		05EFE8176DB28DD64171E00E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B322C44C6DD58D2BDB13A357 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 72783C16EAB6EDCA16201140;
+			remoteInfo = MindloomActivity;
+		};
 		191991FC7A768392D5A57B89 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = B322C44C6DD58D2BDB13A357 /* Project object */;
@@ -63,6 +114,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 91EE4C23234654E7EFB838B7;
 			remoteInfo = MindloomPhone;
+		};
+		6CA8F4036CD9544ACEDAA047 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B322C44C6DD58D2BDB13A357 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 496F6470E487E802698BC033;
+			remoteInfo = MindloomWatch;
+		};
+		77D9DB532DC9D3AD463B0283 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B322C44C6DD58D2BDB13A357 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 496F6470E487E802698BC033;
+			remoteInfo = MindloomWatch;
+		};
+		BFBDB27444F8E7BC342B166D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = B322C44C6DD58D2BDB13A357 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 93AB7705DC5D3CA7DB68AE02;
+			remoteInfo = MindloomWatchWidgets;
 		};
 		DF5E6E273FBE2D55DD399F28 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -80,8 +152,31 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				750C6EC2FF9B5C3C0BE566FB /* MindloomActivity.appex in Embed Foundation Extensions */,
 				AAA0AC953BB589A0A02C1C96 /* MindloomKeyboard.appex in Embed Foundation Extensions */,
 				D2773F68EA6A9AAD0ECAF449 /* MindloomShare.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E788B1162ABD600CAD937B34 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				62A76CDA8F919D60CAC57F38 /* MindloomWatch.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F82ACA075F02B22799ECE40E /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				820400E6A8A88F952E989F21 /* MindloomWatchWidgets.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,42 +184,82 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		04BC3898F5CEE566275E4D32 /* WatchTranscriber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchTranscriber.swift; sourceTree = "<group>"; };
 		06F6DF14FECC07DF0F8D9ECA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		09025B7BF78ADE4FC14E9456 /* MindloomKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MindloomKeyboard.entitlements; sourceTree = "<group>"; };
-		10D98E2A94D1D9F19EBFABF9 /* OutboxTimeLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutboxTimeLabelTests.swift; sourceTree = "<group>"; };
-		1BE1C2737CC7AB78799E6724 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		0C49760089B7AABD0C2DAD88 /* DebugVoiceBench.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugVoiceBench.swift; sourceTree = "<group>"; };
+		130FFCB012BC4A8F4D204B4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		131B4D391496F02A7A646BF4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		13D77628A19D9D4B913C503D /* WatchRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRecorder.swift; sourceTree = "<group>"; };
 		1E326EF2F54D20432FAC4034 /* VoiceSessionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceSessionModel.swift; sourceTree = "<group>"; };
 		1E42390ED992E1F2A38A0597 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		2355B4C822163C7B871DDF2D /* KeyboardCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardCard.swift; sourceTree = "<group>"; };
+		1FBAC85D3C8ACEEA29CE2476 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		1FC749DFE8E563A631406BCB /* DebugLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLaunch.swift; sourceTree = "<group>"; };
+		203E1F5755DEF64030594FC6 /* WatchRecordingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRecordingTests.swift; sourceTree = "<group>"; };
+		20EF44EF4F2CD700FDD7D546 /* ItemViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemViews.swift; sourceTree = "<group>"; };
 		276172C1A5EEBA4BDDAA0341 /* PairingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingModel.swift; sourceTree = "<group>"; };
+		2843CB832B855987199AD6E1 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		2C96EE72B113829B5EF2E22C /* VoiceAudio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceAudio.swift; sourceTree = "<group>"; };
+		2DE72ABC579B809DC972167F /* MindloomWatchUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomWatchUITests.swift; sourceTree = "<group>"; };
 		2F61DC9FE12CC7BB6148955D /* SyntheticSpeech.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyntheticSpeech.swift; sourceTree = "<group>"; };
+		302CF54A53EA39FBBEBA27F1 /* MindloomDesign */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomDesign; path = ../Packages/MindloomDesign; sourceTree = SOURCE_ROOT; };
 		3380D23C21AF80027949BB7B /* MindloomLink */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomLink; path = ../Packages/MindloomLink; sourceTree = SOURCE_ROOT; };
+		3A40C1FC1E027EBE95724A04 /* FrozenKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrozenKeyboard.swift; sourceTree = "<group>"; };
 		3EC8B76F8F7B6E4CD53E55F5 /* MindloomPhoneApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomPhoneApp.swift; sourceTree = "<group>"; };
-		4014BBF1B93BD93579CCC7BB /* PrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyView.swift; sourceTree = "<group>"; };
+		4436E5D1316DB981802D2A06 /* WatchShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchShortcuts.swift; sourceTree = "<group>"; };
 		44E9CFFF4D3276E2A972AFF7 /* PairingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingModelTests.swift; sourceTree = "<group>"; };
 		45C24133396899039C499789 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		4B00AF22BE0CE335E9286272 /* MindloomPhone.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MindloomPhone.entitlements; sourceTree = "<group>"; };
+		4B305DA39D6A9D36A1708F70 /* PermissionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsView.swift; sourceTree = "<group>"; };
 		4C47FBB5B4BA58A38C8A16BF /* DebugScriptedRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugScriptedRecognizer.swift; sourceTree = "<group>"; };
-		4EA7D5D5A5C91A6F3479EC8D /* PairingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingView.swift; sourceTree = "<group>"; };
-		523364137647734AF486596A /* LoomTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoomTheme.swift; sourceTree = "<group>"; };
+		540A43FA4B51847C9C410FA1 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		560E7948442F8F8E384E83C8 /* SkeletonTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonTests.swift; sourceTree = "<group>"; };
+		5B0DB22A5D6063978E45A0E4 /* WatchRecordings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchRecordings.swift; sourceTree = "<group>"; };
+		5BE89C14102F1BFD5B752DEC /* PairView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairView.swift; sourceTree = "<group>"; };
 		5EE8B9F2B8C18A2FF059530F /* DeliveryService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryService.swift; sourceTree = "<group>"; };
 		65C3BA0F7F3B6B41D7E32F85 /* MindloomShare.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MindloomShare.entitlements; sourceTree = "<group>"; };
 		65DD5F9C31A41270B6BA5776 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		6926734E60C5983D18E6E648 /* Acknowledgements.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Acknowledgements.txt; sourceTree = "<group>"; };
+		6C42D9A6663CA28EAEAD9D19 /* MindloomActivity.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MindloomActivity.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		6ED0C6EC60D882E5B95E850D /* PhoneUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneUI.swift; sourceTree = "<group>"; };
+		73C66DADAB9C56E47E769607 /* PhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoViewer.swift; sourceTree = "<group>"; };
+		763B0DE2642F0A132BEEED70 /* MindloomWatch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MindloomWatch.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7825B383B695298F296CF5E7 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		79B13DEC44090DA9ED2A5E4C /* MindloomActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomActivityWidget.swift; sourceTree = "<group>"; };
+		79B33533F88BA6B7E55B5FB2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		7AF66CB3840DB8BC6013C27D /* StartRecordingIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartRecordingIntent.swift; sourceTree = "<group>"; };
+		7BEC07EE4D4AFE2BBE40A4C5 /* SettingsViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViews.swift; sourceTree = "<group>"; };
 		7C2AE23B6D7244B55DC30B21 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		80188F026FC226A1BC6FEF47 /* MindloomWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MindloomWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		817FA34ED5E992772724547B /* MindloomWatchWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomWatchWidgets.swift; sourceTree = "<group>"; };
 		8699BD17910AF296C6529998 /* OnDeviceRecognizers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceRecognizers.swift; sourceTree = "<group>"; };
 		874E89204C15D2154A62332D /* RecognizerProbeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecognizerProbeTests.swift; sourceTree = "<group>"; };
+		8802F45543E4A9790AA6E744 /* ShareStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareStore.swift; sourceTree = "<group>"; };
 		89C9D962AE2B271B62420DFD /* MindloomPhone.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MindloomPhone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8CCB7E53626DF5F5D3377C52 /* WatchLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchLink.swift; sourceTree = "<group>"; };
 		8E727C93D76822887AAE4F4C /* MindloomPhoneKit */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomPhoneKit; path = ../Packages/MindloomPhoneKit; sourceTree = SOURCE_ROOT; };
+		9734FDCF7C175E5CD6F201DF /* PhoneTitleFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneTitleFont.swift; sourceTree = "<group>"; };
 		97989A960D5D736C890DE471 /* MindloomShare.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MindloomShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		97C615DC791942B83EFD2ABD /* SpeakBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeakBar.swift; sourceTree = "<group>"; };
 		9D53C159FB4954D895530E88 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1EF52AD891B9B24E69EFDE0 /* MindloomWatchHandoff */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomWatchHandoff; path = ../Packages/MindloomWatchHandoff; sourceTree = SOURCE_ROOT; };
+		A92D5E99EA2940D2D7B71F1A /* PhoneWatchLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneWatchLink.swift; sourceTree = "<group>"; };
 		AB7D8E11D18162FD70126F13 /* MindloomKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = MindloomKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B32EB6207DFFF95786417B42 /* TalkController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TalkController.swift; sourceTree = "<group>"; };
+		B639DD76594425C84A2873AD /* MindloomWatchWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MindloomWatchWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		BABB97D15E52818A900AE4CB /* KeyboardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardModel.swift; sourceTree = "<group>"; };
 		BE3C1EA0D467E00508E16017 /* MindloomPhoneTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = MindloomPhoneTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		D531F5CAB55A8758F38B7553 /* MindloomWatchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomWatchApp.swift; sourceTree = "<group>"; };
+		D6AF517ED26300BAAEA77EEA /* VoiceActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceActivity.swift; sourceTree = "<group>"; };
 		DFF24E2DE04E6EB924A3E937 /* VoiceOnDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOnDeviceTests.swift; sourceTree = "<group>"; };
-		EF4A8EC9F272F48C455A58C0 /* PairingDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingDetailView.swift; sourceTree = "<group>"; };
+		E068D9710E4E0CDDC8047900 /* PhoneRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneRulesTests.swift; sourceTree = "<group>"; };
+		E0A7D9755CE7FEA205DB1683 /* HomeStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeStatus.swift; sourceTree = "<group>"; };
+		E679F0E10E0A1FBB2BE8B474 /* RecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordView.swift; sourceTree = "<group>"; };
+		EDD610B4091FF633A2E18A29 /* TitleFontTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleFontTests.swift; sourceTree = "<group>"; };
+		F85EB8EEACCC5F70628EDC32 /* SharedLinkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLinkTests.swift; sourceTree = "<group>"; };
+		F886DE3BE55962EA6EED003D /* VoiceLiveActivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceLiveActivity.swift; sourceTree = "<group>"; };
+		FB4680D742BDBADB57952BCC /* TextRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRules.swift; sourceTree = "<group>"; };
+		FC579620EF949DF92146AB26 /* WatchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchModel.swift; sourceTree = "<group>"; };
 		FE83623A63A184CD02A18667 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,9 +268,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				850B032292647F965A6568D7 /* MindloomLink in Frameworks */,
-				7E4D9C5C763FBC55D9261D60 /* MindloomPhoneKit in Frameworks */,
-				DDDC1717D4953B82DC40BCCE /* MindloomPhoneIntake in Frameworks */,
+				850B032292647F965A6568D7 /* MindloomDesign in Frameworks */,
+				7E4D9C5C763FBC55D9261D60 /* MindloomLink in Frameworks */,
+				DDDC1717D4953B82DC40BCCE /* MindloomPhoneKit in Frameworks */,
+				44FBF73D17184E9CC19E2F45 /* MindloomPhoneIntake in Frameworks */,
+				E1A0DBD9F928242ED5B2CA7C /* MindloomWatchHandoff in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,8 +280,17 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8EA42EE24A8500DD210CEB79 /* MindloomLink in Frameworks */,
-				86FB072D613DE965589D2B21 /* MindloomPhoneKit in Frameworks */,
+				8EA42EE24A8500DD210CEB79 /* MindloomDesign in Frameworks */,
+				86FB072D613DE965589D2B21 /* MindloomLink in Frameworks */,
+				A3C09AA148B0C82359E18890 /* MindloomPhoneKit in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7932F5FA7307CD8D2043C35B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37F5179674ECE93AFD5DC385 /* MindloomWatchHandoff in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,9 +298,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				64F7273C936DB51093AE86A9 /* MindloomLink in Frameworks */,
-				7C7020895F54CEB406C56A99 /* MindloomPhoneKit in Frameworks */,
-				7ECBDFFFFB2C445A2C2DCE66 /* MindloomInboxSSH in Frameworks */,
+				64F7273C936DB51093AE86A9 /* MindloomDesign in Frameworks */,
+				7C7020895F54CEB406C56A99 /* MindloomLink in Frameworks */,
+				7ECBDFFFFB2C445A2C2DCE66 /* MindloomPhoneKit in Frameworks */,
+				B3FD705CBCFB1BF3ACB1C5A2 /* MindloomInboxSSH in Frameworks */,
+				2281A3C50DC5FA6FB17B5F1F /* MindloomWatchHandoff in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B73B9441A9E1C6BD124C029B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E130A5BCF7679647B839A546 /* MindloomDesign in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,9 +318,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C42ECEC127AF6887FA61C65 /* MindloomLink in Frameworks */,
-				60470B20300675B44324F4AA /* MindloomPhoneKit in Frameworks */,
-				0F27E0AB26FD854C04F8E789 /* MindloomPhoneIntake in Frameworks */,
+				1C42ECEC127AF6887FA61C65 /* MindloomDesign in Frameworks */,
+				60470B20300675B44324F4AA /* MindloomLink in Frameworks */,
+				0F27E0AB26FD854C04F8E789 /* MindloomPhoneKit in Frameworks */,
+				4018ED1083187717C54C62E4 /* MindloomPhoneIntake in Frameworks */,
+				4EE0B6B3AC4F152B414EB821 /* MindloomInboxSSH in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -175,8 +333,11 @@
 			isa = PBXGroup;
 			children = (
 				4C47FBB5B4BA58A38C8A16BF /* DebugScriptedRecognizer.swift */,
+				0C49760089B7AABD0C2DAD88 /* DebugVoiceBench.swift */,
 				8699BD17910AF296C6529998 /* OnDeviceRecognizers.swift */,
+				B32EB6207DFFF95786417B42 /* TalkController.swift */,
 				2C96EE72B113829B5EF2E22C /* VoiceAudio.swift */,
+				F886DE3BE55962EA6EED003D /* VoiceLiveActivity.swift */,
 				1E326EF2F54D20432FAC4034 /* VoiceSessionModel.swift */,
 			);
 			path = Voice;
@@ -189,11 +350,14 @@
 				1E42390ED992E1F2A38A0597 /* Info.plist */,
 				4B00AF22BE0CE335E9286272 /* MindloomPhone.entitlements */,
 				3EC8B76F8F7B6E4CD53E55F5 /* MindloomPhoneApp.swift */,
+				B342452AFEBC69C5452FB806 /* Debug */,
 				CA4BD3F09C5AA8DE37FF54B6 /* Delivery */,
+				8F44AAA213FD509B46C38303 /* Model */,
 				69BD7CBF8DB67DFB2B3206B8 /* Pairing */,
 				570476485A238A8E6A7EE184 /* Resources */,
 				B8E34B6C483C24CD37F7A24F /* Views */,
 				013AFC4F914AADCDA735C7E6 /* Voice */,
+				BDC99EEF64C7837EFE8794F2 /* Watch */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -201,23 +365,61 @@
 		172066B207B82C6396618D32 /* MindloomPhoneTests */ = {
 			isa = PBXGroup;
 			children = (
-				10D98E2A94D1D9F19EBFABF9 /* OutboxTimeLabelTests.swift */,
 				44E9CFFF4D3276E2A972AFF7 /* PairingModelTests.swift */,
+				E068D9710E4E0CDDC8047900 /* PhoneRulesTests.swift */,
 				874E89204C15D2154A62332D /* RecognizerProbeTests.swift */,
+				F85EB8EEACCC5F70628EDC32 /* SharedLinkTests.swift */,
 				560E7948442F8F8E384E83C8 /* SkeletonTests.swift */,
 				2F61DC9FE12CC7BB6148955D /* SyntheticSpeech.swift */,
+				EDD610B4091FF633A2E18A29 /* TitleFontTests.swift */,
 				DFF24E2DE04E6EB924A3E937 /* VoiceOnDeviceTests.swift */,
+				203E1F5755DEF64030594FC6 /* WatchRecordingTests.swift */,
 			);
 			path = MindloomPhoneTests;
+			sourceTree = "<group>";
+		};
+		1E454EDBF9DA603A09BE3FBD /* WatchWidgets */ = {
+			isa = PBXGroup;
+			children = (
+				1FBAC85D3C8ACEEA29CE2476 /* Info.plist */,
+				817FA34ED5E992772724547B /* MindloomWatchWidgets.swift */,
+			);
+			path = WatchWidgets;
+			sourceTree = "<group>";
+		};
+		21A90A0C9771621C0A4BEFEC /* MindloomWatchUITests */ = {
+			isa = PBXGroup;
+			children = (
+				2DE72ABC579B809DC972167F /* MindloomWatchUITests.swift */,
+			);
+			path = MindloomWatchUITests;
+			sourceTree = "<group>";
+		};
+		257AEC2F109ED466D0969397 /* Activity */ = {
+			isa = PBXGroup;
+			children = (
+				D6AF517ED26300BAAEA77EEA /* VoiceActivity.swift */,
+			);
+			path = Activity;
 			sourceTree = "<group>";
 		};
 		2FF7BD87ED804A53EAE89D87 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				302CF54A53EA39FBBEBA27F1 /* MindloomDesign */,
 				3380D23C21AF80027949BB7B /* MindloomLink */,
 				8E727C93D76822887AAE4F4C /* MindloomPhoneKit */,
+				A1EF52AD891B9B24E69EFDE0 /* MindloomWatchHandoff */,
 			);
 			name = Packages;
+			sourceTree = "<group>";
+		};
+		51B591567BF5F908C51FE6F5 /* WatchShared */ = {
+			isa = PBXGroup;
+			children = (
+				7AF66CB3840DB8BC6013C27D /* StartRecordingIntent.swift */,
+			);
+			path = WatchShared;
 			sourceTree = "<group>";
 		};
 		570476485A238A8E6A7EE184 /* Resources */ = {
@@ -228,56 +430,142 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		64292DAB32CA247CF7A04055 /* Shared */ = {
+		5A79A186958CC6E424409284 /* LiveActivity */ = {
 			isa = PBXGroup;
 			children = (
-				523364137647734AF486596A /* LoomTheme.swift */,
+				130FFCB012BC4A8F4D204B4A /* Info.plist */,
+				79B13DEC44090DA9ED2A5E4C /* MindloomActivityWidget.swift */,
 			);
-			path = Shared;
+			path = LiveActivity;
+			sourceTree = "<group>";
+		};
+		5D3C0568C237450B469EF092 /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				9734FDCF7C175E5CD6F201DF /* PhoneTitleFont.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		69BD7CBF8DB67DFB2B3206B8 /* Pairing */ = {
 			isa = PBXGroup;
 			children = (
 				276172C1A5EEBA4BDDAA0341 /* PairingModel.swift */,
-				4EA7D5D5A5C91A6F3479EC8D /* PairingView.swift */,
 			);
 			path = Pairing;
+			sourceTree = "<group>";
+		};
+		6C609AC61E5845CA65DB126E /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				7BEC07EE4D4AFE2BBE40A4C5 /* SettingsViews.swift */,
+			);
+			path = Settings;
 			sourceTree = "<group>";
 		};
 		6D70CD4853C16F5E417A19D1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
+				6C42D9A6663CA28EAEAD9D19 /* MindloomActivity.appex */,
 				AB7D8E11D18162FD70126F13 /* MindloomKeyboard.appex */,
 				89C9D962AE2B271B62420DFD /* MindloomPhone.app */,
 				BE3C1EA0D467E00508E16017 /* MindloomPhoneTests.xctest */,
 				97989A960D5D736C890DE471 /* MindloomShare.appex */,
+				763B0DE2642F0A132BEEED70 /* MindloomWatch.app */,
+				80188F026FC226A1BC6FEF47 /* MindloomWatchUITests.xctest */,
+				B639DD76594425C84A2873AD /* MindloomWatchWidgets.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		76EC6761205599EB7F689076 /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				131B4D391496F02A7A646BF4 /* Assets.xcassets */,
+				79B33533F88BA6B7E55B5FB2 /* Info.plist */,
+				D531F5CAB55A8758F38B7553 /* MindloomWatchApp.swift */,
+				E679F0E10E0A1FBB2BE8B474 /* RecordView.swift */,
+				8CCB7E53626DF5F5D3377C52 /* WatchLink.swift */,
+				FC579620EF949DF92146AB26 /* WatchModel.swift */,
+				13D77628A19D9D4B913C503D /* WatchRecorder.swift */,
+				4436E5D1316DB981802D2A06 /* WatchShortcuts.swift */,
+			);
+			path = Watch;
+			sourceTree = "<group>";
+		};
+		8F44AAA213FD509B46C38303 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E0A7D9755CE7FEA205DB1683 /* HomeStatus.swift */,
+				FB4680D742BDBADB57952BCC /* TextRules.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		96A3A02C475D40F7538405D2 = {
 			isa = PBXGroup;
 			children = (
+				257AEC2F109ED466D0969397 /* Activity */,
 				038F4D5C813A8987F83F569E /* App */,
+				5D3C0568C237450B469EF092 /* Common */,
 				D1E6B8CA16B352C1A37F8FE7 /* Keyboard */,
+				5A79A186958CC6E424409284 /* LiveActivity */,
 				2FF7BD87ED804A53EAE89D87 /* Packages */,
 				C8CC1179926D4133CC2216EF /* Share */,
-				64292DAB32CA247CF7A04055 /* Shared */,
 				FC72530F2E62EBF345E577D8 /* Tests */,
+				76EC6761205599EB7F689076 /* Watch */,
+				51B591567BF5F908C51FE6F5 /* WatchShared */,
+				1E454EDBF9DA603A09BE3FBD /* WatchWidgets */,
 				6D70CD4853C16F5E417A19D1 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		B342452AFEBC69C5452FB806 /* Debug */ = {
+			isa = PBXGroup;
+			children = (
+				1FC749DFE8E563A631406BCB /* DebugLaunch.swift */,
+			);
+			path = Debug;
+			sourceTree = "<group>";
+		};
+		B55829F741E5F738FDE87588 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				5BE89C14102F1BFD5B752DEC /* PairView.swift */,
+				4B305DA39D6A9D36A1708F70 /* PermissionsView.swift */,
+				7825B383B695298F296CF5E7 /* WelcomeView.swift */,
+			);
+			path = Onboarding;
 			sourceTree = "<group>";
 		};
 		B8E34B6C483C24CD37F7A24F /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				1BE1C2737CC7AB78799E6724 /* HomeView.swift */,
-				2355B4C822163C7B871DDF2D /* KeyboardCard.swift */,
-				EF4A8EC9F272F48C455A58C0 /* PairingDetailView.swift */,
-				4014BBF1B93BD93579CCC7BB /* PrivacyView.swift */,
+				2843CB832B855987199AD6E1 /* RootView.swift */,
+				C20B246C1320E74D625DCF6A /* Common */,
+				D8B3EA91231ED57734E3AB3F /* Home */,
+				B55829F741E5F738FDE87588 /* Onboarding */,
+				6C609AC61E5845CA65DB126E /* Settings */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		BDC99EEF64C7837EFE8794F2 /* Watch */ = {
+			isa = PBXGroup;
+			children = (
+				A92D5E99EA2940D2D7B71F1A /* PhoneWatchLink.swift */,
+				5B0DB22A5D6063978E45A0E4 /* WatchRecordings.swift */,
+				04BC3898F5CEE566275E4D32 /* WatchTranscriber.swift */,
+			);
+			path = Watch;
+			sourceTree = "<group>";
+		};
+		C20B246C1320E74D625DCF6A /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				6ED0C6EC60D882E5B95E850D /* PhoneUI.swift */,
+			);
+			path = Common;
 			sourceTree = "<group>";
 		};
 		C8CC1179926D4133CC2216EF /* Share */ = {
@@ -285,6 +573,7 @@
 			children = (
 				FE83623A63A184CD02A18667 /* Info.plist */,
 				65C3BA0F7F3B6B41D7E32F85 /* MindloomShare.entitlements */,
+				8802F45543E4A9790AA6E744 /* ShareStore.swift */,
 				65DD5F9C31A41270B6BA5776 /* ShareViewController.swift */,
 			);
 			path = Share;
@@ -301,6 +590,7 @@
 		D1E6B8CA16B352C1A37F8FE7 /* Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				3A40C1FC1E027EBE95724A04 /* FrozenKeyboard.swift */,
 				06F6DF14FECC07DF0F8D9ECA /* Info.plist */,
 				BABB97D15E52818A900AE4CB /* KeyboardModel.swift */,
 				7C2AE23B6D7244B55DC30B21 /* KeyboardView.swift */,
@@ -310,10 +600,22 @@
 			path = Keyboard;
 			sourceTree = "<group>";
 		};
+		D8B3EA91231ED57734E3AB3F /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				540A43FA4B51847C9C410FA1 /* HomeView.swift */,
+				20EF44EF4F2CD700FDD7D546 /* ItemViews.swift */,
+				73C66DADAB9C56E47E769607 /* PhotoViewer.swift */,
+				97C615DC791942B83EFD2ABD /* SpeakBar.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
 		FC72530F2E62EBF345E577D8 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				172066B207B82C6396618D32 /* MindloomPhoneTests */,
+				21A90A0C9771621C0A4BEFEC /* MindloomWatchUITests */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -334,12 +636,55 @@
 			);
 			name = MindloomShare;
 			packageProductDependencies = (
+				085674F2908B0289ED1CED54 /* MindloomDesign */,
 				3F73F92C77B5B936AB4989E1 /* MindloomLink */,
 				7B93D145978A727D13A87CDC /* MindloomPhoneKit */,
 				9A2CFA4A8ECB36DC293B4ED9 /* MindloomPhoneIntake */,
+				EE9264EC9133ED1DECABA75D /* MindloomInboxSSH */,
 			);
 			productName = MindloomShare;
 			productReference = 97989A960D5D736C890DE471 /* MindloomShare.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		496F6470E487E802698BC033 /* MindloomWatch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F4091C9F601565A8DA572E4B /* Build configuration list for PBXNativeTarget "MindloomWatch" */;
+			buildPhases = (
+				52ABD8DC407BA958D4B60563 /* Sources */,
+				D83CFF4D739B2FA4164F547A /* Resources */,
+				7932F5FA7307CD8D2043C35B /* Frameworks */,
+				F82ACA075F02B22799ECE40E /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B221C8AC0AE556E50B0E7D0F /* PBXTargetDependency */,
+			);
+			name = MindloomWatch;
+			packageProductDependencies = (
+				34EE79C97344006DD20AE5A6 /* MindloomWatchHandoff */,
+			);
+			productName = MindloomWatch;
+			productReference = 763B0DE2642F0A132BEEED70 /* MindloomWatch.app */;
+			productType = "com.apple.product-type.application";
+		};
+		72783C16EAB6EDCA16201140 /* MindloomActivity */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C748DFD5CA9A246E7C69808C /* Build configuration list for PBXNativeTarget "MindloomActivity" */;
+			buildPhases = (
+				26D9C5C211E0CBA5E233FAA3 /* Sources */,
+				B73B9441A9E1C6BD124C029B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MindloomActivity;
+			packageProductDependencies = (
+				47A041623D1609E1C07FE3B4 /* MindloomDesign */,
+			);
+			productName = MindloomActivity;
+			productReference = 6C42D9A6663CA28EAEAD9D19 /* MindloomActivity.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		91EE4C23234654E7EFB838B7 /* MindloomPhone */ = {
@@ -350,22 +695,44 @@
 				094071D4C080E30B90860B13 /* Resources */,
 				912315F8935C2B013A894A5F /* Frameworks */,
 				558009839D8D506C3FBDAE12 /* Embed Foundation Extensions */,
+				E788B1162ABD600CAD937B34 /* Embed Watch Content */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E23D62431D528F68C3AB56CF /* PBXTargetDependency */,
+				89483DD4EA03A28906668921 /* PBXTargetDependency */,
 				92B83FF20F84F2708A967C7B /* PBXTargetDependency */,
 				55B3B80CC03080084837F7C2 /* PBXTargetDependency */,
 			);
 			name = MindloomPhone;
 			packageProductDependencies = (
+				8EE38236583AE1AFAB7952FA /* MindloomDesign */,
 				B3198176EB9D851D29B5B166 /* MindloomLink */,
 				DFE4A94CB19582B935D64BDC /* MindloomPhoneKit */,
 				CBE14B0E757E97857296296C /* MindloomInboxSSH */,
+				64A1FD15ABC139C1A6F9FA77 /* MindloomWatchHandoff */,
 			);
 			productName = MindloomPhone;
 			productReference = 89C9D962AE2B271B62420DFD /* MindloomPhone.app */;
 			productType = "com.apple.product-type.application";
+		};
+		93AB7705DC5D3CA7DB68AE02 /* MindloomWatchWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CCE4F8A69E015E75B599E7B4 /* Build configuration list for PBXNativeTarget "MindloomWatchWidgets" */;
+			buildPhases = (
+				6B3B3F579C5859B1778B02D5 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MindloomWatchWidgets;
+			packageProductDependencies = (
+			);
+			productName = MindloomWatchWidgets;
+			productReference = B639DD76594425C84A2873AD /* MindloomWatchWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		A69BDF03713697825093B8D1 /* MindloomPhoneTests */ = {
 			isa = PBXNativeTarget;
@@ -381,9 +748,11 @@
 			);
 			name = MindloomPhoneTests;
 			packageProductDependencies = (
+				885201A0B6BAB970B527DC0B /* MindloomDesign */,
 				550AA0166DDA0F40FD71FD5D /* MindloomLink */,
 				6D1D882D9373FE78178BA33E /* MindloomPhoneKit */,
 				84545AA819AAF59174DB1EAA /* MindloomPhoneIntake */,
+				4EA636EB90EEF8EADBDDADCA /* MindloomWatchHandoff */,
 			);
 			productName = MindloomPhoneTests;
 			productReference = BE3C1EA0D467E00508E16017 /* MindloomPhoneTests.xctest */;
@@ -402,12 +771,31 @@
 			);
 			name = MindloomKeyboard;
 			packageProductDependencies = (
+				CEEB47C04C0040DA079F3922 /* MindloomDesign */,
 				036BF41C1B4CB2C621ED9EC0 /* MindloomLink */,
 				DE6968301F800D12FA6EB0EC /* MindloomPhoneKit */,
 			);
 			productName = MindloomKeyboard;
 			productReference = AB7D8E11D18162FD70126F13 /* MindloomKeyboard.appex */;
 			productType = "com.apple.product-type.app-extension";
+		};
+		DE79C3B3089B23C54C36E6BC /* MindloomWatchUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 18DA8520663A40025B0C2967 /* Build configuration list for PBXNativeTarget "MindloomWatchUITests" */;
+			buildPhases = (
+				EEE3DB27A5DED0A2953B471A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C0A50920C8F697894E659E22 /* PBXTargetDependency */,
+			);
+			name = MindloomWatchUITests;
+			packageProductDependencies = (
+			);
+			productName = MindloomWatchUITests;
+			productReference = 80188F026FC226A1BC6FEF47 /* MindloomWatchUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -422,7 +810,19 @@
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
+					496F6470E487E802698BC033 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					72783C16EAB6EDCA16201140 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
 					91EE4C23234654E7EFB838B7 = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					93AB7705DC5D3CA7DB68AE02 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
@@ -433,6 +833,11 @@
 					D4C4152A4BA3A378EBACFBD3 = {
 						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
+					};
+					DE79C3B3089B23C54C36E6BC = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 496F6470E487E802698BC033;
 					};
 				};
 			};
@@ -446,18 +851,24 @@
 			mainGroup = 96A3A02C475D40F7538405D2;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				67DE99C5F8BB0435AE89BF40 /* XCLocalSwiftPackageReference "../Packages/MindloomDesign" */,
 				BA8EB5679F9F87211C67CC8C /* XCLocalSwiftPackageReference "../Packages/MindloomLink" */,
 				B4596EA3781CAE4836977521 /* XCLocalSwiftPackageReference "../Packages/MindloomPhoneKit" */,
+				394DB424B6A191BEBB7E110B /* XCLocalSwiftPackageReference "../Packages/MindloomWatchHandoff" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6D70CD4853C16F5E417A19D1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				72783C16EAB6EDCA16201140 /* MindloomActivity */,
 				D4C4152A4BA3A378EBACFBD3 /* MindloomKeyboard */,
 				91EE4C23234654E7EFB838B7 /* MindloomPhone */,
 				A69BDF03713697825093B8D1 /* MindloomPhoneTests */,
 				3F91EA29517ABC278022909A /* MindloomShare */,
+				496F6470E487E802698BC033 /* MindloomWatch */,
+				DE79C3B3089B23C54C36E6BC /* MindloomWatchUITests */,
+				93AB7705DC5D3CA7DB68AE02 /* MindloomWatchWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -472,17 +883,57 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D83CFF4D739B2FA4164F547A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E172E9BC8906694BBFCA9D65 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		26D9C5C211E0CBA5E233FAA3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				584D361924D1BA285D3AE69D /* MindloomActivityWidget.swift in Sources */,
+				D0510DAD8CAEBEF600DDD336 /* VoiceActivity.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		47442AE6E07BA187DAE3714D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF769C7D3B56B874346A34A6 /* FrozenKeyboard.swift in Sources */,
 				2AB9F714A8AF6532F0D855A2 /* KeyboardModel.swift in Sources */,
 				A8A0D29B3B2144826661B328 /* KeyboardView.swift in Sources */,
 				CDD4855EC508D687304834F2 /* KeyboardViewController.swift in Sources */,
-				394FD45DE693A4AEA092EC7C /* LoomTheme.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		52ABD8DC407BA958D4B60563 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83182A4945FB6860DF33F058 /* MindloomWatchApp.swift in Sources */,
+				03EFB7F6D9D3DD5101574E5F /* RecordView.swift in Sources */,
+				6C8E7422AEFC13343DAB5BB5 /* StartRecordingIntent.swift in Sources */,
+				2C83CCAAAAD596F05004070D /* WatchLink.swift in Sources */,
+				A8E749130FC8803087A5E27E /* WatchModel.swift in Sources */,
+				16A5CCA3C2BC43851D35358E /* WatchRecorder.swift in Sources */,
+				4C74068F2D47535EC3249D51 /* WatchShortcuts.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6B3B3F579C5859B1778B02D5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2372C774CCA91F2DD314345E /* MindloomWatchWidgets.swift in Sources */,
+				1A03655DD858E3A7096FEBA8 /* StartRecordingIntent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -490,7 +941,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9925EA8D73E2AEDCBB3C6D2D /* LoomTheme.swift in Sources */,
+				1255DEB144AE20CA3BAD89D2 /* PhoneTitleFont.swift in Sources */,
+				067A80478FF588C00DBC8334 /* ShareStore.swift in Sources */,
 				4814639A838DF8842C7369FC /* ShareViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -499,19 +951,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63365DCB934290C3CADA4959 /* DebugLaunch.swift in Sources */,
 				1C26BD9DEEA7DCEC94083639 /* DebugScriptedRecognizer.swift in Sources */,
+				151F318850121EBA5E2A88E1 /* DebugVoiceBench.swift in Sources */,
 				F4C383919A8F0025B6F3B8FB /* DeliveryService.swift in Sources */,
-				1BD3AE4FC4FE605303430214 /* HomeView.swift in Sources */,
-				167BB83F2143F70A0961FCFC /* KeyboardCard.swift in Sources */,
-				69283C1BA550B4B29A40D4A3 /* LoomTheme.swift in Sources */,
+				B65686A65503992662F1D448 /* HomeStatus.swift in Sources */,
+				454E7E4B04FB9E795C2D1F11 /* HomeView.swift in Sources */,
+				29AC3C8701DBB618E773602C /* ItemViews.swift in Sources */,
 				F588106162F299DD0F3589AB /* MindloomPhoneApp.swift in Sources */,
 				5B68126431BE16E2AF062EB3 /* OnDeviceRecognizers.swift in Sources */,
-				1DFEB8ACAB41C1C363F0DDFE /* PairingDetailView.swift in Sources */,
+				3F6AEA7AD2C7702DE798BD6D /* PairView.swift in Sources */,
 				BC9BC4DAABFFCE827F9FB20C /* PairingModel.swift in Sources */,
-				CB9D38FFE4EE95A7532123CB /* PairingView.swift in Sources */,
-				2660AE1FC0C175CAF5703933 /* PrivacyView.swift in Sources */,
+				3860443AABD14A70782D3F4B /* PermissionsView.swift in Sources */,
+				71FE5F61B53A26A009A53871 /* PhoneTitleFont.swift in Sources */,
+				93FF778EC3DAC047F960B136 /* PhoneUI.swift in Sources */,
+				68B8FAD255CB93D51C2E856D /* PhoneWatchLink.swift in Sources */,
+				999D2B36406F9D1753ED8FF4 /* PhotoViewer.swift in Sources */,
+				896AA76C932DCD66408D69B0 /* RootView.swift in Sources */,
+				16F14E5B4F95411D3DEC970A /* SettingsViews.swift in Sources */,
+				9053D0424976E87C42FD4AEE /* SpeakBar.swift in Sources */,
+				BB121BD8BD899D04B9FA5182 /* TalkController.swift in Sources */,
+				4C242176D43DEDAD274A5B78 /* TextRules.swift in Sources */,
+				4A085B9DF553E8A9B4720FD8 /* VoiceActivity.swift in Sources */,
 				A25501D519BE6207991146E3 /* VoiceAudio.swift in Sources */,
+				1FC17C057E88C4F2C53969F9 /* VoiceLiveActivity.swift in Sources */,
 				6A3AB91B0E349BF2249C2D75 /* VoiceSessionModel.swift in Sources */,
+				5DE126A3414C21A8C562F62B /* WatchRecordings.swift in Sources */,
+				E8DA38B5197BA8D3A0294DDF /* WatchTranscriber.swift in Sources */,
+				92470B326110FE88E1B4E6AF /* WelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -519,12 +986,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C4BA17404144C001C0AC19A7 /* OutboxTimeLabelTests.swift in Sources */,
 				A5C3F50EF59ACF11567BA53E /* PairingModelTests.swift in Sources */,
+				08CB2937A6F776F4A4ED3836 /* PhoneRulesTests.swift in Sources */,
 				CE4D188C053FA078314AB7A1 /* RecognizerProbeTests.swift in Sources */,
+				A92855819C968996259A4803 /* SharedLinkTests.swift in Sources */,
 				C2EEFB9FC12378D3537198DA /* SkeletonTests.swift in Sources */,
 				9F588A12A89FEE17E1AB066C /* SyntheticSpeech.swift in Sources */,
+				A7AD15D99D1E6AB1DEB4EEC4 /* TitleFontTests.swift in Sources */,
 				2AFCCEA08DDE00B6C50662C2 /* VoiceOnDeviceTests.swift in Sources */,
+				2F8A698D1422158746033D72 /* WatchRecordingTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EEE3DB27A5DED0A2953B471A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8CA9DAC9CE9C092437A0F34F /* MindloomWatchUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,15 +1014,35 @@
 			target = 3F91EA29517ABC278022909A /* MindloomShare */;
 			targetProxy = DF5E6E273FBE2D55DD399F28 /* PBXContainerItemProxy */;
 		};
+		89483DD4EA03A28906668921 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 496F6470E487E802698BC033 /* MindloomWatch */;
+			targetProxy = 6CA8F4036CD9544ACEDAA047 /* PBXContainerItemProxy */;
+		};
 		92B83FF20F84F2708A967C7B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = D4C4152A4BA3A378EBACFBD3 /* MindloomKeyboard */;
 			targetProxy = 191991FC7A768392D5A57B89 /* PBXContainerItemProxy */;
 		};
+		B221C8AC0AE556E50B0E7D0F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 93AB7705DC5D3CA7DB68AE02 /* MindloomWatchWidgets */;
+			targetProxy = BFBDB27444F8E7BC342B166D /* PBXContainerItemProxy */;
+		};
+		C0A50920C8F697894E659E22 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 496F6470E487E802698BC033 /* MindloomWatch */;
+			targetProxy = 77D9DB532DC9D3AD463B0283 /* PBXContainerItemProxy */;
+		};
 		C11E9F2AA8B64F1AA3FD6219 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 91EE4C23234654E7EFB838B7 /* MindloomPhone */;
 			targetProxy = 418A1FC72E3A259EE46F05BD /* PBXContainerItemProxy */;
+		};
+		E23D62431D528F68C3AB56CF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 72783C16EAB6EDCA16201140 /* MindloomActivity */;
+			targetProxy = 05EFE8176DB28DD64171E00E /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -553,7 +1051,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Share/MindloomShare.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_SHARE)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Share/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -561,10 +1059,65 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.share;
+				MINDLOOM_ENTITLEMENTS_SHARE = Share/MindloomShare.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).share";
 				PRODUCT_NAME = MindloomShare;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		11BEC2AC5E6EC54D3673948B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).live";
+				PRODUCT_NAME = MindloomActivity;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3276D9F010620D4D3DA8D6EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Watch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp";
+				PRODUCT_NAME = MindloomWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Release;
+		};
+		34ED36F684E1BFB36BDD8A0F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp.uitests";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = MindloomWatch;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -573,7 +1126,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = App/MindloomPhone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_APP)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
@@ -581,9 +1134,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone;
+				MINDLOOM_ENTITLEMENTS_APP = App/MindloomPhone.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID)";
 				PRODUCT_NAME = MindloomPhone;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) MINDLOOM_LIVE_ACTIVITY";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -592,7 +1147,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Keyboard/MindloomKeyboard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_KEYBOARD)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -600,7 +1155,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.keyboard;
+				MINDLOOM_ENTITLEMENTS_KEYBOARD = Keyboard/MindloomKeyboard.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).keyboard";
 				PRODUCT_NAME = MindloomKeyboard;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -612,7 +1168,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = App/MindloomPhone.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_APP)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
@@ -620,9 +1176,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone;
+				MINDLOOM_ENTITLEMENTS_APP = App/MindloomPhone.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID)";
 				PRODUCT_NAME = MindloomPhone;
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) MINDLOOM_LIVE_ACTIVITY";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -631,7 +1189,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Keyboard/MindloomKeyboard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_KEYBOARD)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -639,10 +1197,32 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.keyboard;
+				MINDLOOM_ENTITLEMENTS_KEYBOARD = Keyboard/MindloomKeyboard.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).keyboard";
 				PRODUCT_NAME = MindloomKeyboard;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8579E1E0BBBBBAA0BC128DA4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WatchWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp.widgets";
+				PRODUCT_NAME = MindloomWatchWidgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -682,7 +1262,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = "";
@@ -698,16 +1278,37 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0;
+				MINDLOOM_APP_GROUP = "group.$(MINDLOOM_PHONE_BUNDLE_ID)";
+				MINDLOOM_PHONE_BUNDLE_ID = app.mindloom;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		9B62F5E6248A741338EDAB98 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp.uitests";
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = MindloomWatch;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Release;
 		};
@@ -747,7 +1348,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphonesimulator*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = "";
@@ -769,12 +1370,13 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 1.0;
+				MINDLOOM_APP_GROUP = "group.$(MINDLOOM_PHONE_BUNDLE_ID)";
+				MINDLOOM_PHONE_BUNDLE_ID = app.mindloom;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = complete;
@@ -793,18 +1395,57 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).tests";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindloomPhone.app/MindloomPhone";
 			};
 			name = Release;
 		};
+		C4A48B571DE348954FE06B7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = WatchWidgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp.widgets";
+				PRODUCT_NAME = MindloomWatchWidgets;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
+			};
+			name = Debug;
+		};
+		C79A5F2EF3CEB56109746FDC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LiveActivity/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).live";
+				PRODUCT_NAME = MindloomActivity;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		CD2D67AE6DC1D50C7D799452 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = Share/MindloomShare.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "$(MINDLOOM_ENTITLEMENTS_SHARE)";
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Share/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -812,7 +1453,8 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.share;
+				MINDLOOM_ENTITLEMENTS_SHARE = Share/MindloomShare.entitlements;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).share";
 				PRODUCT_NAME = MindloomShare;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -829,10 +1471,26 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.phone.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).tests";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MindloomPhone.app/MindloomPhone";
+			};
+			name = Debug;
+		};
+		FCE9861647FF9E06340B1F37 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=watchsimulator*]" = "-";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Watch/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_PHONE_BUNDLE_ID).watchkitapp";
+				PRODUCT_NAME = MindloomWatch;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 26.0;
 			};
 			name = Debug;
 		};
@@ -844,6 +1502,15 @@
 			buildConfigurations = (
 				44B63A6B8B2653F732A50346 /* Debug */,
 				7D3F5C5C2C208C2EB6065345 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		18DA8520663A40025B0C2967 /* Build configuration list for PBXNativeTarget "MindloomWatchUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				34ED36F684E1BFB36BDD8A0F /* Debug */,
+				9B62F5E6248A741338EDAB98 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -875,6 +1542,24 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		C748DFD5CA9A246E7C69808C /* Build configuration list for PBXNativeTarget "MindloomActivity" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C79A5F2EF3CEB56109746FDC /* Debug */,
+				11BEC2AC5E6EC54D3673948B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CCE4F8A69E015E75B599E7B4 /* Build configuration list for PBXNativeTarget "MindloomWatchWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C4A48B571DE348954FE06B7F /* Debug */,
+				8579E1E0BBBBBAA0BC128DA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		E52553AF8A43705D3C7E090B /* Build configuration list for PBXNativeTarget "MindloomShare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -884,9 +1569,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		F4091C9F601565A8DA572E4B /* Build configuration list for PBXNativeTarget "MindloomWatch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FCE9861647FF9E06340B1F37 /* Debug */,
+				3276D9F010620D4D3DA8D6EE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
+		394DB424B6A191BEBB7E110B /* XCLocalSwiftPackageReference "../Packages/MindloomWatchHandoff" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/MindloomWatchHandoff;
+		};
+		67DE99C5F8BB0435AE89BF40 /* XCLocalSwiftPackageReference "../Packages/MindloomDesign" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../Packages/MindloomDesign;
+		};
 		B4596EA3781CAE4836977521 /* XCLocalSwiftPackageReference "../Packages/MindloomPhoneKit" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Packages/MindloomPhoneKit;
@@ -902,13 +1604,33 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomLink;
 		};
+		085674F2908B0289ED1CED54 /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
+		34EE79C97344006DD20AE5A6 /* MindloomWatchHandoff */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomWatchHandoff;
+		};
 		3F73F92C77B5B936AB4989E1 /* MindloomLink */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomLink;
 		};
+		47A041623D1609E1C07FE3B4 /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
+		4EA636EB90EEF8EADBDDADCA /* MindloomWatchHandoff */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomWatchHandoff;
+		};
 		550AA0166DDA0F40FD71FD5D /* MindloomLink */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomLink;
+		};
+		64A1FD15ABC139C1A6F9FA77 /* MindloomWatchHandoff */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomWatchHandoff;
 		};
 		6D1D882D9373FE78178BA33E /* MindloomPhoneKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -922,6 +1644,14 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomPhoneIntake;
 		};
+		885201A0B6BAB970B527DC0B /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
+		8EE38236583AE1AFAB7952FA /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
 		9A2CFA4A8ECB36DC293B4ED9 /* MindloomPhoneIntake */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomPhoneIntake;
@@ -934,6 +1664,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomInboxSSH;
 		};
+		CEEB47C04C0040DA079F3922 /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
 		DE6968301F800D12FA6EB0EC /* MindloomPhoneKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomPhoneKit;
@@ -941,6 +1675,10 @@
 		DFE4A94CB19582B935D64BDC /* MindloomPhoneKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomPhoneKit;
+		};
+		EE9264EC9133ED1DECABA75D /* MindloomInboxSSH */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomInboxSSH;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

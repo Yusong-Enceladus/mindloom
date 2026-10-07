@@ -6,11 +6,33 @@
 
 <p align="center"><a href="https://www.bilibili.com/video/BV1CbaW6pEcX/">演示视频（B 站，约 5 分钟）</a> · <a href="https://blog.csdn.net/BronyaZaychik818/article/details/166849977">「十日谈」征文（CSDN）</a> · <a href="docs/ESSAY.md">征文（仓库里的 v8 版）</a> · <a href="https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29">截止时提交的版本</a></p>
 
-第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛参赛项目。一个人用：一台 Mac、一部 iPhone，加一台 DGX Spark。截止时的版本打了标签 [`submitted-2026-09-29`](https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29)；之后的改动都是带日期的提交，列在下面的[提交后更新](#提交后更新)里。
+第三届 NVIDIA DGX Spark 黑客松 · Agent Skills 开发挑战赛参赛项目。一个人用：一台 Mac、一部 iPhone，加一台 DGX Spark。截止时的版本打了标签 [`submitted-2026-09-29`](https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29)；之后的改动都是带日期的提交：决赛前的新内容在[决赛更新](#决赛更新2026-10)，v6 到 v8 的在[提交后更新](#提交后更新)。
+
+## 决赛更新（2026-10）
+
+初赛提交的版本是标签 [`submitted-2026-09-29`](https://github.com/Yusong-Enceladus/mindloom/tree/submitted-2026-09-29)。下面是这个仓库相对它新增的东西，每一条只写这份代码里确实有的。验证程度照实写：**测试过**是指有包测试或模拟器测试，**已实现**是指只在代码里；没有在真手表、真 iPhone 或真实资料库上验证的，写在最后。
+
+**Spark 和模型栈（NVIDIA + StepFun + Qwen）**
+
+- **整理在 Spark 上**：事件归属、卡片、拆段、定期合并、人物整理由 Qwen3.6-35B-A3B NVFP4 在 DGX Spark 上用 vLLM 完成，Agent Skills 按素材类型分路、长素材扇出、串行判断。Mac 先遮号码，钥匙只在自己的钥匙串里，Spark 只见到遮过号码的文字和密文（[隐私](#隐私团队共用一台-spark也放心丢进来)）。
+- **读截图可以走 StepFun Step3-VL-10B**：Spark 上除了 Qwen3.6，还起了 StepFun 的 Step3-VL-10B（llama.cpp）。它的聊天模板总在思考，普通的 OpenAI 兼容调用在小题集上只有 2/4；写了一个可选的原生适配器（`spark/organizer/clients.py` 的 `step3-llama-native`，用环境变量 `ORGANIZER_IMAGE_ROUTES` 按图片类型指定读图端点），预填空的思考块之后 4/4，同一张截图从 70.17 秒降到 19.16 秒。在同一批测试图上，它读图表的数据点是 89.7%，不如 Qwen3.6，所以默认读图仍是 Qwen3.6（同一个模型既整理又读图，最快），Step3-VL 是已经适配、评测过、能切换的读图路线（[docs/MODELS.md](docs/MODELS.md)）。
+
+**Mac 与 iPhone（v11、v12）**
+
+- **原生重做的 Mindloom**：Mac 界面按新的设计规格用 SwiftUI 重写（首页、事情页、收进来、人物、历史、设置），颜色、字号、动效、品牌标记放进两端共用的 `mac/Packages/MindloomDesign`；App 的显示名和 Bundle ID 现在是 Mindloom 和 `app.mindloom`，开发代号 bestASR 只留在工程名和旧版迁移代码里。另有「Mindloom Preview」构建配置：默认打开合成演示资料库，任何情况下不回退到真实资料库（演示和截图用的都是合成库）。欢迎页和边栏底部有一句按时段轮换的标语（中英各一套，`MindloomTaglines`）。
+- **Apple Watch**（`mac/iOS/Watch`、`mac/Packages/MindloomWatchHandoff`）：手表 App 只录音，轻点开始、轻点停止，表盘复杂功能、控制和快捷指令可以一键开始；录音交给配对的 iPhone，iPhone 核对大小和 SHA-256 后原样保存，用手机上的语音识别转成文字，像口述一样经发件箱送到 Mac，来源显示「Apple Watch」。手表 App 里没有任何网络代码。**测试过**（包测试和模拟器）。
+- **腾讯会议入口（默认关）**：在设置里扫码连接一次，之后自动把你的腾讯会议账户可以查看的转写取回来，每条转写成为一条「会议记录」，发言人署名进入同一套人物。App 带着腾讯官方的命令行工具 tmeet（MIT，固定到 v1.0.18 的源码，[`mac/third_party/tencentmeeting-cli/`](mac/third_party/tencentmeeting-cli/README.md)），加三个补丁：不上报崩溃、刷新登录遇到网络错误时不删登录、登录密钥改由织机自己的钥匙串条目经继承的文件描述符交给它；只运行固定的几条命令。这是入口里唯一连外网的一个：只把你自己的转写取回来，资料库里的任何内容都不发给腾讯。**测试过**，测试用的是虚构的 tmeet 输出。
+- **从网络补充信息（默认关）**：`mac/Packages/MindloomLookup` 能去公开来源查一个缺口：arXiv、Crossref、ccf-deadlines 的会议表、Wikipedia、OpenStreetMap，或你自己填了密钥的搜索服务，也能在本机读一个网页。查询词由代码拼出，发出前过一道本机检查（号码、人名和资料库里的原话不出去），每次请求和每次跳转之前先看开关，只有一个出网口，设置里有「网络活动」记录。**测试过**；调用它的「发现缺什么」那一步在整理核心的另一条分支里，**不在这份导出里**，所以现在 App 不会自己去查。
+- **按意思找**：历史页的搜索同时按字和按意思：本机向量模型（Qwen3-Embedding-0.6B 的 MLX 4 位版本，可选下载，没装时照旧按字找）给每条记录建本机索引，搜索词和记录都不出 Mac，含全部所打词语的记录排在只按意思找到的前面。外部 Agent 的 `search` 用同一个引擎，只在它被允许读、已遮号的文字上算。评测工具在 `mac/Tools/SearchEval/`，评测集是合成的（`mac/Corpus/product-synthetic/`）。
+- **口述**：松手到出字等几个指标记在本机一个只存数字的小库里（`DictationMetricsStore`），在设置里显示，不上传；口述时只留识别模型、逐句时间之后补做，识别模型按空闲时间和内存压力分级放掉，词典词只在短口述里进识别提示，把口述时的内存压下来。作者自己机器上的实测数字没有放进公开仓库。
+- **录音存得更小**：每段录音先按录下时的原样保留；识别、对齐和说话人任务做完后，同一段音频留一份 16 kHz、16 位的单声道主文件，30 天后再压成无损的 Apple Lossless（`RetainedAudioCodec`、`SourceAudioCompactionCLI`）。缓存清理、模型更新和重新处理都不会删原音。
+- **Agent 读取织机**的工具按 Agent 工具的常见做法重做：长事情分页读全文、回答默认简短、改东西的工具要你另外勾选「也可以改」才能用、不提供删除类工具；仍然是第一次读取要你在 Mac 上同意。
+
+**没有验证的**：真 Apple Watch 上的交接和麦克风录音；真 iPhone 上的键盘、分享和手表的验收；真实资料库（真实资料库只在作者自己的 Mac 上，评测记录没有放进公开仓库）；上面几项在运行的 App 里的完整体验，多数只在测试和渲染里看过。这份仓库是从私有仓库导出的快照：含真实计数和设备信息的开发日志、签名身份和机器路径不在其中；仓库里没有个人数据，处理个人数据的几个评测小工具（`MeaningEvalCLI`、`TencentMeetingProbeCLI`、`mac/Tools/SearchEval/blind_grading.py`）会拒绝任何既不是合成数据、也不在本机私有评测文件夹里的根目录。代码注释里的「ALIGNMENT 根-x、收x-y」等编号指向一份没有公开的内部对齐文档，仓库里查不到。
 
 ## 提交后更新
 
-截止（2026-09-29 23:59，北京时间）之后，Spark 端 91 个提交、Mac 端 78 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
+截止（2026-09-29 23:59，北京时间）之后，Spark 端 92 个提交、Mac 端 228 个提交。演示视频按 v6 重新剪了一版，正在上传到原来的 B 站链接（地址不变）。
 
 - **入口：兼容一切（v8，Mac 端）**：除了粘贴和拖入，又有了系统分享菜单和服务菜单里的「收进织机」、快捷指令（「添加到织机」「织机：今天到期」）、命令行 `mindloom`、监视文件夹、日历（只读）和「把下一步加到提醒事项」（点了才写）、Git 仓库和 Zotero 两个科研入口，以及 Chrome 扩展「收进织机」（经 Chrome 的本机通信交给 App，没有网络路径）。全部走和粘贴相同的收进规则，记来源和时间，链接只记不打开；命令行、服务菜单和会在后台收东西的入口默认关闭，都列在「设置 → 入口」里（[mac/README.md](mac/README.md)）。
 - **实验室的 infra（v8）**：队友的 Mac 用自己的钥匙进团队的 Spark：钥匙在 Spark 上被强制命令锁在一个只转发共享空间请求的门上（没有 shell、没有转发），每人有自己的凭证，邀请里是只能用一次的钥匙，断开后 Spark 上的钥匙文件和之前逐字节相同。Mac 设置里新增「团队与整理设备」：Spark 的状态（只有数字）、成员和设备、邀请、加一台我的 Mac、组织管理员和钥匙托管（丢了一位管理员，另一位能接管空间）、加密备份与恢复、存储配额、审计记录。一件事换负责人时，新的 Agent Skill handover-pack 写交接包（每一句带出处），可以导出 Markdown，或作为冻结的快照分享进空间（[docs/INFRA.md](docs/INFRA.md)）。
@@ -32,7 +54,7 @@
 | | |
 |---|---|
 | **是什么** | 一个人的「记录 → 组织 → 行动」：一个入口接住所有场景；Spark 把散落的素材织成一件件事（现在到哪一步、谁参与、下一个截止）；要推进时，一键复制成纯文字交给 Claude / Codex |
-| **在哪跑** | Mac：录音、识别、认人、存储、界面。iPhone：织机键盘和「收进织机」，语音在手机上识别。DGX Spark：整理（vLLM 上的 Qwen3.6-35B-A3B NVFP4 + MTP）。**没有云端** |
+| **在哪跑** | Mac：录音、识别、认人、存储、界面。iPhone：织机键盘和「收进织机」，语音在手机上识别。DGX Spark：整理（vLLM 上的 Qwen3.6-35B-A3B NVFP4 + MTP）；读截图另有 StepFun Step3-VL-10B 可选。**没有云端模型和云端存储**；Mac 上有两个默认关闭的出口：腾讯会议入口（只取回你自己的转写）和「从网络补充信息」（只发过检查的公开查询词），见[决赛更新](#决赛更新2026-10) |
 | **Agent Skills** | 10 个在路由里：image-read、file-read、item-split、event-assign、event-brief、event-consolidate、person-resolve、home-rank、matter-map、matter-group；交接时按需调用的 handover-pack；另有 1 个占位 recall。按素材类型分路、长素材拆段扇出、串行判断归属、受影响的几件事各自重写卡片，定期把碎片事件并回它的事、整理人物；每步都有确定性校验，拿不准就问一句，你的纠正永远优先（[架构图](#spark-上的-skill-图不是一条流水线)） |
 | **SKILL.md 正文有用吗** | 同一模型只去掉正文：事件归属 B³ F1 0.782 → 0.612，读图关键字段 97.5% → 62.6%，文件概要一次合格 36/38 → 1–2/38（[评测](#评测)） |
 | **规模实测** | 三个合成场景，各是一个人五到六周里的 1,510–1,600 条素材：B³ F1 0.668–0.724，是无模型基线的 2.3–4.0 倍（留出场景 startup 0.668）；事件数是真值的 2.6–4.5 倍（整合版上重跑） |
@@ -355,7 +377,7 @@ H=eval/scenarios/holdout-week-v2/scenario.json
 .venv/bin/python eval/run_eval.py --scenario $H --condition baseline --embed hash --out /tmp/h2-baseline
 ```
 
-遮号规范是两端共用的一份：`privacy/mask_vectors.json` 里 200 条测试向量，Python（`spark/organizer/masking.py`）和 Swift 逐字节一致。Mac 客户端在 [mac/](mac/README.md)，代码、工程名和 Bundle ID 沿用开发代号 bestASR（`com.bestasr.app`）；iPhone App 在 [mac/iOS/](docs/PHONE.md#装-iphone-app从源码构建)。构建需要 Xcode 27 和一个外置构建卷，目前没有发布安装包。
+遮号规范是两端共用的一份：`privacy/mask_vectors.json` 里 200 条测试向量，Python（`spark/organizer/masking.py`）和 Swift 逐字节一致。Mac 客户端在 [mac/](mac/README.md)，代码和工程名沿用开发代号 bestASR，App 的显示名和 Bundle ID 是 Mindloom 和 `app.mindloom`；iPhone App 在 [mac/iOS/](docs/PHONE.md#装-iphone-app从源码构建)。构建需要 Xcode 27 和一个外置构建卷，目前没有发布安装包。
 
 ## 部署
 
@@ -368,9 +390,10 @@ H=eval/scenarios/holdout-week-v2/scenario.json
    服务启动时库是锁着的，等你的 Mac 连上来开锁。**团队共用一台 Spark 时**：每个人用自己的系统账户跑一个整理服务（自己的数据目录、socket 和链路令牌），模型服务可以共用；不要和别人共用一个登录账户。关键环境变量见 [spark/README.md](spark/README.md)。
 2. **Mac（收集端）**：按 [mac/README.md](mac/README.md) 构建，然后把链路指向自己的 Spark：
    ```bash
-   defaults write com.bestasr.app preferences.spark-organizer-host YOUR_SPARK
-   defaults write com.bestasr.app preferences.spark-organizer-socket-path '~/hack/organizer-data/organizer.sock'
-   defaults write com.bestasr.app preferences.spark-organizer-token-path '~/hack/organizer-data/link_token'
+   # 偏好域就是 App 的 Bundle ID：Debug 构建是 app.mindloom.debug，Preview 是 com.bestasr.mindloom.preview
+   defaults write app.mindloom preferences.spark-organizer-host YOUR_SPARK
+   defaults write app.mindloom preferences.spark-organizer-socket-path '~/hack/organizer-data/organizer.sock'
+   defaults write app.mindloom preferences.spark-organizer-token-path '~/hack/organizer-data/link_token'
    ```
    第一次打开链路时，Mac 为这个资料库生成钥匙、存进钥匙串，开锁之后才发内容。开发和演示时用 `mac/script/make_synthetic_data_root.sh <绝对路径>` 建一个合成数据目录，用 `-BestASRDataRoot <绝对路径>` 启动 App，再在设置里打开 Spark 开关。
 3. **iPhone（可选）**：从源码构建 iPhone App「织机」（模拟器：`mac/iOS/script/xcodebuild.sh build`；真机要换成你自己团队下的 Bundle ID 和 App Group，步骤见 [docs/PHONE.md](docs/PHONE.md#装-iphone-app从源码构建)），在设置里添加「织机键盘」，然后在 Mac 的 Spark 链路设置里点「连接 iPhone」，手机扫码或粘贴配对码：手机拿到一把只能往收件箱放封好条目的 SSH 钥匙。
@@ -391,8 +414,8 @@ H=eval/scenarios/holdout-week-v2/scenario.json
 - **黑客松期间（北京时间 2026-09-26 至 09-29 23:59 截止）**：
   - Spark 端全部新做（90 个提交）：整理服务、6 个在路由里的 Agent Skills 和 1 个占位、读图和读文件、长素材拆段、手机收件箱、评测驱动与评分器、小场景和三个规模场景、多轮评测与过拟合审计、System One、20 多个开放权重模型的对比。
   - Mac 端 52 个提交（188 个文件，+34,933 / −571 行）：Mac↔Spark 可撤销链路（端口归属核对、链路令牌、按修订号发送、合成数据闸门）；粘贴 / 拖入任何文件并带来源 App；会议逐字稿导入；视频关键帧；手机收件箱拉取；导出为纯文字；首页、事件页、人物页；规模场景的端到端 harness。
-- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 91 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；v7 的线索图和绳（matter-map、matter-group）、关系 v2、共享空间（签名的操作日志、钥匙包、每个空间一个加密整理库）；v8 的每人一把钥匙的门、Spark 状态、交接包（handover-pack）、加密备份和恢复、钥匙托管、配额和轮流整理、片段原音、快照、断网重发。Mac 端 78 个提交：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标；v7 的线索图和首页的四个看法、Agent 读取（本机 MCP、同意、记录、Claude Code 插件）、共享空间的成员端；v8 的入口（分享扩展、服务菜单、快捷指令、命令行、文件夹、日历和提醒事项、Git、Zotero、Chrome 扩展）和「团队与整理设备」。
-- 公开仓库不含私有仓库的历史：每次发布都是从私有仓库导出的一份快照提交（去掉个人数据工具、设备与签名信息和内部笔记）。
+- **截止之后**（标签 `submitted-2026-09-29` 之后，见[提交后更新](#提交后更新)）：Spark 端 92 个提交：隐私 v6（加密存储、遮号码、读完就删、删除同步、「忘掉我」、复查修复）、只收封存条目的手机收件箱和手机配对、定期整理事件（event-consolidate）、人物整理（person-resolve）、item-split 1.3.0、评测和文档；v7 的线索图和绳（matter-map、matter-group）、关系 v2、共享空间（签名的操作日志、钥匙包、每个空间一个加密整理库）；v8 的每人一把钥匙的门、Spark 状态、交接包（handover-pack）、加密备份和恢复、钥匙托管、配额和轮流整理、片段原音、快照、断网重发。Mac 端 228 个提交（v11、v12 的内容见[决赛更新](#决赛更新2026-10)）：遮号和截图涂号、钥匙和上锁、删除同步、iPhone App 和配对、人物显示、新图标；v7 的线索图和首页的四个看法、Agent 读取（本机 MCP、同意、记录、Claude Code 插件）、共享空间的成员端；v8 的入口（分享扩展、服务菜单、快捷指令、命令行、文件夹、日历和提醒事项、Git、Zotero、Chrome 扩展）和「团队与整理设备」。
+- 公开仓库不含私有仓库的历史：每次发布都是从私有仓库导出的一份快照提交（去掉导入真实历史记录的工具、设备与签名信息和内部笔记；仍在的几个评测小工具只认合成数据或本机私有文件夹，见上面的「没有验证的」）。
 
 ## 仓库结构
 

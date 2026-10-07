@@ -261,6 +261,9 @@ public enum DictationInsertionMethod: String, Codable, Sendable {
   case accessibilityReplacement
   case clipboardPaste
   case retainedForCopy
+  /// Written straight into a text field of this App that had the keyboard
+  /// (Mindloom's own search or paste box): no clipboard, no keystrokes.
+  case directWrite
 }
 
 /// Why text was kept for copying instead of delivered. Every case is an
@@ -282,6 +285,12 @@ public enum DictationInsertionFailureReason: String, Codable, Sendable {
   case unavailable
   /// Two insertions of the same dictation raced; the second stood down.
   case ambiguousReservation
+  /// The application asked the pasteboard for the text and the words were
+  /// not seen in the field (it names no focused element, shows no text
+  /// there, or did not show the words in time). The words may or may not
+  /// have landed, so they stay on the clipboard and the HUD says 已拷贝
+  /// rather than claiming they were typed in.
+  case unconfirmed
 }
 
 extension DictationInsertionFailureReason {
@@ -290,7 +299,8 @@ extension DictationInsertionFailureReason {
   /// system doing its job; an engine that could not produce text is not.
   public var declinedByDesign: Bool {
     switch self {
-    case .nowhere, .secureInput, .applicationChanged, .permissionDenied, .nothingToInsert:
+    case .nowhere, .secureInput, .applicationChanged, .permissionDenied, .nothingToInsert,
+      .unconfirmed:
       true
     case .unavailable, .ambiguousReservation:
       false

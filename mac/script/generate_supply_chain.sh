@@ -4,7 +4,7 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$repository_root/script/build_storage.sh"
-package_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app"
+package_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/Mindloom.app"
 dependencies_path="$repository_root/config/dependencies.json"
 models_path="$repository_root/config/model-artifacts.json"
 policy_path="$repository_root/config/release-package-policy.json"
@@ -211,9 +211,9 @@ jq -S -n \
     metadata: {
       component: {
         type: "application",
-        name: "bestASR",
+        name: "Mindloom",
         version: $packageVersion,
-        "bom-ref": ("application:bestASR@" + $packageVersion)
+        "bom-ref": ("application:Mindloom@" + $packageVersion)
       },
       properties: [
         {name: "bestasr:model-selection-status", value: $selectionStatus},
@@ -272,7 +272,7 @@ jq -S -s \
     packageIdentifier: $packageIdentifier,
     packageVersion: $packageVersion,
     buildConfiguration: "Release",
-    packageRoot: "build-product://bestASR.app",
+    packageRoot: "build-product://Mindloom.app",
     dependencyManifestSHA256: $dependencyManifestSHA256,
     modelManifestSHA256: $modelManifestSHA256,
     noticeSHA256: $noticeSHA256,

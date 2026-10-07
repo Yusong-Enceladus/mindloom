@@ -55,13 +55,13 @@ final class EventsModel: ObservableObject {
   @Published var generatingEventDocumentTaskID: LocalTextTaskID?
 
   @Published var eventStatusMessage =
-    "事件会在本机按语义、人物、时间和来源整理"
+    "事情会在本机按语义、人物、时间和来源整理"
 
   @Published var organizationInProgress = false
 
   @Published var remoteProjection: RemoteOrganizerProjection?
 
-  @Published var remoteStatusMessage = "整理设备链路已关闭；使用这台 Mac 整理"
+  @Published var remoteStatusMessage = "DGX Spark 连接已关闭；使用这台 Mac 整理"
 
   /// The organizer's clock mode from its health check (`wall` in production).
   @Published var remoteServiceClock: String?

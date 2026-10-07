@@ -14,6 +14,8 @@ enum AgentFixture {
   static let openDay = "E-OPENDAY"
   static let labWeekly = "E-LABWEEKLY"
   static let moving = "E-MOVING"
+  static let researchGroup = "00000000-0000-4000-8000-0000000000b1"
+  static let lifeGroup = "00000000-0000-4000-8000-0000000000b2"
   static let han = "5A0E4D8C-0000-4000-8000-000000000001"
   static let lin = "5A0E4D8C-0000-4000-8000-000000000002"
   static let items = (0..<6).map {
@@ -51,7 +53,9 @@ enum AgentFixture {
         text: text, itemIDs: [items[item].uuidString], state: state, date: date))
   }
 
-  static func snapshot(now: Date = now) throws -> AgentMemorySnapshot {
+  static func snapshot(now: Date = now, twinStatus: String = "第三组数据周五前跑完") throws
+    -> AgentMemorySnapshot
+  {
     let records = [
       record(0, text: "韩策：第三组周五前能跑完，有问题打我电话 \(phone)\n林晓：好的，我把表更新好", source: "微信", hoursAgo: 5),
       record(1, text: "第一组跑完了。结果发到 \(email)。", source: "邮件", hoursAgo: 30),
@@ -74,7 +78,7 @@ enum AgentFixture {
     func hours(_ value: Double) -> Date { now.addingTimeInterval(-value * 3_600) }
     let events = [
       MemoryEventSource(
-        eventID: twin, origin: .spark, title: "Twin-7 真机实验", statusLine: "第三组数据周五前跑完",
+        eventID: twin, origin: .spark, title: "Twin-7 真机实验", statusLine: twinStatus,
         pinned: false, updatedAt: hours(2), itemIDs: [0, 1, 2].map { items[$0].uuidString },
         personIDs: [han, lin],
         statusFacts: MemoryStatusFact.ordered([
@@ -102,7 +106,7 @@ enum AgentFixture {
          {"person_id":"\(lin)","display_name":"林晓","aliases":[],"origin":"spark"}]
         """.utf8))
     let projection = MemoryProjection(events: events, records: records, persons: persons, now: now)
-    return AgentMemorySnapshot(
+    var snapshot = AgentMemorySnapshot(
       projection: projection,
       spaces: [.personal, AgentSpace(id: "lab", name: "实验室")],
       ropes: [
@@ -110,6 +114,9 @@ enum AgentFixture {
         AgentRope(id: "r-life", title: "生活", matterIDs: [moving]),
       ],
       spaceOfMatter: [labWeekly: "lab"], timeZone: timeZone)
+    // v11: the user's own groups (「这个分组」 grants).
+    snapshot.groupOfMatter = [twin.uppercased(): researchGroup, moving.uppercased(): lifeGroup]
+    return snapshot
   }
 }
 
@@ -123,7 +130,8 @@ struct FixedMemory: AgentMemoryProviding {
 actor ScriptedOwner: AgentConsentPresenting {
   private(set) var consentRequests: [AgentConsentRequest] = []
   private(set) var approvalRequests: [AgentMatterApprovalRequest] = []
-  private(set) var proposals: [AgentInboxProposal] = []
+  private(set) var made: [AgentChangeRecord] = []
+  private(set) var limited: [String] = []
   private(set) var changes = 0
   private var answers: [AgentConsentAnswer?] = []
   private var waiters: [CheckedContinuation<AgentConsentAnswer?, Never>] = []
@@ -158,7 +166,8 @@ actor ScriptedOwner: AgentConsentPresenting {
     return await withCheckedContinuation { approvalWaiters.append($0) }
   }
 
-  func proposalArrived(_ proposal: AgentInboxProposal) async { proposals.append(proposal) }
+  func changeMade(_ change: AgentChangeRecord) async { made.append(change) }
+  func limitReached(clientName: String) async { limited.append(clientName) }
   func accessChanged() async { changes += 1 }
   private(set) var recorded: [AgentAuditRecord] = []
   func accessRecorded(_ record: AgentAuditRecord) async { recorded.append(record) }
@@ -170,6 +179,7 @@ actor MemoryAgentRecords: AgentAccessRecordStore {
   var decisions: [UUID: [String: Bool]] = [:]
   var audit: [AgentAuditRecord] = []
   var inbox: [AgentInboxProposal] = []
+  var changeRows: [AgentChangeRecord] = []
 
   func agentGrants() async throws -> [AgentGrantRecord] { grants }
   func saveAgentGrant(_ grant: AgentGrantRecord) async throws {
@@ -199,6 +209,21 @@ actor MemoryAgentRecords: AgentAccessRecordStore {
   func resolveAgentProposal(
     _ proposalID: UUID, state: AgentInboxProposal.State, itemID: SessionID?, at: Date
   ) async throws {}
+  func appendAgentChange(_ change: AgentChangeRecord) async throws { changeRows.append(change) }
+  func agentChanges(clientKey: String?, limit: Int) async throws -> [AgentChangeRecord] {
+    Array(
+      changeRows.filter { clientKey == nil || $0.clientKey == clientKey }.reversed().prefix(limit))
+  }
+  func markAgentChangeUndone(_ changeID: UUID, at: Date) async throws -> Bool {
+    guard let index = changeRows.firstIndex(where: { $0.changeID == changeID }),
+      changeRows[index].state == .applied
+    else { return false }
+    changeRows[index].state = .undone
+    changeRows[index].undoneAt = at
+    return true
+  }
+
+  func replaceGrants(_ replacement: [AgentGrantRecord]) { grants = replacement }
 
   func tamperFirstGrant() {
     guard let grant = grants.first else { return }
@@ -256,7 +281,18 @@ struct AgentTestClient {
     return reply ?? .null
   }
 
+  /// A tool call that also asks for the answer as data (`structured`).
   func call(_ tool: String, _ arguments: JSONValue = [:]) async -> JSONValue {
+    await request(
+      "tools/call",
+      [
+        "name": .string(tool), "arguments": arguments,
+        "_meta": [AgentToolResult.structuredKey: true],
+      ])["result"] ?? .null
+  }
+
+  /// A tool call as an agent makes it: the text only.
+  func plainCall(_ tool: String, _ arguments: JSONValue = [:]) async -> JSONValue {
     await request("tools/call", ["name": .string(tool), "arguments": arguments])["result"] ?? .null
   }
 
@@ -279,18 +315,59 @@ extension JSONValue {
     (self["content"]?.arrayValue ?? []).compactMap { $0["text"]?.stringValue }.joined()
   }
   var isErrorResult: Bool { self["isError"]?.boolValue == true }
-  var errorCode: String? { self["structuredContent"]?["error"]?.stringValue }
+  /// The data a tool result carries for scripts and tests (`_meta`).
+  var structured: JSONValue? { AgentToolResult.data(of: self) }
+  var errorCode: String? { structured?["error"]?.stringValue }
   var matterIDs: [String] {
-    (self["structuredContent"]?["matters"]?.arrayValue ?? []).compactMap { $0["id"]?.stringValue }
+    (structured?["matters"]?.arrayValue ?? []).compactMap { $0["id"]?.stringValue }
   }
 }
 
 func allowAll(
-  spaces: Set<String> = ["personal"], range: AgentScopeRange = .all, propose: Bool = false,
+  spaces: Set<String> = ["personal"], range: AgentScopeRange = .all, change: Bool = false,
   duration: AgentGrantDuration = .always, numbers: Bool = false, ask: Bool = false
 ) -> AgentConsentAnswer {
   .allow(
     AgentGrantTerms(
-      spaces: spaces, range: range, canPropose: propose, duration: duration, showNumbers: numbers,
+      spaces: spaces, range: range, canChange: change, duration: duration, showNumbers: numbers,
       askForNewMatters: ask))
+}
+
+/// The App's side of 也可以改, by script: records what it was asked to apply
+/// (a note becomes a fixed item ID), or fails when told to.
+actor RecordingChanges: AgentChangeApplying {
+  private(set) var applied: [AgentChange] = []
+  var failing = false
+  static let noteItemID = "7B1E0000-0000-4000-8000-0000000000AA"
+
+  func fail(_ on: Bool) { failing = on }
+
+  func apply(_ change: AgentChange, client: AgentClientIdentity) async throws -> String? {
+    if failing { throw AgentChangeError.notApplied }
+    applied.append(change)
+    if case .addNote = change { return Self.noteItemID }
+    return nil
+  }
+}
+
+extension String {
+  /// The text between an answer's fence marks (the library's words only).
+  var fenced: String {
+    guard let mark = range(of: #"⟦资料 [0-9a-f]+⟧"#, options: .regularExpression) else {
+      return ""
+    }
+    let nonce = self[mark].dropFirst(4).dropLast()
+    guard let open = range(of: "\n⟦资料 \(nonce)⟧\n"),
+      let close = range(of: "\n⟦/资料 \(nonce)⟧", range: open.upperBound..<endIndex)
+    else { return "" }
+    return String(self[open.upperBound..<close.lowerBound])
+  }
+}
+
+/// Lines the service pushed to a client on its own.
+final class PushedLines: @unchecked Sendable {
+  private let lock = NSLock()
+  private var stored: [String] = []
+  var lines: [String] { lock.withLock { stored } }
+  func append(_ line: String) { lock.withLock { stored.append(line) } }
 }

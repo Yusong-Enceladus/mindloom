@@ -1,8 +1,9 @@
 @preconcurrency import Foundation
+import MindloomIdentity
 
 public enum InferenceXPCContract {
   public static let currentVersion = 1
-  public static let serviceName = "com.bestasr.app.inference-worker"
+  public static let serviceName = MindloomIdentity.bundleID(of: .inferenceWorker)
 
   public static func interface() -> NSXPCInterface {
     NSXPCInterface(with: InferenceWorkerXPCProtocol.self)

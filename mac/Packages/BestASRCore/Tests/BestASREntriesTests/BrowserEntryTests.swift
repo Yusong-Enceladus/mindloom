@@ -134,12 +134,12 @@ final class BrowserEntryTests: XCTestCase {
     XCTAssertEqual(try manifest.install(helperPath: helper.path), .installed)
     let written = try Data(contentsOf: manifest.fileURL)
     let value = try JSONValue.parse(written)
-    XCTAssertEqual(value["name"]?.stringValue, "com.bestasr.mindloom")
+    XCTAssertEqual(value["name"]?.stringValue, "app.mindloom")
     XCTAssertEqual(value["path"]?.stringValue, helper.path)
     XCTAssertEqual(value["type"]?.stringValue, "stdio")
     XCTAssertEqual(
       value["allowed_origins"], .strings(["chrome-extension://mhpochidiepnikgedmjbpnoknbkjidpa/"]))
-    XCTAssertEqual(manifest.fileURL.lastPathComponent, "com.bestasr.mindloom.json")
+    XCTAssertEqual(manifest.fileURL.lastPathComponent, "app.mindloom.json")
     let first = try XCTUnwrap(fileState(manifest.fileURL))
     XCTAssertEqual(first.mode, 0o644, "Chrome must be able to read it")
     XCTAssertEqual(manifest.status(helperPath: helper.path), .installed)
@@ -237,7 +237,12 @@ final class BrowserEntryTests: XCTestCase {
     XCTAssertEqual(summary.storedCount, 4)
     XCTAssertEqual(NetworkTripwire.requests, [], "links are kept as text, never fetched")
     let drafts = await store.drafts
-    XCTAssertEqual(Set(drafts.map(\.source?.name)), ["Chrome"])
+    // v12 F10: Chrome only when the App checked that Chrome started the
+    // helper; these requests were not checked.
+    XCTAssertEqual(Set(drafts.map(\.source?.name)), [EntrySource.unverified])
+    var checked = BrowserAddRequest(kind: .page, url: "https://example.test/plan", title: "十月计划")
+    checked.startedByChrome = true
+    XCTAssertEqual(HandEntries.browser(checked, at: now).first?.source?.name, "Chrome")
     for draft in drafts {
       XCTAssertEqual(draft.capturedAt.timeIntervalSince(now), 0, accuracy: 1)
     }
@@ -258,7 +263,7 @@ final class BrowserEntryTests: XCTestCase {
     XCTAssertEqual(Set(drafts.map(\.kind)), [.text])
     XCTAssertEqual(
       summary.confirmation(source: EntrySource.named(EntrySource.browser)),
-      "已收进来 4 条 · 来自 Chrome")
+      "已添加 4 条 · 来自 Chrome")
   }
 
   // MARK: Switches
@@ -281,7 +286,7 @@ final class BrowserEntryTests: XCTestCase {
         due: { _ in .reply(OwnerReply(message: "ok")) },
         browserAdd: { request in
           await taken.note(request)
-          return .reply(OwnerReply(message: "已收进来 · 来自 Chrome", stored: 1))
+          return .reply(OwnerReply(message: "已收好 · 来自 Chrome", stored: 1))
         })
     }
     let peer = AgentConnectionPeer(pid: getpid(), uid: getuid(), clientExecutablePath: nil)
@@ -319,8 +324,7 @@ final class BrowserEntryTests: XCTestCase {
     // background entry (it takes only what the owner clicks).
     XCTAssertFalse(EntrySettings.defaults.isOn(.browserExtension))
     XCTAssertFalse(EntryKind.browserExtension.capturesInBackground)
-    XCTAssertTrue(EntryKind.browserExtension.detail.contains("不会打开"))
-    XCTAssertTrue(EntryKind.browserExtension.detail.contains("不联网"))
+    XCTAssertTrue(EntryKind.browserExtension.detail.contains("链接按文字添加"))
   }
 
   // MARK: The extension itself

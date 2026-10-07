@@ -28,8 +28,8 @@ public struct ReminderDraft: Equatable, Sendable {
     let due = day.map { calendar.dateComponents([.year, .month, .day], from: $0) }
     let matter = matterTitle.trimmingCharacters(in: .whitespacesAndNewlines)
     return ReminderDraft(
-      title: title.isEmpty ? "织机里的下一步" : title, due: due,
-      notes: matter.isEmpty ? "来自织机" : "来自织机：\(matter)")
+      title: title.isEmpty ? "Mindloom 中的下一步" : title, due: due,
+      notes: matter.isEmpty ? "来自 Mindloom" : "来自 Mindloom：\(matter)")
   }
 }
 

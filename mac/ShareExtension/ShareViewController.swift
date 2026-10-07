@@ -2,20 +2,24 @@ import AppKit
 import MindloomShareDrop
 import UniformTypeIdentifiers
 
-/// 收进织机 on the Mac (V8 contract A1): the share sheet of Safari, Mail,
+/// 收进 Mindloom on the Mac (V8 contract A1): the share sheet of Safari, Mail,
 /// Notes, Finder and any other App. It collects what was shared — text, a
-/// link (never fetched), a file (by its path), an image or other bytes —
-/// and leaves it in 织机's drop folder; the App takes it in through the same
-/// intake rules as a paste or a drop and records the App it came from.
+/// link (never fetched), a file (copied in whole, v12 F10: the App never
+/// opens a path a drop names), an image or other bytes — and leaves it in
+/// Mindloom's drop folder; the App takes it in through the same intake rules
+/// as a paste or a drop.
 /// Sandboxed: it can write only that one folder, and it opens nothing but
-/// `mindloom://share-inbox` to tell the App to look.
+/// `<scheme>://share-inbox` to tell the App to look. The scheme and the
+/// library come from this extension's Info.plist (`MindloomURLScheme`,
+/// `MindloomShareDropRoot`): the owner's library for the App, the synthetic
+/// preview root for Mindloom Preview.
 final class ShareViewController: NSViewController {
-  private let titleLabel = NSTextField(labelWithString: "收进织机")
+  private let titleLabel = NSTextField(labelWithString: "添加到 Mindloom")
   private let summaryLabel = NSTextField(wrappingLabelWithString: "正在读取分享的内容…")
   private let noteLabel = NSTextField(
-    wrappingLabelWithString: "只存进这台 Mac 上的织机。链接只记下，不会打开。")
+    wrappingLabelWithString: "添加到这台 Mac 上的 Mindloom。链接按文字添加，文件会拷贝到 Mindloom。")
   private let cancelButton = NSButton(title: "取消", target: nil, action: nil)
-  private let sendButton = NSButton(title: "收进织机", target: nil, action: nil)
+  private let sendButton = NSButton(title: "添加", target: nil, action: nil)
   private var collected: ShareCollection?
   private let source = NSWorkspace.shared.frontmostApplication
 
@@ -63,49 +67,68 @@ final class ShareViewController: NSViewController {
   }
 
   private func show(_ collection: ShareCollection) {
-    guard let dropbox = ShareDropbox.ownerLibraryDropbox(), dropbox.isOpen else {
+    guard let dropbox = Self.dropbox, dropbox.isOpen else {
       summaryLabel.stringValue =
-        "分享入口没有打开：请在织机的 设置 → 入口 里打开「分享菜单」，并打开一次织机。"
+        "共享入口未打开。请在 Mindloom 的“设置”>“入口”中打开“共享菜单”，然后打开一次 Mindloom。"
       sendButton.isEnabled = false
       return
     }
     guard !collection.parts.isEmpty else {
-      summaryLabel.stringValue = collection.refused.first ?? "没有可收进来的内容。"
+      summaryLabel.stringValue = collection.refused.first ?? "没有可添加的内容。"
       return
     }
     var line = collection.summary
     if let name = source?.localizedName { line += " · 来自 \(name)" }
-    if !collection.refused.isEmpty { line += "（\(collection.refused.count) 项收不进来）" }
+    if !collection.refused.isEmpty { line += "（\(collection.refused.count) 项无法添加）" }
     summaryLabel.stringValue = line
     sendButton.isEnabled = true
   }
 
   @objc private func send() {
-    guard let collection = collected, let dropbox = ShareDropbox.ownerLibraryDropbox() else {
+    guard let collection = collected, let dropbox = Self.dropbox else {
       return
     }
     let entry = ShareDropEntry(
       sourceBundleID: source?.bundleIdentifier, sourceName: source?.localizedName,
       parts: collection.parts)
+    // The shared files are read here, inside the share, and copied in.
+    let opened = collection.files.values.filter { $0.startAccessingSecurityScopedResource() }
+    defer {
+      for url in opened { url.stopAccessingSecurityScopedResource() }
+    }
     do {
-      try dropbox.write(entry, data: collection.data)
+      try dropbox.write(entry, data: collection.data, files: collection.files)
     } catch ShareDropbox.DropError.closed {
-      summaryLabel.stringValue = "分享入口没有打开：请在织机的 设置 → 入口 里打开「分享菜单」。"
+      summaryLabel.stringValue = "共享入口未打开。请在 Mindloom 的“设置”>“入口”中打开“共享菜单”。"
       return
     } catch ShareDropbox.DropError.tooLarge {
-      summaryLabel.stringValue = "内容太大（单个超过 25 MB），请把文件拖进织机。"
+      summaryLabel.stringValue = "内容过大。请将文件拖到 Mindloom 中。"
       return
     } catch {
-      summaryLabel.stringValue = "没能交给织机，请再试一次。"
+      summaryLabel.stringValue = "未能发送到 Mindloom。请重试。"
       return
     }
     // Tell the App to look; the URL carries nothing.
-    if let url = URL(string: "mindloom://share-inbox") {
+    if let url = URL(string: Self.scheme + "://share-inbox") {
       let configuration = NSWorkspace.OpenConfiguration()
       configuration.activates = false
       NSWorkspace.shared.open(url, configuration: configuration)
     }
     extensionContext?.completeRequest(returningItems: nil)
+  }
+
+  /// The App's URL scheme (`mindloom`, or `mindloom-preview` for the preview).
+  private static var scheme: String {
+    let value = Bundle.main.object(forInfoDictionaryKey: "MindloomURLScheme") as? String
+    return value.flatMap { $0.isEmpty ? nil : $0 } ?? "mindloom"
+  }
+
+  /// The drop folder: the owner's library, unless this build names its own
+  /// root (Mindloom Preview's absolute one, a development build's folder in
+  /// the owner's home).
+  private static var dropbox: ShareDropbox? {
+    ShareDropbox.forRootSetting(
+      Bundle.main.object(forInfoDictionaryKey: "MindloomShareDropRoot") as? String)
   }
 
   @objc private func cancel() {
@@ -118,6 +141,8 @@ final class ShareViewController: NSViewController {
 struct ShareCollection: Sendable {
   var parts: [ShareDropEntry.Part] = []
   var data: [String: Data] = [:]
+  /// Shared files, copied into the drop when it is written (F10).
+  var files: [String: URL] = [:]
   var refused: [String] = []
 
   var summary: String {
@@ -137,6 +162,7 @@ enum ShareCollector {
   static func collect(_ items: [NSExtensionItem]) async -> ShareCollection {
     var collection = ShareCollection()
     var total = 0
+    var fileTotal = 0
     for item in items {
       if let text = item.attributedContentText?.string.trimmingCharacters(
         in: .whitespacesAndNewlines), !text.isEmpty
@@ -147,9 +173,39 @@ enum ShareCollector {
       for provider in item.attachments ?? [] {
         guard collection.parts.count < ShareDropEntry.maximumParts else { break }
         if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier) {
-          if let url = await loadURL(provider), url.isFileURL {
-            collection.parts.append(.file(url.path))
+          guard let url = await loadURL(provider), url.isFileURL else { continue }
+          // The file itself is copied into the drop (F10): the App never
+          // opens a path a drop names.
+          let scoped = url.startAccessingSecurityScopedResource()
+          let size = ShareDropbox.regularFileSize(url)
+          if scoped { url.stopAccessingSecurityScopedResource() }
+          guard let size else {
+            collection.refused.append("有一项不是文件，无法添加")
+            continue
           }
+          let ext = url.pathExtension.lowercased()
+          let type = UTType(filenameExtension: ext)
+          if type?.conforms(to: .audiovisualContent) == true {
+            // The import reads the original later; sharing hands over a copy.
+            collection.refused.append("音视频请拖到 Mindloom 中，或使用“文件”>“导入…”")
+            continue
+          }
+          guard size <= ShareDropbox.maximumFileBytes,
+            fileTotal + size <= ShareDropbox.maximumShareFileBytes
+          else {
+            collection.refused.append("有一项过大")
+            continue
+          }
+          fileTotal += size
+          let base = url.deletingPathExtension().lastPathComponent
+            .replacingOccurrences(of: "/", with: "-")
+            .trimmingCharacters(in: CharacterSet(charactersIn: "."))
+          let count = collection.data.count + collection.files.count + 1
+          let name =
+            "\(count)-\(base.isEmpty ? "shared" : base)" + (ext.isEmpty ? "" : ".\(ext)")
+          guard ShareDropEntry.isPlainFileName(name) else { continue }
+          collection.files[name] = url
+          collection.parts.append(.data(name: name, type: type?.identifier))
         } else if provider.hasItemConformingToTypeIdentifier(UTType.url.identifier) {
           if let url = await loadURL(provider), !url.isFileURL {
             // A link: its text only. It is never opened here or in the App.
@@ -167,13 +223,13 @@ enum ShareCollector {
               UTType($0)?.conforms(to: type) == true
             } ?? type.identifier
           guard let bytes = await loadData(provider, type: declared) else {
-            collection.refused.append("有一项读不出来")
+            collection.refused.append("有一项无法读取")
             continue
           }
           guard bytes.count <= ShareDropbox.maximumDataBytes,
             total + bytes.count <= ShareDropbox.maximumShareBytes
           else {
-            collection.refused.append("有一项太大")
+            collection.refused.append("有一项过大")
             continue
           }
           total += bytes.count
@@ -181,7 +237,8 @@ enum ShareCollector {
           let base = (provider.suggestedName ?? "shared")
             .replacingOccurrences(of: "/", with: "-")
             .trimmingCharacters(in: CharacterSet(charactersIn: "."))
-          let name = "\(collection.data.count + 1)-\(base.isEmpty ? "shared" : base).\(ext)"
+          let name =
+            "\(collection.data.count + collection.files.count + 1)-\(base.isEmpty ? "shared" : base).\(ext)"
           guard ShareDropEntry.isPlainFileName(name) else { continue }
           collection.data[name] = bytes
           collection.parts.append(.data(name: name, type: declared))

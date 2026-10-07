@@ -10,13 +10,13 @@ if [[ "${1:-}" == "--hide-product" ]]; then
   hide_product=true
   shift
 fi
-app_path="${1:-$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app}"
+app_path="${1:-$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/Mindloom.app}"
 lsregister_path="${BESTASR_LSREGISTER_PATH:-/System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister}"
 
 case "$app_path" in
-  "$BESTASR_XCODE_DERIVED_DATA"/Build/Products/*/bestASR.app) ;;
+  "$BESTASR_XCODE_DERIVED_DATA"/Build/Products/*/Mindloom.app) ;;
   *)
-    print -u2 "error: refusing to unregister a non-build bestASR path: $app_path"
+    print -u2 "error: refusing to unregister a non-build Mindloom path: $app_path"
     exit 64
     ;;
 esac
@@ -36,7 +36,7 @@ fi
 if [[ "$hide_product" == true ]]; then
   hidden_path="${app_path%.app}.build-product"
   case "$hidden_path" in
-    "$BESTASR_XCODE_DERIVED_DATA"/Build/Products/*/bestASR.build-product) ;;
+    "$BESTASR_XCODE_DERIVED_DATA"/Build/Products/*/Mindloom.build-product) ;;
     *)
       print -u2 "error: refusing unexpected hidden build product path: $hidden_path"
       exit 64

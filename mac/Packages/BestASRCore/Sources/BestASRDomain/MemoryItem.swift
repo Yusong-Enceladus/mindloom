@@ -96,6 +96,9 @@ public struct MemoryItemRecord: Equatable, Identifiable, Sendable {
   public var keptOnMac = false
   /// A video recording: the keyframes taken from it, in time order.
   public var keyframes: [Keyframe] = []
+  /// A dictation's delivered text (the cleaned-up words written into the
+  /// App) when it differs from `text`; nil otherwise.
+  public var deliveredText: String? = nil
 
   public var id: SessionID { sessionID }
 
@@ -148,6 +151,13 @@ public enum SourceLabel {
     inputMode: SessionInputMode, bundleID: String?, displayName: String?
   ) -> String {
     let appName = displayName?.trimmingCharacters(in: .whitespacesAndNewlines)
+    // What another App put in (`agent:<name>`, AGENT-007): its name and that
+    // it is another App, never the owner's own words (v12: plain words).
+    if let appName, appName.hasPrefix(AgentInboxProposal.sourcePrefix) {
+      let name = appName.dropFirst(AgentInboxProposal.sourcePrefix.count)
+        .trimmingCharacters(in: .whitespaces)
+      return (name.isEmpty ? "未知" : name) + "（其他 App）"
+    }
     let bundle = bundleID?.trimmingCharacters(in: .whitespacesAndNewlines)
     let hasBundle = !(bundle?.isEmpty ?? true)
     // Only these modes store an App in the display-name field. An import or a

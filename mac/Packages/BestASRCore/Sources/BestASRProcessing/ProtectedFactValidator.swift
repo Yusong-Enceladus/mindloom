@@ -138,7 +138,16 @@ public enum DictationProtectedFactValidator {
     let terms = Array(
       Set(dictionaryTerms.map(normalize).filter { !$0.isEmpty })
     ).sorted()
-    for term in terms {
+    // A term or actor that occurs in neither text has no occurrences and no
+    // relations to compare. Skipping those keeps this gate's cost to the
+    // words actually said: with the user's whole dictionary it compiled and
+    // ran a few hundred expressions per dictation, about 100 ms on the
+    // critical path between recognition and paste (DICTATION_ARCHITECTURE
+    // §15). `mayOccur` is never stricter than the expressions themselves.
+    let present = terms.filter {
+      mayOccur($0, in: normalizedSource) || mayOccur($0, in: normalizedCandidate)
+    }
+    for term in present {
       if dictionaryOccurrenceCount(of: term, in: normalizedSource)
         != dictionaryOccurrenceCount(of: term, in: normalizedCandidate)
       {
@@ -146,8 +155,8 @@ public enum DictationProtectedFactValidator {
       }
     }
 
-    if actionOwnerRelations(in: normalizedSource, dictionaryTerms: terms)
-      != actionOwnerRelations(in: normalizedCandidate, dictionaryTerms: terms)
+    if actionOwnerRelations(in: normalizedSource, dictionaryTerms: present)
+      != actionOwnerRelations(in: normalizedCandidate, dictionaryTerms: present)
     {
       violations.insert(.actionOwner)
     }
@@ -191,12 +200,7 @@ public enum DictationProtectedFactValidator {
     in text: String,
     trimTrailingPunctuation: Bool
   ) -> [String] {
-    guard
-      let expression = try? NSRegularExpression(
-        pattern: pattern,
-        options: [.caseInsensitive]
-      )
-    else { return [] }
+    guard let expression = expressions.expression(pattern) else { return [] }
     let range = NSRange(text.startIndex..<text.endIndex, in: text)
     return expression.matches(in: text, range: range).compactMap { match in
       guard let swiftRange = Range(match.range, in: text) else { return nil }
@@ -212,6 +216,8 @@ public enum DictationProtectedFactValidator {
     }.sorted()
   }
 
+  /// Each actor's relations come from its own matches, so an actor that does
+  /// not occur in `text` contributes nothing and is not compiled or run.
   private static func actionOwnerRelations(
     in text: String,
     dictionaryTerms: [String]
@@ -221,7 +227,7 @@ public enum DictationProtectedFactValidator {
       "我", "我们", "你", "你们", "他", "她", "他们", "她们",
     ]
     let actors = Array(Set(dictionaryTerms + fixedActors))
-      .filter { !$0.isEmpty }
+      .filter { !$0.isEmpty && mayOccur($0, in: text) }
       .sorted { $0.count > $1.count }
     var relations: [String] = []
     for actor in actors {
@@ -251,12 +257,7 @@ public enum DictationProtectedFactValidator {
   }
 
   private static func capturedRelations(pattern: String, in text: String) -> [String] {
-    guard
-      let expression = try? NSRegularExpression(
-        pattern: pattern,
-        options: [.caseInsensitive]
-      )
-    else { return [] }
+    guard let expression = expressions.expression(pattern) else { return [] }
     let range = NSRange(text.startIndex..<text.endIndex, in: text)
     return expression.matches(in: text, range: range).compactMap { match in
       guard match.numberOfRanges == 4 else { return nil }
@@ -315,17 +316,25 @@ public enum DictationProtectedFactValidator {
       hasHan
       ? escaped
       : "(?<![\\p{L}\\p{N}])\(escaped)(?![\\p{L}\\p{N}])"
-    guard
-      let expression = try? NSRegularExpression(
-        pattern: pattern,
-        options: [.caseInsensitive]
-      )
-    else { return 0 }
+    guard let expression = expressions.expression(pattern) else { return 0 }
     return expression.numberOfMatches(
       in: text,
       range: NSRange(text.startIndex..<text.endIndex, in: text)
     )
   }
+
+  /// False only when `needle` cannot match anywhere in `text` under the
+  /// case-insensitive expressions above: a looser, case-, width- and
+  /// diacritic-insensitive literal search finds every such match.
+  static func mayOccur(_ needle: String, in text: String) -> Bool {
+    text.range(
+      of: needle, options: [.caseInsensitive, .diacriticInsensitive, .widthInsensitive]) != nil
+  }
+
+  /// Compiled expressions, shared by every validation. The fixed patterns
+  /// and the user's dictionary are a small, stable set; the cap only bounds
+  /// a pathological dictionary.
+  private static let expressions = ExpressionCache(limit: 1_024)
 
   private static func normalize(_ value: String) -> String {
     value.precomposedStringWithCompatibilityMapping
@@ -349,5 +358,32 @@ extension Array where Element: Equatable {
       }
     }
     return candidateIndex == endIndex
+  }
+}
+
+/// Case-insensitive `NSRegularExpression`s by pattern. Compiling is the
+/// expensive part of a validation; a compiled expression is immutable and
+/// safe to share across threads.
+private final class ExpressionCache: @unchecked Sendable {
+  private let lock = NSLock()
+  private var compiled: [String: NSRegularExpression] = [:]
+  private let limit: Int
+
+  init(limit: Int) { self.limit = limit }
+
+  func expression(_ pattern: String) -> NSRegularExpression? {
+    lock.lock()
+    if let cached = compiled[pattern] {
+      lock.unlock()
+      return cached
+    }
+    lock.unlock()
+    guard let made = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive])
+    else { return nil }
+    lock.lock()
+    if compiled.count >= limit { compiled.removeAll(keepingCapacity: true) }
+    compiled[pattern] = made
+    lock.unlock()
+    return made
   }
 }

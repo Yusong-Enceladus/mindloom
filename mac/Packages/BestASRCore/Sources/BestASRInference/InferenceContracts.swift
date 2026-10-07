@@ -335,10 +335,38 @@ public enum ASRMode: String, Codable, Sendable {
 public struct ASRDictionaryHint: Codable, Equatable, Sendable {
   public let canonicalForm: String
   public let spokenForms: [String]
+  /// Only the listed spoken forms are rewritten to `canonicalForm`, where
+  /// they stand as whole words; the word is not also searched for among
+  /// similar-looking text, even when `dictionaryTerms` lists it too. Set for
+  /// every form learned from the user's corrections (ALIGNMENT 收1-8),
+  /// however often the correction was seen.
+  public let explicitOnly: Bool
 
-  public init(canonicalForm: String, spokenForms: [String] = []) {
+  public init(canonicalForm: String, spokenForms: [String] = [], explicitOnly: Bool = false) {
     self.canonicalForm = canonicalForm
     self.spokenForms = spokenForms
+    self.explicitOnly = explicitOnly
+  }
+
+  private enum CodingKeys: String, CodingKey {
+    case canonicalForm
+    case spokenForms
+    case explicitOnly
+  }
+
+  public init(from decoder: Decoder) throws {
+    let container = try decoder.container(keyedBy: CodingKeys.self)
+    canonicalForm = try container.decode(String.self, forKey: .canonicalForm)
+    spokenForms = try container.decodeIfPresent([String].self, forKey: .spokenForms) ?? []
+    explicitOnly = try container.decodeIfPresent(Bool.self, forKey: .explicitOnly) ?? false
+  }
+
+  public func encode(to encoder: Encoder) throws {
+    var container = encoder.container(keyedBy: CodingKeys.self)
+    try container.encode(canonicalForm, forKey: .canonicalForm)
+    try container.encode(spokenForms, forKey: .spokenForms)
+    // Absent when false, so every hint encoded before stays byte-identical.
+    if explicitOnly { try container.encode(true, forKey: .explicitOnly) }
   }
 }
 
@@ -356,6 +384,11 @@ public struct ASRRecognitionContext: Codable, Equatable, Sendable {
   public let dictionaryTerms: [String]
   public let dictionaryHints: [ASRDictionaryHint]
   public let priorStableSegments: [ASRContextSegment]
+  /// Return the text without word timings: one segment for the whole range,
+  /// to be aligned later by the caller (a recognizer that has no separate
+  /// aligner ignores it). Dictation asks for it so the aligner never has to
+  /// sit in memory next to the recognizer (DICTATION_ARCHITECTURE §15.7).
+  public let deferWordAlignment: Bool
 
   public init(
     dictionaryTerms: [String] = [],
@@ -371,17 +404,20 @@ public struct ASRRecognitionContext: Codable, Equatable, Sendable {
   public init(
     dictionaryTerms: [String],
     dictionaryHints: [ASRDictionaryHint],
-    priorStableSegments: [ASRContextSegment] = []
+    priorStableSegments: [ASRContextSegment] = [],
+    deferWordAlignment: Bool = false
   ) {
     self.dictionaryTerms = dictionaryTerms
     self.dictionaryHints = dictionaryHints
     self.priorStableSegments = priorStableSegments
+    self.deferWordAlignment = deferWordAlignment
   }
 
   private enum CodingKeys: String, CodingKey {
     case dictionaryTerms
     case dictionaryHints
     case priorStableSegments
+    case deferWordAlignment
   }
 
   public init(from decoder: Decoder) throws {
@@ -401,6 +437,8 @@ public struct ASRRecognitionContext: Codable, Equatable, Sendable {
         [ASRContextSegment].self,
         forKey: .priorStableSegments
       ) ?? []
+    deferWordAlignment =
+      try container.decodeIfPresent(Bool.self, forKey: .deferWordAlignment) ?? false
   }
 
   public func encode(to encoder: Encoder) throws {
@@ -408,6 +446,11 @@ public struct ASRRecognitionContext: Codable, Equatable, Sendable {
     try container.encode(dictionaryTerms, forKey: .dictionaryTerms)
     try container.encode(dictionaryHints, forKey: .dictionaryHints)
     try container.encode(priorStableSegments, forKey: .priorStableSegments)
+    // Absent unless set, so a context that does not defer encodes exactly as
+    // it did before the field existed.
+    if deferWordAlignment {
+      try container.encode(true, forKey: .deferWordAlignment)
+    }
   }
 
   public func bounded(
@@ -435,15 +478,20 @@ public struct ASRRecognitionContext: Codable, Equatable, Sendable {
           }
           .prefix(32)
       )
+      // `explicitOnly` travels with the hint: a learned word that lost it
+      // here would be matched by sound and anywhere inside other words by
+      // every recognizer behind `CandidateAdapterCore` (review 10-6 S1).
       return ASRDictionaryHint(
         canonicalForm: canonical,
-        spokenForms: spoken
+        spokenForms: spoken,
+        explicitOnly: hint.explicitOnly
       )
     }
     return Self(
       dictionaryTerms: Array(dictionaryTerms.prefix(termLimit)),
       dictionaryHints: Array(boundedHints.prefix(termLimit)),
-      priorStableSegments: Array(priorStableSegments.suffix(segmentLimit))
+      priorStableSegments: Array(priorStableSegments.suffix(segmentLimit)),
+      deferWordAlignment: deferWordAlignment
     )
   }
 }

@@ -39,7 +39,10 @@ let package = Package(
   targets: [
     .target(
       name: "MindloomPhoneKit",
-      dependencies: [.product(name: "MindloomLink", package: "MindloomLink")]
+      dependencies: [
+        .product(name: "MindloomLink", package: "MindloomLink"),
+        .product(name: "MindloomIdentity", package: "MindloomLink"),
+      ]
     ),
     .target(
       name: "MindloomInboxSSH",

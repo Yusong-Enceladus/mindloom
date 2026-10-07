@@ -2,6 +2,7 @@ import BestASRRemoteOrganizer
 import CryptoKit
 import Darwin
 import Foundation
+import MindloomIdentity
 import Security
 
 /// Where each grant's secret lives (AGENT-CONTRACT §2: "a per-client secret
@@ -48,11 +49,11 @@ public enum AgentGrantSecret {
   }
 }
 
-/// Generic passwords in the login Keychain: service `com.bestasr.agent-grant`,
+/// Generic passwords in the login Keychain: service `app.mindloom.agent-grant`,
 /// account = the data root's identity hash + ":" + the grant ID, this device
 /// only (never synchronized).
 public struct KeychainAgentGrantSecretStore: AgentGrantSecretStore {
-  public static let service = "com.bestasr.agent-grant"
+  public static let service = MindloomIdentity.keychainService("agent-grant")
   public let rootIdentity: String
 
   public init(dataRoot: URL) {

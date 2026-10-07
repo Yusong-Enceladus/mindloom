@@ -7,6 +7,7 @@ DerivedData/
 build/
 *.profraw
 *.xcodeproj/xcuserdata/
+iOS/MindloomPhone.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/
 *.xcuserstate
 *.xccheckout
@@ -48,3 +49,7 @@ __pycache__/
 # Editor state
 .idea/
 .vscode/
+
+# Device-build variant without the Live Activity widget (iOS/script/device_build.sh)
+iOS/MindloomPhoneNoWidget.xcodeproj/
+iOS/MindloomPhoneNoWatch.xcodeproj/

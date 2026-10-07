@@ -1,0 +1,114 @@
+Mindloom patch 0002: keep the login when a refresh fails on the network.
+
+Upstream deletes the saved login on any refresh error, so a Mac that wakes before its network is back
+would have to scan the QR code again. Only an explicit rejection by Tencent's server deletes it now.
+Regression test: internal/auth/auth_refresh_keep_test.go (3 cases).
+
+diff --git a/internal/auth/auth.go b/internal/auth/auth.go
+index 560a294..5a05a0c 100644
+--- a/internal/auth/auth.go
++++ b/internal/auth/auth.go
+@@ -103,6 +103,13 @@ func (w *TmeetAuth) RefreshToken(ctx context.Context, clearFunc config.ClearUser
+ 		tokenData, err := w.refreshAuthToken(ctx)
+ 		if err != nil {
+ 			log.Errorf(ctx, "refresh token failed: %v", err)
++			// Mindloom build: delete the saved login only when the server
++			// answered and rejected the refresh. A network failure, a non-200
++			// gateway reply or an undecodable body never reached a server
++			// decision, so the login is kept and the next call retries.
++			if !exception.Is(err, exception.RefreshTokenFailedError) {
++				return err
++			}
+ 			// Delete local config.
+ 			_ = clearFunc()
+ 			return exception.RefreshTokenFailedError
+diff --git a/internal/auth/auth_refresh_keep_test.go b/internal/auth/auth_refresh_keep_test.go
+new file mode 100644
+index 0000000..68eb96b
+--- /dev/null
++++ b/internal/auth/auth_refresh_keep_test.go
+@@ -0,0 +1,84 @@
++package auth
++
++import (
++	"context"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"tmeet/internal"
++	"tmeet/internal/common"
++	"tmeet/internal/config"
++	"tmeet/internal/core/serializable"
++	"tmeet/internal/core/thttp"
++	"tmeet/internal/exception"
++)
++
++// Mindloom regression test: a refresh that never reached a server decision
++// must not delete the saved login; an explicit server rejection still does.
++func newRefreshTestTmeet(t *testing.T, host string) *internal.Tmeet {
++	t.Helper()
++	t.Setenv("TMEET_CLI_CONFIG_DIR", t.TempDir())
++	t.Setenv("TMEET_CLI_DATA_DIR", t.TempDir())
++	config.ResetCache()
++	clt, err := thttp.NewClient(host,
++		thttp.WithProtocol("http"),
++		thttp.WithSerializer(serializable.DefaultSerializer),
++		thttp.WithClient(&http.Client{Timeout: 3 * time.Second}))
++	if err != nil {
++		t.Fatal(err)
++	}
++	now := time.Now().Unix()
++	return &internal.Tmeet{
++		TCtx:       context.Background(),
++		CGIClient:  clt,
++		RestClient: clt,
++		SystemInfo: &common.SystemInfo{MachineID: "test-machine"},
++		UserConfig: &config.UserConfig{
++			SdkId: "sdk", OpenId: "open_test", AccessToken: "a", RefreshToken: "r",
++			Expires: now - 10, RefreshTokenExpires: now + 3600,
++		},
++	}
++}
++
++func runRefresh(t *testing.T, host string) (error, bool) {
++	tm := newRefreshTestTmeet(t, host)
++	cleared := false
++	err := NewTmeetAuth(tm).RefreshToken(context.Background(), func() error { cleared = true; return nil })
++	return err, cleared
++}
++
++func TestRefreshKeepsLoginOnGatewayError(t *testing.T) {
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.WriteHeader(http.StatusBadGateway)
++	}))
++	defer srv.Close()
++	err, cleared := runRefresh(t, strings.TrimPrefix(srv.URL, "http://"))
++	if err == nil || cleared {
++		t.Fatalf("want error and login kept, got err=%v cleared=%v", err, cleared)
++	}
++}
++
++func TestRefreshKeepsLoginWhenServerUnreachable(t *testing.T) {
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
++	host := strings.TrimPrefix(srv.URL, "http://")
++	srv.Close()
++	err, cleared := runRefresh(t, host)
++	if err == nil || cleared || !exception.Is(err, exception.NetworkError) {
++		t.Fatalf("want network error and login kept, got err=%v cleared=%v", err, cleared)
++	}
++}
++
++func TestRefreshClearsLoginWhenServerRejects(t *testing.T) {
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		w.Header().Set("Content-Type", "application/json")
++		_, _ = w.Write([]byte(`{"code":1001,"message":"refresh token invalid"}`))
++	}))
++	defer srv.Close()
++	err, cleared := runRefresh(t, strings.TrimPrefix(srv.URL, "http://"))
++	if !cleared || !exception.Is(err, exception.RefreshTokenFailedError) {
++		t.Fatalf("want login cleared on rejection, got err=%v cleared=%v", err, cleared)
++	}
++}

@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>zh-Hans</string>
 	<key>CFBundleDisplayName</key>
-	<string>织机键盘</string>
+	<string>Mindloom</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,6 +24,12 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>MindloomAppBundleID</key>
+	<string>$(MINDLOOM_PHONE_BUNDLE_ID)</string>
+	<key>MindloomAppGroup</key>
+	<string>$(MINDLOOM_APP_GROUP)</string>
+	<key>MindloomSharedKeychainGroup</key>
+	<string>$(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).shared</string>
 	<key>NSExtension</key>
 	<dict>
 		<key>NSExtensionAttributes</key>

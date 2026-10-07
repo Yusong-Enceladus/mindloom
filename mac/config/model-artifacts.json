@@ -826,6 +826,84 @@
           "sha256": "38ee28d4269c076cef254ee760bbd811f0738a92e0f01f9699ad372828c5de8f"
         }
       ]
+    },
+    {
+      "id": "qwen3-embedding-0.6b-mlx-4bit-6c3ae708",
+      "exactVersion": "6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "activationSequence": 1,
+      "downloadBaseURL": "https://huggingface.co/mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ/resolve/6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "source": "https://huggingface.co/mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ/tree/6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "sourceRevision": "6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "treeSHA256": "c9b6afa5185b24e8757450b1f168c87ae6c3d4d1fa3c092528d923f10e34271d",
+      "treeDigestAlgorithm": "sha256-shasum-path-list-v1",
+      "license": "Apache-2.0",
+      "licenseSource": "https://huggingface.co/mlx-community/Qwen3-Embedding-0.6B-4bit-DWQ/blob/6c3ae70858513f1a78e9cdca3cae330d9075cd2a/README.md",
+      "licenseRevision": "6c3ae70858513f1a78e9cdca3cae330d9075cd2a",
+      "licenseFile": "Legal/Qwen3-LICENSE-Apache-2.0.txt",
+      "licenseSHA256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
+      "requiredAttribution": "Qwen3-Embedding model by Alibaba Cloud (Apache License 2.0, declared in the model card); MLX 4-bit conversion by the mlx-community organization. Retain the Apache License 2.0 text and the Alibaba Cloud copyright notice.",
+      "minimumOS": "macOS 14.2",
+      "hardware": "Apple Silicon arm64 with at least 16 GB unified memory; 4-bit MLX inference evaluated on Apple M4 Pro",
+      "totalSizeBytes": 351226578,
+      "networkBehavior": "After explicit license and download consent, installation fetches only the catalog-pinned public model files over HTTPS and verifies every file before activation. Record text, queries, audio, dictionaries and speaker data never enter model requests. The runtime receives only the verified local directory and has no network access.",
+      "runtimeBehavior": "Qwen3-Embedding 0.6B 4-bit through the exact-pinned MLX Swift embedders library: last-token pooling, unit vectors, 512 tokens per piece. Loaded only while the search index is built or a search runs, on its own utility queue, paused while dictation or a recording is captured or recognized; released after two idle minutes. Vectors are derived data in the library database (16-bit floats), rebuilt when the model changes, never exported.",
+      "distributionImpact": "The 351,226,578-byte model is not stored in Git or bundled in the current app. It is an optional download (its own license toggle); search works by characters without it.",
+      "files": [
+        {
+          "relativePath": "added_tokens.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/added_tokens.json",
+          "sizeBytes": 707,
+          "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680"
+        },
+        {
+          "relativePath": "config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/config.json",
+          "sizeBytes": 937,
+          "sha256": "e7dfa5b73fb2a03cbc8fb40c394e95b99f03348e237f7f28e7a1daf56a2169bb"
+        },
+        {
+          "relativePath": "merges.txt",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/merges.txt",
+          "sizeBytes": 1671853,
+          "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+        },
+        {
+          "relativePath": "model.safetensors",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/model.safetensors",
+          "sizeBytes": 335296756,
+          "sha256": "3d773d5ee582eda445daeee23f7a2b76124011796df244ddb45e22638fdb7cde"
+        },
+        {
+          "relativePath": "model.safetensors.index.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/model.safetensors.index.json",
+          "sizeBytes": 49770,
+          "sha256": "90d82744cdb6b7d093f0b812fc21a49b6ffa9d0084a45428f0cfd01eb4adbe12"
+        },
+        {
+          "relativePath": "special_tokens_map.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/special_tokens_map.json",
+          "sizeBytes": 613,
+          "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd"
+        },
+        {
+          "relativePath": "tokenizer.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/tokenizer.json",
+          "sizeBytes": 11423705,
+          "sha256": "def76fb086971c7867b829c23a26261e38d9d74e02139253b38aeb9df8b4b50a"
+        },
+        {
+          "relativePath": "tokenizer_config.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/tokenizer_config.json",
+          "sizeBytes": 5404,
+          "sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0"
+        },
+        {
+          "relativePath": "vocab.json",
+          "packagePath": "Contents/Resources/Models/qwen3-embedding-0.6b-mlx-4bit-6c3ae708/vocab.json",
+          "sizeBytes": 2776833,
+          "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+        }
+      ]
     }
   ],
   "selectionStatus": "The current product candidate uses automatic stage routing: Fluid SenseVoice int8 for live drafts and sentence-level Chinese-English mixing, Fluid Paraformer int8 for clearly Mandarin final recomputation, and Fluid Parakeet Unified int8 for clearly English final recomputation. The two monolingual final candidates passed their pinned public FLEURS real-human tuning profiles; SenseVoice failed the combined realistic profile and therefore is not treated as the all-language final default. This tuning selection is not release eligibility. Fluid offline diarization remains the frozen speaker candidate after the independent public AMI holdout, and Qwen3 1.7B MLX plus deterministic editing remains the protected local-text candidate. Every runtime loads only model-manager-verified local files."

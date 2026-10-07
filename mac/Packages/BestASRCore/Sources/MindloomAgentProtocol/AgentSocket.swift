@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import MindloomIdentity
 
 /// Where the App listens for the helper, and the POSIX pieces both sides
 /// use: a Unix domain socket in the data root's private `agent` folder
@@ -28,7 +29,8 @@ public enum AgentSocketLocation {
     let home = String(cString: directory)
     guard home.hasPrefix("/") else { return nil }
     return URL(fileURLWithPath: home, isDirectory: true)
-      .appendingPathComponent("Library/Application Support/bestASR", isDirectory: true)
+      .appendingPathComponent("Library/Application Support", isDirectory: true)
+      .appendingPathComponent(MindloomIdentity.libraryFolderName, isDirectory: true)
   }
 
   /// `MINDLOOM_DATA_ROOT` when set to an absolute path, else the default.
@@ -156,10 +158,14 @@ public enum AgentSocketIO {
 public struct AgentPeer: Equatable, Sendable {
   public let uid: uid_t
   public let pid: pid_t
+  /// The peer's audit token (`LOCAL_PEERTOKEN`), which, unlike a process ID,
+  /// names that one process and is never reused; nil when unavailable.
+  public let auditToken: Data?
 
-  public init(uid: uid_t, pid: pid_t) {
+  public init(uid: uid_t, pid: pid_t, auditToken: Data? = nil) {
     self.uid = uid
     self.pid = pid
+    self.auditToken = auditToken
   }
 
   public static func of(_ descriptor: Int32) -> AgentPeer? {
@@ -172,7 +178,12 @@ public struct AgentPeer: Equatable, Sendable {
     var pidLength = socklen_t(MemoryLayout<pid_t>.size)
     guard getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERPID, &pid, &pidLength) == 0, pid > 0
     else { return nil }
-    return AgentPeer(uid: credentials.cr_uid, pid: pid)
+    var token = audit_token_t()
+    var tokenLength = socklen_t(MemoryLayout<audit_token_t>.size)
+    let auditToken: Data? =
+      getsockopt(descriptor, SOL_LOCAL, LOCAL_PEERTOKEN, &token, &tokenLength) == 0
+      ? withUnsafeBytes(of: &token) { Data($0) } : nil
+    return AgentPeer(uid: credentials.cr_uid, pid: pid, auditToken: auditToken)
   }
 }
 

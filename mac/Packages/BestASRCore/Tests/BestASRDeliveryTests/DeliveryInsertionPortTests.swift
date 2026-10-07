@@ -1,3 +1,4 @@
+import AppKit
 import BestASRDictation
 import BestASRDomain
 import XCTest
@@ -12,6 +13,66 @@ final class DeliveryInsertionPortTests: XCTestCase {
     XCTAssertEqual(DeliveryInsertionPort.failureReason(for: .secureInput), .secureInput)
     XCTAssertEqual(DeliveryInsertionPort.failureReason(for: .applicationChanged), .applicationChanged)
     XCTAssertEqual(DeliveryInsertionPort.failureReason(for: .permissionDenied), .permissionDenied)
+    XCTAssertEqual(DeliveryInsertionPort.failureReason(for: .unconfirmed), .unconfirmed)
+  }
+
+  /// 收1-12: a paste nobody could see land is kept for copying, not
+  /// reported as inserted.
+  func testAnUnconfirmedPasteIsKeptForCopy() throws {
+    let result = DeliveryInsertionPort.result(
+      try DictationIdempotencyKey("delivery-unconfirmed"), kept: .unconfirmed)
+    XCTAssertEqual(result.method, .retainedForCopy)
+    XCTAssertFalse(result.inserted)
+    XCTAssertEqual(result.failureReason, .unconfirmed)
+    XCTAssertTrue(DictationInsertionFailureReason.unconfirmed.declinedByDesign)
+  }
+
+  /// 收1-11: a dictation that ends in Mindloom's own search field is written
+  /// into it directly (no clipboard, no ⌘V), without its final 「。」, so the
+  /// search runs on the words. It used to be kept as aimed at nowhere.
+  @MainActor
+  func testOwnSearchFieldIsWrittenDirectly() async throws {
+    try XCTSkipIf(TargetReader().secureInputActive(), "a password field has the keyboard")
+    let search = FakeOwnField(text: "", singleLine: true)
+    let port = DeliveryInsertionPort(
+      reader: TargetReader(), deliverer: TextDeliverer(), ownApplicationAllowed: { false },
+      targetProvider: { nil }, ownTextInput: { search })
+    let clipboard = NSPasteboard.general.changeCount
+    let result = try await port.insert(
+      DictationInsertionRequest(
+        sessionID: SessionID(), target: nil, text: "上周和高原的周报。",
+        idempotencyKey: try DictationIdempotencyKey("delivery-own-search")))
+    XCTAssertEqual(search.text, "上周和高原的周报")
+    XCTAssertTrue(result.inserted)
+    XCTAssertEqual(result.method, .directWrite)
+    XCTAssertEqual(result.evidence, "own-field")
+    XCTAssertNil(result.failureReason)
+    XCTAssertEqual(NSPasteboard.general.changeCount, clipboard, "the clipboard is not touched")
+  }
+
+  /// A multi-line field keeps the sentence as said, at the caret, with the
+  /// space English after English needs.
+  @MainActor
+  func testOwnTextBoxTakesTheWordsAtTheCaret() throws {
+    let box = FakeOwnField(text: "hello", singleLine: false)
+    XCTAssertEqual(DeliveryInsertionPort.ownFieldText("world.", into: box), " world.")
+    let search = FakeOwnField(text: "", singleLine: true)
+    XCTAssertNil(DeliveryInsertionPort.ownFieldText("。", into: search))
+    XCTAssertEqual(DeliveryInsertionPort.ownFieldText(" Twin-7 数据. ", into: search), "Twin-7 数据")
+  }
+
+  /// No field of this App has the keyboard: the usual delivery decides.
+  @MainActor
+  func testWithoutAnOwnFieldTheFrontApplicationDecides() async throws {
+    let port = DeliveryInsertionPort(
+      reader: TargetReader(), deliverer: TextDeliverer(), ownApplicationAllowed: { false },
+      targetProvider: { nil }, ownTextInput: { nil })
+    let kept = try await port.insert(
+      DictationInsertionRequest(
+        sessionID: SessionID(), target: nil, text: "x",
+        idempotencyKey: try DictationIdempotencyKey("delivery-no-own-field")))
+    XCTAssertFalse(kept.inserted)
+    XCTAssertEqual(kept.failureReason, .nowhere)
   }
 
   func testKeptTextIsRetainedForCopyWithItsReason() throws {
@@ -56,6 +117,44 @@ final class DeliveryInsertionPortTests: XCTestCase {
     XCTAssertFalse(secure.inserted)
   }
 
+  /// Regression (review 10-5c S5): after a delivery left its words on the
+  /// clipboard, the App copied the dictation again with `clearContents`, so
+  /// whatever the user copied in the meantime was lost. The port remembers
+  /// the clipboard each delivery left; a newer one belongs to the user.
+  @MainActor
+  func testACopyMadeAfterTheDeliveryBelongsToTheUser() throws {
+    let port = DeliveryInsertionPort(
+      reader: TargetReader(), deliverer: TextDeliverer(), ownApplicationAllowed: { false },
+      targetProvider: { nil })
+    let key = try DictationIdempotencyKey("delivery-lease")
+    XCTAssertFalse(
+      port.clipboardTakenSinceDelivery(key, currentChangeCount: 10),
+      "no clipboard was borrowed: the App copies the words as before")
+    port.record(ClipboardLease(changeCount: 10), for: key)
+    XCTAssertFalse(port.clipboardTakenSinceDelivery(key, currentChangeCount: 10))
+    XCTAssertTrue(port.clipboardTakenSinceDelivery(key, currentChangeCount: 11))
+    port.record(nil, for: key)
+    XCTAssertFalse(port.clipboardTakenSinceDelivery(key, currentChangeCount: 11))
+    XCTAssertTrue(ClipboardLease(changeCount: 3).userCopiedSince(currentChangeCount: 4))
+    XCTAssertFalse(ClipboardLease(changeCount: 3).userCopiedSince(currentChangeCount: 3))
+  }
+
+  /// The probe pins the application under test: capturing the target names
+  /// it, whatever is in front (review 10-5c P1).
+  @MainActor
+  func testAProvidedTargetIsWhatTheKeyDownCaptures() throws {
+    let pinned = DictationTargetSnapshot(
+      processIdentifier: 0x7FFF_FF00, bundleIdentifier: "com.example.pinned", isSecure: false)
+    let port = DeliveryInsertionPort(
+      reader: TargetReader(), deliverer: TextDeliverer(), ownApplicationAllowed: { false },
+      targetProvider: { pinned })
+    XCTAssertEqual(try port.captureTargetNow(), pinned)
+    let none = DeliveryInsertionPort(
+      reader: TargetReader(), deliverer: TextDeliverer(), ownApplicationAllowed: { false },
+      targetProvider: { nil })
+    XCTAssertThrowsError(try none.captureTargetNow())
+  }
+
   /// A result written by an earlier build, with a reason this vocabulary
   /// no longer has, still decodes: the reason is simply absent.
   func testResultsWithHistoricalReasonsStillDecode() throws {
@@ -74,5 +173,24 @@ final class DeliveryInsertionPortTests: XCTestCase {
     let snapshot = try JSONDecoder().decode(DictationTargetSnapshot.self, from: Data(target.utf8))
     XCTAssertEqual(snapshot.processIdentifier, 7)
     XCTAssertFalse(snapshot.isSecure)
+  }
+}
+
+/// One of this App's own text fields, without a window.
+@MainActor
+private final class FakeOwnField: OwnTextInput {
+  var text: String
+  var selection: NSRange
+  let isSingleLine: Bool
+
+  init(text: String, singleLine: Bool) {
+    self.text = text
+    selection = NSRange(location: (text as NSString).length, length: 0)
+    isSingleLine = singleLine
+  }
+
+  func insert(_ words: String) {
+    text = (text as NSString).replacingCharacters(in: selection, with: words)
+    selection = NSRange(location: selection.location + (words as NSString).length, length: 0)
   }
 }

@@ -83,13 +83,13 @@ final class AgentSpacesIntegrationTests: XCTestCase {
 
     await owner.queue(allowAll(spaces: ["personal"]))
     let mine = await AgentTestClient(service: service)
-    let found = await mine.call("search_matters", ["query": "咖啡馆"]).matterIDs
+    let found = await mine.call("search", ["query": "咖啡馆"]).matterIDs
     XCTAssertEqual(found, [Self.cafe])
     let recent = await mine.call("list_recent", ["days": 14]).matterIDs
     XCTAssertEqual(recent, [Self.cafe])
     let refused = await mine.call("get_matter", ["id": .string(spaceCafe)])
     XCTAssertEqual(refused.errorCode, "not_found")
-    let read = await mine.call("get_matter", ["id": .string(Self.cafe)])
+    let read = await mine.call("get_matter", ["id": .string(Self.cafe), "detail": "full"])
     XCTAssertFalse(read.text.contains(Self.sentinel))
     XCTAssertTrue(read.text.contains("招牌"))  // its strands are part of the text lens
 
@@ -98,7 +98,9 @@ final class AgentSpacesIntegrationTests: XCTestCase {
       service: service, name: "cursor-vscode", path: "/Applications/Cursor.app/x")
     let inSpace = await shared.call("list_recent", ["days": 14]).matterIDs
     XCTAssertEqual(inSpace, [spaceCafe])
-    let text = await shared.call("get_matter", ["id": .string(spaceCafe)]).text
+    let text = await shared.call(
+      "get_matter", ["id": .string(spaceCafe), "detail": "full"]
+    ).text
     XCTAssertTrue(text.contains(Self.sentinel))
     XCTAssertTrue(text.contains("拾光咖啡馆"))
     let mineRefused = await shared.call("get_matter", ["id": .string(Self.cafe)])
@@ -120,7 +122,7 @@ final class AgentSpacesIntegrationTests: XCTestCase {
     {
       AgentAuditRecord(
         at: AgentFixture.now, clientKey: "k", clientName: "Claude Code", grantID: nil,
-        tool: "search_matters", outcome: outcome, matterIDs: ids, byteCount: bytes)
+        tool: "search", outcome: outcome, matterIDs: ids, byteCount: bytes)
     }
     let ids = ["E1", "space:lab:E1", "space:lab:E2", "space:shop:E9"]
     let entries = AgentSpaceAccess.entries(for: record(.allowed, ids)) { _ in 3 }

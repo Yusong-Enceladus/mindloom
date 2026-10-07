@@ -74,12 +74,12 @@ if [[ "$model_state_before" != "$model_state_after" ]]; then
   exit 1
 fi
 
-app_path="$derived_data_path/Build/Products/Debug/bestASR.app"
-app_executable="$app_path/Contents/MacOS/bestASR"
+app_path="$derived_data_path/Build/Products/Debug/Mindloom.app"
+app_executable="$app_path/Contents/MacOS/Mindloom"
 test -d "$app_path"
 test -x "$app_executable"
 bundle_identifier="$(/usr/bin/plutil -extract CFBundleIdentifier raw -o - "$app_path/Contents/Info.plist")"
-if [[ "$bundle_identifier" != "com.bestasr.app.debug" ]]; then
+if [[ "$bundle_identifier" != "app.mindloom.debug" ]]; then
   print -u2 "error: unexpected bundle identifier: $bundle_identifier"
   exit 1
 fi

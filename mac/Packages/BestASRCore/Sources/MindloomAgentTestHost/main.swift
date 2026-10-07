@@ -10,11 +10,13 @@
 // Refuses a root without the SYNTHETIC_DATA_ROOT marker or inside the
 // owner's real library. Commands on stdin, one JSON object per line:
 //   {"cmd":"consent","answer":"deny"|"none"|{"spaces":[…],"range":"all"|
-//     {"ropes":[…]}|{"matters":[…]},"propose":bool,"duration":"once"|"today"|
+//     {"ropes":[…]}|{"matters":[…]},"change":bool,"duration":"once"|"today"|
 //     "always","numbers":bool,"ask":bool}}      queue the next consent answer
 //   {"cmd":"approve","answers":{"<matter id>":true|false}}  next approval
 //   {"cmd":"grants"} {"cmd":"revoke","grant_id":"…"} {"cmd":"revoke_all"}
-//   {"cmd":"proposals"} {"cmd":"reject","proposal_id":"…"} {"cmd":"quit"}
+//   {"cmd":"changes"} {"cmd":"quit"}
+// Changes an agent makes are recorded (agent_changes) and reported as
+// events; the fixture itself does not change.
 // Events and replies on stdout, one JSON object per line.
 
 import BestASRAgentAccess
@@ -195,11 +197,23 @@ actor ScriptedOwner: AgentConsentPresenting {
     return await withCheckedContinuation { approvalWaiters.append($0) }
   }
 
-  func proposalArrived(_ proposal: AgentInboxProposal) async {
-    emit(["event": "proposal", "proposal_id": .string(proposal.proposalID.uuidString.lowercased())])
+  func changeMade(_ change: AgentChangeRecord) async {
+    emit([
+      "event": "change", "change_id": .string(change.changeID.uuidString.lowercased()),
+      "kind": .string(change.kind.rawValue),
+    ])
   }
 
   func accessChanged() async {}
+}
+
+/// Takes every allowed change without touching the fixture; a note becomes
+/// a fresh item ID.
+struct RecordingChanges: AgentChangeApplying {
+  func apply(_ change: AgentChange, client: AgentClientIdentity) async throws -> String? {
+    if case .addNote = change { return UUID().uuidString }
+    return nil
+  }
 }
 
 @Sendable func terms(_ value: JSONValue) -> AgentGrantTerms? {
@@ -213,7 +227,7 @@ actor ScriptedOwner: AgentConsentPresenting {
   } else if let matters = value["range"]?["matters"]?.arrayValue {
     terms.range = .matters(Set(matters.compactMap(\.stringValue)))
   }
-  terms.canPropose = value["propose"]?.boolValue ?? false
+  terms.canChange = value["change"]?.boolValue ?? false
   terms.duration =
     value["duration"]?.stringValue.flatMap(AgentGrantDuration.init(rawValue:)) ?? .once
   terms.showNumbers = value["numbers"]?.boolValue ?? false
@@ -234,9 +248,12 @@ do {
 let owner = ScriptedOwner()
 let service = AgentAccessService(
   memory: FixtureMemory(fixture: fixture), records: store, secrets: secrets, consent: owner,
+  changes: RecordingChanges(),
   configuration: .init(consentTimeout: consentTimeout, denialCooldown: 0),
   timeZone: fixture.snapshot.timeZone)
-let server = AgentSocketServer(dataRoot: root, service: service)
+// A test host: any process of this user may connect (the App admits only
+// its bundled helper).
+let server = AgentSocketServer(dataRoot: root, service: service, gate: .anyProcessOfThisUser)
 do { try server.start() } catch { fail("socket unavailable: \(error)") }
 emit(["event": "ready", "socket": .string(server.socketURL.path)])
 
@@ -289,23 +306,18 @@ let commands = Thread {
       case "revoke_all":
         for grant in await service.grants() { await service.revoke(grant.grantID) }
         emit(["ok": "revoke_all"])
-      case "proposals":
-        let proposals = (try? await store.agentProposals(includeDecided: true)) ?? []
+      case "changes":
+        let changes = (try? await store.agentChanges(clientKey: nil, limit: 100)) ?? []
         emit([
-          "proposals": .array(
-            proposals.map {
+          "changes": .array(
+            changes.map {
               [
-                "proposal_id": .string($0.proposalID.uuidString.lowercased()),
-                "state": .string($0.state.rawValue), "client": .string($0.clientName),
-                "has_text": .bool(!$0.text.isEmpty),
+                "change_id": .string($0.changeID.uuidString.lowercased()),
+                "kind": .string($0.kind.rawValue), "client": .string($0.clientName),
+                "state": .string($0.state.rawValue), "matters": .strings($0.matterIDs),
               ]
             })
         ])
-      case "reject":
-        if let id = command["proposal_id"]?.stringValue.flatMap(UUID.init(uuidString:)) {
-          try? await store.resolveAgentProposal(id, state: .rejected, itemID: nil, at: Date())
-        }
-        emit(["ok": "reject"])
       case "quit":
         server.stop()
         emit(["event": "stopped"])

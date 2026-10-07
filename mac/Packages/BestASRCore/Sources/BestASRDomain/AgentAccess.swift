@@ -1,10 +1,11 @@
 import Foundation
 
-// Agents reading and writing 织机 (AGENT-CONTRACT; PRD §0.3 第 11 条). The
-// App serves a local MCP server; what an agent may see is a grant the owner
-// gave in the consent sheet. These are the records the library keeps about
-// it: grants (scope, never content), per-matter approvals, the audit list
-// (never content) and the Agent 收件箱 (proposals, content until decided).
+// Agents reading and writing Mindloom (AGENT-CONTRACT; PRD §0.3 第 11 条, as
+// amended 2026-10-05). The App serves a local MCP server; what an agent may
+// see and change is a grant the owner gave in the consent card. These are the
+// records the library keeps about it: grants (scope, never content),
+// per-matter approvals, the audit list (never content), the changes other
+// Apps made (each undoable from the Mac), and the older Agent 收件箱 table.
 
 /// The personal space's ID. Shared spaces (SPACES-CONTRACT) use their own IDs.
 public enum AgentSpaceID {
@@ -21,23 +22,28 @@ public enum AgentSpaceID {
 /// Which matters of the allowed spaces a grant covers.
 public enum AgentScopeRange: Equatable, Hashable, Sendable {
   case all
-  /// Matters in these ropes (and in ropes nested under them).
+  /// Matters in these ropes (v7). v11 shows no ropes: a stored grant of this
+  /// kind still decodes, but covers nothing (as if it had expired).
   case ropes(Set<String>)
   /// Exactly these matters.
   case matters(Set<String>)
+  /// The matters in these user-made groups (v11 「这个分组」; group IDs,
+  /// lower-case UUIDs), as they are when the agent reads.
+  case groups(Set<String>)
 
   public var kind: String {
     switch self {
     case .all: "all"
     case .ropes: "ropes"
     case .matters: "matters"
+    case .groups: "groups"
     }
   }
 
   public var ids: Set<String> {
     switch self {
     case .all: []
-    case .ropes(let ids), .matters(let ids): ids
+    case .ropes(let ids), .matters(let ids), .groups(let ids): ids
     }
   }
 
@@ -46,6 +52,7 @@ public enum AgentScopeRange: Equatable, Hashable, Sendable {
     case "all": self = .all
     case "ropes": self = .ropes(ids)
     case "matters": self = .matters(ids)
+    case "groups": self = .groups(ids)
     default: return nil
     }
   }
@@ -64,8 +71,11 @@ public enum AgentGrantDuration: String, CaseIterable, Sendable {
 public struct AgentGrantTerms: Equatable, Sendable {
   public var spaces: Set<String>
   public var range: AgentScopeRange
-  /// 只读 + 可以提建议（写进收件箱）.
-  public var canPropose: Bool
+  /// 也可以改 (v12): the agent may add a note, move an item to another matter
+  /// or take it out, rename a matter and mark a step done — each applied at
+  /// once, recorded and undoable from the Mac. Off by default. Stored in the
+  /// `can_propose` column, which meant "may propose to the inbox" before.
+  public var canChange: Bool
   public var duration: AgentGrantDuration
   /// 号码：原样. Default false: numbers go out as placeholders.
   public var showNumbers: Bool
@@ -74,12 +84,12 @@ public struct AgentGrantTerms: Equatable, Sendable {
 
   public init(
     spaces: Set<String> = [AgentSpaceID.personal], range: AgentScopeRange = .all,
-    canPropose: Bool = false, duration: AgentGrantDuration = .once, showNumbers: Bool = false,
+    canChange: Bool = false, duration: AgentGrantDuration = .once, showNumbers: Bool = false,
     askForNewMatters: Bool = false
   ) {
     self.spaces = spaces
     self.range = range
-    self.canPropose = canPropose
+    self.canChange = canChange
     self.duration = duration
     self.showNumbers = showNumbers
     self.askForNewMatters = askForNewMatters
@@ -113,12 +123,18 @@ public struct AgentGrantRecord: Equatable, Sendable {
     self.mac = mac
   }
 
+  /// The version of `canonicalText`. v2 (v12 phase B, review v12-B #2): the
+  /// `can_propose` column now means 也可以改 (direct changes); a grant made
+  /// before, when it meant 「可以提建议（写进收件箱）」, carries a v1 MAC, no
+  /// longer checks out and is removed, so the owner is asked again.
+  public static let canonicalVersion = "mindloom-agent-grant-v2"
+
   /// Every field the MAC covers, in a fixed order.
   public var canonicalText: String {
     [
-      "mindloom-agent-grant-v1", grantID.uuidString.lowercased(), clientKey, clientName,
+      Self.canonicalVersion, grantID.uuidString.lowercased(), clientKey, clientName,
       clientPath, terms.spaces.sorted().joined(separator: ","), terms.range.kind,
-      terms.range.ids.sorted().joined(separator: ","), terms.canPropose ? "1" : "0",
+      terms.range.ids.sorted().joined(separator: ","), terms.canChange ? "1" : "0",
       terms.duration.rawValue, terms.showNumbers ? "1" : "0",
       terms.askForNewMatters ? "1" : "0", String(Int64(createdAt.timeIntervalSince1970 * 1_000)),
       expiresAt.map { String(Int64($0.timeIntervalSince1970 * 1_000)) } ?? "-",
@@ -138,6 +154,8 @@ public enum AgentAuditOutcome: String, CaseIterable, Sendable {
   case notFound = "not_found"
   case invalid
   case failed
+  /// Over the grant's hourly limit (v12 F7): nothing was read or changed.
+  case limited
 }
 
 /// One row of 谁读过什么 (`agent_audit`): who, when, which tool, which matter
@@ -210,16 +228,78 @@ public struct AgentInboxProposal: Equatable, Sendable, Identifiable {
     self.itemID = itemID
   }
 
+  /// What the stored source name starts with; pages show
+  /// 「<name>（其他 App）」 (`SourceLabel`).
+  public static let sourcePrefix = "agent:"
+
   /// The source label of the item it becomes: never the owner's own words.
   public static func sourceName(clientName: String) -> String {
     let name = clientName.trimmingCharacters(in: .whitespacesAndNewlines)
-    return "agent:" + (name.isEmpty ? "未知" : String(name.prefix(60)))
+    return sourcePrefix + (name.isEmpty ? "未知" : String(name.prefix(60)))
   }
 
   /// The item's text: the title (when given) on its own first line.
   public var itemText: String {
     let heading = title.trimmingCharacters(in: .whitespacesAndNewlines)
     return heading.isEmpty ? text : heading + "\n\n" + text
+  }
+}
+
+/// One change another App made through 也可以改 (`agent_changes`, v12): what it
+/// did, to which matters, and how to take it back. Applied at once; the owner
+/// sees it in 设置 › 其他 App and can undo it there at any time. Local only:
+/// never sent, never in a portable archive.
+public struct AgentChangeRecord: Equatable, Sendable, Identifiable {
+  public enum Kind: String, CaseIterable, Sendable {
+    case addNote = "add_note"
+    case moveItem = "move_item"
+    case takeOut = "take_out"
+    case renameMatter = "rename_matter"
+    case markStep = "mark_step"
+  }
+
+  public enum State: String, Sendable {
+    case applied
+    case undone
+  }
+
+  public let changeID: UUID
+  public let at: Date
+  public let clientKey: String
+  public let clientName: String
+  public let grantID: UUID?
+  public let kind: Kind
+  /// The matters it touched.
+  public let matterIDs: [String]
+  /// The item it made (add_note) or moved.
+  public let itemID: String?
+  /// What was applied, as JSON the App reads back to undo it (the page
+  /// correction for a move, a rename or a step; the new item for a note).
+  public let payload: String
+  /// One line for the owner, in plain words.
+  public let summary: String
+  public var state: State
+  public var undoneAt: Date?
+
+  public var id: UUID { changeID }
+
+  public init(
+    changeID: UUID = UUID(), at: Date, clientKey: String, clientName: String, grantID: UUID?,
+    kind: Kind, matterIDs: [String], itemID: String?, payload: String, summary: String,
+    state: State = .applied, undoneAt: Date? = nil
+  ) {
+    self.changeID = changeID
+    self.at = at
+    self.clientKey = clientKey
+    self.clientName = clientName
+    self.grantID = grantID
+    self.kind = kind
+    self.matterIDs = matterIDs
+    self.itemID = itemID
+    self.payload = payload
+    self.summary = summary
+    self.state = state
+    self.undoneAt = undoneAt
   }
 }
 
@@ -243,4 +323,9 @@ public protocol AgentAccessRecordStore: Sendable {
   func resolveAgentProposal(
     _ proposalID: UUID, state: AgentInboxProposal.State, itemID: SessionID?, at: Date
   ) async throws
+  func appendAgentChange(_ change: AgentChangeRecord) async throws
+  /// Newest first; `clientKey` filters to one client.
+  func agentChanges(clientKey: String?, limit: Int) async throws -> [AgentChangeRecord]
+  /// 撤销: the change is marked undone (once; false when it already was).
+  func markAgentChangeUndone(_ changeID: UUID, at: Date) async throws -> Bool
 }

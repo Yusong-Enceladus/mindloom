@@ -69,11 +69,26 @@ public final class VoiceSessionCore {
   public var onChange: (@MainActor () -> Void)?
   /// Called after a final is published.
   public var onFinal: (@MainActor (VoiceText) -> Void)?
+  /// The keyboard inserted this final into a field (`voice/ack`): the app keeps it for the Mac
+  /// when 「键盘说的话也送到 Mac」 is on. `at` is when it was inserted (the undo window).
+  public var onKeyboardInserted: (@MainActor (VoiceText, Date) -> Void)?
+  /// The keyboard took this utterance back (「撤销」 within its window).
+  public var onKeyboardWithdrawn: (@MainActor (Int) -> Void)?
+  /// The microphone is off in iOS Settings (published to the keyboard even without a session).
+  public private(set) var microphoneDenied = false
 
   private let channel: VoiceChannel
   private let signaling: any PhoneSignaling
   private let clock: @Sendable () -> Date
-  private let idleTimeout: TimeInterval
+  /// How long the session stays on without use (自动结束: 5, 10 or 30 minutes). Changing it
+  /// restarts the countdown (PHONE-SPEC §5.7).
+  public var idleTimeout: TimeInterval {
+    didSet {
+      guard idleTimeout != oldValue, phase != .off else { return }
+      touch()
+      publishState()
+    }
+  }
   private let maximumUtterance: TimeInterval
   private let finalRetention: TimeInterval
 
@@ -83,6 +98,9 @@ public final class VoiceSessionCore {
   private var lastFinish: Task<Void, Never>?
   private var finals: VoiceFinals
   private var observations: [PhoneSignalObservation] = []
+  private var ackObservation: PhoneSignalObservation?
+  private var handledInserted: Set<Int> = []
+  private var handledWithdrawn: Set<Int> = []
   /// Bumped on every `start`/`end` so late finishes of an ended session are
   /// not published into a new one.
   private var generation = 0
@@ -103,6 +121,41 @@ public final class VoiceSessionCore {
     self.finalRetention = finalRetention
     self.seq = channel.highestSeq()
     self.finals = channel.readFinals() ?? VoiceFinals()
+    // Acknowledgements left by an earlier run were handled then (or are stale).
+    if let ack = channel.readAck() {
+      handledInserted = Set(ack.inserted)
+      handledWithdrawn = Set(ack.withdrawn)
+    }
+    ackObservation = signaling.observe(PhoneSignal.voiceAck) { [weak self] in
+      self?.handleAck()
+    }
+  }
+
+  /// Records whether the microphone is allowed and tells the keyboard (also without a session).
+  public func setMicrophoneDenied(_ denied: Bool) {
+    guard denied != microphoneDenied || channel.readState()?.microphoneDenied != denied else {
+      return
+    }
+    microphoneDenied = denied
+    publishState()
+  }
+
+  /// The keyboard's acknowledgements: each inserted final once, each withdrawal once.
+  public func handleAck() {
+    guard let ack = channel.readAck() else { return }
+    for number in ack.inserted where !handledInserted.contains(number) {
+      handledInserted.insert(number)
+      guard !ack.withdrawn.contains(number),
+        let final = finals.entries.first(where: { $0.seq == number }),
+        final.outcome == .text || final.outcome == nil, !final.text.isEmpty
+      else { continue }
+      let at = ack.at.map { Date(timeIntervalSince1970: $0) } ?? clock()
+      onKeyboardInserted?(final, at)
+    }
+    for number in ack.withdrawn where !handledWithdrawn.contains(number) {
+      handledWithdrawn.insert(number)
+      onKeyboardWithdrawn?(number)
+    }
   }
 
   public var isAlive: Bool { phase != .off }
@@ -130,6 +183,7 @@ public final class VoiceSessionCore {
     observations = [
       signaling.observe(PhoneSignal.voiceStart) { [weak self] in self?.handleStart() },
       signaling.observe(PhoneSignal.voiceStop) { [weak self] in self?.handleStop() },
+      signaling.observe(PhoneSignal.voiceCancel) { [weak self] in self?.handleCancel() },
     ]
     publishState()
   }
@@ -226,6 +280,29 @@ public final class VoiceSessionCore {
     }
   }
 
+  /// The keyboard's ×: drops the open utterance (nothing is transcribed further) and publishes
+  /// an empty final for it, so the numbering stays in order and nothing is inserted.
+  public func handleCancel() {
+    guard case .listening(let number) = phase, let current = utterance else { return }
+    utterance = nil
+    listeningSince = nil
+    phase = .ready
+    current.cancel()
+    channel.writeLevel(0)
+    touch()
+    let previous = lastFinish
+    let session = generation
+    finishingCount += 1
+    lastFinish = Task { @MainActor [weak self] in
+      await previous?.value
+      guard let self, self.generation == session else { return }
+      self.finishingCount -= 1
+      self.publishFinal(seq: number, text: "")
+      self.publishState()
+    }
+    publishState()
+  }
+
   /// Waits until every released utterance has its final (tests, and the
   /// app before it ends a session on purpose).
   public func waitForFinals() async {
@@ -262,7 +339,8 @@ public final class VoiceSessionCore {
       seq: seq,
       heartbeatAt: now.timeIntervalSince1970,
       recognizer: phase == .off ? nil : recognizer?.kindName,
-      problem: problem)
+      problem: problem,
+      microphoneDenied: microphoneDenied)
     try? channel.writeState(state)
     signaling.post(PhoneSignal.voiceHeartbeat)
     onChange?()

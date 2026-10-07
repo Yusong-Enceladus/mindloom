@@ -1,0 +1,238 @@
+Mindloom patch 0003: take the master key from Mindloom on an inherited descriptor.
+
+Upstream stores its 32-byte master key in the login Keychain through /usr/bin/security, which any
+program running as the owner can read without a prompt, and with it decrypt the saved login.
+With TMEET_MASTER_KEY_FD set, tmeet reads the key (base64 or 32 raw bytes) from that descriptor,
+closes it, clears the variable, and never reads or writes the system Keychain; a missing or
+malformed key is an error, with no fallback. Mindloom keeps the key in its own Keychain item.
+Without the variable tmeet behaves as upstream.
+Regression test: internal/core/keychain/keychain_fd_darwin_test.go.
+
+diff --git a/internal/core/keychain/keychain_darwin.go b/internal/core/keychain/keychain_darwin.go
+index 524c574..e08e248 100644
+--- a/internal/core/keychain/keychain_darwin.go
++++ b/internal/core/keychain/keychain_darwin.go
+@@ -16,12 +16,35 @@ import (
+ 	"encoding/base64"
+ 	"errors"
+ 	"fmt"
++	"io"
+ 	"os"
++	"strconv"
++	"strings"
+ 	"sync"
+ 
+ 	"github.com/zalando/go-keyring"
+ )
+ 
++// MasterKeyFDEnv names a file descriptor, inherited from the program that
++// started tmeet, that holds the master key (Mindloom build, patch 0003).
++// Mindloom keeps the key in its own Keychain item, which other programs
++// cannot read without the owner's approval, and hands it over on this
++// descriptor on every run: base64 text or the 32 raw bytes, read to the end
++// and closed. While it is set the system Keychain is never read or written,
++// and a missing, unreadable or malformed key is an error: there is no
++// fallback to the system Keychain. Without it tmeet behaves as upstream.
++const MasterKeyFDEnv = "TMEET_MASTER_KEY_FD"
++
++// maxMasterKeyInput bounds what is read from the descriptor.
++const maxMasterKeyInput = 256
++
++// keyringGet and keyringSet are the system Keychain calls (replaced in tests
++// to prove the descriptor mode never reaches them).
++var (
++	keyringGet = keyring.Get
++	keyringSet = keyring.Set
++)
++
+ // darwinKeychain is the macOS platform implementation.
+ // The master key is cached in memory via sync.Once to avoid accessing the system Keychain on every operation (IPC ~1-5ms).
+ type darwinKeychain struct {
+@@ -45,7 +68,10 @@ func (k *darwinKeychain) getMasterKey() ([]byte, error) {
+ 
+ // loadOrCreateMasterKey loads the master key from the system Keychain; auto-generates and stores it if not found.
+ func (k *darwinKeychain) loadOrCreateMasterKey() ([]byte, error) {
+-	encoded, err := keyring.Get(ServiceName, MasterKeyAccount)
++	if fdText, ok := os.LookupEnv(MasterKeyFDEnv); ok {
++		return readMasterKeyFromFD(fdText)
++	}
++	encoded, err := keyringGet(ServiceName, MasterKeyAccount)
+ 	if err == nil {
+ 		masterKey, decErr := base64.StdEncoding.DecodeString(encoded)
+ 		if decErr != nil {
+@@ -67,7 +93,7 @@ func (k *darwinKeychain) loadOrCreateMasterKey() ([]byte, error) {
+ 	}
+ 
+ 	encoded = base64.StdEncoding.EncodeToString(masterKey)
+-	if err = keyring.Set(ServiceName, MasterKeyAccount, encoded); err != nil {
++	if err = keyringSet(ServiceName, MasterKeyAccount, encoded); err != nil {
+ 		return nil, fmt.Errorf("failed to write system Keychain: %w", err)
+ 	}
+ 
+@@ -129,3 +155,41 @@ func (k *darwinKeychain) Remove(service, account string) error {
+ 	}
+ 	return nil
+ }
++
++// readMasterKeyFromFD reads the master key from the inherited descriptor
++// named by MasterKeyFDEnv, closes it, and clears the variable so that a
++// process tmeet starts never takes the number for a descriptor of its own.
++func readMasterKeyFromFD(fdText string) ([]byte, error) {
++	_ = os.Unsetenv(MasterKeyFDEnv)
++	fd, err := strconv.Atoi(strings.TrimSpace(fdText))
++	if err != nil || fd < 3 {
++		return nil, fmt.Errorf("invalid %s: not a descriptor number above 2", MasterKeyFDEnv)
++	}
++	file := os.NewFile(uintptr(fd), "tmeet-master-key")
++	if file == nil {
++		return nil, fmt.Errorf("invalid %s: descriptor %d is not open", MasterKeyFDEnv, fd)
++	}
++	defer file.Close()
++	data, err := io.ReadAll(io.LimitReader(file, maxMasterKeyInput+1))
++	if err != nil {
++		return nil, fmt.Errorf("failed to read the master key from descriptor %d: %w", fd, err)
++	}
++	defer zeroBytes(data)
++	if len(data) > maxMasterKeyInput {
++		return nil, fmt.Errorf("master key on descriptor %d is too long", fd)
++	}
++	if len(data) == masterKeySize {
++		key := make([]byte, masterKeySize)
++		copy(key, data)
++		return key, nil
++	}
++	decoded, err := base64.StdEncoding.DecodeString(strings.TrimSpace(string(data)))
++	if err != nil {
++		return nil, fmt.Errorf("master key on descriptor %d is neither 32 bytes nor base64", fd)
++	}
++	if len(decoded) != masterKeySize {
++		zeroBytes(decoded)
++		return nil, fmt.Errorf("invalid master key length on descriptor %d: expected %d bytes, got %d bytes", fd, masterKeySize, len(decoded))
++	}
++	return decoded, nil
++}
+diff --git a/internal/core/keychain/keychain_fd_darwin_test.go b/internal/core/keychain/keychain_fd_darwin_test.go
+new file mode 100644
+index 0000000..ee8ff90
+--- /dev/null
++++ b/internal/core/keychain/keychain_fd_darwin_test.go
+@@ -0,0 +1,119 @@
++//go:build darwin
++
++package keychain
++
++import (
++	"bytes"
++	"encoding/base64"
++	"os"
++	"path/filepath"
++	"strconv"
++	"syscall"
++	"testing"
++)
++
++// Mindloom build, patch 0003: the master key comes from an inherited
++// descriptor and the system Keychain is never touched.
++
++// noSystemKeychain fails the test if the system Keychain is read or written.
++func noSystemKeychain(t *testing.T) {
++	t.Helper()
++	savedGet, savedSet := keyringGet, keyringSet
++	keyringGet = func(service, user string) (string, error) {
++		t.Fatalf("system Keychain read (%s/%s) in descriptor mode", service, user)
++		return "", nil
++	}
++	keyringSet = func(service, user, password string) error {
++		t.Fatalf("system Keychain write (%s/%s) in descriptor mode", service, user)
++		return nil
++	}
++	t.Cleanup(func() { keyringGet, keyringSet = savedGet, savedSet })
++}
++
++// keyOnDescriptor writes payload into a pipe and names its read end in
++// TMEET_MASTER_KEY_FD, as Mindloom does when it starts tmeet. Raw descriptors
++// (not os.File) so no finalizer closes a reused number later.
++func keyOnDescriptor(t *testing.T, payload []byte) int {
++	t.Helper()
++	var fds [2]int
++	if err := syscall.Pipe(fds[:]); err != nil {
++		t.Fatalf("pipe: %v", err)
++	}
++	if _, err := syscall.Write(fds[1], payload); err != nil {
++		t.Fatalf("write: %v", err)
++	}
++	syscall.Close(fds[1])
++	t.Setenv(MasterKeyFDEnv, strconv.Itoa(fds[0]))
++	return fds[0]
++}
++
++func descriptorIsClosed(fd int) bool {
++	var stat syscall.Stat_t
++	return syscall.Fstat(fd, &stat) != nil
++}
++
++func TestMasterKeyFDRoundTripWithoutSystemKeychain(t *testing.T) {
++	noSystemKeychain(t)
++	dataDir := t.TempDir()
++	t.Setenv("TMEET_CLI_DATA_DIR", dataDir)
++	key := bytes.Repeat([]byte{7}, masterKeySize)
++
++	fd := keyOnDescriptor(t, []byte(base64.StdEncoding.EncodeToString(key)+"\n"))
++	writer := newPlatformKeychain()
++	if err := writer.Set(ServiceName, "account_1", `{"access_token":"a"}`); err != nil {
++		t.Fatalf("Set: %v", err)
++	}
++	if !descriptorIsClosed(fd) {
++		t.Fatalf("descriptor %d left open", fd)
++	}
++	if _, ok := os.LookupEnv(MasterKeyFDEnv); ok {
++		t.Fatalf("%s still set after the key was read", MasterKeyFDEnv)
++	}
++	if _, err := os.Stat(filepath.Join(dataDir, "account_1.enc")); err != nil {
++		t.Fatalf("no .enc file: %v", err)
++	}
++
++	// A later run gets the same key, as 32 raw bytes this time.
++	keyOnDescriptor(t, key)
++	reader := newPlatformKeychain()
++	got, err := reader.Get(ServiceName, "account_1")
++	if err != nil || got != `{"access_token":"a"}` {
++		t.Fatalf("Get = %q, %v", got, err)
++	}
++
++	// Another key cannot read it.
++	keyOnDescriptor(t, bytes.Repeat([]byte{9}, masterKeySize))
++	other := newPlatformKeychain()
++	if _, err := other.Get(ServiceName, "account_1"); err == nil {
++		t.Fatalf("a different key decrypted the credentials")
++	}
++}
++
++func TestMasterKeyFDRefusesBadKeysWithoutFallback(t *testing.T) {
++	noSystemKeychain(t)
++	t.Setenv("TMEET_CLI_DATA_DIR", t.TempDir())
++	cases := map[string][]byte{
++		"empty":      {},
++		"short":      []byte(base64.StdEncoding.EncodeToString(bytes.Repeat([]byte{1}, 16))),
++		"not base64": []byte("not a key at all, not a key at all"),
++		"too long":   bytes.Repeat([]byte{'A'}, maxMasterKeyInput+10),
++	}
++	for name, payload := range cases {
++		t.Run(name, func(t *testing.T) {
++			keyOnDescriptor(t, payload)
++			kc := newPlatformKeychain()
++			if err := kc.Set(ServiceName, "account_1", "x"); err == nil {
++				t.Fatalf("a %s key was accepted", name)
++			}
++		})
++	}
++	for name, value := range map[string]string{"stdin": "0", "word": "three", "closed": "250"} {
++		t.Run(name, func(t *testing.T) {
++			t.Setenv(MasterKeyFDEnv, value)
++			kc := newPlatformKeychain()
++			if _, err := kc.Get(ServiceName, "account_1"); err == nil {
++				t.Fatalf("descriptor %q was accepted", value)
++			}
++		})
++	}
++}

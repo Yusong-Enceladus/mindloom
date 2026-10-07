@@ -57,7 +57,7 @@ final class AgentSocketTests: XCTestCase {
     let root = try makeSyntheticRoot()
     defer { try? FileManager.default.removeItem(at: root) }
     let (service, owner) = try service()
-    let server = AgentSocketServer(dataRoot: root, service: service)
+    let server = AgentSocketServer(dataRoot: root, service: service, gate: .anyProcessOfThisUser)
     try server.start()
     defer { server.stop() }
     var entry = stat()
@@ -105,7 +105,8 @@ final class AgentSocketTests: XCTestCase {
     let root = try makeSyntheticRoot()
     defer { try? FileManager.default.removeItem(at: root) }
     let (service, owner) = try service()
-    let server = AgentSocketServer(dataRoot: root, service: service, peerCheck: { _ in false })
+    let server = AgentSocketServer(
+      dataRoot: root, service: service, gate: .anyProcessOfThisUser, peerCheck: { _ in false })
     try server.start()
     defer { server.stop() }
     let descriptor = try AgentSocketIO.connect(path: server.socketURL.path)
@@ -126,7 +127,7 @@ final class AgentSocketTests: XCTestCase {
     try FileManager.default.createDirectory(
       at: folder, withIntermediateDirectories: false, attributes: [.posixPermissions: 0o755])
     let (service, _) = try service()
-    let server = AgentSocketServer(dataRoot: root, service: service)
+    let server = AgentSocketServer(dataRoot: root, service: service, gate: .anyProcessOfThisUser)
     try server.start()
     server.stop()
     var entry = stat()
@@ -173,6 +174,6 @@ final class AgentSocketTests: XCTestCase {
     XCTAssertNil(AgentSocketLocation.dataRoot(environment: ["MINDLOOM_DATA_ROOT": "relative/path"]))
     XCTAssertTrue(
       AgentSocketLocation.dataRoot(environment: [:])?.path.hasSuffix(
-        "Library/Application Support/bestASR") ?? false)
+        "Library/Application Support/Mindloom") ?? false)
   }
 }

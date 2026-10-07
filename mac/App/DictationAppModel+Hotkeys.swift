@@ -45,7 +45,7 @@ extension DictationAppModel {
 
   func applyHotkeyConfiguration() {
     guard hotkeySelectionIsSafe else {
-      hotkeys.hotkeyStatusMessage = "快捷键至少要带一个修饰键"
+      hotkeys.hotkeyStatusMessage = "快捷键至少需要包含一个修饰键"
       return
     }
     let configuration = DictationHotkeyConfiguration(
@@ -61,9 +61,7 @@ extension DictationAppModel {
     }
     hotkeys.hotkeyStatusMessage = "正在注册全局快捷键…"
     Task { [weak self] in
-      guard let self else { return }
-      let result = await hotkeyController.apply(configuration)
-      await publishHotkeyResult(result, controller: hotkeyController)
+      await FnGuard.shared.apply(configuration, app: self, controller: hotkeyController)
     }
   }
 

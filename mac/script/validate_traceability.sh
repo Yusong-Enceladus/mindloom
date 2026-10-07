@@ -87,7 +87,7 @@ structure_filter='def unique_array:
     all(.requirementIDs[]; test("^[A-Z][A-Z0-9]*-[0-9]{3}$")) and
     all(.threatIDs[]; test("^TM-[0-9]{2}$")) and
     all(.scenarioIDs[]; type == "string" and length > 0) and
-    all(.tests[]; test("^(Packages|Tests|Spikes|script)/[A-Za-z0-9._/-]+$")) and
+    all(.tests[]; test("^(Packages|Tests|Spikes|script|iOS/Tests)/[A-Za-z0-9._/-]+$")) and
     all(.evidence[]; test("^(artifacts/evidence/|fixture://Tests/Fixtures/)[A-Za-z0-9._/-]+$"))
   )'
 jq -e "$structure_filter" "$manifest_path" >/dev/null \

@@ -4,7 +4,7 @@ set -euo pipefail
 
 repository_root="$(cd "$(dirname "$0")/.." && pwd)"
 source "$repository_root/script/build_storage.sh"
-package_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/bestASR.app"
+package_path="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release/Mindloom.app"
 manifest_path="$repository_root/artifacts/evidence/supply-chain/release-manifest.json"
 sbom_path="$repository_root/artifacts/evidence/supply-chain/sbom.cdx.json"
 dependencies_path="$repository_root/config/dependencies.json"
@@ -45,7 +45,7 @@ manifest_filter='def digest: type == "string" and test("^[0-9a-f]{64}$");
   (.packageIdentifier | type == "string" and length > 0) and
   (.packageVersion | type == "string" and length > 0) and
   .buildConfiguration == "Release" and
-  .packageRoot == "build-product://bestASR.app" and
+  .packageRoot == "build-product://Mindloom.app" and
   (.dependencyManifestSHA256 | digest) and
   (.modelManifestSHA256 | digest) and
   (.noticeSHA256 | digest) and
@@ -199,7 +199,7 @@ trap 'rm -f "$summary_temp"; rmdir "$summary_temp_directory" 2>/dev/null || true
 jq -n \
   --arg status "$package_validation_status" \
   --arg failedCheck "$failed_check" \
-  --arg packageRoot "build-product://bestASR.app" \
+  --arg packageRoot "build-product://Mindloom.app" \
   --argjson actualFileCount "$actual_file_count" \
   --argjson registeredFileCount "$registered_file_count" \
   '{

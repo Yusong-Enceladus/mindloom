@@ -43,5 +43,5 @@ final class ExportModel: ObservableObject {
   @Published var archiveOperationInProgress = false
 
   @Published var archiveStatusMessage =
-    "完整归档包含历史、原音、逐字稿、人物、词典和整理结果；不包含可重新下载的组件或缓存"
+    "完整归档包含历史、原音、逐字稿、人物、词典和整理结果；不包含可重新下载的模型或缓存"
 }

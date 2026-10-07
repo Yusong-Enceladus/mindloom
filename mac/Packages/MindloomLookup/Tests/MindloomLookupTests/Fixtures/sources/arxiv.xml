@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/synthetic</id>
+  <title>arXiv Query: search_query=&amp;id_list=1706.03762&amp;start=0&amp;max_results=1</title>
+  <updated>2026-10-06T00:00:00Z</updated>
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <entry>
+    <id>http://arxiv.org/abs/1706.03762v7</id>
+    <title>Attention Is All You
+      Need</title>
+    <updated>2023-08-02T00:41:18Z</updated>
+    <link href="https://arxiv.org/abs/1706.03762v7" rel="alternate" type="text/html"/>
+    <summary>The dominant sequence transduction models are based on complex recurrent or convolutional neural networks. We propose a new simple network architecture, the Transformer.</summary>
+    <category term="cs.CL" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2017-06-12T17:57:34Z</published>
+    <arxiv:comment>15 pages, 5 figures</arxiv:comment>
+    <arxiv:primary_category term="cs.CL"/>
+    <author>
+      <name>Ashish Vaswani</name>
+    </author>
+    <author>
+      <name>Noam Shazeer</name>
+    </author>
+  </entry>
+</feed>

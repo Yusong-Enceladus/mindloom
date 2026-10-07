@@ -12,6 +12,11 @@ import PackageDescription
 // `MindloomSpaces` is the member side of shared spaces (SPACES-CONTRACT):
 // device keys, signed ops, space-key wraps, per-item data keys, the space
 // routes and the member flows. Same rule: CryptoKit and Foundation only.
+//
+// `MindloomIdentity` is the product's identity in one place (bundle id
+// `app.mindloom`, App Group, keychain services, log subsystem, library folder)
+// and what it replaced (bestASR, `com.bestasr.app`). No dependency at all, so
+// the share extensions, the MCP helper and the carry-over helper link it.
 let package = Package(
   name: "MindloomLink",
   platforms: [
@@ -19,17 +24,20 @@ let package = Package(
     .iOS(.v26),
   ],
   products: [
+    .library(name: "MindloomIdentity", targets: ["MindloomIdentity"]),
     .library(name: "MindloomLink", targets: ["MindloomLink"]),
     .library(name: "MindloomSpaces", targets: ["MindloomSpaces"]),
     .library(name: "MindloomSpacesTestSupport", targets: ["MindloomSpacesTestSupport"]),
   ],
   targets: [
+    .target(name: "MindloomIdentity"),
     .target(name: "MindloomLink"),
     .target(name: "MindloomSpaces", dependencies: ["MindloomLink"]),
     // Tests only (this package's and the Mac's): an in-memory Spark with the
     // space routes' rules. Never linked into an App.
     .target(
       name: "MindloomSpacesTestSupport", dependencies: ["MindloomSpaces", "MindloomLink"]),
+    .testTarget(name: "MindloomIdentityTests", dependencies: ["MindloomIdentity"]),
     .testTarget(
       name: "MindloomLinkTests",
       dependencies: ["MindloomLink"],

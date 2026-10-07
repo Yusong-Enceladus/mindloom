@@ -120,7 +120,7 @@ public enum SpaceProjectionBuilder {
         events.append(
           RemoteOrganizerEvent(
             eventID: "package-\(package.packageID)", title: package.title ?? "共享的事",
-            titleUserEdited: false, statusLine: "\(ids.count) 条素材 · 正在整理…",
+            titleUserEdited: false, statusLine: "\(ids.count) 条原文",
             statusFacts: [], importance: 0.5, startedAt: nil, updatedAt: nil,
             itemIDs: ids.map { $0.uppercased() }, personIDs: [], pinned: false, deleted: false,
             provenance: [:]))
@@ -181,7 +181,7 @@ public enum SpaceProjectionBuilder {
     }
     var record = MemoryItemRecord(
       sessionID: SessionID(uuid), inputMode: mode, itemKind: userKind,
-      title: fields.title ?? "共享的素材", startedAt: started, updatedAt: item.updatedAt,
+      title: fields.title ?? "共享的原文", startedAt: started, updatedAt: item.updatedAt,
       sourceBundleID: fields.sourceBundleID, sourceDisplayName: source.isEmpty ? nil : source,
       sourceIdentifier: nil, text: SpaceOrganizerPayloads.organizerText(fields),
       segments: segments, localReading: fields.reading)
@@ -384,9 +384,9 @@ public struct SpaceHandoverView: Equatable, Sendable {
   public var statusText: String {
     switch status {
     case "ready": return "交接包已经写好"
-    case "failed": return "没有写成（\(error ?? "未知原因")）；可以再试一次"
-    case "running": return "整理设备正在写交接包…"
-    default: return "排队中，整理设备空下来就写…"
+    case "failed": return "未能生成（\(error ?? "未知原因")）。请重试"
+    case "running": return "DGX Spark 正在写交接包…"
+    default: return "排队中，DGX Spark 空下来就写…"
     }
   }
 

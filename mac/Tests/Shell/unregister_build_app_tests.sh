@@ -5,7 +5,7 @@ set -euo pipefail
 repository_root="${0:A:h:h:h}"
 source "$repository_root/script/build_storage.sh"
 
-fake_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/UnregisterTest/bestASR.app"
+fake_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/UnregisterTest/Mindloom.app"
 mkdir -p "$fake_app"
 
 BESTASR_LSREGISTER_PATH=/usr/bin/true \
@@ -32,13 +32,13 @@ mv "$hidden_app" "$fake_app"
 
 if BESTASR_LSREGISTER_PATH=/usr/bin/true \
   "$repository_root/script/unregister_build_app.sh" \
-  "$HOME/Applications/bestASR.app" >/dev/null 2>&1
+  "$HOME/Applications/Mindloom.app" >/dev/null 2>&1
 then
   print -u2 "error: build App unregistration accepted the installed product path"
   exit 1
 fi
 
-missing_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release-missing/bestASR.app"
+missing_app="$BESTASR_XCODE_DERIVED_DATA/Build/Products/Release-missing/Mindloom.app"
 if BESTASR_LSREGISTER_PATH=/usr/bin/true \
   "$repository_root/script/unregister_build_app.sh" "$missing_app" >/dev/null 2>&1
 then

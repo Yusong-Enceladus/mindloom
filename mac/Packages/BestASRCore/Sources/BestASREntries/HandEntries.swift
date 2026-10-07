@@ -7,8 +7,9 @@ import MindloomShareDrop
 /// The entries the owner triggers each time: the share extension, the
 /// Services menu, Shortcuts and the command line (V8 contract A1–A3). Each
 /// turns what it was handed into intake items: text as text, a link as text
-/// (never fetched), a file by its path under the drop rules, bytes through
-/// the image path or the file rules.
+/// (never fetched), bytes (and, from the share extension, a file it copied
+/// in) through the image path or the file rules. Only the owner's own
+/// command line names files by their path.
 public enum HandEntries {
   // MARK: Share extension (A1)
 
@@ -17,9 +18,8 @@ public enum HandEntries {
     items: [EntryIntakeItem], refused: [String]
   ) {
     let entry = pending.entry
-    let source =
-      ItemSourceApplication(bundleID: entry.sourceBundleID, name: entry.sourceName)
-      ?? EntrySource.named(EntrySource.shareFallback)
+    // Whatever App the drop names cannot be checked (F10).
+    let source = EntrySource.share(entry)
     let time = entry.createdDate ?? Date()
     var items: [EntryIntakeItem] = []
     var refused: [String] = []
@@ -38,30 +38,48 @@ public enum HandEntries {
           items.append(.init(candidate: candidate, source: source, capturedAt: time))
         }
       case .file:
-        if let candidate = EntryCandidates.file(path: part.path ?? "") {
-          items.append(.init(candidate: candidate, source: source, capturedAt: time))
-        } else {
-          refused.append("只收本机文件，未收进来")
-        }
+        // A path in a drop is never opened (F10, AGENT-IO N4): any program
+        // can write the drop folder, and Mindloom would read the file with
+        // its own rights. The extension copies a shared file in instead.
+        refused.append(sharedPathRefusal)
       case .data:
         guard let url = pending.dataURL(part),
-          let bytes = readRegularFile(url, limit: ShareDropbox.maximumDataBytes)
+          let size = ShareDropbox.regularFileSize(url)
         else {
-          refused.append("分享的内容读不出来，未收进来")
+          refused.append("无法读取共享的内容，未添加")
           continue
         }
         do {
-          let (candidate, scratch) = try EntryCandidates.data(
-            bytes, filename: part.name ?? "file", typeIdentifier: part.type)
+          let (candidate, scratch): (IntakeCandidate, URL?)
+          if size <= ShareDropbox.maximumDataBytes {
+            guard let bytes = readRegularFile(url, limit: ShareDropbox.maximumDataBytes) else {
+              refused.append("无法读取共享的内容，未添加")
+              continue
+            }
+            (candidate, scratch) = try EntryCandidates.data(
+              bytes, filename: part.name ?? "file", typeIdentifier: part.type)
+          } else if size <= ShareDropbox.maximumFileBytes {
+            // A shared file the extension copied in: cloned into a scratch
+            // folder of its own, read by the file rules.
+            (candidate, scratch) = try EntryCandidates.copiedFile(
+              url, filename: part.name ?? "file")
+          } else {
+            refused.append("共享的文件过大，未添加。可以将它拖到 Mindloom 中")
+            continue
+          }
           items.append(
             .init(candidate: candidate, source: source, capturedAt: time, scratch: scratch))
         } catch {
-          refused.append("分享的内容读不出来，未收进来")
+          refused.append("无法读取共享的内容，未添加")
         }
       }
     }
     return (items, refused)
   }
+
+  /// What a drop that names a path (an extension from before v12, or a
+  /// program writing the drop folder) is told.
+  public static let sharedPathRefusal = "有一项仅提供了文件位置，未添加。请重新共享此文件"
 
   // MARK: Services (A1)
 
@@ -124,7 +142,7 @@ public enum HandEntries {
       if let candidate = EntryCandidates.file(path: path) {
         items.append(.init(candidate: candidate, source: source, capturedAt: time))
       } else {
-        refused.append("只收本机文件，未收进来")
+        refused.append("仅支持这台 Mac 上的文件，未添加")
       }
     }
     return (items, refused)
@@ -135,7 +153,7 @@ public enum HandEntries {
   /// 「收进织机」 in Chrome: the selection (with the page it came from), the
   /// page link, or a link on the page. Links stay text, never fetched.
   public static func browser(_ request: BrowserAddRequest, at time: Date) -> [EntryIntakeItem] {
-    let source = EntrySource.named(EntrySource.browser)
+    let source = EntrySource.browser(request)
     let candidate: IntakeCandidate?
     switch request.kind {
     case .selection:

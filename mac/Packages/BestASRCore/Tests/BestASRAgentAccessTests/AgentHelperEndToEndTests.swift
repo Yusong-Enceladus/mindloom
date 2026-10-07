@@ -53,8 +53,14 @@ final class AgentHelperEndToEndTests: XCTestCase {
       throw CocoaError(.fileReadUnknown)
     }
 
+    /// Also asks for the answer as data (`structured`, `matterIDs`, `errorCode`).
     func call(_ tool: String, _ arguments: JSONValue = [:]) throws -> JSONValue {
-      try request("tools/call", ["name": .string(tool), "arguments": arguments])["result"] ?? .null
+      try request(
+        "tools/call",
+        [
+          "name": .string(tool), "arguments": arguments,
+          "_meta": [AgentToolResult.structuredKey: true],
+        ])["result"] ?? .null
     }
 
     func close() {
@@ -75,6 +81,23 @@ final class AgentHelperEndToEndTests: XCTestCase {
     return url
   }
 
+  /// Connects this test process straight to the App's socket, sends a
+  /// handshake, and returns whatever comes back within a second.
+  static func directReply(socket: String) -> String {
+    guard let descriptor = try? AgentSocketIO.connect(path: socket) else { return "" }
+    defer { close(descriptor) }
+    let line =
+      MCPMessage.request(
+        id: 1, method: "initialize", params: ["clientInfo": ["name": "claude-code"]]
+      ).serialized + "\n"
+    _ = AgentSocketIO.writeAll(descriptor, Data(line.utf8))
+    var timeout = timeval(tv_sec: 1, tv_usec: 0)
+    setsockopt(descriptor, SOL_SOCKET, SO_RCVTIMEO, &timeout, socklen_t(MemoryLayout<timeval>.size))
+    var buffer = [UInt8](repeating: 0, count: 4_096)
+    let count = read(descriptor, &buffer, buffer.count)
+    return count > 0 ? String(decoding: buffer[0..<count], as: UTF8.self) : ""
+  }
+
   func testRealHelperOverStdioAgainstASyntheticRoot() async throws {
     let binary = try helperBinary()
     let root = try makeSyntheticRoot()
@@ -86,7 +109,9 @@ final class AgentHelperEndToEndTests: XCTestCase {
       secrets: try FileAgentGrantSecretStore(dataRoot: root), consent: owner,
       configuration: .init(consentTimeout: .seconds(5)), timeZone: AgentFixture.timeZone,
       clock: { AgentFixture.now })
-    let server = AgentSocketServer(dataRoot: root, service: service)
+    // F8: the socket admits the helper this test built, and nothing else.
+    let server = AgentSocketServer(
+      dataRoot: root, service: service, gate: .bundled(helper: binary, appTeam: nil))
 
     // The App is not running.
     let helper = try Helper(binary: binary, dataRoot: root)
@@ -100,7 +125,7 @@ final class AgentHelperEndToEndTests: XCTestCase {
     XCTAssertEqual(initialize["result"]?["serverInfo"]?["name"], "mindloom")
     helper.send(MCPMessage.notification(method: "notifications/initialized"))
     XCTAssertEqual(try helper.request("tools/list")["result"]?["tools"]?.arrayValue?.count, 6)
-    let offline = try helper.call("search_matters", ["query": "Twin"])
+    let offline = try helper.call("search", ["query": "Twin"])
     XCTAssertEqual(offline.text, AgentCopy.notRunning)
     XCTAssertTrue(offline.isErrorResult)
 
@@ -108,18 +133,24 @@ final class AgentHelperEndToEndTests: XCTestCase {
     // the owner is asked once.
     try server.start()
     await owner.queue(allowAll())
-    let found = try helper.call("search_matters", ["query": "Twin"])
+    let found = try helper.call("search", ["query": "Twin"])
     XCTAssertEqual(found.matterIDs, [AgentFixture.twin, AgentFixture.openDay], found.text)
     let requests = await owner.consentRequests
     XCTAssertEqual(requests.map(\.client.displayName), ["Claude Code"])
     let matter = try helper.call("get_matter", ["id": .string(AgentFixture.twin)])
-    XCTAssertTrue(matter.text.contains(AgentCopy.dataHeader))
+    XCTAssertTrue(matter.text.contains("⟦资料 "), matter.text)
     XCTAssertFalse(matter.serialized.contains(AgentFixture.phone))
     XCTAssertEqual(
       try helper.call("get_matter", ["id": .string(AgentFixture.labWeekly)]).errorCode, "not_found")
-    XCTAssertEqual(try helper.call("add_to_inbox", ["text": "建议"]).errorCode, "read_only")
+    XCTAssertEqual(try helper.call("add_note", ["text": "建议"]).errorCode, "read_only")
     let resources = try helper.request("resources/list")["result"]?["resources"]?.arrayValue
     XCTAssertEqual(resources?.count, 3)
+
+    // Another program of this user connecting straight to the socket gets
+    // nothing: not the bundled helper (F8; AGENT-IO N2).
+    XCTAssertEqual(Self.directReply(socket: server.socketURL.path), "", "a direct peer was served")
+    let rejected = server.rejectedConnections
+    XCTAssertGreaterThanOrEqual(rejected, 1)
 
     // The App quits mid-session, then comes back: the grant holds.
     server.stop()

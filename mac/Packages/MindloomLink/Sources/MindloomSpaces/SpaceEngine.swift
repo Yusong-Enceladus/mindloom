@@ -576,7 +576,7 @@ public actor SpaceEngine {
       case .ok:
         break
       case .unverifiable:
-        warning = "这条申请来自另一位管理员发的邀请，这台 Mac 核对不了；请当面核对指纹"
+        warning = "此申请来自另一位管理员发出的邀请，这台 Mac 无法核对。请当面核对指纹"
       case .bad:
         warning = "这条申请不是持邀请码的人发的（签名或邀请绑定对不上），不能同意"
         blocked = true

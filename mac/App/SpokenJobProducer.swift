@@ -68,11 +68,15 @@ struct SpokenJobProducer: Sendable {
 
     case .notice(let text):
       return Result(delivery: .shown(text), answerForPanel: text)
+
+    case .correct(_, let written):
+      // Written over the highlight exactly as said; nothing else to make.
+      return Result(delivery: .replaced(written))
     }
   }
 
   static func languagePackNotice(_ language: String) -> String {
-    "需要先下载\(language)语言包，下载后再试一次"
+    "需要先下载\(language)语言包，下载后请重试"
   }
 
   /// The gates a rewrite must pass to be written over the highlight: it is

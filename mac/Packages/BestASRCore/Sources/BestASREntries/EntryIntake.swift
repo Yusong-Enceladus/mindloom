@@ -5,6 +5,7 @@ import Darwin
 import Foundation
 import ImageIO
 import MindloomAgentProtocol
+import MindloomShareDrop
 
 /// One thing an entry hands to intake: a candidate (exactly what a paste or a
 /// drop would give), its source and its time. Entries never build items
@@ -31,8 +32,14 @@ public struct EntryIntakeItem: Equatable, Sendable {
   }
 }
 
-/// The source labels entries give their items ("已收进来 · 来自 日历").
+/// The source labels entries give their items ("已收好 · 来自 日历").
 public enum EntrySource {
+  /// A side door whose sender Mindloom cannot check (v12 F10; AGENT-IO M6):
+  /// the share folder (any program can write it and name any App), the
+  /// Services menu (any program can call it while another App is in front),
+  /// and a browser request whose helper Chrome did not start. Never the name
+  /// the sender gave.
+  public static let unverified = "本机其他程序"
   public static let shareFallback = "分享"
   public static let shortcuts = "快捷指令"
   public static let commandLine = "命令行"
@@ -45,6 +52,20 @@ public enum EntrySource {
 
   public static func named(_ name: String) -> ItemSourceApplication? {
     ItemSourceApplication(bundleID: nil, name: name)
+  }
+
+  /// The share folder's source: whatever App the drop names, it cannot be
+  /// checked.
+  public static func share(_ entry: ShareDropEntry) -> ItemSourceApplication? {
+    named(unverified)
+  }
+
+  /// The Services menu's source: the caller cannot be checked.
+  public static var services: ItemSourceApplication? { named(unverified) }
+
+  /// The Chrome extension's source: Chrome only when the App checked it.
+  public static func browser(_ request: BrowserAddRequest) -> ItemSourceApplication? {
+    named(request.startedByChrome ? browser : unverified)
   }
 }
 
@@ -126,6 +147,43 @@ public enum EntryCandidates {
     let staged = try IntakeInboxIngestor.writeScratch(
       bytes, filename: InboxSafeName.sanitized(filename))
     return (.file(staged), staged.deletingLastPathComponent())
+  }
+
+  /// A file the share extension copied into the drop (F10), too big to read
+  /// whole: cloned (or copied) into a private scratch folder and taken in by
+  /// the file rules; the scratch folder is removed after staging. The drop's
+  /// own copy is never followed through a link.
+  /// Audio or video handed over as bytes (a share, a Shortcut): the import
+  /// reads a file later, after the scratch copy is gone.
+  public static let mediaBytesRefusal = "音视频请拖到 Mindloom 中，或使用“文件”>“导入…”"
+
+  public static func copiedFile(_ url: URL, filename: String) throws -> (IntakeCandidate, URL?) {
+    let folder = FileManager.default.temporaryDirectory
+      .appendingPathComponent("bestasr-inbox-\(UUID().uuidString)", isDirectory: true)
+    guard mkdir(folder.path, S_IRWXU) == 0 else { throw CocoaError(.fileWriteUnknown) }
+    let staged = folder.appendingPathComponent(InboxSafeName.sanitized(filename))
+    let input = open(url.path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+    var entry = stat()
+    guard input >= 0, fstat(input, &entry) == 0, entry.st_mode & S_IFMT == S_IFREG else {
+      if input >= 0 { close(input) }
+      IntakeInboxIngestor.removeScratch(folder)
+      throw CocoaError(.fileReadUnknown)
+    }
+    defer { close(input) }
+    if clonefile(url.path, staged.path, UInt32(CLONE_NOFOLLOW)) != 0 {
+      let output = open(
+        staged.path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR)
+      guard output >= 0 else {
+        IntakeInboxIngestor.removeScratch(folder)
+        throw CocoaError(.fileWriteUnknown)
+      }
+      defer { close(output) }
+      guard fcopyfile(input, output, nil, copyfile_flags_t(COPYFILE_DATA)) == 0 else {
+        IntakeInboxIngestor.removeScratch(folder)
+        throw CocoaError(.fileWriteUnknown)
+      }
+    }
+    return (.file(staged), folder)
   }
 }
 
@@ -219,14 +277,14 @@ public struct EntryCommitter: Sendable {
             {
               summary.alreadyTaken.append(draft.id)
             } else {
-              summary.rejected.append("未能保存到资料库，未收进来")
+              summary.rejected.append("未能保存到资料库，未添加")
             }
           }
         case .media(let url):
           if item.scratch != nil {
             // Bytes handed over without a file of their own: the import
             // pipeline reads files later, after the scratch copy is gone.
-            summary.rejected.append("音视频请在访达里分享文件，或拖进织机导入")
+            summary.rejected.append(EntryCandidates.mediaBytesRefusal)
           } else {
             summary.media.append(url)
           }

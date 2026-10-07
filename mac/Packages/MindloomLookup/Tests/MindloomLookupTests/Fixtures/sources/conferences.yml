@@ -1,0 +1,48 @@
+- title: EXCONF
+  description: Example Conference on Learning Systems
+  sub: AI
+  rank:
+    ccf: A
+    core: A*
+  dblp: exconf
+  confs:
+  - year: 2025
+    id: exconf25
+    link: https://exconf.example.org/2025/
+    timeline:
+    - abstract_deadline: '2025-05-11 23:59:59'
+      deadline: '2025-05-18 23:59:59'
+    timezone: AoE
+    date: December 1-5, 2025
+    place: Example City
+  - year: 2026
+    id: exconf26
+    link: https://exconf.example.org/2026/
+    timeline:
+    - abstract_deadline: '2026-05-11 23:59:59'
+      deadline: '2026-05-18 23:59:59'
+      comment: 'Main track; supplementary material deadline: May 25, 2026,
+        23:59 AoE'
+    - deadline: TBD
+      comment: Datasets track
+    timezone: AoE
+    date: December 6-12, 2026
+    place: Example City, Exampleland
+  conference_key: AI/exconf
+- title: SAMPLE
+  description: Symposium on Sample Data
+  sub: DB
+  rank:
+    ccf: B
+  dblp: sample
+  confs:
+  - year: 2027
+    id: sample27
+    link: https://sample.example.org/
+    timeline:
+    - deadline: '2026-09-15 23:59:59'
+      rebuttal_deadline: '2026-11-01 23:59:59'
+    timezone: UTC-8
+    date: TBD
+    place: TBD
+  conference_key: DB/sample

@@ -5,6 +5,7 @@ import Foundation
 import MLX
 import MLXAudioSTT
 import MLXNN
+import MindloomIdentity
 
 public struct QwenRecognizedText: Equatable, Sendable {
   public let text: String
@@ -18,8 +19,21 @@ public struct QwenRecognizedText: Equatable, Sendable {
 
 public protocol QwenASRSampleTranscribing: Sendable {
   func transcribe(samples: [Float], dictionaryTerms: [String]) async throws -> QwenRecognizedText
+  /// The same, with `priorText` (what was said just before) added to the
+  /// prompt context. Only the evaluation harness asks for it; production
+  /// decodes have no prior text (DICTATION_ARCHITECTURE §15).
+  func transcribe(samples: [Float], dictionaryTerms: [String], priorText: String) async throws
+    -> QwenRecognizedText
   /// Drops the weights so an idle App does not hold them.
   func release() async
+}
+
+extension QwenASRSampleTranscribing {
+  public func transcribe(samples: [Float], dictionaryTerms: [String], priorText: String)
+    async throws -> QwenRecognizedText
+  {
+    try await transcribe(samples: samples, dictionaryTerms: dictionaryTerms)
+  }
 }
 
 public protocol QwenWordsAligning: Sendable {
@@ -40,7 +54,7 @@ public actor QwenASRBackend: QwenASRSampleTranscribing {
   /// else the dictation needs at exactly the wrong moment, so this actor runs
   /// on a thread of its own.
   private let computeQueue = DispatchSerialQueue(
-    label: "com.bestasr.app.qwen-asr", qos: .userInitiated)
+    label: MindloomIdentity.queueLabel("qwen-asr"), qos: .userInitiated)
 
   public nonisolated var unownedExecutor: UnownedSerialExecutor {
     computeQueue.asUnownedSerialExecutor()
@@ -61,6 +75,12 @@ public actor QwenASRBackend: QwenASRSampleTranscribing {
   }
 
   public func transcribe(samples: [Float], dictionaryTerms: [String]) throws -> QwenRecognizedText {
+    try transcribe(samples: samples, dictionaryTerms: dictionaryTerms, priorText: "")
+  }
+
+  public func transcribe(samples: [Float], dictionaryTerms: [String], priorText: String) throws
+    -> QwenRecognizedText
+  {
     try InferenceCancellation.check()
     guard !samples.isEmpty, samples.count <= QwenASRPinnedArtifact.maximumSamples,
       samples.allSatisfy(\.isFinite)
@@ -89,8 +109,15 @@ public actor QwenASRBackend: QwenASRSampleTranscribing {
       samples, melBins: model.config.audioConfig.numMelBins)
     logQwenStage("qwen-features", since: featuresStarted, samples: samples.count)
     try InferenceCancellation.check()
-    let input = model.buildPrompt(
-      numAudioTokens: audioTokens, context: terms.joined(separator: ", "), language: nil)
+    // The prior text, when given, follows the terms on its own line, cut to
+    // its last 200 characters and stripped of anything that reads as a
+    // control token.
+    var context = terms.joined(separator: ", ")
+    let prior = String(priorText.suffix(200)).trimmingCharacters(in: .whitespacesAndNewlines)
+    if !prior.isEmpty, !prior.contains("<|"), !prior.contains("<asr_text>") {
+      context = context.isEmpty ? prior : context + "\n" + prior
+    }
+    let input = model.buildPrompt(numAudioTokens: audioTokens, context: context, language: nil)
     let promptLength = input.dim(1)
     guard promptLength > 1, promptLength <= 4_096 else {
       throw qwenFailure(.invalidRequest, "qwen-asr-prompt-limit", false)
@@ -157,7 +184,7 @@ public actor QwenForcedAlignmentBackend: QwenWordsAligning {
   private var model: Qwen3ForcedAlignerModel?
   /// Alignment is model inference too; see `QwenASRBackend`.
   private let computeQueue = DispatchSerialQueue(
-    label: "com.bestasr.app.qwen-aligner", qos: .userInitiated)
+    label: MindloomIdentity.queueLabel("qwen-aligner"), qos: .userInitiated)
 
   public nonisolated var unownedExecutor: UnownedSerialExecutor {
     computeQueue.asUnownedSerialExecutor()
@@ -183,6 +210,11 @@ public actor QwenForcedAlignmentBackend: QwenWordsAligning {
       samples.allSatisfy(\.isFinite), !text.isEmpty, text.count <= 4_000
     else { throw qwenFailure(.invalidRequest, "qwen-alignment-input-invalid", false) }
     try prepare()
+    // Loading takes a second or more; a dictation that started meanwhile
+    // (it cancels the pass that timed sentences) must not wait for a whole
+    // window's alignment as well before the aligner is released (review
+    // 2026-10-07).
+    try InferenceCancellation.check()
     guard let model else {
       throw qwenFailure(.modelUnavailable, "qwen-alignment-not-prepared", true)
     }

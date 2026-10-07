@@ -1,8 +1,11 @@
 import AppKit
 import BestASRDomain
 import BestASRIntake
+import BestASRMemory
 import BestASRPersistence
 import BestASRRemoteOrganizer
+import BestASRMemoryUI
+import CryptoKit
 import Foundation
 import UniformTypeIdentifiers
 
@@ -50,14 +53,14 @@ extension DictationAppModel {
     // One clipboard content is taken in once: a second ⌘V (or an
     // auto-repeat that slipped through) does not make a duplicate item.
     guard pasteboard.changeCount != lastReceivedPasteChangeCount else {
-      intake.show("这份剪贴板内容刚才已收进来")
+      intake.show("这份剪贴板内容刚才已经收过了")
       return
     }
     switch IntakePasteboardReader(pasteboard: pasteboard).read() {
     case .refused(let message):
       intake.show(message)
     case .candidates(let candidates) where candidates.isEmpty:
-      intake.show("剪贴板里没有可收进来的内容")
+      intake.show("剪贴板里没有能收的内容")
     case .candidates(let candidates):
       lastReceivedPasteChangeCount = pasteboard.changeCount
       let (source, origin) = sourceApplicationTracker?.sourceForPaste() ?? (nil, .unknown)
@@ -82,7 +85,7 @@ extension DictationAppModel {
       }
       guard let self else { return }
       guard !candidates.isEmpty else {
-        intake.show("不支持这种内容，未收进来")
+        intake.show("无法添加此类内容")
         return
       }
       receive(candidates, source: source, origin: origin)
@@ -96,7 +99,7 @@ extension DictationAppModel {
     guard !urls.isEmpty else { return false }
     let files = urls.filter(\.isFileURL)
     guard !files.isEmpty else {
-      intake.show("只收本机文件，链接未收进来")
+      intake.show("仅支持这台 Mac 上的文件，链接未添加")
       return true
     }
     let (source, origin) =
@@ -105,11 +108,125 @@ extension DictationAppModel {
     return true
   }
 
+  // MARK: - 文件 › 导入… and 收进会议记录… (v12 1C)
+
+  /// 文件 › 导入… ⌘O (ALIGNMENT 收2-6): recordings and videos, through the
+  /// same way in as a drop (one at a time, the same bytes once). An
+  /// imported recording is called 「录音」, a video 「视频」.
+  func chooseMediaToImport() {
+    let panel = NSOpenPanel()
+    panel.title = "导入录音或视频"
+    panel.prompt = "导入"
+    panel.allowsMultipleSelection = true
+    panel.canChooseDirectories = false
+    panel.canChooseFiles = true
+    panel.allowedContentTypes =
+      [.audio, .audiovisualContent, .movie]
+      + MediaImportFormats.extensions.sorted().compactMap { UTType(filenameExtension: $0) }
+    presentOpenPanel(panel) { [weak self] urls in
+      self?.receive(urls.map(IntakeCandidate.file), source: nil, origin: .unknown)
+    }
+  }
+
+  /// 文件 › 导入会议记录… (ALIGNMENT 收2-5): a transcript a meeting App
+  /// exported (txt, md — Tencent Meeting's web download —, docx, srt, vtt).
+  func chooseMeetingTranscripts() {
+    let panel = NSOpenPanel()
+    panel.title = "导入会议记录"
+    panel.message = "腾讯会议、飞书妙记、Zoom 导出的会议记录：txt、md、docx、srt、vtt"
+    panel.prompt = "导入"
+    panel.allowsMultipleSelection = true
+    panel.canChooseDirectories = false
+    panel.canChooseFiles = true
+    panel.allowedContentTypes = IntakeFileClass.meetingTranscriptExtensions.compactMap {
+      UTType(filenameExtension: $0)
+    }
+    presentOpenPanel(panel) { [weak self] urls in self?.takeInMeetingTranscripts(urls) }
+  }
+
+  /// Reads each file's turns on this Mac (`MemoryTranscriptText`, the rules
+  /// the DGX Spark cuts it by) and takes it in like a drop, its source named
+  /// after the App whose export it is (「会议记录 · 腾讯会议」). A file whose
+  /// turns cannot be told is still taken in, as a file, and that is said.
+  func takeInMeetingTranscripts(_ urls: [URL]) {
+    let files = urls.filter(\.isFileURL)
+    guard !files.isEmpty else { return }
+    Task { [weak self] in
+      let read = await Self.meetingTranscriptApps(files)
+      guard let self else { return }
+      var byApp: [String: [URL]] = [:]
+      var unnamed: [URL] = []
+      for (url, reading) in zip(files, read) {
+        if case .transcript(let app?) = reading {
+          byApp[app, default: []].append(url)
+        } else {
+          unnamed.append(url)
+        }
+      }
+      let notTranscripts = read.filter { $0 == .notTranscript }.count
+      let note: String? =
+        switch notTranscripts {
+        case 0: nil
+        case 1 where files.count == 1: "无法识别说话人，已作为文件添加"
+        default: "有 \(notTranscripts) 份无法识别说话人，已作为文件添加"
+        }
+      for app in byApp.keys.sorted() {
+        receive(
+          byApp[app, default: []].map(IntakeCandidate.file),
+          source: ItemSourceApplication(bundleID: nil, name: app), origin: .user)
+      }
+      if !unnamed.isEmpty {
+        receive(unnamed.map(IntakeCandidate.file), source: nil, origin: .unknown, note: note)
+      }
+    }
+  }
+
+  enum MeetingTranscriptReading: Equatable {
+    /// Turns were found; the App whose export it is (nil for subtitles).
+    case transcript(app: String?)
+    case notTranscript
+  }
+
+  nonisolated static func meetingTranscriptApps(_ urls: [URL]) async -> [MeetingTranscriptReading] {
+    await Task.detached(priority: .userInitiated) {
+      urls.map { url in
+        guard let text = IntakeTextExtractor.meetingTranscriptText(fileURL: url),
+          let transcript = MemoryTranscriptText.parse(text)
+        else { return MeetingTranscriptReading.notTranscript }
+        return .transcript(app: transcript.format.meetingApp)
+      }
+    }.value
+  }
+
+  /// An open panel as a sheet on the main window when there is one, else
+  /// on its own; one at a time.
+  func presentOpenPanel(_ panel: NSOpenPanel, chosen: @escaping ([URL]) -> Void) {
+    guard importOpenPanel == nil else { return }
+    importOpenPanel = panel
+    let finish: (NSApplication.ModalResponse) -> Void = { [weak self, weak panel] response in
+      let urls = response == .OK ? panel?.urls ?? [] : []
+      self?.importOpenPanel = nil
+      if !urls.isEmpty { chosen(urls) }
+    }
+    let application = NSApplication.shared
+    let parent = Self.importPresentationWindow(
+      keyWindow: application.keyWindow, mainWindow: application.mainWindow,
+      windows: application.windows)
+    application.activate()
+    if let parent {
+      parent.makeKeyAndOrderFront(nil)
+      panel.beginSheetModal(for: parent, completionHandler: finish)
+    } else {
+      panel.begin(completionHandler: finish)
+    }
+  }
+
   func receive(
-    _ candidates: [IntakeCandidate], source: ItemSourceApplication?, origin: ItemSourceOrigin
+    _ candidates: [IntakeCandidate], source: ItemSourceApplication?, origin: ItemSourceOrigin,
+    note: String? = nil
   ) {
     guard let processor = intakeProcessor, let repository else {
-      intake.show("资料库尚未打开；未收进来")
+      intake.show("尚未就绪，请稍后再试")
       return
     }
     let base = Date()
@@ -118,9 +235,16 @@ extension DictationAppModel {
     Task { [weak self] in
       await ready?.value
       var stored = 0
-      var lastStored: SessionID?
+      var storedIDs: [SessionID] = []
       var media: [URL] = []
       var rejected: [String] = []
+      // v11: the same bytes taken in twice are recognised by content (SHA-256
+      // of the original), never by the file's name.
+      var duplicates: [SessionID] = []
+      // The same bytes already on their way in (twice in this drop, or a
+      // drop still being received or imported): taken in once.
+      var onItsWay = 0
+      var mediaDigests: [URL: HashedSourceFile] = [:]
       for (index, candidate) in candidates.enumerated() {
         // Input order is capture order.
         let capturedAt = base.addingTimeInterval(Double(index) * 0.001)
@@ -131,16 +255,46 @@ extension DictationAppModel {
         for outcome in outcomes {
           switch outcome {
           case .item(let draft):
+            let digest = draft.attachments.first(where: { $0.role == .original })?.digest.value
+            if let digest, self?.claimIntake(digest) == false {
+              await Self.discardIntakeStaging(processor.assetStore, draft.id)
+              onItsWay += 1
+              continue
+            }
+            defer { if let digest { self?.intake.receiving.remove(digest) } }
+            if let digest,
+              let existing = try? await repository.existingCapture(withOriginalDigest: digest)
+            {
+              await Self.discardIntakeStaging(processor.assetStore, draft.id)
+              duplicates.append(existing)
+              continue
+            }
             do {
               try await repository.createUserItem(draft)
               await Self.commitIntakeStaging(processor.assetStore, draft.id)
               stored += 1
-              lastStored = draft.id
+              storedIDs.append(draft.id)
             } catch {
               await Self.discardIntakeStaging(processor.assetStore, draft.id)
-              rejected.append("未能保存到资料库，未收进来")
+              rejected.append("未能存到这台 Mac，没有收")
             }
           case .media(let url):
+            let hashed = await Self.fileDigest(url)
+            let digest = hashed?.digest
+            if let digest, self?.claimIntake(digest) == false {
+              onItsWay += 1
+              continue
+            }
+            if let digest,
+              let existing = try? await repository.existingCapture(withOriginalDigest: digest)
+            {
+              self?.intake.receiving.remove(digest)
+              duplicates.append(existing)
+              continue
+            }
+            // Stays claimed until it is queued below (then the queue says it
+            // is on its way).
+            if let hashed { mediaDigests[url] = hashed }
             media.append(url)
           case .rejected(let message):
             rejected.append(message)
@@ -148,25 +302,92 @@ extension DictationAppModel {
         }
       }
       guard let self else { return }
+      // A recording or video over 1 GB that is not here yet is asked about
+      // once, all of them in one question (STORE-005); a file the item limit
+      // refuses or one already in the library is never asked about (review
+      // 10-6 S13). Declined ones are left where they are.
+      let declined = Self.largeMediaDeclined(media)
+      for url in declined {
+        if let digest = mediaDigests.removeValue(forKey: url)?.digest {
+          intake.receiving.remove(digest)
+        }
+      }
+      media.removeAll { declined.contains($0) }
       intake.inProgress = false
       for url in media {
-        intake.pendingMediaImports.append(.init(url: url, source: source))
+        intake.pendingMediaImports.append(.init(url: url, source: source, hashed: mediaDigests[url]))
       }
-      let wasImporting = capture.importInProgress
+      for hashed in mediaDigests.values { intake.receiving.remove(hashed.digest) }
       let refusal = startNextQueuedMediaImport()
-      let summary = IntakeConfirmation.text(
-        stored: stored, mediaStarted: !media.isEmpty && !wasImporting && capture.importInProgress,
-        mediaWaiting: media.isEmpty ? 0 : intake.pendingMediaImports.count,
-        rejected: rejected, source: source)
-      intake.show(
-        refusal.map { stored > 0 ? "\(summary)；\($0)" : $0 } ?? summary,
-        item: stored == 1 && refusal == nil && rejected.isEmpty ? lastStored : nil,
-        source: source?.name)
+      if !storedIDs.isEmpty {
+        CaptureFeedback.shared.taken(storedIDs, kind: .item)
+      } else if !media.isEmpty, refusal == nil {
+        // A recording or video is taken in once its import finishes; it is
+        // already safe on this Mac.
+        CaptureFeedback.shared.show(MemoryToast("已添加", icon: .mark))
+      } else if let first = duplicates.first {
+        CaptureFeedback.shared.duplicate(of: first)
+      } else if onItsWay > 0 {
+        // Already being taken in: it is safe; nothing is taken twice.
+        CaptureFeedback.shared.show(MemoryToast("已添加", icon: .mark))
+      }
+      if let message = refusal ?? rejected.first {
+        intake.show(message)
+      } else if let note, stored > 0 {
+        intake.show(note)
+      }
       if stored > 0 {
         // New items join local fallback events right away, as recordings do.
         await refreshHistoryItems(preserveStatus: true, organizeEvents: true)
       }
     }
+  }
+
+  /// 1 GB as the question shows it (`ByteCountFormatter` counts in
+  /// thousands).
+  static let largeFileBytes: Int64 = 1_000_000_000
+
+  /// The recordings and videos over 1 GB the user chose not to add, asked
+  /// in one question.
+  static func largeMediaDeclined(_ media: [URL]) -> Set<URL> {
+    let large = media.compactMap { url -> (URL, Int64)? in
+      guard let size = (try? url.resourceValues(forKeys: [.fileSizeKey]))?.fileSize,
+        Int64(size) > largeFileBytes
+      else { return nil }
+      return (url, Int64(size))
+    }
+    guard !large.isEmpty else { return [] }
+    let alert = NSAlert()
+    alert.messageText = largeFileQuestion(large.map { ($0.0.lastPathComponent, $0.1) })
+    alert.informativeText = "文件会拷贝到 Mindloom，占用相同大小的空间。原文件保持不变。"
+    alert.addButton(withTitle: "添加")
+    alert.addButton(withTitle: "取消").keyEquivalent = "\u{1b}"
+    guard alert.runModal() != .alertFirstButtonReturn else { return [] }
+    return Set(large.map(\.0))
+  }
+
+  /// 「添加“讲座.mov”（2.3 GB）？」 or 「添加 2 个大于 1 GB 的文件（共 4.1 GB）？」.
+  static func largeFileQuestion(_ files: [(name: String, bytes: Int64)]) -> String {
+    let total = SettingsStorage.bytes(files.reduce(0) { $0 + $1.bytes })
+    if files.count == 1, let file = files.first {
+      return "添加“\(file.name)”（\(total)）？"
+    }
+    return "添加 \(files.count) 个大于 1 GB 的文件（共 \(total)）？"
+  }
+
+  /// Claims `digest` for one intake; false when the same bytes are already
+  /// on their way in.
+  func claimIntake(_ digest: String) -> Bool {
+    guard !intake.isOnItsWay(digest, importing: capture.importInProgress) else { return false }
+    intake.receiving.insert(digest)
+    return true
+  }
+
+  /// The SHA-256 of a file's bytes with the file's fingerprint (read in
+  /// chunks, off the main actor); nil when it cannot be read. The import
+  /// reuses it (`pendingImportHashed`) while the file is unchanged.
+  nonisolated static func fileDigest(_ url: URL) async -> HashedSourceFile? {
+    await Task.detached(priority: .utility) { HashedSourceFile.hash(url) }.value
   }
 
   /// The user corrects where an item came from; stored as a new revision.
@@ -192,13 +413,16 @@ extension DictationAppModel {
   func startNextQueuedMediaImport() -> String? {
     guard !capture.importInProgress, !intake.pendingMediaImports.isEmpty else { return nil }
     let next = intake.pendingMediaImports.removeFirst()
+    intake.importingDigest = next.digest
     pendingImportSourceApplication = next.source
+    pendingImportHashed = next.hashed
     importMedia(next.url)
     if !capture.importInProgress {
       // Refused (components not ready, a recording in progress, ...). The
       // queue is dropped rather than started by surprise later; the user's
       // files are untouched and can be dropped again.
       pendingImportSourceApplication = nil
+      pendingImportHashed = nil
       let skipped = intake.pendingMediaImports.count
       intake.pendingMediaImports.removeAll()
       return "音视频未导入：\(capture.importStatusMessage)"

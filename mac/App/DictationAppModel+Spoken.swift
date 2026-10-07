@@ -158,7 +158,7 @@ extension DictationAppModel {
     language: String
   ) -> String {
     switch mode {
-    case .dictate: "音频会先安全保存，再进行本地识别"
+    case .dictate: "音频会先保存，再进行本地识别"
     case .translate: "说完写入\(language)"
     case .command: hasSelection ? "说出要对选中文字做的事" : "说出要它做的事"
     }

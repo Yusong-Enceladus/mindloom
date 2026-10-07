@@ -56,7 +56,7 @@ final class AgentProtocolTests: XCTestCase {
           #"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26"}}"#
         )))
     XCTAssertEqual(initialize["result"]?["protocolVersion"], "2025-03-26")
-    XCTAssertEqual(initialize["result"]?["serverInfo"]?["title"], "织机")
+    XCTAssertEqual(initialize["result"]?["serverInfo"]?["title"], "Mindloom")
     let tools = try XCTUnwrap(
       AgentOfflineResponder.reply(
         to: MCPMessage.decode(#"{"jsonrpc":"2.0","id":2,"method":"tools/list"}"#)))
@@ -68,7 +68,8 @@ final class AgentProtocolTests: XCTestCase {
         )))
     XCTAssertEqual(call["result"]?["isError"], true)
     XCTAssertEqual(
-      call["result"]?["content"]?.arrayValue?.first?["text"]?.stringValue, "织机没有在运行，请先打开织机")
+      call["result"]?["content"]?.arrayValue?.first?["text"]?.stringValue,
+      "Mindloom 未运行。请先打开 Mindloom。")
     let read = try XCTUnwrap(
       AgentOfflineResponder.reply(
         to: MCPMessage.decode(
@@ -90,10 +91,26 @@ final class AgentProtocolTests: XCTestCase {
       .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
       .deletingLastPathComponent().deletingLastPathComponent()
     let file = root.appendingPathComponent("schemas/agent/mindloom-mcp-tools.json")
-    XCTAssertEqual(try JSONValue.parse(Data(contentsOf: file)), AgentTool.listResult)
+    if ProcessInfo.processInfo.environment["MINDLOOM_WRITE_AGENT_SCHEMA"] == "1" {
+      // Regenerates the reviewed copy after a deliberate change to the tools.
+      let object = try JSONSerialization.jsonObject(with: AgentTool.catalog.serializedData)
+      try JSONSerialization.data(
+        withJSONObject: object, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+      ).write(to: file)
+    }
+    XCTAssertEqual(try JSONValue.parse(Data(contentsOf: file)), AgentTool.catalog)
     for tool in AgentTool.allCases {
       XCTAssertEqual(tool.inputSchema["additionalProperties"], false, tool.rawValue)
-      XCTAssertEqual(tool.annotations["readOnlyHint"], .bool(tool != .addToInbox))
+      XCTAssertEqual(tool.annotations["readOnlyHint"], .bool(!tool.isChange))
+      XCTAssertEqual(tool.annotations["destructiveHint"], false)
+    }
+    // v12: reads, and four changes; nothing that deletes, shares, exports,
+    // records or changes settings (ALIGNMENT 用-7).
+    XCTAssertEqual(
+      AgentTool.allCases.filter(\.isChange).map(\.rawValue),
+      ["add_note", "move_item", "rename_matter", "mark_step"])
+    for word in ["delete", "share", "export", "record", "setting", "grant", "inbox"] {
+      XCTAssertFalse(AgentTool.allCases.contains { $0.rawValue.contains(word) }, word)
     }
   }
 
@@ -106,7 +123,7 @@ final class AgentProtocolTests: XCTestCase {
     XCTAssertEqual(a.path, "/Users/u/.local/share/claude/versions/*")
     XCTAssertEqual(a.key, b.key)
     XCTAssertEqual(a.displayName, "Claude Code")
-    XCTAssertEqual(a.signerLabel, "开发者签名（团队 TESTTEAM01）")
+    XCTAssertEqual(a.signerLabel, "开发者（团队 TESTTEAM01）签名的程序")
     // Unsigned (or ad hoc): the exact path, and the script an interpreter runs (V7-A3).
     let unsigned = AgentClientIdentity(
       name: "claude-code", path: "/Users/u/.local/share/claude/versions/9.9.9")

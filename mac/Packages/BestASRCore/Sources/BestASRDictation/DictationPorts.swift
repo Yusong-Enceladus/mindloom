@@ -476,13 +476,39 @@ public struct DictationASRRequest: Codable, Equatable, Sendable {
 extension DictionaryContextProjection {
   /// Preserve the canonical-to-spoken mapping across the dictation/inference
   /// protocol boundary instead of flattening it into canonical strings.
+  ///
+  /// Everything learning taught is `explicitOnly` for as long as it is in the
+  /// dictionary (review 10-6 S7): a word learning made, and the forms it
+  /// added to a word the user made, which travel as a second hint after all
+  /// the words, so the user's own forms of that word keep their replacement
+  /// and a bound on hints drops a learned form before any word.
   public var asrDictionaryHints: [ASRDictionaryHint] {
-    entries.map {
-      ASRDictionaryHint(
-        canonicalForm: $0.canonicalForm,
-        spokenForms: $0.spokenForms
-      )
+    func key(_ form: String) -> String {
+      form.precomposedStringWithCompatibilityMapping.lowercased()
     }
+    var words: [ASRDictionaryHint] = []
+    var learned: [ASRDictionaryHint] = []
+    for entry in entries {
+      if learnedEntryIDs.contains(entry.id) || replacementOnlyEntryIDs.contains(entry.id) {
+        words.append(
+          ASRDictionaryHint(
+            canonicalForm: entry.canonicalForm, spokenForms: entry.spokenForms,
+            explicitOnly: true))
+        continue
+      }
+      let learnedKeys = Set(learnedForms[entry.id, default: []].map(key))
+      words.append(
+        ASRDictionaryHint(
+          canonicalForm: entry.canonicalForm,
+          spokenForms: entry.spokenForms.filter { !learnedKeys.contains(key($0)) }))
+      let forms = entry.spokenForms.filter { learnedKeys.contains(key($0)) }
+      if !forms.isEmpty {
+        learned.append(
+          ASRDictionaryHint(
+            canonicalForm: entry.canonicalForm, spokenForms: forms, explicitOnly: true))
+      }
+    }
+    return words + learned
   }
 }
 

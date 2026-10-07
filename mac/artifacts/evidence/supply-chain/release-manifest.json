@@ -1,31 +1,61 @@
 {
   "buildConfiguration": "Release",
-  "dependencyManifestSHA256": "787cd233041b5112da45ed0a5731598302df71396b9b0d94667ca0ff362004b3",
-  "fileCount": 61,
+  "dependencyManifestSHA256": "37aeead3e35f20f937fd5f4bac2f37919b3d727603e5de059776d0840e3202b6",
+  "fileCount": 81,
   "files": [
     {
       "kind": "dependency-mach-o",
       "relativePath": "Contents/Frameworks/libswiftCompatibilitySpan.dylib",
-      "sha256": "a22c3864a009bc2f9d22a517d9d14464bebf9ee71e9b49dc78cbd032cf5c9920",
-      "sizeBytes": 188064
+      "sha256": "ffa26327e30bbb058c104177f7772c9162da5e229af640aaab6d5e6a5c87a0bc",
+      "sizeBytes": 137248
+    },
+    {
+      "kind": "first-party-mach-o",
+      "relativePath": "Contents/Helpers/mindloom-mcp",
+      "sha256": "a6583d816a2e2917b5fdb3fd0b5bf85a691147fa5adbd7f5f24bb0c06d073178",
+      "sizeBytes": 480096
+    },
+    {
+      "kind": "dependency-mach-o",
+      "relativePath": "Contents/Helpers/tmeet",
+      "sha256": "72633b06e277df2cc084dc58da201413dfc81f92923eb66db9a0912cbf1be25f",
+      "sizeBytes": 9646272
     },
     {
       "kind": "resource",
       "relativePath": "Contents/Info.plist",
-      "sha256": "acf59c4a5eb23e4403b928907e71caafb9b44285e2823c471b07701ff0a7d83b",
-      "sizeBytes": 2303
+      "sha256": "c98bb0bab4816db0fb3b9a71504ca4cda105adf3d0861d8015544c7dd9d24782",
+      "sizeBytes": 3451
     },
     {
       "kind": "first-party-mach-o",
-      "relativePath": "Contents/MacOS/bestASR",
-      "sha256": "fdb38f1ed2a49b49018e190ddbd0e3d2414afc8ef83fee4430180f701feeb301",
-      "sizeBytes": 128465680
+      "relativePath": "Contents/MacOS/Mindloom",
+      "sha256": "98570b0da681af488c7d714bce10c059ced338f80604568c308c29e0c39a2700",
+      "sizeBytes": 109536160
     },
     {
       "kind": "resource",
       "relativePath": "Contents/PkgInfo",
       "sha256": "82502191c9484b04d685374f9879a0066069c49b8acae7a04b01d38d07e8eca0",
       "sizeBytes": 8
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/PlugIns/MindloomShare.appex/Contents/Info.plist",
+      "sha256": "a252381d3b8303e78eee6ac58a7cee915d3157aacb154f5b2db2051b7833ed57",
+      "sizeBytes": 2299
+    },
+    {
+      "kind": "first-party-mach-o",
+      "relativePath": "Contents/PlugIns/MindloomShare.appex/Contents/MacOS/MindloomShare",
+      "sha256": "05bf96bbb1a6c654984698bc1e4f3f9250061a4a43523bb198b717a049f844a2",
+      "sizeBytes": 320048
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/PlugIns/MindloomShare.appex/Contents/_CodeSignature/CodeResources",
+      "sha256": "6686de10a28a2fe11b36cbb86dcbacc827cfc4ea116b4dabf1845e5aee629e9b",
+      "sizeBytes": 2200
     },
     {
       "kind": "resource",
@@ -36,8 +66,8 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/AppIcon.icns",
-      "sha256": "f6012a98e3742c40ba65106028292a5131a81747ca756abacabc4562332ac846",
-      "sizeBytes": 53179
+      "sha256": "4165cd62237e76e40f0868d5559a84b083c64037b3ca811334e005ddff79b8a8",
+      "sizeBytes": 38719
     },
     {
       "kind": "resource",
@@ -54,8 +84,8 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/Assets.car",
-      "sha256": "6d052491f419c5981ee2d9f1f31dc3da4b985ba038f6437cb3debb70d93b34ed",
-      "sizeBytes": 889544
+      "sha256": "275a67f4d8bc4f1e7fc5097f2fb8e68781d7cb033249aa8d4266e87daed3c5f2",
+      "sizeBytes": 259800
     },
     {
       "kind": "resource",
@@ -102,8 +132,8 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/GRDB_GRDB.bundle/Contents/Info.plist",
-      "sha256": "2c5b1be711d5e472dfa051fdca7d5abf01b71084ed5e77970a3f79cd5e21f49a",
-      "sizeBytes": 1118
+      "sha256": "4872dafa6260547a1eee79c2471dc49ba3eff220254933ee77e3d405a364a3e3",
+      "sizeBytes": 1120
     },
     {
       "kind": "resource",
@@ -114,7 +144,7 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/GRDB_GRDB.bundle/Contents/_CodeSignature/CodeDirectory",
-      "sha256": "f8d4c47d276f101cd9d104bf208a84d0b2edeefef7ddd9ec9e410e3892b4840a",
+      "sha256": "d6364641ec157f21a8cea76eadf1498f6c7fdbe1418e492e4333ae8f5eeefd25",
       "sizeBytes": 217
     },
     {
@@ -132,7 +162,7 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/GRDB_GRDB.bundle/Contents/_CodeSignature/CodeSignature",
-      "sha256": "b971ccc060a608399f3e1f4f626ed40f7b972a61343c14feee7a4b08c196b467",
+      "sha256": "90725c91ae253d685baedfc54c24dc95207856a97fffdd01ef8097e1cfbaaacc",
       "sizeBytes": 4784
     },
     {
@@ -143,6 +173,30 @@
     },
     {
       "kind": "resource",
+      "relativePath": "Contents/Resources/Metadata.appintents/extract.actionsdata",
+      "sha256": "f363969b98e020da1155429d49f1cee70ea674e75dd5d2fa9adf6384b6ba56e6",
+      "sizeBytes": 5527
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/Metadata.appintents/version.json",
+      "sha256": "dd4247d69cd8c750931505420148b52da7955333be2932b866fef83e3c713ac4",
+      "sizeBytes": 53
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/MindloomDesign_MindloomTaglines.bundle/Contents/Info.plist",
+      "sha256": "b35d10f8c8d194de0e814bf5334a9d795672f019fa8083cdee4387c5e1e469b6",
+      "sizeBytes": 1158
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/MindloomDesign_MindloomTaglines.bundle/Contents/Resources/taglines.json",
+      "sha256": "8215782839455b67f7f5c266098b3803f63b95b6d42b1e35cda4d55b23f747d8",
+      "sizeBytes": 19008
+    },
+    {
+      "kind": "resource",
       "relativePath": "Contents/Resources/Qwen3-LICENSE-Apache-2.0.txt",
       "sha256": "b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a",
       "sizeBytes": 11344
@@ -150,8 +204,56 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/THIRD-PARTY-NOTICES.md",
-      "sha256": "aa0087288aebc103c6c5d2b2dc9d288f02c11dd927275021ede68f965d919ef2",
-      "sizeBytes": 15042
+      "sha256": "111aacad734c641aaa3cb9df3fe554e8badd845b02cea0b6b3b69512cdd2f835",
+      "sizeBytes": 16615
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/README.md",
+      "sha256": "fa4e2d90037c5de0113646404e253130e4c878ebe6bece8d028faff9fd655f65",
+      "sizeBytes": 2386
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/background.js",
+      "sha256": "c0c4e9dc219a41966e3e517ad37fcceb3680b845b015ed3f927e10e8ecd007b3",
+      "sizeBytes": 7731
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/icons/icon-128.png",
+      "sha256": "d05d99a04d0143d94a2f0ccc6b250d95fb8266dfb18acfc1debe0b3d80e4c13c",
+      "sizeBytes": 17341
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/icons/icon-16.png",
+      "sha256": "f198e3a45088d9204ba63f7601473ad783f35207f9c290b7795de997ebb2dcd0",
+      "sizeBytes": 705
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/icons/icon-32.png",
+      "sha256": "ba41232ab71c2cd0710ef71cec2c0db31c22d7234231bd630b5cc716b4f072e0",
+      "sizeBytes": 1762
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/icons/icon-48.png",
+      "sha256": "600bf550408bec811675ae836617021e3ce7cada94ad0eedb0e39c1a0a4dea37",
+      "sizeBytes": 3449
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/chrome-extension/manifest.json",
+      "sha256": "49419015d3bd62dc3c42ce1bfcc1e492552ab07fdd1b8921a75e8fa6ed6bb9b7",
+      "sizeBytes": 1312
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/en.lproj/InfoPlist.strings",
+      "sha256": "22b152e4dd130c6cca08f2509e8938d09fa039532877de855f952dbd29f20ed1",
+      "sizeBytes": 1680
     },
     {
       "kind": "resource",
@@ -174,19 +276,19 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/mlx-swift_Cmlx.bundle/Contents/Info.plist",
-      "sha256": "9671e7d71f19ba26aa6d16bd6d9b11c0ac1c210a5cba3e08139317b3e5452ef0",
-      "sizeBytes": 1121
+      "sha256": "f350270dc2dd823663f566f429d8f3bbee12d1bde797915b6fd44d374e66b3bb",
+      "sizeBytes": 1124
     },
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/mlx-swift_Cmlx.bundle/Contents/Resources/default.metallib",
-      "sha256": "24d4cfcd3ca8b15ead691e46219f35adabbea64c9f8de4eae9bf293fd8d5eb7b",
-      "sizeBytes": 3817916
+      "sha256": "0214ad23cc2fa1df961eb7e2118881bd4b2bdb0183546ef537fff1a2a61e2ada",
+      "sizeBytes": 3836652
     },
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/mlx-swift_Cmlx.bundle/Contents/_CodeSignature/CodeDirectory",
-      "sha256": "01f5d9b5fdb22233fd1c820201b4547cc07f10f3bf2fadcfaf2683508892f969",
+      "sha256": "32a32381e0fa0c87bbff1ab2e281163d801ff3a98722b4f2a68bc6042b75eefd",
       "sizeBytes": 216
     },
     {
@@ -198,20 +300,20 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/mlx-swift_Cmlx.bundle/Contents/_CodeSignature/CodeResources",
-      "sha256": "e76e2e0aed1d537a3695ffdc43c3fc626a77749114b5cff997fec088edcbaf38",
+      "sha256": "cd3f6e9acdf0aea5cf869344ac6fbee144b9ca4b99be436ead8a533030decfd7",
       "sizeBytes": 2454
     },
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/mlx-swift_Cmlx.bundle/Contents/_CodeSignature/CodeSignature",
-      "sha256": "f1626b6a75695fcfcaf6a0c1ec5a26156684e78047d9af2f80e25625da2a1402",
+      "sha256": "b1ea2996b1614bfdd9176ba4e447b5988e3b9040c47003789896e5a21aa4a842",
       "sizeBytes": 4784
     },
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/model-artifacts.json",
-      "sha256": "95c081861b088559d2514c51eaba465bb6da32a1ae36592432bc7d069bf4dee6",
-      "sizeBytes": 47793
+      "sha256": "77941124c22c38ce5d1ac0d0468b5e93d63e7255c44993da2c7009faff93833c",
+      "sizeBytes": 58009
     },
     {
       "kind": "resource",
@@ -240,8 +342,8 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-crypto_Crypto.bundle/Contents/Info.plist",
-      "sha256": "54e8faae2b6a47a96202d18ce0bf1623bf6fe19c1a23738ab43a5006c398e29c",
-      "sizeBytes": 1132
+      "sha256": "204c658fcf1bb91cb59ff416ea6f7956d05271dc4bbdc3ba6b329413c1324c50",
+      "sizeBytes": 1134
     },
     {
       "kind": "resource",
@@ -252,7 +354,7 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-crypto_Crypto.bundle/Contents/_CodeSignature/CodeDirectory",
-      "sha256": "f5f54abfd1f27d5fa31b30f35a725faa5f3180522a3a69dbc01b7bf79914655f",
+      "sha256": "60c231b4c1cb80a9057aabae4f2631c7512ab8df767300303b8143b0e29ccd26",
       "sizeBytes": 221
     },
     {
@@ -270,7 +372,7 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-crypto_Crypto.bundle/Contents/_CodeSignature/CodeSignature",
-      "sha256": "f62ccc8bf4ae48a75417596029205df94646058c92b200aafbe6ce44400814f6",
+      "sha256": "17bd06f4283adc63805c5595c0df5820389269e9e409f5e0c50f601bf38b1319",
       "sizeBytes": 4784
     },
     {
@@ -300,8 +402,8 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-transformers_Hub.bundle/Contents/Info.plist",
-      "sha256": "98a200fd0abf975b7d28ac95a74d9c9d8bc2ffb4185c59a2f0fad08860457b3a",
-      "sizeBytes": 1137
+      "sha256": "5eb5101874edc706fd895dac5872da62ab3a9016c67621fff2b0dc03ba6b57ff",
+      "sizeBytes": 1140
     },
     {
       "kind": "resource",
@@ -318,7 +420,7 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-transformers_Hub.bundle/Contents/_CodeSignature/CodeDirectory",
-      "sha256": "d4b60f60c6cee80023ac4abacdf8838b9de07c274f3be7607ad362612e783969",
+      "sha256": "72ce06a1655e94aed0fc80e971ada74e2c88433cd2121cc823e38b58f55eff41",
       "sizeBytes": 224
     },
     {
@@ -336,8 +438,20 @@
     {
       "kind": "resource",
       "relativePath": "Contents/Resources/swift-transformers_Hub.bundle/Contents/_CodeSignature/CodeSignature",
-      "sha256": "19d35bdba598f7d362f70dfbae9e72fb2c83bec841cc63838152d31839de25d7",
+      "sha256": "1ea4675134e6b3905e62f9e07f4bba8fe5ecbc9947f7d81906c650d8ddd3421c",
       "sizeBytes": 4784
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/tencentmeeting-cli-LICENSE-MIT.txt",
+      "sha256": "477e7cca2b7c7a5ad4ab49e6d569c297a7ea7796caea9c70584ab91e46afb0e7",
+      "sizeBytes": 1305
+    },
+    {
+      "kind": "resource",
+      "relativePath": "Contents/Resources/tmeet-Go-LICENSES.txt",
+      "sha256": "6a574e4982c7a37035ce1a67f464aa4029710e2317d958b421843b845b61470d",
+      "sizeBytes": 23436
     },
     {
       "kind": "resource",
@@ -347,15 +461,21 @@
     },
     {
       "kind": "resource",
+      "relativePath": "Contents/Resources/zh-Hans.lproj/InfoPlist.strings",
+      "sha256": "4847639d31b142011ecc698609b799b8b2701336dcc3b2dfb5ece9cd7675b47e",
+      "sizeBytes": 1366
+    },
+    {
+      "kind": "resource",
       "relativePath": "Contents/XPCServices/InferenceWorker.xpc/Contents/Info.plist",
-      "sha256": "14836ac3b9e1c101ad6d8cfa459ebc5f2d6b203b1b24837e6308ea0928aa7bb9",
-      "sizeBytes": 1477
+      "sha256": "299458ada086f1e7cc9d8216cd02c529d34afb3c9da2dc51abda888889f1ea5e",
+      "sizeBytes": 1478
     },
     {
       "kind": "first-party-mach-o",
       "relativePath": "Contents/XPCServices/InferenceWorker.xpc/Contents/MacOS/InferenceWorker",
-      "sha256": "4b6e899d5bd9a15702200fed60a9de9a9ed12fb2f8965a70bda67f66a8cb8ec3",
-      "sizeBytes": 218672
+      "sha256": "158902be3a2f81355a601eb850dca05659c993484514d2e2b960f5447b999609",
+      "sizeBytes": 149824
     },
     {
       "kind": "resource",
@@ -366,17 +486,17 @@
     {
       "kind": "resource",
       "relativePath": "Contents/_CodeSignature/CodeResources",
-      "sha256": "ee5fa5a1540cb2ae626811e056ddb9b71a426fd015e3cf2ad2333b3b7ac2ff55",
-      "sizeBytes": 18586
+      "sha256": "e392dd4daa5f7efe2f4d614aa85645fd191d5dfb96ca5538ffed3ec71fb3d7af",
+      "sizeBytes": 23395
     }
   ],
   "kind": "release-manifest",
-  "modelManifestSHA256": "95c081861b088559d2514c51eaba465bb6da32a1ae36592432bc7d069bf4dee6",
-  "noticeSHA256": "aa0087288aebc103c6c5d2b2dc9d288f02c11dd927275021ede68f965d919ef2",
-  "packageIdentifier": "com.bestasr.app",
-  "packageRoot": "build-product://bestASR.app",
-  "packageVersion": "0.1.0",
+  "modelManifestSHA256": "77941124c22c38ce5d1ac0d0468b5e93d63e7255c44993da2c7009faff93833c",
+  "noticeSHA256": "111aacad734c641aaa3cb9df3fe554e8badd845b02cea0b6b3b69512cdd2f835",
+  "packageIdentifier": "app.mindloom",
+  "packageRoot": "build-product://Mindloom.app",
+  "packageVersion": "0.2.0",
   "sbomPath": "artifacts/evidence/supply-chain/sbom.cdx.json",
-  "sbomSHA256": "f7956a007690bfaa549e4d7a5b7b5ae88fa25abf4ea0a0ccf72772004a47fa6d",
+  "sbomSHA256": "7fc20c3116c9643dd00988a0191894600b330dd0f154b71ebdb8ff4cc45f00aa",
   "schemaVersion": 1
 }

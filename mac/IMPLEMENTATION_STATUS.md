@@ -5,7 +5,11 @@ This file is the delivery ledger for the product defined in
 from acceptance evidence. A protocol, fixture, database table, or passing unit
 test does not by itself make a product capability complete.
 
-Status date: 2026-10-01.
+Status date: 2026-10-06.
+
+## Later development (2026-10-02 to 2026-10-07)
+
+The entries for the native Mindloom rebuild of the Mac and iPhone apps (v11) and the v12 wave (Apple Watch recording, web lookup, search by meaning, the Tencent Meeting entry, recording storage, dictation timing and memory, the move to the `app.mindloom` identity and their review fixes) are kept in the private development log: they record the owner's own installation, library and accounts, which a public repository does not carry. The code, tests and design of those features are in this repository; the finals section of the root README says what is new and how far each part was checked.
 
 ## 2026-10-01 v8 integration, Mac side (`claude/v8` → `hackathon/base`)
 
@@ -225,6 +229,7 @@ Not installed; the App was not launched. Synthetic data only.
 | ENTRY-009 Git | Implemented, tested against real git repositories (every blob deleted, commits still read) | `GitRunner`, `GitWatch` |
 | ENTRY-010 Zotero | Implemented, tested with a fake local API; real Zotero not run | `ZoteroLoopbackTransport`, `ZoteroWatch` |
 | ENTRY-011 no new network path | Tested (URLProtocol tripwire; loopback-only request builder) | |
+| ENTRY-013 Tencent Meeting transcripts | Implemented and revised after the 2026-10-06 review; unit-tested with synthetic tmeet output; live read-only pass against the owner's account into a temporary private library, review fixes replayed offline on the saved output; QR connection not scanned in the App (2026-10-06 section above) | `third_party/tencentmeeting-cli`, `script/build_tmeet.sh`, `script/bundle_tmeet.sh`; `MindloomTencentMeeting`; App `TencentMeetingModel`, `DictationAppModel+TencentMeeting`; `BestASRMemoryUI` `SettingsTencentMeetingGroup` |
 
 - Choices: the command line is **off by default** (anything running as the
   owner, an agent's terminal tool too, could use it; the setting says so);
@@ -290,7 +295,7 @@ Not installed; the App was not launched. Synthetic data only.
 | MAP-003, MAP-004, MAP-005 | delivered; checked by tests, renders and the App build, not in the running App; continuous zoom not seen moving; no VoiceOver pass by hand |
 | MAP-006 | delivered on the organizer (tests with a fake model); in the live spaces run the grouping pass ran in the space, a drawn map was not inspected |
 | LINK-001–005 | delivered; the lab data has no blocks edge, so 在等 / 被它等 is covered by tests and the synthetic fixture only |
-| AGENT-001–009 | delivered; consent panel, notifications and Settings → Agent checked by build and service tests, not on screen; no real vendor agent driven (the MCP exchange is verified with an independent client) |
+| AGENT-001–009 | delivered in v7; amended 2026-10-05 (v12 1D, above): AGENT-007's inbox is replaced by AGENT-011 (changes applied at once, undoable); AGENT-010–013 added; consent card, 其他 App page and undo seen on screen in the check build; real Claude Code reached the App through the bundled helper (model call unavailable here), the tool calls were made over the same helper by a Claude session |
 | SPACE-001–012 | delivered except: segment audio is not shared (text and speaker names only; user decision pending), 快照 is not offered in the share sheet, no UI for a member's second Mac or for adding org admins, a sole org admin removed from the org keeps the space (no key escrow), teammates still reach the organizing device through the owner's SSH account, shares made while the link is down fail with a message (no durable outbox) |
 
 ## 2026-10-01 v7 matter map and relations, Mac side (`claude/v7-map`)
@@ -1052,7 +1057,7 @@ Verification:
 |---|---|
 | Affected SwiftPM tests | 40 insertion/live, 3 polish-deadline, 11 hotkey: all pass |
 | Hosted App tests (Debug) | 94 pass, including the cache fallback |
-| Release build | Signed with the existing Apple Development identity |
+| Release build | Signed with the existing identity (the owner's team, passed at build time) |
 
 The Release build is installed as `494f935+dictation-fast-path-uncommitted`. On
 launch, the installed App logged the local cache fallback, registered both

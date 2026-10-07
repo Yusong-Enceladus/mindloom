@@ -18,10 +18,16 @@ final class KeyboardVoiceControllerTests: XCTestCase {
   private var recognizer: FakeRecognizer!
   private var core: VoiceSessionCore!
   private var keyboard: KeyboardVoiceController!
+  /// The host field: committed text plus the marked (underlined) text after it.
+  private var field = ""
+  private var marked = ""
+  private var marks: [String] = []
   private var inserted: [String] = []
-  private var collected: [String] = []
-  private var collectResult: CollectResult = .collected
+  private var outcomes: [KeyboardVoiceController.Outcome] = []
+  private var delays: [TimeInterval] = []
   private var haptics: [KeyboardVoiceController.Haptic] = []
+  private var keptForMac: [String] = []
+  private var withdrawnSeqs: [Int] = []
 
   override func setUp() async throws {
     root = try makeTemporaryDirectory()
@@ -30,10 +36,17 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     clock = TestClock()
     recognizer = FakeRecognizer()
     core = VoiceSessionCore(channel: channel, signaling: signaling, clock: clock.function)
+    core.onKeyboardInserted = { [weak self] final, _ in self?.keptForMac.append(final.text) }
+    core.onKeyboardWithdrawn = { [weak self] seq in self?.withdrawnSeqs.append(seq) }
+    field = ""
+    marked = ""
+    marks = []
     inserted = []
-    collected = []
-    collectResult = .collected
+    outcomes = []
+    delays = []
     haptics = []
+    keptForMac = []
+    withdrawnSeqs = []
     keyboard = makeKeyboard(channel: channel)
   }
 
@@ -44,19 +57,32 @@ final class KeyboardVoiceControllerTests: XCTestCase {
   }
 
   private func makeKeyboard(channel: VoiceChannel?) -> KeyboardVoiceController {
-    KeyboardVoiceController(
-      channel: channel, signaling: signaling, clock: clock.function,
-      insert: { [weak self] in self?.inserted.append($0) },
-      collect: { [weak self] text in
-        guard let self else { return .failed }
-        if self.collectResult == .collected { self.collected.append(text) }
-        return self.collectResult
+    let host = KeyboardTextHost(
+      mark: { [weak self] in
+        self?.marked = $0
+        self?.marks.append($0)
       },
-      collectedCount: { [weak self] in
-        guard let self, self.collectResult != .notPaired else { return nil }
-        return self.collected.count
+      insert: { [weak self] text in
+        guard let self else { return }
+        self.marked = ""
+        self.field += text
+        self.inserted.append(text)
+      },
+      clearMarked: { [weak self] in self?.marked = "" },
+      textBeforeCursor: { [weak self] in self?.field },
+      deleteBackward: { [weak self] count in
+        guard let self else { return }
+        self.field = String(self.field.dropLast(count))
+      })
+    let controller = KeyboardVoiceController(
+      channel: channel, signaling: signaling, clock: clock.function, host: host,
+      after: { [weak self] delay, body in
+        self?.delays.append(delay)
+        body()
       },
       haptic: { [weak self] in self?.haptics.append($0) })
+    controller.onOutcome = { [weak self] in self?.outcomes.append($0) }
+    return controller
   }
 
   /// Starts the app's session and shows the keyboard.
@@ -66,8 +92,8 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     signaling.deliverPending()
   }
 
-  /// Delivers signals and lets the app's finishing tasks run (without
-  /// waiting for utterances the test is holding back).
+  /// Delivers signals and lets the app's finishing tasks run (without waiting for utterances the
+  /// test is holding back).
   private func pump() async {
     for _ in 0..<5 {
       signaling.deliverPending()
@@ -81,7 +107,7 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     if let partial { recognizer.utterances.last?.say(partial) }
     await pump()
     clock.advance(seconds)
-    keyboard.pressUp()
+    keyboard.pressUp(moved: 20)
     await pump()
   }
 
@@ -89,14 +115,14 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     let locked = makeKeyboard(channel: nil)
     locked.appear()
     XCTAssertEqual(locked.display.mic, .needsFullAccess)
-    locked.pressDown()
+    XCTAssertFalse(locked.pressDown())
     XCTAssertTrue(signaling.posted.isEmpty, "nothing is sent without full access")
   }
 
   func testWithoutASessionTheKeyOpensTheApp() {
     keyboard.appear()
     XCTAssertEqual(keyboard.display.mic, .needsSession)
-    keyboard.pressDown()
+    XCTAssertFalse(keyboard.pressDown())
     XCTAssertFalse(signaling.posted.contains(PhoneSignal.voiceStart))
     // A session whose app stopped writing heartbeats counts as gone.
     core.start(recognizer: recognizer)
@@ -107,39 +133,56 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     XCTAssertEqual(keyboard.display.mic, .needsSession)
   }
 
-  func testHoldToTalkInsertsTheFinalOnceAndCollectsIt() async {
+  func testMicrophoneOffIsShownEvenWithoutASession() {
+    keyboard.appear()
+    core.setMicrophoneDenied(true)
+    signaling.deliverPending()
+    XCTAssertEqual(keyboard.display.mic, .microphoneDenied)
+    XCTAssertFalse(keyboard.pressDown())
+    core.setMicrophoneDenied(false)
+    signaling.deliverPending()
+    XCTAssertEqual(keyboard.display.mic, .needsSession)
+  }
+
+  func testPartialsAreMarkedTextAndTheFinalReplacesThem() async {
     openSessionAndKeyboard()
     XCTAssertEqual(keyboard.display.mic, .ready)
-    keyboard.pressDown()
+    XCTAssertTrue(keyboard.pressDown())
     XCTAssertEqual(keyboard.display.mic, .listening(toggle: false))
     await pump()
     XCTAssertEqual(core.phase, .listening(seq: 1))
     recognizer.utterances[0].say("合成：明早")
     await pump()
-    XCTAssertEqual(keyboard.display.transcript, "合成：明早")
-    XCTAssertTrue(keyboard.display.transcriptIsLive)
+    XCTAssertEqual(marked, "合成：明早", "live words are marked text in the field")
+    XCTAssertEqual(field, "", "nothing is committed while speaking")
     clock.advance(1.2)
-    keyboard.pressUp()
+    XCTAssertFalse(keyboard.pressUp(moved: 30))
     XCTAssertEqual(keyboard.display.mic, .finishing)
     await pump()
-    XCTAssertEqual(inserted, ["合成：明早九点站会"])
-    XCTAssertEqual(collected, ["合成：明早九点站会"])
+    XCTAssertEqual(inserted, ["合成：明早九点站会。"], "「。」 is added")
+    XCTAssertEqual(field, "合成：明早九点站会。")
+    XCTAssertEqual(marked, "")
+    XCTAssertEqual(outcomes, [.inserted("合成：明早九点站会。")])
+    XCTAssertEqual(delays.count, 1)
+    XCTAssertEqual(
+      delays[0], KeyboardVoiceController.commitDelay, accuracy: 0.001,
+      "committed no earlier than release + 0.35 s")
     XCTAssertEqual(keyboard.display.mic, .ready)
-    XCTAssertEqual(keyboard.display.transcript, "合成：明早九点站会")
-    XCTAssertFalse(keyboard.display.transcriptIsLive)
-    XCTAssertEqual(keyboard.display.collected, 1)
     XCTAssertEqual(haptics, [.start, .stop, .inserted])
-    // Another final notification changes nothing.
+    // The app keeps the inserted final for the Mac (once).
+    XCTAssertEqual(keptForMac, ["合成：明早九点站会"])
     signaling.post(PhoneSignal.voiceFinal)
+    signaling.post(PhoneSignal.voiceAck)
     await pump()
     XCTAssertEqual(inserted.count, 1)
+    XCTAssertEqual(keptForMac.count, 1)
   }
 
-  func testShortTapTogglesListeningUntilTheNextTap() async {
+  func testShortTapLatchesUntilTheNextTapOrDone() async {
     openSessionAndKeyboard()
     keyboard.pressDown()
     clock.advance(0.2)
-    keyboard.pressUp()
+    XCTAssertTrue(keyboard.pressUp(moved: 3))
     XCTAssertEqual(keyboard.display.mic, .listening(toggle: true))
     await pump()
     XCTAssertEqual(core.phase, .listening(seq: 1), "still listening after the finger lifts")
@@ -148,8 +191,80 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     XCTAssertEqual(keyboard.display.mic, .finishing)
     keyboard.pressUp()
     await pump()
-    XCTAssertEqual(inserted, ["合成：明早九点站会"])
+    XCTAssertEqual(inserted, ["合成：明早九点站会。"])
     XCTAssertEqual(keyboard.display.mic, .ready)
+    // ✓ finishes a latched press too.
+    keyboard.pressDown()
+    clock.advance(0.1)
+    keyboard.pressUp()
+    await pump()
+    keyboard.done()
+    await pump()
+    XCTAssertEqual(inserted.count, 2)
+  }
+
+  func testAShortPressThatMovedIsNotATap() async {
+    openSessionAndKeyboard()
+    keyboard.pressDown()
+    clock.advance(0.2)
+    XCTAssertFalse(keyboard.pressUp(moved: 15))
+    XCTAssertEqual(keyboard.display.mic, .finishing)
+  }
+
+  func testCancelInsertsNothingAndTheAppDropsTheUtterance() async {
+    openSessionAndKeyboard()
+    keyboard.pressDown()
+    await pump()
+    recognizer.utterances[0].say("合成：算了")
+    await pump()
+    XCTAssertEqual(marked, "合成：算了")
+    keyboard.cancel()
+    XCTAssertEqual(marked, "", "the marked text is removed")
+    XCTAssertEqual(signaling.posted.last, PhoneSignal.voiceCancel)
+    await pump()
+    XCTAssertTrue(recognizer.utterances[0].cancelled)
+    XCTAssertEqual(core.phase, .ready)
+    XCTAssertEqual(inserted, [])
+    XCTAssertEqual(outcomes, [.cancelled])
+    XCTAssertEqual(keptForMac, [])
+    // The next utterance works and is numbered after the cancelled one.
+    await hold(1)
+    XCTAssertEqual(inserted, ["合成：明早九点站会。"])
+    XCTAssertEqual(core.seq, 2)
+  }
+
+  func testUndoRemovesTheTextAndTheAppWithdrawsTheItem() async {
+    openSessionAndKeyboard()
+    field = "好的，"
+    await hold(1)
+    XCTAssertEqual(field, "好的，合成：明早九点站会。")
+    XCTAssertTrue(keyboard.canUndo)
+    clock.advance(2)
+    XCTAssertTrue(keyboard.undo())
+    XCTAssertEqual(field, "好的，", "only the inserted words are deleted")
+    await pump()
+    XCTAssertEqual(withdrawnSeqs, [1])
+    XCTAssertFalse(keyboard.undo(), "once")
+  }
+
+  func testUndoLeavesTheFieldAloneWhenTheUserTypedAfter() async {
+    openSessionAndKeyboard()
+    await hold(1)
+    field += "？"
+    XCTAssertTrue(keyboard.undo())
+    XCTAssertEqual(field, "合成：明早九点站会。？")
+    await pump()
+    XCTAssertEqual(withdrawnSeqs, [1], "the item is still taken back")
+  }
+
+  func testUndoWindowCloses() async {
+    openSessionAndKeyboard()
+    await hold(1)
+    clock.advance(KeyboardVoiceController.undoWindow + 1)
+    XCTAssertFalse(keyboard.undo())
+    await hold(1)
+    keyboard.settle()
+    XCTAssertFalse(keyboard.undo())
   }
 
   func testFinalsOnDiskBeforeTheKeyboardAppearedAreNeverInserted() async throws {
@@ -172,6 +287,7 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     await pump()
     XCTAssertEqual(inserted, [])
     XCTAssertEqual(keyboard.display.mic, .ready)
+    XCTAssertEqual(keptForMac, [], "nothing the keyboard did not insert is kept")
   }
 
   func testCoalescedFinalsAreAllInsertedInOrder() async {
@@ -189,7 +305,7 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     await settle()
     await pump()
     XCTAssertEqual(inserted, ["第一句。", "第二句。"])
-    XCTAssertEqual(collected, ["第一句。", "第二句。"])
+    XCTAssertEqual(keptForMac, ["第一句。", "第二句。"])
     XCTAssertEqual(keyboard.display.mic, .ready)
   }
 
@@ -204,38 +320,73 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     XCTAssertEqual(keyboard.display.mic, .listening(toggle: false))
     recognizer.utterances[0].release()
     await pump()
-    XCTAssertEqual(inserted, ["前一句"])
+    XCTAssertEqual(inserted, ["前一句。"])
     XCTAssertEqual(keyboard.display.mic, .listening(toggle: false), "still holding the key")
     clock.advance(1)
     keyboard.pressUp()
     await pump()
     recognizer.utterances[1].release()
     await pump()
-    XCTAssertEqual(inserted, ["前一句", "后一句"])
+    XCTAssertEqual(inserted, ["前一句。", "后一句。"])
   }
 
-  func testNothingHeardIsSaidPlainly() async {
+  /// Regression (fix-ios review): an older utterance that comes back empty while the next press is
+  /// held must not clear that press's live words, end it, or leave the app listening on.
+  func testAnEmptyOlderFinalDoesNotEndTheHeldPress() async {
+    openSessionAndKeyboard()
+    recognizer.holdFinishes = true
+    recognizer.nextFinalText = ""
+    await hold(1)
+    recognizer.nextFinalText = "后一句"
+    keyboard.pressDown()
+    await pump()
+    recognizer.utterances.last?.say("后一")
+    await pump()
+    XCTAssertEqual(marked, "后一")
+    recognizer.utterances[0].release()
+    await pump()
+    XCTAssertEqual(marked, "后一", "the held press keeps its live words")
+    XCTAssertEqual(keyboard.display.mic, .listening(toggle: false), "still holding the key")
+    XCTAssertEqual(outcomes, [], "no outcome for the older, empty utterance")
+    clock.advance(1)
+    keyboard.pressUp()
+    await pump()
+    recognizer.utterances[1].release()
+    await pump()
+    XCTAssertEqual(inserted, ["后一句。"])
+    XCTAssertEqual(keptForMac, ["后一句"], "the app keeps the raw final (it finalizes it itself)")
+  }
+
+  /// Regression: switching away while the final is still coming leaves no partial behind as marked
+  /// text.
+  func testLeavingWhileFinishingClearsTheMarkedPartial() async {
+    openSessionAndKeyboard()
+    recognizer.holdFinishes = true
+    keyboard.pressDown()
+    await pump()
+    recognizer.utterances.last?.say("还没说完")
+    await pump()
+    clock.advance(1)
+    keyboard.pressUp(moved: 20)
+    await pump()
+    XCTAssertEqual(keyboard.display.mic, .finishing)
+    keyboard.disappear()
+    XCTAssertEqual(marked, "")
+  }
+
+  func testNothingHeardEndsWithoutSaving() async {
     openSessionAndKeyboard()
     recognizer.nextFinalText = ""
     await hold(1)
     XCTAssertEqual(inserted, [])
-    XCTAssertEqual(collected, [])
+    XCTAssertEqual(outcomes, [.nothing])
     XCTAssertEqual(keyboard.display.notice, KeyboardCopy.heardNothing)
     recognizer.nextFinalText = nil
     await hold(1)
     XCTAssertEqual(keyboard.display.notice, KeyboardCopy.recognitionFailed)
+    XCTAssertEqual(outcomes, [.nothing, .nothing])
     XCTAssertEqual(keyboard.display.mic, .ready)
-  }
-
-  func testUnpairedPhoneStillTypesButDoesNotCollect() async {
-    collectResult = .notPaired
-    openSessionAndKeyboard()
-    XCTAssertNil(keyboard.display.collected)
-    await hold(1)
-    XCTAssertEqual(inserted, ["合成：明早九点站会"])
-    XCTAssertEqual(collected, [])
-    XCTAssertEqual(keyboard.display.notice, KeyboardCopy.notPaired)
-    XCTAssertNil(keyboard.display.collected)
+    XCTAssertEqual(keptForMac, [])
   }
 
   func testAppThatNeverAnswersIsReported() async {
@@ -254,6 +405,7 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     XCTAssertEqual(keyboard.display.notice, KeyboardCopy.appNotResponding)
     XCTAssertEqual(signaling.posted.last, PhoneSignal.voiceStop)
     XCTAssertNotEqual(keyboard.display.mic, .listening(toggle: false))
+    XCTAssertEqual(outcomes, [.nothing])
   }
 
   func testMissingFinalTimesOut() async {
@@ -272,6 +424,16 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     XCTAssertEqual(inserted, [])
   }
 
+  func testSessionEndingUnderTheFingerGoesBackToOff() async {
+    openSessionAndKeyboard()
+    keyboard.pressDown()
+    await pump()
+    core.end(reason: .user)
+    await pump()
+    XCTAssertEqual(keyboard.display.mic, .needsSession)
+    XCTAssertEqual(outcomes, [.nothing])
+  }
+
   func testLeavingTheKeyboardStopsListening() async {
     openSessionAndKeyboard()
     keyboard.pressDown()
@@ -282,6 +444,7 @@ final class KeyboardVoiceControllerTests: XCTestCase {
     keyboard.disappear()
     await pump()
     XCTAssertFalse(core.isListening)
+    XCTAssertEqual(inserted, [])
   }
 
   func testAppProblemIsShownOnTheKey() async {

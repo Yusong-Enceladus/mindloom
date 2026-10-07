@@ -1,255 +1,248 @@
 import AppKit
 import BestASRDictation
+import BestASRMemory
+import BestASRMemoryUI
+import BestASRPersistence
+import Combine
 import SwiftUI
 
-private enum MenuBarDestructiveAction {
-  case dictation
-  case roomRecording
-  case systemAudio
-  case mediaImport
+// OWNER: mac-capture. The menu bar extra (MAC-SPEC §3.2), a system menu:
+// 开始记录会议 · 录：腾讯会议 › (or 只能录麦克风 · 允许录电脑的声音…) · DGX
+// Spark 已连接 / 没连上 + 重新连接 · 打开 Mindloom · 设置…; while recording
+// 正在记录会议 12:04 · 录：腾讯会议 (or 只录了麦克风) · 暂停 / 继续 · 结束并保存 ·
+// 放弃这次记录… (asks first) · 隐藏字幕 / 显示字幕 (v12 1C). The label is the
+// mark, or the recording capsule.
+
+/// The meeting's elapsed time, paused spans left out; ticks once a second
+/// while a meeting is recorded (M32).
+@MainActor
+final class MeetingClock: ObservableObject {
+  static let shared = MeetingClock()
+  @Published private(set) var elapsed: TimeInterval = 0
+  @Published private(set) var phase: DictationPhase = .idle
+  private var startedAt: Date?
+  private var pausedAt: Date?
+  private var pausedTotal: TimeInterval = 0
+  private var timer: Timer?
+  private var observer: AnyCancellable?
+
+  func attach(_ model: DictationAppModel) {
+    guard observer == nil else { return }
+    // The meeting is the room microphone's recording or the computer's
+    // sound (开始记录会议 records that when it may); whichever runs.
+    observer = model.capture.$roomSnapshot.map(\.phase)
+      .combineLatest(model.capture.$systemAudioSnapshot.map(\.phase))
+      .map { room, system in
+        let live: Set<DictationPhase> = [.preparing, .recording, .paused]
+        return live.contains(system) && !live.contains(room) ? system : room
+      }
+      .removeDuplicates()
+      .sink { [weak self] phase in self?.follow(phase) }
+  }
+
+  var isRecording: Bool { [.preparing, .recording, .paused].contains(phase) }
+
+  private func follow(_ next: DictationPhase) {
+    let now = Date()
+    switch next {
+    case .preparing, .recording:
+      if startedAt == nil {
+        startedAt = now
+        pausedTotal = 0
+      }
+      if let pausedAt {
+        pausedTotal += now.timeIntervalSince(pausedAt)
+        self.pausedAt = nil
+      }
+      startTimer()
+    case .paused:
+      if pausedAt == nil { pausedAt = now }
+    default:
+      startedAt = nil
+      pausedAt = nil
+      pausedTotal = 0
+      timer?.invalidate()
+      timer = nil
+      elapsed = 0
+    }
+    phase = next
+    tick()
+  }
+
+  private func startTimer() {
+    guard timer == nil else { return }
+    let timer = Timer(timeInterval: 1, repeats: true) { [weak self] _ in
+      Task { @MainActor in self?.tick() }
+    }
+    RunLoop.main.add(timer, forMode: .common)
+    self.timer = timer
+  }
+
+  private func tick() {
+    guard let startedAt else { return }
+    let end = pausedAt ?? Date()
+    let value = max(0, end.timeIntervalSince(startedAt) - pausedTotal)
+    if Int(value) != Int(elapsed) { elapsed = value }
+  }
+}
+
+/// The menu bar's label: the mark as a template image, or while a meeting
+/// is recorded the capsule with 「m:ss」 and the orange dot.
+struct MenuBarLabel: View {
+  @ObservedObject var clock = MeetingClock.shared
+  @Environment(\.colorScheme) private var scheme
+  private static let idle = MenuBarLabelImage.idle()
+
+  var body: some View {
+    if clock.isRecording {
+      Image(nsImage: MenuBarLabelImage.recording(clock.elapsed, dark: scheme == .dark))
+        .accessibilityLabel("正在记录会议 \(MenuBarClock.text(clock.elapsed))")
+    } else {
+      Image(nsImage: Self.idle).accessibilityLabel("Mindloom")
+    }
+  }
 }
 
 struct MenuBarContentView: View {
   @ObservedObject var model: DictationAppModel
+  @ObservedObject private var clock = MeetingClock.shared
+  @ObservedObject private var meeting = MeetingState.shared
   @Environment(\.openWindow) private var openWindow
-  @State private var pendingDestructiveAction: MenuBarDestructiveAction?
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Label(model.menuBarStatusMessage, systemImage: model.menuBarSymbol)
-        .font(.headline)
-        .accessibilityIdentifier("bestASR.menuStatus")
-      if model.snapshot.phase.isActive {
-        HStack {
-          if model.canPauseOrResume {
-            Button(model.startEndTitle) { model.startOrEnd() }
-              .accessibilityLabel(model.startEndTitle)
-              .accessibilityIdentifier("bestASR.menu.dictation.end")
-            // Resume, never pause. Nothing offers to pause a dictation any
-            // more; this is only here to release one the system paused for
-            // the user — on sleep, on lock, or when the microphone went away.
-            if model.snapshot.phase == .paused {
-              Button("继续") { model.pauseOrResume() }
-                .accessibilityLabel("继续口述")
-                .accessibilityIdentifier("bestASR.menu.dictation.resume")
-            }
-          } else {
-            ProgressView().controlSize(.small)
-            Text(
-              model.snapshot.phase == .preparing
-                ? "正在准备麦克风" : "正在完成本次口述"
-            )
-            .foregroundStyle(.secondary)
-          }
-          if model.canCancel {
-            Button("放弃本次口述…", role: .destructive) {
-              pendingDestructiveAction = .dictation
-            }
-            .accessibilityLabel("放弃本次口述")
-            .accessibilityIdentifier("bestASR.menu.dictation.discard")
-          }
-        }
-      } else if model.capture.roomSnapshot.phase.isActive {
-        HStack {
-          if model.roomCanPauseOrResume {
-            Button("结束线下录音") { model.startOrEndRoomRecording() }
-              .accessibilityLabel("结束线下录音")
-              .accessibilityIdentifier("bestASR.menu.room.end")
-            Button(model.capture.roomSnapshot.phase == .paused ? "继续" : "暂停") {
-              model.pauseOrResumeRoomRecording()
-            }
-            .accessibilityLabel(
-              model.capture.roomSnapshot.phase == .paused ? "继续线下录音" : "暂停线下录音"
-            )
-            .accessibilityIdentifier("bestASR.menu.room.pauseResume")
-            Button("删除本次未完成录音…", role: .destructive) {
-              pendingDestructiveAction = .roomRecording
-            }
-            .accessibilityLabel("删除本次未完成线下录音")
-            .accessibilityIdentifier("bestASR.menu.room.discard")
-            .disabled(!model.roomCanCancel)
-          } else {
-            ProgressView().controlSize(.small)
-            Text("正在处理线下录音").foregroundStyle(.secondary)
-          }
-        }
-      } else if model.capture.systemAudioSnapshot.phase.isActive {
-        HStack {
-          if model.systemAudioCanPauseOrResume {
-            Button("结束电脑内录") { model.startOrEndSystemAudioRecording() }
-              .accessibilityLabel("结束电脑内录")
-              .accessibilityIdentifier("bestASR.menu.systemAudio.end")
-            Button(model.capture.systemAudioSnapshot.phase == .paused ? "继续" : "暂停") {
-              model.pauseOrResumeSystemAudioRecording()
-            }
-            .accessibilityLabel(
-              model.capture.systemAudioSnapshot.phase == .paused ? "继续电脑内录" : "暂停电脑内录"
-            )
-            .accessibilityIdentifier("bestASR.menu.systemAudio.pauseResume")
-            Button("删除本次未完成录音…", role: .destructive) {
-              pendingDestructiveAction = .systemAudio
-            }
-            .accessibilityLabel("删除本次未完成电脑内录")
-            .accessibilityIdentifier("bestASR.menu.systemAudio.discard")
-            .disabled(!model.systemAudioCanCancel)
-          } else {
-            ProgressView().controlSize(.small)
-            Text("正在处理电脑内录").foregroundStyle(.secondary)
-          }
-        }
-      } else if model.capture.importInProgress {
-        HStack {
-          Button(model.capture.importPaused ? "继续导入" : "暂停导入") {
-            model.toggleImportPause()
-          }
-          .accessibilityLabel(model.capture.importPaused ? "继续导入" : "暂停导入")
-          .accessibilityIdentifier("bestASR.menu.import.pauseResume")
-          Button("取消导入…", role: .destructive) {
-            pendingDestructiveAction = .mediaImport
-          }
-          .accessibilityLabel("取消导入")
-          .accessibilityIdentifier("bestASR.menu.import.discard")
-        }
-      } else if let handoff = model.capture.captureWorkspaceHandoff {
-        VStack(alignment: .leading, spacing: 8) {
-          Text(handoff.detail)
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityIdentifier("bestASR.menu.handoff.detail")
-          HStack {
-            Button("打开这条记录") {
-              model.openCaptureWorkspaceHandoff()
-              openWindow(id: "main")
-              NSApplication.shared.activate(ignoringOtherApps: true)
-            }
-            .accessibilityLabel("打开这条记录")
-            .accessibilityIdentifier("bestASR.menu.handoff.openRecord")
-            Button("开始下一条") {
-              model.dismissCaptureWorkspaceHandoff()
-            }
-            .accessibilityLabel("开始下一条")
-            .accessibilityIdentifier("bestASR.menu.handoff.next")
-          }
-        }
-      } else {
-        Button("\(model.startEndTitle)  \(model.startEndShortcutTitle)") {
-          model.startOrEndFromMenuBar()
-        }
-        .accessibilityLabel(model.startEndTitle)
-        .accessibilityIdentifier("bestASR.menuStartEnd")
-        Button("开始线下录音") { model.startOrEndRoomRecording() }
-          .accessibilityLabel("开始线下录音")
-          .accessibilityIdentifier("bestASR.menu.room.start")
-        Button("录制电脑声音…") { openSection("systemAudio") }
-          .accessibilityLabel("录制电脑声音")
-          .accessibilityIdentifier("bestASR.menu.systemAudio.open")
-        Button("导入音视频…") { model.chooseAndImportMedia() }
-          .accessibilityLabel("导入音视频")
-          .accessibilityIdentifier("bestASR.menu.import.open")
-      }
-      if let pendingDestructiveAction,
-        destructiveActionIsAvailable(pendingDestructiveAction)
-      {
+    let rows = MenuBarExtraRow.rows(
+      link: MemoryScreenModel.link(model), recording: recording, meeting: model.meetingMenu,
+      demo: MindloomLaunch.isDemo)
+    // fn needs 设备控制和数据访问: said first until it is allowed (review of 10-6).
+    FnAccessibilityMenuRows(model: model, onboarding: model.onboarding)
+    ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+      switch row {
+      case .separator:
         Divider()
-        VStack(alignment: .leading, spacing: 8) {
-          Text(destructiveActionMessage(pendingDestructiveAction))
-            .font(.caption)
-            .foregroundStyle(.secondary)
-            .fixedSize(horizontal: false, vertical: true)
-            .accessibilityIdentifier("bestASR.menu.destructive.message")
-          HStack {
-            Button("确认删除", role: .destructive) {
-              performDestructiveAction(pendingDestructiveAction)
-              self.pendingDestructiveAction = nil
+      case .header(let title, _, let detail, _):
+        Text(detail.map { "\(title)  \($0)" } ?? title)
+      case .submenu(let id, let title, let symbol, let options):
+        if id == "recent" {
+          // 最近记录 › — the latest records, each to copy or to see in 历史.
+          Menu {
+            recentRecords
+          } label: {
+            if let symbol { Label(title, systemImage: symbol) } else { Text(title) }
+          }
+        } else {
+          // 录：腾讯会议 › — what the next meeting records.
+          Menu(title) {
+            ForEach(options, id: \.id) { option in
+              Toggle(
+                option.title,
+                isOn: Binding(
+                  get: { option.checked },
+                  set: { if $0 { model.chooseMeetingSound(option.id) } }))
             }
-            .accessibilityLabel("确认删除")
-            .accessibilityIdentifier("bestASR.menu.destructive.confirm")
-            Button("继续保留") {
-              self.pendingDestructiveAction = nil
-            }
-            .accessibilityLabel("继续保留")
-            .accessibilityIdentifier("bestASR.menu.destructive.keep")
+          }
+        }
+      case .action(let id, let title, let symbol, _):
+        if id == "settings" {
+          SettingsLink { Text(title) }
+            .keyboardShortcut(",", modifiers: .command)
+        } else {
+          Button {
+            perform(id)
+          } label: {
+            if let symbol { Label(title, systemImage: symbol) } else { Text(title) }
+          }
+          .disabled(!enabled(id))
+        }
+      }
+    }
+    if model.fnHeldByOtherApp {
+      Divider()
+      Text(FnHUDHint.fnTakenLine)
+    }
+  }
+
+  /// 最近记录 (v12 find): the latest five records, each to copy or to see
+  /// in 历史.
+  @ViewBuilder
+  private var recentRecords: some View {
+    let records = model.recentRecords
+    if records.isEmpty {
+      Text("尚无记录")
+    } else {
+      ForEach(records) { item in
+        Menu(Self.recentTitle(item)) {
+          Button("拷贝") { model.copyRecordText(item.preferredText ?? "") }
+            .disabled((item.preferredText ?? "").isEmpty)
+          Button("在“历史”中查看") {
+            model.pendingHistoryReveal = item.sessionID.rawValue.uuidString.uppercased()
+            model.requestNavigation(to: "history")
+            MainWindow.show(openWindow)
           }
         }
       }
       Divider()
-      if !model.history.homeRecentHistoryItems.isEmpty {
-        Text("最近记录")
-          .font(.caption)
-          .foregroundStyle(.secondary)
-        ForEach(model.history.homeRecentHistoryItems.prefix(3)) { item in
-          Button {
-            model.openHistoryItem(item)
-            openSection("history")
-          } label: {
-            HStack {
-              Text(item.title).lineLimit(1)
-              Spacer()
-              Text(item.updatedAt, style: .time)
-                .foregroundStyle(.secondary)
-            }
-          }
-        }
-        Divider()
+      Button("打开历史") {
+        model.requestNavigation(to: "history")
+        MainWindow.show(openWindow)
       }
-      Button("打开织机…") { openWindow(id: "main") }
-        .accessibilityIdentifier("bestASR.menu.openApp")
-      SettingsLink { Text("设置…") }
-        .accessibilityIdentifier("bestASR.menu.settings")
-      Button("退出织机") { NSApplication.shared.terminate(nil) }
-        .accessibilityIdentifier("bestASR.menu.quit")
-    }
-    .padding(14)
-    .frame(width: 340)
-  }
-
-  private func openSection(_ identifier: String) {
-    model.requestNavigation(to: identifier)
-    openWindow(id: "main")
-    NSApplication.shared.activate(ignoringOtherApps: true)
-  }
-
-  private func destructiveActionMessage(
-    _ action: MenuBarDestructiveAction
-  ) -> String {
-    switch action {
-    case .dictation:
-      "只删除这次尚未提交的口述录音和临时文字；已有资料库内容不变。"
-    case .roomRecording:
-      "只删除这次尚未提交的线下录音；已完成的记录和原音不变。"
-    case .systemAudio:
-      "只删除这次尚未提交的系统与麦克风音轨；已完成的记录不变。"
-    case .mediaImport:
-      "只删除这次未完成的处理进度；你选择的原始文件和已有资料库内容不变。"
     }
   }
 
-  private func performDestructiveAction(_ action: MenuBarDestructiveAction) {
-    switch action {
-    case .dictation:
-      model.cancel()
-    case .roomRecording:
-      model.cancelRoomRecording()
-    case .systemAudio:
-      model.cancelSystemAudioRecording()
-    case .mediaImport:
-      model.cancelImport()
+  /// 「15:49  第一行文字」 (the line cut at 24 characters).
+  static func recentTitle(_ item: DictationHistoryItem) -> String {
+    let calendar = SearchClock.productCalendar
+    let time = MindloomDates.clock(item.createdAt, calendar: calendar)
+    let first = (item.preferredText ?? "").split(whereSeparator: \.isNewline).first
+    let line = first.map(String.init)?.trimmingCharacters(in: .whitespaces) ?? ""
+    let short = String(line.prefix(24))
+    return time + "  " + (short.isEmpty ? "（无文字）" : short)
+  }
+
+  private var recording: MemoryCaptureIndicator? {
+    guard clock.isRecording else { return nil }
+    return MemoryCaptureIndicator(
+      kind: .room, title: "正在记录会议", detail: MenuBarClock.text(clock.elapsed),
+      paused: clock.phase == .paused, elapsed: clock.elapsed)
+  }
+
+  private func enabled(_ id: String) -> Bool {
+    switch id {
+    case "start": !model.snapshot.phase.isActive && !model.capture.importInProgress
+    case "pause", "resume": model.meetingCanPauseOrResume
+    case "discard": model.meetingCanCancel
+    default: true
     }
   }
 
-  private func destructiveActionIsAvailable(
-    _ action: MenuBarDestructiveAction
-  ) -> Bool {
-    switch action {
-    case .dictation:
-      model.snapshot.phase.isActive
-    case .roomRecording:
-      model.capture.roomSnapshot.phase.isActive
-    case .systemAudio:
-      model.capture.systemAudioSnapshot.phase.isActive
-    case .mediaImport:
-      model.capture.importInProgress
+  private func perform(_ id: String) {
+    switch id {
+    case "start", "stop": model.startOrEndMeetingRecording()
+    case "pause", "resume": model.pauseOrResumeMeetingRecording()
+    case "discard": confirmDiscard()
+    case "reconnect": model.reconnectRemoteOrganizer()
+    case "allow-computer-sound": model.allowMeetingComputerSound()
+    case "show-captions": model.showMeetingCaptions(true)
+    case "hide-captions": model.showMeetingCaptions(false)
+    case "open":
+      model.requestNavigation(to: "home")
+      MainWindow.show(openWindow)
+    default: break
     }
+  }
+
+  /// 放弃这次记录？ — the recording not yet saved is deleted only after the
+  /// user chose 放弃 here.
+  private func confirmDiscard() {
+    let alert = NSAlert()
+    alert.messageText = DiscardRecordingAlert.title
+    alert.informativeText = DiscardRecordingAlert.message
+    alert.alertStyle = .warning
+    let discard = alert.addButton(withTitle: "放弃")
+    discard.hasDestructiveAction = true
+    alert.addButton(withTitle: "继续记录").keyEquivalent = "\u{1b}"
+    NSApp.activate(ignoringOtherApps: true)
+    guard alert.runModal() == .alertFirstButtonReturn, model.meetingCanCancel else { return }
+    model.cancelMeetingRecording()
+    CaptureFeedback.shared.show(MemoryToast("已放弃此次记录", icon: .symbol("trash")))
   }
 }

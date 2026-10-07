@@ -1,0 +1,44 @@
+# The voice session's Live Activity (PHONE-SPEC §5.14): Dynamic Island and Lock Screen. Included by
+# project.yml when PHONE_WIDGETS=YES (the default of iOS/script/generate_project.sh).
+targets:
+  MindloomActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: LiveActivity
+      - path: Activity
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_PHONE_BUNDLE_ID).live
+        PRODUCT_NAME: MindloomActivity
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: LiveActivity/Info.plist
+        APPLICATION_EXTENSION_API_ONLY: YES
+    info:
+      path: LiveActivity/Info.plist
+      properties:
+        CFBundleDisplayName: Mindloom
+        CFBundleDevelopmentRegion: zh-Hans
+        CFBundleLocalizations: [zh-Hans]
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    dependencies:
+      - package: MindloomDesign
+        product: MindloomDesign
+
+  MindloomPhone:
+    settings:
+      base:
+        # The app draws its own 「结束」 only when there is no widget (VoiceLiveActivity.hasWidget).
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) MINDLOOM_LIVE_ACTIVITY
+    dependencies:
+      - target: MindloomActivity
+        embed: true
+
+schemes:
+  MindloomPhone:
+    build:
+      targets:
+        MindloomActivity: all

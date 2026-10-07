@@ -270,7 +270,7 @@ extension SpaceEngine {
       }
       var entry = SpaceOutboxEntry(
         entryID: SpaceID.new(), kind: .share,
-        label: item.fields.title ?? item.fields.filename ?? "素材", createdAt: now(),
+        label: item.fields.title ?? item.fields.filename ?? "原文", createdAt: now(),
         itemID: item.itemID, revision: revision, itemKind: item.kind, fields: item.fields,
         segment: item.segment, snapshot: snapshot, packageID: package?.packageID)
       for (index, original) in originals.enumerated() {
@@ -827,7 +827,7 @@ extension SpaceEngine {
     var state = (try? states.load(id)) ?? nil
     if state == nil || state?.membership != .active {
       state = SpaceLocalState(
-        spaceID: id, memberID: memberID, name: "组织空间", ownerKind: .org, orgID: orgID.lowercased(),
+        spaceID: id, memberID: memberID, name: "机构空间", ownerKind: .org, orgID: orgID.lowercased(),
         policy: .org, role: .admin, membership: .active, spark: nil)
     }
     state?.knownNames[memberID] = displayName

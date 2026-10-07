@@ -13,8 +13,41 @@ struct LocalStorageSnapshot: Equatable, Sendable {
   }
 }
 
+/// 设置 › 口述 › 储存空间: recordings, models and files (ALIGNMENT 收1-4).
+struct DictationStorageBreakdown: Equatable, Sendable {
+  /// Every session's audio: dictations, meetings, imported media.
+  var recordingsBytes: UInt64
+  /// Recognition, alignment, text, speaker and the personal cleanup models.
+  var modelsBytes: UInt64
+  /// The files of pasted or dragged items (screenshots, documents).
+  var filesBytes: UInt64
+}
+
 actor LocalStorageInspector {
   private let fileManager = FileManager.default
+
+  /// What recordings, models and files take on disk. A pasted or dragged
+  /// item is a session too; its folder holds the item's files, so those
+  /// folders count as files and every other session folder as recordings.
+  func dictationBreakdown(
+    dataRoot: URL, userItemSessions: Set<SessionID>
+  ) throws -> DictationStorageBreakdown {
+    let assets = dataRoot.appendingPathComponent("assets", isDirectory: true)
+    let sessions = assets.appendingPathComponent("sessions", isDirectory: true)
+    var files: UInt64 = 0
+    for sessionID in userItemSessions {
+      files += try allocatedSize(
+        at: sessions.appendingPathComponent(
+          sessionID.rawValue.uuidString.lowercased(), isDirectory: true))
+    }
+    let allAssets = try allocatedSize(at: assets)
+    let models =
+      try allocatedSize(at: dataRoot.appendingPathComponent("models", isDirectory: true))
+      + allocatedSize(at: dataRoot.appendingPathComponent("personal-models", isDirectory: true))
+    return DictationStorageBreakdown(
+      recordingsBytes: allAssets >= files ? allAssets - files : 0, modelsBytes: models,
+      filesBytes: files)
+  }
 
   func snapshot(dataRoot: URL, cacheRoot: URL) throws -> LocalStorageSnapshot {
     var result = LocalStorageSnapshot()

@@ -1,10 +1,11 @@
 import Foundation
+import MindloomIdentity
 import NaturalLanguage
 import OSLog
 import Translation
 
 private let appleTranslationLogger = Logger(
-  subsystem: "com.bestasr.app",
+  subsystem: MindloomIdentity.logSubsystem,
   category: "translation"
 )
 

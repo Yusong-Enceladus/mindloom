@@ -1,9 +1,12 @@
 import AppKit
+import BestASRAgentAccess
 import BestASRDictation
 import BestASRDomain
 import BestASRInference
+import BestASRIntake
 import BestASRMacAudio
 import BestASRMacUI
+import BestASRMemoryUI
 import BestASRPersistence
 import BestASRProcessing
 import Combine
@@ -577,21 +580,21 @@ final class MemoryOperationFeedbackTests: XCTestCase {
     let model = DictationAppModel(preview: true, memoryRepository: store)
     model.events.newEventTitleDraft = "Synthetic event A"
     model.createEventFromSelection()
-    try await settle { model.events.eventStatusMessage.hasPrefix("事件已建立") }
+    try await settle { model.events.eventStatusMessage.hasPrefix("已新建") }
     let firstID = try XCTUnwrap(model.events.selectedEventID)
     model.beginNewEvent()
     model.events.newEventTitleDraft = "Synthetic event B"
     model.createEventFromSelection()
-    try await settle { model.events.eventStatusMessage.hasPrefix("事件已建立") }
+    try await settle { model.events.eventStatusMessage.hasPrefix("已新建") }
     model.events.titleDraft = "Renamed synthetic event"
     model.saveEventDraft()
-    try await settle { model.events.eventStatusMessage == "事件名称和备注已保存在本机" }
+    try await settle { model.events.eventStatusMessage == "名称和备注已保存在本机" }
     model.events.mergeTargetEventID = firstID
     model.mergeSelectedEvent()
-    try await settle { model.events.eventStatusMessage.hasPrefix("事件已合并") }
+    try await settle { model.events.eventStatusMessage.hasPrefix("已合并") }
     XCTAssertEqual(model.events.summaries.count, 1)
     model.undoLastEventEdit()
-    try await settle { model.events.eventStatusMessage == "最近一次事件修改已撤销" }
+    try await settle { model.events.eventStatusMessage == "最近一次修改已撤销" }
     XCTAssertEqual(model.events.summaries.count, 2)
     try await store.checkpointAndClose()
   }
@@ -1255,13 +1258,26 @@ final class DictationModelReadinessTests: XCTestCase {
     XCTAssertTrue(model.capture.roomLevelPreviewActive)
     XCTAssertEqual(
       model.capture.roomStatusMessage,
-      "正在本机预览输入音量；不会保存预览音频"
+      "正在检查输入音量；检查结束后，声音即被丢弃"
     )
 
     model.toggleRoomLevelPreview()
     XCTAssertFalse(model.capture.roomLevelPreviewActive)
     XCTAssertEqual(model.capture.roomInputLevel, 0)
-    XCTAssertEqual(model.capture.roomStatusMessage, "已停止音量预览；可以开始线下录音")
+    XCTAssertEqual(model.capture.roomStatusMessage, "已停止检查音量；可以开始线下录音")
+  }
+
+  /// Review 10-5d R11: with the words not copied, the status line said
+  /// 「结果已保存在资料库」 while the HUD said 「文字已保存在“历史”中」; both
+  /// say “历史”.
+  @MainActor
+  func testKeptWordsAreSaidToBeInHistoryLikeTheHUD() {
+    let model = DictationAppModel(preview: true)
+    XCTAssertFalse(model.retainedTextWasCopied)
+    XCTAssertEqual(
+      model.retainedInsertionStatus(.unconfirmed), "无法确认文字是否已输入；文字已保存在“历史”中")
+    XCTAssertEqual(
+      model.retainedInsertionStatus(.nowhere), "没有找到输入位置；文字已保存在“历史”中")
   }
 
   func testSystemAudioPickerHidesBackgroundServicesButKeepsRealSources() {
@@ -1333,7 +1349,7 @@ final class DictationModelReadinessTests: XCTestCase {
     )
     XCTAssertFalse(
       DictationAppModel.applicationAudioSourceIsUserFacing(
-        bundleID: "com.bestasr.app",
+        bundleID: "app.mindloom",
         activationPolicy: .regular,
         resolvesToApplication: true
       )
@@ -1464,7 +1480,7 @@ final class DictationModelReadinessTests: XCTestCase {
     XCTAssertTrue(model.memorySearch.searchHistoryItems.isEmpty)
     XCTAssertEqual(
       model.memorySearch.searchStatusMessage,
-      "搜索逐字稿、整理、人物、事件和来源"
+      "搜索逐字稿、整理、人、事情和来源"
     )
   }
 
@@ -1822,7 +1838,7 @@ final class DictationModelReadinessTests: XCTestCase {
     XCTAssertTrue(
       DictationAppModel.startupFailureDescription(
         BestASRAppStorageError.externalCacheUnavailable
-      ).contains("外置缓存盘未挂载")
+      ).contains("外置缓存盘未装载")
     )
   }
 
@@ -1831,14 +1847,14 @@ final class DictationModelReadinessTests: XCTestCase {
       .appendingPathComponent(UUID().uuidString, isDirectory: true)
     try FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: base) }
-    let link = base.appendingPathComponent("com.bestasr.app")
+    let link = base.appendingPathComponent(MindloomBuild.cacheFolderName)
     let missingVolume = "/Volumes/bestASR-missing-\(UUID().uuidString)/cache"
     try FileManager.default.createSymbolicLink(
       atPath: link.path, withDestinationPath: missingVolume)
 
     let resolved = try DictationAppModel.resolveApplicationCacheRoot(base: base)
 
-    XCTAssertEqual(resolved.lastPathComponent, "com.bestasr.app.local")
+    XCTAssertEqual(resolved.lastPathComponent, MindloomBuild.cacheFolderName + ".local")
     var isDirectory: ObjCBool = false
     XCTAssertTrue(
       FileManager.default.fileExists(atPath: resolved.path, isDirectory: &isDirectory))
@@ -1860,6 +1876,11 @@ final class DictationModelReadinessTests: XCTestCase {
         failureReason: .nowhere))
     XCTAssertEqual(
       DictationAppModel.uninsertedClipboardText(retained, draft: "草稿")?.value, "最终文字")
+    // v12 1B: a translation that was not typed in is copied as written (the
+    // HUD's caption shows the translation; ⌘V pastes the same).
+    XCTAssertEqual(
+      DictationAppModel.uninsertedClipboardText(retained, draft: "草稿", written: "Final text")?
+        .value, "Final text")
 
     let inserted = DictationSessionSnapshot(
       sessionID: sessionID, revision: 3, phase: .completed, transcript: transcript,
@@ -1896,12 +1917,12 @@ final class DictationModelReadinessTests: XCTestCase {
     let target = base.appendingPathComponent("elsewhere", isDirectory: true)
     try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
     defer { try? FileManager.default.removeItem(at: base) }
-    let link = base.appendingPathComponent("com.bestasr.app")
+    let link = base.appendingPathComponent(MindloomBuild.cacheFolderName)
     try FileManager.default.createSymbolicLink(at: link, withDestinationURL: target)
 
     let resolved = try DictationAppModel.resolveApplicationCacheRoot(base: base)
 
-    XCTAssertEqual(resolved.lastPathComponent, "com.bestasr.app")
+    XCTAssertEqual(resolved.lastPathComponent, MindloomBuild.cacheFolderName)
   }
 
   func testMenuBarSceneDoesNotRepublishAnUnchangedInsertionState() {
@@ -1928,12 +1949,12 @@ final class DictationModelReadinessTests: XCTestCase {
 
   func testOwnAppIsATargetOnlyWhileThePracticeFieldIsUp() {
     let target = DictationTargetSnapshot(
-      processIdentifier: 42, bundleIdentifier: "com.bestasr.app", isSecure: false)
+      processIdentifier: 42, bundleIdentifier: "app.mindloom", isSecure: false)
     XCTAssertNil(
-      DictationAppModel.externalInsertionTarget(target, ownBundleIdentifier: "com.bestasr.app"))
+      DictationAppModel.externalInsertionTarget(target, ownBundleIdentifier: "app.mindloom"))
     XCTAssertEqual(
       DictationAppModel.externalInsertionTarget(
-        target, ownBundleIdentifier: "com.bestasr.app", ownApplicationAllowed: true),
+        target, ownBundleIdentifier: "app.mindloom", ownApplicationAllowed: true),
       target)
     XCTAssertEqual(
       DictationAppModel.externalInsertionTarget(target, ownBundleIdentifier: "com.example.other"),
@@ -2352,7 +2373,7 @@ final class DictationModelReadinessTests: XCTestCase {
     XCTAssertEqual(model.models.recommendedModelProgress, 1)
     XCTAssertEqual(
       model.models.recommendedModelProgressMessage,
-      "三个本地组件均已校验并可离线使用"
+      "三个本地模型均已校验，可在本机直接使用"
     )
   }
 }
@@ -2364,7 +2385,7 @@ final class DictationSetupViewModelTests: XCTestCase {
 
     model.downloadRecommendedModels()
     XCTAssertFalse(model.models.modelRuntimeReady)
-    XCTAssertTrue(model.models.recommendedModelProgressMessage.contains("三个本地组件许可"))
+    XCTAssertTrue(model.models.recommendedModelProgressMessage.contains("三个本地模型许可"))
 
     model.models.modelLicenseAccepted = true
     XCTAssertFalse(model.canInstallRecommendedModels)
@@ -2643,37 +2664,39 @@ final class DictationCopyResponsivenessTests: XCTestCase {
       }))
 
     model.copyHistoryItem(item)
-    XCTAssertEqual(model.history.historyStatusMessage, "正在复制…")
+    XCTAssertEqual(model.history.historyStatusMessage, "正在拷贝…")
 
     let clock = ContinuousClock()
     let deadline = clock.now.advanced(by: .seconds(2))
-    while clock.now < deadline, model.history.historyStatusMessage == "正在复制…" {
+    while clock.now < deadline, model.history.historyStatusMessage == "正在拷贝…" {
       try await Task.sleep(for: .milliseconds(10))
     }
-    XCTAssertEqual(model.history.historyStatusMessage, "已复制所选本地口述")
+    XCTAssertEqual(model.history.historyStatusMessage, "已拷贝所选本地口述")
   }
 }
 
 final class FirstLaunchPracticeValidationTests: XCTestCase {
+  /// Review 10-5d R11: the generated titles named the system pane without
+  /// quotes (「打开设备控制和数据访问设置」); a system name is in quotes.
   func testPermissionActionsMatchTheActualSystemState() {
     XCTAssertEqual(
       ContentView.permissionActionTitle(
         title: "麦克风",
         state: .notDetermined
       ),
-      "允许麦克风"
+      "允许“麦克风”"
     )
     XCTAssertEqual(
       ContentView.permissionActionTitle(title: "麦克风", state: .denied),
-      "打开麦克风设置"
+      "打开“麦克风”设置"
     )
     XCTAssertEqual(
-      ContentView.permissionActionTitle(title: "辅助功能", state: .revoked),
-      "打开辅助功能设置"
+      ContentView.permissionActionTitle(title: "设备控制和数据访问", state: .revoked),
+      "打开“设备控制和数据访问”设置"
     )
     XCTAssertEqual(
       ContentView.permissionActionTitle(title: "麦克风", state: .granted),
-      "麦克风已允许"
+      "“麦克风”已允许"
     )
     XCTAssertEqual(
       ContentView.permissionActionTitle(
@@ -3294,5 +3317,80 @@ final class DefaultPolishMigrationTests: XCTestCase {
     XCTAssertTrue(
       DictationAppModel.initialDefaultPolishEnabled(defaults: defaults),
       "After the one-time migration the user's own choice wins")
+  }
+}
+
+/// Review v12-B #5 (regression): 复制 in 历史 and in the menu bar's 最近记录
+/// marks the copy as Mindloom's own, so ⌘V in Mindloom refuses it instead of
+/// taking it in again as an item from another App (d54's history copy did).
+@MainActor
+final class RecordCopyMarkTests: XCTestCase {
+  func testARecordCopyCarriesTheOwnOriginMark() throws {
+    let board = NSPasteboard(name: NSPasteboard.Name("mindloom-check-\(UUID().uuidString)"))
+    defer { board.releaseGlobally() }
+    XCTAssertTrue(DictationAppModel.writeRecordText("组会纪要：周五交初稿", to: board))
+    XCTAssertEqual(board.string(forType: .string), "组会纪要：周五交初稿")
+    let types = board.types ?? []
+    XCTAssertTrue(types.contains(IntakePasteboardMarks.ownOrigin))
+    XCTAssertEqual(IntakePasteboardMarks.refusal(types: types), IntakePasteboardMarks.ownMessage)
+  }
+}
+
+/// Review v12-B #13 (regression): a check build's pre-approval comes from
+/// this launch's arguments only, with -MindloomNoArm, on a synthetic library,
+/// never in the product; review v12-B #6: every 历史 row export kind maps to
+/// the history exporter's format.
+@MainActor
+final class CheckRunAndHistoryExportTests: XCTestCase {
+  func testPreapprovalNeedsTheLaunchItselfNoArmAndASyntheticLibrary() throws {
+    let root = FileManager.default.temporaryDirectory
+      .appendingPathComponent("preapproval-\(UUID().uuidString)", isDirectory: true)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+    defer { try? FileManager.default.removeItem(at: root) }
+    let spec = "client=claude-session-e2e;path=/usr/bin/true;range=all;change=1;duration=always"
+    let launch = ["bestASR", "-MindloomNoArm", "YES", "-MindloomAgentTestGrant", spec]
+    // Not a synthetic library yet.
+    XCTAssertNil(
+      DictationAppModel.agentPreapproval(dataRoot: root, arguments: launch, flavor: .development))
+    try Data("synthetic\n".utf8).write(to: root.appendingPathComponent("SYNTHETIC_DATA_ROOT"))
+    let approval = try XCTUnwrap(
+      DictationAppModel.agentPreapproval(dataRoot: root, arguments: launch, flavor: .development))
+    XCTAssertEqual(approval.clientName, "claude-session-e2e")
+    XCTAssertEqual(approval.path, "/usr/bin/true")
+    // The product never; without -MindloomNoArm never; not from preferences.
+    XCTAssertNil(
+      DictationAppModel.agentPreapproval(dataRoot: root, arguments: launch, flavor: .release))
+    XCTAssertNil(
+      DictationAppModel.agentPreapproval(
+        dataRoot: root, arguments: ["bestASR", "-MindloomAgentTestGrant", spec],
+        flavor: .development))
+    XCTAssertNil(
+      DictationAppModel.agentPreapproval(
+        dataRoot: root, arguments: ["bestASR", "-MindloomNoArm", "YES"], flavor: .development))
+  }
+
+  /// A pre-approved check run posts no notification, so it never asks for
+  /// notification permission on the owner's screen (end-to-end run with
+  /// Claude Code, 2026-10-06); every other run tells the owner.
+  func testAPreapprovedCheckRunPostsNoNotifications() throws {
+    XCTAssertTrue(DictationAppModel.agentNotifiesOwner(preapproval: nil))
+    let approval = try XCTUnwrap(
+      AgentPreapproval.parse("client=claude-code;path=/usr/bin/true;range=all;change=1"))
+    XCTAssertFalse(DictationAppModel.agentNotifiesOwner(preapproval: approval))
+  }
+
+  /// The delete confirmation says what each button deletes in plain words.
+  func testTheDeleteConfirmationSaysWhatGoes() {
+    XCTAssertTrue(ContentView.historyDeletionMessage(hasAudio: true).contains("删除录音并保留文字"))
+    XCTAssertEqual(ContentView.historyDeletionMessage(hasAudio: false), "此操作无法撤销。")
+    for message in [true, false].map(ContentView.historyDeletionMessage(hasAudio:)) {
+      XCTAssertFalse(message.contains("保留原音"), message)
+    }
+  }
+
+  func testEveryRowExportKindHasAnExporterFormat() {
+    for kind in MemoryHistoryExport.allCases {
+      XCTAssertNotNil(LocalHistoryExportFormat(rawValue: kind.rawValue), kind.rawValue)
+    }
   }
 }

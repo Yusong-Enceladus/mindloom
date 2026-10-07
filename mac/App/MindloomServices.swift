@@ -17,7 +17,7 @@ final class MindloomServicesProvider: NSObject {
       ?? pasteboard.readObjects(forClasses: [NSAttributedString.self])?
       .compactMap { ($0 as? NSAttributedString)?.string }.first
     guard let text, !text.isEmpty else {
-      error.pointee = "选中的内容里没有文字" as NSString
+      error.pointee = "所选内容中没有文字" as NSString
       return
     }
     if let model = EntryHub.shared.model, model.entries.isReady {

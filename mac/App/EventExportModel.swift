@@ -2,6 +2,7 @@ import AppKit
 import BestASRDomain
 import BestASRMemory
 import BestASRPersistence
+import BestASRRemoteOrganizer
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
@@ -54,27 +55,29 @@ extension DictationAppModel {
     let localQuestions: [MemoryQuestion]
     let now: Date
     let owners: Set<String>
+    /// The voices this Mac knows (v12 理3-1: listed even with no matter).
+    var localPeople: [MemoryLocalPerson] = []
 
     func projection() -> MemoryProjection {
       if let remote {
-        return MemoryProjection(remote: remote, records: records, now: now, ownerPersonIDs: owners)
+        return RemoteOrganizerMirror.memoryProjection(
+          remote, records: records, now: now, ownerPersonIDs: owners, localPeople: localPeople)
       }
       return MemoryProjection(
         events: sources, records: records, unfiled: unfiled, localQuestions: localQuestions,
-        now: now, ownerPersonIDs: owners)
+        now: now, ownerPersonIDs: owners, localPeople: localPeople)
     }
   }
 
   func memoryProjectionInputs(now: Date = Date()) async -> MemoryProjectionInputs? {
     guard let repository else { return nil }
     if memoryUsesRemote, let remote = events.remoteProjection {
-      let sources = remote.events.filter { !$0.deleted }.map(MemoryProjection.source)
-      let ids = MemoryProjection.sessionIDs(
-        sources.flatMap(\.itemIDs) + remote.unfiled.map(\.itemID))
+      let ids = RemoteOrganizerMirror.recordIDs(remote)
       let records = (try? await repository.memoryItemRecords(ids: ids)) ?? []
       return MemoryProjectionInputs(
         remote: remote, sources: [], records: records, unfiled: [], localQuestions: [],
-        now: now, owners: memoryOwnerPersonIDs)
+        now: now, owners: memoryOwnerPersonIDs,
+        localPeople: Self.memoryLocalPeople(people.personSummaries))
     }
     let summaries = events.summaries.sorted { $0.event.updatedAt > $1.event.updatedAt }
     let sources = summaries.map(Self.localEventSource)
@@ -84,7 +87,20 @@ extension DictationAppModel {
     let records = (try? await repository.memoryItemRecords(ids: ids)) ?? []
     return MemoryProjectionInputs(
       remote: nil, sources: sources, records: records, unfiled: unfiled,
-      localQuestions: localMemoryQuestions(), now: now, owners: memoryOwnerPersonIDs)
+      localQuestions: localMemoryQuestions(), now: now, owners: memoryOwnerPersonIDs,
+      localPeople: Self.memoryLocalPeople(people.personSummaries))
+  }
+
+  /// This Mac's people as the pages list them (v12 理3-1): every voice it
+  /// knows, named or not, with how often it was heard.
+  nonisolated static func memoryLocalPeople(_ summaries: [PersonSummary]) -> [MemoryLocalPerson] {
+    summaries.map { summary in
+      MemoryLocalPerson(
+        personID: summary.person.id.rawValue.uuidString, name: summary.person.displayName,
+        aliases: summary.person.aliases, createdAt: summary.person.createdAt,
+        recordCount: summary.sessionCount, lastHeardAt: summary.latestOccurrenceAt,
+        hasVoice: summary.occurrenceCount > 0 || summary.embeddingCount > 0)
+    }
   }
 
   /// The Mac's user: the local "self" person of the microphone track.
@@ -208,7 +224,7 @@ extension DictationAppModel {
 
   private func copyEventText(_ detail: MemoryEventDetail) {
     let text = EventPlainTextFormatter().format(detail)
-    intake.show(pasteboardWriter.write(text) ? "已复制这件事的文字" : "复制失败；记录仍保留在本机")
+    intake.show(pasteboardWriter.write(text) ? "已拷贝这件事的文字" : "未能拷贝；记录仍保留在本机")
   }
 
   private func saveEventText(_ detail: MemoryEventDetail) {

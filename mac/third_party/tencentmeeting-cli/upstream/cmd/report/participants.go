@@ -1,0 +1,129 @@
+package report
+
+import (
+	"net/http"
+	"strconv"
+	"tmeet/internal"
+	"tmeet/internal/cmdutil"
+	middleWare "tmeet/internal/cmdutil/middleware"
+	"tmeet/internal/core/thttp"
+	"tmeet/internal/exception"
+	"tmeet/internal/output"
+	restProxy "tmeet/internal/proxy/rest-proxy"
+	"tmeet/internal/utils"
+
+	"github.com/spf13/cobra"
+)
+
+// ParticipantsOptions holds the options for participants.
+type ParticipantsOptions struct {
+	tmeet        *internal.Tmeet
+	MeetingId    string // Meeting ID
+	SubMeetingId string // Sub-meeting ID for recurring meetings
+	Pos          int    // Query start position for paginated retrieval, deprecated use PageToken instead
+	Size         int    // Number of participants per page, max 100, deprecated use PageSize instead
+	StartTime    string // Query start time, ISO 8601, e.g. 2026-03-12T14:00+08:00
+	EndTime      string // Query end time, ISO 8601, e.g. 2026-03-12T14:00+08:00
+	PageToken    string // Page token
+	PageSize     int    // Page size
+}
+
+// newParticipantsCmd gets the participants list.
+func newParticipantsCmd(tmeet *internal.Tmeet) *cobra.Command {
+	opts := &ParticipantsOptions{tmeet: tmeet}
+	cmd := &cobra.Command{
+		Use:   "participants",
+		Short: "get meeting participants",
+		RunE: middleWare.Chain(
+			opts.Run,
+			middleWare.WithApiCmd(cmdutil.StaticApiCmd(cmdutil.ApiCmdReportParticipants)),
+			middleWare.WithCompact(tmeet),
+		),
+	}
+
+	cmd.Flags().StringVar(&opts.MeetingId, "meeting-id", "", "meeting id (required)")
+	cmd.Flags().StringVar(&opts.SubMeetingId, "sub-meeting-id", "", "sub meeting id for recurring meeting")
+	cmd.Flags().IntVar(&opts.Pos, "pos", -1, "query start position, default 0, (deprecated, use --page-token instead)")
+	cmd.Flags().IntVar(&opts.Size, "size", 0,
+		"number of participants per page, max 100, (deprecated, use --page-size instead)")
+	cmd.Flags().StringVar(&opts.StartTime, "start", "", "query start time (ISO 8601, e.g. 2026-03-12T14:00+08:00)")
+	cmd.Flags().StringVar(&opts.EndTime, "end", "", "query end time (ISO 8601, e.g. 2026-03-12T14:00+08:00)")
+	cmd.Flags().StringVar(&opts.PageToken, "page-token", "", "page token for pagination")
+	cmd.Flags().IntVar(&opts.PageSize, "page-size", 100, "page size, default 100, max 100")
+
+	// mark required flags
+	_ = cmd.MarkFlagRequired("meeting-id")
+	// mark deprecated flags
+	_ = cmd.Flags().MarkDeprecated("pos", "use --page-token instead")
+	_ = cmd.Flags().MarkDeprecated("size", "use --page-size instead")
+
+	return cmd
+}
+
+func (o *ParticipantsOptions) Run(cmd *cobra.Command, args []string) error {
+	queryParams := thttp.QueryParams{}
+	queryParams.Set("operator_id", o.tmeet.UserConfig.OpenId)
+	queryParams.Set("operator_id_type", "2") // OpenId
+
+	// pagination compatibility
+	pageValue, pageType := cmdutil.ChoosePosOrToken(o.Pos, o.PageToken)
+	queryParams.Set("page_type", strconv.Itoa(pageType))
+	if pageType == cmdutil.PageTypeOld {
+		queryParams.Set("pos", pageValue)
+		queryParams.Set("size", strconv.Itoa(o.Size))
+	} else {
+		queryParams.Set("page_token", pageValue)
+		pageSize, err := cmdutil.ClampingPageSize(cmd, o.PageSize, cmdutil.PageSizeMaxReports)
+		if err != nil {
+			return err
+		}
+		queryParams.Set("page_size", strconv.Itoa(pageSize))
+	}
+
+	if o.SubMeetingId != "" {
+		queryParams.Set("sub_meeting_id", o.SubMeetingId)
+	}
+
+	if o.StartTime != "" {
+		startTime, err := utils.ISO8601ToTimeStamp(o.StartTime)
+		if err != nil {
+			return exception.InvalidArgsError.With("--start format error: %v", err)
+		}
+		queryParams.Set("start_time", strconv.FormatInt(startTime, 10))
+	}
+
+	if o.EndTime != "" {
+		endTime, err := utils.ISO8601ToTimeStamp(o.EndTime)
+		if err != nil {
+			return exception.InvalidArgsError.With("--end format error: %v", err)
+		}
+		queryParams.Set("end_time", strconv.FormatInt(endTime, 10))
+	}
+
+	req := &thttp.Request{
+		ApiURI:      "/v1/meetings/{meeting_id}/participants",
+		PathParams:  thttp.PathParams{"meeting_id": o.MeetingId},
+		QueryParams: queryParams,
+	}
+	rsp, err := restProxy.RequestProxy(cmd.Context(), http.MethodGet, o.tmeet, req)
+	if err != nil {
+		return err
+	}
+
+	convertMap := map[string]utils.FieldConverter{
+		"join_time":           utils.TimestampConverter,
+		"left_time":           utils.TimestampConverter,
+		"schedule_start_time": utils.TimestampConverter,
+		"schedule_end_time":   utils.TimestampConverter,
+		"instanceid":          utils.InstanceIdConverter,
+		"user_name":           utils.Base64DecodeConverter,
+		"subject":             utils.Base64DecodeConverter,
+		"user_role":           utils.MeetingUserRoleConverter,
+	}
+
+	output.FormatPrint(cmd, rsp.TraceId, rsp.Message, rsp.Data,
+		output.WithMetaFieldFilter(output.MetaKeyFilterField),
+		output.WithConvert(convertMap),
+		output.WithCompact(middleWare.GetCompactFields(cmd.Context())))
+	return nil
+}

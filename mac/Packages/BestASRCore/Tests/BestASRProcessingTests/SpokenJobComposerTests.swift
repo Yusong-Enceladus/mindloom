@@ -54,6 +54,40 @@ final class SpokenJobComposerTests: XCTestCase {
       .transform(instruction: "改短一点", selection: "a long draft"))
   }
 
+  /// 收1-8: in an App that shows no text, the user selects the wrong word
+  /// and says the right one with fn+space.
+  func testTheRightWordSaidOverAWrongOneReplacesItAsSaid() {
+    XCTAssertEqual(
+      compose(.command, "Mindloom。", selection: "mind loom"),
+      .correct(heard: "mind loom", written: "Mindloom"))
+    XCTAssertEqual(
+      compose(.command, "改成在坐", selection: "在座"),
+      .correct(heard: "在座", written: "在坐"))
+    XCTAssertEqual(
+      compose(.command, "改正式一点", selection: "你好"),
+      .transform(instruction: "改正式一点", selection: "你好"),
+      "An instruction about the selection is still an instruction")
+    XCTAssertEqual(
+      compose(.command, "下午三点", selection: "明天上午"),
+      .transform(instruction: "下午三点", selection: "明天上午"),
+      "Words that do not sound alike are not a correction")
+  }
+
+  /// Regression (review 10-6 S8): an instruction after 改成 or 写成 over a
+  /// selection goes to the text model; it is never pasted over the selection
+  /// as the literal word.
+  func testAnInstructionAfterACueStaysAnInstruction() {
+    for (said, selection) in [
+      ("改成英文", "早上好"), ("改成英文", "Good morning"), ("改成大写", "hello world"),
+      ("改成繁体", "软件开发"), ("改成列表", "苹果 香蕉 橙子"), ("写成英文", "会议纪要"),
+      ("改成后天", "明天"),
+    ] {
+      XCTAssertEqual(
+        compose(.command, said, selection: selection),
+        .transform(instruction: said, selection: selection), "\(said) over \(selection)")
+    }
+  }
+
   func testAnInstructionWithNothingHighlightedIsAnswered() {
     XCTAssertEqual(
       compose(.command, "十七乘以二十三", selection: nil),

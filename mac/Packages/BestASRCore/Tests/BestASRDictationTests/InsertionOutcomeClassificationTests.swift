@@ -8,7 +8,7 @@ final class InsertionOutcomeClassificationTests: XCTestCase {
   func testReasonsThatAreTheSystemDoingItsJob() {
     for reason in [
       DictationInsertionFailureReason.nowhere, .secureInput, .applicationChanged,
-      .permissionDenied, .nothingToInsert,
+      .permissionDenied, .nothingToInsert, .unconfirmed,
     ] {
       XCTAssertTrue(reason.declinedByDesign, "\(reason)")
     }
@@ -23,9 +23,9 @@ final class InsertionOutcomeClassificationTests: XCTestCase {
   func testTheVocabularyIsSmallAndComplete() {
     let all: [DictationInsertionFailureReason] = [
       .nowhere, .secureInput, .applicationChanged, .permissionDenied, .nothingToInsert,
-      .unavailable, .ambiguousReservation,
+      .unavailable, .ambiguousReservation, .unconfirmed,
     ]
-    XCTAssertEqual(Set(all.map(\.rawValue)).count, 7)
+    XCTAssertEqual(Set(all.map(\.rawValue)).count, 8)
     for reason in all {
       XCTAssertEqual(DictationInsertionFailureReason(rawValue: reason.rawValue), reason)
     }

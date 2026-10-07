@@ -3,27 +3,74 @@ import BestASRMemory
 import Foundation
 import MindloomAgentProtocol
 
-/// The App's MCP server behind the helper (AGENT-CONTRACT §1–§2). One
-/// session per helper connection. Every tool call and resource read is
-/// checked against the client's grant on that call (so a revocation or an
-/// expiry takes effect on the next call), answered within the grant's scope
-/// with numbers masked unless the grant says 原样, and written to the audit
-/// (never content). An unknown client gets the consent sheet; a denial is a
-/// clear MCP error. `add_to_inbox` only ever proposes: this service cannot
-/// create an item at all.
+/// The App's MCP server behind the helper (AGENT-CONTRACT §1–§2; v12 phase B,
+/// B5 appendix C F1–F13). One session per helper connection. Every tool call
+/// and resource read is checked against the client's grant on that call (so
+/// a revocation or an expiry takes effect on the next call), answered within
+/// the grant's scope with numbers masked unless the grant says 原样, inside a
+/// fence made fresh for each answer, counted against the grant's hourly
+/// limits, and written to the audit (never content). An unknown client gets
+/// the consent card; a denial is a clear MCP error.
+///
+/// Agent-tool practice (AGENT-TOOLS.md): the hourly content quota counts the
+/// bytes of library text an answer gives (reads and searches), not the
+/// resource list; `resources/list` gives nothing before a grant, then pages
+/// of titles and ids, each page audited and counted against its own limit.
+///
+/// Reading is the default. A grant with 也可以改 also lists and runs four
+/// change tools (add a note, move an item or take it out, rename a matter,
+/// mark a step); each is applied at once through the App
+/// (`AgentChangeApplying`), recorded in `agent_changes` and undoable from the
+/// Mac. Nothing here deletes, shares, exports, records or changes settings.
 public actor AgentAccessService {
+  /// Per grant, per rolling hour (v12 F7; B5 B6's suggested values).
+  /// `bytesPerHour` counts the content bytes reads and searches return (the
+  /// UTF-8 text the agent's model reads); `listingsPerHour` counts
+  /// `resources/list` pages, which use no content quota.
+  public struct Limits: Sendable, Equatable {
+    public var mattersPerHour: Int
+    public var bytesPerHour: Int
+    public var notesPerHour: Int
+    public var changesPerHour: Int
+    public var listingsPerHour: Int
+    public var window: TimeInterval
+
+    public init(
+      mattersPerHour: Int = 40, bytesPerHour: Int = 200_000, notesPerHour: Int = 30,
+      changesPerHour: Int = 15, listingsPerHour: Int = 40, window: TimeInterval = 3_600
+    ) {
+      self.mattersPerHour = mattersPerHour
+      self.bytesPerHour = bytesPerHour
+      self.notesPerHour = notesPerHour
+      self.changesPerHour = changesPerHour
+      self.listingsPerHour = listingsPerHour
+      self.window = window
+    }
+  }
+
   public struct Configuration: Sendable {
-    /// How long a call waits for the owner in the consent sheet or a
-    /// matter approval before it returns "等主人批准" (the sheet stays open;
+    /// How long a call waits for the owner in the consent card or a
+    /// matter approval before it returns "等主人批准" (the card stays open;
     /// a later answer still counts).
     public var consentTimeout: Duration
-    /// After 不同意, the same client is refused without asking again for
+    /// After 不允许, the same client is refused without asking again for
     /// this long (and for the rest of the session).
     public var denialCooldown: TimeInterval
+    public var limits: Limits
+    /// `resources/list`: matters a page, and over all pages.
+    public var listPageSize: Int
+    public var listMaximum: Int
 
-    public init(consentTimeout: Duration = .seconds(60), denialCooldown: TimeInterval = 60) {
+    public init(
+      consentTimeout: Duration = .seconds(60), denialCooldown: TimeInterval = 60,
+      limits: Limits = Limits(), listPageSize: Int = AgentResource.pageSize,
+      listMaximum: Int = AgentResource.maximumListed
+    ) {
       self.consentTimeout = consentTimeout
       self.denialCooldown = denialCooldown
+      self.limits = limits
+      self.listPageSize = max(1, listPageSize)
+      self.listMaximum = max(0, listMaximum)
     }
   }
 
@@ -46,15 +93,20 @@ public actor AgentAccessService {
     var clientTitle: String?
     var once: OnceGrant?
     var denied = false
+    /// Writes a line to the client on the service's own (a notification).
+    var push: (@Sendable (String) -> Void)?
+    /// Whether the last `tools/list` it got had the change tools; nil before
+    /// it asked.
+    var listedChanges: Bool?
 
     var identity: AgentClientIdentity {
       AgentClientIdentity(
         name: clientName, title: clientTitle, path: peer.clientExecutablePath ?? "unknown",
-        signer: peer.clientSigner, script: peer.clientScript)
+        signer: peer.clientSigner, script: peer.clientScript, signerName: peer.clientSignerName)
     }
   }
 
-  /// 这一次: kept in memory for its connection only.
+  /// 这次对话 (这一次): kept in memory for its connection only.
   private struct OnceGrant {
     let grantID: UUID
     let terms: AgentGrantTerms
@@ -77,38 +129,82 @@ public actor AgentAccessService {
     case unavailable
   }
 
+  /// One grant's use in the rolling hour.
+  private struct Usage {
+    var reads: [(at: Date, matters: Int, bytes: Int)] = []
+    var notes: [Date] = []
+    var changes: [Date] = []
+    /// `resources/list` pages (titles and ids; no content quota).
+    var listings: [Date] = []
+    /// When the owner was last told this grant is paused.
+    var toldAt: Date?
+  }
+
   private let memory: any AgentMemoryProviding
   private let records: any AgentAccessRecordStore
   private let secrets: any AgentGrantSecretStore
   private let consent: any AgentConsentPresenting
+  private let changes: (any AgentChangeApplying)?
+  private let search: any AgentSearching
   private let configuration: Configuration
   private let clock: @Sendable () -> Date
-  private let timeZone: TimeZone
+  /// The product time zone, read at each use: changed in Settings, it
+  /// applies to agents at once (review v12-B #14).
+  private let zone: @Sendable () -> TimeZone
+  private var timeZone: TimeZone { zone() }
   private var sessions: [UUID: Session] = [:]
+  private var maskMemos: [Data: AgentGenerationCache<String>] = [:]
   private var consentTasks: [String: Task<AgentConsentAnswer?, Never>] = [:]
+  /// Identity key → the name its open consent card shows.
+  private var consentNames: [String: String] = [:]
   private var approvalTasks: [String: Task<[String: Bool], Never>] = [:]
   private var deniedAt: [String: Date] = [:]
+  private var usage: [UUID: Usage] = [:]
 
+  /// - Parameters:
+  ///   - changes: applies an allowed change (the App); nil answers every
+  ///     change tool that Mindloom cannot change things right now.
+  ///   - search: the App's search engine (`AgentRecordSearch`; the App
+  ///     passes the dictionary and the owner's names).
   public init(
     memory: any AgentMemoryProviding, records: any AgentAccessRecordStore,
     secrets: any AgentGrantSecretStore, consent: any AgentConsentPresenting,
+    changes: (any AgentChangeApplying)? = nil, search: any AgentSearching = AgentRecordSearch(),
     configuration: Configuration = Configuration(), timeZone: TimeZone = .current,
+    clock: @escaping @Sendable () -> Date = { Date() }
+  ) {
+    self.init(
+      memory: memory, records: records, secrets: secrets, consent: consent, changes: changes,
+      search: search, configuration: configuration, zone: { timeZone }, clock: clock)
+  }
+
+  /// `zone` gives the product time zone each time it is needed (the App's
+  /// setting), for time words, 今天 and a 今天 grant's end.
+  public init(
+    memory: any AgentMemoryProviding, records: any AgentAccessRecordStore,
+    secrets: any AgentGrantSecretStore, consent: any AgentConsentPresenting,
+    changes: (any AgentChangeApplying)? = nil, search: any AgentSearching = AgentRecordSearch(),
+    configuration: Configuration = Configuration(), zone: @escaping @Sendable () -> TimeZone,
     clock: @escaping @Sendable () -> Date = { Date() }
   ) {
     self.memory = memory
     self.records = records
     self.secrets = secrets
     self.consent = consent
+    self.changes = changes
+    self.search = search
     self.configuration = configuration
-    self.timeZone = timeZone
+    self.zone = zone
     self.clock = clock
   }
 
   // MARK: - Sessions
 
-  public func openSession(peer: AgentConnectionPeer) -> UUID {
+  public func openSession(
+    peer: AgentConnectionPeer, push: (@Sendable (String) -> Void)? = nil
+  ) -> UUID {
     let id = UUID()
-    sessions[id] = Session(id: id, peer: peer)
+    sessions[id] = Session(id: id, peer: peer, push: push)
     return id
   }
 
@@ -147,13 +243,17 @@ public actor AgentAccessService {
       case "ping":
         return MCPMessage.result(id: id, [:])
       case "tools/list":
-        return MCPMessage.result(id: id, AgentTool.listResult)
+        // The change tools only for a grant that may change (F5): nothing
+        // is offered that the owner did not allow. Listing never asks.
+        let includeChanges = await mayChange(sessionID)
+        sessions[sessionID]?.listedChanges = includeChanges
+        return MCPMessage.result(id: id, AgentTool.listResult(includingChanges: includeChanges))
       case "resources/templates/list":
         return MCPMessage.result(id: id, AgentResource.templatesResult)
       case "tools/call":
         return await callTool(id: id, params: params, session: sessionID)
       case "resources/list":
-        return await listResources(id: id, session: sessionID)
+        return await listResources(id: id, params: params, session: sessionID)
       case "resources/read":
         return await readResource(id: id, params: params, session: sessionID)
       default:
@@ -174,7 +274,14 @@ public actor AgentAccessService {
     let arguments = params?["arguments"]?.objectValue ?? [:]
     let output: AgentToolOutput
     var grantID: UUID?
-    switch await authorize(session: session) {
+    let hint: String? =
+      switch tool {
+      case .getMatter: arguments["id"]?.stringValue
+      case .renameMatter, .markStep, .addNote: arguments["matter_id"]?.stringValue
+      case .moveItem: arguments["from_matter_id"]?.stringValue
+      default: nil
+      }
+    switch await authorize(session: session, matterHint: hint, wantsToChange: tool.isChange) {
     case .denied:
       output = .failure(AgentCopy.denied, code: "denied", outcome: .denied)
     case .pending:
@@ -183,31 +290,51 @@ public actor AgentAccessService {
       output = .failure(AgentCopy.unavailable, code: "unavailable", outcome: .failed)
     case .granted(let grant):
       grantID = grant.grantID
-      let answer = await run(tool, arguments: arguments, grant: grant, session: session)
-      // A call may have waited for the owner; a grant revoked meanwhile wins (V7-A5).
-      output =
-        await stillGranted(grant, session: session)
-        ? answer : .failure(AgentCopy.denied, code: "denied", outcome: .denied)
+      if tool.isChange, !grant.terms.canChange {
+        output = .failure(AgentCopy.changeNotAllowed, code: "read_only", outcome: .denied)
+      } else if await overLimit(grant.grantID, tool: tool, session: session) {
+        output = .failure(AgentCopy.limited, code: "limited", outcome: .limited)
+      } else {
+        let answer = await run(tool, arguments: arguments, grant: grant, session: session)
+        // A call may have waited for the owner; a grant revoked meanwhile wins (V7-A5).
+        output =
+          await stillGranted(grant, session: session)
+          ? answer : .failure(AgentCopy.denied, code: "denied", outcome: .denied)
+      }
     }
-    let result = output.result
+    let result = output.result(withData: AgentToolResult.wantsData(params))
+    // The content quota and the audit count the library text the answer
+    // gives (what the agent's model reads), not the JSON around it nor the
+    // data a script asked for in `_meta`; a refusal gives none.
+    let bytes = output.outcome == .allowed ? output.contentBytes : 0
+    if let grantID, output.outcome == .allowed {
+      account(grantID, tool: tool, matters: output.matterIDs.count, bytes: bytes)
+    }
     await audit(
       session: session, grant: grantID, tool: tool.rawValue, outcome: output.outcome,
-      ids: output.matterIDs, bytes: result.serializedData.count)
+      ids: output.matterIDs, bytes: bytes)
     return MCPMessage.result(id: id, result)
   }
 
   private func run(
     _ tool: AgentTool, arguments: [String: JSONValue], grant: ActiveGrant, session: UUID
   ) async -> AgentToolOutput {
-    if tool == .addToInbox {
-      return await propose(arguments: arguments, grant: grant, session: session)
-    }
     guard let snapshot = await memory.agentSnapshot() else {
       return .failure(AgentCopy.unavailable, code: "unavailable", outcome: .failed)
     }
     let reader = reader(snapshot, grant: grant)
+    if tool.isChange {
+      return await change(
+        tool, arguments: arguments, reader: reader, grant: grant, session: session)
+    }
     switch tool {
-    case .searchMatters:
+    case .today:
+      guard grant.terms.askForNewMatters else { return reader.renderToday() }
+      // An older grant that asks matter by matter reads only approved ones.
+      let ids = reader.matters.map(\.eventID)
+      let (allowed, _) = await approved(ids, snapshot: snapshot, grant: grant, session: session)
+      return restricted(reader, to: allowed).renderToday()
+    case .search:
       guard let query = text(arguments["query"], max: AgentTool.maximumQueryCharacters),
         !query.isEmpty
       else { return invalid("query 需要 1–\(AgentTool.maximumQueryCharacters) 个字") }
@@ -221,54 +348,92 @@ public actor AgentAccessService {
           default: AgentTool.defaultSearchLimit)
       else { return invalid("limit 需要在 1–\(AgentTool.maximumSearchLimit) 之间") }
       let space = arguments["space"]?.stringValue.map(AgentSpaceID.normalized)
-      let matched = reader.search(query: query, space: space)
+      // The App's search engine, over the masked, in-scope matters only
+      // (AGENT-004, AGENT-005); time words in the product time zone.
+      let found = await search.search(
+        query, in: reader.searchDocuments(space: space), limit: AgentTool.maximumSearchLimit,
+        clock: SearchClock(now: clock(), timeZone: timeZone))
+      let matched = found.hits
       let candidates = Array(matched.prefix(limit))
       let (allowed, waiting) = await approved(
-        candidates.map(\.eventID), snapshot: snapshot, grant: grant, session: session)
-      let shown = candidates.filter { allowed.contains($0.eventID) }
+        candidates.map(\.matterID), snapshot: snapshot, grant: grant, session: session)
+      let shown = candidates.filter { allowed.contains($0.matterID) }
       // With "ask me first", matters the owner refused are not even counted (V7-A4).
       let total = grant.terms.askForNewMatters ? shown.count : matched.count
-      return reader.renderSearch(shown, matched: total, waiting: waiting)
+      return reader.renderSearch(
+        shown, total: total, waiting: waiting, conditions: found.conditions,
+        dropped: found.dropped, meaningPartial: found.meaningPartial)
     case .getMatter:
-      guard let matterID = text(arguments["id"], max: 128), !matterID.isEmpty else {
-        return invalid("id 不能为空")
-      }
+      guard let matterID = text(arguments["id"], max: AgentTool.maximumIDCharacters),
+        !matterID.isEmpty
+      else { return invalid("id 不能为空") }
       let format = arguments["format"]?.stringValue ?? "text"
       guard format == "text" || format == "json" else { return invalid("format 只能是 text 或 json") }
+      let detail = arguments["detail"]?.stringValue ?? "brief"
+      guard detail == "brief" || detail == "full" else {
+        return invalid("detail 只能是 brief 或 full")
+      }
+      var item: (id: String, around: String?)?
+      if let raw = arguments["item_id"] {
+        guard let itemID = text(raw, max: AgentTool.maximumIDCharacters), !itemID.isEmpty else {
+          return invalid("item_id 不能为空")
+        }
+        guard let around = optionalText(arguments["around"], max: AgentTool.maximumQueryCharacters)
+        else { return invalid("around 最多 \(AgentTool.maximumQueryCharacters) 个字") }
+        item = (itemID, around)
+      } else if arguments["around"] != nil {
+        return invalid("around 要和 item_id 一起用")
+      }
+      // The full lens comes in pages (AGENT-TOOLS.md, verification 10-6).
+      guard let page = integer(arguments["page"], in: 1...Int(Int32.max), default: 1) else {
+        return invalid("page 需要是 1 或更大的整数")
+      }
+      if let raw = arguments["page"], raw != .null, detail != "full" || item != nil {
+        return invalid("page 要和 detail=full 一起用（不给 item_id）")
+      }
       return await matter(
-        matterID, json: format == "json", reader: reader, grant: grant, session: session)
+        matterID, json: format == "json", full: detail == "full", page: page, item: item,
+        reader: reader, grant: grant, session: session)
     case .listDeadlines:
       guard
         let days = integer(
           arguments["days"], in: 1...AgentTool.maximumDeadlineDays,
           default: AgentTool.defaultDeadlineDays)
       else { return invalid("days 需要在 1–\(AgentTool.maximumDeadlineDays) 之间") }
-      let deadlines = reader.deadlines(days: days)
+      guard let limit = listLimit(arguments) else { return listLimitInvalid }
+      let all = reader.deadlines(days: days)
+      let deadlines = Array(all.prefix(limit))
       let ids = orderedUnique(deadlines.map(\.entry.eventID))
       let (allowed, waiting) = await approved(
         ids, snapshot: snapshot, grant: grant, session: session)
       return reader.renderDeadlines(
-        deadlines.filter { allowed.contains($0.entry.eventID) }, days: days, waiting: waiting)
+        deadlines.filter { allowed.contains($0.entry.eventID) }, days: days, waiting: waiting,
+        more: unlisted(all.count, limit, grant))
     case .listRecent:
       guard
         let days = integer(
           arguments["days"], in: 1...AgentTool.maximumRecentDays,
           default: AgentTool.defaultRecentDays)
       else { return invalid("days 需要在 1–\(AgentTool.maximumRecentDays) 之间") }
+      guard let limit = listLimit(arguments) else { return listLimitInvalid }
       let space = arguments["space"]?.stringValue.map(AgentSpaceID.normalized)
-      let entries = reader.recent(days: days, space: space)
+      let all = reader.recent(days: days, space: space)
+      let entries = Array(all.prefix(limit))
       let (allowed, waiting) = await approved(
         entries.map(\.eventID), snapshot: snapshot, grant: grant, session: session)
       return reader.renderRecent(
-        entries.filter { allowed.contains($0.eventID) }, days: days, waiting: waiting)
+        entries.filter { allowed.contains($0.eventID) }, days: days, waiting: waiting,
+        more: unlisted(all.count, limit, grant))
     case .getPerson:
       guard let name = text(arguments["name"], max: AgentTool.maximumPersonNameCharacters),
         !name.isEmpty
       else { return invalid("name 不能为空") }
+      guard let limit = listLimit(arguments) else { return listLimitInvalid }
       guard let found = reader.person(named: name) else {
         return .failure(AgentCopy.personNotFound, code: "not_found", outcome: .notFound)
       }
-      let (person, matters) = found
+      let (person, all) = found
+      let matters = Array(all.prefix(limit))
       let (allowed, waiting) = await approved(
         matters.map(\.eventID), snapshot: snapshot, grant: grant, session: session)
       let shown = matters.filter { allowed.contains($0.eventID) }
@@ -279,14 +444,17 @@ public actor AgentAccessService {
         return .failure(AgentCopy.personNotFound, code: "not_found", outcome: .notFound)
       }
       return reader.renderPerson(
-        person, matters: shown, quotes: reader.quotes(of: person, in: shown), waiting: waiting)
-    case .addToInbox:
+        person, matters: shown, quotes: reader.quotes(of: person, in: shown), waiting: waiting,
+        more: unlisted(all.count, limit, grant))
+    case .addNote, .moveItem, .renameMatter, .markStep:
       return invalid("")
     }
   }
 
   private func matter(
-    _ matterID: String, json: Bool, reader: AgentReader, grant: ActiveGrant, session: UUID
+    _ matterID: String, json: Bool, full: Bool, page: Int = 1,
+    item: (id: String, around: String?)? = nil, reader: AgentReader, grant: ActiveGrant,
+    session: UUID
   ) async -> AgentToolOutput {
     // Outside the grant is the same answer as not existing.
     guard let entry = reader.entry(matterID), let detail = reader.detail(entry.eventID) else {
@@ -297,52 +465,309 @@ public actor AgentAccessService {
     guard allowed.contains(entry.eventID) else {
       return waiting > 0
         ? .failure(AgentCopy.pending, code: "pending", outcome: .pending)
-        : .failure("主人没有同意这个 Agent 读这件事。", code: "denied", outcome: .denied)
+        : .failure("主人没有同意这个 App 读这件事。", code: "denied", outcome: .denied)
     }
-    return reader.renderMatter(detail, json: json)
+    if let item {
+      // One item, with who said it (review 10-5d R8).
+      return reader.renderItem(detail, itemID: item.id, around: item.around, json: json)
+        ?? .failure(AgentCopy.itemNotInMatter, code: "not_found", outcome: .notFound)
+    }
+    return full
+      ? reader.renderMatter(detail, page: page, json: json)
+      : reader.renderBrief(detail, json: json)
   }
 
-  private func propose(
-    arguments: [String: JSONValue], grant: ActiveGrant, session: UUID
-  ) async -> AgentToolOutput {
-    guard grant.terms.canPropose else {
-      return .failure(AgentCopy.proposeNotAllowed, code: "read_only", outcome: .denied)
-    }
-    guard
-      let body = text(
-        arguments["text"], max: AgentTool.maximumInboxTextCharacters, keepLines: true),
-      !body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    else { return invalid("text 需要 1–\(AgentTool.maximumInboxTextCharacters) 个字") }
-    guard let title = text(arguments["title"] ?? "", max: AgentTool.maximumInboxTitleCharacters),
-      let hint = text(arguments["matter_hint"] ?? "", max: AgentTool.maximumMatterHintCharacters)
+  /// The reader limited to `allowed` matters (an older grant that asks
+  /// matter by matter).
+  private func restricted(_ reader: AgentReader, to allowed: Set<String>) -> AgentReader {
+    AgentReader(
+      snapshot: reader.snapshot, inScope: { reader.inScope($0) && allowed.contains($0) },
+      mask: reader.mask)
+  }
+
+  // MARK: - Changes (也可以改)
+
+  /// Why a matter cannot be changed, as the answer the agent gets.
+  private struct Refusal: Error {
+    let output: AgentToolOutput
+  }
+
+  /// A matter a change may touch: in the grant (approved when it asks
+  /// first), and the owner's own (a shared space's matters are read-only
+  /// here, AGENT-004).
+  private func changeable(
+    _ raw: String?, reader: AgentReader, grant: ActiveGrant, session: UUID
+  ) async -> Result<MemoryHomeEntry, Refusal> {
+    guard let raw, !raw.isEmpty, raw.count <= AgentTool.maximumIDCharacters,
+      let entry = reader.entry(raw)
     else {
-      return invalid(
-        "title 最多 \(AgentTool.maximumInboxTitleCharacters) 个字，matter_hint 最多 \(AgentTool.maximumMatterHintCharacters) 个字"
-      )
+      return .failure(
+        Refusal(output: .failure(AgentCopy.notFound, code: "not_found", outcome: .notFound)))
     }
-    guard let identity = sessions[session]?.identity else {
+    guard reader.snapshot.space(of: entry.eventID) == AgentSpaceID.personal else {
+      return .failure(
+        Refusal(
+          output: .failure(AgentCopy.sharedNotChangeable, code: "read_only", outcome: .denied)))
+    }
+    let (allowed, waiting) = await approved(
+      [entry.eventID], snapshot: reader.snapshot, grant: grant, session: session)
+    guard allowed.contains(entry.eventID) else {
+      return .failure(
+        Refusal(
+          output: waiting > 0
+            ? .failure(AgentCopy.pending, code: "pending", outcome: .pending)
+            : .failure(AgentCopy.notFound, code: "not_found", outcome: .notFound)))
+    }
+    return .success(entry)
+  }
+
+  private func change(
+    _ tool: AgentTool, arguments: [String: JSONValue], reader: AgentReader, grant: ActiveGrant,
+    session: UUID
+  ) async -> AgentToolOutput {
+    guard let changes, let identity = sessions[session]?.identity else {
       return .failure(AgentCopy.unavailable, code: "unavailable", outcome: .failed)
     }
-    let proposal = AgentInboxProposal(
-      clientKey: identity.key, clientName: identity.displayName, createdAt: clock(),
-      title: title, text: body, matterHint: hint)
+    let applied: AgentChange
+    let kind: AgentChangeRecord.Kind
+    var matterIDs: [String] = []
+    var itemID: String?
+    let summary: String
+    switch tool {
+    case .addNote:
+      guard
+        let body = text(arguments["text"], max: AgentTool.maximumNoteCharacters, keepLines: true),
+        !body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      else { return invalid("text 需要 1–\(AgentTool.maximumNoteCharacters) 个字") }
+      guard let title = text(arguments["title"] ?? "", max: AgentTool.maximumNoteTitleCharacters)
+      else { return invalid("title 最多 \(AgentTool.maximumNoteTitleCharacters) 个字") }
+      var target: MemoryHomeEntry?
+      if let raw = arguments["matter_id"]?.stringValue, !raw.isEmpty {
+        switch await changeable(raw, reader: reader, grant: grant, session: session) {
+        case .failure(let refusal): return refusal.output
+        case .success(let entry): target = entry
+        }
+      }
+      applied = .addNote(title: title, text: body, matterID: target?.eventID)
+      kind = .addNote
+      matterIDs = target.map { [$0.eventID] } ?? []
+      let shown = title.isEmpty ? String(reader.oneLine(body).prefix(24)) : title
+      summary =
+        "添加“\(shown)”" + (target.map { "到“\(reader.oneLine($0.title))”" } ?? "")
+    case .moveItem:
+      let from: MemoryHomeEntry
+      switch await changeable(
+        arguments["from_matter_id"]?.stringValue, reader: reader, grant: grant, session: session)
+      {
+      case .failure(let refusal): return refusal.output
+      case .success(let entry): from = entry
+      }
+      var to: MemoryHomeEntry?
+      if let raw = arguments["to_matter_id"]?.stringValue, !raw.isEmpty {
+        switch await changeable(raw, reader: reader, grant: grant, session: session) {
+        case .failure(let refusal): return refusal.output
+        case .success(let entry): to = entry
+        }
+        guard to?.eventID != from.eventID else { return invalid("移出和移入是同一件事") }
+      }
+      guard let wanted = text(arguments["item_id"], max: AgentTool.maximumIDCharacters),
+        let item = reader.detail(from.eventID)?.items.first(where: {
+          $0.itemID.caseInsensitiveCompare(wanted) == .orderedSame
+        })
+      else {
+        return .failure(AgentCopy.itemNotInMatter, code: "not_found", outcome: .notFound)
+      }
+      itemID = item.itemID
+      if let to {
+        applied = .correction(
+          .moveItem(itemID: item.itemID, segID: nil, from: from.eventID, to: to.eventID))
+        kind = .moveItem
+        matterIDs = [from.eventID, to.eventID]
+        summary = "将一条原文从“\(reader.oneLine(from.title))”移到“\(reader.oneLine(to.title))”"
+      } else {
+        applied = .correction(.takeOut(itemID: item.itemID, segID: nil, from: from.eventID))
+        kind = .takeOut
+        matterIDs = [from.eventID]
+        summary = "将一条原文移出“\(reader.oneLine(from.title))”"
+      }
+    case .renameMatter:
+      let entry: MemoryHomeEntry
+      switch await changeable(
+        arguments["matter_id"]?.stringValue, reader: reader, grant: grant, session: session)
+      {
+      case .failure(let refusal): return refusal.output
+      case .success(let found): entry = found
+      }
+      guard let title = text(arguments["title"], max: AgentTool.maximumMatterTitleCharacters),
+        !title.isEmpty
+      else { return invalid("title 需要 1–\(AgentTool.maximumMatterTitleCharacters) 个字") }
+      guard title != entry.title else {
+        return AgentToolOutput(
+          text: "名字本来就是这个，没有改。", structured: ["changed": false], matterIDs: [entry.eventID])
+      }
+      applied = .correction(.rename(eventID: entry.eventID, from: entry.title, to: title))
+      kind = .renameMatter
+      matterIDs = [entry.eventID]
+      summary = "将“\(reader.oneLine(entry.title))”重新命名为“\(title)”"
+    case .markStep:
+      let entry: MemoryHomeEntry
+      switch await changeable(
+        arguments["matter_id"]?.stringValue, reader: reader, grant: grant, session: session)
+      {
+      case .failure(let refusal): return refusal.output
+      case .success(let found): entry = found
+      }
+      guard let stepID = text(arguments["step_id"], max: AgentTool.maximumIDCharacters),
+        let step = reader.steps(entry.eventID)?.step(stepID)
+      else { return .failure(AgentCopy.stepNotFound, code: "not_found", outcome: .notFound) }
+      let wanted = arguments["state"]?.stringValue ?? "done"
+      guard let state = UserStepOverride.State(rawValue: wanted) else {
+        return invalid("state 只能是 done 或 settled")
+      }
+      if state == .settled, !step.isOpenQuestion {
+        return invalid("只有待定的问题能标为已经定了（settled）；这一步用 done")
+      }
+      if state == .done, step.isOpenQuestion {
+        return invalid("这是一个待定的问题，用 state=settled")
+      }
+      let previous = reader.snapshot.user.override(eventID: entry.eventID, stepID: step.id)?.state
+      guard previous != state, !(state == .done && step.isDone && previous == nil) else {
+        return AgentToolOutput(
+          text: "这一步已经是这样了，没有改。", structured: ["changed": false], matterIDs: [entry.eventID])
+      }
+      applied = .correction(
+        .markStep(eventID: entry.eventID, stepID: step.id, state: state, previous: previous))
+      kind = .markStep
+      matterIDs = [entry.eventID]
+      summary =
+        "将“\(reader.oneLine(step.text))”标记为\(state == .done ? "完成" : "已确定")（“\(reader.oneLine(entry.title))”）"
+    default:
+      return invalid("")
+    }
+    let made: String?
     do {
-      try await records.addAgentProposal(proposal)
+      made = try await changes.apply(applied, client: identity)
     } catch {
-      return .failure(AgentCopy.unavailable, code: "unavailable", outcome: .failed)
+      return .failure("没有改成；Mindloom 里什么都没变。", code: "failed", outcome: .failed)
     }
-    await consent.proposalArrived(proposal)
-    let id = proposal.proposalID.uuidString.lowercased()
+    let payload: JSONValue
+    switch applied {
+    case .addNote(_, _, let matterID):
+      itemID = made
+      payload = [
+        "item_id": made.map(JSONValue.string) ?? .null,
+        "matter_id": matterID.map(JSONValue.string) ?? .null,
+      ]
+    case .correction(let correction):
+      payload = (try? JSONEncoder().encode(correction)).flatMap { try? JSONValue.parse($0) } ?? [:]
+    }
+    let record = AgentChangeRecord(
+      at: clock(), clientKey: identity.key, clientName: identity.displayName,
+      grantID: grant.grantID, kind: kind, matterIDs: matterIDs, itemID: itemID,
+      payload: payload.serialized, summary: String(summary.prefix(200)))
+    try? await records.appendAgentChange(record)
+    await memory.invalidate()
+    await consent.changeMade(record)
+    var structured: [String: JSONValue] = [
+      "changed": true, "change_id": .string(record.changeID.uuidString.lowercased()),
+      "kind": .string(kind.rawValue), "matter_ids": .strings(matterIDs),
+    ]
+    if let itemID { structured["item_id"] = .string(itemID) }
     return AgentToolOutput(
-      text: AgentCopy.proposed + "（建议 id：\(id)）",
-      structured: ["proposal_id": .string(id), "state": "pending"], matterIDs: [])
+      text: AgentCopy.changed + (itemID.map { "（条目 id：\($0)）" } ?? ""),
+      structured: .object(structured), matterIDs: matterIDs)
+  }
+
+  // MARK: - Limits (F7)
+
+  /// True when the grant has used its hour for this kind of call; the owner
+  /// is told once per pause.
+  private func overLimit(_ grantID: UUID, tool: AgentTool, session: UUID) async -> Bool {
+    let limits = configuration.limits
+    let now = clock()
+    var current = usage[grantID] ?? Usage()
+    let since = now.addingTimeInterval(-limits.window)
+    current.reads.removeAll { $0.at < since }
+    current.notes.removeAll { $0 < since }
+    current.changes.removeAll { $0 < since }
+    current.listings.removeAll { $0 < since }
+    let over: Bool
+    switch tool {
+    case .addNote: over = current.notes.count >= limits.notesPerHour
+    case .moveItem, .renameMatter, .markStep: over = current.changes.count >= limits.changesPerHour
+    default:
+      over =
+        current.reads.reduce(0) { $0 + $1.matters } >= limits.mattersPerHour
+        || current.reads.reduce(0) { $0 + $1.bytes } >= limits.bytesPerHour
+    }
+    var tell = false
+    if over, current.toldAt.map({ $0 < since }) ?? true {
+      current.toldAt = now
+      tell = true
+    }
+    usage[grantID] = current
+    if tell, let name = sessions[session]?.identity.displayName {
+      await consent.limitReached(clientName: name)
+    }
+    return over
+  }
+
+  /// True when the grant has listed resources `listingsPerHour` times in
+  /// the rolling hour. The owner is not told: a client lists at its own
+  /// start, not because anyone asked for something.
+  private func overListingLimit(_ grantID: UUID) -> Bool {
+    let since = clock().addingTimeInterval(-configuration.limits.window)
+    usage[grantID, default: Usage()].listings.removeAll { $0 < since }
+    return (usage[grantID]?.listings.count ?? 0) >= configuration.limits.listingsPerHour
+  }
+
+  private func account(_ grantID: UUID, tool: AgentTool?, matters: Int, bytes: Int) {
+    let now = clock()
+    switch tool {
+    case .addNote: usage[grantID, default: Usage()].notes.append(now)
+    case .moveItem, .renameMatter, .markStep: usage[grantID, default: Usage()].changes.append(now)
+    default: usage[grantID, default: Usage()].reads.append((now, matters, bytes))
+    }
   }
 
   // MARK: - Resources
 
-  private func listResources(id: JSONValue, session: UUID) async -> JSONValue {
+  /// `resources/list` (MCP resources are application-driven: Claude Code
+  /// lists them at every start for its @-mention picker and follows
+  /// `nextCursor` by itself). Listing never asks (as `tools/list`): before a
+  /// grant the list is empty and nothing is recorded, so no card appears
+  /// before anyone asked for anything (v12 end-to-end check). With a grant,
+  /// one page of titles and ids, most recent first, at most
+  /// `listMaximum` over all pages; each page is audited and counted against
+  /// `listingsPerHour`, never against the content quota (AGENT-TOOLS.md).
+  private func listResources(id: JSONValue, params: JSONValue?, session: UUID) async -> JSONValue {
+    if let current = sessions[session], current.once == nil,
+      case .some(.none) = await storedGrant(for: current.identity)
+    {
+      return MCPMessage.result(id: id, AgentOfflineResponder.emptyResourceList)
+    }
     switch await authorize(session: session) {
     case .granted(let grant):
+      var position: (offset: Int, after: String)?
+      if let raw = params?["cursor"], raw != .null {
+        guard let cursor = raw.stringValue, let found = AgentResource.position(of: cursor),
+          found.offset <= configuration.listMaximum
+        else {
+          await audit(
+            session: session, grant: grant.grantID, tool: "resources/list", outcome: .invalid,
+            ids: [], bytes: 0)
+          return MCPMessage.error(
+            id: id, code: MCPErrorCode.invalidParams, message: AgentCopy.invalidCursor)
+        }
+        position = found
+      }
+      if overListingLimit(grant.grantID) {
+        await audit(
+          session: session, grant: grant.grantID, tool: "resources/list", outcome: .limited,
+          ids: [], bytes: 0)
+        return MCPMessage.error(
+          id: id, code: MCPErrorCode.notAllowed, message: AgentCopy.listingLimited)
+      }
       guard let snapshot = await memory.agentSnapshot() else {
         await audit(
           session: session, grant: grant.grantID, tool: "resources/list", outcome: .failed, ids: [],
@@ -357,20 +782,34 @@ public actor AgentAccessService {
         let decisions = await decisions(grant: grant, session: session)
         entries = entries.filter { decisions[$0.eventID.uppercased()] == true }
       }
-      entries = Array(entries.prefix(AgentResource.maximumListed))
-      let result = reader.resourceList(entries)
+      entries = Array(entries.prefix(configuration.listMaximum))
+      // The page starts after the last matter the cursor named while it is
+      // still listed (stable when a matter moved up), else at its offset.
+      var start = position?.offset ?? 0
+      if let after = position?.after,
+        let index = entries.firstIndex(where: {
+          $0.eventID.caseInsensitiveCompare(after) == .orderedSame
+        })
+      {
+        start = index + 1
+      }
+      start = min(start, entries.count)
+      let end = min(start + configuration.listPageSize, entries.count)
+      let page = Array(entries[start..<end])
+      let next = page.last.flatMap {
+        end < entries.count ? AgentResource.cursor(offset: end, after: $0.eventID) : nil
+      }
+      let result = reader.resourceList(page, nextCursor: next)
+      let bytes = result.serializedData.count
+      usage[grant.grantID, default: Usage()].listings.append(clock())
       await audit(
         session: session, grant: grant.grantID, tool: "resources/list", outcome: .allowed,
-        ids: entries.map(\.eventID), bytes: result.serializedData.count)
+        ids: page.map(\.eventID), bytes: bytes)
       return MCPMessage.result(id: id, result)
     case .denied:
-      await audit(
-        session: session, grant: nil, tool: "resources/list", outcome: .denied, ids: [], bytes: 0)
-      return MCPMessage.error(id: id, code: MCPErrorCode.notAllowed, message: AgentCopy.denied)
+      return MCPMessage.result(id: id, AgentOfflineResponder.emptyResourceList)
     case .pending:
-      await audit(
-        session: session, grant: nil, tool: "resources/list", outcome: .pending, ids: [], bytes: 0)
-      return MCPMessage.error(id: id, code: MCPErrorCode.notAllowed, message: AgentCopy.pending)
+      return MCPMessage.result(id: id, AgentOfflineResponder.emptyResourceList)
     case .unavailable:
       await audit(
         session: session, grant: nil, tool: "resources/list", outcome: .failed, ids: [], bytes: 0)
@@ -389,13 +828,15 @@ public actor AgentAccessService {
     }
     let output: AgentToolOutput
     var grantID: UUID?
-    switch await authorize(session: session) {
+    switch await authorize(session: session, matterHint: matterID) {
     case .granted(let grant):
       grantID = grant.grantID
-      if let snapshot = await memory.agentSnapshot() {
+      if await overLimit(grant.grantID, tool: .getMatter, session: session) {
+        output = .failure(AgentCopy.limited, code: "limited", outcome: .limited)
+      } else if let snapshot = await memory.agentSnapshot() {
         let answer = await matter(
-          matterID, json: false, reader: reader(snapshot, grant: grant), grant: grant,
-          session: session)
+          matterID, json: false, full: false, reader: reader(snapshot, grant: grant),
+          grant: grant, session: session)
         output =
           await stillGranted(grant, session: session)
           ? answer : .failure(AgentCopy.denied, code: "denied", outcome: .denied)
@@ -425,15 +866,19 @@ public actor AgentAccessService {
         ]
       ]
     ]
+    let bytes = output.contentBytes
+    if let grantID { account(grantID, tool: .getMatter, matters: 1, bytes: bytes) }
     await audit(
       session: session, grant: grantID, tool: "resources/read", outcome: .allowed,
-      ids: output.matterIDs, bytes: result.serializedData.count)
+      ids: output.matterIDs, bytes: bytes)
     return MCPMessage.result(id: id, result)
   }
 
   // MARK: - Grants
 
-  private func authorize(session sessionID: UUID) async -> Authorization {
+  private func authorize(
+    session sessionID: UUID, matterHint: String? = nil, wantsToChange: Bool = false
+  ) async -> Authorization {
     guard let session = sessions[sessionID] else { return .denied }
     let identity = session.identity
     if let once = session.once {
@@ -452,7 +897,15 @@ public actor AgentAccessService {
       sessions[sessionID]?.denied = true
       return .denied
     }
-    let task = consentTask(for: identity, session: sessionID)
+    // One open card per name (F7): another program calling itself the same
+    // waits instead of stacking cards.
+    if consentTasks[identity.key] == nil,
+      consentNames.contains(where: { $0.key != identity.key && $0.value == identity.displayName })
+    {
+      return .pending
+    }
+    let task = consentTask(
+      for: identity, session: sessionID, matterHint: matterHint, wantsToChange: wantsToChange)
     guard let answer = await waitWithTimeout(task) else {
       return sessions[sessionID]?.denied == true ? .denied : .pending
     }
@@ -470,6 +923,28 @@ public actor AgentAccessService {
       case .none: return .unavailable
       case .some(.none): return .pending
       }
+    }
+  }
+
+  /// The session's current grant allows changes (checked without asking).
+  private func mayChange(_ sessionID: UUID) async -> Bool {
+    guard let session = sessions[sessionID] else { return false }
+    if let once = session.once { return once.terms.canChange }
+    if case .some(.some(let grant)) = await storedGrant(for: session.identity) {
+      return grant.terms.canChange
+    }
+    return false
+  }
+
+  /// Tells each client that listed tools when what it may do changed
+  /// (`notifications/tools/list_changed`), so it lists them again.
+  private func refreshListedTools() async {
+    for (id, session) in sessions {
+      guard let listed = session.listedChanges else { continue }
+      let now = await mayChange(id)
+      guard now != listed else { continue }
+      sessions[id]?.listedChanges = now
+      session.push?(MCPMessage.notification(method: "notifications/tools/list_changed").serialized)
     }
   }
 
@@ -495,6 +970,12 @@ public actor AgentAccessService {
         await removeGrant(record.grantID)
         continue
       }
+      // v11 shows no ropes: an old rope grant covers nothing, so it is no
+      // grant at all; it is removed and the owner is asked again (fix-mac).
+      if case .ropes = record.terms.range {
+        await removeGrant(record.grantID)
+        continue
+      }
       let secret: Data?
       do { secret = try secrets.secret(for: record.grantID) } catch { return nil }
       guard let secret else {
@@ -514,26 +995,46 @@ public actor AgentAccessService {
     return .some(nil)
   }
 
-  private func consentTask(for identity: AgentClientIdentity, session: UUID)
+  private func consentTask(
+    for identity: AgentClientIdentity, session: UUID, matterHint: String? = nil,
+    wantsToChange: Bool = false
+  )
     -> Task<AgentConsentAnswer?, Never>
   {
     if let existing = consentTasks[identity.key] { return existing }
     let presenter = consent
     let memory = memory
+    let records = records
     let now = clock()
     let task = Task<AgentConsentAnswer?, Never> { [weak self] in
       let snapshot = await memory.agentSnapshot()
       let options = AgentConsentOptions(
         spaces: snapshot?.spaces ?? [.personal], ropes: snapshot?.ropes ?? [],
-        matters: (snapshot?.projection.home() ?? []).prefix(60).map {
+        matters: (snapshot?.projection.home() ?? []).filter {
+          snapshot?.space(of: $0.eventID) == AgentSpaceID.personal
+        }.prefix(60).map {
           AgentMatterOption(id: $0.eventID, title: $0.title)
         })
+      // The matter the first call names (get_matter, a change, a resource),
+      // so the owner is asked about that one (v11 「让 … 读「…」？」).
+      let requested = matterHint.flatMap { hint in
+        snapshot?.projection.home().first {
+          $0.eventID.caseInsensitiveCompare(hint) == .orderedSame
+        }.map { AgentMatterOption(id: $0.eventID, title: $0.title) }
+      }
+      // Another program allowed before under the same name (F3).
+      let lookalike = ((try? await records.agentGrants()) ?? []).first {
+        $0.clientName == identity.displayName && $0.clientKey != identity.key
+      }.map { AgentLookalike(name: $0.clientName, path: $0.clientPath) }
       let answer = await presenter.requestConsent(
-        AgentConsentRequest(client: identity, options: options, requestedAt: now))
+        AgentConsentRequest(
+          client: identity, options: options, requestedAt: now, requestedMatter: requested,
+          lookalike: lookalike, wantsToChange: wantsToChange))
       await self?.apply(answer, identity: identity, session: session)
       return answer
     }
     consentTasks[identity.key] = task
+    consentNames[identity.key] = identity.displayName
     return task
   }
 
@@ -541,6 +1042,7 @@ public actor AgentAccessService {
     async
   {
     consentTasks[identity.key] = nil
+    consentNames[identity.key] = nil
     switch answer {
     case .none, .some(.deny):
       deniedAt[identity.key] = clock()
@@ -555,6 +1057,7 @@ public actor AgentAccessService {
         // Nothing half-made stays: the next call asks again.
       }
     }
+    await refreshListedTools()
     await consent.accessChanged()
   }
 
@@ -595,6 +1098,7 @@ public actor AgentAccessService {
   private func removeGrant(_ grantID: UUID) async {
     try? secrets.delete(for: grantID)
     try? await records.deleteAgentGrant(grantID)
+    usage[grantID] = nil
   }
 
   /// The task's value, or nil when it takes longer than the consent
@@ -677,7 +1181,7 @@ public actor AgentAccessService {
     await consent.accessChanged()
   }
 
-  // MARK: - Management (Settings → Agent)
+  // MARK: - Management (Settings › 其他 App)
 
   public func grants() async -> [GrantSummary] {
     var result: [GrantSummary] = []
@@ -701,14 +1205,48 @@ public actor AgentAccessService {
     return result.sorted { $0.createdAt > $1.createdAt }
   }
 
-  /// 撤销: the secret and the scope record go; the next call from that
+  /// The programs connected right now, by client key (for Settings: who is
+  /// talking to Mindloom, signed by whom, from where).
+  public func connectedClients() -> [AgentClientIdentity] {
+    var seen = Set<String>()
+    return sessions.values.map(\.identity).filter {
+      $0.name != "unknown" && seen.insert($0.key).inserted
+    }
+  }
+
+  /// 停止允许: the secret and the scope record go; the next call from that
   /// client finds no grant.
   public func revoke(_ grantID: UUID) async {
     for (id, session) in sessions where session.once?.grantID == grantID {
       sessions[id]?.once = nil
     }
     await removeGrant(grantID)
+    await refreshListedTools()
     await consent.accessChanged()
+  }
+
+  /// 停止允许 for every grant of one client (the per-App page's button).
+  public func revokeAll(clientKey: String) async {
+    for (id, session) in sessions where session.identity.key == clientKey {
+      sessions[id]?.once = nil
+    }
+    for record in (try? await records.agentGrants()) ?? [] where record.clientKey == clientKey {
+      await removeGrant(record.grantID)
+    }
+    await refreshListedTools()
+    await consent.accessChanged()
+  }
+
+  /// Every matter's words as the search reads them for a grant that shows
+  /// numbers, over the whole library: what the App's background warm-up of
+  /// the agents' meaning vectors embeds (`AgentRecordSearch.warmMeaning`).
+  /// Never sent to an agent; a grant reads only its own scope, masked as it
+  /// says, and a masked piece has its own key.
+  public func meaningDocuments() async -> [AgentSearchDocument] {
+    guard let snapshot = await memory.agentSnapshot() else { return [] }
+    let reader = AgentReader(
+      snapshot: snapshot, inScope: { _ in true }, mask: AgentTextMask(masker: nil))
+    return reader.searchDocuments(space: nil)
   }
 
   // MARK: - Helpers
@@ -722,17 +1260,33 @@ public actor AgentAccessService {
         return true
       case .matters(let ids):
         return ids.contains { $0.caseInsensitiveCompare(matterID) == .orderedSame }
-      case .ropes(let ids):
-        return snapshot.ropeChain(of: matterID).contains { ids.contains($0.id) }
+      case .ropes:
+        // v11 shows no ropes: an old rope grant covers nothing.
+        return false
+      case .groups(let ids):
+        guard let group = snapshot.groupOfMatter[matterID.uppercased()] else { return false }
+        return ids.contains { $0.caseInsensitiveCompare(group) == .orderedSame }
       }
     }
     let masker = terms.showNumbers ? nil : try? PrivacyMasker(maskKey: grant.maskKey)
+    // What this grant's key masked before is kept (review v12-B #10).
+    let memo = masker.map { _ in maskMemo(grant.maskKey) }
+    memo?.beginUse()
     var reader = AgentReader(
-      snapshot: snapshot, inScope: inScope, mask: AgentTextMask(masker: masker))
+      snapshot: snapshot, inScope: inScope, mask: AgentTextMask(masker: masker, memo: memo))
     // A split recording names its other matters only when they are in scope,
     // and never when each new matter first waits for the owner (V7-A1).
     reader.showSibling = terms.askForNewMatters ? { _ in false } : inScope
     return reader
+  }
+
+  /// The masked texts of one mask key (one per grant), at most a few kept.
+  private func maskMemo(_ key: Data) -> AgentGenerationCache<String> {
+    if let memo = maskMemos[key] { return memo }
+    if maskMemos.count >= 4 { maskMemos.removeAll() }
+    let memo = AgentGenerationCache<String>(budget: 16_000_000)
+    maskMemos[key] = memo
+    return memo
   }
 
   private func audit(
@@ -748,8 +1302,25 @@ public actor AgentAccessService {
     await consent.accessChanged()
   }
 
+  /// `limit` of the list tools; nil when it is out of range.
+  private func listLimit(_ arguments: [String: JSONValue]) -> Int? {
+    integer(
+      arguments["limit"], in: 1...AgentTool.maximumListLimit, default: AgentTool.defaultListLimit)
+  }
+
+  private var listLimitInvalid: AgentToolOutput {
+    invalid("limit 需要在 1–\(AgentTool.maximumListLimit) 之间")
+  }
+
+  /// Rows a `limit` left out, said under the list; not said to a grant that
+  /// asks matter by matter, whose refused matters are not even counted
+  /// (V7-A4).
+  private func unlisted(_ total: Int, _ limit: Int, _ grant: ActiveGrant) -> Int {
+    grant.terms.askForNewMatters ? 0 : max(0, total - limit)
+  }
+
   private func invalid(_ message: String) -> AgentToolOutput {
-    .failure(message.isEmpty ? "参数不对" : message, code: "invalid_arguments", outcome: .invalid)
+    .failure(message.isEmpty ? "参数有误" : message, code: "invalid_arguments", outcome: .invalid)
   }
 
   /// A string argument, trimmed, without control characters (line breaks
@@ -763,6 +1334,14 @@ public actor AgentAccessService {
     let cleaned = String(String.UnicodeScalarView(scalars)).trimmingCharacters(
       in: keepLines ? .whitespacesAndNewlines : .whitespaces)
     return cleaned.count <= max ? cleaned : nil
+  }
+
+  /// An optional string argument: `.some(nil)` when it is absent or empty,
+  /// nil when it is not a string or too long.
+  private func optionalText(_ value: JSONValue?, max: Int) -> String?? {
+    guard let value, value != .null else { return .some(nil) }
+    guard let cleaned = text(value, max: max) else { return nil }
+    return .some(cleaned.isEmpty ? nil : cleaned)
   }
 
   private func integer(_ value: JSONValue?, in range: ClosedRange<Int>, default fallback: Int)

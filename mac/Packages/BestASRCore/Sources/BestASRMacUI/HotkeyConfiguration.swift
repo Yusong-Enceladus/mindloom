@@ -187,6 +187,20 @@ public actor GlobalHotkeyConfigurationController {
 
   public func activeConfiguration() -> DictationHotkeyConfiguration? { active }
 
+  /// Saves `configuration` as the one to use without registering it (fn may
+  /// not be armed now); `refreshActiveRegistration()` registers it later.
+  public func remember(_ configuration: DictationHotkeyConfiguration) async throws {
+    try await store.save(configuration)
+    active = configuration
+  }
+
+  /// Takes the shortcut off the system (the event tap goes when nothing is
+  /// bound) without forgetting it; `refreshActiveRegistration()` puts it
+  /// back. Used while another App holds fn, or with 「按住 fn 说话」 off.
+  public func suspend() async {
+    await provider.unregister(action: .startOrEnd)
+  }
+
   public func refreshActiveRegistration() async -> HotkeyConfigurationResult {
     let configuration: DictationHotkeyConfiguration
     if let active {

@@ -424,7 +424,13 @@ public final class AudioJournal {
     _ entry: AudioJournalChunkEntry,
     tracks: [AudioJournalTrack]
   ) -> Bool {
-    entry.relativePath == "chunks/\(entry.trackID)-\(entry.sequence).pcm"
+    // `.pcm` as captured; `.lossless.caf` or `.caf` once a sealed recording
+    // is kept losslessly or as Opus (BestASRAudioJournal's
+    // SourceAudioArchival). The name still has to be the track and sequence,
+    // so an entry can only describe its own file.
+    [".pcm", ".lossless.caf", ".caf"].contains {
+      entry.relativePath == "chunks/\(entry.trackID)-\(entry.sequence)\($0)"
+    }
       && tracks.contains(where: { $0.trackID == entry.trackID })
       && entry.sampleRateHertz > 0
       && entry.frameCount > 0

@@ -36,6 +36,80 @@ final class InboxItemPayloadTests: XCTestCase {
     )
   }
 
+  /// WATCH-005: a recording from Apple Watch reaches the Mac as text whose `source` is one every
+  /// Mac since v11 knows ("iPhone 口述"), with `origin` "Apple Watch", which a Mac from v12 on
+  /// shows as the source.
+  func testWatchTextKeepsAKnownSourceAndCarriesItsOrigin() throws {
+    let payload = try InboxItemPayload.text(
+      "合成：下周一交周报。", source: .voice, origin: .appleWatch, createdAt: fixedDate,
+      timeZone: shanghai)
+    let object = try json(payload)
+    XCTAssertEqual(object["source"] as? String, "iPhone 口述")
+    XCTAssertEqual(object["origin"] as? String, "Apple Watch")
+    let decoded = try InboxItemPayload.decode(payload.encoded())
+    XCTAssertEqual(decoded, payload)
+    XCTAssertEqual(decoded.shownSource, "Apple Watch")
+    XCTAssertEqual(
+      try InboxItemPayload.text("合成", source: .keyboard, createdAt: fixedDate).shownSource,
+      "iPhone 键盘")
+    XCTAssertEqual(
+      InboxItemSource.allCases.map(\.rawValue), ["iPhone 键盘", "iPhone 分享", "iPhone 口述"],
+      "a phone only ever sends the names every Mac since v11 knows")
+  }
+
+  /// Regression (review of the Apple Watch stream, 10-06): a Mac before v12 decoded `source` as a
+  /// closed list, and an entry with a name it did not know failed to decode, was acknowledged as
+  /// unusable and so deleted from the organizing device for good. A watch payload must decode with
+  /// exactly that older decoder (unknown keys are skipped), under a source it knows.
+  func testAMacBeforeV12OpensAnAppleWatchEntry() throws {
+    struct V11Payload: Decodable {
+      enum Source: String, Decodable {
+        case keyboard = "iPhone 键盘"
+        case share = "iPhone 分享"
+        case voice = "iPhone 口述"
+      }
+      let v: Int
+      let kind: InboxItemKind
+      let source: Source
+      let createdAt: String
+      let text: String?
+
+      enum CodingKeys: String, CodingKey {
+        case v, kind, source, text
+        case createdAt = "created_at"
+      }
+    }
+    let payload = try InboxItemPayload.text(
+      "合成：周五前回邮件。", source: .voice, origin: .appleWatch, createdAt: fixedDate,
+      timeZone: shanghai)
+    let old = try JSONDecoder().decode(V11Payload.self, from: payload.encoded())
+    XCTAssertEqual(old.source, .voice)
+    XCTAssertEqual(old.text, "合成：周五前回邮件。")
+  }
+
+  /// A Mac from v12 on opens an entry whose source it does not know and shows that name, instead
+  /// of deleting it (the Mac path: `IntakeInboxIngestor.open` decodes with `decode`).
+  func testAnUnknownSourceIsKeptAsItsName() throws {
+    let entry: [String: Any] = [
+      "v": 1, "kind": "text", "source": "iPad 口述", "created_at": "2026-09-30T09:15:02+08:00",
+      "text": "合成",
+    ]
+    let decoded = try decode(entry)
+    XCTAssertEqual(decoded.source.rawValue, "iPad 口述")
+    XCTAssertNil(decoded.origin)
+    XCTAssertEqual(decoded.shownSource, "iPad 口述")
+    XCTAssertEqual(
+      try decode(entry.merging(["origin": "Apple Watch Ultra"]) { $1 }).shownSource,
+      "Apple Watch Ultra")
+    for bad in ["", "   ", "a\nb", "a\u{0007}", String(repeating: "长", count: 65)] {
+      assertThrows(Failure.invalidSource) { try self.decode(entry.merging(["source": bad]) { $1 }) }
+      assertThrows(Failure.invalidSource) { try self.decode(entry.merging(["origin": bad]) { $1 }) }
+    }
+    XCTAssertNoThrow(
+      try decode(entry.merging(["source": String(repeating: "长", count: 64)]) { $1 }))
+    assertThrows(Failure.malformedJSON) { try self.decode(entry.merging(["source": 7]) { $1 }) }
+  }
+
   func testLinkPayloadKeepsURLAndTitleAndIsNeverFetched() throws {
     let url = URL(string: "https://example.com/a/b?c=1")!
     let payload = try InboxItemPayload.link(
@@ -183,9 +257,10 @@ final class InboxItemPayloadTests: XCTestCase {
     assertThrows(Failure.unexpectedField("url")) {
       try self.decode(base.merging(["url": "https://example.com"]) { $1 })
     }
-    assertThrows(Failure.malformedJSON) {
-      try self.decode(base.merging(["source": "Android"]) { $1 })
-    }
+    // An unknown source is a name (see `testAnUnknownSourceIsKeptAsItsName`); an unknown kind
+    // still is not.
+    XCTAssertEqual(
+      try decode(base.merging(["source": "Android"]) { $1 }).source.rawValue, "Android")
     assertThrows(Failure.malformedJSON) {
       try self.decode(base.merging(["kind": "audio"]) { $1 })
     }

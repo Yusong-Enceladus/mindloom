@@ -92,4 +92,35 @@ expect_failure "missing-required-audio-input-entitlement" \
   --info-plist "$repository_root/App/Info.plist" \
   --entitlements "$repository_root/Tests/Fixtures/Permissions/MissingRequired.entitlements"
 
-print "permission lint fixtures passed: valid plus 12 fail-closed mutations"
+# The opt-in keychain-group variant: the base entitlements plus exactly one
+# keychain-access-groups array. Dropping a base key or adding another fails.
+variant_arguments=(
+  --manifest "$repository_root/config/permissions.json"
+  --project "$repository_root/project.yml"
+  --info-plist "$repository_root/App/Info.plist"
+  --entitlements "$repository_root/App/BestASR.entitlements"
+)
+cp "$repository_root/App/BestASR-KeychainGroup.entitlements" "$result_root/variant-no-audio.entitlements"
+plutil -remove "com\.apple\.security\.device\.audio-input" "$result_root/variant-no-audio.entitlements"
+expect_failure "variant-missing-audio-input" "${variant_arguments[@]}" \
+  --variant-entitlements "$result_root/variant-no-audio.entitlements"
+cp "$repository_root/App/BestASR-KeychainGroup.entitlements" "$result_root/variant-extra.entitlements"
+plutil -insert "com\.apple\.security\.network\.client" -bool true "$result_root/variant-extra.entitlements"
+expect_failure "variant-extra-key" "${variant_arguments[@]}" \
+  --variant-entitlements "$result_root/variant-extra.entitlements"
+cp "$repository_root/App/BestASR.entitlements" "$result_root/variant-no-group.entitlements"
+expect_failure "variant-without-group" "${variant_arguments[@]}" \
+  --variant-entitlements "$result_root/variant-no-group.entitlements"
+
+# The release script must not pass the signing settings on the command line (they
+# would override every target, the sandboxed share extension included).
+{ cat "$repository_root/script/build_release.sh"; print '    CODE_SIGN_ENTITLEMENTS=App/BestASR-KeychainGroup.entitlements'; } \
+  > "$result_root/release-override.sh"
+expect_failure "release-entitlements-override" "${variant_arguments[@]}" \
+  --release-script "$result_root/release-override.sh"
+{ cat "$repository_root/script/build_release.sh"; print '    PROVISIONING_PROFILE_SPECIFIER=X'; } \
+  > "$result_root/release-profile.sh"
+expect_failure "release-profile-override" "${variant_arguments[@]}" \
+  --release-script "$result_root/release-profile.sh"
+
+print "permission lint fixtures passed: valid plus 17 fail-closed mutations"

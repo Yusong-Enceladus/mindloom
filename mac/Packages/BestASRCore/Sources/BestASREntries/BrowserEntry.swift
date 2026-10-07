@@ -11,7 +11,7 @@ import MindloomAgentProtocol
 /// extension's ID, no library data.
 public struct BrowserHostManifest: Sendable {
   public static let fileName = BrowserExtension.hostName + ".json"
-  public static let description = "织机「收进织机」的本机连接（不联网）"
+  public static let description = "Mindloom“添加到 Mindloom”的本机连接"
 
   /// Chrome's `NativeMessagingHosts` folder for this user.
   public let directory: URL

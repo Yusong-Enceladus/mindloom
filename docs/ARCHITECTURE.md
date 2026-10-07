@@ -212,6 +212,15 @@ flowchart TB
 
 Agent（Claude Code、Claude Desktop、Codex、Cursor…）启动 App 自带的 `mindloom-mcp`，它只经数据目录里本用户私有的 Unix socket 把 MCP 消息转给正在运行的 App；App 每次调用都当场查授权（空间、范围、期限、号码遮挡，第一次要你同意），在范围内作答，默认遮号，写一行不含内容的记录。共享空间里的事单独标着空间，只给授权了那个空间的 Agent，读到时往那个空间的日志写一条只有数量的 `agent.access`。Spark 不参与。
 
+## 决赛更新：v11、v12 的新增部分（Mac 与 iPhone）
+
+- **Mac 界面**原生重写，设计规则在两端共用的 `mac/Packages/MindloomDesign`；App 的 Bundle ID 是 `app.mindloom`。「Mindloom Preview」构建配置默认打开合成演示资料库，不回退到真实资料库。
+- **Apple Watch → iPhone → Mac**：手表只录音（`mac/iOS/Watch`，没有网络代码），录音经 WatchConnectivity 交给 iPhone；`MindloomWatchHandoff` 的 `WatchRecordingInbox` 核对大小和 SHA-256 后原样存进 App 私有储存，iPhone 回报「已保存原件」之后手表才删它的那份；iPhone 在本机识别，文字像口述一样封好放进发件箱送到 Mac，来源显示「Apple Watch」。原件留在 iPhone 上，不经 Spark。
+- **两个默认关闭的出口**（Mac 上会碰到你的数据的两个对外出口，都默认关闭；另外模型下载和手动检查更新也会联网，它们不带任何用户内容，由用户自己发起；其余都只在本机或到你自己的 Spark）：腾讯会议入口用 App 自带的 tmeet（固定源码加三个补丁，环境从零构造，只运行固定的几条命令），把你自己的转写取回来，一条一条走和粘贴相同的收进路径；「从网络补充信息」（`MindloomLookup`）只有一个出网口 `LookupEgress`，每次请求和跳转之前先看开关，查询词由代码拼出并先过本机的出网检查，只去公开来源或你填了密钥的搜索服务。
+- **按意思找**：`BestASRMemory/Search` 把一条记录的文字切块，用本机向量模型建索引（派生数据，不进完整导出），和按字的结果合并，含全部所打词语的记录在前。
+- **口述的资源**：`ModelResidencyPolicy` 定模型何时放掉，口述时只留识别模型，逐句时间由 `deferWordAlignment` 之后补做；`DictationMetricsStore` 记每次口述的阶段耗时（只有数字，在本机）。
+- **录音存储**：先保留录下时的原样；任务做完后留 16 kHz 16 位的主文件，30 天后压成无损（`BestASRAudioJournal/RetainedAudioCodec`、`SourceAudioCompaction`）。
+
 ## 设计了但没实现或没接入
 
 | 状态 | 内容 |
@@ -220,6 +229,9 @@ Agent（Claude Code、Claude Desktop、Codex、Cursor…）启动 App 自带的 
 | 只在实验分支 | **event-merge 和离线合并碎片**：没有合入；运行时里收拾碎片的是 event-consolidate |
 | 占位 | **recall** 不在路由表里，不用模型，只在标题和进展里做关键词匹配 |
 | 未实测 | **iPhone App** 只在 iOS 模拟器上跑过，没在真 iPhone 上跑过；以前的快捷指令路径没法封存，已停用 |
+| 未实测 | **Apple Watch App** 只在模拟器和包测试里验证过（交接、重发、续录），真手表的麦克风录音和交接没有验证 |
+| 未接入 | **从网络补充信息**：模块、设置页和网络活动记录在 Mac 里；调用它的整理步骤（发现缺什么、提问）在整理核心的另一条分支，不在这份导出里，所以 App 现在不会自己去查 |
+| 没实现 | **设备之间的同步**：手表和 iPhone 录的音留在 iPhone 上，Mac 自己录的音频不离开 Mac；跨设备同步的方案还没有做 |
 | 两端对不上 | **GIF 的后几帧**：Mac 发了最多 3 帧，Spark 的素材定义里没有这个字段，只读了第一帧 |
 | 开发期关闭 | **真实资料库上链路**：`productReleaseAllowsOwnLibrary = false` |
 | 默认关闭 | **按图片类型换模型**（`ORGANIZER_IMAGE_ROUTES`）已实现但没配置，所有类型都用同一个 Qwen3.6 |

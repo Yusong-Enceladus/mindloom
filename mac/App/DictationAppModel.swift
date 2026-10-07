@@ -1,4 +1,5 @@
 import AppKit
+import BestASRMemoryUI
 import BestASRAudioJournal
 import BestASRDictation
 import BestASRDomain
@@ -20,12 +21,14 @@ import Combine
 import CoreGraphics
 import CryptoKit
 import Foundation
+import MindloomLibrary
 import OSLog
 import ServiceManagement
 import UniformTypeIdentifiers
+import MindloomIdentity
 
 let dictationAppLogger = Logger(
-  subsystem: "com.bestasr.app",
+  subsystem: MindloomIdentity.logSubsystem,
   category: "dictation-app"
 )
 
@@ -35,7 +38,7 @@ enum BestASRAppStorageError: LocalizedError {
   var errorDescription: String? {
     switch self {
     case .externalCacheUnavailable:
-      "织机的外置缓存盘未挂载。请重新挂载该缓存卷后再打开 App；历史、原音、词典、人物和已安装模型仍安全保留在本机。"
+      "Mindloom 的外置缓存盘未装载。请重新装载该卷后再打开 Mindloom。历史、录音、词典、人物和已安装的模型保存在这台 Mac 上。"
     }
   }
 }
@@ -208,7 +211,7 @@ struct HistoryNavigationOrigin: Equatable, Sendable {
     var title: String {
       switch self {
       case .person: "人物"
-      case .event: "事件"
+      case .event: "事情"
       }
     }
   }
@@ -328,7 +331,11 @@ actor LocalImportedMediaFileStore {
     self.assetRoot = assetRoot
   }
 
-  func stage(source: URL, sessionID: SessionID) throws
+  /// Copies `source` into the session's folder and records its digest.
+  /// `hashed` (the drop path's digest of the same file) is reused when the
+  /// file is unchanged before and after the copy; otherwise the copy is
+  /// hashed here, as before.
+  func stage(source: URL, sessionID: SessionID, hashed: HashedSourceFile? = nil) throws
     -> RetainedSourceAssetRecord
   {
     let values = try source.resourceValues(
@@ -356,11 +363,21 @@ actor LocalImportedMediaFileStore {
       ".original.\(UUID().uuidString).importing"
     )
     defer { try? FileManager.default.removeItem(at: temporary) }
+    let unchangedBefore = hashed?.stillDescribes(source) ?? false
     try FileManager.default.copyItem(at: source, to: temporary)
     let handle = try FileHandle(forUpdating: temporary)
     try handle.synchronize()
     try handle.close()
-    let digest = try Self.digest(file: temporary)
+    let copiedSize =
+      (try? temporary.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? -1
+    let digest: String
+    if let hashed, unchangedBefore, hashed.stillDescribes(source),
+      copiedSize == hashed.fingerprint.size
+    {
+      digest = hashed.digest
+    } else {
+      digest = try Self.digest(file: temporary)
+    }
     try FileManager.default.moveItem(at: temporary, to: destination)
     return RetainedSourceAssetRecord(
       id: UUID(),
@@ -401,11 +418,13 @@ actor LocalImportedMediaFileStore {
     let handle = try FileHandle(forReadingFrom: file)
     defer { try? handle.close() }
     var hasher = SHA256()
-    while true {
+    // Each chunk released as soon as it is hashed (see LocalModelManager.sha256).
+    while try autoreleasepool(invoking: {
       let data = try handle.read(upToCount: 1_048_576) ?? Data()
-      if data.isEmpty { break }
+      if data.isEmpty { return false }
       hasher.update(data: data)
-    }
+      return true
+    }) {}
     return hasher.finalize().map { String(format: "%02x", $0) }.joined()
   }
 
@@ -611,6 +630,8 @@ final class DictationAppModel: ObservableObject {
   var usage = UsageModel()
   var export = ExportModel()
   var memorySearch = MemorySearchModel()
+  /// v12 search: the meaning half of 历史's and other Apps' search.
+  let meaningSearch = MeaningSearch()
   var playback = PlaybackModel()
   var history = HistoryModel()
   var capture = CaptureModel()
@@ -625,15 +646,24 @@ final class DictationAppModel: ObservableObject {
   @Published var remoteOrganizerCanForget = false
   @Published var remoteOrganizerHoldsOtherKey = false
   @Published var remoteOrganizerForgetting = false
+  /// v11: the link's status as the pages word it (已连接 / 没连上 / 连接中),
+  /// and when the DGX Spark's state last arrived (「上次整理 22:40」).
+  @Published var remoteOrganizerLinkStatus: RemoteOrganizerLinkController.Status = .off
+  @Published var remoteOrganizerLastPull: Date?
   var remoteOrganizer: RemoteOrganizerLinkController?
   /// The paired iPhone (PHONE-CONTRACT §4).
   var phoneLink = PhoneLinkModel()
-  /// Agents reading 织机 (AGENT-CONTRACT): grants, audit, the Agent 收件箱.
+  /// Other Apps reading Mindloom (AGENT-CONTRACT; v12 1D): grants, every call,
+  /// the changes they made (each undoable).
   var agentAccess = AgentAccessModel()
   var agentRequestPanel: AgentRequestPanelController?
   var spoken = SpokenModel()
   var hotkeys = HotkeysModel()
   var onboarding = OnboardingModel()
+  /// The undo window (v11), owned for the App's lifetime: closing the main
+  /// window never drops a held correction, and a crash leaves it in the
+  /// library's journal for the next launch (`DictationAppModel+Memory`).
+  lazy var memoryCorrections: MemoryCorrectionQueue = makeMemoryCorrections()
   private var childObservers: [AnyCancellable] = []
 
   private func observeChildren() {
@@ -666,12 +696,18 @@ final class DictationAppModel: ObservableObject {
     "model-license-receipt.automatic-speech-pack-v2"
   static let polishLicenseReceiptKey =
     "model-license-receipt.qwen3-1.7b-mlx-4bit"
+  static let meaningLicenseReceiptKey =
+    "model-license-receipt.qwen3-embedding-0.6b-mlx-4bit"
   static let speakerLicenseReceiptKey =
     "model-license-receipt.fluid-speaker-diarization-coreml"
   static let speechLicenseReceipt =
     "LicenseRef-FunASR-Model-1.1|0e0bf30bfc6836f182ccd1d89984df919c949e26|5dd557bd06342a3cd07ceccb909d8a45e48b053a|7dba975a2069691db4992b0592d70828b330d2f8a30a71450f4e152a554e84f8|CC-BY-4.0|4252711f6f060f9a2f91e5f081a806d7f45eebd8|ba3860fa07d324df252296b64388d46bedb9c37f3e9c463154a0703e57cc0d67"
   static let polishLicenseReceipt =
     "Apache-2.0|21457c6f51ed54a7c16e988c0844db973815c137|b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a"
+  /// Apache-2.0 | the model's revision | the license text's SHA-256
+  /// (`Legal/Qwen3-LICENSE-Apache-2.0.txt`).
+  static let meaningLicenseReceipt =
+    "Apache-2.0|6c3ae70858513f1a78e9cdca3cae330d9075cd2a|b83d568eb276ef9705b46d55f6b85393b444e1c2a20b5fce45c4ee5f0102f80a"
   static let speakerLicenseReceipt =
     "CC-BY-4.0|1ed7a662fdc7109e36d822db793ee6eebdaf8594|638b2185c4e3885a54d79d1ea6765a7778519b902389be632e37389c80e41a63"
 
@@ -682,8 +718,10 @@ final class DictationAppModel: ObservableObject {
   @Published var startupRecoverySessionIDs: Set<SessionID> = []
   @Published var enhancedFinalASRReady = false
   @Published var polishRuntimeReady = false
+  /// v12 search: the meaning model is installed and verified.
+  @Published var meaningSearchReady = false
   @Published var polishReadinessMessage =
-    "本地文字整理尚未准备；口述仍可使用安全标点"
+    "本地文字整理尚未准备；口述仍可使用基础标点"
   /// Every application dictation has been written into, for the source filter.
   /// The mode of the dictation now running, for the floating capsule.
   @Published var dictationMode: DictationSpokenMode = .dictate
@@ -696,6 +734,13 @@ final class DictationAppModel: ObservableObject {
   /// A language a finished dictation needed and did not have. The prompt is
   /// shown once the dictation has been delivered, never during it.
   var translationInstallNeeded: String?
+  /// The last dictation whose translation went in as said because its
+  /// language was not installed: the HUD says so when it ends (收1-9).
+  var untranslatedDictation: (session: SessionID, language: String)?
+  /// What the last dictation wrote in place of what was said (a translation,
+  /// an answer): the HUD's caption ends with it. Held in memory only, for
+  /// one dictation; never written to the database or logged.
+  var deliveredDictationText: (session: SessionID, text: String)?
 
 
 
@@ -724,7 +769,7 @@ final class DictationAppModel: ObservableObject {
   var eventMemoryWanted = false
   @Published var liveTranscriptText = ""
   @Published var liveTranscriptStatus =
-    "音频会先安全保存，再进行本地识别"
+    "音频会先保存，再进行本地识别"
   @Published var menuBarEnabled = LocalPreferenceStore.bool(
     "preferences.menu-bar-enabled",
     default: true
@@ -738,9 +783,11 @@ final class DictationAppModel: ObservableObject {
   }
   @Published var launchAtLoginEnabled = false
   @Published var defaultPolishEnabled = DictationAppModel.initialDefaultPolishEnabled()
-  @Published var capsuleSubtitlesRequireHover = LocalPreferenceStore.bool(
-    "preferences.capsule-subtitles-hover-only",
-    default: false
+  /// 设置 › 通用 › 口述时显示文字 (on by default; ALIGNMENT 收1-17). The old
+  /// 「只在鼠标悬停时显示实时字幕」 key is no longer read: v11 ignored it.
+  @Published var dictationCaptionsEnabled = LocalPreferenceStore.bool(
+    DictationAppModel.dictationCaptionsKey,
+    default: true
   )
   @Published var appTextPolicies = LocalPreferenceStore.policies()
   @Published var appPolicyBundleIDDraft = ""
@@ -749,16 +796,33 @@ final class DictationAppModel: ObservableObject {
   @Published var appPolicyFormattingStyle: AppTextFormattingStyle = .automatic
   @Published var preferencesStatusMessage = ""
   @Published var storageSnapshot = LocalStorageSnapshot()
-  @Published var storageStatusMessage = "正在统计本机存储…"
+  /// Settings › 通用 › 储存空间 (收3-5): by kind, by month, and the disk.
+  @Published var libraryStorage: LibraryStorageReport?
+  /// Dictionary words learning made (自动添加), by word.
+  @Published var automaticDictionaryEntries: [DictionaryEntryID: AutomaticDictionaryEntry] = [:]
+  /// Reads the last dictation's field again a while after it was typed in
+  /// (改了就校准, `scheduleCorrectionSettle`).
+  var correctionSettleTask: Task<Void, Never>?
+  /// What the watched field has shown of the last dictation, read every
+  /// second or two while the watch lasts (`followFieldCorrections`).
+  var fieldCorrections: FieldCorrectionTracker?
+  @Published var storageStatusMessage = "正在统计本机储存空间…"
   @Published var storageRefreshInProgress = false
   @Published var diagnosticsPreview = ""
   @Published var requestedNavigationSectionID: String?
+  /// The zone the library counts days in (ALIGNMENT 根-13): Home's 今天 and
+  /// 已过期, due dates and time words in search. Set at launch from the
+  /// library (`MindloomLaunch.applyProductTimeZone`), changed in 通用.
+  @Published var productTimeZone: TimeZone =
+    MindloomLaunch.launch.map { MindloomLaunch.productTimeZone(root: $0.root) } ?? .current
+  /// A record 历史 should show and light when it opens next (menu bar
+  /// 最近记录 › 在历史里查看).
+  var pendingHistoryReveal: String?
 
 
   let fixtureMode: Bool
-  let localSelfPersonID = PersonID(
-    LocalPreferenceStore.uuid("identity.local-self-person-id")
-  )
+  /// The owner's 「我」, or the demo root's own in demo mode.
+  let localSelfPersonID = PersonID(LibraryIdentity.localSelfPersonID)
   var repository: GRDBDictationStore?
   var journal: ProductionAudioJournal?
   var coordinator: DictationCaptureCoordinator?
@@ -779,6 +843,15 @@ final class DictationAppModel: ObservableObject {
   var systemAudioCoordinator: DictationCaptureCoordinator?
   var systemAudioLifecycleTask: Task<Void, Never>?
   var activeSystemMicrophoneUID = ""
+  /// 开始记录会议 asked for the computer's sound: the next system-audio
+  /// start records this pick (the meeting App playing sound, the whole
+  /// computer, or what the menu chose) plus the microphone when allowed,
+  /// whatever the 电脑内录 page's own source choice is (v12 1C).
+  var meetingComputerSound: MeetingAudioPick?
+  /// What the running system-audio recording captures (scope and whether a
+  /// microphone track goes with it); a paused one resumes the same way.
+  var activeSystemScope: SystemAudioCaptureScope?
+  var activeSystemIncludesMicrophone = false
   var activeSystemOutputDeviceID: UInt32?
   let sourceContextAdapterRegistry = LocalSourceContextAdapterRegistry()
   var lastSystemSourceContextFingerprint = ""
@@ -808,6 +881,8 @@ final class DictationAppModel: ObservableObject {
   let intake = IntakeModel()
   /// Every other entry (Settings → 入口, V8 contract §A).
   let entries = EntriesModel()
+  /// 设置 › 设备与隐私 › 从网络补充信息 (PRD LOOKUP-001–003).
+  let webLookup = WebLookupModel()
   var intakeProcessor: IntakeProcessor?
   /// The startup staging sweep; every intake waits for it.
   var intakeReady: Task<Void, Never>?
@@ -817,6 +892,9 @@ final class DictationAppModel: ObservableObject {
   /// The App an intake-routed audio/video file came from, consumed by the
   /// next `startImport`.
   var pendingImportSourceApplication: ItemSourceApplication?
+  /// The drop path's digest of that file, reused by the import's copy while
+  /// the file is unchanged (the recording is not read twice to hash it).
+  var pendingImportHashed: HashedSourceFile?
   var permissionService: MacDictationPermissionService?
   var permissionRefreshTask: Task<Void, Never>?
   var insertionService: DeliveryInsertionPort?
@@ -830,7 +908,21 @@ final class DictationAppModel: ObservableObject {
   var copiedRetainedSessionID: SessionID?
   var copiedRetainedTextWasDraft = false
   var functionHoldStartedAt: ContinuousClock.Instant?
+  /// The fn press's own time (seconds since the Mac started), when known.
+  var functionHoldKeyTime: TimeInterval?
   var firstAudioPendingSince: ContinuousClock.Instant?
+  /// Key down to recording started (the capture coordinator running) for
+  /// the dictation being recorded: the definition 收1-19 is judged by.
+  var pressToRecording: Duration?
+  /// The key events that will start and end the dictation, from the events'
+  /// own times: the timing table counts from the key itself, not from when
+  /// the main actor got round to it (review 2026-10-06).
+  var dictationStartKeyAt: ContinuousClock.Instant?
+  var dictationEndKeyAt: ContinuousClock.Instant?
+  /// This Mac's dictation timings (numbers only, 90 days; 收1-2, 收1-5).
+  var dictationMetricsStore: DictationMetricsStore?
+  /// 设置 › 口述 › 速度与占用.
+  @Published var dictationMetrics = SettingsDictationMetrics()
   var keyPressMicrophone: (early: EarlyMicrophoneStart, at: ContinuousClock.Instant)?
   var diskSpaceDecisionCache:
     (decision: CaptureDiskSpaceDecision, checkedAt: ContinuousClock.Instant)?
@@ -858,7 +950,22 @@ final class DictationAppModel: ObservableObject {
   var historyPlaybackControlTask: Task<Void, Never>?
   var historyPlaybackGeneration = UUID()
   var historyPlaybackSeekRequestID = UUID()
-  var loadedPlaybackSessionID: SessionID?
+  var loadedPlaybackSessionID: SessionID? {
+    didSet {
+      // The idle rewrite (16 kHz, Opus) leaves a recording being played
+      // alone; the player reads its chunk files as it goes.
+      guard loadedPlaybackSessionID != oldValue else { return }
+      publishAudioInUse()
+    }
+  }
+
+  /// The recordings a rewrite must leave alone: the one loaded in the player
+  /// and the one open in a record (its ranges are already in hand).
+  func publishAudioInUse() {
+    let inUse = Set([loadedPlaybackSessionID, history.selectedHistorySessionID].compactMap { $0 })
+    let runtime = localRuntime
+    Task { await runtime?.setAudioInUse(inUse) }
+  }
   var loadedPlaybackTrackID = ""
   var historyPlaybackAssetRootURL: URL?
   var historyPlaybackTrackDescriptors: [String: CaptureTrackDescriptor] = [:]
@@ -907,7 +1014,12 @@ final class DictationAppModel: ObservableObject {
       forKey: "preferences.interface-language"
     )
     if !fixtureMode {
-      launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+      // 登录时打开 follows the App when it moved (bestASR.app → Mindloom.app):
+      // registered again from this bundle, once (switch preparation 10-6).
+      launchAtLoginEnabled =
+        LoginItemRepair.repair(
+          service: MainAppLoginItem(), defaults: LocalPreferenceStore.defaults,
+          currentPath: Bundle.main.bundleURL.path) == .enabled
       models.modelLicenseAccepted = LocalModelLicenseReceipts.accepted(
         key: Self.speechLicenseReceiptKey,
         receipt: Self.speechLicenseReceipt
@@ -919,6 +1031,10 @@ final class DictationAppModel: ObservableObject {
       models.speakerModelLicenseAccepted = LocalModelLicenseReceipts.accepted(
         key: Self.speakerLicenseReceiptKey,
         receipt: Self.speakerLicenseReceipt
+      )
+      models.meaningModelLicenseAccepted = LocalModelLicenseReceipts.accepted(
+        key: Self.meaningLicenseReceiptKey,
+        receipt: Self.meaningLicenseReceipt
       )
       if systemAudioMicrophoneOverrides.isEmpty,
         LocalPreferenceStore.defaults.object(
@@ -946,11 +1062,11 @@ final class DictationAppModel: ObservableObject {
       models.modelRuntimeReady = true
       enhancedFinalASRReady = true
       models.modelDiscoveryComplete = true
-      models.modelReadinessMessage = "本机语音识别测试组件已就绪"
+      models.modelReadinessMessage = "本机语音识别测试模型已就绪"
       polishRuntimeReady = true
-      polishReadinessMessage = "本机文字整理测试组件已就绪"
+      polishReadinessMessage = "本机文字整理测试模型已就绪"
       people.speakerRuntimeReady = true
-      people.speakerReadinessMessage = "本机多人识别测试组件已就绪"
+      people.speakerReadinessMessage = "本机多人识别测试模型已就绪"
       history.historyItems = Self.fixtureHistoryItems()
       history.homeRecentHistoryItems = Array(history.historyItems.prefix(3))
       usage.usage = DictationUsageSummary.make(
@@ -996,9 +1112,9 @@ final class DictationAppModel: ObservableObject {
           events.summaries = [fixture.initialSummary]
           events.candidates = [fixture.candidate]
           history.eventAvailableHistoryItems = history.historyItems
-          events.eventStatusMessage = "1 个事件 · 1 条待确认线索；先听原音再决定"
+          events.eventStatusMessage = "1 件事 · 1 条待确认；先听原音再决定"
         } catch {
-          events.eventStatusMessage = "无法创建本地事件交互测试数据"
+          events.eventStatusMessage = "无法创建本地测试数据"
         }
       }
       if ProcessInfo.processInfo.arguments.contains(
@@ -1047,15 +1163,15 @@ final class DictationAppModel: ObservableObject {
         models.modelDiscoveryComplete = true
         polishRuntimeReady = false
         people.speakerRuntimeReady = false
-        models.modelReadinessMessage = "需要准备离线语音识别"
-        polishReadinessMessage = "需要准备离线文字整理"
-        people.speakerReadinessMessage = "需要准备离线多人识别"
+        models.modelReadinessMessage = "需要准备本机语音识别"
+        polishReadinessMessage = "需要准备本机文字整理"
+        people.speakerReadinessMessage = "需要准备本机多人识别"
         if !onboardingExistingHistoryFixture {
           history.historyItems = []
           history.homeRecentHistoryItems = []
           usage.usageStatistics = LocalHistoryUsageStatistics()
           usage.usage = DictationUsageSummary()
-          history.historyStatusMessage = "还没有记录"
+          history.historyStatusMessage = "尚无记录"
         }
       } else if modelSetupFixture
         || ProcessInfo.processInfo.arguments.contains("--model-setup-ui-testing")
@@ -1064,9 +1180,9 @@ final class DictationAppModel: ObservableObject {
         models.modelDiscoveryComplete = true
         polishRuntimeReady = false
         people.speakerRuntimeReady = false
-        models.modelReadinessMessage = "需要准备推荐的本机组件"
-        polishReadinessMessage = "需要准备推荐的本机组件"
-        people.speakerReadinessMessage = "需要准备推荐的本机组件"
+        models.modelReadinessMessage = "需要准备推荐的本机模型"
+        polishReadinessMessage = "需要准备推荐的本机模型"
+        people.speakerReadinessMessage = "需要准备推荐的本机模型"
       }
       if ProcessInfo.processInfo.arguments.contains(
         "--capture-processing-ui-testing"
@@ -1080,9 +1196,9 @@ final class DictationAppModel: ObservableObject {
           revision: processingItem.revision,
           phase: .recognizing
         )
-        liveTranscriptText = "已经安全保存的实时草稿"
+        liveTranscriptText = "已保存的实时草稿"
         liveTranscriptStatus = "采集已经结束；正在运行本地识别"
-        statusMessage = "原音已安全保存，正在本机识别…"
+        statusMessage = "原音已保存，正在本机识别…"
       } else if ProcessInfo.processInfo.arguments.contains(
         "--capture-handoff-ui-testing"
       ),
@@ -1105,9 +1221,16 @@ final class DictationAppModel: ObservableObject {
     do {
       let root = try Self.applicationDataRoot()
       let cacheRoot = try Self.applicationCacheRoot()
-      let durableRepository = try GRDBDictationStore(
+      // Waits while another program has the database busy instead of failing
+      // the startup (REHEARSAL.md §8), and is closed cleanly on quit.
+      let durableRepository = try GRDBDictationStore.openWaitingWhileBusy(
         databaseURL: root.appendingPathComponent("history.sqlite")
       )
+      LibraryQuit.store = durableRepository
+      // Measuring is never a reason not to start: without the table the
+      // dictation still runs, its numbers are just not kept.
+      dictationMetricsStore = try? DictationMetricsStore(
+        databaseURL: DictationMetricsStore.databaseURL(dataRoot: root))
       let durableJournal = try ProductionAudioJournal(
         assetRootURL: root.appendingPathComponent("assets", isDirectory: true),
         sourceIndex: durableRepository
@@ -1117,10 +1240,16 @@ final class DictationAppModel: ObservableObject {
       configureIntake(repository: durableRepository, assetRoot: durableJournal.assetRootURL)
       configureAgentAccess(repository: durableRepository, dataRoot: root)
       configureEntries(dataRoot: root)
+      configureWebLookup(dataRoot: root)
       dictionary.repository = durableRepository
       history.repository = durableRepository
       journal = durableJournal
       refreshDiskSpaceDecisionInBackground()
+      // Once the main window can show the notice.
+      Task { [weak self] in
+        try? await Task.sleep(for: .seconds(10))
+        self?.checkLowDisk()
+      }
       importedMediaDecoder = AVFoundationImportedMediaDecoder()
       importedMediaFileStore = LocalImportedMediaFileStore(
         assetRoot: durableJournal.assetRootURL
@@ -1134,7 +1263,10 @@ final class DictationAppModel: ObservableObject {
         deliverer: TextDeliverer(),
         ownApplicationAllowed: { [weak self] in
           MainActor.assumeIsolated { self?.onboardingPracticeTargetArmed ?? false }
-        }
+        },
+        // A dictation that ends in one of Mindloom's own fields (the search
+        // field, a name) is written into it directly (收1-11).
+        ownTextInput: { AppKitOwnTextInput.focused() }
       )
       insertionService = deliveryPort
       let runtime = try LocalDictationRuntime(
@@ -1166,6 +1298,7 @@ final class DictationAppModel: ObservableObject {
       )
       inspectSetupCompatibility(dataRoot: root)
       beginSystemLifecycleMonitoring()
+      FnGuard.shared.attach(self, applyNow: false)
       Task { [weak self] in await self?.bootstrap() }
     } catch {
       let failure = Self.startupFailureDescription(error)
@@ -1181,6 +1314,13 @@ final class DictationAppModel: ObservableObject {
   nonisolated static func startupFailureDescription(_ error: Error) -> String {
     if let storageError = error as? BestASRAppStorageError {
       return storageError.localizedDescription
+    }
+    if let launchError = error as? LibraryLaunchError {
+      return MindloomLaunch.refusalMessage(launchError)
+    }
+    if error is LibraryMigrationBackupError {
+      return
+        "资料库需要升级到新版本，但升级前的备份未能完成，因此未升级。请释放磁盘空间后重新打开 Mindloom。"
     }
     let nsError = error as NSError
     return
@@ -1423,7 +1563,7 @@ final class DictationAppModel: ObservableObject {
           inputMode: handoff.inputMode,
           state: .needsAttention,
           title: handoff.title,
-          detail: "这条记录仍安全保存在本机，但资料库暂时无法打开；请稍后重试",
+          detail: "这条记录仍保存在本机，但资料库暂时无法打开；请稍后重试",
           sourceDisplayName: handoff.sourceDisplayName,
           sourceAudioRetained: handoff.sourceAudioRetained
         )
@@ -1517,8 +1657,8 @@ final class DictationAppModel: ObservableObject {
         forInfoDictionaryKey: "CFBundleDisplayName"
       ) as? String
       ?? Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
-      ?? "bestASR"
-    let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.bestasr.app"
+      ?? MindloomIdentity.displayName
+    let bundleIdentifier = Bundle.main.bundleIdentifier ?? MindloomIdentity.bundleID
     let path = Bundle.main.bundleURL.resolvingSymlinksInPath().path
       .replacingOccurrences(
         of: FileManager.default.homeDirectoryForCurrentUser.path,
@@ -1596,11 +1736,20 @@ final class DictationAppModel: ObservableObject {
         sizeBytes: MLXLocalTextArtifact.qwen3Selected.totalSizeBytes,
         ready: polishRuntimeReady
       ),
+      LocalModelComponentPresentation(
+        component: .meaning,
+        revision: MLXMeaningArtifact.selected.sourceRevision,
+        sizeBytes: MLXMeaningArtifact.selected.totalSizeBytes,
+        ready: meaningSearchReady
+      ),
     ]
   }
 
+  /// SenseVoice (live captions) 239,918,735 bytes, the recognizer and the
+  /// aligner; Paraformer and Parakeet left the download on 2026-10-06
+  /// (`LocalDictationRuntime.requiredSpeechArtifactIDs`).
   nonisolated static let recommendedSpeechBytes: UInt64 =
-    1_076_144_535 + QwenASRPinnedArtifact.totalSizeBytes
+    239_918_735 + QwenASRPinnedArtifact.totalSizeBytes
     + QwenAlignmentPinnedArtifact.totalSizeBytes
   nonisolated static let recommendedTotalBytes: UInt64 =
     recommendedSpeechBytes + 21_602_781 + 930_271_884
@@ -1679,6 +1828,9 @@ final class DictationAppModel: ObservableObject {
         try SMAppService.mainApp.unregister()
       }
       launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
+      LoginItemRepair.recordChoice(
+        on: enabled, status: MainAppLoginItem().status, defaults: LocalPreferenceStore.defaults,
+        currentPath: Bundle.main.bundleURL.path)
       preferencesStatusMessage =
         launchAtLoginEnabled
         ? "已设置为登录后自动启动"
@@ -1686,7 +1838,7 @@ final class DictationAppModel: ObservableObject {
     } catch {
       launchAtLoginEnabled = SMAppService.mainApp.status == .enabled
       preferencesStatusMessage =
-        "登录启动设置未能更改；请确认织机已安装在“应用程序”文件夹"
+        "未能更改登录时启动设置。请确认 Mindloom 已安装在“应用程序”文件夹中。"
     }
   }
 
@@ -1770,7 +1922,7 @@ final class DictationAppModel: ObservableObject {
     guard !hasActiveCapture, !models.recommendedModelInstallInProgress,
       !export.archiveOperationInProgress
     else {
-      storageStatusMessage = "请先结束录音、导入、组件下载或归档操作"
+      storageStatusMessage = "请先结束录音、导入、模型下载或归档操作"
       return
     }
     storageStatusMessage = "正在清理可重新下载的缓存…"
@@ -1778,11 +1930,11 @@ final class DictationAppModel: ObservableObject {
       guard let self else { return }
       do {
         let cacheRoot = try Self.applicationCacheRoot()
-        let released = try await storageInspector.clearRebuildableCache(
+        let freedBytes = try await storageInspector.clearRebuildableCache(
           cacheRoot: cacheRoot
         )
         storageStatusMessage =
-          "已释放 \(Self.byteCountTitle(released))；资料库、原音、词典、人物和已安装组件未受影响"
+          "已释放 \(Self.byteCountTitle(freedBytes))；资料库、原音、词典、人物和已安装模型未受影响"
         refreshStorageUsage()
       } catch {
         storageStatusMessage = "缓存清理失败；没有删除用户数据"
@@ -1797,7 +1949,7 @@ final class DictationAppModel: ObservableObject {
     case .roomMicrophone: "线下录音"
     case .systemAudio: "电脑内录"
     case .importedMedia: "文件导入"
-    case .userItem: "收进来的内容"
+    case .userItem: "添加的内容"
     }
   }
 
@@ -1807,18 +1959,18 @@ final class DictationAppModel: ObservableObject {
         forInfoDictionaryKey: "CFBundleShortVersionString"
       ) as? String ?? "development"
     diagnosticsPreview = [
-      "bestASR \(appVersion)",
+      "\(MindloomIdentity.displayName) \(appVersion)",
       "macOS \(ProcessInfo.processInfo.operatingSystemVersionString)",
       "本机服务：\(startupFailureMessage.isEmpty ? "已启动" : startupFailureMessage)",
       "麦克风权限：\(Self.diagnosticPermissionTitle(capture.microphonePermission))",
-      "辅助功能权限：\(Self.diagnosticPermissionTitle(onboarding.accessibilityPermission))",
+      "设备控制和数据访问权限：\(Self.diagnosticPermissionTitle(onboarding.accessibilityPermission))",
       "系统音频权限：\(Self.diagnosticPermissionTitle(capture.systemAudioPermission))",
       "语音识别模型：\(models.modelRuntimeReady ? "已就绪" : "未就绪")",
       "多人识别模型：\(people.speakerRuntimeReady ? "已就绪" : "未就绪")",
       "本地文字模型：\(polishRuntimeReady ? "已就绪" : "未就绪")",
       "本机历史记录：\(usage.usageStatistics.sessionCount) 条",
       "可恢复记录：\(recoveryItemCount) 条",
-      "受管理存储：\(Self.byteCountTitle(storageSnapshot.totalManagedBytes))",
+      "受管理的储存空间：\(Self.byteCountTitle(storageSnapshot.totalManagedBytes))",
       "可用空间：\(Self.byteCountTitle(UInt64(max(0, storageSnapshot.availableBytes))))",
       "产品遥测：关闭",
       "远程崩溃上报：关闭",
@@ -1873,6 +2025,10 @@ final class DictationAppModel: ObservableObject {
     guard [.recording, .paused].contains(snapshot.phase) || canStartDictationNow
     else { return }
     let ending = [.recording, .paused].contains(snapshot.phase)
+    if ending {
+      scheduleCorrectionSettle()
+      checkLowDisk()
+    }
     if !ending {
       // Cleared here, before the command is queued, rather than inside it.
       // The chord that chooses 翻译 or 指令 arrives milliseconds after the
@@ -1883,6 +2039,12 @@ final class DictationAppModel: ObservableObject {
       spoken.activeTranslationLanguage =
         spoken.translationTargetLanguageNames.first ?? Self.translationLanguageNames[0]
       spokenAnswerPanel.dismiss()
+      // The last take's HUD facts are not this one's.
+      deliveredDictationText = nil
+      untranslatedDictation = nil
+      // Starting the next dictation ends the watch on the last one: what the
+      // user changed in it by now is what they meant (收1-8).
+      settleFieldCorrections()
     }
     performLifecycleCommand(
       mode: .dictation,
@@ -1947,7 +2109,13 @@ final class DictationAppModel: ObservableObject {
   }
 
   var selectableSystemAudioSources: [SystemAudioSource] {
-    return capture.systemAudioSources.filter { source in
+    Self.selectableAudioSources(capture.systemAudioSources)
+  }
+
+  /// The sources a person would pick: running Apps (and bundle-less players
+  /// while they play), not background services.
+  static func selectableAudioSources(_ sources: [SystemAudioSource]) -> [SystemAudioSource] {
+    sources.filter { source in
       let isUserFacingApplication =
         source.bundleID.map { bundleID in
           let resolvesToApplication =
@@ -1980,7 +2148,7 @@ final class DictationAppModel: ObservableObject {
     else { return nil }
     let identity = "\(source.bundleID ?? "") \(source.displayName)".lowercased()
     if identity.contains("chrome") || identity.contains("chromium") {
-      return "Chrome 会作为一个应用整体录制，无法只隔离单个标签页；不想混入其他标签声音时，请关闭其他发声标签。"
+      return "Chrome 会作为一个应用整体录制，无法单独录制某个标签页。如需避免录入其他标签页的声音，请关闭其他正在发声的标签页。"
     }
     if ["quicktime", "vlc", "iina"].contains(where: {
       identity.contains($0)
@@ -1996,7 +2164,7 @@ final class DictationAppModel: ObservableObject {
     }
     return history.includeMicrophoneInSystemRecording
       ? "已识别为会议应用，默认开启独立麦克风音轨；你可以覆盖。"
-      : "当前来源默认只录电脑输出；需要讲解或网页会议时可以手动开启。"
+      : "当前来源默认录制电脑输出；需要录制讲解或网页会议时，可以手动开启麦克风。"
   }
 
 
@@ -2063,14 +2231,14 @@ final class DictationAppModel: ObservableObject {
         }
         publishSnapshotStatus()
       } catch {
-        statusMessage = "暂停或继续未完成；已提交音频仍安全保留"
+        statusMessage = "暂停或继续未完成；已提交音频仍保留"
       }
     }
   }
 
   func cancel() {
     if lifecycleCommands.queueIfInFlight(.cancel, for: .dictation) {
-      liveTranscriptStatus = "当前操作完成后立即取消，不会插入文字"
+      liveTranscriptStatus = "当前操作完成后立即取消，取消后不输入文字"
       statusMessage = liveTranscriptStatus
       renderRecordingPanel()
       return
@@ -2095,14 +2263,18 @@ final class DictationAppModel: ObservableObject {
           snapshot = try await coordinator.cancel()
           if let sessionID {
             await localRuntime?.clearLiveSession(sessionID: sessionID)
+            // Esc and the fn chord end the take here, never in `process`:
+            // give the speculation slot back and re-arm the idle release.
+            await localRuntime?.endUnprocessedDictation(sessionID: sessionID)
           }
           self.coordinator = nil
           activeDictationMicrophoneUID = ""
+          if !keepsDictations { await forgetDemoDictation(sessionID) }
         }
         await hotkeyProvider?.setCancellationEnabled(false)
         publishSnapshotStatus()
       } catch {
-        statusMessage = "取消尚未收口；下次启动会从本机记录安全恢复"
+        statusMessage = "取消尚未收口；下次启动会从本机记录恢复"
       }
     }
   }
@@ -2309,10 +2481,6 @@ final class DictationAppModel: ObservableObject {
     return history.eventAvailableHistoryItems.filter { !linked.contains($0.sessionID) }
   }
 
-  var selectedPersonRelatedEvents: [EventSummary] {
-    guard let selectedPersonID = people.selectedPersonID else { return [] }
-    return events.summaries.filter { $0.personIDs.contains(selectedPersonID) }
-  }
 
 
 
@@ -2371,12 +2539,12 @@ final class DictationAppModel: ObservableObject {
     candidateCount: Int
   ) -> String {
     if eventCount == 0, candidateCount == 0 {
-      return "还没有事件；确认线索或从相关记录建立一个事件"
+      return "尚无事。请确认归类，或从相关记录新建一件事"
     }
     let review =
       candidateCount == 0
-      ? "没有待确认线索" : "\(candidateCount) 条待确认线索"
-    return "\(eventCount) 个事件 · \(review)；全部处理均在本机完成"
+      ? "没有待确认的内容" : "\(candidateCount) 条待确认"
+    return "\(eventCount) 件事 · \(review)；全部处理均在本机完成"
   }
 
   var filteredPersonSummaries: [PersonSummary] {
@@ -2467,18 +2635,21 @@ final class DictationAppModel: ObservableObject {
 
   func bootstrap() async {
     await readPermissionStates()
-    refreshMicrophoneDevices()
-    refreshSystemAudioSources()
+    // Not at launch (live-mac): listing devices brings CoreAudio up in this
+    // process (its voice-processing listeners log at once), and an idle App
+    // has no use for the list. The pages and Settings that show devices
+    // read them when they appear, and a capture reads its device itself.
     // Known before the first Fn ⇧, so the capsule can say when a language
     // pack is missing rather than discovering it after the words went in.
     refreshTranslationEngineStatus()
     // Register and observe the system-wide shortcut before loading history,
     // semantic organization, or model runtimes. A large local library must
     // never make the most basic interaction look dead during launch.
-    if let hotkeyController {
-      let result = await hotkeyController.activateSavedOrDefault()
-      await publishHotkeyResult(result, controller: hotkeyController)
-    }
+    // Not while fn is held by the user's bestASR App, switched off, or a
+    // preview verification run says so (FnGuard arms it later when it may).
+    // FnGuard is attached before this (init), so a launch or quit of
+    // bestASR meanwhile is applied after this arming, never before it.
+    await FnGuard.shared.arm(atLaunch: self)
     if let hotkeyProvider {
       await beginHotkeyObservation(using: hotkeyProvider)
     }
@@ -2500,6 +2671,9 @@ final class DictationAppModel: ObservableObject {
     }
 
     async let modelDiscovery: Void = discoverInstalledModels()
+    // Demo mode: dictations an earlier run left behind go before history
+    // and recovery see them.
+    await forgetLeftoverDemoDictations()
     await dictionary.refreshEntries()
     await refreshHistoryItems(refreshOverview: false)
     scheduleHistoryMaintenance()
@@ -2525,7 +2699,7 @@ final class DictationAppModel: ObservableObject {
       !models.recommendedModelInstallInProgress
     {
       models.recommendedModelProgressMessage =
-        "自动更新已启用：正在安装此版本固定并校验过的缺失组件"
+        "自动更新已启用：正在安装此版本固定并校验过的缺失模型"
       downloadRecommendedModels()
     }
     if models.automaticAppUpdateChecks {
@@ -2540,6 +2714,13 @@ final class DictationAppModel: ObservableObject {
 
 
   func handle(_ transition: NativeHotkeyTransition) async {
+    // Mindloom Preview beside the user's own bestASR App: that App has fn, so
+    // the preview does not dictate (one press would dictate twice). A press
+    // that started here before the other App launched still gets its release.
+    if transition.isPressed, snapshot.phase == .idle, MindloomBuild.otherAppHoldsFn {
+      hotkeys.hotkeyStatusMessage = "bestASR 正在使用 fn 键。请先退出 bestASR，或在设置中为 Mindloom 更换快捷键。"
+      return
+    }
     // Only a press is refused because other work is running. A release always
     // reaches the branch its press took: a recording that starts elsewhere
     // while the key is held must not strand the dictation it was holding.
@@ -2556,7 +2737,7 @@ final class DictationAppModel: ObservableObject {
     // that with it off the key already behaved this way; the rule reads the
     // press itself, so there is nothing left to configure.
     if transition.action == .startOrEnd, !hasNonDictationWork {
-      await handleFunctionKey(isPressed: transition.isPressed)
+      await handleFunctionKey(isPressed: transition.isPressed, keyTime: transition.keyTime)
       return
     }
     guard transition.isPressed else { return }
@@ -2564,21 +2745,31 @@ final class DictationAppModel: ObservableObject {
   }
 
   /// Holding Fn longer than this is push-to-talk; a shorter tap keeps the
-  /// dictation running hands-free until Fn is tapped again.
-  nonisolated static let functionHoldThreshold: Duration = .milliseconds(350)
+  /// dictation running hands-free until Fn is tapped again (Esc cancels).
+  nonisolated static let functionHoldThreshold: Duration = DictationKeyRelease.holdThreshold
 
   /// Another key typed within this window after Fn started a dictation means
   /// the user meant an Fn chord (Fn+Delete, Fn+arrow…), not dictation.
   nonisolated static let functionChordWindow: Duration = .milliseconds(700)
 
-  func handleFunctionKey(isPressed: Bool) async {
+  func handleFunctionKey(isPressed: Bool, keyTime: TimeInterval? = nil) async {
     if isPressed {
       pushToTalkFinishTask?.cancel()
+      // v11 (mac-capture): microphone not allowed → 「麦克风没有打开 · 去设置」.
+      guard fnPressAllowed() else { return }
       // Time every press, including one made while the runtime is still busy.
       // Reading the clock only when a dictation could start immediately meant
       // a hold that began a moment too early recorded no start time, so its
       // release was discarded and the dictation it did start kept recording.
       functionHoldStartedAt = ContinuousClock.now
+      functionHoldKeyTime = keyTime
+      // A press starts a dictation, or ends one that is listening hands-free.
+      let keyAt = Self.keyEventInstant(keyTime)
+      if [.recording, .paused].contains(snapshot.phase) {
+        dictationEndKeyAt = keyAt
+      } else {
+        dictationStartKeyAt = keyAt
+      }
       armFunctionReleaseWatchdog()
       await handle(.startOrEnd)
       return
@@ -2587,7 +2778,17 @@ final class DictationAppModel: ObservableObject {
     functionReleaseWatchdog = nil
     guard let started = functionHoldStartedAt else { return }
     functionHoldStartedAt = nil
-    if Self.functionReleaseEndsDictation(heldFor: ContinuousClock.now - started) {
+    let pressedAt = functionHoldKeyTime
+    functionHoldKeyTime = nil
+    // A short tap leaves the take listening hands-free: the next press ends
+    // it, Esc cancels it, and a take with no speech ends with 「没有听到」
+    // (d54; ALIGNMENT 收1-21, decided 10/5). v11 dropped it instead. The
+    // key events' own times decide, not when they were handled (review
+    // v12-B #11): starting the microphone between the two is not holding fn.
+    let held = DictationKeyRelease.heldDuration(
+      pressedAt: pressedAt, releasedAt: keyTime, handledApart: ContinuousClock.now - started)
+    if Self.functionReleaseEndsDictation(heldFor: held) {
+      dictationEndKeyAt = Self.keyEventInstant(keyTime)
       finishDictationAfterStartSettles()
     }
   }
@@ -2608,8 +2809,14 @@ final class DictationAppModel: ObservableObject {
     functionReleaseWatchdog = Task { [weak self] in
       try? await Task.sleep(for: Self.functionHoldThreshold + .milliseconds(50))
       guard !Task.isCancelled else { return }
-      // Whether the key is still down now or was let go before this check,
-      // the hardware state is the truth; the release event may never come.
+      // Let go before this first look: a tap (or a hold just past the
+      // threshold), and the release event, queued behind the main thread,
+      // says which with the key's own times. Ending it here would turn a
+      // delayed tap into a hold (review v12-B #11); if that event never
+      // comes, the take keeps listening and the next tap ends it.
+      guard Self.functionKeyPhysicallyHeld() else { return }
+      // Still held: the hardware state is the truth from here; the release
+      // event may never come.
       while !Task.isCancelled, Self.functionKeyPhysicallyHeld() {
         try? await Task.sleep(for: .milliseconds(150))
       }
@@ -2770,6 +2977,14 @@ final class DictationAppModel: ObservableObject {
     captureExternalTargetWhenMissing: Bool
   ) async {
     let startRequested = ContinuousClock.now
+    // Counted from the key's own event when a key started it, else from the
+    // microphone started at the key press, else from now (menu bar, window).
+    let pressedAt = Self.dictationAnchor(
+      dictationStartKeyAt ?? keyPressMicrophone?.at, now: startRequested)
+    dictationStartKeyAt = nil
+    // An end key seen before this take started belongs to an earlier one.
+    dictationEndKeyAt = nil
+    pressToRecording = nil
     dictationAppLogger.info("dictation start requested")
     do {
       guard !self.capture.roomSnapshot.phase.isActive,
@@ -2797,11 +3012,11 @@ final class DictationAppModel: ObservableObject {
         let disk = await dictationStartDiskSpaceDecision(journal),
         disk.state == .hardStop
       {
-        statusMessage = "本机可用空间不足 1 GB；为避免损坏录音，已拒绝开始。请先在设置中管理存储"
+        statusMessage = "这台 Mac 的可用空间不足 1 GB，无法开始录音。请先在设置中管理储存空间"
         return
       }
       liveTranscriptText = ""
-      liveTranscriptStatus = "正在准备麦克风；不会改变当前输入焦点"
+      liveTranscriptStatus = "正在准备麦克风"
       if fixtureMode {
         self.capture.captureWorkspaceHandoff = nil
         let fixtureActor = DictationSessionActor()
@@ -2838,6 +3053,9 @@ final class DictationAppModel: ObservableObject {
         // Wake an idle recognizer while the user is still speaking.
         Task { await localRuntime.warmFinalASRIfIdle() }
         let sessionID = earlyMicrophone?.sessionID ?? SessionID()
+        // Demo mode: written down before the session exists, so it is
+        // removed even if the App stops in the middle (根-10).
+        if !keepsDictations { noteDemoDictation(sessionID) }
         var target = externalInsertionTarget(preCapturedTarget)
         snapshot = DictationSessionSnapshot(
           sessionID: sessionID,
@@ -2852,7 +3070,7 @@ final class DictationAppModel: ObservableObject {
           ]
         )
         self.capture.captureWorkspaceHandoff = nil
-        statusMessage = "正在准备麦克风；原输入位置不会被悬浮条抢走"
+        statusMessage = "正在准备麦克风"
         renderRecordingPanel()
         // Esc must become active as soon as the visible preparation state
         // exists. Waiting until microphone startup finishes would drop the
@@ -2889,6 +3107,7 @@ final class DictationAppModel: ObservableObject {
           earlyMicrophoneAdopted = true
         } else {
           firstAudioPendingSince = startRequested
+          pressToRecording = nil
           let dictationDevice = try MicrophoneDeviceCatalog.defaultDevice()
           activeDictationMicrophoneUID = dictationDevice.uid
           capture = makeDictationCapture(deviceUID: dictationDevice.uid, sessionID: sessionID)
@@ -2899,7 +3118,9 @@ final class DictationAppModel: ObservableObject {
           capture: capture,
           journal: journal,
           repository: repository,
-          committedChunkObserver: localRuntime
+          committedChunkObserver: localRuntime,
+          // A demo dictation never reaches a DGX Spark.
+          grantsRemoteEligibility: keepsDictations
         )
         self.coordinator = coordinator
         snapshot = try await coordinator.start(
@@ -2907,6 +3128,7 @@ final class DictationAppModel: ObservableObject {
           target: target
         )
         logDictationStage("start-to-capture", since: startRequested)
+        pressToRecording = ContinuousClock.now - pressedAt
         if let sessionID = snapshot.sessionID {
           await localRuntime.registerLiveSession(
             sessionID: sessionID,
@@ -2931,13 +3153,22 @@ final class DictationAppModel: ObservableObject {
       coordinator = nil
       activeDictationMicrophoneUID = ""
       await hotkeyProvider?.setCancellationEnabled(false)
+      // A start that failed after the runtime took its speculation slot (or
+      // cancelled the idle release to warm the recognizer) ends here.
+      if let sessionID = snapshot.sessionID, snapshot.phase == .preparing {
+        await localRuntime?.endUnprocessedDictation(sessionID: sessionID)
+      }
       if let sessionID = snapshot.sessionID,
         let durable = try? await repository?.load(sessionID: sessionID)
       {
+        // Demo mode too: what was captured stays (review v12-B #1).
+        if !keepsDictations { keepDemoDictation(sessionID) }
         snapshot = durable
         statusMessage = "口述未能开始；已建立的本机记录可恢复，没有插入不完整文字"
         renderRecordingPanel()
       } else {
+        // Nothing was made: a demo take only leaves the ledger.
+        if !keepsDictations { await forgetDemoDictation(snapshot.sessionID) }
         snapshot = DictationSessionSnapshot()
         recordingPanel.dismiss()
         statusMessage = "口述未能开始；没有插入任何不完整文字"
@@ -2947,6 +3178,10 @@ final class DictationAppModel: ObservableObject {
 
   func end() async {
     let endRequested = ContinuousClock.now
+    // Release to text counts from the key's own event (the release, or the
+    // press that ends a hands-free take) when a key ended it.
+    let releasedAt = Self.dictationAnchor(dictationEndKeyAt, now: endRequested)
+    dictationEndKeyAt = nil
     defer { refreshDiskSpaceDecisionInBackground() }
     stopDictationLifecycleMonitoring()
     do {
@@ -2963,7 +3198,7 @@ final class DictationAppModel: ObservableObject {
             sessionID: snapshot.sessionID,
             inputMode: .dictation,
             state: .processing,
-            detail: "原音已安全保存；完成本地语音识别组件准备后即可继续转写",
+            detail: "原音已保存；完成本地语音识别模型准备后即可继续转写",
             organizeEvents: false
           )
           return
@@ -2996,41 +3231,60 @@ final class DictationAppModel: ObservableObject {
           phase: .finalizing,
           marker: .endRequested
         )
-        statusMessage = "正在结束录音并安全保存原音…"
+        statusMessage = "正在结束录音并保存原音…"
         publishSnapshotStatus()
         let finalization = try await coordinator.end()
         logDictationStage("seal-audio", since: endRequested)
-        snapshot = finalization.snapshot
-        publishSnapshotStatus()
-        guard models.modelRuntimeReady, let localRuntime else {
-          await hotkeyProvider?.setCancellationEnabled(false)
+        let sealed = ContinuousClock.now - endRequested
+        let measured = DictationTimingInputs(
+          releasedAt: releasedAt, seal: sealed, pressToRecording: pressToRecording,
+          mode: spokenModePlan?.mode ?? .dictate)
+        pressToRecording = nil
+        if models.modelRuntimeReady, let localRuntime {
+          // The audio is sealed, so nothing about this dictation needs the
+          // microphone or the lifecycle lock any more: recognition, cleanup
+          // and insertion continue in the background and the user can start
+          // the next dictation immediately. Recognition starts before any
+          // screen work; the status and the capsule follow while the
+          // recognizer already runs (收1-2).
           self.coordinator = nil
           activeDictationMicrophoneUID = ""
-          statusMessage =
-            "音频已保存在本机；完成本地语音识别组件准备后即可转写"
-          await presentCaptureWorkspaceHandoff(
-            sessionID: snapshot.sessionID,
-            inputMode: .dictation,
-            state: .processing,
-            detail: statusMessage,
-            organizeEvents: false
+          snapshot = finalization.snapshot
+          finalizeInBackground(
+            finalization,
+            coordinator: coordinator,
+            runtime: localRuntime,
+            endRequested: endRequested,
+            measured: measured
           )
+          statusMessage = "正在本地转写并插入文字…"
+          await hotkeyProvider?.setCancellationEnabled(false)
+          publishSnapshotStatus()
           return
         }
-        statusMessage = "正在本地转写并插入文字…"
-        // The audio is sealed, so nothing about this dictation needs the
-        // microphone or the lifecycle lock any more: recognition, cleanup and
-        // insertion continue in the background and the user can start the
-        // next dictation immediately.
+        // No recognizer yet: the audio stays to be transcribed once the
+        // models are ready.
+        if let sessionID = finalization.snapshot.sessionID {
+          await localRuntime?.endUnprocessedDictation(sessionID: sessionID)
+        }
+        snapshot = finalization.snapshot
+        publishSnapshotStatus()
+        await hotkeyProvider?.setCancellationEnabled(false)
         self.coordinator = nil
         activeDictationMicrophoneUID = ""
-        await hotkeyProvider?.setCancellationEnabled(false)
-        publishSnapshotStatus()
-        finalizeInBackground(
-          finalization,
-          coordinator: coordinator,
-          runtime: localRuntime,
-          endRequested: endRequested
+        // Demo mode too: the audio stays to be transcribed once the
+        // models are ready (review v12-B #1).
+        if !keepsDictations, let sessionID = snapshot.sessionID {
+          keepDemoDictation(sessionID)
+        }
+        statusMessage =
+          "音频已保存在本机；完成本地语音识别模型准备后即可转写"
+        await presentCaptureWorkspaceHandoff(
+          sessionID: snapshot.sessionID,
+          inputMode: .dictation,
+          state: .processing,
+          detail: statusMessage,
+          organizeEvents: false
         )
         return
       }
@@ -3044,6 +3298,10 @@ final class DictationAppModel: ObservableObject {
         organizeEvents: true
       )
     } catch {
+      // Sealing failed, so `process` never saw this take.
+      if !fixtureMode, let sessionID = snapshot.sessionID {
+        await localRuntime?.endUnprocessedDictation(sessionID: sessionID)
+      }
       if let sessionID = snapshot.sessionID,
         let durable = try? await repository?.load(sessionID: sessionID)
       {
@@ -3053,6 +3311,11 @@ final class DictationAppModel: ObservableObject {
       copyUninsertedDictationIfNeeded(snapshot, draft: liveTranscriptText)
       await hotkeyProvider?.setCancellationEnabled(false)
       publishSnapshotStatus()
+      // Demo mode: a take that failed stays in the demo library with its
+      // audio (review v12-B #1).
+      if !keepsDictations, await settleDemoDictation(snapshot, sessionID: snapshot.sessionID) {
+        return
+      }
       statusMessage = "音频已保留；可以重试完成处理"
       await presentCaptureWorkspaceHandoff(
         sessionID: snapshot.sessionID,
@@ -3115,6 +3378,9 @@ final class DictationAppModel: ObservableObject {
 
   func publishASRReadiness(_ ready: Bool) {
     models.modelDiscoveryComplete = true
+    // Mindloom Preview: Welcome and Settings may have offered the import
+    // before the models in the root were found (finish-ship).
+    defer { refreshModelImportOffer() }
     if ready {
       models.modelRuntimeReady = true
       models.modelReadinessMessage =
@@ -3141,7 +3407,7 @@ final class DictationAppModel: ObservableObject {
     } else {
       polishRuntimeReady = false
       polishReadinessMessage =
-        "本地文字整理尚未准备；口述仍可使用安全标点"
+        "本地文字整理尚未准备；口述仍可使用基础标点"
     }
   }
 
@@ -3165,13 +3431,13 @@ final class DictationAppModel: ObservableObject {
     case .warming:
       models.recommendedModelProgressMessage = "\(component)：正在准备本地运行时…"
     case .ready:
-      models.recommendedModelProgressMessage = "\(component)已可离线使用"
+      models.recommendedModelProgressMessage = "\(component)已就绪，可在本机使用"
     case .retryableFailure:
       models.recommendedModelProgressMessage =
-        "\(component)已安全暂停；重试会继续已校验进度"
+        "\(component)已暂停；重试会继续已校验进度"
     case .incompatible:
       models.recommendedModelProgressMessage =
-        "\(component)与当前目录不兼容；请更新织机"
+        "\(component)与当前目录不兼容。请更新 Mindloom。"
     case .consentRequired:
       models.recommendedModelProgressMessage =
         "请接受当前所选模型的许可后再下载"
@@ -3244,10 +3510,10 @@ final class DictationAppModel: ObservableObject {
       case .roomMicrophone: "线下录音"
       case .systemAudio: "电脑内录"
       case .importedMedia: "文件导入"
-      case .userItem: "收进来的内容"
+      case .userItem: "添加的内容"
       }
     return switch state {
-    case .processing: "\(modeTitle)已安全保存，等待完成处理"
+    case .processing: "\(modeTitle)已保存，等待完成处理"
     case .completed: "\(modeTitle)已完成"
     case .needsAttention: "\(modeTitle)已保留，需要继续处理"
     }
@@ -3264,16 +3530,9 @@ final class DictationAppModel: ObservableObject {
 
 
 
+  /// This Mac's device identity, or the demo root's own in demo mode.
   nonisolated static func localOriginDeviceID() -> UUID {
-    let key = "bestASR.local-origin-device-id"
-    if let value = UserDefaults.standard.string(forKey: key),
-      let uuid = UUID(uuidString: value)
-    {
-      return uuid
-    }
-    let uuid = UUID()
-    UserDefaults.standard.set(uuid.uuidString, forKey: key)
-    return uuid
+    LibraryIdentity.originDeviceID
   }
 
 
@@ -3299,19 +3558,15 @@ final class DictationAppModel: ObservableObject {
     }
   }
 
-  /// The normal library, or a separate data root chosen explicitly for this
-  /// launch with `-BestASRDataRoot <path>` (demo/synthetic data). A separate
-  /// root may not be, contain, or sit inside the normal library (compared by
-  /// file identity), and any misspelled, empty, or invalid request fails the
-  /// launch instead of falling back to the normal library.
+  /// The library this launch opens (`MindloomLaunch`): the owner's library
+  /// in the product, a separate root named with `-BestASRDataRoot <path>`, a
+  /// demo root named with `-MindloomDemoRoot <path>`. A separate or demo root
+  /// may not be, contain, or sit inside the owner's library (compared by
+  /// file identity); any misspelled, empty, or invalid request, and a
+  /// development build started without naming a library, fails the launch
+  /// instead of falling back to the owner's library.
   static func applicationDataRoot() throws -> URL {
-    guard let realLibrary = BestASRDataRootSelection.ownerRealLibraryRoot() else {
-      throw CocoaError(.fileNoSuchFile)
-    }
-    let root =
-      try BestASRDataRootSelection.separateDataRoot(
-        arguments: ProcessInfo.processInfo.arguments, realLibraryRoot: realLibrary
-      ) ?? realLibrary
+    let root = try MindloomLaunch.current.get().root
     try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
     return root
   }
@@ -3346,7 +3601,7 @@ final class DictationAppModel: ObservableObject {
 
   nonisolated static func resolveApplicationCacheRoot(base: URL) throws -> URL {
     let fileManager = FileManager.default
-    let root = base.appendingPathComponent("com.bestasr.app", isDirectory: true)
+    let root = base.appendingPathComponent(MindloomBuild.cacheFolderName, isDirectory: true)
     let attributes = try? fileManager.attributesOfItem(atPath: root.path)
     if attributes?[.type] as? FileAttributeType == .typeSymbolicLink {
       let destination = try fileManager.destinationOfSymbolicLink(atPath: root.path)
@@ -3362,7 +3617,7 @@ final class DictationAppModel: ObservableObject {
       // and leave the user's link untouched for when the volume returns.
       dictationAppLogger.notice("cache link target unavailable; using local cache")
       let fallback = base.appendingPathComponent(
-        "com.bestasr.app.local", isDirectory: true)
+        MindloomBuild.cacheFolderName + ".local", isDirectory: true)
       try fileManager.createDirectory(at: fallback, withIntermediateDirectories: true)
       return fallback
     }
@@ -3399,4 +3654,20 @@ final class DictationAppModel: ObservableObject {
 
 
 
+}
+
+/// `SMAppService.mainApp` for `LoginItemRepair` (MindloomLibrary).
+struct MainAppLoginItem: LoginItemService {
+  var status: LoginItemRepair.Status {
+    switch SMAppService.mainApp.status {
+    case .enabled: .enabled
+    case .requiresApproval: .requiresApproval
+    case .notRegistered: .notRegistered
+    case .notFound: .notFound
+    @unknown default: .notFound
+    }
+  }
+
+  func register() throws { try SMAppService.mainApp.register() }
+  func unregister() throws { try SMAppService.mainApp.unregister() }
 }

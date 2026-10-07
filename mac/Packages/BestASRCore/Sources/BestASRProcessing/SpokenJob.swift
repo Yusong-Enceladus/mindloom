@@ -31,9 +31,13 @@ public enum SpokenJob: Equatable, Sendable {
   case answer(instruction: String, about: String?)
   /// Nothing can be produced; this is what the user is told instead.
   case notice(String)
+  /// The highlight is a word dictation got wrong and what was said is the
+  /// right one (ALIGNMENT 收1-8): it is written over the highlight as said,
+  /// with no model involved, and the pair is learned.
+  case correct(heard: String, written: String)
 }
 
-/// The routing table. Five rows, read top to bottom, exhaustively tested.
+/// The routing table. Six rows, read top to bottom, exhaustively tested.
 public enum SpokenJobComposer {
   public static let selectSomethingFirst = "先选中要翻译的文字，再说一遍"
 
@@ -62,6 +66,13 @@ public enum SpokenJobComposer {
         return .translate(highlight, to: language, replacing: true)
       }
       guard let highlight else { return .answer(instruction: transcript, about: nil) }
+      // A word or two highlighted and a word or two said that sounds like
+      // it (or follows 改成, 应该是): the right word, not an instruction.
+      if let correction = CorrectionLearning.fromSelection(
+        selection: highlight, spoken: transcript)
+      {
+        return .correct(heard: correction.heard, written: correction.written)
+      }
       if SpokenInstructionIntent.showsAnswer(for: transcript) {
         return .answer(instruction: transcript, about: highlight)
       }

@@ -236,12 +236,25 @@ extension ProductionAudioJournal: DictationInferenceAudioPort {
           }
 
           let sourceURL = assetRootURL.appendingPathComponent(range.assetReference)
-          let sourceBytes = try Data(
-            contentsOf: sourceURL,
-            options: [.mappedIfSafe]
-          )
-          guard Self.sha256(sourceBytes) == range.contentDigest else {
-            throw ProductionAudioJournalError.inferenceDerivationInvalid
+          let sourceBytes: Data
+          if RetainedAudioContainer(reference: range.assetReference).isCompressed {
+            // A recording kept as Opus: decoded here, the one place every
+            // recognizer and the speaker model read audio from.
+            do {
+              sourceBytes = try RetainedAudioCodec.pcmBytes(
+                at: sourceURL, expectedDigest: range.contentDigest,
+                frameCount: UInt64(entry.frameCount), encoding: sourceDescriptor.encoding)
+            } catch {
+              throw ProductionAudioJournalError.inferenceDerivationInvalid
+            }
+          } else {
+            sourceBytes = try Data(
+              contentsOf: sourceURL,
+              options: [.mappedIfSafe]
+            )
+            guard Self.sha256(sourceBytes) == range.contentDigest else {
+              throw ProductionAudioJournalError.inferenceDerivationInvalid
+            }
           }
           let converted = try await converter.convert(
             CapturedPCMChunk(

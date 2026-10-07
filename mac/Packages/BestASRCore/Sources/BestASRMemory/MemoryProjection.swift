@@ -111,7 +111,8 @@ public struct MemoryEventSpan: Equatable, Sendable {
 
 public struct MemoryPersonRef: Equatable, Hashable, Sendable {
   public let personID: String
-  /// The person's name, or "?" while nobody named them.
+  /// The person's name, or 「没起名 N」 while nobody named them (「?」 only
+  /// for someone without a number).
   public let name: String
   public let isNamed: Bool
 
@@ -329,14 +330,20 @@ public struct MemoryDayGroup: Equatable, Identifiable, Sendable {
 
 public struct MemoryPersonEntry: Equatable, Identifiable, Sendable {
   public let personID: String
-  /// The name, or "?" while nobody named them.
+  /// The name, or 「没起名 N」 (`unnamedNumber`) while nobody named them.
   public let name: String
   /// In Home order.
   public let events: [MemoryHomeEntry]
   public let pendingQuestions: [RemoteOrganizerQuestion]
   public var isNamed = true
-  /// When they last appeared in any event.
+  /// When they last appeared in any event, or were last heard on this Mac.
   public var lastSeen: Date?
+  /// Their number while nobody named them (the same on every page).
+  public var unnamedNumber: Int?
+  /// Heard in a recording on this Mac: the pages offer 「听一段」.
+  public var hasVoice = false
+  /// Records on this Mac they speak in.
+  public var voiceRecords = 0
 
   public var id: String { personID }
   /// As `MemoryPersonRef.colorIndex`.
@@ -386,6 +393,12 @@ public struct MemoryProjection: Sendable {
   public let relations: [RemoteOrganizerRelation]
   /// Questions made on this Mac (the local fallback organizer's candidates).
   public let localQuestions: [MemoryQuestion]
+  /// The people this Mac knows from its own recordings (named or not),
+  /// listed even when no matter holds them.
+  public let localPeople: [MemoryLocalPerson]
+  /// Merges made on this Mac that the organizer's people do not show yet
+  /// (upper-case merged ID → the person it joined): a held 「合并到…」.
+  public let localMerges: [String: String]
   /// The moment "now" for question expiry; injected for determinism.
   public let now: Date
   /// The Mac's user (upper-case person IDs). Never shown as one of the
@@ -415,6 +428,11 @@ public struct MemoryProjection: Sendable {
   private var heardPersonIDs: Set<String> = []
   /// People the pages draw as avatars and chips (see `isShownPerson`).
   private var shownPersonIDs: Set<String> = []
+  /// Unnamed people's numbers (upper-case canonical IDs), see
+  /// `MemoryUnnamedNumbers`.
+  private var unnamedNumbers: [String: Int] = [:]
+  /// `localPeople` by upper-case ID.
+  private var localByID: [String: MemoryLocalPerson] = [:]
 
   public init(
     events: [MemoryEventSource], records: [MemoryItemRecord],
@@ -424,8 +442,15 @@ public struct MemoryProjection: Sendable {
     unfiled: [RemoteOrganizerUnfiledItem] = [],
     localQuestions: [MemoryQuestion] = [], now: Date = Date(),
     ownerPersonIDs: Set<String> = [], ropes: [RemoteOrganizerRope] = [],
-    relations: [RemoteOrganizerRelation] = []
+    relations: [RemoteOrganizerRelation] = [], localPeople: [MemoryLocalPerson] = [],
+    localMerges: [String: String] = [:]
   ) {
+    self.localPeople = localPeople
+    var merges: [String: String] = [:]
+    for (from, to) in localMerges { merges[from.uppercased()] = to }
+    self.localMerges = merges
+    localByID = Dictionary(
+      localPeople.map { ($0.personID, $0) }, uniquingKeysWith: { a, _ in a })
     self.events = events
     let shown = Set(events.map(\.eventID))
     self.relations = relations.filter { shown.contains($0.a) && shown.contains($0.b) }
@@ -455,6 +480,9 @@ public struct MemoryProjection: Sendable {
         if localNames[key] == nil { localNames[key] = person.name }
       }
     }
+    // The library's own people are the latest word on a local name (a
+    // record read a moment earlier may still carry the old one).
+    for local in localPeople { localNames[local.personID] = local.name ?? "" }
     for event in events {
       var held = Set<String>()
       for part in event.segments where held.insert(part.itemID.uppercased()).inserted {
@@ -466,6 +494,10 @@ public struct MemoryProjection: Sendable {
       let ids = record.people.map(\.id) + record.segments.compactMap(\.personID)
       for id in ids { heardPersonIDs.insert(canonicalID(id.rawValue.uuidString).uppercased()) }
     }
+    for local in localPeople where local.hasVoice {
+      heardPersonIDs.insert(canonicalID(local.personID).uppercased())
+    }
+    unnamedNumbers = MemoryUnnamedNumbers.assign(unnamedCandidates(records: records))
     // Colours come from the Home people row, which comes from Home; the
     // cards then take the assigned colours.
     let uncolored = events.map(homeEntry)
@@ -488,7 +520,7 @@ public struct MemoryProjection: Sendable {
     remote: RemoteOrganizerProjection, records: [MemoryItemRecord],
     remoteReadings: [String: String]? = nil, remoteReadingSummaries: [String: String]? = nil,
     now: Date = Date(),
-    ownerPersonIDs: Set<String> = []
+    ownerPersonIDs: Set<String> = [], localPeople: [MemoryLocalPerson] = []
   ) {
     self.init(
       events: remote.events.filter { !$0.deleted }.map(Self.source),
@@ -498,7 +530,8 @@ public struct MemoryProjection: Sendable {
         ?? (remoteReadings == nil ? remote.readingSummaries : [:]),
       remoteReadingFacts: remoteReadings == nil ? remote.readingFacts : [:],
       unfiled: remote.unfiled, now: now,
-      ownerPersonIDs: ownerPersonIDs, ropes: remote.ropes, relations: remote.relations
+      ownerPersonIDs: ownerPersonIDs, ropes: remote.ropes, relations: remote.relations,
+      localPeople: localPeople
     )
   }
 
@@ -871,25 +904,7 @@ public struct MemoryProjection: Sendable {
     return open.first { $0.kind != .samePerson } ?? open.first
   }
 
-  // MARK: - Related and Unfiled
-
-  /// Other events sharing at least one person who takes part in both
-  /// (`MemoryHomeEntry.participantIDs`), most shared first, then in Home
-  /// order. Someone a text only names relates nothing.
-  public func related(
-    to eventID: String, limit: Int = 4, home precomputed: [MemoryHomeEntry]? = nil
-  ) -> [MemoryHomeEntry] {
-    let home = precomputed ?? home()
-    guard let own = home.first(where: { $0.eventID == eventID }) else { return [] }
-    let people = own.participantIDs
-    guard !people.isEmpty else { return [] }
-    let scored = home.enumerated().compactMap { index, entry -> (Int, Int, MemoryHomeEntry)? in
-      guard entry.eventID != eventID else { return nil }
-      let shared = entry.participantIDs.intersection(people).count
-      return shared > 0 ? (shared, index, entry) : nil
-    }
-    return scored.sorted { ($0.0, -$0.1) > ($1.0, -$1.1) }.prefix(limit).map(\.2)
-  }
+  // MARK: - Unfiled
 
   /// Items in no event, newest first. Items no longer on this Mac are left out.
   public func unfiledItems() -> [MemoryUnfiledItem] {
@@ -923,9 +938,12 @@ public struct MemoryProjection: Sendable {
     }
     var entries: [MemoryPersonEntry] = []
     var listed = Set<String>()
-    for person in persons where person.mergedInto == nil && !person.isNotPerson {
+    for person in persons
+    where person.mergedInto == nil && localMerges[person.personID.uppercased()] == nil
+      && !person.isNotPerson
+    {
       guard !isOwner(person.personID, name: person.displayName),
-        listed.insert(person.personID).inserted
+        listed.insert(person.personID.uppercased()).inserted
       else { continue }
       let personEvents = eventsByPerson[person.personID] ?? []
       var entry = MemoryPersonEntry(
@@ -936,14 +954,15 @@ public struct MemoryProjection: Sendable {
         },
         colorIndex: personColors[person.personID]
       )
-      entry.isNamed = entry.name != Self.unnamed
+      entry.isNamed = isNamed(person.personID)
       entry.lastSeen = Self.lastSeen(personEvents)
+      fillVoice(&entry)
       entries.append(entry)
     }
     // People known only from local recordings (the fallback organizer, or a
     // Spark that has not reported them yet).
     for entry in home {
-      for ref in entry.people where listed.insert(ref.personID).inserted {
+      for ref in entry.people where listed.insert(ref.personID.uppercased()).inserted {
         let personEvents = eventsByPerson[ref.personID] ?? []
         var person = MemoryPersonEntry(
           personID: ref.personID, name: ref.name, events: personEvents, pendingQuestions: [],
@@ -951,10 +970,104 @@ public struct MemoryProjection: Sendable {
         )
         person.isNamed = ref.isNamed
         person.lastSeen = Self.lastSeen(personEvents)
+        fillVoice(&person)
         entries.append(person)
       }
     }
+    // Voices this Mac knows that no matter holds (yet): named or not, they
+    // have a page and a place in 按人 (理3-1).
+    for local in localPeople {
+      let canonical = canonicalID(local.personID)
+      guard canonical.uppercased() == local.personID, !isNotPerson(canonical),
+        !isOwner(canonical, name: local.name), listed.insert(canonical.uppercased()).inserted
+      else { continue }
+      var person = MemoryPersonEntry(
+        personID: canonical, name: name(of: canonical), events: [], pendingQuestions: [],
+        colorIndex: personColors[canonical])
+      person.isNamed = isNamed(canonical)
+      fillVoice(&person)
+      entries.append(person)
+    }
     return entries
+  }
+
+  /// A person's voice facts and number, from this Mac's own people.
+  private func fillVoice(_ entry: inout MemoryPersonEntry) {
+    let key = entry.personID.uppercased()
+    if let local = localByID[key] {
+      entry.hasVoice = local.hasVoice
+      entry.voiceRecords = local.recordCount
+      if let heard = local.lastHeardAt, heard > (entry.lastSeen ?? .distantPast) {
+        entry.lastSeen = heard
+      }
+    } else if heardPersonIDs.contains(key) {
+      entry.hasVoice = true
+    }
+    entry.unnamedNumber = entry.isNamed ? nil : unnamedNumbers[key]
+  }
+
+  /// Everyone nobody named, for the one numbering: this Mac's unnamed
+  /// people (by when it made them), unnamed speakers of its records (by
+  /// their first record), and the organizer's unnamed people; merged-away
+  /// people, the owner and labels never take a number.
+  private func unnamedCandidates(records: [MemoryItemRecord]) -> [MemoryUnnamedNumbers.Candidate] {
+    var result: [MemoryUnnamedNumbers.Candidate] = []
+    func consider(_ id: String, _ firstKnown: Date?) {
+      let canonical = canonicalID(id)
+      guard !isNamed(canonical), !isOwner(canonical, name: nil), !isNotPerson(canonical) else {
+        return
+      }
+      result.append(.init(personID: canonical, firstKnown: firstKnown))
+    }
+    for local in localPeople { consider(local.personID, local.createdAt) }
+    for record in records {
+      for person in record.people { consider(person.id.rawValue.uuidString, record.startedAt) }
+      for segment in record.segments {
+        if let id = segment.personID { consider(id.rawValue.uuidString, record.startedAt) }
+      }
+    }
+    for person in persons where person.mergedInto == nil { consider(person.personID, nil) }
+    return result
+  }
+
+  /// Someone gave this person a name (the organizer, or this Mac).
+  func isNamed(_ personID: String) -> Bool {
+    nonEmpty(personsByID[personID]?.displayName) != nil
+      || nonEmpty(localName(of: personID)) != nil
+  }
+
+  /// 「没起名 N」 for a person nobody named (「?」 when they have no number).
+  public func unnamedName(_ personID: String) -> String {
+    unnamedNumbers[canonicalID(personID).uppercased()].map(MemoryUnnamedNumbers.label)
+      ?? Self.unnamed
+  }
+
+  /// A person's number while nobody named them.
+  public func unnamedNumber(_ personID: String) -> Int? {
+    let canonical = canonicalID(personID)
+    return isNamed(canonical) ? nil : unnamedNumbers[canonical.uppercased()]
+  }
+
+  /// About three seconds of a person's own voice from a recording the pages
+  /// hold (`MemoryVoiceSample`), earliest recording first. Nil when none is
+  /// held here (the App then asks the library).
+  public func voiceSample(of personID: String) -> MemoryVoiceStretch? {
+    let wanted = canonicalID(personID).uppercased()
+    let recordings = records.values.filter(\.playbackAvailable).sorted {
+      ($0.startedAt, Self.key($0.sessionID)) < ($1.startedAt, Self.key($1.sessionID))
+    }
+    var stretches: [MemoryVoiceStretch] = []
+    for record in recordings {
+      for segment in record.segments {
+        guard let id = segment.personID?.rawValue.uuidString,
+          canonicalID(id).uppercased() == wanted,
+          let start = segment.monotonicStartNanoseconds, let end = segment.monotonicEndNanoseconds
+        else { continue }
+        stretches.append(
+          MemoryVoiceStretch(itemID: record.sessionID.rawValue.uuidString, start: start, end: end))
+      }
+    }
+    return MemoryVoiceSample.choose(stretches)
   }
 
   /// People in the Home row: most recently seen first; people seen in no
@@ -1094,7 +1207,8 @@ public struct MemoryProjection: Sendable {
     return ref
   }
 
-  /// The name shown for a person nobody named.
+  /// The name shown for a person nobody named who has no number (see
+  /// `unnamedName`).
   public static let unnamed = "?"
 
   // MARK: - Helpers
@@ -1120,7 +1234,7 @@ public struct MemoryProjection: Sendable {
         guard !isOwner(canonical, name: name), !isNotPerson(canonical) else { continue }
         result.append(
           colored(
-            MemoryPersonRef(personID: canonical, name: name, isNamed: name != Self.unnamed)))
+            MemoryPersonRef(personID: canonical, name: name, isNamed: isNamed(canonical))))
       }
     }
     var spokenIn: [String: Int] = [:]
@@ -1223,13 +1337,17 @@ public struct MemoryProjection: Sendable {
     if let remote = nonEmpty(personsByID[canonical]?.displayName) {
       return MemoryPersonRef(personID: canonical, name: remote)
     }
-    if canonical != localID, let merged = localName(of: canonical) {
-      return MemoryPersonRef(personID: canonical, name: merged)
+    // This Mac's own name for them (its people are the latest word).
+    if let known = nonEmpty(localName(of: canonical)) {
+      return MemoryPersonRef(personID: canonical, name: known)
     }
-    guard let local = nonEmpty(fallbackName) else {
-      return MemoryPersonRef(personID: canonical, name: Self.unnamed, isNamed: false)
+    // A record's name for someone this Mac's people list does not have.
+    if canonical.uppercased() == localID.uppercased(), localByID[canonical.uppercased()] == nil,
+      let local = nonEmpty(fallbackName)
+    {
+      return MemoryPersonRef(personID: canonical, name: local)
     }
-    return MemoryPersonRef(personID: canonical, name: local)
+    return MemoryPersonRef(personID: canonical, name: unnamedName(canonical), isNamed: false)
   }
 
   /// The person a local or merged ID is now (merges followed).
@@ -1239,7 +1357,7 @@ public struct MemoryProjection: Sendable {
     var current = id
     var visited = Set<String>()
     while visited.insert(current).inserted,
-      let next = personsByID[current]?.mergedInto
+      let next = personsByID[current]?.mergedInto ?? localMerges[current.uppercased()]
     {
       current = next
     }
@@ -1250,7 +1368,7 @@ public struct MemoryProjection: Sendable {
     if let name = nonEmpty(personsByID[personID]?.displayName) {
       return name
     }
-    return nonEmpty(localName(of: personID)) ?? Self.unnamed
+    return nonEmpty(localName(of: personID)) ?? unnamedName(personID)
   }
 
   private func localName(of personID: String) -> String? {
@@ -1298,37 +1416,35 @@ public struct MemoryReadModel: Sendable {
   public let home: [MemoryHomeEntry]
   public let people: [MemoryPersonEntry]
   public let recentPeople: [MemoryPersonEntry]
-  /// The Home people row (`MemoryProjection.featuredPeople`).
+  /// The people who matter (`MemoryProjection.featuredPeople`).
   public let featuredPeople: [MemoryPersonEntry]
   public let unfiled: [MemoryUnfiledItem]
-  public let bannerQuestion: MemoryQuestion?
-  /// Open questions (Home's 「N 个问题等你确认」).
-  public let questionCount: Int
-  /// Home's 「最近在动的事」, for each span the page offers.
-  public let looms: [MemoryLoom.Span: MemoryLoom]
-  /// Home's other lenses: 按绳, 按截止, 按人 (v7).
-  public let lenses: MemoryHomeLenses
+  /// v11: every live matter digested (parts, steps, due and overdue, risk,
+  /// 待定, the same capture's other matters) and 按截止's rows, with the
+  /// user's step overrides applied.
+  public let digest: MemoryDigest
 
-  public init(_ projection: MemoryProjection, calendar: Calendar = .current) {
+  /// - Parameters:
+  ///   - user: the user's pins, groups and step overrides (overrides change
+  ///     the digest; pins and groups are read by the pages).
+  ///   - now: "today" for due words and overdue steps (the real clock in the
+  ///     App; a fixed moment in fixtures). Defaults to the projection's.
+  ///   - ownerNames: extra spellings of the owner's name for the display
+  ///     guards (the projection's owner persons are always included).
+  public init(
+    _ projection: MemoryProjection, user: UserOrganizingSnapshot = .empty, now: Date? = nil,
+    calendar: Calendar = .current, ownerNames: [String] = []
+  ) {
     self.projection = projection
     let home = projection.home()
     self.home = home
-    let looms = Dictionary(
-      uniqueKeysWithValues: MemoryLoom.Span.allCases.map {
-        ($0, MemoryLoom(projection: projection, home: home, span: $0, calendar: calendar))
-      })
-    self.looms = looms
     let people = projection.people()
     self.people = people
     recentPeople = projection.recentPeople(from: people)
-    let featured = projection.featuredPeople(from: people)
-    featuredPeople = featured
-    lenses = MemoryHomeLenses(
-      projection: projection, home: home, featuredPeople: featured,
-      now: looms[.twoWeeks]?.now ?? projection.now, calendar: calendar)
+    featuredPeople = projection.featuredPeople(from: people)
     unfiled = projection.unfiledItems()
-    let questions = projection.memoryQuestions()
-    questionCount = questions.count
-    bannerQuestion = questions.first { $0.kind != .samePerson } ?? questions.first
+    digest = MemoryDigest(
+      projection: projection, user: user, now: now ?? projection.now, calendar: calendar,
+      ownerNames: ownerNames)
   }
 }

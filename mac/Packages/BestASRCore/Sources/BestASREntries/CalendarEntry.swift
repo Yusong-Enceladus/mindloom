@@ -138,7 +138,7 @@ public enum CalendarItemText {
     let names = event.attendeeNames.map(oneLine).filter { !$0.isEmpty }
     if !names.isEmpty { lines.append("参与人：\(names.joined(separator: "、"))") }
     if !event.calendarTitle.isEmpty { lines.append("日历：\(oneLine(event.calendarTitle))") }
-    if changed { lines.append("（这条日程有改动，之前收进过一次）") }
+    if changed { lines.append("（此日程有更改，之前已添加过一次）") }
     if let notes = event.notes?.trimmingCharacters(in: .whitespacesAndNewlines), !notes.isEmpty {
       lines.append("备注：")
       lines.append(notes)

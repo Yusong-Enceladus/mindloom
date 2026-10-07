@@ -291,12 +291,6 @@ final class MemoryPresentationTests: XCTestCase {
     XCTAssertEqual(unfiled.map(\.reason), ["none", "removed_by_user"])
   }
 
-  /// 王姐 writes in both matters (a speaker line in each), so they relate.
-  func testRelatedEventsSharePeople() {
-    let related = projection().related(to: "ev-rent")
-    XCTAssertEqual(related.map(\.eventID), ["ev-net"])
-  }
-
   func testDayGroupsFollowTheInjectedCalendar() throws {
     let detail = try XCTUnwrap(projection().event(id: "ev-rent"))
     let groups = detail.dayGroups(calendar: calendar)
@@ -313,14 +307,18 @@ final class MemoryPresentationTests: XCTestCase {
     XCTAssertEqual(MemoryDateText.duration(nanoseconds: 192_000_000_000), "3 分 12 秒")
   }
 
-  func testPeopleAreNamesOrAQuestionMarkWithStableColours() {
+  /// v12 (理3-1, 理3-5): someone nobody named is 「没起名 N」, the same
+  /// number in the people list and on a matter (was 「?」).
+  func testPeopleAreNamesOrANumberedUnnamedWithStableColours() {
     let projection = projection()
     let people = projection.people()
     let unnamed = try! XCTUnwrap(people.first { $0.personID == "p-x" })
-    XCTAssertEqual(unnamed.name, "?")
+    XCTAssertEqual(unnamed.name, "未命名 1")
+    XCTAssertEqual(unnamed.unnamedNumber, 1)
     XCTAssertFalse(unnamed.isNamed)
     XCTAssertTrue(people.first { $0.personID == "p-wang" }!.isNamed)
-    XCTAssertEqual(projection.home()[1].people.map(\.name), ["王姐", "?"])
+    XCTAssertEqual(projection.home()[1].people.map(\.name), ["王姐", "未命名 1"])
+    XCTAssertEqual(projection.home()[1].people.map(\.isNamed), [true, false])
     // Stable across processes: a fixed FNV-1a value, not Swift's seeded hash.
     XCTAssertEqual(MemoryPersonColor.index(for: "p-wang"), MemoryPersonColor.index(for: "P-WANG"))
     XCTAssertTrue((0..<6).contains(MemoryPersonColor.index(for: "p-wang")))

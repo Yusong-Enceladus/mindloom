@@ -31,7 +31,7 @@ MCP 在这里只用到很小的一块：stdio 上逐行的 JSON-RPC 2.0，方法
 - **helper（`mindloom-mcp`）**：由 Agent 以 stdio 启动；不存资料、不带密钥、不联网。它只连 `<数据目录>/agent/mindloom.sock`：连之前检查文件夹是本用户的且权限 0700、套接字是本用户的且 0600，连上后用内核的对端凭据（`LOCAL_PEERCRED`、`LOCAL_PEERPID`）加 libproc（`proc_pidinfo`）确认在听的进程属于本用户。数据目录默认是账户数据库里的主目录下的 `Library/Application Support/bestASR`，开发版可用 `MINDLOOM_DATA_ROOT` 指到别的绝对路径。App 不在时，它自己回答握手和工具列表，每个工具调用返回“织机没有在运行，请先打开织机”；App 中途退出时，正在进行的调用也这样回答；App 回来后下一次调用自动重连，并把客户端原来的握手重放一次。stderr 只写连接出了什么事，不写内容。
 - **App 一侧（`AgentSocketServer` + `AgentAccessService`）**：在私有文件夹里监听（绑定时收紧 umask，套接字 0600；已有的文件夹若不是 0700 就改成 0700，不是本用户的就不监听）。每个连接先做同样的对端检查，不通过就直接断开、不读一个字节。客户端身份 = MCP `clientInfo.name` + App 自己用 libproc 查到的 helper 父进程的可执行文件路径（版本号文件夹折叠成 `*`）。
 - 每次 `tools/call` 和资源读取都当场查授权（撤销、到期在下一次调用生效），在范围内作答，号码默认按遮挡规范 v3 换成占位符（每个授权一把占位符钥匙：`HMAC-SHA256(授权密钥, "mindloom-agent-mask-v1")`），并写一行审计（不含内容）。
-- 授权：`agent_grants` 行只存范围，外加用授权密钥做的 `HMAC-SHA256` 校验；密钥是 32 字节随机数，存在登录钥匙串（service `com.bestasr.agent-grant`，account = 数据目录身份 hash + 授权 id，`AfterFirstUnlockThisDeviceOnly`，不同步）。测试和端到端运行用 0600 文件（只允许带 `SYNTHETIC_DATA_ROOT` 标记、且不在真实资料库里的目录）。“这一次”的授权只在内存里，随连接结束。
+- 授权：`agent_grants` 行只存范围，外加用授权密钥做的 `HMAC-SHA256` 校验；密钥是 32 字节随机数，存在登录钥匙串（service `app.mindloom.agent-grant`（2026-10-06 之前是 `com.bestasr.agent-grant`，换装时交接），account = 数据目录身份 hash + 授权 id，`AfterFirstUnlockThisDeviceOnly`，不同步）。测试和端到端运行用 0600 文件（只允许带 `SYNTHETIC_DATA_ROOT` 标记、且不在真实资料库里的目录）。“这一次”的授权只在内存里，随连接结束。
 
 ## 最低系统
 
@@ -47,5 +47,5 @@ macOS 14（App 的部署目标）。用到的系统接口：`LOCAL_PEERCRED`/`LO
 
 - 没有云端入口，也不监听任何网络端口；只有本机、本用户的 Unix 套接字。
 - Agent 读到的内容会由 Agent 背后的服务处理，离开这台 Mac：这是用户在同意窗口里明确选择的（PRD §0.3 第 11 条），窗口和设置页都写明。音频、声纹、个人词典永远不给；给的只有文字。
-- 审计只记客户端、时间、工具、结果、返回的事 id、字节数；不记查询词、标题或任何正文。Agent 收件箱里的建议在主人决定前保存正文，决定后删除正文（收下的成为一条来源为 `agent:<名字>` 的资料）。
+- 审计只记客户端、时间、工具、结果、返回的事 id、字节数；不记查询词、标题或任何正文。Agent 收件箱里的建议在主人决定前保存正文，决定后删除正文（收下的成为一条来源为 `agent:<名字>` 的资料）。2026-10-05（v12 1D）：收件箱由“也可以改”的四个改动工具取代（马上生效、记进 `agent_changes`、可撤销），连接只认自带的连接程序（代码签名），回答里的资料放在每次随机的标记之间；手写的 MCP 实现不变。
 - 这些表都是本机表（schema v25），不进可移植归档，也从不发往整理设备。

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!-- Mindloom Preview's share extension: sandboxed, and it may write only the
+       preview's own share drop folder, outside every data root (the App on
+       any copy of the synthetic root reads it). Never the owner's library,
+       never the canonical preview root. -->
+  <key>com.apple.security.app-sandbox</key>
+  <true/>
+  <key>com.apple.security.temporary-exception.files.absolute-path.read-write</key>
+  <array>
+    <string>/Users/Shared/mindloom-demo/v11/env/share-drop/entries/share-inbox/</string>
+  </array>
+</dict>
+</plist>

@@ -51,14 +51,14 @@ extension ContentView {
           if origin.kind == .event,
             let candidate = model.activeEventReviewCandidate
           {
-            Button("确认是同一事件") {
+            Button("确认是同一件事") {
               model.acceptEventCandidate(candidate)
             }
             .buttonStyle(.borderedProminent)
             .accessibilityIdentifier(
               "bestASR.history.eventCandidate.accept"
             )
-            Button("不是同一事件") {
+            Button("不是同一件事") {
               model.dismissEventCandidate(candidate)
             }
             .accessibilityIdentifier(
@@ -69,7 +69,7 @@ extension ContentView {
           Text(
             model.activeEventReviewCandidate == nil
               ? model.history.detailStatusMessage
-              : "正在审核事件线索；确认前不会改变任何关系"
+              : "正在核对归类；确认后才更改关系"
           )
           .font(.caption)
           .foregroundStyle(.secondary)
@@ -143,14 +143,14 @@ extension ContentView {
               }
             }
             .disabled(model.history.retryingHistorySessionID != nil)
-            .help("使用已保留的原音继续本机处理，原音和已有版本不会被覆盖。")
+            .help("使用保留的录音继续在本机处理，录音和已有版本都会保留。")
             .accessibilityIdentifier("bestASR.history.recoverSelected")
           }
           if item.preferredText?.isEmpty == false {
             Button {
               model.copyHistoryItem(item)
             } label: {
-              Label("复制", systemImage: "doc.on.doc")
+              Label("拷贝", systemImage: "doc.on.doc")
             }
           }
           Button("删除…", role: .destructive) {
@@ -243,7 +243,7 @@ extension ContentView {
 
       DisclosureGroup("整篇修改与重新处理") {
         VStack(alignment: .leading, spacing: 10) {
-          Text("适合一次改很多内容。以前的文字仍可从“来源”找回，原音不会改变。")
+          Text("适合一次更改大量内容。之前的文字可以在“来源”中找回，录音保持不变。")
             .font(.caption)
             .foregroundStyle(.secondary)
           TextEditor(text: $model.history.transcriptEditDraft)
@@ -317,7 +317,7 @@ extension ContentView {
               .textSelection(.enabled)
               .accessibilityIdentifier("bestASR.history.rawText")
             HStack {
-              Button("复制原始识别") {
+              Button("拷贝原始识别结果") {
                 model.copyHistoryText(raw, label: "原始识别")
               }
               Button("恢复为当前文字") {
@@ -407,9 +407,9 @@ extension ContentView {
       }
       if currentDocuments.isEmpty {
         ContentUnavailableView(
-          "还没有整理结果",
+          "尚无整理结果",
           systemImage: "text.badge.plus",
-          description: Text("选择上方一种整理方式；逐字稿和原音不会被改写。")
+          description: Text("选择上方的一种整理方式；逐字稿和录音保持不变。")
         )
       } else {
         ForEach(currentDocuments) { document in
@@ -457,10 +457,10 @@ extension ContentView {
       let relatedEvents = model.events.summaries.filter {
         $0.sessionIDs.contains(item.sessionID)
       }
-      GroupBox("相关事件") {
+      GroupBox("相关的事") {
         VStack(alignment: .leading, spacing: 9) {
           if relatedEvents.isEmpty {
-            Text("这条记录尚未归入事件。系统只会给出本机建议，确认前不会自动改变你的组织方式。")
+            Text("这条记录尚未归入任何事。Mindloom 会在本机给出归类，你确认后才更改分类。")
               .foregroundStyle(.secondary)
           } else {
             ForEach(relatedEvents) { summary in
@@ -482,9 +482,9 @@ extension ContentView {
               .buttonStyle(.plain)
             }
           }
-          Button("打开事件工作区") {
+          Button("打开这件事") {
             navigate(to: .events)
-            model.refreshEvents()
+            model.reloadEventMemory()
           }
         }
         .padding(.top, 4)
@@ -981,7 +981,7 @@ extension ContentView {
               Image(systemName: "trash")
             }
             .buttonStyle(.plain)
-            .help("删除这条整理项；逐字稿和原音不会删除")
+            .help("删除此整理项；逐字稿和录音会保留")
           }
         }
         .font(.caption)
@@ -994,7 +994,7 @@ extension ContentView {
           }
           .buttonStyle(.borderedProminent)
           .disabled(model.history.reprocessingInProgress)
-          Text("每条整理项都保留来源时间戳；编辑不会改写逐字稿。")
+          Text("每条整理项都保留来源时间戳；编辑时逐字稿保持不变。")
             .font(.caption)
             .foregroundStyle(.secondary)
         }
@@ -1025,7 +1025,7 @@ extension ContentView {
     if !model.history.selectedHistorySourceContexts.isEmpty {
       GroupBox("来源说明") {
         VStack(alignment: .leading, spacing: 9) {
-          Text("这些信息只从本机会议界面读取，不改变录音边界。只有与远端音轨严格对齐的可靠“当前发言人”事件才可映射当前会话姓名；参会者名单不会用于猜测，人工确认始终优先。")
+          Text("这些信息读取自本机的会议界面，录音范围保持不变。与远端音轨严格对齐的“当前发言人”记录可用于对应会话中的姓名；人工确认始终优先。")
             .font(.caption)
             .foregroundStyle(.secondary)
           ForEach(model.history.selectedHistorySourceContexts) { context in
@@ -1093,7 +1093,7 @@ extension ContentView {
     case .roomMicrophone: "线下录音"
     case .systemAudio: "电脑内录"
     case .importedMedia: "文件导入"
-    case .userItem: "收进来的内容"
+    case .userItem: "添加的内容"
     }
   }
 
@@ -1166,7 +1166,7 @@ private struct HistoryNotesGenerationControls: View {
       } label: {
         HStack(spacing: 6) {
           if isGenerating { ProgressView().controlSize(.small) }
-          Text(isGenerating ? "正在整理…" : "生成整理")
+          Text(isGenerating ? "请稍候…" : "生成整理")
         }
       }
       .buttonStyle(.borderedProminent)

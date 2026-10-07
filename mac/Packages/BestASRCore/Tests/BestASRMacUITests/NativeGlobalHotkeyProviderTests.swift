@@ -411,3 +411,50 @@ private actor FixtureHotkeyStore: HotkeyConfigurationStore {
     self.configuration = configuration
   }
 }
+
+/// Review v12-B #11 (regression): fn's press and release carry the key
+/// events' own times to the App, which tells a tap from a hold by them.
+final class HotkeyKeyTimeTests: XCTestCase {
+  @MainActor
+  func testFnTransitionsCarryTheKeyEventsTimes() async {
+    let backend = CarbonHotkeyBackend()
+    let identifier = GlobalHotkeyAction.startOrEnd.rawValue
+    backend.setBindingForTesting(
+      identifier: identifier, keyCode: 63,
+      carbonModifiers: CarbonHotkeyBackend.functionModifierSentinel)
+    let provider = NativeGlobalHotkeyProvider(backend: backend)
+    let stream = await provider.transitions()
+    let received = Task { () -> [NativeHotkeyTransition] in
+      var all: [NativeHotkeyTransition] = []
+      for await transition in stream {
+        all.append(transition)
+        if all.count == 2 { return all }
+      }
+      return all
+    }
+    // Let the provider subscribe before the keys move.
+    for _ in 0..<20 { await Task.yield() }
+    backend.handleFlagsChanged(keyCode: 63, flags: [.maskSecondaryFn], at: 500.00)
+    backend.handleFlagsChanged(keyCode: 63, flags: [], at: 500.18)
+    let transitions = await received.value
+    XCTAssertEqual(transitions.map(\.isPressed), [true, false])
+    XCTAssertEqual(transitions.map(\.keyTime), [500.00, 500.18])
+    let held = DictationKeyRelease.heldDuration(
+      pressedAt: transitions[0].keyTime, releasedAt: transitions[1].keyTime,
+      handledApart: .seconds(1))
+    XCTAssertEqual(DictationKeyRelease.after(held: held), .keepsListening)
+  }
+
+  /// A key event's timestamp, whether it carries mach ticks (Apple silicon)
+  /// or nanoseconds, reads as seconds since the Mac started.
+  func testKeyEventTimestampsReadAsSecondsSinceStart() {
+    var base = mach_timebase_info_data_t()
+    mach_timebase_info(&base)
+    let now = mach_absolute_time()
+    let seconds = Double(now) * Double(base.numer) / Double(base.denom) / 1e9
+    XCTAssertEqual(CarbonHotkeyBackend.keySeconds(now, nowTicks: now), seconds, accuracy: 0.001)
+    let nanoseconds = UInt64(seconds * 1e9)
+    XCTAssertEqual(
+      CarbonHotkeyBackend.keySeconds(nanoseconds, nowTicks: now), seconds, accuracy: 0.001)
+  }
+}

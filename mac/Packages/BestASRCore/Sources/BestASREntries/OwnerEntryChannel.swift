@@ -63,17 +63,19 @@ public struct OwnerEntryChannel: OwnerChannelHandling {
     case OwnerChannel.addMethod:
       guard let request = OwnerAddRequest(params: params), !request.isEmpty else {
         return MCPMessage.error(
-          id: id, code: MCPErrorCode.invalidParams, message: "没有要收进来的内容")
+          id: id, code: MCPErrorCode.invalidParams, message: "没有要添加的内容")
       }
       outcome = await add(request)
     case OwnerChannel.dueMethod:
       let days = Int(params?["days"]?.intValue ?? 0)
       outcome = await due(min(max(days, 0), 30))
     case OwnerChannel.browserAddMethod:
-      guard let request = BrowserAddRequest(params: params) else {
+      guard var request = BrowserAddRequest(params: params) else {
         return MCPMessage.error(
           id: id, code: MCPErrorCode.invalidParams, message: BrowserCopy.malformed)
       }
+      // Who started the helper, from its code signature (F10).
+      request.startedByChrome = BrowserExtension.isChrome(signer: peer.clientSigner)
       outcome = await browserAdd(request)
     default:
       return MCPMessage.error(

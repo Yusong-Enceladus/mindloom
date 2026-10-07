@@ -18,14 +18,20 @@ final class EntrySettingsTests: XCTestCase {
     XCTAssertTrue(defaults.isOn(.shareSheet))
     // Review V8R-17: any app can invoke a Services item, so it waits for the owner.
     XCTAssertFalse(defaults.isOn(.services))
-    XCTAssertTrue(defaults.isOn(.shortcuts))
+    // v12 F10 (regression): any program can run a shortcut, and 「今天到期」
+    // reads the owner's steps, so Shortcuts waits for the owner too.
+    XCTAssertFalse(defaults.isOn(.shortcuts))
+    XCTAssertTrue(EntryKind.shortcuts.detail.contains("“Mindloom：今天到期”"))
+    XCTAssertFalse(EntryKind.shortcuts.detail.contains("织机"))
+    XCTAssertFalse(EntryKind.shortcuts.detail.contains("只读"))
+    XCTAssertFalse(EntryKind.shortcutsOffMessage.contains("织机"))
     for kind in EntryKind.allCases {
       XCTAssertFalse(kind.title.isEmpty)
       XCTAssertFalse(kind.detail.isEmpty)
     }
-    XCTAssertTrue(EntryKind.calendar.detail.contains("从不写日历"))
-    XCTAssertTrue(EntryKind.git.detail.contains("从不读取文件内容"))
-    XCTAssertTrue(EntryKind.shareSheet.detail.contains("不会打开"))
+    XCTAssertTrue(EntryKind.calendar.detail.contains("读取你所选日历中的日程"))
+    XCTAssertTrue(EntryKind.git.detail.contains("标题、说明、更改的文件名和数量"))
+    XCTAssertTrue(EntryKind.shareSheet.detail.contains("链接按文字添加"))
   }
 
   func testSettingsRoundTripPrivatelyAndUnknownFieldsTurnNothingOn() throws {

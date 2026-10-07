@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		004FF6541892B7C4C73C75E2 /* FnAccessibilityNoticeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C825A0DCEE36175B319BAB0 /* FnAccessibilityNoticeTests.swift */; };
+		02C54E4A7692CCEEA7C64FFC /* DictationMetricsProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FF5B7D8D204ED8598E8A1E /* DictationMetricsProbe.swift */; };
 		03C1137536DDDBAF206E6552 /* DictationAppModel+History.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72532F83AF7E06D5CC7BBF76 /* DictationAppModel+History.swift */; };
 		05A7F60BC3E9A785221E826E /* model-artifacts.json in Resources */ = {isa = PBXBuildFile; fileRef = A4D1E67E3F7D0A8AB1BA23AC /* model-artifacts.json */; };
 		065EBF2FAE62D81260E8316D /* HistoryPlaybackKeyboardPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9FF3627D33ABFF8BB96BE93 /* HistoryPlaybackKeyboardPolicy.swift */; };
@@ -17,27 +19,38 @@
 		0D93C5B687C58378500A4F5E /* swift-asn1-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 290F37D9EF31EF2851D82A90 /* swift-asn1-LICENSE-Apache-2.0.txt */; };
 		0DAC3864F2FA42BEF7ED4FC5 /* swift-system-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F6FFFE400D1E19E627D6D01 /* swift-system-LICENSE-Apache-2.0.txt */; };
 		0DB90BF9121FFEB084EBDDD0 /* EntriesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EAA539DBA1DD2D1E176B15D /* EntriesModel.swift */; };
+		0E17F750C5E452AA445E0FEE /* FnHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49B05E1167F37E320102346 /* FnHUD.swift */; };
 		11A0D5D3B6DBA31B9FFFFEFF /* DictationAppModel+AgentAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C656D8CBD6ADA18961B3A12 /* DictationAppModel+AgentAccess.swift */; };
 		11B25095C13F1EA24C8D2AE4 /* LocalDictationRuntime+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F5704BD99D02E495D06E91 /* LocalDictationRuntime+Processing.swift */; };
 		11B9FE1C8632C49238A1D3C1 /* DictationAppModel+Hotkeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8329207C66074321D7BCAEE3 /* DictationAppModel+Hotkeys.swift */; };
 		12C58C335C0E76E75D339E25 /* MindloomShareDrop in Frameworks */ = {isa = PBXBuildFile; productRef = 7F2CC02D68ACC2ED9835C5AC /* MindloomShareDrop */; };
+		137A06E93CAD8CD890036B68 /* DictationAppModel+TimeZone.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD334585C910DD115517EA41 /* DictationAppModel+TimeZone.swift */; };
 		13C38A0463637F6FB55D2CA8 /* ProcessTapTCCDenialProbeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C896BAFE6A7352CDAD509EE9 /* ProcessTapTCCDenialProbeApp.swift */; };
 		13F22853881C19BAA9D75FD6 /* MindloomAgentProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 848084E4204CC8A55223802A /* MindloomAgentProtocol */; };
 		141E50B2379D83FD0B8DD3DE /* DictionaryInteractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 265B9F941F14454D16C18EA5 /* DictionaryInteractionTests.swift */; };
 		14206DF7BE6F015DD4F42524 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5424885DCA237799E3AE8F69 /* main.swift */; };
 		15C8F0B11DCCA25BC067CAE0 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABE5FFC146753E6C34D51AF /* main.swift */; };
+		15EC54EA9FFB5F7542AB564D /* DeliveryProbeLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A13D410602A553C99D671B5 /* DeliveryProbeLaunch.swift */; };
+		16FADE84C6FEC34844062DDE /* MindloomCarryOver in Frameworks */ = {isa = PBXBuildFile; productRef = B0068437259B6730A2A64A86 /* MindloomCarryOver */; };
+		1701E13A1227A65F518803CA /* MeetingCaptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A51710764F4365072606C9CA /* MeetingCaptions.swift */; };
 		171B3C52D513082BC6910C3E /* swift-nio-NOTICE.txt in Resources */ = {isa = PBXBuildFile; fileRef = F00BAAD23244019726890ABA /* swift-nio-NOTICE.txt */; };
 		19CDB3B08112BE72DEAB0A44 /* DictationAppModel+People.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94E64A4A4909BA850168208F /* DictationAppModel+People.swift */; };
 		1A2E19D8CCF914FE503F09BB /* BestASRIntake in Frameworks */ = {isa = PBXBuildFile; productRef = 0B4A55B1D67521B15038E783 /* BestASRIntake */; };
 		1ABFE5696D79633814FA4322 /* BestASRQwenRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 90A9B82FC2FFE62FCC31EC27 /* BestASRQwenRuntime */; };
+		1B798881CC1C475B9898569D /* CaptureFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F7397235B2EF5D2CE35CFCB /* CaptureFeedback.swift */; };
 		1CBCF5273C791136DFB86E96 /* AppUpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123321391F2E4CFEAA9EB90C /* AppUpdateChecker.swift */; };
+		1D43913F58464C3EA18D4F18 /* DictationAppModel+Corrections.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A8D0DC06D57C5911A228 /* DictationAppModel+Corrections.swift */; };
 		1D956354CDBF242749147437 /* DictationAppModel+Spoken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63F8988DA67317FF3D025D90 /* DictationAppModel+Spoken.swift */; };
+		1E4883255A38991FE98F8752 /* StartupRefusalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF63A9CED80B0A30CEF91F8C /* StartupRefusalView.swift */; };
 		1E7799B741DF6A270CB67767 /* SpaceAudioSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97FDF7ADF1B83F2BC2DFAB93 /* SpaceAudioSource.swift */; };
 		21DD49036CA7CAA4CA160600 /* ModelsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26CE6FC9C8D9B71710C3C8CC /* ModelsModel.swift */; };
 		22EE60B03DB3F95F97E4889B /* swift-crypto-NOTICE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 314E29A2795200F8FD6FA433 /* swift-crypto-NOTICE.txt */; };
+		22FEBF74B2F2EE965E59227F /* MindloomWiring+Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = 962D59EA4DA291DA2F235C74 /* MindloomWiring+Home.swift */; };
 		2373A36541CA7605FEB1959D /* DictationAppModel+Playback.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8738A1A82A2C719451DDF44 /* DictationAppModel+Playback.swift */; };
 		253D23AF32F60EF19BE3D9A5 /* DictationAppModel+MemorySearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF530DC2583F9758A9F317A0 /* DictationAppModel+MemorySearch.swift */; };
+		2885C91A94398CC8D520175E /* DictationAppModel+WebLookup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 179E6D1B21702FB3BA32BD73 /* DictationAppModel+WebLookup.swift */; };
 		2A05B12D0EC5867CADF47A33 /* EventExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28225D52F6243B00570723C3 /* EventExportModel.swift */; };
+		2ABD5F9EAD04A0DAC5302F71 /* tmeet-Go-LICENSES.txt in Resources */ = {isa = PBXBuildFile; fileRef = CFD3D9539E81E487E899C20E /* tmeet-Go-LICENSES.txt */; };
 		2B135D86650CEE948D7388DE /* SelectedWatermarkPlayer.app in Resources */ = {isa = PBXBuildFile; fileRef = 18F5B5AB27C70A0EB7919F6D /* SelectedWatermarkPlayer.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2C08DEA6D5B04EACCFC0D3A6 /* BestASRMemory in Frameworks */ = {isa = PBXBuildFile; productRef = 9D20A150986BC248134D3F91 /* BestASRMemory */; };
 		2C1B2296CC5E9E7E65D92D60 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E7B3E03A63D385CD4CE00F6 /* ShareViewController.swift */; };
@@ -48,42 +61,54 @@
 		2F5E98453661084202B4EFDC /* yyjson-LICENSE-MIT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5C61A86255A558D5EA9F7F5F /* yyjson-LICENSE-MIT.txt */; };
 		30F6B1535FE285D75653DA4C /* MindloomServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7B6EF2E17D22A739B263EB /* MindloomServices.swift */; };
 		3110CDB9C76074996E6CC666 /* MemoryScreenAdapterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96B02AB33AB77FDA49FF7694 /* MemoryScreenAdapterTests.swift */; };
+		313657EDE5E69509D08D4CB4 /* HeldCorrectionsFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D3FC6987F2F68B9113526B /* HeldCorrectionsFile.swift */; };
 		3474BF20405EA3ECE885B701 /* AMI-Corpus-NOTICE-CC-BY-4.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 90ED1D22F43024606F29A628 /* AMI-Corpus-NOTICE-CC-BY-4.0.txt */; };
+		34983D14165DAD81017D3EA6 /* ModelImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EE2944B929A1E04CD35367 /* ModelImport.swift */; };
 		34D33A622B9176F888767BC8 /* chrome-extension in Resources */ = {isa = PBXBuildFile; fileRef = 35AC5D85514E1DAF75F9031B /* chrome-extension */; };
 		35350657ECE43EBF2B4E5807 /* BestASRCore in Frameworks */ = {isa = PBXBuildFile; productRef = 6617AC3385FB755C2CA708D4 /* BestASRCore */; };
 		358CABAA83A84964DB84BDEB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0724DB366D0E2A470537500A /* main.swift */; };
 		36DEB7E69DE6B10E7ABC3552 /* SpokenJobProducer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F7CE4E71907F412225A920 /* SpokenJobProducer.swift */; };
+		37C2D3955391D8392BAE4273 /* RawAudioDeletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F90B6D0BEF8CC213465D67 /* RawAudioDeletion.swift */; };
 		3840E2A9E568E8AFA850B974 /* InferenceWorker.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7976453EC8A6259FFFBAF1A9 /* InferenceWorker.xpc */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		38B24D314B0C74FFEFDE33AE /* ProcessTapProbeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC96F743D5C8B9E834ADD33B /* ProcessTapProbeApp.swift */; };
 		39905BD756AF5C2A6DA32BD5 /* DictationAppModel+Usage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFAEEF0FD7FFE80938028D1 /* DictationAppModel+Usage.swift */; };
 		39B5F07EB8C5C4E1D5366519 /* MindloomAgentProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = B3B6A4AD9F471F003A1FF033 /* MindloomAgentProtocol */; };
 		3A57DB94D210D1E2CF48BED5 /* OwnerCommandLineRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 421A823C52792B79B6B2598E /* OwnerCommandLineRunner.swift */; };
+		3B5DF0BCA848877D0B8A8138 /* CarryOverLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EB846EDEFDCF0DC53AF973B /* CarryOverLaunch.swift */; };
+		3CBC68AB3F13E3841AF0B1C0 /* FnAccessibilityNotice.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9653A54071BEA6B29B9FBC /* FnAccessibilityNotice.swift */; };
 		3F5F913909451888056F2B0B /* LocalSessionAudioPlayerDecodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E73A40900E33D5B06DEE74D /* LocalSessionAudioPlayerDecodeTests.swift */; };
 		3FCD30AC06F91666CC33A02A /* ContentView+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8977FCDD7BB4F192437B9577 /* ContentView+Navigation.swift */; };
 		41829482DD8221A558790974 /* BestASRDomain in Frameworks */ = {isa = PBXBuildFile; productRef = A8B688B8459060EE3CCEC002 /* BestASRDomain */; };
+		44A7A096E659B66D3C195CE2 /* DictionaryWordEditing.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9A72B7A1A12CE33003E379F /* DictionaryWordEditing.swift */; };
 		4734B7FCCECBD7CF473A2935 /* BestASRMacPermissions in Frameworks */ = {isa = PBXBuildFile; productRef = A654D2DA5676B3B8E69F733C /* BestASRMacPermissions */; };
 		481077CCF2967AA2888E249A /* DictationAppModel+Export.swift in Sources */ = {isa = PBXBuildFile; fileRef = D03D351585C0F2148C9BF88A /* DictationAppModel+Export.swift */; };
 		489C67B86FCCDC9BF17F0734 /* LocalSessionAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9722FC1B941F9DB89A9292B9 /* LocalSessionAudioPlayer.swift */; };
 		4962FACA60A60DC38990CAA0 /* DictationSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 913522B8FA5938789E785710 /* DictationSettingsView.swift */; };
 		499B22112A9115D34A651FEC /* BestASRDelivery in Frameworks */ = {isa = PBXBuildFile; productRef = AB58BDD1366EE772D2F8947A /* BestASRDelivery */; };
 		49D8FF293AAC5CDCAE60814C /* DictionaryModel+Behaviour.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620BA8084625CD7BD7B5175E /* DictionaryModel+Behaviour.swift */; };
+		49F2C67593E058C9D237C0C7 /* MeaningSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = B45A9C7685D469DD5CDEC37E /* MeaningSearch.swift */; };
+		4A287AA5BC55516EAAD82C9F /* MindloomCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67C333D7D35FB6E2BBA0E031 /* MindloomCommands.swift */; };
 		4C003A46607AE30DACF72ABC /* BestASRProcessTapProbe in Frameworks */ = {isa = PBXBuildFile; productRef = D6B5D6005DF20E2BBA4B524C /* BestASRProcessTapProbe */; };
 		4D90B9972340C85FC2C7AAE8 /* swift-huggingface-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = D513245E0E798FD794164C1E /* swift-huggingface-LICENSE-Apache-2.0.txt */; };
 		4DCC8BA3C2FFAC6B24FABA2F /* DictationAppModel+Entries.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E9AB66FB7E72CC00ECE27C /* DictationAppModel+Entries.swift */; };
+		4F3AEA7A0E4597542D59E65D /* WebLookupModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 730FA4E2148F5F62CD20662A /* WebLookupModel.swift */; };
 		4F3BC2F09A522898FD5F47FB /* inference-candidates.json in Resources */ = {isa = PBXBuildFile; fileRef = 02790AA3E4D5B57D9F567034 /* inference-candidates.json */; };
 		4F632D0184873A964DD9F5B9 /* UsageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08932AD748852A9E0900B170 /* UsageModel.swift */; };
 		4F7579A8EA4D514F8A461FEF /* EntriesSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99528C8DA73E62CC566C6E56 /* EntriesSettingsSection.swift */; };
 		50793D83943B30174B28BD8E /* AgentConsentPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE51E4874F714D14C910824E /* AgentConsentPanel.swift */; };
 		51EDA95FC4064BE83F1FB95E /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74E3FD0F03A10F6042871D3E /* ContentView.swift */; };
 		5267E5E58370FE6CC21B0B0D /* DictationAppModel+PhoneLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6417393CE8235158F842A14 /* DictationAppModel+PhoneLink.swift */; };
+		5666A2422B4A68234DEEB42D /* MindloomLookup in Frameworks */ = {isa = PBXBuildFile; productRef = A45C4C62888C88AFB2C9F3DC /* MindloomLookup */; };
 		56BE704660527502C5E75229 /* BestASRRemoteOrganizer in Frameworks */ = {isa = PBXBuildFile; productRef = 376591A28E96685CE6ADB248 /* BestASRRemoteOrganizer */; };
 		5777CDD7F3C98FC2A6FC4703 /* BestASRBenchmark in Frameworks */ = {isa = PBXBuildFile; productRef = 56E3280DCEA2416269F4752E /* BestASRBenchmark */; };
+		583259093B4B9E2656107772 /* MindloomWiring+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEDD4EE800082A5B6A21AED1 /* MindloomWiring+Capture.swift */; };
 		58721155CEE64BFFBFFC53FB /* HotkeyRecorderField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D7D8DF30CC855B98B64468 /* HotkeyRecorderField.swift */; };
 		587591787288000EA4A9CBFA /* GRDB-LICENSE-MIT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9D9F01F6AC148AA46108189C /* GRDB-LICENSE-MIT.txt */; };
 		58F6E9CD8868505AD12BBDFE /* FunASR-MODEL-LICENSE-1.1.txt in Resources */ = {isa = PBXBuildFile; fileRef = BE8656593382A97D6C0261C0 /* FunASR-MODEL-LICENSE-1.1.txt */; };
 		5ADABCE29EF14C5E849AD265 /* SpokenAnswerPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1EC54582AF93F560306323E /* SpokenAnswerPanel.swift */; };
 		5BC653E1A2D18A4B297C8A56 /* MemorySearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F92657FF57D5597787C5BC5 /* MemorySearchModel.swift */; };
 		5BF858607F56A405AB6102E3 /* mlx-swift-LICENSE-MIT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3FF1B3CE68E32756B1F2EDAF /* mlx-swift-LICENSE-MIT.txt */; };
+		5BF88B3E181BA41D52DC109A /* MindloomFindKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 831C6BE748EDA4681E44992A /* MindloomFindKey.swift */; };
 		650490DAB87278D6930B33B6 /* SilentTakeRetentionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A480AD1B74F0E3F15EC8C65 /* SilentTakeRetentionTests.swift */; };
 		66D872D05F2E88248E9FF484 /* LocalHistoryExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40094AB2A3CB611EB868332 /* LocalHistoryExporter.swift */; };
 		68468704E8542586F73F7C09 /* MemoryScreenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBE7C35E4A56EAB49ED2DC27 /* MemoryScreenModel.swift */; };
@@ -93,7 +118,6 @@
 		71518B16A5C0093A606F091A /* BrowserHostRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74F898282C9A952088E808CC /* BrowserHostRunner.swift */; };
 		725CB820DBD5BE040CFBC414 /* LocalDictionaryTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5867E598DB9DB1FB353716 /* LocalDictionaryTransfer.swift */; };
 		72D8B2E2A7920171092CAC33 /* LocalDictationRuntime+Instructions.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBC84E772FB644B1682BE80F /* LocalDictationRuntime+Instructions.swift */; };
-		747EE35D75D0043CB8FA374A /* PasteProbe.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29A1050CEE88A2AD9A2D878A /* PasteProbe.swift */; };
 		779F8DD3E5F37C34D65E2691 /* BestASRAgentAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 045918ABD6EE8CFACA839E38 /* BestASRAgentAccess */; };
 		79B3096628B00F1C6BA144F6 /* ContentView+Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA649ADBB309A5C9B4E9D46D /* ContentView+Home.swift */; };
 		7B093A9743107C36E5D861A4 /* DictationAppModel+Dictation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF5ACBDF582D7E94E34F1C1 /* DictationAppModel+Dictation.swift */; };
@@ -104,28 +128,33 @@
 		803C4F12925A40123DC1194F /* DictationAppModel+Intake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CEFFFAE4AF0F558444EC2B /* DictationAppModel+Intake.swift */; };
 		8157ECE1F912F18E842BB927 /* InferenceXPCProbeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294DF8C7791745425993728B /* InferenceXPCProbeApp.swift */; };
 		81BC5F434C1C7EBB60D5A3DD /* swift-crypto-nio-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3A39C68A4D6AA47E63A046F2 /* swift-crypto-nio-LICENSE-Apache-2.0.txt */; };
-		825A5014720D0CB270B82660 /* MindloomShareDrop in Frameworks */ = {isa = PBXBuildFile; productRef = A0744F4764E3CB597D250C9D /* MindloomShareDrop */; };
+		81CD104F0290630CB9DEA6FC /* MindloomLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A86D3E188E256313B6769DB4 /* MindloomLaunchTests.swift */; };
+		825A5014720D0CB270B82660 /* BestASREntries in Frameworks */ = {isa = PBXBuildFile; productRef = CB6FFBF238871648DDD3D5C6 /* BestASREntries */; };
+		835A0492CE39A3051BB37285 /* WelcomeWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 821FFBA1B765945C54E59627 /* WelcomeWindow.swift */; };
 		876722A3333E2AF7F0E68B2F /* BestASRMacUI in Frameworks */ = {isa = PBXBuildFile; productRef = 77F94086A0C782A0A2A959E1 /* BestASRMacUI */; };
 		879AD544DE5242DF54F2163D /* TranslationInstaller.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03107BAA6A6C63391476A89E /* TranslationInstaller.swift */; };
+		88A01B429E21F426AC82D016 /* DictationAppModel+Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B286747F61027E3625B91DC /* DictationAppModel+Demo.swift */; };
 		8C7E9F02ACA4E3BACD2255F9 /* PersonalDictationCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CE578D464369BDDE78AA83 /* PersonalDictationCleanup.swift */; };
 		8CA8B738DC8669C562BC35E9 /* ContentView+History.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A7B1048F0F051DEAD6C94F /* ContentView+History.swift */; };
 		8E9C2376A846D793D953E205 /* AgentAccessModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E66FFB3A65E226E56EB6985 /* AgentAccessModel.swift */; };
+		8F25A22826F82D5CF09508DC /* MindloomSettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78F1EBFF5C453A3DF39101B8 /* MindloomSettingsWindow.swift */; };
 		8F2848E04ECB7437BE20103D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7227293807EDB971E175FD16 /* Assets.xcassets */; };
 		904A7F447393CEF399C9E406 /* BestASRPortableArchiveProbe in Frameworks */ = {isa = PBXBuildFile; productRef = 8A938C17EF43B889B2C47DC9 /* BestASRPortableArchiveProbe */; };
+		92BB986E013E670D9F1051C8 /* MindloomLaunch.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9E87217B413962184AD69F6 /* MindloomLaunch.swift */; };
 		93C53CC28C692CC1E4F2B052 /* DictationAppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11768AA769E7F2426632320B /* DictationAppModel.swift */; };
 		96DED0B9A99972658813243E /* IntakeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D282E8B8159480CB8256BC4D /* IntakeModel.swift */; };
 		97A032B0D47C4E093329497D /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 17211537D79687BBF6A0419F /* InfoPlist.xcstrings */; };
 		97AF1C207790F38DC1D86689 /* BestASRSpeakerRouting in Frameworks */ = {isa = PBXBuildFile; productRef = EB65E0478C1CFCA79E1D9558 /* BestASRSpeakerRouting */; };
 		991EF0ED6C699E8E39BA0962 /* DictationAppModel+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CDEDF5209AFE2309FAD4068 /* DictationAppModel+Capture.swift */; };
-		9942ABB8A8721C0BA70B2EE7 /* BestASREntries in Frameworks */ = {isa = PBXBuildFile; productRef = CB6FFBF238871648DDD3D5C6 /* BestASREntries */; };
+		9942ABB8A8721C0BA70B2EE7 /* MindloomDesign in Frameworks */ = {isa = PBXBuildFile; productRef = 9BBCC530A6FC8E5DBE3F6E56 /* MindloomDesign */; };
 		9997F9D408D6C6257A21744A /* SpokenAnswerPanelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F66BD1ADFC62985AC8E86DA2 /* SpokenAnswerPanelTests.swift */; };
 		9BB812ACCC8B659A3D689C1E /* LocalEventOrganizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBC5439734BAD082F4351D26 /* LocalEventOrganizer.swift */; };
 		9C11D2798C59F138543940F9 /* DictationAppModel+Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF50634C7E946D81F0470829 /* DictationAppModel+Memory.swift */; };
 		9C39F9086D9DADC73B839945 /* DictationAppModel+Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = A01CFDBBFC9A51BC070B6E08 /* DictationAppModel+Onboarding.swift */; };
 		9C47C9458E3F6D2C53A5339F /* MindloomSpaces in Frameworks */ = {isa = PBXBuildFile; productRef = 32C4CC917B848176A38B47ED /* MindloomSpaces */; };
-		9F189E5A581FC67F3B4B116A /* AgentSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42EDA23F33CEF69B518411CB /* AgentSettingsSection.swift */; };
 		A0EFB7B681F624726C934F7C /* LocalDictationRuntime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A59FFB1E45C748FBABA0A9 /* LocalDictationRuntime.swift */; };
 		A0F0D36AE0E560442556D912 /* ContentView+Capture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BBAA940DA407CEACAAB90BA /* ContentView+Capture.swift */; };
+		A2002D1CB59762C5859C871B /* LiveShots.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0543D9E10412D0DED2C0B1D7 /* LiveShots.swift */; };
 		A31A33373E9BBADC716FCB13 /* MainWindowDesign.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2995236FC5D19EE7375C73F /* MainWindowDesign.swift */; };
 		A31E66B001B7A0FD0AF200E3 /* BestASRProcessing in Frameworks */ = {isa = PBXBuildFile; productRef = 17DDB4908D9518A993D87E0A /* BestASRProcessing */; };
 		A4C7B8CB9D7C3F54004BD0BB /* DictionaryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E12E9DB3B29CAB68FE0DB25F /* DictionaryModel.swift */; };
@@ -135,6 +164,7 @@
 		AB824B5457CCFE7953B15A9B /* ContentView+Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE36254C4119D69EA5899EA7 /* ContentView+Dictionary.swift */; };
 		ABF7A8759644E1F8EAC0B90C /* PlaybackModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28DD22FD158AEBA861561CF4 /* PlaybackModel.swift */; };
 		ADD2B6E7C056C5E31902BD08 /* BestASRProcessTapProbe in Frameworks */ = {isa = PBXBuildFile; productRef = D70128574BE7F8AB65626D95 /* BestASRProcessTapProbe */; };
+		AF73F5BDFE9090C368AFD2E1 /* LocalDictationRuntime+WordAlignment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B88AED4B2682E121E102085 /* LocalDictationRuntime+WordAlignment.swift */; };
 		AFFEB07D173E9F2FBF30F5F7 /* EventSource-LICENSE-MIT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1F027726A9D9AF62FA5C635F /* EventSource-LICENSE-MIT.txt */; };
 		B06D8C227FFE4DF291B390A4 /* DictationAppModel+Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 091D5AEA1630790174DA2FF5 /* DictationAppModel+Dictionary.swift */; };
 		B0BBAFA89DBF84A2709EFFA4 /* InteractionRecoveryUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8271E953D10BEF2186C3576 /* InteractionRecoveryUITests.swift */; };
@@ -145,19 +175,28 @@
 		B94CB22F6B45E651EC65C802 /* MindloomIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B811FA620E958372BC48CDF /* MindloomIntents.swift */; };
 		BA0C655E0451685170F33A14 /* SpokenModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AA9E9433B8935475593C46C /* SpokenModel.swift */; };
 		BA397917242F78C59B86986F /* MindloomShare.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6BA13278F07988F9F3BFF32F /* MindloomShare.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BA51EC4695AA52A9DFD076AC /* PreviewEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 849F2D2C6D92112C37BD1839 /* PreviewEnvironment.swift */; };
+		BA7A59ACE3079EA472FB737D /* MindloomLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 400FC3796E145C21F3065F18 /* MindloomLibrary */; };
 		BAE1ADA66339040277C5B7A9 /* LocalStorageInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D66ACEF9A6B9F55B92CEBB9 /* LocalStorageInspector.swift */; };
 		BCBF7B0D1F64AF5541943D5D /* InferenceWorker.xpc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7976453EC8A6259FFFBAF1A9 /* InferenceWorker.xpc */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BD47A869BCD726B30E0D5735 /* SpokenModeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB119BB3979EA5927F972E5 /* SpokenModeTests.swift */; };
 		BDF1CA5C670D069863D09532 /* ExportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C28D7837A5A81CE032A5975 /* ExportModel.swift */; };
+		BE18F5C38435FAF482FE68D5 /* MindloomWiring+Matter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF4CF24649D95588B80B4724 /* MindloomWiring+Matter.swift */; };
 		C0796F581100B718C38396C0 /* WatermarkPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53335B27344170CC6B65A99A /* WatermarkPlayerApp.swift */; };
 		C0E2169E2F14BBE218E4DC94 /* HistoryFilterControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C5D814809613FE8A911B872 /* HistoryFilterControls.swift */; };
 		C261ADABE6B59880D1A118E3 /* BestASRFluidRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = CCCAE9346A8A8A1819211291 /* BestASRFluidRuntime */; };
 		C2EFAF888123A25255742E0A /* LocalDictationRuntime+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46ACCEB9BB5C76C8CBD531B /* LocalDictationRuntime+Models.swift */; };
 		C352A6382517E96287D53470 /* DictationAppModel+Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7B91B6815E03D83263F6DB4 /* DictationAppModel+Models.swift */; };
+		C498CE445FBD1BEB76B4EA12 /* DictationTimingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D875C9BB9F3EABC64A0B40B /* DictationTimingTests.swift */; };
+		C6192976086F0573479EC255 /* MindloomShareDrop in Frameworks */ = {isa = PBXBuildFile; productRef = A0744F4764E3CB597D250C9D /* MindloomShareDrop */; };
+		C61D9A4C753DF71C44AB34F3 /* tencentmeeting-cli-LICENSE-MIT.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6F423F77C4A3843567843A13 /* tencentmeeting-cli-LICENSE-MIT.txt */; };
+		C73F2B5189B9D735964F9737 /* DictationAppModel+TencentMeeting.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA0165DC7706CEB992E638CD /* DictationAppModel+TencentMeeting.swift */; };
 		C7C9D62DFAA9930BF3327DDA /* Qwen3-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = A7869BCD1CD6C92C05EC2D22 /* Qwen3-LICENSE-Apache-2.0.txt */; };
 		C89A249364B7F2F8AC34BEDA /* WatermarkPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53335B27344170CC6B65A99A /* WatermarkPlayerApp.swift */; };
 		C984F1E15A3851FF0748781D /* Apple-Swift-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 1C7F8479F9684E044EFAA8D3 /* Apple-Swift-LICENSE-Apache-2.0.txt */; };
+		CA25D0EF8E8C292777B01304 /* DictionaryWordEditingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB62DCD887DE5CE2D3817C8D /* DictionaryWordEditingTests.swift */; };
 		CAD1393EAA3A92418AD44F48 /* BestASRCore in Frameworks */ = {isa = PBXBuildFile; productRef = E1DA553AD94B1F703E4AD1F8 /* BestASRCore */; };
+		CB667D9A8439C8C3A8A16800 /* MindloomIdentity in Frameworks */ = {isa = PBXBuildFile; productRef = 6B38691C17855F0AA5717002 /* MindloomIdentity */; };
 		CE2E35ADC291D29EFF0F008B /* CaptureModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA2460C1A7C6FC705C7161A /* CaptureModel.swift */; };
 		CF26EC29AAB3A5608E7E19D9 /* BestASRMLXRuntime in Frameworks */ = {isa = PBXBuildFile; productRef = 53ECFF9272B78AA307FA8BEA /* BestASRMLXRuntime */; };
 		CF94CED706B88E1324DF6472 /* BestASRCore in Frameworks */ = {isa = PBXBuildFile; productRef = 83511397708EDA9F57B0B3B4 /* BestASRCore */; };
@@ -175,16 +214,18 @@
 		E079989228F0657C5DBBDCB5 /* BestASRCandidateAdapters in Frameworks */ = {isa = PBXBuildFile; productRef = 8EC2CB7C29B812286220E68D /* BestASRCandidateAdapters */; };
 		E4230B295D525011EFE3FE70 /* BestASRInferenceXPCProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = 7AC3862DAB502784937B75A5 /* BestASRInferenceXPCProtocol */; };
 		E48019B349807993CF8A378D /* BestASRDictation in Frameworks */ = {isa = PBXBuildFile; productRef = D107CCB8E746A0186962937F /* BestASRDictation */; };
+		E5A35F9E94FC60B17A12FBAA /* MindloomWindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 749CD3F0CBBF0DA4E8107445 /* MindloomWindowChrome.swift */; };
 		E68BC950BB7CBFED58EDEEA2 /* DictationAppModel+RemoteOrganizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A3B24AC195FDC191C77249D /* DictationAppModel+RemoteOrganizer.swift */; };
 		E7EED4C6B4CD14088C48DB35 /* WorkspaceSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2898C358EC65DAA7A0841FE0 /* WorkspaceSmokeTests.swift */; };
+		E8F5D10AEBDD920F6B8659CE /* MindloomTencentMeeting in Frameworks */ = {isa = PBXBuildFile; productRef = 122F6996B64F312B78E5BED3 /* MindloomTencentMeeting */; };
 		EA887B83C1339E8723EB8ECE /* BestASRAudioJournal in Frameworks */ = {isa = PBXBuildFile; productRef = F84D8269F1C9AAF91F28D703 /* BestASRAudioJournal */; };
 		EADE2C3947DC0DF5DF9CDE62 /* OwnerSocketCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBD0A4A24E49855369E5D94 /* OwnerSocketCall.swift */; };
 		EB47EFCB30307BA26E90EC98 /* BestASRRecognition in Frameworks */ = {isa = PBXBuildFile; productRef = 583797CF8174D915C538954B /* BestASRRecognition */; };
 		ED26A813D19EF5353A45725C /* HistoryModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C22CC5C7734F7804C07EAF /* HistoryModel.swift */; };
+		ED6A61E4F91920FB7CA3BDD7 /* TencentMeetingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EFE07E678AB3C679EAA9896 /* TencentMeetingModel.swift */; };
 		EE39D7EBF2B137249D4CD09C /* MenuBarContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58BE57A20AC9531BBCADD6C4 /* MenuBarContentView.swift */; };
 		EE8540968618B0EC3E7E0444 /* BestASRInference in Frameworks */ = {isa = PBXBuildFile; productRef = 056CFF2402C79CEB45118621 /* BestASRInference */; };
 		EF95AB8CA03DE8DB0838ABA3 /* ContentView+Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12D1AF42A29AA808E21EA1DB /* ContentView+Memory.swift */; };
-		EFD178148E4EC45FA7C30C68 /* TeamSettingsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A67566989DF9250B59AB17A /* TeamSettingsSection.swift */; };
 		EFD21CA1C09E70549941D82F /* FLEURS-Corpus-NOTICE-CC-BY-4.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 40DE75D214FEEC510B1EA9CD /* FLEURS-Corpus-NOTICE-CC-BY-4.0.txt */; };
 		F18F14CB570331E17E98949E /* ContentView+Spaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96DCE5C6F65D02207753F143 /* ContentView+Spaces.swift */; };
 		F54B3F4EE71DB4133A2CC875 /* swift-transformers-jinja-LICENSE-Apache-2.0.txt in Resources */ = {isa = PBXBuildFile; fileRef = 0E0E8223A820E77650AE380D /* swift-transformers-jinja-LICENSE-Apache-2.0.txt */; };
@@ -300,9 +341,11 @@
 		03107BAA6A6C63391476A89E /* TranslationInstaller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationInstaller.swift; sourceTree = "<group>"; };
 		03F7CE4E71907F412225A920 /* SpokenJobProducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenJobProducer.swift; sourceTree = "<group>"; };
 		041463D22D269E161300A7EE /* IntakePasteKeyMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntakePasteKeyMonitor.swift; sourceTree = "<group>"; };
+		0543D9E10412D0DED2C0B1D7 /* LiveShots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveShots.swift; sourceTree = "<group>"; };
 		0724DB366D0E2A470537500A /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		08932AD748852A9E0900B170 /* UsageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageModel.swift; sourceTree = "<group>"; };
 		091D5AEA1630790174DA2FF5 /* DictationAppModel+Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Dictionary.swift"; sourceTree = "<group>"; };
+		0B286747F61027E3625B91DC /* DictationAppModel+Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Demo.swift"; sourceTree = "<group>"; };
 		0E0E8223A820E77650AE380D /* swift-transformers-jinja-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-transformers-jinja-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
 		0F373DEA810E5574132EE0EC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0FE184992B71B0407FE73C91 /* DictationAppModel+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Events.swift"; sourceTree = "<group>"; };
@@ -311,8 +354,10 @@
 		123321391F2E4CFEAA9EB90C /* AppUpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUpdateChecker.swift; sourceTree = "<group>"; };
 		12D1AF42A29AA808E21EA1DB /* ContentView+Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Memory.swift"; sourceTree = "<group>"; };
 		17211537D79687BBF6A0419F /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
+		179E6D1B21702FB3BA32BD73 /* DictationAppModel+WebLookup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+WebLookup.swift"; sourceTree = "<group>"; };
 		18CEFFFAE4AF0F558444EC2B /* DictationAppModel+Intake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Intake.swift"; sourceTree = "<group>"; };
 		18F5B5AB27C70A0EB7919F6D /* SelectedWatermarkPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SelectedWatermarkPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1B88AED4B2682E121E102085 /* LocalDictationRuntime+WordAlignment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalDictationRuntime+WordAlignment.swift"; sourceTree = "<group>"; };
 		1C7F8479F9684E044EFAA8D3 /* Apple-Swift-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Apple-Swift-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
 		1D3F7B47BE2F6DD032508711 /* BestASRCore */ = {isa = PBXFileReference; lastKnownFileType = folder; name = BestASRCore; path = Packages/BestASRCore; sourceTree = SOURCE_ROOT; };
 		1EF59BC5E4C884D197C662E4 /* DictationAppModel+HistoryEditing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+HistoryEditing.swift"; sourceTree = "<group>"; };
@@ -327,13 +372,14 @@
 		28DD22FD158AEBA861561CF4 /* PlaybackModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackModel.swift; sourceTree = "<group>"; };
 		290F37D9EF31EF2851D82A90 /* swift-asn1-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-asn1-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
 		294DF8C7791745425993728B /* InferenceXPCProbeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InferenceXPCProbeApp.swift; sourceTree = "<group>"; };
-		29A1050CEE88A2AD9A2D878A /* PasteProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteProbe.swift; sourceTree = "<group>"; };
 		2A3B24AC195FDC191C77249D /* DictationAppModel+RemoteOrganizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+RemoteOrganizer.swift"; sourceTree = "<group>"; };
 		2E73A40900E33D5B06DEE74D /* LocalSessionAudioPlayerDecodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSessionAudioPlayerDecodeTests.swift; sourceTree = "<group>"; };
 		2E7B3E03A63D385CD4CE00F6 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
+		2EB846EDEFDCF0DC53AF973B /* CarryOverLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CarryOverLaunch.swift; sourceTree = "<group>"; };
 		2F5867E598DB9DB1FB353716 /* LocalDictionaryTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDictionaryTransfer.swift; sourceTree = "<group>"; };
 		30717E814042708BDF862770 /* SpacesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpacesModel.swift; sourceTree = "<group>"; };
 		314E29A2795200F8FD6FA433 /* swift-crypto-NOTICE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-crypto-NOTICE.txt"; sourceTree = "<group>"; };
+		32D3FC6987F2F68B9113526B /* HeldCorrectionsFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeldCorrectionsFile.swift; sourceTree = "<group>"; };
 		35AC5D85514E1DAF75F9031B /* chrome-extension */ = {isa = PBXFileReference; lastKnownFileType = folder; name = "chrome-extension"; path = "integrations/chrome-extension"; sourceTree = SOURCE_ROOT; };
 		3872DB31A825604F12481276 /* MindloomLink */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomLink; path = Packages/MindloomLink; sourceTree = SOURCE_ROOT; };
 		3A39C68A4D6AA47E63A046F2 /* swift-crypto-nio-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-crypto-nio-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
@@ -345,18 +391,20 @@
 		40DE75D214FEEC510B1EA9CD /* FLEURS-Corpus-NOTICE-CC-BY-4.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "FLEURS-Corpus-NOTICE-CC-BY-4.0.txt"; sourceTree = "<group>"; };
 		421A823C52792B79B6B2598E /* OwnerCommandLineRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerCommandLineRunner.swift; sourceTree = "<group>"; };
 		42E784FD7AF23ED17422B30F /* ContentView+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Events.swift"; sourceTree = "<group>"; };
-		42EDA23F33CEF69B518411CB /* AgentSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentSettingsSection.swift; sourceTree = "<group>"; };
+		44F90B6D0BEF8CC213465D67 /* RawAudioDeletion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawAudioDeletion.swift; sourceTree = "<group>"; };
 		4B811FA620E958372BC48CDF /* MindloomIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomIntents.swift; sourceTree = "<group>"; };
 		4C28D7837A5A81CE032A5975 /* ExportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportModel.swift; sourceTree = "<group>"; };
 		4C5D814809613FE8A911B872 /* HistoryFilterControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryFilterControls.swift; sourceTree = "<group>"; };
 		4D66ACEF9A6B9F55B92CEBB9 /* LocalStorageInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStorageInspector.swift; sourceTree = "<group>"; };
+		4EFE07E678AB3C679EAA9896 /* TencentMeetingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TencentMeetingModel.swift; sourceTree = "<group>"; };
 		4FA7A40ECA832D0191A233FF /* ProcessTapTCCDenialProbe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProcessTapTCCDenialProbe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4FD7A381A24A74305F374A7C /* MindloomDesign */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomDesign; path = Packages/MindloomDesign; sourceTree = SOURCE_ROOT; };
+		5123CB689BEDB5960BE72A96 /* BestASR-KeychainGroup.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "BestASR-KeychainGroup.entitlements"; sourceTree = "<group>"; };
 		53335B27344170CC6B65A99A /* WatermarkPlayerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatermarkPlayerApp.swift; sourceTree = "<group>"; };
 		53D6E6B3E8770AE29C428B89 /* PeopleModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeopleModel.swift; sourceTree = "<group>"; };
 		5424885DCA237799E3AE8F69 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		55E8CC620CC0D5F12CE3DE61 /* Argmax-WhisperKit-LICENSE-MIT.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Argmax-WhisperKit-LICENSE-MIT.txt"; sourceTree = "<group>"; };
 		58BE57A20AC9531BBCADD6C4 /* MenuBarContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentView.swift; sourceTree = "<group>"; };
-		5A67566989DF9250B59AB17A /* TeamSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamSettingsSection.swift; sourceTree = "<group>"; };
 		5A906910E74197799D1EF311 /* BestASRUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestASRUITests.swift; sourceTree = "<group>"; };
 		5A97B5309D05B4F58119BA46 /* Fluid-Speaker-Diarization-MODEL-NOTICE-CC-BY-4.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Fluid-Speaker-Diarization-MODEL-NOTICE-CC-BY-4.0.txt"; sourceTree = "<group>"; };
 		5AB2C23AF2871CC4F80156D2 /* BestASRUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestASRUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -369,15 +417,21 @@
 		646C023F7D850E815DB3031C /* DictationAppModel+Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Settings.swift"; sourceTree = "<group>"; };
 		652607543E460DD240BB27D2 /* BestASR.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = BestASR.entitlements; sourceTree = "<group>"; };
 		66AD2E2CC49C1DA555649489 /* WorkspaceSmokeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WorkspaceSmokeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		67C333D7D35FB6E2BBA0E031 /* MindloomCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomCommands.swift; sourceTree = "<group>"; };
 		6BA13278F07988F9F3BFF32F /* MindloomShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MindloomShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		6BFAEEF0FD7FFE80938028D1 /* DictationAppModel+Usage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Usage.swift"; sourceTree = "<group>"; };
 		6C656D8CBD6ADA18961B3A12 /* DictationAppModel+AgentAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+AgentAccess.swift"; sourceTree = "<group>"; };
+		6C825A0DCEE36175B319BAB0 /* FnAccessibilityNoticeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FnAccessibilityNoticeTests.swift; sourceTree = "<group>"; };
+		6F423F77C4A3843567843A13 /* tencentmeeting-cli-LICENSE-MIT.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tencentmeeting-cli-LICENSE-MIT.txt"; sourceTree = "<group>"; };
 		6F6FFFE400D1E19E627D6D01 /* swift-system-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-system-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
 		7227293807EDB971E175FD16 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72532F83AF7E06D5CC7BBF76 /* DictationAppModel+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+History.swift"; sourceTree = "<group>"; };
+		730FA4E2148F5F62CD20662A /* WebLookupModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebLookupModel.swift; sourceTree = "<group>"; };
+		749CD3F0CBBF0DA4E8107445 /* MindloomWindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomWindowChrome.swift; sourceTree = "<group>"; };
 		74E3FD0F03A10F6042871D3E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		74F898282C9A952088E808CC /* BrowserHostRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHostRunner.swift; sourceTree = "<group>"; };
 		7676A6F0CE6FEC661DC5157B /* THIRD-PARTY-NOTICES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "THIRD-PARTY-NOTICES.md"; sourceTree = "<group>"; };
+		78F1EBFF5C453A3DF39101B8 /* MindloomSettingsWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomSettingsWindow.swift; sourceTree = "<group>"; };
 		7976453EC8A6259FFFBAF1A9 /* InferenceWorker.xpc */ = {isa = PBXFileReference; explicitFileType = "wrapper.xpc-service"; includeInIndex = 0; path = InferenceWorker.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		79B32282D07CF62800FB1F2B /* DictationAppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationAppModelTests.swift; sourceTree = "<group>"; };
 		7CBD0A4A24E49855369E5D94 /* OwnerSocketCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OwnerSocketCall.swift; sourceTree = "<group>"; };
@@ -386,34 +440,45 @@
 		7F92657FF57D5597787C5BC5 /* MemorySearchModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemorySearchModel.swift; sourceTree = "<group>"; };
 		803275B01D653A2FDDBDC009 /* swift-asn1-NOTICE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-asn1-NOTICE.txt"; sourceTree = "<group>"; };
 		8214511748674C7E35AF0355 /* TeamModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamModel.swift; sourceTree = "<group>"; };
+		821FFBA1B765945C54E59627 /* WelcomeWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeWindow.swift; sourceTree = "<group>"; };
+		831C6BE748EDA4681E44992A /* MindloomFindKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomFindKey.swift; sourceTree = "<group>"; };
 		8329207C66074321D7BCAEE3 /* DictationAppModel+Hotkeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Hotkeys.swift"; sourceTree = "<group>"; };
 		83A59FFB1E45C748FBABA0A9 /* LocalDictationRuntime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalDictationRuntime.swift; sourceTree = "<group>"; };
+		849F2D2C6D92112C37BD1839 /* PreviewEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewEnvironment.swift; sourceTree = "<group>"; };
 		84CE578D464369BDDE78AA83 /* PersonalDictationCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalDictationCleanup.swift; sourceTree = "<group>"; };
 		85D7D8DF30CC855B98B64468 /* HotkeyRecorderField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyRecorderField.swift; sourceTree = "<group>"; };
 		8876B9C5AFF9EBD946C96C0F /* ContentView+People.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+People.swift"; sourceTree = "<group>"; };
 		8977FCDD7BB4F192437B9577 /* ContentView+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Navigation.swift"; sourceTree = "<group>"; };
 		8AA9E9433B8935475593C46C /* SpokenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenModel.swift; sourceTree = "<group>"; };
 		8CB119BB3979EA5927F972E5 /* SpokenModeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenModeTests.swift; sourceTree = "<group>"; };
+		8D875C9BB9F3EABC64A0B40B /* DictationTimingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationTimingTests.swift; sourceTree = "<group>"; };
 		8E66FFB3A65E226E56EB6985 /* AgentAccessModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentAccessModel.swift; sourceTree = "<group>"; };
 		8EB4B9B5BE7CCCADE8C227CA /* BestASR.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BestASR.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8F7397235B2EF5D2CE35CFCB /* CaptureFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureFeedback.swift; sourceTree = "<group>"; };
 		90ED1D22F43024606F29A628 /* AMI-Corpus-NOTICE-CC-BY-4.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "AMI-Corpus-NOTICE-CC-BY-4.0.txt"; sourceTree = "<group>"; };
 		913522B8FA5938789E785710 /* DictationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationSettingsView.swift; sourceTree = "<group>"; };
 		94E64A4A4909BA850168208F /* DictationAppModel+People.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+People.swift"; sourceTree = "<group>"; };
+		962D59EA4DA291DA2F235C74 /* MindloomWiring+Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MindloomWiring+Home.swift"; sourceTree = "<group>"; };
 		96B02AB33AB77FDA49FF7694 /* MemoryScreenAdapterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryScreenAdapterTests.swift; sourceTree = "<group>"; };
 		96DCE5C6F65D02207753F143 /* ContentView+Spaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Spaces.swift"; sourceTree = "<group>"; };
 		9722FC1B941F9DB89A9292B9 /* LocalSessionAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSessionAudioPlayer.swift; sourceTree = "<group>"; };
 		97F5704BD99D02E495D06E91 /* LocalDictationRuntime+Processing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalDictationRuntime+Processing.swift"; sourceTree = "<group>"; };
 		97FDF7ADF1B83F2BC2DFAB93 /* SpaceAudioSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceAudioSource.swift; sourceTree = "<group>"; };
 		99528C8DA73E62CC566C6E56 /* EntriesSettingsSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntriesSettingsSection.swift; sourceTree = "<group>"; };
+		9A13D410602A553C99D671B5 /* DeliveryProbeLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryProbeLaunch.swift; sourceTree = "<group>"; };
 		9D9F01F6AC148AA46108189C /* GRDB-LICENSE-MIT.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "GRDB-LICENSE-MIT.txt"; sourceTree = "<group>"; };
 		9F55556F79BD435E8A793CF4 /* PersonalDictationCleanupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalDictationCleanupTests.swift; sourceTree = "<group>"; };
 		A01CFDBBFC9A51BC070B6E08 /* DictationAppModel+Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Onboarding.swift"; sourceTree = "<group>"; };
 		A1EC54582AF93F560306323E /* SpokenAnswerPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenAnswerPanel.swift; sourceTree = "<group>"; };
 		A4D1E67E3F7D0A8AB1BA23AC /* model-artifacts.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "model-artifacts.json"; sourceTree = "<group>"; };
+		A51710764F4365072606C9CA /* MeetingCaptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeetingCaptions.swift; sourceTree = "<group>"; };
 		A7869BCD1CD6C92C05EC2D22 /* Qwen3-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "Qwen3-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
+		A86D3E188E256313B6769DB4 /* MindloomLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomLaunchTests.swift; sourceTree = "<group>"; };
 		AAADB6BC5E255CEDAF2B499F /* HistoryQueryIsolationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryQueryIsolationTests.swift; sourceTree = "<group>"; };
 		AC96F743D5C8B9E834ADD33B /* ProcessTapProbeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTapProbeApp.swift; sourceTree = "<group>"; };
+		ADA5A8D0DC06D57C5911A228 /* DictationAppModel+Corrections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Corrections.swift"; sourceTree = "<group>"; };
 		AE36254C4119D69EA5899EA7 /* ContentView+Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Dictionary.swift"; sourceTree = "<group>"; };
+		B45A9C7685D469DD5CDEC37E /* MeaningSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeaningSearch.swift; sourceTree = "<group>"; };
 		B4E25E2000A1AB0DC2C0FBCA /* BenchCLI */ = {isa = PBXFileReference; includeInIndex = 0; path = BenchCLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		B99E930CDD7A3E3023A74E2F /* ContentView+HistoryDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+HistoryDetail.swift"; sourceTree = "<group>"; };
 		BBC84E772FB644B1682BE80F /* LocalDictationRuntime+Instructions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalDictationRuntime+Instructions.swift"; sourceTree = "<group>"; };
@@ -427,37 +492,52 @@
 		C7B91B6815E03D83263F6DB4 /* DictationAppModel+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Models.swift"; sourceTree = "<group>"; };
 		C8271E953D10BEF2186C3576 /* InteractionRecoveryUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionRecoveryUITests.swift; sourceTree = "<group>"; };
 		C896BAFE6A7352CDAD509EE9 /* ProcessTapTCCDenialProbeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessTapTCCDenialProbeApp.swift; sourceTree = "<group>"; };
+		C9A72B7A1A12CE33003E379F /* DictionaryWordEditing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryWordEditing.swift; sourceTree = "<group>"; };
 		CE51E4874F714D14C910824E /* AgentConsentPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AgentConsentPanel.swift; sourceTree = "<group>"; };
 		CEE5DD745330909C90EBC4E7 /* DictationAppModel+Recording.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Recording.swift"; sourceTree = "<group>"; };
 		CF50634C7E946D81F0470829 /* DictationAppModel+Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Memory.swift"; sourceTree = "<group>"; };
 		CF530DC2583F9758A9F317A0 /* DictationAppModel+MemorySearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+MemorySearch.swift"; sourceTree = "<group>"; };
+		CF9653A54071BEA6B29B9FBC /* FnAccessibilityNotice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FnAccessibilityNotice.swift; sourceTree = "<group>"; };
+		CFD3D9539E81E487E899C20E /* tmeet-Go-LICENSES.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "tmeet-Go-LICENSES.txt"; sourceTree = "<group>"; };
 		D03D351585C0F2148C9BF88A /* DictationAppModel+Export.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Export.swift"; sourceTree = "<group>"; };
 		D0C22CC5C7734F7804C07EAF /* HistoryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryModel.swift; sourceTree = "<group>"; };
 		D13C126B0BE0C32BFFA8626E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D282E8B8159480CB8256BC4D /* IntakeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntakeModel.swift; sourceTree = "<group>"; };
 		D40094AB2A3CB611EB868332 /* LocalHistoryExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHistoryExporter.swift; sourceTree = "<group>"; };
 		D46ACCEB9BB5C76C8CBD531B /* LocalDictationRuntime+Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalDictationRuntime+Models.swift"; sourceTree = "<group>"; };
+		D49B05E1167F37E320102346 /* FnHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FnHUD.swift; sourceTree = "<group>"; };
 		D513245E0E798FD794164C1E /* swift-huggingface-LICENSE-Apache-2.0.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-huggingface-LICENSE-Apache-2.0.txt"; sourceTree = "<group>"; };
+		D600E96CA93EE24CE1104566 /* MindloomLookup */ = {isa = PBXFileReference; lastKnownFileType = folder; name = MindloomLookup; path = Packages/MindloomLookup; sourceTree = SOURCE_ROOT; };
 		D61627F48D6889BBD157D724 /* BestASRApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BestASRApp.swift; sourceTree = "<group>"; };
+		D9E87217B413962184AD69F6 /* MindloomLaunch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomLaunch.swift; sourceTree = "<group>"; };
 		D9FF3627D33ABFF8BB96BE93 /* HistoryPlaybackKeyboardPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryPlaybackKeyboardPolicy.swift; sourceTree = "<group>"; };
+		DA5B4DB9BBEBB4364E0FC8F7 /* Info-Preview.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "Info-Preview.plist"; sourceTree = "<group>"; };
+		DF4CF24649D95588B80B4724 /* MindloomWiring+Matter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MindloomWiring+Matter.swift"; sourceTree = "<group>"; };
 		E12E9DB3B29CAB68FE0DB25F /* DictionaryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryModel.swift; sourceTree = "<group>"; };
+		E1EE2944B929A1E04CD35367 /* ModelImport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelImport.swift; sourceTree = "<group>"; };
+		E3FF5B7D8D204ED8598E8A1E /* DictationMetricsProbe.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictationMetricsProbe.swift; sourceTree = "<group>"; };
 		E8DB2B7F44808A1E8A8933D9 /* MindloomMCP */ = {isa = PBXFileReference; includeInIndex = 0; path = MindloomMCP; sourceTree = BUILT_PRODUCTS_DIR; };
 		E943F509FB986EA6B1143C1E /* BestASRAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BestASRAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA649ADBB309A5C9B4E9D46D /* ContentView+Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+Home.swift"; sourceTree = "<group>"; };
 		EBE7C35E4A56EAB49ED2DC27 /* MemoryScreenModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryScreenModel.swift; sourceTree = "<group>"; };
 		EDA2460C1A7C6FC705C7161A /* CaptureModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModel.swift; sourceTree = "<group>"; };
+		EF63A9CED80B0A30CEF91F8C /* StartupRefusalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartupRefusalView.swift; sourceTree = "<group>"; };
 		F00BAAD23244019726890ABA /* swift-nio-NOTICE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "swift-nio-NOTICE.txt"; sourceTree = "<group>"; };
 		F3A7B1048F0F051DEAD6C94F /* ContentView+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView+History.swift"; sourceTree = "<group>"; };
 		F6417393CE8235158F842A14 /* DictationAppModel+PhoneLink.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+PhoneLink.swift"; sourceTree = "<group>"; };
 		F66BD1ADFC62985AC8E86DA2 /* SpokenAnswerPanelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpokenAnswerPanelTests.swift; sourceTree = "<group>"; };
 		F6F45CBD8A53F4C260CDA945 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F8738A1A82A2C719451DDF44 /* DictationAppModel+Playback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+Playback.swift"; sourceTree = "<group>"; };
+		FA0165DC7706CEB992E638CD /* DictationAppModel+TencentMeeting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+TencentMeeting.swift"; sourceTree = "<group>"; };
 		FA465D9550D36D886D6072A3 /* mlx-swift-lm-LICENSE-MIT.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "mlx-swift-lm-LICENSE-MIT.txt"; sourceTree = "<group>"; };
 		FABE5FFC146753E6C34D51AF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FB5E8E826DB3847568E7C0FF /* ProcessTapProbe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProcessTapProbe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB62DCD887DE5CE2D3817C8D /* DictionaryWordEditingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryWordEditingTests.swift; sourceTree = "<group>"; };
 		FB7B6EF2E17D22A739B263EB /* MindloomServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MindloomServices.swift; sourceTree = "<group>"; };
 		FBC5439734BAD082F4351D26 /* LocalEventOrganizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalEventOrganizer.swift; sourceTree = "<group>"; };
 		FC4C2BE34F46F8432148F79F /* LocalDictationRuntime+History.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalDictationRuntime+History.swift"; sourceTree = "<group>"; };
+		FD334585C910DD115517EA41 /* DictationAppModel+TimeZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DictationAppModel+TimeZone.swift"; sourceTree = "<group>"; };
+		FEDD4EE800082A5B6A21AED1 /* MindloomWiring+Capture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MindloomWiring+Capture.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -558,8 +638,14 @@
 				779F8DD3E5F37C34D65E2691 /* BestASRAgentAccess in Frameworks */,
 				39B5F07EB8C5C4E1D5366519 /* MindloomAgentProtocol in Frameworks */,
 				9C47C9458E3F6D2C53A5339F /* MindloomSpaces in Frameworks */,
-				9942ABB8A8721C0BA70B2EE7 /* BestASREntries in Frameworks */,
-				825A5014720D0CB270B82660 /* MindloomShareDrop in Frameworks */,
+				9942ABB8A8721C0BA70B2EE7 /* MindloomDesign in Frameworks */,
+				825A5014720D0CB270B82660 /* BestASREntries in Frameworks */,
+				C6192976086F0573479EC255 /* MindloomShareDrop in Frameworks */,
+				E8F5D10AEBDD920F6B8659CE /* MindloomTencentMeeting in Frameworks */,
+				BA7A59ACE3079EA472FB737D /* MindloomLibrary in Frameworks */,
+				5666A2422B4A68234DEEB42D /* MindloomLookup in Frameworks */,
+				16FADE84C6FEC34844062DDE /* MindloomCarryOver in Frameworks */,
+				CB667D9A8439C8C3A8A16800 /* MindloomIdentity in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -637,7 +723,9 @@
 			isa = PBXGroup;
 			children = (
 				1D3F7B47BE2F6DD032508711 /* BestASRCore */,
+				4FD7A381A24A74305F374A7C /* MindloomDesign */,
 				3872DB31A825604F12481276 /* MindloomLink */,
+				D600E96CA93EE24CE1104566 /* MindloomLookup */,
 				7B52E0CDA5895CD7C9442FE8 /* BestASRCore */,
 			);
 			path = Packages;
@@ -666,11 +754,15 @@
 			isa = PBXGroup;
 			children = (
 				79B32282D07CF62800FB1F2B /* DictationAppModelTests.swift */,
+				8D875C9BB9F3EABC64A0B40B /* DictationTimingTests.swift */,
 				265B9F941F14454D16C18EA5 /* DictionaryInteractionTests.swift */,
 				7DA70055DA071F6130DAC42A /* DictionaryModelTests.swift */,
+				FB62DCD887DE5CE2D3817C8D /* DictionaryWordEditingTests.swift */,
+				6C825A0DCEE36175B319BAB0 /* FnAccessibilityNoticeTests.swift */,
 				AAADB6BC5E255CEDAF2B499F /* HistoryQueryIsolationTests.swift */,
 				2E73A40900E33D5B06DEE74D /* LocalSessionAudioPlayerDecodeTests.swift */,
 				96B02AB33AB77FDA49FF7694 /* MemoryScreenAdapterTests.swift */,
+				A86D3E188E256313B6769DB4 /* MindloomLaunchTests.swift */,
 				9F55556F79BD435E8A793CF4 /* PersonalDictationCleanupTests.swift */,
 				3A480AD1B74F0E3F15EC8C65 /* SilentTakeRetentionTests.swift */,
 				F66BD1ADFC62985AC8E86DA2 /* SpokenAnswerPanelTests.swift */,
@@ -703,13 +795,15 @@
 			children = (
 				8E66FFB3A65E226E56EB6985 /* AgentAccessModel.swift */,
 				CE51E4874F714D14C910824E /* AgentConsentPanel.swift */,
-				42EDA23F33CEF69B518411CB /* AgentSettingsSection.swift */,
 				C0DD7BA77154E27841DF1088 /* AppleTranslation.swift */,
 				123321391F2E4CFEAA9EB90C /* AppUpdateChecker.swift */,
 				7227293807EDB971E175FD16 /* Assets.xcassets */,
+				5123CB689BEDB5960BE72A96 /* BestASR-KeychainGroup.entitlements */,
 				652607543E460DD240BB27D2 /* BestASR.entitlements */,
 				D61627F48D6889BBD157D724 /* BestASRApp.swift */,
+				8F7397235B2EF5D2CE35CFCB /* CaptureFeedback.swift */,
 				EDA2460C1A7C6FC705C7161A /* CaptureModel.swift */,
+				2EB846EDEFDCF0DC53AF973B /* CarryOverLaunch.swift */,
 				74E3FD0F03A10F6042871D3E /* ContentView.swift */,
 				3BBAA940DA407CEACAAB90BA /* ContentView+Capture.swift */,
 				AE36254C4119D69EA5899EA7 /* ContentView+Dictionary.swift */,
@@ -721,9 +815,12 @@
 				8977FCDD7BB4F192437B9577 /* ContentView+Navigation.swift */,
 				8876B9C5AFF9EBD946C96C0F /* ContentView+People.swift */,
 				96DCE5C6F65D02207753F143 /* ContentView+Spaces.swift */,
+				9A13D410602A553C99D671B5 /* DeliveryProbeLaunch.swift */,
 				11768AA769E7F2426632320B /* DictationAppModel.swift */,
 				6C656D8CBD6ADA18961B3A12 /* DictationAppModel+AgentAccess.swift */,
 				3CDEDF5209AFE2309FAD4068 /* DictationAppModel+Capture.swift */,
+				ADA5A8D0DC06D57C5911A228 /* DictationAppModel+Corrections.swift */,
+				0B286747F61027E3625B91DC /* DictationAppModel+Demo.swift */,
 				BFF5ACBDF582D7E94E34F1C1 /* DictationAppModel+Dictation.swift */,
 				091D5AEA1630790174DA2FF5 /* DictationAppModel+Dictionary.swift */,
 				02E9AB66FB7E72CC00ECE27C /* DictationAppModel+Entries.swift */,
@@ -744,56 +841,82 @@
 				2A3B24AC195FDC191C77249D /* DictationAppModel+RemoteOrganizer.swift */,
 				646C023F7D850E815DB3031C /* DictationAppModel+Settings.swift */,
 				63F8988DA67317FF3D025D90 /* DictationAppModel+Spoken.swift */,
+				FA0165DC7706CEB992E638CD /* DictationAppModel+TencentMeeting.swift */,
+				FD334585C910DD115517EA41 /* DictationAppModel+TimeZone.swift */,
 				6BFAEEF0FD7FFE80938028D1 /* DictationAppModel+Usage.swift */,
+				179E6D1B21702FB3BA32BD73 /* DictationAppModel+WebLookup.swift */,
+				E3FF5B7D8D204ED8598E8A1E /* DictationMetricsProbe.swift */,
 				913522B8FA5938789E785710 /* DictationSettingsView.swift */,
 				E12E9DB3B29CAB68FE0DB25F /* DictionaryModel.swift */,
 				620BA8084625CD7BD7B5175E /* DictionaryModel+Behaviour.swift */,
+				C9A72B7A1A12CE33003E379F /* DictionaryWordEditing.swift */,
 				3EAA539DBA1DD2D1E176B15D /* EntriesModel.swift */,
 				99528C8DA73E62CC566C6E56 /* EntriesSettingsSection.swift */,
 				28225D52F6243B00570723C3 /* EventExportModel.swift */,
 				5D5E25143ACBBDF7C87145DB /* EventsModel.swift */,
 				4C28D7837A5A81CE032A5975 /* ExportModel.swift */,
+				CF9653A54071BEA6B29B9FBC /* FnAccessibilityNotice.swift */,
+				D49B05E1167F37E320102346 /* FnHUD.swift */,
+				32D3FC6987F2F68B9113526B /* HeldCorrectionsFile.swift */,
 				4C5D814809613FE8A911B872 /* HistoryFilterControls.swift */,
 				D0C22CC5C7734F7804C07EAF /* HistoryModel.swift */,
 				D9FF3627D33ABFF8BB96BE93 /* HistoryPlaybackKeyboardPolicy.swift */,
 				85D7D8DF30CC855B98B64468 /* HotkeyRecorderField.swift */,
 				10105CC3E17F02BC0D35957B /* HotkeysModel.swift */,
+				DA5B4DB9BBEBB4364E0FC8F7 /* Info-Preview.plist */,
 				5B7F424797BEA96022B397E3 /* Info.plist */,
 				17211537D79687BBF6A0419F /* InfoPlist.xcstrings */,
 				D282E8B8159480CB8256BC4D /* IntakeModel.swift */,
 				041463D22D269E161300A7EE /* IntakePasteKeyMonitor.swift */,
+				0543D9E10412D0DED2C0B1D7 /* LiveShots.swift */,
 				83A59FFB1E45C748FBABA0A9 /* LocalDictationRuntime.swift */,
 				FC4C2BE34F46F8432148F79F /* LocalDictationRuntime+History.swift */,
 				BBC84E772FB644B1682BE80F /* LocalDictationRuntime+Instructions.swift */,
 				D46ACCEB9BB5C76C8CBD531B /* LocalDictationRuntime+Models.swift */,
 				97F5704BD99D02E495D06E91 /* LocalDictationRuntime+Processing.swift */,
 				2402BD72EB169CD630EC002B /* LocalDictationRuntime+Speakers.swift */,
+				1B88AED4B2682E121E102085 /* LocalDictationRuntime+WordAlignment.swift */,
 				2F5867E598DB9DB1FB353716 /* LocalDictionaryTransfer.swift */,
 				FBC5439734BAD082F4351D26 /* LocalEventOrganizer.swift */,
 				D40094AB2A3CB611EB868332 /* LocalHistoryExporter.swift */,
 				9722FC1B941F9DB89A9292B9 /* LocalSessionAudioPlayer.swift */,
 				4D66ACEF9A6B9F55B92CEBB9 /* LocalStorageInspector.swift */,
 				C2995236FC5D19EE7375C73F /* MainWindowDesign.swift */,
+				B45A9C7685D469DD5CDEC37E /* MeaningSearch.swift */,
+				A51710764F4365072606C9CA /* MeetingCaptions.swift */,
 				EBE7C35E4A56EAB49ED2DC27 /* MemoryScreenModel.swift */,
 				7F92657FF57D5597787C5BC5 /* MemorySearchModel.swift */,
 				58BE57A20AC9531BBCADD6C4 /* MenuBarContentView.swift */,
+				67C333D7D35FB6E2BBA0E031 /* MindloomCommands.swift */,
+				831C6BE748EDA4681E44992A /* MindloomFindKey.swift */,
 				4B811FA620E958372BC48CDF /* MindloomIntents.swift */,
+				D9E87217B413962184AD69F6 /* MindloomLaunch.swift */,
 				FB7B6EF2E17D22A739B263EB /* MindloomServices.swift */,
+				78F1EBFF5C453A3DF39101B8 /* MindloomSettingsWindow.swift */,
+				749CD3F0CBBF0DA4E8107445 /* MindloomWindowChrome.swift */,
+				FEDD4EE800082A5B6A21AED1 /* MindloomWiring+Capture.swift */,
+				962D59EA4DA291DA2F235C74 /* MindloomWiring+Home.swift */,
+				DF4CF24649D95588B80B4724 /* MindloomWiring+Matter.swift */,
+				E1EE2944B929A1E04CD35367 /* ModelImport.swift */,
 				26CE6FC9C8D9B71710C3C8CC /* ModelsModel.swift */,
 				1F92FF6AD9BF68DC3D479167 /* OnboardingModel.swift */,
-				29A1050CEE88A2AD9A2D878A /* PasteProbe.swift */,
 				53D6E6B3E8770AE29C428B89 /* PeopleModel.swift */,
 				84CE578D464369BDDE78AA83 /* PersonalDictationCleanup.swift */,
 				28DD22FD158AEBA861561CF4 /* PlaybackModel.swift */,
+				849F2D2C6D92112C37BD1839 /* PreviewEnvironment.swift */,
+				44F90B6D0BEF8CC213465D67 /* RawAudioDeletion.swift */,
 				97FDF7ADF1B83F2BC2DFAB93 /* SpaceAudioSource.swift */,
 				30717E814042708BDF862770 /* SpacesModel.swift */,
 				A1EC54582AF93F560306323E /* SpokenAnswerPanel.swift */,
 				03F7CE4E71907F412225A920 /* SpokenJobProducer.swift */,
 				8AA9E9433B8935475593C46C /* SpokenModel.swift */,
+				EF63A9CED80B0A30CEF91F8C /* StartupRefusalView.swift */,
 				8214511748674C7E35AF0355 /* TeamModel.swift */,
-				5A67566989DF9250B59AB17A /* TeamSettingsSection.swift */,
+				4EFE07E678AB3C679EAA9896 /* TencentMeetingModel.swift */,
 				03107BAA6A6C63391476A89E /* TranslationInstaller.swift */,
 				08932AD748852A9E0900B170 /* UsageModel.swift */,
+				730FA4E2148F5F62CD20662A /* WebLookupModel.swift */,
+				821FFBA1B765945C54E59627 /* WelcomeWindow.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -840,6 +963,8 @@
 				F00BAAD23244019726890ABA /* swift-nio-NOTICE.txt */,
 				6F6FFFE400D1E19E627D6D01 /* swift-system-LICENSE-Apache-2.0.txt */,
 				0E0E8223A820E77650AE380D /* swift-transformers-jinja-LICENSE-Apache-2.0.txt */,
+				6F423F77C4A3843567843A13 /* tencentmeeting-cli-LICENSE-MIT.txt */,
+				CFD3D9539E81E487E899C20E /* tmeet-Go-LICENSES.txt */,
 				5C61A86255A558D5EA9F7F5F /* yyjson-LICENSE-MIT.txt */,
 			);
 			path = Legal;
@@ -1040,6 +1165,7 @@
 				BF0FB8F07D2E460F318EA676 /* Frameworks */,
 				882844C43AFF21B081EC5EC4 /* Embed Foundation Extensions */,
 				FC5F49C6E00EDFAFDD02F3D2 /* Embed Dependencies */,
+				CF1532E213D9A539E48FADC7 /* Bundle tmeet */,
 			);
 			buildRules = (
 			);
@@ -1077,8 +1203,14 @@
 				045918ABD6EE8CFACA839E38 /* BestASRAgentAccess */,
 				B3B6A4AD9F471F003A1FF033 /* MindloomAgentProtocol */,
 				32C4CC917B848176A38B47ED /* MindloomSpaces */,
+				9BBCC530A6FC8E5DBE3F6E56 /* MindloomDesign */,
 				CB6FFBF238871648DDD3D5C6 /* BestASREntries */,
 				A0744F4764E3CB597D250C9D /* MindloomShareDrop */,
+				122F6996B64F312B78E5BED3 /* MindloomTencentMeeting */,
+				400FC3796E145C21F3065F18 /* MindloomLibrary */,
+				A45C4C62888C88AFB2C9F3DC /* MindloomLookup */,
+				B0068437259B6730A2A64A86 /* MindloomCarryOver */,
+				6B38691C17855F0AA5717002 /* MindloomIdentity */,
 			);
 			productName = BestASR;
 			productReference = 8EB4B9B5BE7CCCADE8C227CA /* BestASR.app */;
@@ -1246,7 +1378,9 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				003578670FD34FB85E395E48 /* XCLocalSwiftPackageReference "Packages/BestASRCore" */,
+				8893C1AD5D124AB87F55BD03 /* XCLocalSwiftPackageReference "Packages/MindloomDesign" */,
 				3A22441BB5A44493F0ADFFC7 /* XCLocalSwiftPackageReference "Packages/MindloomLink" */,
+				8B7E4B7C970C7A2797DF9083 /* XCLocalSwiftPackageReference "Packages/MindloomLookup" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 96ADC6B0CC900571E96AFD1F /* Products */;
@@ -1311,11 +1445,42 @@
 				171B3C52D513082BC6910C3E /* swift-nio-NOTICE.txt in Resources */,
 				0DAC3864F2FA42BEF7ED4FC5 /* swift-system-LICENSE-Apache-2.0.txt in Resources */,
 				F54B3F4EE71DB4133A2CC875 /* swift-transformers-jinja-LICENSE-Apache-2.0.txt in Resources */,
+				C61D9A4C753DF71C44AB34F3 /* tencentmeeting-cli-LICENSE-MIT.txt in Resources */,
+				2ABD5F9EAD04A0DAC5302F71 /* tmeet-Go-LICENSES.txt in Resources */,
 				2F5E98453661084202B4EFDC /* yyjson-LICENSE-MIT.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CF1532E213D9A539E48FADC7 /* Bundle tmeet */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/script/bundle_tmeet.sh",
+				"$(SRCROOT)/script/build_tmeet.sh",
+				"$(SRCROOT)/third_party/tencentmeeting-cli/VERSION",
+				"$(SRCROOT)/third_party/tencentmeeting-cli/upstream.sha256",
+				"$(SRCROOT)/third_party/tencentmeeting-cli/patches/0001-disable-remote-crash-report.patch",
+				"$(SRCROOT)/third_party/tencentmeeting-cli/patches/0002-keep-login-when-refresh-fails-on-network.patch",
+				"$(SRCROOT)/third_party/tencentmeeting-cli/patches/0003-master-key-from-inherited-descriptor.patch",
+			);
+			name = "Bundle tmeet";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/tmeet",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/script/bundle_tmeet.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		008595403C2241B83556CCD2 /* Sources */ = {
@@ -1371,11 +1536,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				2CA4014D45EA2B09864E9318 /* DictationAppModelTests.swift in Sources */,
+				C498CE445FBD1BEB76B4EA12 /* DictationTimingTests.swift in Sources */,
 				141E50B2379D83FD0B8DD3DE /* DictionaryInteractionTests.swift in Sources */,
 				6FF17BBDA6EE807FBBD8D07A /* DictionaryModelTests.swift in Sources */,
+				CA25D0EF8E8C292777B01304 /* DictionaryWordEditingTests.swift in Sources */,
+				004FF6541892B7C4C73C75E2 /* FnAccessibilityNoticeTests.swift in Sources */,
 				F948F7E0D7DD228A3613A0E0 /* HistoryQueryIsolationTests.swift in Sources */,
 				3F5F913909451888056F2B0B /* LocalSessionAudioPlayerDecodeTests.swift in Sources */,
 				3110CDB9C76074996E6CC666 /* MemoryScreenAdapterTests.swift in Sources */,
+				81CD104F0290630CB9DEA6FC /* MindloomLaunchTests.swift in Sources */,
 				2E48DD42F3FC4151A9A37DD4 /* PersonalDictationCleanupTests.swift in Sources */,
 				650490DAB87278D6930B33B6 /* SilentTakeRetentionTests.swift in Sources */,
 				9997F9D408D6C6257A21744A /* SpokenAnswerPanelTests.swift in Sources */,
@@ -1407,11 +1576,12 @@
 			files = (
 				8E9C2376A846D793D953E205 /* AgentAccessModel.swift in Sources */,
 				50793D83943B30174B28BD8E /* AgentConsentPanel.swift in Sources */,
-				9F189E5A581FC67F3B4B116A /* AgentSettingsSection.swift in Sources */,
 				1CBCF5273C791136DFB86E96 /* AppUpdateChecker.swift in Sources */,
 				7E5CC5916608FD654347CDB9 /* AppleTranslation.swift in Sources */,
 				DEB4311E8E1DD82FCC3F5FFA /* BestASRApp.swift in Sources */,
+				1B798881CC1C475B9898569D /* CaptureFeedback.swift in Sources */,
 				CE2E35ADC291D29EFF0F008B /* CaptureModel.swift in Sources */,
+				3B5DF0BCA848877D0B8A8138 /* CarryOverLaunch.swift in Sources */,
 				A0F0D36AE0E560442556D912 /* ContentView+Capture.swift in Sources */,
 				AB824B5457CCFE7953B15A9B /* ContentView+Dictionary.swift in Sources */,
 				B25A3B84DA908405E1BC1D02 /* ContentView+Events.swift in Sources */,
@@ -1423,8 +1593,11 @@
 				D3E7D64D0D67F2F29867CA3F /* ContentView+People.swift in Sources */,
 				F18F14CB570331E17E98949E /* ContentView+Spaces.swift in Sources */,
 				51EDA95FC4064BE83F1FB95E /* ContentView.swift in Sources */,
+				15EC54EA9FFB5F7542AB564D /* DeliveryProbeLaunch.swift in Sources */,
 				11A0D5D3B6DBA31B9FFFFEFF /* DictationAppModel+AgentAccess.swift in Sources */,
 				991EF0ED6C699E8E39BA0962 /* DictationAppModel+Capture.swift in Sources */,
+				1D43913F58464C3EA18D4F18 /* DictationAppModel+Corrections.swift in Sources */,
+				88A01B429E21F426AC82D016 /* DictationAppModel+Demo.swift in Sources */,
 				7B093A9743107C36E5D861A4 /* DictationAppModel+Dictation.swift in Sources */,
 				B06D8C227FFE4DF291B390A4 /* DictationAppModel+Dictionary.swift in Sources */,
 				4DCC8BA3C2FFAC6B24FABA2F /* DictationAppModel+Entries.swift in Sources */,
@@ -1445,16 +1618,24 @@
 				E68BC950BB7CBFED58EDEEA2 /* DictationAppModel+RemoteOrganizer.swift in Sources */,
 				B88C934E1D96C2EC6F94F27C /* DictationAppModel+Settings.swift in Sources */,
 				1D956354CDBF242749147437 /* DictationAppModel+Spoken.swift in Sources */,
+				C73F2B5189B9D735964F9737 /* DictationAppModel+TencentMeeting.swift in Sources */,
+				137A06E93CAD8CD890036B68 /* DictationAppModel+TimeZone.swift in Sources */,
 				39905BD756AF5C2A6DA32BD5 /* DictationAppModel+Usage.swift in Sources */,
+				2885C91A94398CC8D520175E /* DictationAppModel+WebLookup.swift in Sources */,
 				93C53CC28C692CC1E4F2B052 /* DictationAppModel.swift in Sources */,
+				02C54E4A7692CCEEA7C64FFC /* DictationMetricsProbe.swift in Sources */,
 				4962FACA60A60DC38990CAA0 /* DictationSettingsView.swift in Sources */,
 				49D8FF293AAC5CDCAE60814C /* DictionaryModel+Behaviour.swift in Sources */,
 				A4C7B8CB9D7C3F54004BD0BB /* DictionaryModel.swift in Sources */,
+				44A7A096E659B66D3C195CE2 /* DictionaryWordEditing.swift in Sources */,
 				0DB90BF9121FFEB084EBDDD0 /* EntriesModel.swift in Sources */,
 				4F7579A8EA4D514F8A461FEF /* EntriesSettingsSection.swift in Sources */,
 				2A05B12D0EC5867CADF47A33 /* EventExportModel.swift in Sources */,
 				2DC0403B08A7EDE649E4A0FC /* EventsModel.swift in Sources */,
 				BDF1CA5C670D069863D09532 /* ExportModel.swift in Sources */,
+				3CBC68AB3F13E3841AF0B1C0 /* FnAccessibilityNotice.swift in Sources */,
+				0E17F750C5E452AA445E0FEE /* FnHUD.swift in Sources */,
+				313657EDE5E69509D08D4CB4 /* HeldCorrectionsFile.swift in Sources */,
 				C0E2169E2F14BBE218E4DC94 /* HistoryFilterControls.swift in Sources */,
 				ED26A813D19EF5353A45725C /* HistoryModel.swift in Sources */,
 				065EBF2FAE62D81260E8316D /* HistoryPlaybackKeyboardPolicy.swift in Sources */,
@@ -1462,11 +1643,13 @@
 				D4406F688B6F58F95435081B /* HotkeysModel.swift in Sources */,
 				96DED0B9A99972658813243E /* IntakeModel.swift in Sources */,
 				FF4D14F543CEB59B14D580C1 /* IntakePasteKeyMonitor.swift in Sources */,
+				A2002D1CB59762C5859C871B /* LiveShots.swift in Sources */,
 				D7CC0AD9F81E41B3328A5A77 /* LocalDictationRuntime+History.swift in Sources */,
 				72D8B2E2A7920171092CAC33 /* LocalDictationRuntime+Instructions.swift in Sources */,
 				C2EFAF888123A25255742E0A /* LocalDictationRuntime+Models.swift in Sources */,
 				11B25095C13F1EA24C8D2AE4 /* LocalDictationRuntime+Processing.swift in Sources */,
 				FDFA7C41A5AD43DD103E516D /* LocalDictationRuntime+Speakers.swift in Sources */,
+				AF73F5BDFE9090C368AFD2E1 /* LocalDictationRuntime+WordAlignment.swift in Sources */,
 				A0EFB7B681F624726C934F7C /* LocalDictationRuntime.swift in Sources */,
 				725CB820DBD5BE040CFBC414 /* LocalDictionaryTransfer.swift in Sources */,
 				9BB812ACCC8B659A3D689C1E /* LocalEventOrganizer.swift in Sources */,
@@ -1474,26 +1657,41 @@
 				489C67B86FCCDC9BF17F0734 /* LocalSessionAudioPlayer.swift in Sources */,
 				BAE1ADA66339040277C5B7A9 /* LocalStorageInspector.swift in Sources */,
 				A31A33373E9BBADC716FCB13 /* MainWindowDesign.swift in Sources */,
+				49F2C67593E058C9D237C0C7 /* MeaningSearch.swift in Sources */,
+				1701E13A1227A65F518803CA /* MeetingCaptions.swift in Sources */,
 				68468704E8542586F73F7C09 /* MemoryScreenModel.swift in Sources */,
 				5BC653E1A2D18A4B297C8A56 /* MemorySearchModel.swift in Sources */,
 				EE39D7EBF2B137249D4CD09C /* MenuBarContentView.swift in Sources */,
+				4A287AA5BC55516EAAD82C9F /* MindloomCommands.swift in Sources */,
+				5BF88B3E181BA41D52DC109A /* MindloomFindKey.swift in Sources */,
 				B94CB22F6B45E651EC65C802 /* MindloomIntents.swift in Sources */,
+				92BB986E013E670D9F1051C8 /* MindloomLaunch.swift in Sources */,
 				30F6B1535FE285D75653DA4C /* MindloomServices.swift in Sources */,
+				8F25A22826F82D5CF09508DC /* MindloomSettingsWindow.swift in Sources */,
+				E5A35F9E94FC60B17A12FBAA /* MindloomWindowChrome.swift in Sources */,
+				583259093B4B9E2656107772 /* MindloomWiring+Capture.swift in Sources */,
+				22FEBF74B2F2EE965E59227F /* MindloomWiring+Home.swift in Sources */,
+				BE18F5C38435FAF482FE68D5 /* MindloomWiring+Matter.swift in Sources */,
+				34983D14165DAD81017D3EA6 /* ModelImport.swift in Sources */,
 				21DD49036CA7CAA4CA160600 /* ModelsModel.swift in Sources */,
 				7EEBE3FD45783AD268E67AF2 /* OnboardingModel.swift in Sources */,
-				747EE35D75D0043CB8FA374A /* PasteProbe.swift in Sources */,
 				0B29632612CF34C6EA06D5D3 /* PeopleModel.swift in Sources */,
 				8C7E9F02ACA4E3BACD2255F9 /* PersonalDictationCleanup.swift in Sources */,
 				ABF7A8759644E1F8EAC0B90C /* PlaybackModel.swift in Sources */,
+				BA51EC4695AA52A9DFD076AC /* PreviewEnvironment.swift in Sources */,
+				37C2D3955391D8392BAE4273 /* RawAudioDeletion.swift in Sources */,
 				1E7799B741DF6A270CB67767 /* SpaceAudioSource.swift in Sources */,
 				7C701F02A8EDFE7A10F932A0 /* SpacesModel.swift in Sources */,
 				5ADABCE29EF14C5E849AD265 /* SpokenAnswerPanel.swift in Sources */,
 				36DEB7E69DE6B10E7ABC3552 /* SpokenJobProducer.swift in Sources */,
 				BA0C655E0451685170F33A14 /* SpokenModel.swift in Sources */,
+				1E4883255A38991FE98F8752 /* StartupRefusalView.swift in Sources */,
 				F59C434D86F5B2CDBA69F0B8 /* TeamModel.swift in Sources */,
-				EFD178148E4EC45FA7C30C68 /* TeamSettingsSection.swift in Sources */,
+				ED6A61E4F91920FB7CA3BDD7 /* TencentMeetingModel.swift in Sources */,
 				879AD544DE5242DF54F2163D /* TranslationInstaller.swift in Sources */,
 				4F632D0184873A964DD9F5B9 /* UsageModel.swift in Sources */,
+				4F3AEA7A0E4597542D59E65D /* WebLookupModel.swift in Sources */,
+				835A0492CE39A3051BB37285 /* WelcomeWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1580,12 +1778,32 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.app.share;
+				MINDLOOM_SHARE_DISPLAY_NAME = Mindloom;
+				MINDLOOM_SHARE_DROP_ROOT = "";
+				MINDLOOM_URL_SCHEME = mindloom;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).share";
 				PRODUCT_NAME = MindloomShare;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
+		};
+		0578BE160B32EC3EAE569411 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.workspace-smoke-tests";
+				SDKROOT = macosx;
+			};
+			name = Preview;
 		};
 		072E827D69CF77B8AAB3A999 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1601,6 +1819,26 @@
 				SDKROOT = macosx;
 			};
 			name = Debug;
+		};
+		08A0B4AB936A071FDCE9CA15 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "bestASR Nonselected Watermark Player";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.spike.nonselected-watermark-player";
+				PRODUCT_NAME = NonselectedWatermarkPlayer;
+				SDKROOT = macosx;
+			};
+			name = Preview;
 		};
 		0D071C0E0F44233DCEA63857 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1634,9 +1872,38 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.app-tests";
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/bestASR.app/Contents/MacOS/bestASR";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mindloom.app/Contents/MacOS/Mindloom";
 			};
 			name = Release;
+		};
+		156D8022615D38BBA60C7778 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "App/BestASR$(MINDLOOM_ENTITLEMENTS_VARIANT).entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "App/Info-Preview.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MINDLOOM_APP_PROFILE_SPECIFIER = "";
+				MINDLOOM_DISPLAY_NAME = Mindloom;
+				MINDLOOM_ENTITLEMENTS_VARIANT = "";
+				MINDLOOM_PREVIEW_DATA_ROOT = "/Users/Shared/mindloom-demo/v11/env/preview-root";
+				MINDLOOM_URL_SCHEME = "mindloom-preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.mindloom.preview;
+				PRODUCT_MODULE_NAME = bestASR;
+				PRODUCT_NAME = Mindloom;
+				PROVISIONING_PROFILE_SPECIFIER = "$(MINDLOOM_APP_PROFILE_SPECIFIER)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MINDLOOM_PREVIEW;
+			};
+			name = Preview;
 		};
 		1A4494350D9844C9DD25621E /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1676,7 +1943,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -1697,7 +1964,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
+				MINDLOOM_BUNDLE_ID = app.mindloom;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1714,7 +1982,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = ShareExtension/MindloomShare.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "ShareExtension/MindloomShare-Debug.entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_APP_SANDBOX = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1725,7 +1993,10 @@
 					"@executable_path/../../../../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.app.debug.share;
+				MINDLOOM_SHARE_DISPLAY_NAME = Mindloom;
+				MINDLOOM_SHARE_DROP_ROOT = "~/Library/Application Support/Mindloom-debug-share-drop";
+				MINDLOOM_URL_SCHEME = "mindloom-debug";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).debug.share";
 				PRODUCT_NAME = MindloomShare;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1752,6 +2023,24 @@
 			};
 			name = Debug;
 		};
+		2E1959240F5719D6213310AE /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.mindloom.preview.mcp;
+				PRODUCT_NAME = "mindloom-mcp";
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Preview;
+		};
 		333063758066ADF8C1F3AC46 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1763,12 +2052,31 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.app.inference-worker";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).inference-worker";
 				PRODUCT_NAME = InferenceWorker;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
+		};
+		3F8DAFE962A69B48BB08D089 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Spikes/SPIKE-CAP-001/ProcessTapProbeApp/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.spike.process-tap-probe";
+				PRODUCT_NAME = ProcessTapProbe;
+				SDKROOT = macosx;
+			};
+			name = Preview;
 		};
 		41CF9AE03C65C3B1FE61E76B /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1784,6 +2092,50 @@
 				SDKROOT = macosx;
 			};
 			name = Release;
+		};
+		482BF80BFB2BA555662C7B88 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Spikes/SPIKE-CAP-001/ProcessTapTCCDenialProbeApp/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.spike.process-tap-tcc-denial-probe.v2";
+				PRODUCT_NAME = ProcessTapTCCDenialProbeV2;
+				SDKROOT = macosx;
+			};
+			name = Preview;
+		};
+		492EE1986ADEB7AB932B5D96 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = "ShareExtension/MindloomShare-Preview.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = ShareExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MINDLOOM_SHARE_DISPLAY_NAME = "Mindloom 预览版";
+				MINDLOOM_SHARE_DROP_ROOT = "/Users/Shared/mindloom-demo/v11/env/share-drop";
+				MINDLOOM_URL_SCHEME = "mindloom-preview";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.mindloom.preview.share;
+				PRODUCT_NAME = MindloomShare;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Preview;
 		};
 		494A3E317AA07BF225DAE2ED /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1809,9 +2161,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = App/BestASR.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "App/BestASR$(MINDLOOM_ENTITLEMENTS_VARIANT).entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_APP_SANDBOX = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1819,8 +2172,14 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.app.debug;
-				PRODUCT_NAME = bestASR;
+				MINDLOOM_APP_PROFILE_SPECIFIER = "";
+				MINDLOOM_DISPLAY_NAME = Mindloom;
+				MINDLOOM_ENTITLEMENTS_VARIANT = "";
+				MINDLOOM_URL_SCHEME = "mindloom-debug";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).debug";
+				PRODUCT_MODULE_NAME = bestASR;
+				PRODUCT_NAME = Mindloom;
+				PROVISIONING_PROFILE_SPECIFIER = "$(MINDLOOM_APP_PROFILE_SPECIFIER)";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -1836,7 +2195,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.mindloom-mcp";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).mcp";
 				PRODUCT_NAME = "mindloom-mcp";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -1857,7 +2216,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.app-tests";
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/bestASR.app/Contents/MacOS/bestASR";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mindloom.app/Contents/MacOS/Mindloom";
 			};
 			name = Debug;
 		};
@@ -1865,9 +2224,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = App/BestASR.entitlements;
+				CODE_SIGN_ENTITLEMENTS = "App/BestASR$(MINDLOOM_ENTITLEMENTS_VARIANT).entitlements";
 				COMBINE_HIDPI_IMAGES = YES;
 				ENABLE_APP_SANDBOX = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1875,9 +2235,16 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bestasr.app;
-				PRODUCT_NAME = bestASR;
+				MINDLOOM_APP_PROFILE_SPECIFIER = "";
+				MINDLOOM_DISPLAY_NAME = Mindloom;
+				MINDLOOM_ENTITLEMENTS_VARIANT = "";
+				MINDLOOM_URL_SCHEME = mindloom;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID)";
+				PRODUCT_MODULE_NAME = bestASR;
+				PRODUCT_NAME = Mindloom;
+				PROVISIONING_PROFILE_SPECIFIER = "$(MINDLOOM_APP_PROFILE_SPECIFIER)";
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = MINDLOOM_RELEASE;
 			};
 			name = Release;
 		};
@@ -1900,6 +2267,26 @@
 			};
 			name = Debug;
 		};
+		5E2C45C3A5525FCFAD74AD68 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "bestASR XPC Probe";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.spike.inference-xpc-probe";
+				PRODUCT_NAME = InferenceXPCProbe;
+				SDKROOT = macosx;
+			};
+			name = Preview;
+		};
 		642189188FE77F0C829310CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1911,12 +2298,117 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.app.inference-worker";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).inference-worker";
 				PRODUCT_NAME = InferenceWorker;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
+		};
+		677E80E09E478B25E82D69EF /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.app-tests";
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Mindloom.app/Contents/MacOS/Mindloom";
+			};
+			name = Preview;
+		};
+		72C941770F10B4DCAFF6E307 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = arm64;
+				BESTASR_GIT_REVISION = uncommitted;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
+				CODE_SIGN_STYLE = Manual;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 3;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				MARKETING_VERSION = 0.2.0;
+				MINDLOOM_BUNDLE_ID = app.mindloom;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Preview;
+		};
+		84969B61956FE67F6AA05D29 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.ui-tests";
+				SDKROOT = macosx;
+				TEST_TARGET_NAME = BestASR;
+			};
+			name = Preview;
 		};
 		8D5019CFCBA96259C2A1F0E4 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1929,12 +2421,30 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.mindloom-mcp";
+				PRODUCT_BUNDLE_IDENTIFIER = "$(MINDLOOM_BUNDLE_ID).mcp";
 				PRODUCT_NAME = "mindloom-mcp";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
+		};
+		9D1BF4A5FCC1DF1236812A77 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = InferenceWorker/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.mindloom.preview.inference-worker";
+				PRODUCT_NAME = InferenceWorker;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Preview;
 		};
 		A82F2E398E70FCE4CF0E4FED /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -1991,6 +2501,21 @@
 				SDKROOT = macosx;
 			};
 			name = Release;
+		};
+		B4474AAB7ECDB89A4D38568B /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.bench-cli";
+				PRODUCT_NAME = BenchCLI;
+				SDKROOT = macosx;
+			};
+			name = Preview;
 		};
 		C44B9244963E272CF8907AB6 /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -2123,7 +2648,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_INJECT_BASE_ENTITLEMENTS = NO;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -2138,7 +2663,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.2;
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.0;
+				MINDLOOM_BUNDLE_ID = app.mindloom;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2150,6 +2676,26 @@
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
+		};
+		F432CB5D5A22BB07A58D3AA5 /* Preview */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_APP_SANDBOX = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "bestASR Selected Watermark Player";
+				INFOPLIST_KEY_LSUIElement = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 14.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.bestasr.spike.selected-watermark-player";
+				PRODUCT_NAME = SelectedWatermarkPlayer;
+				SDKROOT = macosx;
+			};
+			name = Preview;
 		};
 		F6E35A78CD887FC15B1CD30D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2198,6 +2744,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1C56CF18A4DFC9AF08B64AD4 /* Debug */,
+				492EE1986ADEB7AB932B5D96 /* Preview */,
 				0531E731A8785BC84DA071D9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2207,6 +2754,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				642189188FE77F0C829310CD /* Debug */,
+				9D1BF4A5FCC1DF1236812A77 /* Preview */,
 				333063758066ADF8C1F3AC46 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2216,6 +2764,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1A4494350D9844C9DD25621E /* Debug */,
+				72C941770F10B4DCAFF6E307 /* Preview */,
 				F08EF09B655C2DC23C061D4D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2225,6 +2774,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2436F321E0557D7FC92C670C /* Debug */,
+				F432CB5D5A22BB07A58D3AA5 /* Preview */,
 				A82F2E398E70FCE4CF0E4FED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2234,6 +2784,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				072E827D69CF77B8AAB3A999 /* Debug */,
+				B4474AAB7ECDB89A4D38568B /* Preview */,
 				41CF9AE03C65C3B1FE61E76B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2243,6 +2794,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				EB150577EBD95016A2A95CA6 /* Debug */,
+				0578BE160B32EC3EAE569411 /* Preview */,
 				AF5C42E862AAE2EF3683BC64 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2252,6 +2804,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				8D5019CFCBA96259C2A1F0E4 /* Debug */,
+				2E1959240F5719D6213310AE /* Preview */,
 				505050C3A99C05C6609D8296 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2261,6 +2814,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5A2777C6E13067DBE88EA553 /* Debug */,
+				3F8DAFE962A69B48BB08D089 /* Preview */,
 				D2D25BF95707BFFD2DD93BA0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2270,6 +2824,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0D071C0E0F44233DCEA63857 /* Debug */,
+				84969B61956FE67F6AA05D29 /* Preview */,
 				D1DA244699E8FC4B142D02B3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2279,6 +2834,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4AD461DF3FD7E0694803D4D1 /* Debug */,
+				156D8022615D38BBA60C7778 /* Preview */,
 				57397D3F9099C47BD6AC12A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2288,6 +2844,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A8FCECC21FD1C43C17F0C07E /* Debug */,
+				482BF80BFB2BA555662C7B88 /* Preview */,
 				E0C8756FB717B1DFDADD31B4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2297,6 +2854,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				494A3E317AA07BF225DAE2ED /* Debug */,
+				5E2C45C3A5525FCFAD74AD68 /* Preview */,
 				F909C7754F820F8DD71DC3DC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2306,6 +2864,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5172A3A990B6887D96407BBA /* Debug */,
+				677E80E09E478B25E82D69EF /* Preview */,
 				15304040611CEDA6EA347AA9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2315,6 +2874,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				F6E35A78CD887FC15B1CD30D /* Debug */,
+				08A0B4AB936A071FDCE9CA15 /* Preview */,
 				C44B9244963E272CF8907AB6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2330,6 +2890,14 @@
 		3A22441BB5A44493F0ADFFC7 /* XCLocalSwiftPackageReference "Packages/MindloomLink" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/MindloomLink;
+		};
+		8893C1AD5D124AB87F55BD03 /* XCLocalSwiftPackageReference "Packages/MindloomDesign" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MindloomDesign;
+		};
+		8B7E4B7C970C7A2797DF9083 /* XCLocalSwiftPackageReference "Packages/MindloomLookup" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/MindloomLookup;
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -2350,6 +2918,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRInferenceXPCProtocol;
 		};
+		122F6996B64F312B78E5BED3 /* MindloomTencentMeeting */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomTencentMeeting;
+		};
 		17DDB4908D9518A993D87E0A /* BestASRProcessing */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRProcessing;
@@ -2365,6 +2937,10 @@
 		376591A28E96685CE6ADB248 /* BestASRRemoteOrganizer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRRemoteOrganizer;
+		};
+		400FC3796E145C21F3065F18 /* MindloomLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomLibrary;
 		};
 		47D3A8D610F22401773D8003 /* BestASRModelManager */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2385,6 +2961,10 @@
 		6617AC3385FB755C2CA708D4 /* BestASRCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRCore;
+		};
+		6B38691C17855F0AA5717002 /* MindloomIdentity */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomIdentity;
 		};
 		6F7ADE2FAD2E1BAAE34F1DA9 /* BestASRProcessTapProbe */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2422,6 +3002,10 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRQwenRuntime;
 		};
+		9BBCC530A6FC8E5DBE3F6E56 /* MindloomDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomDesign;
+		};
 		9D20A150986BC248134D3F91 /* BestASRMemory */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRMemory;
@@ -2429,6 +3013,10 @@
 		A0744F4764E3CB597D250C9D /* MindloomShareDrop */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = MindloomShareDrop;
+		};
+		A45C4C62888C88AFB2C9F3DC /* MindloomLookup */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomLookup;
 		};
 		A654D2DA5676B3B8E69F733C /* BestASRMacPermissions */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -2445,6 +3033,10 @@
 		AB58BDD1366EE772D2F8947A /* BestASRDelivery */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = BestASRDelivery;
+		};
+		B0068437259B6730A2A64A86 /* MindloomCarryOver */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = MindloomCarryOver;
 		};
 		B3B6A4AD9F471F003A1FF033 /* MindloomAgentProtocol */ = {
 			isa = XCSwiftPackageProductDependency;

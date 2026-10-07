@@ -184,11 +184,11 @@ public struct OutboxEntry: Codable, Equatable, Sendable {
     if kind == .image, preview != nil { throw EntryError.invalidState }
   }
 
-  static func millis(_ date: Date) -> Int64 {
+  public static func millis(_ date: Date) -> Int64 {
     Int64((date.timeIntervalSince1970 * 1000).rounded())
   }
 
-  static func date(_ millis: Int64) -> Date {
+  public static func date(_ millis: Int64) -> Date {
     Date(timeIntervalSince1970: TimeInterval(millis) / 1000)
   }
 }

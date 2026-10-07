@@ -142,6 +142,15 @@ extension GRDBDictationStore: RemoteOrganizerRepository {
 
   // MARK: - Items
 
+  /// True when this session may be sent to the organizing device (its
+  /// capture started with the link on and was granted eligibility).
+  public func isRemoteEligible(sessionID: SessionID) async throws -> Bool {
+    let database = try requirePool()
+    return try await database.read { db in
+      try Self.isRemoteEligible(db, sessionID: sessionID.rawValue.uuidString)
+    }
+  }
+
   public func enqueueRemoteSession(sessionID: SessionID) async throws -> Bool {
     let database = try requirePool()
     let id = sessionID.rawValue.uuidString

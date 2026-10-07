@@ -29,13 +29,21 @@ final class HandEntriesTests: XCTestCase {
     try Data("组会纪要：周五交初稿".utf8).write(to: file)
     let shared = Date(timeIntervalSince1970: 1_790_000_000)
     let png = try pngData()
+    // v12 F10: a shared file is copied into the drop by the extension.
     let entry = ShareDropEntry(
       createdAt: shared, sourceBundleID: "com.apple.Safari", sourceName: "Safari",
       parts: [
         .text("选中的一段话"), .link("https://example.org/paper?id=7", title: "一篇论文"),
-        .file(file.path), .data(name: "picture.png", type: "public.png"),
+        .data(name: "1-notes.txt", type: "public.plain-text"),
+        .data(name: "picture.png", type: "public.png"),
       ])
-    try dropbox.write(entry, data: ["picture.png": png])
+    try dropbox.write(entry, data: ["picture.png": png], files: ["1-notes.txt": file])
+    let copy = dropbox.directory.appendingPathComponent(entry.id).appendingPathComponent(
+      "1-notes.txt")
+    var copied = stat()
+    XCTAssertEqual(lstat(copy.path, &copied), 0)
+    XCTAssertEqual(copied.st_mode & S_IFMT, S_IFREG)
+    XCTAssertEqual(copied.st_mode & 0o777, 0o600)
     var json = stat()
     XCTAssertEqual(
       lstat(dropbox.directory.appendingPathComponent("\(entry.id).json").path, &json), 0)
@@ -58,8 +66,10 @@ final class HandEntriesTests: XCTestCase {
     XCTAssertEqual(NetworkTripwire.requests, [], "a shared link must never be fetched")
 
     let drafts = await store.drafts
-    XCTAssertEqual(Set(drafts.compactMap(\.source?.name)), ["Safari"])
-    XCTAssertEqual(Set(drafts.compactMap(\.source?.bundleID)), ["com.apple.Safari"])
+    // v12 F10: any program can write the drop and name any App; the source
+    // is what Mindloom can check.
+    XCTAssertEqual(Set(drafts.compactMap(\.source?.name)), [EntrySource.unverified])
+    XCTAssertEqual(Set(drafts.compactMap(\.source?.bundleID)), [])
     for draft in drafts {
       XCTAssertEqual(
         draft.capturedAt.timeIntervalSince1970, shared.timeIntervalSince1970, accuracy: 1)
@@ -74,6 +84,31 @@ final class HandEntriesTests: XCTestCase {
     XCTAssertFalse(
       FileManager.default.fileExists(
         atPath: dropbox.directory.appendingPathComponent(entry.id).path))
+  }
+
+  /// v12: a development build drops into a folder of its own in the
+  /// owner's home, never the owner's library (`MindloomShareDropRoot`).
+  func testEachBuildNamesItsOwnDropFolder() throws {
+    let home = String(cString: try XCTUnwrap(getpwuid(getuid())?.pointee.pw_dir))
+    let owner = try XCTUnwrap(ShareDropbox.forRootSetting(""))
+    XCTAssertEqual(
+      owner.directory.path, home + "/Library/Application Support/Mindloom/entries/share-inbox")
+    XCTAssertEqual(ShareDropbox.ownerLibraryDropbox()?.directory, owner.directory)
+    let debug = try XCTUnwrap(
+      ShareDropbox.forRootSetting("~/Library/Application Support/Mindloom-debug-share-drop"))
+    XCTAssertEqual(
+      debug.directory.path,
+      home + "/Library/Application Support/Mindloom-debug-share-drop/entries/share-inbox")
+    XCTAssertEqual(
+      ShareDropbox.forRootSetting("/Users/Shared/demo/share-drop")?.directory.path,
+      "/Users/Shared/demo/share-drop/entries/share-inbox")
+    XCTAssertNil(ShareDropbox.forRootSetting("$(MINDLOOM_SHARE_DROP_ROOT)"))
+    XCTAssertNil(ShareDropbox.forRootSetting("~/../other"))
+    // The App makes the whole folder, root included, when sharing is on.
+    let root = try makeTemporaryFolder().appendingPathComponent("own-drop-root", isDirectory: true)
+    let dropbox = ShareDropbox.inLibrary(root)
+    XCTAssertTrue(dropbox.prepareFolder())
+    XCTAssertTrue(dropbox.isOpen)
   }
 
   func testBrokenOrHalfWrittenSharesAreNeverTakenIn() throws {
@@ -118,31 +153,104 @@ final class HandEntriesTests: XCTestCase {
     XCTAssertFalse(dropbox.isOpen)
   }
 
-  func testSharedAudioBytesAreRefusedButASharedAudioFileIsQueuedForImport() async throws {
+  /// v12 F10: audio and video are never taken in from a share (the import
+  /// reads a file of its own later); the owner is told where to bring them.
+  func testSharedAudioIsRefusedAndSaysWhereToBringIt() async throws {
     let root = try makeTemporaryFolder()
     let dropbox = ShareDropbox.inLibrary(root)
     XCTAssertTrue(dropbox.prepareFolder())
     // An "m4a" by its first bytes (ftyp M4A).
     var audio = Data([0, 0, 0, 0x20]) + Data("ftypM4A ".utf8)
     audio += Data(count: 64)
-    let audioFile = root.appendingPathComponent("voice.m4a")
-    try audio.write(to: audioFile)
     let entry = ShareDropEntry(
-      sourceName: "访达",
-      parts: [.data(name: "clip.m4a", type: "public.mpeg-4-audio"), .file(audioFile.path)])
+      sourceName: "访达", parts: [.data(name: "clip.m4a", type: "public.mpeg-4-audio")])
     try dropbox.write(entry, data: ["clip.m4a": audio])
     let pending = try XCTUnwrap(dropbox.pending().entries.first)
     let (items, refused) = HandEntries.items(from: pending)
     XCTAssertEqual(refused, [])
+    let (committer, _) = makeCommitter(root: root)
+    let summary = await committer.commit(items)
+    XCTAssertEqual(summary.rejected, ["音视频请拖到 Mindloom 中，或使用“文件”>“导入…”"])
+    XCTAssertEqual(summary.media, [])
+  }
+
+  /// v12 F10, AGENT-IO N4 (regression): any program can write the drop
+  /// folder. A drop that names a file by its path is never opened with
+  /// Mindloom's rights — not a document, not audio — and the extension
+  /// cannot write one any more.
+  func testADropNamingAPathIsNeverOpened() async throws {
+    let root = try makeTemporaryFolder()
+    let dropbox = ShareDropbox.inLibrary(root)
+    XCTAssertTrue(dropbox.prepareFolder())
+    let secret = root.appendingPathComponent("elsewhere/secret.txt")
+    try FileManager.default.createDirectory(
+      at: secret.deletingLastPathComponent(), withIntermediateDirectories: true)
+    try Data("别的地方的文件".utf8).write(to: secret)
+    var audio = Data([0, 0, 0, 0x20]) + Data("ftypM4A ".utf8)
+    audio += Data(count: 64)
+    let audioFile = root.appendingPathComponent("elsewhere/voice.m4a")
+    try audio.write(to: audioFile)
+    // Written the way a program would, straight into the folder.
+    let forged = ShareDropEntry(
+      sourceName: "微信", parts: [.file(secret.path), .file(audioFile.path), .text("附言")])
+    try JSONEncoder().encode(forged).write(
+      to: dropbox.directory.appendingPathComponent("\(forged.id).json"))
+    let pending = try XCTUnwrap(dropbox.pending().entries.first)
+    let (items, refused) = HandEntries.items(from: pending)
+    XCTAssertEqual(refused, [HandEntries.sharedPathRefusal, HandEntries.sharedPathRefusal])
+    XCTAssertEqual(items.count, 1, "only the text")
     let (committer, store) = makeCommitter(root: root)
     let summary = await committer.commit(items)
+    XCTAssertEqual(summary.media, [])
     let drafts = await store.drafts
-    // The bytes have no file of their own to import later: refused, not sent.
-    XCTAssertTrue(summary.rejected.contains("音视频请在访达里分享文件，或拖进织机导入"))
-    // The file goes to the import pipeline, like a drop.
-    XCTAssertEqual(summary.media.map(\.lastPathComponent), ["voice.m4a"])
+    XCTAssertEqual(drafts.map(\.kind), [.text])
+    XCTAssertFalse(drafts.contains { $0.text.contains("别的地方的文件") })
+    // The extension's own writer refuses a path part.
+    XCTAssertThrowsError(try dropbox.write(ShareDropEntry(parts: [.file(secret.path)]))) {
+      XCTAssertEqual($0 as? ShareDropbox.DropError, .malformed)
+    }
+  }
+
+  /// v12 F10: a file the extension copied in, bigger than bytes are read
+  /// whole, is cloned into a scratch folder and taken in by the file rules;
+  /// one over the limit is refused before anything is copied.
+  func testALargeSharedFileIsCopiedInAndTakenFromTheCopy() throws {
+    let root = try makeTemporaryFolder()
+    let dropbox = ShareDropbox.inLibrary(root)
+    XCTAssertTrue(dropbox.prepareFolder())
+    let big = root.appendingPathComponent("report.pdf")
     XCTAssertTrue(
-      drafts.allSatisfy { $0.extractor == UserItemLimits.localOnlyExtractor || $0.kind != .file })
+      FileManager.default.createFile(atPath: big.path, contents: Data("%PDF-1.7\n".utf8)))
+    let handle = try FileHandle(forWritingTo: big)
+    try handle.truncate(atOffset: UInt64(ShareDropbox.maximumDataBytes + 1_024))
+    try handle.close()
+    let entry = ShareDropEntry(parts: [.data(name: "1-report.pdf", type: "com.adobe.pdf")])
+    try dropbox.write(entry, files: ["1-report.pdf": big])
+    let pending = try XCTUnwrap(dropbox.pending().entries.first)
+    let (items, refused) = HandEntries.items(from: pending)
+    XCTAssertEqual(refused, [])
+    let item = try XCTUnwrap(items.first)
+    let scratch = try XCTUnwrap(item.scratch)
+    defer { try? FileManager.default.removeItem(at: scratch) }
+    guard case .file(let staged) = item.candidate else { return XCTFail("\(item.candidate)") }
+    XCTAssertTrue(staged.path.hasPrefix(scratch.path))
+    XCTAssertNotEqual(staged.path, big.path)
+    XCTAssertEqual(ShareDropbox.regularFileSize(staged), ShareDropbox.maximumDataBytes + 1_024)
+
+    let huge = root.appendingPathComponent("huge.bin")
+    XCTAssertTrue(FileManager.default.createFile(atPath: huge.path, contents: nil))
+    let hugeHandle = try FileHandle(forWritingTo: huge)
+    try hugeHandle.truncate(atOffset: UInt64(ShareDropbox.maximumFileBytes + 1))
+    try hugeHandle.close()
+    XCTAssertThrowsError(
+      try dropbox.write(
+        ShareDropEntry(parts: [.data(name: "1-huge.bin", type: nil)]),
+        files: ["1-huge.bin": huge])
+    ) { XCTAssertEqual($0 as? ShareDropbox.DropError, .tooLarge) }
+    // A link is not a file to copy.
+    let link = root.appendingPathComponent("link.pdf")
+    try FileManager.default.createSymbolicLink(at: link, withDestinationURL: big)
+    XCTAssertNil(ShareDropbox.regularFileSize(link))
   }
 
   // MARK: Services, Shortcuts, command line
@@ -169,7 +277,7 @@ final class HandEntriesTests: XCTestCase {
     // A file path that is not absolute is never opened.
     XCTAssertEqual(
       HandEntries.commandLine(OwnerAddRequest(filePaths: ["relative/path"]), at: now).refused,
-      ["只收本机文件，未收进来"])
+      ["仅支持这台 Mac 上的文件，未添加"])
     // The processor refuses a web URL as a "file" before reading anything.
     items.append(
       EntryIntakeItem(
@@ -178,7 +286,7 @@ final class HandEntriesTests: XCTestCase {
 
     let summary = await committer.commit(items)
     XCTAssertEqual(summary.storedCount, 6)
-    XCTAssertEqual(summary.rejected, ["只收本机文件，链接未收进来"])
+    XCTAssertEqual(summary.rejected, ["仅支持这台 Mac 上的文件，链接未添加"])
     XCTAssertEqual(NetworkTripwire.requests, [], "links are kept as text, never fetched")
     let drafts = await store.drafts
     XCTAssertEqual(
@@ -195,7 +303,7 @@ final class HandEntriesTests: XCTestCase {
     XCTAssertEqual(drafts[4].text, "参考\nhttps://example.org/cli")
     XCTAssertEqual(drafts[5].originalFilename, "plan.md")
     XCTAssertEqual(
-      summary.confirmation(source: EntrySource.named("命令行")), "已收进来 6 条 · 来自 命令行；只收本机文件，链接未收进来")
+      summary.confirmation(source: EntrySource.named("命令行")), "已添加 6 条 · 来自 命令行；仅支持这台 Mac 上的文件，链接未添加")
   }
 
   func testAShortcutFileIsTakenByTheFileRulesAndItsScratchCopyRemoved() async throws {

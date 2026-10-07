@@ -343,10 +343,10 @@ final class MemoryProjectionTests: XCTestCase {
   func testItemPromptNamesTheItem() {
     XCTAssertEqual(
       MemoryQuestion.itemPrompt(itemText: "露营装备清单：睡袋\n防潮垫", eventTitle: "周末露营"),
-      "这条「露营装备清单：睡袋 防潮垫」和「周末露营」是同一件事吗？")
+      "这条“露营装备清单：睡袋 防潮垫”和“周末露营”是同一件事吗？")
     let long = String(repeating: "长", count: 30)
     XCTAssertEqual(
       MemoryQuestion.itemPrompt(itemText: long, eventTitle: ""),
-      "这条「\(String(repeating: "长", count: 23))…」和「那件事」是同一件事吗？")
+      "这条“\(String(repeating: "长", count: 23))…”和“那件事”是同一件事吗？")
   }
 }

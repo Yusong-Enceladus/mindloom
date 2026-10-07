@@ -1,10 +1,22 @@
-# 织机 (Mindloom) for iPhone: the app, the 织机键盘 keyboard and the 收进织机
-# share extension (PHONE-CONTRACT §1). Separate from the Mac project, which it
+# Mindloom for iPhone: the app, the Mindloom keyboard and the Mindloom share
+# extension (PHONE-CONTRACT §1, PHONE-SPEC §1). Separate from the Mac project, which it
 # leaves untouched. Generate with iOS/script/generate_project.sh.
 name: MindloomPhone
 
+# The Live Activity widget (<bundle id>.live) is its own file so a device build can leave it
+# out when no provisioning profile can be made for it (iOS/script/device_build.sh). The committed
+# project includes it (iOS/script/generate_project.sh sets PHONE_WIDGETS=YES).
+include:
+  - path: project-widgets.yml
+    enable: ${PHONE_WIDGETS}
+  # The Apple Watch app and its complication (<bundle id>.watchkitapp, .watchkitapp.widgets),
+  # embedded in the iPhone app. Part of the committed project (generate_project.sh sets
+  # PHONE_WATCH=YES); device_build.sh leaves it out with PHONE_WATCH=NO.
+  - path: project-watch.yml
+    enable: ${PHONE_WATCH}
+
 options:
-  bundleIdPrefix: com.bestasr
+  bundleIdPrefix: app.mindloom
   createIntermediateGroups: true
   defaultConfig: Debug
   deploymentTarget:
@@ -18,8 +30,8 @@ configs:
 
 settings:
   base:
-    CURRENT_PROJECT_VERSION: 1
-    MARKETING_VERSION: 0.1.0
+    CURRENT_PROJECT_VERSION: 10
+    MARKETING_VERSION: "1.0"
     IPHONEOS_DEPLOYMENT_TARGET: "26.0"
     TARGETED_DEVICE_FAMILY: "1"
     SWIFT_VERSION: "6.0"
@@ -27,15 +39,28 @@ settings:
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     CODE_SIGN_STYLE: Automatic
-    # Simulator builds sign locally; device builds need the user's team.
+    # Simulator builds sign locally; device builds need the user's team, given at build time
+    # (iOS/script/device_build.sh, PHONE_TEAM), never committed.
     "CODE_SIGN_IDENTITY[sdk=iphonesimulator*]": "-"
     DEVELOPMENT_TEAM: ""
+    # The phone's identity, set here only. The extensions are <bundle id>.keyboard, .share and
+    # .live; the keychain groups are $(AppIdentifierPrefix)<bundle id>[.shared|.sharekey]; each
+    # target's Info.plist names the bundle id and the App Group for the code (PhoneAppGroup.Identity).
+    # The same bundle id as the Mac app: one Mindloom identity under one paid team (owner's
+    # decision 2026-10-06: app.mindloom; MindloomIdentity.bundleID in the code). Override per
+    # build (device_build.sh: PHONE_BUNDLE_ID, PHONE_APP_GROUP).
+    MINDLOOM_PHONE_BUNDLE_ID: app.mindloom
+    MINDLOOM_APP_GROUP: group.$(MINDLOOM_PHONE_BUNDLE_ID)
 
 packages:
+  MindloomDesign:
+    path: ../Packages/MindloomDesign
   MindloomLink:
     path: ../Packages/MindloomLink
   MindloomPhoneKit:
     path: ../Packages/MindloomPhoneKit
+  MindloomWatchHandoff:
+    path: ../Packages/MindloomWatchHandoff
 
 targets:
   MindloomPhone:
@@ -43,53 +68,75 @@ targets:
     platform: iOS
     sources:
       - path: App
-      - path: Shared
+      - path: Activity
+      - path: Common
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_PHONE_BUNDLE_ID)
         PRODUCT_NAME: MindloomPhone
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: App/Info.plist
-        CODE_SIGN_ENTITLEMENTS: App/MindloomPhone.entitlements
+        # Per target so a build without the App Group can give each target its own keychain
+        # groups (device_build.sh sets MINDLOOM_ENTITLEMENTS_* to iOS/DeviceTest-*.entitlements).
+        MINDLOOM_ENTITLEMENTS_APP: App/MindloomPhone.entitlements
+        CODE_SIGN_ENTITLEMENTS: $(MINDLOOM_ENTITLEMENTS_APP)
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     info:
       path: App/Info.plist
       properties:
-        CFBundleDisplayName: 织机
+        CFBundleDisplayName: Mindloom
         # Chinese first, so system controls (paste, share sheet) speak Chinese.
         CFBundleDevelopmentRegion: zh-Hans
         CFBundleLocalizations: [zh-Hans]
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSRequiresIPhoneOS: true
-        UILaunchScreen: {}
+        UILaunchScreen:
+          # Paper from the first frame, light or dark (no white flash before Home).
+          UIColorName: Paper
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         # The voice session keeps the mic open for the keyboard (§2); outbox
         # delivery also runs from BGAppRefreshTask (§5).
         UIBackgroundModes: [audio, fetch]
-        BGTaskSchedulerPermittedIdentifiers: [com.bestasr.phone.outbox-refresh]
-        NSMicrophoneUsageDescription: 只在你按住织机键盘的麦克风键时听写。声音只在这台手机上识别，不保存、不上传。
-        NSSpeechRecognitionUsageDescription: 语音在这台手机上识别，不经过任何网络服务。
-        NSCameraUsageDescription: 用来扫描 Mac 上「连接 iPhone」显示的配对二维码。
-        NSLocalNetworkUsageDescription: 把收进织机的内容送到你自己的 Spark（它在同一局域网时）。
-        # 织机键盘's "打开织机开始语音" opens mindloom://voice/start (§2).
+        BGTaskSchedulerPermittedIdentifiers: [$(MINDLOOM_PHONE_BUNDLE_ID).outbox-refresh]
+        NSMicrophoneUsageDescription: Mindloom 使用麦克风录制你按住说话时的内容，并在这台 iPhone 上转写为文字。
+        NSSpeechRecognitionUsageDescription: Mindloom 使用 iPhone 自带的语音识别，在这台 iPhone 上将口述转写为文字。
+        NSCameraUsageDescription: Mindloom 使用相机扫描 Mac 上显示的二维码。
+        NSLocalNetworkUsageDescription: Mindloom 通过本地网络将你发送的内容传送到你的 Mac。
+        # The keyboard's 「轻点开启语音」 opens mindloom://voice/start (PHONE-SPEC §7.2).
         CFBundleURLTypes:
-          - CFBundleURLName: com.bestasr.phone
+          - CFBundleURLName: $(MINDLOOM_PHONE_BUNDLE_ID)
             CFBundleURLSchemes: [mindloom]
-    entitlements:
-      path: App/MindloomPhone.entitlements
-      properties:
-        com.apple.security.application-groups: [group.com.bestasr.phone]
+        # The voice session's Dynamic Island and Lock Screen banner (PHONE-SPEC §5.14).
+        NSSupportsLiveActivities: true
+        # Without the App Group (a free team's profile has none) the keyboard and the share
+        # extension reach the app through this keychain group (IOS-CODE-MAP §3b).
+        MindloomSharedKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).shared
+        # The phone's SSH key lives here, readable by the app only.
+        MindloomPrivateKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID)
+        # The pairing handed to the share extension (no App Group): app and share only, never
+        # the keyboard.
+        MindloomShareKeyKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).sharekey
+        # The identity for the code (PhoneAppGroup.Identity).
+        MindloomAppBundleID: $(MINDLOOM_PHONE_BUNDLE_ID)
+        MindloomAppGroup: $(MINDLOOM_APP_GROUP)
+    # Entitlements: App/MindloomPhone.entitlements (kept in the repository, not generated, so CODE_SIGN_ENTITLEMENTS
+    # can name a per-target variable; XcodeGen's `entitlements:` would pin the path).
     dependencies:
+      - package: MindloomDesign
+        product: MindloomDesign
       - package: MindloomLink
         product: MindloomLink
       - package: MindloomPhoneKit
         product: MindloomPhoneKit
       - package: MindloomPhoneKit
         product: MindloomInboxSSH
+      # Receives recordings from Apple Watch (the watch app itself is in project-watch.yml).
+      - package: MindloomWatchHandoff
+        product: MindloomWatchHandoff
       - target: MindloomKeyboard
         embed: true
       - target: MindloomShare
@@ -100,19 +147,19 @@ targets:
     platform: iOS
     sources:
       - path: Keyboard
-      - path: Shared
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.keyboard
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_PHONE_BUNDLE_ID).keyboard
         PRODUCT_NAME: MindloomKeyboard
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Keyboard/Info.plist
-        CODE_SIGN_ENTITLEMENTS: Keyboard/MindloomKeyboard.entitlements
+        MINDLOOM_ENTITLEMENTS_KEYBOARD: Keyboard/MindloomKeyboard.entitlements
+        CODE_SIGN_ENTITLEMENTS: $(MINDLOOM_ENTITLEMENTS_KEYBOARD)
         APPLICATION_EXTENSION_API_ONLY: YES
     info:
       path: Keyboard/Info.plist
       properties:
-        CFBundleDisplayName: 织机键盘
+        CFBundleDisplayName: Mindloom
         # Chinese first, so system controls (paste, share sheet) speak Chinese.
         CFBundleDevelopmentRegion: zh-Hans
         CFBundleLocalizations: [zh-Hans]
@@ -127,12 +174,16 @@ targets:
             PrimaryLanguage: zh-Hans
             IsASCIICapable: false
             PrefersRightToLeft: false
-    entitlements:
-      path: Keyboard/MindloomKeyboard.entitlements
-      properties:
-        com.apple.security.application-groups: [group.com.bestasr.phone]
+        MindloomSharedKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).shared
+        MindloomAppBundleID: $(MINDLOOM_PHONE_BUNDLE_ID)
+        MindloomAppGroup: $(MINDLOOM_APP_GROUP)
+    # Entitlements: Keyboard/MindloomKeyboard.entitlements (kept in the repository, not generated, so CODE_SIGN_ENTITLEMENTS
+    # can name a per-target variable; XcodeGen's `entitlements:` would pin the path).
     dependencies:
-      # No networking code in the keyboard: it only writes the outbox.
+      # No networking code in the keyboard: it talks to the app's voice session only; the app
+      # keeps keyboard speech for the Mac.
+      - package: MindloomDesign
+        product: MindloomDesign
       - package: MindloomLink
         product: MindloomLink
       - package: MindloomPhoneKit
@@ -143,19 +194,20 @@ targets:
     platform: iOS
     sources:
       - path: Share
-      - path: Shared
+      - path: Common
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.share
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_PHONE_BUNDLE_ID).share
         PRODUCT_NAME: MindloomShare
         GENERATE_INFOPLIST_FILE: NO
         INFOPLIST_FILE: Share/Info.plist
-        CODE_SIGN_ENTITLEMENTS: Share/MindloomShare.entitlements
+        MINDLOOM_ENTITLEMENTS_SHARE: Share/MindloomShare.entitlements
+        CODE_SIGN_ENTITLEMENTS: $(MINDLOOM_ENTITLEMENTS_SHARE)
         APPLICATION_EXTENSION_API_ONLY: YES
     info:
       path: Share/Info.plist
       properties:
-        CFBundleDisplayName: 收进织机
+        CFBundleDisplayName: Mindloom
         # Chinese first, so system controls (paste, share sheet) speak Chinese.
         CFBundleDevelopmentRegion: zh-Hans
         CFBundleLocalizations: [zh-Hans]
@@ -164,9 +216,12 @@ targets:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.share-services
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ShareViewController
+          # A card over the host, not a sheet (PHONE-SPEC §5.15): presented full screen with a
+          # clear background; the card draws its own scrim.
+          NSExtensionActionWantsFullScreenPresentation: true
           NSExtensionAttributes:
             # Text, links, images and documents. Audio and video are refused
-            # inside the extension with "音视频请在 Mac 上导入" (§0.5); movies
+            # inside the extension (「这段视频没有收」, PHONE-SPEC §5.15); movies
             # activate it only so it can say so.
             NSExtensionActivationRule:
               NSExtensionActivationSupportsText: true
@@ -175,17 +230,24 @@ targets:
               NSExtensionActivationSupportsMovieWithMaxCount: 10
               NSExtensionActivationSupportsFileWithMaxCount: 10
               NSExtensionActivationSupportsAttachmentsWithMaxCount: 10
-    entitlements:
-      path: Share/MindloomShare.entitlements
-      properties:
-        com.apple.security.application-groups: [group.com.bestasr.phone]
+        MindloomSharedKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).shared
+        MindloomShareKeyKeychainGroup: $(AppIdentifierPrefix)$(MINDLOOM_PHONE_BUNDLE_ID).sharekey
+        MindloomAppBundleID: $(MINDLOOM_PHONE_BUNDLE_ID)
+        MindloomAppGroup: $(MINDLOOM_APP_GROUP)
+    # Entitlements: Share/MindloomShare.entitlements (kept in the repository, not generated, so CODE_SIGN_ENTITLEMENTS
+    # can name a per-target variable; XcodeGen's `entitlements:` would pin the path).
     dependencies:
+      - package: MindloomDesign
+        product: MindloomDesign
       - package: MindloomLink
         product: MindloomLink
       - package: MindloomPhoneKit
         product: MindloomPhoneKit
       - package: MindloomPhoneKit
         product: MindloomPhoneIntake
+      # Only used without the App Group, when the extension sends by itself (ShareStore).
+      - package: MindloomPhoneKit
+        product: MindloomInboxSSH
 
   MindloomPhoneTests:
     type: bundle.unit-test
@@ -194,18 +256,22 @@ targets:
       - path: Tests/MindloomPhoneTests
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.bestasr.phone.tests
+        PRODUCT_BUNDLE_IDENTIFIER: $(MINDLOOM_PHONE_BUNDLE_ID).tests
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: $(BUILT_PRODUCTS_DIR)/MindloomPhone.app/MindloomPhone
         BUNDLE_LOADER: $(TEST_HOST)
     dependencies:
       - target: MindloomPhone
+      - package: MindloomDesign
+        product: MindloomDesign
       - package: MindloomLink
         product: MindloomLink
       - package: MindloomPhoneKit
         product: MindloomPhoneKit
       - package: MindloomPhoneKit
         product: MindloomPhoneIntake
+      - package: MindloomWatchHandoff
+        product: MindloomWatchHandoff
 
 schemes:
   MindloomPhone:
@@ -223,6 +289,7 @@ schemes:
         - package: MindloomPhoneKit/MindloomPhoneKitTests
         - package: MindloomPhoneKit/MindloomPhoneIntakeTests
         - package: MindloomPhoneKit/MindloomInboxSSHTests
+        - package: MindloomWatchHandoff/MindloomWatchHandoffTests
     run:
       config: Debug
       executable: MindloomPhone

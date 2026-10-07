@@ -312,4 +312,38 @@ final class PhoneLinkInboxTests: XCTestCase {
     }
     XCTAssertEqual(payload.text, "虚构")
   }
+
+  /// Regression (review of the Apple Watch stream, 10-06): an entry from a phone newer than this
+  /// Mac, with a source name the Mac does not know, opens and keeps that name instead of being
+  /// deleted from the organizing device as unusable; a recording from Apple Watch shows its
+  /// origin. Synthetic text only.
+  func testANewerPhonesSourceOpensAndTheOriginIsShown() throws {
+    let key = Curve25519.KeyAgreement.PrivateKey()
+    func opened(_ plaintext: Data) -> Result<InboxItemPayload, RemoteOrganizerInboxDiscard> {
+      let id = EntryID.make()
+      let wire = try? MindloomSeal.seal(plaintext, entryID: id, to: key.publicKey)
+      return IntakeInboxIngestor.open(
+        RemoteOrganizerInboxEntry(
+          inboxID: id, source: "", kind: .sealed, text: nil, imageData: nil, sealedBlob: wire,
+          receivedAt: Date()),
+        with: key)
+    }
+    let newer = Data(
+      #"{"created_at":"2026-10-06T09:00:00+08:00","kind":"text","source":"iPad 口述","text":"虚构","v":1}"#
+        .utf8)
+    guard case .success(let payload) = opened(newer) else {
+      return XCTFail("an unknown source still opens")
+    }
+    XCTAssertEqual(payload.shownSource, "iPad 口述")
+    let watch = try InboxItemPayload.text("虚构：明早九点站会。", source: .voice, origin: .appleWatch)
+    guard case .success(let fromWatch) = opened(try watch.encoded()) else {
+      return XCTFail("a watch entry opens")
+    }
+    XCTAssertEqual(fromWatch.shownSource, "Apple Watch")
+    // What cannot be an item is still dropped.
+    let broken = Data(
+      #"{"created_at":"2026-10-06T09:00:00+08:00","kind":"audio","source":"iPhone 口述","v":1}"#
+        .utf8)
+    XCTAssertEqual(opened(broken), .failure(.unusable))
+  }
 }

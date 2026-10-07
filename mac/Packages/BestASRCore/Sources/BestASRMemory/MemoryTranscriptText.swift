@@ -45,6 +45,18 @@ public enum MemoryTranscriptText {
     case feishu
     case zoom
     case subtitles
+
+    /// The meeting App that exports this format, as the item's source
+    /// names it (「会议记录 · 腾讯会议」); nil for subtitles, which any App
+    /// writes.
+    public var meetingApp: String? {
+      switch self {
+      case .tencent: "腾讯会议"
+      case .feishu: "飞书妙记"
+      case .zoom: "Zoom"
+      case .subtitles: nil
+      }
+    }
   }
 
   public struct Turn: Equatable, Sendable {
@@ -87,6 +99,40 @@ public enum MemoryTranscriptText {
       }
     }
     return best
+  }
+
+  /// A transcript as people read it in a list: the title lines before the
+  /// first turn (format marks — `WEBVTT`, cue numbers and timings — left
+  /// out), then one line per turn, 「名字：话」. Nil when the text is not a
+  /// transcript. Only for showing a line or two (刚收进来, 历史's rows); the
+  /// record's own text stays as it was.
+  public static func readable(_ text: String) -> String? {
+    guard let transcript = parse(text), let first = transcript.turns.first else { return nil }
+    let titles = lines(text)
+      .filter { !$0.text.isEmpty && $0.contentEnd <= first.start && !isFormatMark($0.text) }
+      .map(\.text)
+    let turns = transcript.turns.map { turn in
+      let words = turn.text.split(whereSeparator: \.isNewline)
+        .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+        .joined(separator: " ")
+      return turn.speaker + "：" + words
+    }
+    return (titles + turns).joined(separator: "\n")
+  }
+
+  /// Whether a line on its own would open a turn of a Tencent Meeting export
+  /// (`名字(时:分:秒):`). For writers that put a title above the turns
+  /// (the Tencent Meeting entry), so a title never reads as a speaker.
+  public static func startsTurn(_ line: String) -> Bool {
+    let trimmed = line.trimmingCharacters(in: .whitespacesAndNewlines)
+    guard let parts = match(tencentHeader, trimmed), parts.count >= 2 else { return false }
+    return isSpeakerName(parts[0].trimmingCharacters(in: .whitespaces))
+  }
+
+  /// A subtitle file's own marks: its header, a cue number, a cue timing.
+  static func isFormatMark(_ line: String) -> Bool {
+    line.uppercased().hasPrefix("WEBVTT") || line.contains("-->")
+      || line.unicodeScalars.allSatisfy { CharacterSet.decimalDigits.contains($0) }
   }
 
   static func qualifies(_ turns: [Turn], format: Format) -> Bool {
@@ -325,6 +371,42 @@ public enum MemoryTranscriptText {
 
   /// The part of `text` between two Unicode-scalar offsets, clamped to the
   /// text; empty when the range is empty or outside it.
+  /// Where each sentence is in `text`, as Unicode-scalar offsets (the
+  /// organizer's part offsets): each found after the one before, its
+  /// surrounding blanks ignored; an empty sentence takes the place where
+  /// the search stands. Nil when one is not found (the text was edited
+  /// after it was transcribed).
+  public static func sentenceRanges(_ text: String, sentences: [String]) -> [Range<Int>]? {
+    let scalars = Array(text.unicodeScalars)
+    var cursor = 0
+    var ranges: [Range<Int>] = []
+    for sentence in sentences {
+      let needle = Array(sentence.trimmingCharacters(in: .whitespacesAndNewlines).unicodeScalars)
+      guard !needle.isEmpty else {
+        ranges.append(cursor..<cursor)
+        continue
+      }
+      guard let found = firstIndex(of: needle, in: scalars, from: cursor) else { return nil }
+      ranges.append(found..<(found + needle.count))
+      cursor = found + needle.count
+    }
+    return ranges
+  }
+
+  private static func firstIndex(
+    of needle: [Unicode.Scalar], in haystack: [Unicode.Scalar], from start: Int
+  ) -> Int? {
+    guard needle.count <= haystack.count else { return nil }
+    var index = start
+    while index + needle.count <= haystack.count {
+      if haystack[index] == needle[0], Array(haystack[index..<(index + needle.count)]) == needle {
+        return index
+      }
+      index += 1
+    }
+    return nil
+  }
+
   public static func slice(_ text: String, start: Int, end: Int) -> String {
     let scalars = text.unicodeScalars
     let count = scalars.count

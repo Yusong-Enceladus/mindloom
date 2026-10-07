@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>$(DEVELOPMENT_LANGUAGE)</string>
+  <key>CFBundleDisplayName</key>
+  <string>$(MINDLOOM_DISPLAY_NAME)</string>
+  <key>CFBundleExecutable</key>
+  <string>$(EXECUTABLE_NAME)</string>
+  <key>CFBundleIdentifier</key>
+  <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>$(MINDLOOM_DISPLAY_NAME)</string>
+  <key>LSHasLocalizedDisplayName</key>
+  <true/>
+  <key>CFBundlePackageType</key>
+  <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+  <key>CFBundleShortVersionString</key>
+  <string>$(MARKETING_VERSION)</string>
+  <key>CFBundleVersion</key>
+  <string>$(CURRENT_PROJECT_VERSION)</string>
+  <key>CFBundleDocumentTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeName</key>
+      <string>Audio or video to transcribe</string>
+      <key>CFBundleTypeRole</key>
+      <string>Viewer</string>
+      <key>LSHandlerRank</key>
+      <string>Alternate</string>
+      <key>LSItemContentTypes</key>
+      <array>
+        <string>public.audio</string>
+        <string>public.movie</string>
+      </array>
+    </dict>
+  </array>
+  <key>BestASRBuildRevision</key>
+  <string>$(BESTASR_GIT_REVISION)</string>
+  <key>MindloomPreviewDataRoot</key>
+  <string>$(MINDLOOM_PREVIEW_DATA_ROOT)</string>
+  <!-- The synthetic scenario's owner (only on a root marked SYNTHETIC_DATA_ROOT). -->
+  <key>MindloomPreviewOwnerNames</key>
+  <string>林知远,知远</string>
+  <!-- The synthetic scenario's days are Beijing days: the product time zone
+       when the demo root stores none (App/MindloomLaunch.swift). -->
+  <key>MindloomPreviewTimeZone</key>
+  <string>Asia/Shanghai</string>
+  <key>LSApplicationCategoryType</key>
+  <string>public.app-category.productivity</string>
+  <key>MindloomRetainedAudioReader</key>
+  <integer>1</integer>
+  <key>LSMinimumSystemVersion</key>
+  <string>$(MACOSX_DEPLOYMENT_TARGET)</string>
+  <key>NSAudioCaptureUsageDescription</key>
+  <string>Mindloom records audio from the app or Mac output you choose for a recording.</string>
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsLocalNetworking</key>
+    <true/>
+  </dict>
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Mindloom uses the microphone to record the dictation and meetings you start.</string>
+  <key>NSCalendarsFullAccessUsageDescription</key>
+  <string>Mindloom reads events from the calendars you choose in Settings.</string>
+  <key>NSRemindersFullAccessUsageDescription</key>
+  <string>Mindloom adds a reminder when you add a next step to Reminders.</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>com.bestasr.mindloom.preview.share-inbox</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>$(MINDLOOM_URL_SCHEME)</string>
+      </array>
+    </dict>
+  </array>
+  <key>NSServices</key>
+  <array>
+    <dict>
+      <key>NSMenuItem</key>
+      <dict>
+        <key>default</key>
+        <string>添加到 Mindloom 预览版</string>
+      </dict>
+      <key>NSMessage</key>
+      <string>addToMindloom</string>
+      <key>NSPortName</key>
+      <string>$(PRODUCT_NAME)</string>
+      <key>NSRequiredContext</key>
+      <dict/>
+      <key>NSSendTypes</key>
+      <array>
+        <string>public.utf8-plain-text</string>
+        <string>NSStringPboardType</string>
+      </array>
+    </dict>
+  </array>
+</dict>
+</plist>

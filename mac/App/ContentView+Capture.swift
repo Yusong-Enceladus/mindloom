@@ -96,11 +96,11 @@ extension ContentView {
     case .preparing: "正在准备录音"
     case .recording: recording
     case .paused: paused
-    case .finalizing: "正在安全保存原音"
+    case .finalizing: "正在保存原音"
     case .recognizing:
       model.models.modelRuntimeReady ? "正在本机识别" : "原音已保存，等待识别"
     case .polishing: "正在本机整理"
-    case .inserting: "正在安全写回"
+    case .inserting: "正在写回"
     case .cancelling: "正在取消"
     default: recording
     }
@@ -140,7 +140,7 @@ extension ContentView {
         transcriptPlaceholder: "识别到的文字会在这里出现；原音正在持续保存在本机。",
         personStatus: model.people.speakerRuntimeReady
           ? "结束后可以确认是谁在说话"
-          : "人物线索会随原音保留，离线能力就绪后可补全",
+          : "说话人信息会随原音保留，本机能力就绪后可补全",
         finalStageTitle: "整理并写回",
         level: nil,
         snapshot: model.snapshot,
@@ -163,8 +163,8 @@ extension ContentView {
         transcript: model.capture.roomLiveTranscriptText,
         transcriptPlaceholder: "说话后，实时逐字稿会出现在这里。",
         personStatus: model.people.speakerRuntimeReady
-          ? "正在保留多人说话线索，结束后统一匹配人物"
-          : "人物线索会随原音保留，离线能力就绪后可补全",
+          ? "正在保留多人说话信息，结束后统一匹配人物"
+          : "说话人信息会随原音保留，本机能力就绪后可补全",
         finalStageTitle: "人物与整理",
         level: model.capture.roomInputLevel,
         snapshot: model.capture.roomSnapshot,
@@ -187,8 +187,8 @@ extension ContentView {
         transcript: model.capture.systemAudioLiveTranscriptText,
         transcriptPlaceholder: "开始说话或播放声音后，实时逐字稿会出现在这里。",
         personStatus: model.people.speakerRuntimeReady
-          ? "正在分别保留对方与本机麦克风的人物线索"
-          : "人物线索会随各音轨保留，离线能力就绪后可补全",
+          ? "正在分别保留对方与本机麦克风的说话人信息"
+          : "说话人信息会随各音轨保留，本机能力就绪后可补全",
         finalStageTitle: "人物与整理",
         level: model.capture.systemAudioPreviewLevel,
         snapshot: model.capture.systemAudioSnapshot,
@@ -242,11 +242,11 @@ extension ContentView {
       switch snapshot.phase {
       case .preparing: "正在准备录音"
       case .recording, .paused: title
-      case .finalizing: "正在安全保存原音"
+      case .finalizing: "正在保存原音"
       case .recognizing:
         model.models.modelRuntimeReady ? "正在本机识别" : "原音已保存，等待识别"
       case .polishing: "正在本机整理文字"
-      case .inserting: "正在安全写回文字"
+      case .inserting: "正在写回文字"
       case .cancelling: "正在移除未提交内容"
       default: title
       }
@@ -380,7 +380,7 @@ extension ContentView {
         }
 
         Label(
-          "录音已经结束；后续处理不会继续占用麦克风，原音不会被整理结果覆盖",
+          "录音已结束，麦克风已释放；整理结果另存，原始录音保持不变",
           systemImage: "checkmark.shield"
         )
         .font(.caption)
@@ -436,7 +436,7 @@ extension ContentView {
           .font(.caption.weight(.semibold))
           .foregroundStyle(.secondary)
         Spacer()
-        Label("原文件不会被修改", systemImage: "lock.fill")
+        Label("原文件保持不变", systemImage: "lock.fill")
           .font(.caption)
           .foregroundStyle(.secondary)
       }
@@ -469,7 +469,7 @@ extension ContentView {
         .foregroundStyle(.secondary)
         .accessibilityIdentifier("bestASR.import.status")
       Label(
-        "逐字稿、人物和事件会进入与口述和录音相同的资料库",
+        "逐字稿、人和事会进入与口述和录音相同的资料库",
         systemImage: "rectangle.stack"
       )
       .font(.caption)
@@ -534,7 +534,7 @@ extension ContentView {
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 6) {
           Text("线下录音").font(.largeTitle.bold())
-          Text("记录会议、访谈和现场交流；完成后自动进入统一人物与事件记忆。")
+          Text("记录会议、访谈和现场交流；完成后自动归进对应的人和事。")
             .font(.title3)
             .foregroundStyle(.secondary)
         }
@@ -562,14 +562,14 @@ extension ContentView {
                 .frame(maxWidth: 360)
                 .accessibilityLabel("麦克风输入音量")
                 .accessibilityValue("\(Int(model.capture.roomInputLevel * 100))%")
-              Button(model.capture.roomLevelPreviewActive ? "停止音量预览" : "检查音量") {
+              Button(model.capture.roomLevelPreviewActive ? "停止检查音量" : "检查音量") {
                 model.toggleRoomLevelPreview()
               }
               .accessibilityIdentifier("bestASR.room.levelPreview")
               Button("刷新设备") { model.refreshMicrophoneDevices() }
                 .disabled(model.capture.roomLevelPreviewActive)
             }
-            Text("音量预览不会保存音频。开始后原音按小块持续写入本机。")
+            Text("检查音量时不保存声音。开始后，录音分段持续写入这台 Mac。")
               .font(.caption)
               .foregroundStyle(.secondary)
 
@@ -595,7 +595,7 @@ extension ContentView {
           .accessibilityIdentifier("bestASR.room.status")
 
         Label(
-          "原音、文字、谁在说话和时间线只保存在这台 Mac 上。",
+          "录音、文字、说话人和时间保存在这台 Mac 上。",
           systemImage: "lock.shield"
         )
         .font(.callout)
@@ -681,11 +681,11 @@ extension ContentView {
                 .frame(maxWidth: 360)
                 .accessibilityLabel("所选电脑输出音量")
                 .accessibilityValue("\(Int(model.capture.systemAudioPreviewLevel * 100))%")
-              Button(model.capture.systemAudioPreviewActive ? "停止音量预览" : "检查音量") {
+              Button(model.capture.systemAudioPreviewActive ? "停止检查音量" : "检查音量") {
                 model.toggleSystemAudioPreview()
               }
               .accessibilityIdentifier("bestASR.systemAudio.levelPreview")
-              Text("不会保存预览音频")
+              Text("检查结束后，检查时的声音即被丢弃。")
                 .font(.caption)
                 .foregroundStyle(.secondary)
             }
@@ -712,14 +712,14 @@ extension ContentView {
             if model.capture.systemAudioPermission != .granted {
               HStack {
                 Label(
-                  "需要“屏幕与系统音频录制”权限；织机不捕获画面。",
+                  "需要“录屏与系统录音”权限，用于录制所选 App 或整台 Mac 的声音。",
                   systemImage: "exclamationmark.shield"
                 )
                 .foregroundStyle(.orange)
                 Spacer()
                 Button(
                   model.capture.systemAudioPermission == .notDetermined
-                    ? "允许" : "打开系统设置"
+                    ? "允许" : "打开“系统设置”"
                 ) {
                   model.resolvePermission(.systemAudioCapture)
                 }
@@ -758,7 +758,7 @@ extension ContentView {
           .accessibilityIdentifier("bestASR.systemAudio.status")
 
         Label(
-          "应用选择、原始音频、逐字稿和来源信息只保留在这台 Mac 上。",
+          "所选 App、原始音频、逐字稿和来源信息保存在这台 Mac 上。",
           systemImage: "lock.shield"
         )
         .font(.callout)
@@ -786,7 +786,7 @@ extension ContentView {
       VStack(alignment: .leading, spacing: 24) {
         VStack(alignment: .leading, spacing: 6) {
           Text("导入音视频").font(.largeTitle.bold())
-          Text("把已有录音、播客和视频放进同一个本机资料库。")
+          Text("将已有的录音、播客和视频添加到本机资料库。")
             .font(.title3)
             .foregroundStyle(.secondary)
         }
@@ -850,7 +850,7 @@ extension ContentView {
           }
         }
 
-        Label("外部原文件只读；织机的保留副本只有在你明确删除该记录时才会删除。", systemImage: "lock.shield")
+        Label("原文件保持不变；Mindloom 保留的副本在你删除该记录时删除。", systemImage: "lock.shield")
           .font(.callout)
           .foregroundStyle(.secondary)
       }

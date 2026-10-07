@@ -90,7 +90,9 @@ public struct IntakeInboxIngestor: RemoteOrganizerInboxIngesting {
       case .success(let opened): payload = opened
       }
       capturedAt = payload.createdDate ?? entry.receivedAt
-      sourceName = payload.source.rawValue
+      // "Apple Watch" for a recording from the watch (its `source` stays a name every Mac
+      // knows); any other well-formed name a newer phone sends is shown as it is.
+      sourceName = payload.shownSource
       switch Self.candidate(for: payload) {
       case .none:
         return .discarded(.unusable)
@@ -114,7 +116,7 @@ public struct IntakeInboxIngestor: RemoteOrganizerInboxIngesting {
       // Audio or video is never taken in from the phone (PHONE-CONTRACT §0.5).
       if case .media = outcome, entry.kind == .sealed { return .discarded(.unusable) }
       if case .rejected(let message) = outcome { return .refused(message) }
-      return .refused("未收进来")
+      return .refused("未添加")
     }
     do {
       try await store.createUserItem(draft)

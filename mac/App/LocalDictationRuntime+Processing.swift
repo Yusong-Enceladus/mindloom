@@ -23,6 +23,11 @@ extension LocalDictationRuntime {
   func process(
     _ finalization: DictationCaptureFinalization
   ) async throws -> DictationProcessingOutcome {
+    // Recognition, speaker matching, polish and insertion of a dictation, a
+    // recording, an import or a record recognized again: the meaning search
+    // waits (v12 search, HIST-009).
+    heavyWork.begin()
+    defer { heavyWork.end() }
     guard let sessionID = finalization.snapshot.sessionID else {
       throw LocalDictationRuntimeError.modelNotReady
     }
@@ -58,10 +63,18 @@ extension LocalDictationRuntime {
       let dictionaryFingerprint = dictionary.entries.map {
         "\($0.id.rawValue.uuidString):\($0.revision.value)"
       }.joined(separator: "|")
+      // Dictation is recognized without word timings; its sentences are
+      // timed once the recognizer has left memory (`DeferredWordAlignment`).
+      // Recordings and imports keep them in the same pass.
+      let inputMode =
+        (try? await repository.sessionInputMode(sessionID: sessionID))
+        ?? liveInputModes[sessionID]
+      let defersWordAlignment = inputMode == .dictation
       let asrConfigHash = try BestASRDomain.SHA256Digest(
         Self.sha256(
           "\(baseASRConfigHash.value)|\(dictionaryFingerprint)"
             + "|\(finalRoutingAvailabilityFingerprint)"
+            + (defersWordAlignment ? "|words=deferred-v1" : "")
         )
       )
       let targetPolicy = finalization.snapshot.target?.bundleIdentifier
@@ -108,7 +121,8 @@ extension LocalDictationRuntime {
         configHash: asrConfigHash,
         languageEvidenceText: liveLanguageEvidence?.content ?? "",
         languageEvidenceHints: liveLanguageEvidence?.languageHints ?? [],
-        permitsEmptyResult: liveParent != nil
+        permitsEmptyResult: liveParent != nil,
+        defersWordAlignment: defersWordAlignment
       )
       let finalASR: any DictationASRPort
       if let parent = liveParent {
@@ -149,13 +163,20 @@ extension LocalDictationRuntime {
             }
           )
         } ?? selectedPolish
+      let clock = DictationStageClock()
+      let cold = recognizerColdAtStart.removeValue(forKey: sessionID) ?? !recognizerResident
+      clock.update { $0.recognizerWasCold = cold }
+      // Recoveries and retries are processed here too and nobody takes their
+      // times; never let them pile up.
+      if stageClocks.count >= 16 { stageClocks.removeAll() }
+      stageClocks[sessionID] = clock
       let coordinator = DictationProcessingCoordinator(
         initialSnapshot: finalization.snapshot,
         repository: repository,
-        asr: TimedDictationASR(base: finalASR),
-        polish: insertionPolish,
+        asr: TimedDictationASR(base: finalASR, clock: clock),
+        polish: ClockedDictationPolish(base: insertionPolish, clock: clock),
         insertion: TimedDictationInsertion(
-          base: insertion, deliver: deliveryTransform),
+          base: insertion, deliver: deliveryTransform, clock: clock),
         speaker: GRDBSpeakerJobScheduler(
           store: repository,
           modelArtifactKey: FluidSpeakerPinnedArtifact.artifactID,
@@ -230,12 +251,41 @@ extension LocalDictationRuntime {
   }
 
   /// What every way of ending a dictation owes the App: the speculation slot
-  /// back, with the audio it holds, and the idle release re-armed. Leaving
-  /// either one out keeps about 4 GB resident for as long as the App runs.
-  func endDictationBookkeeping(sessionID: SessionID) {
+  /// back, with the audio it holds, the idle release re-armed, and a
+  /// memory-pressure release that waited for this dictation applied. Leaving
+  /// any of them out keeps about 4 GB resident for as long as the App runs.
+  /// `recognized`: the recognizer decoded this dictation, so it is in memory
+  /// and was just used.
+  func endDictationBookkeeping(sessionID: SessionID, recognized: Bool = true) {
     if finalSpeculation?.sessionID == sessionID { finalSpeculation = nil }
-    lastFinalASRActivity = ContinuousClock.now
+    recognizerColdAtStart[sessionID] = nil
+    dictationEndedSinceLaunch = true
+    if recognized {
+      lastFinalASRActivity = ContinuousClock.now
+      if finalASRWarmupRuntime != nil, multilingualFinalASREngine != nil {
+        recognizerResident = true
+      }
+    }
     scheduleIdleModelRelease()
+    if !pendingMemoryPressureRelease.isEmpty {
+      Task { await self.releaseForMemoryPressure([]) }
+    }
+  }
+
+  /// A dictation that ends without reaching `process`: cancelled with Esc or
+  /// the fn chord, a start that failed after the speculation slot was taken,
+  /// or audio kept for later because no recognizer is ready. Before
+  /// 2026-10-06 these left the slot taken and the idle timer cancelled, so
+  /// after one Esc the models stayed resident and memory pressure was put
+  /// off until the next dictation.
+  func endUnprocessedDictation(sessionID: SessionID) {
+    endDictationBookkeeping(sessionID: sessionID, recognized: false)
+  }
+
+  /// The stage durations of a dictation this runtime processed, once; nil
+  /// for one it did not (numbers only, for `DictationMetricsStore`).
+  func takeStageTimes(sessionID: SessionID) -> DictationStageClock.Times? {
+    stageClocks.removeValue(forKey: sessionID)?.snapshot
   }
 
   func persistOuterProcessingFailure(

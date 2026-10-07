@@ -27,10 +27,16 @@ public struct AgentClientIdentity: Equatable, Hashable, Sendable {
   public let signer: String?
   /// The script an interpreter parent runs, when there is one.
   public let script: String?
+  /// Who signed it, as its certificate names the developer (「Anthropic PBC」),
+  /// for the owner's eyes only: never part of the key.
+  public let signerName: String?
+  /// The executable exactly as the kernel reported it (version folders not
+  /// folded), for the owner's eyes only: never part of the key.
+  public let executable: String
 
   public init(
     name: String, title: String? = nil, path: String, signer: String? = nil,
-    script: String? = nil
+    script: String? = nil, signerName: String? = nil
   ) {
     self.name = Self.clean(name, limit: 80).isEmpty ? "unknown" : Self.clean(name, limit: 80)
     let cleanedTitle = title.map { Self.clean($0, limit: 80) }
@@ -39,6 +45,10 @@ public struct AgentClientIdentity: Equatable, Hashable, Sendable {
     self.signer = signed
     self.path = signed == nil ? Self.exactPath(path) : Self.stablePath(path)
     self.script = script.map { Self.clean($0, limit: 1_024) }.flatMap { $0.isEmpty ? nil : $0 }
+    self.signerName = signerName.map { Self.clean($0, limit: 120) }.flatMap {
+      $0.isEmpty ? nil : $0
+    }
+    self.executable = Self.exactPath(path)
   }
 
   /// Stable per client: `SHA-256("mindloom-agent-client-v2\n" + name + "\n"
@@ -49,14 +59,28 @@ public struct AgentClientIdentity: Equatable, Hashable, Sendable {
     return digest.prefix(16).map { String(format: "%02x", $0) }.joined()
   }
 
-  /// How the owner sees who signed the program.
+  /// How the owner sees who signed the program, in plain words:
+  /// 「Anthropic PBC 签名的程序」, 「Apple 签名的程序」, 「没有开发者签名的程序」.
   public var signerLabel: String {
-    guard let signer else { return "没有开发者签名（按程序的确切位置认）" }
+    guard let signer else { return "没有开发者签名的程序" }
     let parts = signer.split(separator: ":", maxSplits: 2).map(String.init)
-    if parts.first == "apple" { return "Apple 签名" }
-    if parts.count == 3 { return "开发者签名（团队 \(parts[1])）" }
-    return signer
+    if parts.first == "apple" { return "Apple 签名的程序" }
+    if let signerName { return "\(signerName) 签名的程序" }
+    if parts.count == 3 { return "开发者（团队 \(parts[1])）签名的程序" }
+    return "有开发者签名的程序"
   }
+
+  /// Where the program is, with the home folder written 「~」.
+  public var shownPath: String {
+    let home = NSHomeDirectory()
+    var path = script.map { executable + " " + $0 } ?? executable
+    if path.hasPrefix(home + "/") { path = "~" + path.dropFirst(home.count) }
+    return path
+  }
+
+  /// One line for the consent card and Settings: who signed it and where it
+  /// is (「Anthropic PBC 签名的程序 · ~/.local/share/claude/versions/2.1.3/claude」).
+  public var whoLine: String { signerLabel + " · " + shownPath }
 
   /// How the owner sees it: well-known clients by their product name.
   public var displayName: String {
@@ -112,16 +136,19 @@ public struct AgentConnectionPeer: Equatable, Sendable {
   public let clientSigner: String?
   /// The script an interpreter parent runs.
   public let clientScript: String?
+  /// The developer named by the parent's signing certificate.
+  public let clientSignerName: String?
 
   public init(
     pid: pid_t, uid: uid_t, clientExecutablePath: String?, clientSigner: String? = nil,
-    clientScript: String? = nil
+    clientScript: String? = nil, clientSignerName: String? = nil
   ) {
     self.pid = pid
     self.uid = uid
     self.clientExecutablePath = clientExecutablePath
     self.clientSigner = clientSigner
     self.clientScript = clientScript
+    self.clientSignerName = clientSignerName
   }
 
   /// Reads the peer of an accepted socket: kernel credentials, then libproc
@@ -130,12 +157,14 @@ public struct AgentConnectionPeer: Equatable, Sendable {
     guard let peer = AgentPeer.of(descriptor) else { return nil }
     let parent = AgentProcessInspector.parentPID(peer.pid).flatMap { $0 > 1 ? $0 : nil }
     let path = parent.flatMap { AgentProcessInspector.executablePath($0) }
+    let signature = parent.flatMap(AgentCodeSigning.signature(pid:))
     return AgentConnectionPeer(
       pid: peer.pid, uid: peer.uid, clientExecutablePath: path,
-      clientSigner: parent.flatMap(AgentCodeSigning.signer(pid:)),
+      clientSigner: signature?.signer,
       clientScript: parent.flatMap { pid in
         path.flatMap { AgentCodeSigning.script(pid: pid, executable: $0) }
-      })
+      },
+      clientSignerName: signature?.name)
   }
 }
 
@@ -144,7 +173,10 @@ public enum AgentCodeSigning {
   /// `team:<team id>:<signing id>` for a valid Developer ID or App Store
   /// signature, `apple:<signing id>` for Apple's own, nil otherwise (no
   /// signature, ad hoc, or one that does not check out).
-  public static func signer(pid: pid_t) -> String? {
+  public static func signer(pid: pid_t) -> String? { signature(pid: pid)?.signer }
+
+  /// The signer (as `signer(pid:)`) and the developer its certificate names.
+  public static func signature(pid: pid_t) -> (signer: String, name: String?)? {
     var code: SecCode?
     let attributes = [kSecGuestAttributePid: NSNumber(value: pid)] as CFDictionary
     guard SecCodeCopyGuestWithAttributes(nil, attributes, [], &code) == errSecSuccess,
@@ -159,16 +191,28 @@ public enum AgentCodeSigning {
       let identifier = dictionary[kSecCodeInfoIdentifier as String] as? String
     else { return nil }
     if let team = dictionary[kSecCodeInfoTeamIdentifier as String] as? String, !team.isEmpty {
-      return "team:\(team):\(identifier)"
+      let leaf = (dictionary[kSecCodeInfoCertificates as String] as? [SecCertificate])?.first
+      let summary = leaf.flatMap { SecCertificateCopySubjectSummary($0) as String? }
+      return ("team:\(team):\(identifier)", summary.flatMap { developerName($0, team: team) })
     }
     var requirement: SecRequirement?
     if SecRequirementCreateWithString("anchor apple" as CFString, [], &requirement)
       == errSecSuccess, let requirement,
       SecCodeCheckValidity(code, [], requirement) == errSecSuccess
     {
-      return "apple:\(identifier)"
+      return ("apple:\(identifier)", "Apple")
     }
     return nil
+  }
+
+  /// 「Developer ID Application: Anthropic PBC (ANTHRTEAM1)」 → 「Anthropic PBC」.
+  public static func developerName(_ summary: String, team: String) -> String? {
+    var name = summary
+    if let colon = name.range(of: ": ") { name = String(name[colon.upperBound...]) }
+    let suffix = " (\(team))"
+    if name.hasSuffix(suffix) { name = String(name.dropLast(suffix.count)) }
+    name = name.trimmingCharacters(in: .whitespaces)
+    return name.isEmpty ? nil : name
   }
 
   static let interpreters = ["node", "bun", "deno"]

@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import MindloomIdentity
 
 /// The hand-over between the macOS share extension 「收进织机」 and the App
 /// (V8 contract A1). The extension is sandboxed and cannot reach the App's
@@ -8,11 +9,13 @@ import Foundation
 /// App takes every entry in through the same intake rules as a paste or a
 /// drop and removes it. Foundation only: the extension links nothing else.
 ///
-/// An entry is `<id>.json` plus, for bytes that are not a file on disk (an
-/// image from Safari, a clipping), a folder `<id>/` with those bytes. The
-/// JSON is written last (temporary name, then rename), so a half-written
-/// share is never read. Links are kept as text and never fetched; a shared
-/// file is recorded by its path and read by the App under the drop rules.
+/// An entry is `<id>.json` plus a folder `<id>/` with what the share carried
+/// as bytes: an image from Safari, a clipping, and (v12 F10) a shared file,
+/// which the extension copies in itself. The JSON is written last (temporary
+/// name, then rename), so a half-written share is never read. Links are kept
+/// as text and never fetched. The App never opens a path a drop names: any
+/// program can write this folder, and the App reads files with its own
+/// rights (AGENT-IO N4), so a `file` part is refused.
 public struct ShareDropEntry: Codable, Equatable, Sendable {
   public static let currentVersion = 1
   /// At most this many parts per share.
@@ -33,7 +36,9 @@ public struct ShareDropEntry: Codable, Equatable, Sendable {
       case text
       /// A web link: kept as its title and URL, never fetched.
       case link
-      /// A file on this Mac, by its absolute path.
+      /// A file on this Mac, by its absolute path. Written by extensions
+      /// before v12; the App refuses it (F10): a shared file is copied in as
+      /// `data`.
       case file
       /// Bytes saved next to the entry (`name` inside `<id>/`).
       case data
@@ -144,6 +149,10 @@ public struct ShareDropbox: Sendable {
   /// Bytes of one data part, and of one share in all.
   public static let maximumDataBytes = 25 * 1_024 * 1_024
   public static let maximumShareBytes = 100 * 1_024 * 1_024
+  /// A shared file the extension copies in (F10): at most this big each, and
+  /// all of one share's together.
+  public static let maximumFileBytes = 200 * 1_024 * 1_024
+  public static let maximumShareFileBytes = 400 * 1_024 * 1_024
 
   public let directory: URL
 
@@ -154,13 +163,27 @@ public struct ShareDropbox: Sendable {
   /// The drop folder of the owner's library (from the account database, not
   /// `HOME`, which is the container inside the sandbox).
   public static func ownerLibraryDropbox() -> ShareDropbox? {
-    guard let entry = getpwuid(getuid()), let home = entry.pointee.pw_dir else { return nil }
+    forRootSetting("~/Library/Application Support/" + MindloomIdentity.libraryFolderName)
+  }
+
+  /// The drop folder a build names in its extension's Info.plist
+  /// (`MindloomShareDropRoot`): empty is the owner's library; `/…` that
+  /// root; `~/…` that root in the owner's home (from the account database).
+  /// Anything else (a build setting left unexpanded) is nil.
+  public static func forRootSetting(_ setting: String?) -> ShareDropbox? {
+    let value = (setting ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+    if value.isEmpty { return ownerLibraryDropbox() }
+    if value.hasPrefix("/") {
+      return inLibrary(URL(fileURLWithPath: value, isDirectory: true))
+    }
+    guard value.hasPrefix("~/"), !value.contains("/../"), !value.hasSuffix("/.."),
+      let entry = getpwuid(getuid()), let home = entry.pointee.pw_dir
+    else { return nil }
     let path = String(cString: home)
     guard path.hasPrefix("/") else { return nil }
-    return ShareDropbox(
-      directory: URL(fileURLWithPath: path, isDirectory: true)
-        .appendingPathComponent("Library/Application Support/bestASR", isDirectory: true)
-        .appendingPathComponent(relativePath, isDirectory: true))
+    return inLibrary(
+      URL(fileURLWithPath: path, isDirectory: true)
+        .appendingPathComponent(String(value.dropFirst(2)), isDirectory: true))
   }
 
   public static func inLibrary(_ root: URL) -> ShareDropbox {
@@ -183,23 +206,45 @@ public struct ShareDropbox: Sendable {
 
   // MARK: Writing (the extension)
 
-  /// Writes one share: its bytes first, then its JSON under a temporary name,
-  /// renamed into place last.
-  public func write(_ entry: ShareDropEntry, data: [String: Data] = [:]) throws {
+  /// Writes one share: its bytes and copied files first, then its JSON under
+  /// a temporary name, renamed into place last. `files` are shared files
+  /// (data parts by name) copied in whole, so the App never opens a path
+  /// outside the drop folder (F10).
+  public func write(
+    _ entry: ShareDropEntry, data: [String: Data] = [:], files: [String: URL] = [:]
+  ) throws {
     guard isOpen else { throw DropError.closed }
-    guard entry.isWellFormed else { throw DropError.malformed }
+    guard entry.isWellFormed, !entry.parts.contains(where: { $0.kind == .file }) else {
+      throw DropError.malformed
+    }
     let dataParts = entry.parts.filter { $0.kind == .data }.compactMap(\.name)
-    guard Set(dataParts) == Set(data.keys), dataParts.count == data.count else {
+    guard Set(data.keys).isDisjoint(with: files.keys),
+      Set(dataParts) == Set(data.keys).union(files.keys),
+      dataParts.count == data.count + files.count
+    else {
       throw DropError.malformed
     }
     guard data.values.allSatisfy({ $0.count <= Self.maximumDataBytes }),
       data.values.reduce(0, { $0 + $1.count }) <= Self.maximumShareBytes
     else { throw DropError.tooLarge }
+    var fileBytes = 0
+    for url in files.values {
+      guard let size = Self.regularFileSize(url) else { throw DropError.writeFailed }
+      guard size <= Self.maximumFileBytes else { throw DropError.tooLarge }
+      fileBytes += size
+    }
+    guard fileBytes <= Self.maximumShareFileBytes else { throw DropError.tooLarge }
     let folder = directory.appendingPathComponent(entry.id, isDirectory: true)
-    if !data.isEmpty {
+    if !data.isEmpty || !files.isEmpty {
       guard mkdir(folder.path, S_IRWXU) == 0 else { throw DropError.writeFailed }
       for (name, bytes) in data {
         guard Self.writePrivate(bytes, to: folder.appendingPathComponent(name)) else {
+          removeEntryFiles(id: entry.id)
+          throw DropError.writeFailed
+        }
+      }
+      for (name, source) in files {
+        guard Self.copyPrivate(source, to: folder.appendingPathComponent(name)) else {
           removeEntryFiles(id: entry.id)
           throw DropError.writeFailed
         }
@@ -215,6 +260,43 @@ public struct ShareDropbox: Sendable {
       removeEntryFiles(id: entry.id)
       throw DropError.writeFailed
     }
+  }
+
+  /// The size of a regular file (a link or a folder is not one).
+  public static func regularFileSize(_ url: URL) -> Int? {
+    var entry = stat()
+    guard lstat(url.path, &entry) == 0, entry.st_mode & S_IFMT == S_IFREG else { return nil }
+    return Int(entry.st_size)
+  }
+
+  /// Copies a shared file into the drop (an APFS clone where it can be),
+  /// 0600, never following a link and never replacing anything.
+  static func copyPrivate(_ source: URL, to url: URL) -> Bool {
+    let input = Darwin.open(source.path, O_RDONLY | O_NOFOLLOW | O_CLOEXEC)
+    guard input >= 0 else { return false }
+    defer { close(input) }
+    var entry = stat()
+    guard fstat(input, &entry) == 0, entry.st_mode & S_IFMT == S_IFREG else { return false }
+    let folder = Darwin.open(
+      url.deletingLastPathComponent().path, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC)
+    guard folder >= 0 else { return false }
+    defer { close(folder) }
+    if fclonefileat(input, folder, url.lastPathComponent, UInt32(CLONE_NOFOLLOW)) == 0 {
+      guard chmod(url.path, S_IRUSR | S_IWUSR) == 0 else {
+        unlink(url.path)
+        return false
+      }
+      return true
+    }
+    let output = Darwin.open(
+      url.path, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR)
+    guard output >= 0 else { return false }
+    defer { close(output) }
+    guard fcopyfile(input, output, nil, copyfile_flags_t(COPYFILE_DATA)) == 0 else {
+      unlink(url.path)
+      return false
+    }
+    return true
   }
 
   static func writePrivate(_ bytes: Data, to url: URL) -> Bool {
@@ -304,6 +386,11 @@ public struct ShareDropbox: Sendable {
     if lstat(directory.path, &entry) != 0 {
       let parent = directory.deletingLastPathComponent()
       if lstat(parent.path, &entry) != 0 {
+        // A drop root of its own (a development build's) may not exist yet.
+        let root = parent.deletingLastPathComponent()
+        if lstat(root.path, &entry) != 0 {
+          guard mkdir(root.path, S_IRWXU) == 0 || errno == EEXIST else { return false }
+        }
         guard mkdir(parent.path, S_IRWXU) == 0 || errno == EEXIST else { return false }
       }
       guard mkdir(directory.path, S_IRWXU) == 0 || errno == EEXIST else { return false }

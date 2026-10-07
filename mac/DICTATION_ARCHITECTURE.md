@@ -396,7 +396,7 @@ registry 里目前只有 1.7B；代码里定义了 4B（2.15 GB）但没有下�
 | 适配 | `DeliveryInsertionPort` | 状态机的 `captureTarget`/`insert`；自家窗口只在引导练习时算目标。 |
 | 结果 | `DictationInsertionFailureReason` | 7 个：nowhere、secureInput、applicationChanged、permissionDenied、nothingToInsert、unavailable、ambiguousReservation。前五个是设计如此，后两个是缺陷。 |
 
-为什么是两个观察值而不是一个：Chromium/Electron 对 ⌘V **无论焦点是否可编辑都读剪贴板**——页面级 paste 事件先取数据再决定要不要用。实测（由正装 App 的探针 `BESTASR_PASTE_PROBE` 发出）：
+为什么是两个观察值而不是一个：Chromium/Electron 对 ⌘V **无论焦点是否可编辑都读剪贴板**——页面级 paste 事件先取数据再决定要不要用。实测（2026-09-22 由当时正装 App 的探针 `BESTASR_PASTE_PROBE` 发出；这个探针后来只在检查版里，审查 10-5d R9 已删除，送达探针覆盖它）：
 
 | 目标 | 焦点 | 承诺被读 | 焦点文本变化 | 判定 |
 |---|---|---|---|---|
@@ -455,6 +455,18 @@ registry 里目前只有 1.7B；代码里定义了 4B（2.15 GB）但没有下�
 **未做：**
 1. 其余职责的行为迁移（Usage、Hotkeys、Export、MemorySearch、Playback、Events、People、Capture、Models、History），按上面的样板逐个来。
 
+### 13.6 2026-10-05：只凭“读了剪贴板”不再算写进去（v12 阶段 B，ALIGNMENT 收1-12）
+
+13.3 的判定是 `taken && (fieldChanged ?? true)`：App 不报焦点元素时，只凭第一个观察值就算送达。10-05 写进 Claude 桌面版的那次，证据只有 `evidence=pasteboard`；Chromium 没光标时也读剪贴板（13.3 第二张表），所以这正是 9/22 的假成功。
+
+现在 `TextDeliverer.verdict` 返回四种：`landed`（读了、⌘V 前读过的同一个元素里看到了这段字）、`notTaken`、`takenUnseen`（读了、没看到这段字：焦点在按钮上、树还没跟上、输入框被重建或改写）、`takenUnwatched`（读了、但没有可看的输入框）。只有 `landed` 算写进去，也只有它把用户原来的剪贴板还回去（仍然只在承诺还归我们时）；`takenUnseen` 和 `takenUnwatched` 都记为 `kept(.unconfirmed)` / `DictationInsertionFailureReason.unconfirmed`（设计如此，不算缺陷），文字留在剪贴板，浮窗说“已拷贝 · ⌘V 粘贴”，状态写“无法确认文字是否已输入”；只有没人读剪贴板才是 `nowhere`（“没有找到输入位置”）（审查 10-5c S1）。原来的元素没了不再改看当前焦点（S2）。送达把文字留在剪贴板后，用户又拷贝了别的，App 不再用这段口述覆盖它（`ClipboardLease`，S5）。`DeliveryEvidence` 不再有 `pasteboard`，送达证据只有 `field` 和 `own-field`。0.4 秒的粘贴窗口不变。
+
+代价：微信这类从不报焦点元素的 App，写进去了也会显示“已复制”，原来的剪贴板不再还回。要缩小这一块，得为它们找到第二个能看的东西（例如窗口里的焦点元素、网页区的选区位置），并在真 App 上量“有光标 / 没光标”两种（送达探针只编进 Debug、只在检查版 `com.bestasr.mindloom.check` 里运行，正式版和预览版里没有，审查 10-5c P4；粘贴探针已删除，审查 10-5d R9）；这一步没做。
+
+同时：口述结束在 Mindloom 自己的输入框里（搜索框、改名框）时，`DeliveryInsertionPort` 先问 `OwnTextInput`（`AppKitOwnTextInput`：本 App 活跃时 key window 的字段编辑器或文本视图），直接 `insertText`，`method = directWrite`、`evidence = own-field`；单行框去掉末尾的“。”，搜索随之运行。以前这里判“没地方放”。
+
+浮窗（`RecordingStatusPanelController`）：按下时不再问辅助功能（原来只用来决定显不显示字幕，在主线程上同步问、没有超时）；字幕按“口述时显示文字”（默认开）每次都显示，结束换成写入的文字（翻译、指令写的是替换后的文字）；结束只说一次：`FnHUDPresentation.Notice.ending` 是纯函数，没写进去时不会返回“安静收起”（只有指令的答案在自己的面板里显示时例外）。翻译显示目标语言、指令显示“指令”（`Badge`）。轻按 fn（< 0.35 s，`DictationKeyRelease`）回到 d54：免手持，再按结束，Esc 取消。
+
 ## 14. 交互：按用户实际用到的顺序改（2026-09-22）
 
 用户反馈（归纳）：粘贴瞬间首页闪窗；“在这里试一句”仍是旧界面；首页不应滚动、不应放报错横幅；偶尔松手后没停；活动图悬停无详情；检索是下拉框；设置页配色不一致；文案在解释实现而不是说结果。
@@ -474,6 +486,6 @@ registry 里目前只有 1.7B；代码里定义了 4B（2.15 GB）但没有下�
 
 ### 14.1 残余风险（承接 13）
 
-- 剪贴板管理器在 ⌘V 之后读承诺：对报焦点元素的 App 已由第二个观察值兜住；对不报焦点元素的 App（微信）仍可能误报，窗口 400 ms。
+- 剪贴板管理器在 ⌘V 之后读承诺：对报焦点元素的 App 已由第二个观察值兜住；对不报焦点元素的 App（微信）仍可能误报，窗口 400 ms。（2026-10-05 起不报焦点元素的一律按“已复制”处理，见 13.6。）
 - 报了焦点元素但不暴露文本的真输入框（少数 Qt/自绘编辑器）会被判 kept：文字在剪贴板、胶囊说"已复制"，偏向不说假话。
 - Keynote 画布、Excel 单元格这类"焦点不是文本但 ⌘V 会落地"的目标同上，判 kept。

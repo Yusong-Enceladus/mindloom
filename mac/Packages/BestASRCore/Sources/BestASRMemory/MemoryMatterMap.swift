@@ -48,7 +48,7 @@ public struct MemoryStrandModel: Equatable, Sendable {
     public let rowID: String
     public let time: Date?
     public let sourceLabel: String
-    public let source: MemoryLoom.KnotKind
+    public let source: MemorySourceKind
     /// The knot's quote when this item holds it, else the item's first words.
     public let snippet: String
     public let holdsQuote: Bool
@@ -226,10 +226,10 @@ public struct MemoryStrandModel: Equatable, Sendable {
         let holdsQuote = key == quoteKey && !quote.isEmpty
         let snippet =
           holdsQuote
-          ? quote : record.map { MemoryLoom.snippet($0, gist: part?.gist) } ?? ""
+          ? quote : record.map { MemoryItemSource.snippet($0, gist: part?.gist) } ?? ""
         return Evidence(
           itemID: key, rowID: rowID, time: record?.startedAt,
-          sourceLabel: record?.sourceLabel ?? "", source: record.map(MemoryLoom.kind) ?? .chat,
+          sourceLabel: record?.sourceLabel ?? "", source: record.map(MemoryItemSource.kind) ?? .chat,
           snippet: snippet, holdsQuote: holdsQuote)
       }.sorted {
         if $0.holdsQuote != $1.holdsQuote { return $0.holdsQuote }
@@ -329,9 +329,8 @@ public struct MemoryStrandModel: Equatable, Sendable {
   }
 }
 
-/// What the 线索 status bar says: where it stands, how it is going, the
-/// nearest flag and its countdown, promises still open, and what it waits
-/// on / what waits on it.
+/// Where a matter stands: how it is going, the nearest flag and its
+/// countdown, promises still open, and open questions.
 public struct MemoryMatterStatus: Equatable, Sendable {
   public struct Flag: Equatable, Sendable {
     public let text: String
@@ -349,24 +348,11 @@ public struct MemoryMatterStatus: Equatable, Sendable {
     public let date: Date?
   }
 
-  /// Another matter this one waits on (`waitsOn`) or that waits on it.
-  public struct Link: Equatable, Sendable {
-    public let eventID: String
-    public let title: String
-    /// The statement it rests on (verbatim), when it is a blocks edge.
-    public let quote: String?
-    /// The relation as the organizer sent it (`a` blocks `b`).
-    public let a: String
-    public let b: String
-  }
-
   public let statusLine: String
   public let health: MemoryStrandModel.Health?
   public let flag: Flag?
   public let commitments: [Commitment]
   public let questions: [MemoryStrandModel.Knot]
-  public let waitsOn: [Link]
-  public let waitedBy: [Link]
 
   /// How far back a planned day that passed still counts as the flag.
   static let overdueWindow = 14
@@ -400,209 +386,6 @@ public struct MemoryMatterStatus: Equatable, Sendable {
     commitments = model.allKnots.filter { $0.kind == "commitment" && $0.state != "done" }
       .map { Commitment(knotID: $0.id, text: $0.text, who: $0.who, date: $0.date) }
     questions = model.allKnots.filter { $0.glyph == .question }
-    let titles = Dictionary(
-      projection.events.map { ($0.eventID, $0.title) }, uniquingKeysWith: { a, _ in a })
-    let blocks = projection.relations.filter(\.isBlocks)
-    // `a` blocks `b`: b waits on a.
-    waitsOn = blocks.filter { $0.b == model.eventID }.compactMap { relation in
-      titles[relation.a].map {
-        Link(eventID: relation.a, title: $0, quote: relation.quote, a: relation.a, b: relation.b)
-      }
-    }
-    waitedBy = blocks.filter { $0.a == model.eventID }.compactMap { relation in
-      titles[relation.b].map {
-        Link(eventID: relation.b, title: $0, quote: relation.quote, a: relation.a, b: relation.b)
-      }
-    }
-  }
-}
-
-/// The 网 lens: a matter's local graph, one or two hops out. Nodes are
-/// matters and ropes; edges are crossings (shared items), blocks edges
-/// (waiting) and ply (a matter on its rope). Placed on two rings around the
-/// matter, deterministically.
-public struct MemoryMatterNet: Equatable, Sendable {
-  public enum NodeKind: Equatable, Sendable {
-    case center
-    case matter
-    case rope
-  }
-
-  public struct Node: Equatable, Identifiable, Sendable {
-    /// An event ID, or `rope:<id>`.
-    public let id: String
-    public let kind: NodeKind
-    public let title: String
-    /// 0 the matter itself, 1 or 2 hops out.
-    public let hop: Int
-    /// Unit position: the matter at (0, 0), hop one on the circle of radius
-    /// `innerRadius`, hop two on `outerRadius`.
-    public let x: Double
-    public let y: Double
-    /// Its rope is still a proposal (rope nodes only).
-    public let proposed: Bool
-  }
-
-  public enum EdgeKind: Equatable, Sendable {
-    /// Shared items (`count`).
-    case cross(count: Int)
-    /// `from` blocks `to`: `to` waits on `from`.
-    case blocks(quote: String?)
-    /// A matter on its rope.
-    case ply
-  }
-
-  public struct Edge: Equatable, Identifiable, Sendable {
-    public let from: String
-    public let to: String
-    public let kind: EdgeKind
-    public var id: String { "\(from)>\(to)>\(Self.tag(kind))" }
-
-    static func tag(_ kind: EdgeKind) -> String {
-      switch kind {
-      case .cross: "cross"
-      case .blocks: "blocks"
-      case .ply: "ply"
-      }
-    }
-  }
-
-  public let nodes: [Node]
-  public let edges: [Edge]
-
-  public static let innerRadius = 1.0
-  public static let outerRadius = 1.75
-  public static let maximumFirstHop = 8
-  public static let maximumSecondHop = 6
-
-  public var isEmpty: Bool { nodes.count <= 1 }
-
-  public init(projection: MemoryProjection, eventID: String) {
-    let titles = Dictionary(
-      projection.events.map { ($0.eventID, $0.title) }, uniquingKeysWith: { a, _ in a })
-    let home = Dictionary(
-      projection.events.enumerated().map { ($1.eventID, $0) }, uniquingKeysWith: { a, _ in a })
-    let ropeOf = Self.ropeIndex(projection.ropes)
-
-    // Neighbours of a matter: crossings by strength, blocks edges, its rope.
-    func neighbours(_ id: String) -> [(String, EdgeKind, Bool)] {
-      var result: [(String, EdgeKind, Bool, Int)] = []
-      for relation in projection.relations where relation.a == id || relation.b == id {
-        let other = relation.a == id ? relation.b : relation.a
-        if relation.isBlocks {
-          // Kept as `a` blocks `b`; the flag says whether `id` is `a`.
-          result.append((other, .blocks(quote: relation.quote), relation.a == id, 1_000))
-        } else {
-          result.append((other, .cross(count: relation.count ?? 0), true, relation.count ?? 0))
-        }
-      }
-      return result.sorted {
-        ($1.3, home[$0.0] ?? .max, $0.0) < ($0.3, home[$1.0] ?? .max, $1.0)
-      }.map { ($0.0, $0.1, $0.2) }
-    }
-
-    var nodes: [Node] = []
-    var edges: [Edge] = []
-    var placed = Set<String>([eventID])
-    nodes.append(
-      Node(
-        id: eventID, kind: .center, title: titles[eventID] ?? "", hop: 0, x: 0, y: 0,
-        proposed: false))
-
-    // Hop one: the rope first, then blocks edges and crossings.
-    var first: [(id: String, kind: NodeKind, title: String, proposed: Bool)] = []
-    if let rope = ropeOf[eventID] {
-      first.append(("rope:" + rope.id, .rope, rope.title, rope.proposed))
-      edges.append(Edge(from: eventID, to: "rope:" + rope.id, kind: .ply))
-    }
-    var seenEdges = Set<String>()
-    for (other, kind, outgoing) in neighbours(eventID) {
-      guard let title = titles[other] else { continue }
-      let edge =
-        outgoing
-        ? Edge(from: eventID, to: other, kind: kind) : Edge(from: other, to: eventID, kind: kind)
-      guard seenEdges.insert(edge.id).inserted else { continue }
-      if !placed.contains(other) {
-        guard first.count < Self.maximumFirstHop else { continue }
-        placed.insert(other)
-        first.append((other, .matter, title, false))
-      }
-      edges.append(edge)
-    }
-    for (index, node) in first.enumerated() {
-      let angle = Self.angle(index, of: first.count)
-      nodes.append(
-        Node(
-          id: node.id, kind: node.kind, title: node.title, hop: 1,
-          x: cos(angle) * Self.innerRadius, y: sin(angle) * Self.innerRadius,
-          proposed: node.proposed))
-    }
-    placed.formUnion(first.map(\.id))
-
-    // Hop two: the rope's other matters, then each neighbour's strongest
-    // link that is not shown yet.
-    var second: [(id: String, parentAngle: Double, title: String)] = []
-    for (index, node) in first.enumerated() where second.count < Self.maximumSecondHop {
-      let angle = Self.angle(index, of: first.count)
-      if node.kind == .rope,
-        let rope = projection.ropes.first(where: { "rope:" + $0.id == node.id })
-      {
-        for child in rope.children where child != eventID {
-          if !placed.contains(child), second.count < Self.maximumSecondHop,
-            let title = titles[child]
-          {
-            placed.insert(child)
-            second.append((child, angle, title))
-          }
-          if placed.contains(child) {
-            edges.append(Edge(from: child, to: node.id, kind: .ply))
-          }
-        }
-        continue
-      }
-      for (other, kind, outgoing) in neighbours(node.id).prefix(2) {
-        guard let title = titles[other] else { continue }
-        let edge =
-          outgoing
-          ? Edge(from: node.id, to: other, kind: kind) : Edge(from: other, to: node.id, kind: kind)
-        // Only the way out to a new matter: two neighbours' own links would
-        // cross the whole picture.
-        guard !placed.contains(other), second.count < Self.maximumSecondHop else { continue }
-        placed.insert(other)
-        second.append((other, angle, title))
-        if seenEdges.insert(edge.id).inserted { edges.append(edge) }
-      }
-    }
-    // Spread each group of second-hop nodes around its parent's angle.
-    let groups = Dictionary(grouping: second.indices, by: { second[$0].parentAngle })
-    for index in second.indices {
-      let entry = second[index]
-      let siblings = groups[entry.parentAngle] ?? [index]
-      let position = Double(siblings.firstIndex(of: index) ?? 0)
-      let spread = 0.32
-      let angle = entry.parentAngle + (position - Double(siblings.count - 1) / 2) * spread
-      nodes.append(
-        Node(
-          id: entry.id, kind: .matter, title: entry.title, hop: 2,
-          x: cos(angle) * Self.outerRadius, y: sin(angle) * Self.outerRadius, proposed: false))
-    }
-    let shown = Set(nodes.map(\.id))
-    self.nodes = nodes
-    self.edges = edges.filter { shown.contains($0.from) && shown.contains($0.to) }
-  }
-
-  /// Evenly around the circle, the first at the top-right.
-  static func angle(_ index: Int, of count: Int) -> Double {
-    -Double.pi / 2 + 0.35 + Double(index) * 2 * Double.pi / Double(max(count, 1))
-  }
-
-  /// Each matter's rope (the first that lists it).
-  public static func ropeIndex(_ ropes: [RemoteOrganizerRope]) -> [String: RemoteOrganizerRope] {
-    var result: [String: RemoteOrganizerRope] = [:]
-    for rope in ropes {
-      for child in rope.children where result[child] == nil { result[child] = rope }
-    }
-    return result
   }
 }
 

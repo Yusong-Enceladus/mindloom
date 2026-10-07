@@ -69,14 +69,15 @@ final class AgentReviewFixTests: XCTestCase {
     let service = service(try splitMeeting(), owner: owner)
     await owner.queue(allowAll(range: .matters(["ev-expo"])))
     let client = await AgentTestClient(service: service)
-    let search = await client.call("search_matters", ["query": "复诊"])
+    let search = await client.call("search", ["query": "复诊"])
     XCTAssertEqual(search.matterIDs, [])
     for format in ["text", "json"] {
-      let matter = await client.call("get_matter", ["id": "ev-expo", "format": .string(format)])
+      let matter = await client.call(
+        "get_matter", ["id": "ev-expo", "detail": "full", "format": .string(format)])
       XCTAssertFalse(matter.isErrorResult)
       XCTAssertFalse(matter.text.contains("肿瘤复诊"), "\(format): \(matter.text.prefix(600))")
       XCTAssertFalse(
-        matter["structuredContent"]?.serialized.contains("肿瘤复诊") ?? true, format)
+        matter.structured?.serialized.contains("肿瘤复诊") ?? true, format)
       XCTAssertTrue(matter.text.contains("展会展位和海报"), "the part's own note stays")
     }
   }
@@ -86,15 +87,15 @@ final class AgentReviewFixTests: XCTestCase {
     let open = service(try splitMeeting(), owner: owner)
     await owner.queue(allowAll())
     let client = await AgentTestClient(service: open)
-    let matter = await client.call("get_matter", ["id": "ev-expo"])
-    XCTAssertTrue(matter.text.contains("同一段记录还涉及：「苗青禾的肿瘤复诊」"))
+    let matter = await client.call("get_matter", ["id": "ev-expo", "detail": "full"])
+    XCTAssertTrue(matter.text.contains("同一段记录还涉及：“苗青禾的肿瘤复诊”"))
     // "Ask me first": the other matter may be one the owner refuses; it is not named.
     let askingOwner = ScriptedOwner()
     let asking = service(try splitMeeting(), owner: askingOwner)
     await askingOwner.queue(allowAll(ask: true))
     await askingOwner.queueApproval(["EV-EXPO": true])
     let second = await AgentTestClient(service: asking)
-    let shown = await second.call("get_matter", ["id": "ev-expo"])
+    let shown = await second.call("get_matter", ["id": "ev-expo", "detail": "full"])
     XCTAssertFalse(shown.isErrorResult, shown.text)
     XCTAssertFalse(shown.text.contains("肿瘤复诊"))
   }
@@ -112,7 +113,7 @@ final class AgentReviewFixTests: XCTestCase {
     for _ in 0..<8 {
       var next: String?
       for digit in 0...9 where next == nil {
-        let found = await client.call("search_matters", ["query": .string(known + "\(digit)")])
+        let found = await client.call("search", ["query": .string(known + "\(digit)")])
         if found.matterIDs.contains(AgentFixture.twin) { next = known + "\(digit)" }
       }
       guard let next else { break }
@@ -121,11 +122,11 @@ final class AgentReviewFixTests: XCTestCase {
     XCTAssertNotEqual(known, AgentFixture.phone)
     XCTAssertEqual(known, "138", "not even one digit leaked")
     // A query that holds a whole number is refused, not answered.
-    let whole = await client.call("search_matters", ["query": .string(AgentFixture.phone)])
+    let whole = await client.call("search", ["query": .string(AgentFixture.phone)])
     XCTAssertTrue(whole.isErrorResult)
     XCTAssertEqual(whole.errorCode, "invalid_arguments")
     // Words still find their matter.
-    let words = await client.call("search_matters", ["query": "第三组"])
+    let words = await client.call("search", ["query": "第三组"])
     XCTAssertEqual(words.matterIDs, [AgentFixture.twin])
   }
 
@@ -134,7 +135,7 @@ final class AgentReviewFixTests: XCTestCase {
     let service = service(try AgentFixture.snapshot(), owner: owner)
     await owner.queue(allowAll(numbers: true))
     let client = await AgentTestClient(service: service)
-    let found = await client.call("search_matters", ["query": .string(AgentFixture.phone)])
+    let found = await client.call("search", ["query": .string(AgentFixture.phone)])
     XCTAssertFalse(found.isErrorResult)
     XCTAssertEqual(found.matterIDs, [AgentFixture.twin])
   }
@@ -160,8 +161,10 @@ final class AgentReviewFixTests: XCTestCase {
       signer: "team:OTHERTEAM9:com.example.tool")
     let second = await otherTeam.call("get_matter", ["id": .string(AgentFixture.twin)])
     XCTAssertTrue(second.isErrorResult)
+    // v12 F7: while the first impostor's card waits, a second program with
+    // the same name stacks no card of its own; it waits too, refused.
     let asked = await owner.consentRequests.count
-    XCTAssertEqual(asked, 3, "each new program was shown to the owner")
+    XCTAssertEqual(asked, 2, "each new program was shown to the owner, one card at a time")
     // A node script other than the one granted is another client too.
     let nodeOwner = ScriptedOwner()
     let nodeService = self.service(
@@ -194,9 +197,9 @@ final class AgentReviewFixTests: XCTestCase {
       AgentFixture.twin.uppercased(): false, AgentFixture.labWeekly.uppercased(): false,
     ])
     let client = await AgentTestClient(service: service)
-    let search = await client.call("search_matters", ["query": "韩策"])
+    let search = await client.call("search", ["query": "韩策"])
     XCTAssertEqual(search.matterIDs, [])
-    XCTAssertEqual(search["structuredContent"]?["total_matched"], .int(0))
+    XCTAssertEqual(search.structured?["total_matched"], .int(0))
     // 韩策 is only in refused matters: the same answer as someone unknown.
     let person = await client.call("get_person", ["name": "韩策"])
     let nobody = await client.call("get_person", ["name": "没有这个人"])

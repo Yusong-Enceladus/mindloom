@@ -15,7 +15,7 @@ extension ContentView {
         Image(nsImage: NSApplication.shared.applicationIconImage)
           .resizable()
           .frame(width: 24, height: 24)
-        Text("织机")
+        Text("Mindloom")
           .font(.system(size: 16, weight: .semibold))
       }
       .padding(.horizontal, 8)
@@ -83,7 +83,7 @@ extension ContentView {
           ) {
             navigate(to: item)
             if item == .people { model.refreshPeople() }
-            if item == .events { model.refreshEvents() }
+            if item == .events { model.reloadEventMemory() }
           }
           .accessibilityIdentifier("bestASR.sidebar.\(item.rawValue)")
         }

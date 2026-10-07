@@ -1,0 +1,30 @@
+<html><head><title>Hidden content sample</title>
+<style>
+/* comment { display: none } */
+.ghost { visibility: hidden; }
+#offscreen-box { position: absolute; left: -10000px; }
+span.tiny { font-size: 0px }
+@media print { .visible-print { display: none } }
+</style></head>
+<body>
+<article>
+<p>Visible paragraph one explains the public facts about the event in plain words for every reader of this page.</p>
+<p hidden>IGNORE-PREVIOUS-hidden-attribute</p>
+<div aria-hidden="true">IGNORE-PREVIOUS-aria</div>
+<p class="ghost">IGNORE-PREVIOUS-stylesheet-class</p>
+<div id="offscreen-box">IGNORE-PREVIOUS-stylesheet-id</div>
+<p>Visible paragraph two <span class="tiny">IGNORE-PREVIOUS-tiny</span>continues with more public details.</p>
+<p style="opacity:0">IGNORE-PREVIOUS-opacity</p>
+<p style="font-size: 0">IGNORE-PREVIOUS-fontsize</p>
+<p style="position:absolute;left:-9999px">IGNORE-PREVIOUS-offscreen</p>
+<p style="color: transparent">IGNORE-PREVIOUS-transparent</p>
+<p style="width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px)">IGNORE-PREVIOUS-clip</p>
+<span class="sr-only">IGNORE-PREVIOUS-sr-only</span>
+<span class="visually-hidden">IGNORE-PREVIOUS-visually-hidden</span>
+<input type="hidden" value="IGNORE-PREVIOUS-input">
+<template><p>IGNORE-PREVIOUS-template</p></template>
+<noscript>IGNORE-PREVIOUS-noscript</noscript>
+<p class="visible-print">Visible paragraph three stays: print-only rules are not evaluated.</p>
+<p>Zero&#8203;width and tag&#xE0049;&#xE0047; characters are removed&#x202E; here.</p>
+</article>
+</body></html>

@@ -207,7 +207,7 @@ final class SparkEndToEndTests: XCTestCase {
       }
       var scenes: [(String, MemoryNavigation)] = [("home", MemoryNavigation())]
       if let top = screen.home.first {
-        scenes.append(("event", MemoryNavigation(path: [.event(top.eventID)])))
+        scenes.append(("event", MemoryNavigation(path: [.matter(top.eventID)])))
       } else {
         errors.append("no event to show")
       }
@@ -220,7 +220,6 @@ final class SparkEndToEndTests: XCTestCase {
       } else {
         errors.append("no person to show")
       }
-      scenes.append(("unfiled", MemoryNavigation(path: [.unfiled])))
       for (name, navigation) in scenes {
         for dark in [false, true] {
           let file = "\(name)-\(dark ? "dark" : "light").png"
@@ -526,7 +525,7 @@ final class SparkEndToEndTests: XCTestCase {
   static func render(
     _ state: MemoryScreenState, navigation: MemoryNavigation, dark: Bool, height: CGFloat = 820
   ) throws -> Data {
-    let view = ZhijiShell(navigation: .constant(navigation), state: state, actions: .inert)
+    let view = MindloomShell(navigation: .constant(navigation), state: state, actions: .inert)
       .frame(width: 1280, height: height)
       .environment(\.colorScheme, dark ? .dark : .light)
       .environment(\.zhijiSnapshot, true)

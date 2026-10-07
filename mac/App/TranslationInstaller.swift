@@ -1,10 +1,11 @@
 import AppKit
+import MindloomIdentity
 import OSLog
 import SwiftUI
 import Translation
 
 private let translationInstallerLogger = Logger(
-  subsystem: "com.bestasr.app",
+  subsystem: MindloomIdentity.logSubsystem,
   category: "translation"
 )
 
@@ -94,7 +95,7 @@ private struct TranslationInstallHost: View {
           ?? "正在准备翻译"
       )
       .font(.body)
-      Text("语言包由 macOS 下载并保管，只下载这一次。")
+      Text("语言包由 macOS 下载和管理，下载一次即可。")
         .font(.caption)
         .foregroundStyle(.secondary)
     }

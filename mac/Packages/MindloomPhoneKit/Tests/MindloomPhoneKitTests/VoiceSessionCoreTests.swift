@@ -155,6 +155,24 @@ final class VoiceSessionCoreTests: XCTestCase {
     XCTAssertEqual(channel.readFinals()?.seq, 1, "the number stays so old finals stay old")
   }
 
+  /// 自动结束 (PHONE-SPEC §5.7): changing it applies at once and restarts the countdown.
+  func testChangingTheIdleTimeRestartsTheCountdown() throws {
+    startSession()
+    clock.advance(240)
+    core.idleTimeout = 5 * 60
+    XCTAssertEqual(core.aliveUntil, clock.now.addingTimeInterval(300))
+    XCTAssertEqual(
+      try XCTUnwrap(channel.readState()).sessionAliveUntil,
+      clock.now.timeIntervalSince1970 + 300, "the keyboard sees the new end at once")
+    clock.advance(299)
+    core.tick()
+    XCTAssertTrue(core.isAlive)
+    clock.advance(1)
+    core.tick()
+    XCTAssertFalse(core.isAlive)
+    XCTAssertEqual(core.lastEndReason, .idle)
+  }
+
   func testUtteranceLeftOpenStopsByItself() async throws {
     startSession()
     core.handleStart()
@@ -248,5 +266,78 @@ final class VoiceSessionCoreTests: XCTestCase {
     XCTAssertEqual(channel.readLevel(), 0.42, accuracy: 0.0001)
     channel.writeLevel(7)
     XCTAssertEqual(channel.readLevel(), 1)
+  }
+
+  func testNotifyLevelLineCarriesTheLevelWithoutAFile() {
+    let name = "app.mindloom.test.level.\(UUID().uuidString)"
+    let writer = NotifyLevelLine(name: name)
+    let reader = NotifyLevelLine(name: name)
+    writer.write(0.37)
+    XCTAssertEqual(reader.read(), 0.37, accuracy: 0.0001)
+    writer.write(-3)
+    XCTAssertEqual(reader.read(), 0)
+  }
+
+  func testCancelDropsTheUtteranceAndPublishesAnEmptyFinal() async throws {
+    core.start(recognizer: recognizer)
+    core.handleStart()
+    recognizer.utterances[0].say("合成：不要了")
+    core.handleCancel()
+    await core.waitForFinals()
+    XCTAssertTrue(recognizer.utterances[0].cancelled)
+    XCTAssertEqual(core.phase, .ready)
+    let finals = try XCTUnwrap(channel.readFinals())
+    XCTAssertEqual(finals.seq, 1)
+    XCTAssertEqual(finals.text, "")
+    XCTAssertEqual(finals.outcome, .empty)
+    XCTAssertNil(channel.readPartial())
+  }
+
+  func testMicrophoneDeniedIsPublishedWithoutASession() {
+    core.setMicrophoneDenied(true)
+    XCTAssertEqual(channel.readState()?.microphoneDenied, true)
+    XCTAssertFalse(channel.readState()?.isAlive(at: clock.now) ?? true)
+  }
+
+  func testKeyboardAcknowledgementsAreHandledOnce() async throws {
+    var kept: [String] = []
+    var withdrawn: [Int] = []
+    core.onKeyboardInserted = { final, _ in kept.append(final.text) }
+    core.onKeyboardWithdrawn = { withdrawn.append($0) }
+    core.start(recognizer: recognizer)
+    core.handleStart()
+    core.handleStop()
+    await core.waitForFinals()
+    var ack = VoiceAck()
+    ack.insert(1, at: clock.now.timeIntervalSince1970)
+    try channel.writeAck(ack)
+    core.handleAck()
+    core.handleAck()
+    XCTAssertEqual(kept, ["合成：明早九点站会"])
+    ack.withdraw(1)
+    try channel.writeAck(ack)
+    core.handleAck()
+    core.handleAck()
+    XCTAssertEqual(withdrawn, [1])
+    // An acknowledgement for an utterance the app never finished is ignored.
+    ack.insert(7, at: clock.now.timeIntervalSince1970)
+    try channel.writeAck(ack)
+    core.handleAck()
+    XCTAssertEqual(kept.count, 1)
+  }
+
+  func testAcknowledgementsLeftByAnEarlierRunAreNotKeptAgain() async throws {
+    core.start(recognizer: recognizer)
+    core.handleStart()
+    core.handleStop()
+    await core.waitForFinals()
+    var ack = VoiceAck()
+    ack.insert(1, at: clock.now.timeIntervalSince1970)
+    try channel.writeAck(ack)
+    let restarted = VoiceSessionCore(channel: channel, signaling: signaling, clock: clock.function)
+    var kept = 0
+    restarted.onKeyboardInserted = { _, _ in kept += 1 }
+    restarted.handleAck()
+    XCTAssertEqual(kept, 0)
   }
 }

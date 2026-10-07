@@ -427,7 +427,7 @@ public enum PhoneInboxDropNotice {
   public static func text(_ reason: RemoteOrganizerInboxDiscard, count: Int) -> String {
     switch reason {
     case .cannotOpen: "\(count) 条手机内容无法打开（配对已更换）"
-    case .unusable: "\(count) 条手机内容无法收进来"
+    case .unusable: "\(count) 条 iPhone 内容无法添加"
     }
   }
 }

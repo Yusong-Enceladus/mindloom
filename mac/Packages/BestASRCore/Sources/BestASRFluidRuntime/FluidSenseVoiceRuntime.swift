@@ -5,6 +5,7 @@ import BestASRModelManager
 import CryptoKit
 import FluidAudio
 import Foundation
+import NaturalLanguage
 
 public enum FluidSenseVoicePinnedArtifact {
   public static let artifactID = "fluid-sensevoice-small-int8-0e0bf30b"
@@ -291,15 +292,31 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
     normalize(text, dictionaryTerms: dictionaryTerms, dictionaryHints: [])
   }
 
+  /// `nearMatches: false` applies only what the user wrote down: each
+  /// entry's spoken forms and its own spelling (case and spacing). Without
+  /// it, words that merely look or sound like an entry (one Han character
+  /// apart, a near Latin spelling, the same Soundex) are rewritten too.
   public func normalize(
     _ text: String,
     dictionaryTerms: [String],
-    dictionaryHints: [ASRDictionaryHint]
+    dictionaryHints: [ASRDictionaryHint],
+    nearMatches: Bool = true
   ) -> String {
     guard maximumTerms > 0, maximumTermCharacters > 0 else { return text }
     var result = replaceExplicitHints(in: text, hints: dictionaryHints)
-    var seenTerms = Set<String>()
-    let terms = (dictionaryTerms + dictionaryHints.map(\.canonicalForm))
+    guard nearMatches else { return result }
+    // A word learned from corrections (`explicitOnly`) is matched by its
+    // listed forms above, as whole words, and never searched for among
+    // similar text — not even when the recognizer is also told to expect it
+    // (`dictionaryTerms`): a learned 「在坐」 must not turn 「我在做饭」 into
+    // 「我在坐饭」 (review 10-6 S7). A word the user added keeps its search.
+    let searchedKeys = Set(
+      dictionaryHints.filter { !$0.explicitOnly }.map { Self.comparisonKey($0.canonicalForm) })
+    let learnedOnlyKeys = Set(
+      dictionaryHints.filter(\.explicitOnly).map { Self.comparisonKey($0.canonicalForm) }
+    ).subtracting(searchedKeys)
+    var seenTerms = learnedOnlyKeys
+    let terms = (dictionaryTerms + dictionaryHints.filter { !$0.explicitOnly }.map(\.canonicalForm))
       .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
       .filter {
         guard !$0.isEmpty, $0.count <= maximumTermCharacters else {
@@ -323,6 +340,11 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
     let surface: String
     let key: String
     let isASCII: Bool
+    /// A form learned from corrections (`ASRDictionaryHint.explicitOnly`,
+    /// however often the correction was seen) is replaced only where it
+    /// stands as whole words, so a learned 「议室」 never rewrites the middle
+    /// of 「会议室」.
+    let wholeWordsOnly: Bool
   }
 
   /// Rewrites only explicit, unambiguous surfaces.  Every replacement is
@@ -360,7 +382,8 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
             canonicalForm: canonical,
             surface: surface,
             key: key,
-            isASCII: isASCII
+            isASCII: isASCII,
+            wholeWordsOnly: hint.explicitOnly && !isASCII
           )
         )
       }
@@ -397,7 +420,8 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
         replaced = replaceLiteralCandidates(
           in: result,
           surface: mapping.surface,
-          with: placeholder
+          with: placeholder,
+          wholeWordsOnly: mapping.wholeWordsOnly
         )
       }
       if replaced != result {
@@ -456,8 +480,10 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
   private func replaceLiteralCandidates(
     in text: String,
     surface: String,
-    with replacement: String
+    with replacement: String,
+    wholeWordsOnly: Bool = false
   ) -> String {
+    let boundaries = wholeWordsOnly ? Self.wordBoundaries(text) : []
     var ranges: [Range<String.Index>] = []
     var lower = text.startIndex
     while lower < text.endIndex,
@@ -467,7 +493,12 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
         range: lower..<text.endIndex
       )
     {
-      ranges.append(match)
+      if !wholeWordsOnly
+        || (boundaries.contains(match.lowerBound.utf16Offset(in: text))
+          && boundaries.contains(match.upperBound.utf16Offset(in: text)))
+      {
+        ranges.append(match)
+      }
       lower = match.upperBound
     }
     var result = text
@@ -475,6 +506,20 @@ public struct SenseVoiceDictionaryNormalizer: Sendable {
       result.replaceSubrange(range, with: replacement)
     }
     return result
+  }
+
+  /// Where words begin and end in `text` (UTF-16 offsets), by the system's
+  /// on-device word segmentation (Chinese has no spaces to go by).
+  static func wordBoundaries(_ text: String) -> Set<Int> {
+    let tokenizer = NLTokenizer(unit: .word)
+    tokenizer.string = text
+    var boundaries: Set<Int> = [0, text.utf16.count]
+    tokenizer.enumerateTokens(in: text.startIndex..<text.endIndex) { range, _ in
+      boundaries.insert(range.lowerBound.utf16Offset(in: text))
+      boundaries.insert(range.upperBound.utf16Offset(in: text))
+      return true
+    }
+    return boundaries
   }
 
   public static func join(_ pieces: [String]) -> String {

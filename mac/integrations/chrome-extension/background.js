@@ -1,8 +1,8 @@
-// 收进织机 (Chrome, Manifest V3).
+// 添加到 Mindloom (Chrome, Manifest V3).
 //
-// Hands the selected text, the page link or a link on the page to 织机 on
+// Hands the selected text, the page link or a link on the page to Mindloom on
 // this Mac. The only way out is Chrome's native messaging: Chrome starts the
-// small program that comes with 织机 (only for this extension's ID), which
+// small program that comes with Mindloom (only for this extension's ID), which
 // passes the request to the running App. There is no network path: the
 // extension has no host permissions, never fetches anything, and its CSP
 // forbids connections (connect-src 'none'). It stores nothing.
@@ -11,7 +11,7 @@
 
 "use strict";
 
-const HOST = "com.bestasr.mindloom";
+const HOST = "app.mindloom";
 const MAX_CHARS = 1000000;
 const MENU = {
   selection: "mindloom-selection",
@@ -20,31 +20,32 @@ const MENU = {
 };
 
 const COPY = {
-  title: "收进织机",
-  noLink: "这个页面没有可以收进来的链接（只收 http、https 和本机文件的网页）",
-  empty: "没有选中文字，也没有链接",
-  tooLong: "选中的文字太长（超过 100 万字），请分几次收",
-  notInstalled: "还没有连上织机：在织机的 设置 → 入口 里打开「Chrome 扩展」",
-  forbidden: "织机的连接不认这个扩展：请在织机的 设置 → 入口 里重新连接 Chrome",
-  exited: "织机的连接程序意外退出了，请再试一次",
-  unreadable: "织机的回答看不懂",
+  title: "添加到 Mindloom",
+  noLink: "无法添加此网页的链接。可以添加 http、https 和本机文件网页的链接。",
+  empty: "未选择文字，此处也没有链接。",
+  tooLong: "所选文字超过 100 万字。请分几次添加。",
+  notInstalled: "未连接 Mindloom。请在 Mindloom 的“设置”>“入口”中打开“Chrome 扩展”。",
+  forbidden: "Mindloom 未接受此扩展的连接。请在 Mindloom 的“设置”>“入口”中点按“重新连接 Chrome”。",
+  exited: "与 Mindloom 的连接意外中断。请再试一次。",
+  unreadable: "无法读取 Mindloom 的回复。",
+  unreachable: "无法连接 Mindloom。请确认 Mindloom 正在运行，然后再试一次。",
 };
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {
     chrome.contextMenus.create({
       id: MENU.selection,
-      title: "收进织机：选中的文字",
+      title: "将所选文字添加到 Mindloom",
       contexts: ["selection"],
     });
     chrome.contextMenus.create({
       id: MENU.link,
-      title: "收进织机：这个链接",
+      title: "将链接添加到 Mindloom",
       contexts: ["link"],
     });
     chrome.contextMenus.create({
       id: MENU.page,
-      title: "收进织机：这个网页的链接",
+      title: "将网页链接添加到 Mindloom",
       contexts: ["page"],
     });
   });
@@ -159,7 +160,7 @@ function hostProblem(text) {
   if (/not found/i.test(text)) return COPY.notInstalled;
   if (/forbidden/i.test(text)) return COPY.forbidden;
   if (/exited/i.test(text)) return COPY.exited;
-  return "没能连上织机：" + text;
+  return COPY.unreachable;
 }
 
 // MARK: Feedback

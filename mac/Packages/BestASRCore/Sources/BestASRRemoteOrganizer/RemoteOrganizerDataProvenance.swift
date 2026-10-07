@@ -1,5 +1,6 @@
 import Darwin
 import Foundation
+import MindloomIdentity
 
 /// Development-period data-provenance guard for the own-device organizer link
 /// (PRD §0.3.8, AGENTS.md). It applies in every build configuration.
@@ -7,7 +8,8 @@ public enum RemoteOrganizerDataProvenance {
   /// The one switch a product release flips once the Spark link has passed
   /// product acceptance. While it is `false`, the link may run only from a
   /// data root that fixture or demo setup marked as synthetic, and the owner's
-  /// real library (`~/Library/Application Support/bestASR`) is never sent.
+  /// real library (`~/Library/Application Support/Mindloom`, and bestASR's
+  /// folder before it moved) is never sent.
   /// Do not flip it during development.
   public static let productReleaseAllowsOwnLibrary = false
 
@@ -40,7 +42,8 @@ public enum RemoteOrganizerDataProvenance {
     if allowsOwnLibrary { return .allowed }
     // By file identity, so no spelling (symlink, case, /.nofollow, /.resolve,
     // /.vol, firmlink) of the real library passes.
-    if BestASRDataRootSelection.path(dataRoot, isWithinOrEqualTo: realLibraryRoot) {
+    for library in BestASRDataRootSelection.ownerLibraries(realLibraryRoot: realLibraryRoot)
+    where BestASRDataRootSelection.path(dataRoot, isWithinOrEqualTo: library) {
       return .refusedRealLibrary
     }
     let marker = dataRoot.appendingPathComponent(syntheticMarkerFileName)
@@ -104,7 +107,8 @@ public enum BestASRDataRootSelection {
   }
 
   /// The owner's real library, from the account database rather than the
-  /// process environment (`HOME`/`CFFIXED_USER_HOME` can be overridden).
+  /// process environment (`HOME`/`CFFIXED_USER_HOME` can be overridden):
+  /// `~/Library/Application Support/Mindloom`.
   public static func ownerRealLibraryRoot() -> URL? {
     guard let entry = getpwuid(getuid()), let directory = entry.pointee.pw_dir else {
       return nil
@@ -114,7 +118,18 @@ public enum BestASRDataRootSelection {
     return URL(fileURLWithPath: home, isDirectory: true)
       .appendingPathComponent("Library", isDirectory: true)
       .appendingPathComponent("Application Support", isDirectory: true)
-      .appendingPathComponent("bestASR", isDirectory: true)
+      .appendingPathComponent(MindloomIdentity.libraryFolderName, isDirectory: true)
+  }
+
+  /// The owner's library and bestASR's folder beside it, where it was before
+  /// 2026-10-06 (and is again after a rollback): neither may be named as a
+  /// separate root, or sent.
+  public static func ownerLibraries(realLibraryRoot: URL) -> [URL] {
+    [
+      realLibraryRoot,
+      realLibraryRoot.deletingLastPathComponent().appendingPathComponent(
+        MindloomIdentity.Previous.libraryFolderName, isDirectory: true),
+    ]
   }
 
   /// The separate root requested by these launch arguments, or `nil` when the
@@ -148,11 +163,13 @@ public enum BestASRDataRootSelection {
     {
       throw SelectionError.unsupportedPathSpelling
     }
-    if path(url, isWithinOrEqualTo: realLibraryRoot) {
-      throw SelectionError.insideRealLibrary
-    }
-    if path(realLibraryRoot, isWithinOrEqualTo: url) {
-      throw SelectionError.containsRealLibrary
+    for library in ownerLibraries(realLibraryRoot: realLibraryRoot) {
+      if path(url, isWithinOrEqualTo: library) {
+        throw SelectionError.insideRealLibrary
+      }
+      if path(library, isWithinOrEqualTo: url) {
+        throw SelectionError.containsRealLibrary
+      }
     }
     return url
   }

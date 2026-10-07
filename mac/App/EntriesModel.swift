@@ -39,6 +39,8 @@ final class EntriesModel: ObservableObject {
   let calendarReader = EventKitCalendarReader()
   let remindersWriter = EventKitRemindersWriter()
   let zoteroTransport = ZoteroLoopbackTransport()
+  /// 腾讯会议 (ENTRY-013).
+  let tencent = TencentMeetingModel()
   let gitRunner = GitRunner.locate()
 
   func isOn(_ kind: EntryKind) -> Bool { settings.isOn(kind) }
@@ -52,8 +54,8 @@ final class EntriesModel: ObservableObject {
     let formatter = DateFormatter()
     formatter.dateFormat = "HH:mm"
     return count == 0
-      ? "已检查 · \(formatter.string(from: date))，没有新的"
-      : "上次收进 \(count) 条 · \(formatter.string(from: date))"
+      ? "已检查 · \(formatter.string(from: date))，没有新内容"
+      : "上次添加 \(count) 条 · \(formatter.string(from: date))"
   }
 }
 

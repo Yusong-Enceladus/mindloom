@@ -144,7 +144,7 @@ public enum MemoryFileText {
       ("pages", { "\($0) 页" }), ("sheets", { "\($0) 个工作表" }),
       ("slides", { "\($0) 张幻灯片" }), ("messages", { "\($0) 封邮件" }),
       ("entries", { "\($0) 个文件" }), ("attachments", { "\($0) 个附件" }),
-      ("images_read", { "读了 \($0) 张图" }),
+      ("images_read", { "已读取 \($0) 张图片" }),
     ]
     return known.compactMap { key, text in counts[key].flatMap { $0 > 0 ? text($0) : nil } }
   }
@@ -152,11 +152,11 @@ public enum MemoryFileText {
   /// Why the organizing device could not read the file.
   public static func error(_ code: String) -> String {
     switch code {
-    case "encrypted": "文件有密码，整理设备没有打开"
-    case "unsupported": "整理设备还读不了这种文件"
-    case "too_large": "文件太大，整理设备没有读"
-    case "corrupt": "文件已损坏，整理设备读不了"
-    default: "整理设备没能读这个文件"
+    case "encrypted": "文件受密码保护，DGX Spark 未打开"
+    case "unsupported": "DGX Spark 暂不支持读取此类文件"
+    case "too_large": "文件过大，DGX Spark 未读取"
+    case "corrupt": "文件已损坏，DGX Spark 无法读取"
+    default: "DGX Spark 未能读取此文件"
     }
   }
 
@@ -165,7 +165,7 @@ public enum MemoryFileText {
     let names: [String: String] = [
       "from": "发件人", "to": "收件人", "cc": "抄送", "subject": "主题", "date": "日期",
       "title": "标题", "summary": "摘要", "start": "开始", "end": "结束", "location": "地点",
-      "organizer": "组织者", "attendees": "参与人", "name": "姓名", "organization": "单位",
+      "organizer": "发起人", "attendees": "参与人", "name": "姓名", "organization": "单位",
       "org": "单位", "phone": "电话", "tel": "电话", "email": "邮箱", "address": "地址",
       "vendor": "商家", "merchant": "商家", "total": "金额", "amount": "金额",
       "currency": "币种", "author": "作者",
@@ -176,14 +176,14 @@ public enum MemoryFileText {
   /// Why a file item stays on this Mac, when it does: larger than the
   /// organizer's limit with no text read here.
   public static func notSentReason(_ record: MemoryItemRecord) -> String? {
-    if record.keptOnMac { return "只保存在 Mac 上" }
+    if record.keptOnMac { return "保存在这台 Mac 上" }
     guard record.itemKind == .file, let size = record.fileSizeBytes,
       size > UserItemLimits.maximumSendableFileBytes
     else { return nil }
     let hasText = !(record.text ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     return hasText
-      ? "超过 25 MB，只把本机读出的文字交给整理设备"
-      : "超过 25 MB，只留在这台 Mac"
+      ? "超过 25 MB，将本机读取的文字发送到 DGX Spark"
+      : "超过 25 MB，保留在这台 Mac 上"
   }
 
   /// "表格 · 2.3 MB · 2 个工作表" (the row's meta line already names the

@@ -5,7 +5,7 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>zh-Hans</string>
   <key>CFBundleDisplayName</key>
-  <string>收进织机</string>
+  <string>$(MINDLOOM_SHARE_DISPLAY_NAME)</string>
   <key>CFBundleExecutable</key>
   <string>$(EXECUTABLE_NAME)</string>
   <key>CFBundleIdentifier</key>
@@ -13,7 +13,11 @@
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundleName</key>
-  <string>收进织机</string>
+  <string>Mindloom</string>
+  <key>MindloomURLScheme</key>
+  <string>$(MINDLOOM_URL_SCHEME)</string>
+  <key>MindloomShareDropRoot</key>
+  <string>$(MINDLOOM_SHARE_DROP_ROOT)</string>
   <key>CFBundlePackageType</key>
   <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
   <key>CFBundleShortVersionString</key>

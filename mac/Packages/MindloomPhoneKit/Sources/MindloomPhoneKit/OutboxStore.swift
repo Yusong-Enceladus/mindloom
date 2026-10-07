@@ -8,8 +8,13 @@ import MindloomLink
 ///
 /// ```
 /// outbox/
+///   held/<entry_id>.json     a queued entry held back for its undo window
+///                            (`{"until_ms":…,"entry":{…}}`); never sent before
+///                            then, and sent like any queued entry after
 ///   queued/<entry_id>.json   sealed wire + short preview, waiting for the Spark
 ///   sent/<entry_id>.json     preview only, kept 7 days ("已送出")
+///   sending/<entry_id>       an empty claim while the entry is on its way (`beginSending`);
+///                            a claimed entry cannot be withdrawn
 ///   tmp/                     staging for atomic writes
 ///   quarantine/              unreadable files, moved aside, never deleted
 /// ```
@@ -35,6 +40,25 @@ public final class OutboxStore: @unchecked Sendable {
     case alreadySent
   }
 
+  /// What `withdraw(id:)` did.
+  public enum WithdrawResult: Equatable, Sendable {
+    /// The entry was held or queued and is gone; it was never sent.
+    case withdrawn
+    /// Too late: the Mac already has it.
+    case alreadySent
+    /// It is being sent right now (the Mac may already have it): not withdrawn.
+    case inFlight
+    /// No such entry.
+    case unknown
+
+    /// The entry is gone from the phone and was never sent.
+    public var isWithdrawn: Bool { self == .withdrawn || self == .unknown }
+  }
+
+  /// A send claim older than this is left over from a run that died (the app was killed while
+  /// sending); it no longer blocks a withdrawal.
+  public static let sendingClaimLifetime: TimeInterval = 5 * 60
+
   public struct Counts: Equatable, Sendable {
     public let queued: Int
     public let sent: Int
@@ -49,9 +73,11 @@ public final class OutboxStore: @unchecked Sendable {
   private let lock = NSLock()
   private let fileManager: FileManager
 
+  private var heldDirectory: URL { root.appendingPathComponent("held", isDirectory: true) }
   private var queuedDirectory: URL { root.appendingPathComponent("queued", isDirectory: true) }
   private var sentDirectory: URL { root.appendingPathComponent("sent", isDirectory: true) }
   private var tmpDirectory: URL { root.appendingPathComponent("tmp", isDirectory: true) }
+  private var sendingDirectory: URL { root.appendingPathComponent("sending", isDirectory: true) }
   private var quarantineDirectory: URL {
     root.appendingPathComponent("quarantine", isDirectory: true)
   }
@@ -60,7 +86,10 @@ public final class OutboxStore: @unchecked Sendable {
   public init(root: URL, fileManager: FileManager = .default) throws {
     self.root = root
     self.fileManager = fileManager
-    for directory in [root, queuedDirectory, sentDirectory, tmpDirectory, quarantineDirectory] {
+    for directory in [
+      root, heldDirectory, queuedDirectory, sentDirectory, tmpDirectory, quarantineDirectory,
+      sendingDirectory,
+    ] {
       try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
     }
     var excluded = URLResourceValues()
@@ -88,7 +117,9 @@ public final class OutboxStore: @unchecked Sendable {
       if fileManager.fileExists(atPath: file(in: sentDirectory, id: entry.entryID).path) {
         return .alreadySent
       }
-      if fileManager.fileExists(atPath: file(in: queuedDirectory, id: entry.entryID).path) {
+      if fileManager.fileExists(atPath: file(in: queuedDirectory, id: entry.entryID).path)
+        || fileManager.fileExists(atPath: file(in: heldDirectory, id: entry.entryID).path)
+      {
         return .alreadyQueued
       }
       try write(entry, to: queuedDirectory)
@@ -96,11 +127,134 @@ public final class OutboxStore: @unchecked Sendable {
     }
   }
 
+  /// Adds a queued entry that is not sent before `until` (the 3 s undo window after
+  /// 「已收好」). `withdraw(id:)` takes it back without a trace; after `until` it is an
+  /// ordinary queued entry. A hold survives a crash: the next `queued()` after `until`
+  /// releases it, so nothing the user kept is lost. Idempotent by entry id.
+  @discardableResult
+  public func add(_ entry: OutboxEntry, heldUntil until: Date) throws -> AddResult {
+    guard entry.state == .queued else { throw OutboxEntry.EntryError.invalidState }
+    return try locked {
+      if fileManager.fileExists(atPath: file(in: sentDirectory, id: entry.entryID).path) {
+        return .alreadySent
+      }
+      if fileManager.fileExists(atPath: file(in: queuedDirectory, id: entry.entryID).path)
+        || fileManager.fileExists(atPath: file(in: heldDirectory, id: entry.entryID).path)
+      {
+        return .alreadyQueued
+      }
+      let held = HeldEntry(untilMillis: OutboxEntry.millis(until), entry: entry)
+      try writeData(try held.encoded(), id: entry.entryID, to: heldDirectory)
+      return .added
+    }
+  }
+
+  /// Ends a hold now (the undo window closed early). Unknown or already released ids
+  /// change nothing.
+  public func release(id: String) throws {
+    guard EntryID.isValid(id) else { return }
+    try locked {
+      guard let held = try readHeld(id: id) else { return }
+      try promote(held)
+    }
+  }
+
+  /// Moves the end of a running hold to `until` (the share card's 「加一句」 keeps the item
+  /// back while the note is typed). Returns false when the entry is not held any more.
+  @discardableResult
+  public func extendHold(id: String, until: Date) throws -> Bool {
+    guard EntryID.isValid(id) else { return false }
+    return try locked {
+      guard let held = try readHeld(id: id) else { return false }
+      let longer = HeldEntry(untilMillis: OutboxEntry.millis(until), entry: held.entry)
+      try writeData(try longer.encoded(), id: id, to: heldDirectory)
+      return true
+    }
+  }
+
+  /// Takes an entry back before it was sent (「撤销」, 「撤回」): a held or queued entry is
+  /// deleted, a sent one cannot be withdrawn.
+  @discardableResult
+  public func withdraw(id: String) throws -> WithdrawResult {
+    guard EntryID.isValid(id) else { return .unknown }
+    return try locked {
+      if fileManager.fileExists(atPath: file(in: sentDirectory, id: id).path) {
+        return .alreadySent
+      }
+      if hasLiveClaim(id) { return .inFlight }
+      var found = false
+      for directory in [heldDirectory, queuedDirectory] {
+        let url = file(in: directory, id: id)
+        if fileManager.fileExists(atPath: url.path) {
+          try removeIfPresent(url)
+          found = true
+        }
+      }
+      if found { Self.synchronizeDirectory(queuedDirectory) }
+      return found ? .withdrawn : .unknown
+    }
+  }
+
+  /// Removes a sent entry's preview from this iPhone (the person deleted the item it belonged
+  /// to). The Mac keeps what it received. False when there is no sent entry with this id.
+  @discardableResult
+  public func removeSent(id: String) throws -> Bool {
+    guard EntryID.isValid(id) else { return false }
+    return try locked {
+      let url = file(in: sentDirectory, id: id)
+      guard fileManager.fileExists(atPath: url.path) else { return false }
+      try removeIfPresent(url)
+      return true
+    }
+  }
+
+  /// Entries still inside their hold at `now`, oldest first.
+  public func held(now: Date = Date()) throws -> [OutboxEntry] {
+    try locked {
+      let nowMillis = OutboxEntry.millis(now)
+      return try entryIDs(in: heldDirectory)
+        .compactMap { try readHeld(id: $0) }
+        .filter { $0.untilMillis > nowMillis }
+        .map(\.entry)
+        .sorted { ($0.createdAtMillis, $0.entryID) < ($1.createdAtMillis, $1.entryID) }
+    }
+  }
+
+  /// When the earliest hold still running at `now` ends (nil when nothing is held).
+  public func nextHoldEnd(now: Date = Date()) throws -> Date? {
+    try locked {
+      let nowMillis = OutboxEntry.millis(now)
+      return try entryIDs(in: heldDirectory)
+        .compactMap { try readHeld(id: $0) }
+        .map(\.untilMillis)
+        .filter { $0 > nowMillis }
+        .min()
+        .map(OutboxEntry.date)
+    }
+  }
+
+  /// Moves every hold that has ended by `now` to `queued/`.
+  @discardableResult
+  public func releaseDueHolds(now: Date = Date()) throws -> Int {
+    try locked {
+      let nowMillis = OutboxEntry.millis(now)
+      var released = 0
+      for id in entryIDs(in: heldDirectory) {
+        guard let held = try readHeld(id: id), held.untilMillis <= nowMillis else { continue }
+        try promote(held)
+        released += 1
+      }
+      return released
+    }
+  }
+
   // MARK: - Reading
 
-  /// Queued entries, oldest first (then by id, so the order is stable).
-  public func queued() throws -> [OutboxEntry] {
-    try locked {
+  /// Queued entries, oldest first (then by id, so the order is stable). Holds that have
+  /// ended by `now` are released first; entries still held are not included.
+  public func queued(now: Date = Date()) throws -> [OutboxEntry] {
+    try releaseDueHolds(now: now)
+    return try locked {
       let sentIDs = Set(entryIDs(in: sentDirectory))
       return try entryIDs(in: queuedDirectory)
         .filter { !sentIDs.contains($0) }
@@ -124,11 +278,14 @@ public final class OutboxStore: @unchecked Sendable {
     guard EntryID.isValid(id) else { return nil }
     return try locked {
       try read(id: id, from: sentDirectory) ?? read(id: id, from: queuedDirectory)
+        ?? readHeld(id: id)?.entry
     }
   }
 
+  /// Queued includes entries still held: both are on the phone.
   public func counts(now: Date = Date()) throws -> Counts {
-    Counts(queued: try queued().count, sent: try sent(now: now).count)
+    Counts(
+      queued: try queued(now: now).count + held(now: now).count, sent: try sent(now: now).count)
   }
 
   /// How many unreadable files were moved aside.
@@ -137,6 +294,40 @@ public final class OutboxStore: @unchecked Sendable {
   }
 
   // MARK: - Transitions (app only)
+
+  /// Claims a queued entry right before it is handed to the Mac: from now until `markSent` or
+  /// `recordFailure` (or `endSending`), `withdraw` answers `.inFlight`. Returns the entry as it is
+  /// on disk now, or nil when it is no longer queued (withdrawn meanwhile): then it must not be
+  /// sent.
+  public func beginSending(id: String) throws -> OutboxEntry? {
+    guard EntryID.isValid(id) else { return nil }
+    return try locked {
+      guard !fileManager.fileExists(atPath: file(in: sentDirectory, id: id).path),
+        let entry = try read(id: id, from: queuedDirectory), entry.state == .queued
+      else { return nil }
+      try Data().write(to: claimFile(id))
+      return entry
+    }
+  }
+
+  /// Drops the claim (the send was not attempted).
+  public func endSending(id: String) {
+    guard EntryID.isValid(id) else { return }
+    _ = locked { try? removeIfPresent(claimFile(id)) }
+  }
+
+  private func claimFile(_ id: String) -> URL {
+    sendingDirectory.appendingPathComponent(id, isDirectory: false)
+  }
+
+  /// Caller holds the lock.
+  private func hasLiveClaim(_ id: String) -> Bool {
+    let url = claimFile(id)
+    guard fileManager.fileExists(atPath: url.path) else { return false }
+    let made = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?
+      .contentModificationDate ?? .distantPast
+    return Date().timeIntervalSince(made) < Self.sendingClaimLifetime
+  }
 
   /// queued → sent: keeps only the preview. Idempotent; nil for an unknown id.
   @discardableResult
@@ -149,10 +340,14 @@ public final class OutboxStore: @unchecked Sendable {
         try removeIfPresent(file(in: queuedDirectory, id: id))
         return sent
       }
-      guard let queued = try read(id: id, from: queuedDirectory) else { return nil }
+      guard let queued = try read(id: id, from: queuedDirectory) else {
+        try? removeIfPresent(claimFile(id))
+        return nil
+      }
       let sent = queued.markingSent(at: now, duplicate: duplicate)
       try write(sent, to: sentDirectory)
       try removeIfPresent(file(in: queuedDirectory, id: id))
+      try? removeIfPresent(claimFile(id))
       return sent
     }
   }
@@ -164,6 +359,7 @@ public final class OutboxStore: @unchecked Sendable {
   ) throws -> OutboxEntry? {
     guard EntryID.isValid(id) else { return nil }
     return try locked {
+      try? removeIfPresent(claimFile(id))
       guard !fileManager.fileExists(atPath: file(in: sentDirectory, id: id).path),
         let queued = try read(id: id, from: queuedDirectory)
       else { return nil }
@@ -189,6 +385,13 @@ public final class OutboxStore: @unchecked Sendable {
       }
       for id in Set(entryIDs(in: queuedDirectory)).intersection(sentIDs) {
         try removeIfPresent(file(in: queuedDirectory, id: id))
+      }
+      for id in Set(entryIDs(in: heldDirectory)).intersection(sentIDs) {
+        try removeIfPresent(file(in: heldDirectory, id: id))
+      }
+      for name in (try? fileManager.contentsOfDirectory(atPath: sendingDirectory.path)) ?? []
+      where !hasLiveClaim(name) {
+        try? removeIfPresent(sendingDirectory.appendingPathComponent(name))
       }
       let staleBefore = now.addingTimeInterval(-60 * 60)
       for name in (try? fileManager.contentsOfDirectory(atPath: tmpDirectory.path)) ?? [] {
@@ -244,9 +447,57 @@ public final class OutboxStore: @unchecked Sendable {
     return entry
   }
 
+  /// A held entry on disk.
+  struct HeldEntry: Codable, Equatable {
+    let untilMillis: Int64
+    let entry: OutboxEntry
+
+    enum CodingKeys: String, CodingKey {
+      case entry
+      case untilMillis = "until_ms"
+    }
+
+    func encoded() throws -> Data {
+      try entry.validate()
+      let encoder = JSONEncoder()
+      encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
+      return try encoder.encode(self)
+    }
+  }
+
+  /// Reads a held entry; an unreadable one is quarantined like any other file.
+  private func readHeld(id: String) throws -> HeldEntry? {
+    let url = file(in: heldDirectory, id: id)
+    guard let data = try? Data(contentsOf: url) else { return nil }
+    guard let held = try? JSONDecoder().decode(HeldEntry.self, from: data),
+      held.entry.entryID == id, (try? held.entry.validate()) != nil, held.entry.state == .queued
+    else {
+      let target = quarantineDirectory.appendingPathComponent(
+        "held-\(id)-\(UUID().uuidString.prefix(8)).json")
+      try? fileManager.moveItem(at: url, to: target)
+      return nil
+    }
+    return held
+  }
+
+  /// held → queued (caller holds the lock). The queued copy is written before the held
+  /// one is removed, so a crash in between leaves a queued entry (sent once, by id).
+  private func promote(_ held: HeldEntry) throws {
+    let id = held.entry.entryID
+    if !fileManager.fileExists(atPath: file(in: sentDirectory, id: id).path),
+      !fileManager.fileExists(atPath: file(in: queuedDirectory, id: id).path)
+    {
+      try write(held.entry, to: queuedDirectory)
+    }
+    try removeIfPresent(file(in: heldDirectory, id: id))
+  }
+
   private func write(_ entry: OutboxEntry, to directory: URL) throws {
-    let data = try entry.encoded()
-    let staging = tmpDirectory.appendingPathComponent("\(entry.entryID).\(UUID().uuidString).tmp")
+    try writeData(try entry.encoded(), id: entry.entryID, to: directory)
+  }
+
+  private func writeData(_ data: Data, id: String, to directory: URL) throws {
+    let staging = tmpDirectory.appendingPathComponent("\(id).\(UUID().uuidString).tmp")
     var options: Data.WritingOptions = [.withoutOverwriting]
     #if os(iOS)
       options.insert(.completeFileProtectionUntilFirstUserAuthentication)
@@ -254,7 +505,7 @@ public final class OutboxStore: @unchecked Sendable {
     try data.write(to: staging, options: options)
     do {
       try Self.synchronize(staging)
-      guard rename(staging.path, file(in: directory, id: entry.entryID).path) == 0 else {
+      guard rename(staging.path, file(in: directory, id: id).path) == 0 else {
         throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
       }
       Self.synchronizeDirectory(directory)

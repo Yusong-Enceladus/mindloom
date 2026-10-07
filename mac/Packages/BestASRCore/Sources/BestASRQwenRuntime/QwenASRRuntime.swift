@@ -5,9 +5,11 @@ import BestASRModelManager
 import BestASRRecognition
 import CryptoKit
 import Foundation
+import MindloomIdentity
 import OSLog
 
-private let qwenTimingLogger = Logger(subsystem: "com.bestasr.app", category: "qwen-final-asr")
+private let qwenTimingLogger = Logger(
+  subsystem: MindloomIdentity.logSubsystem, category: "qwen-final-asr")
 
 /// Logs one stage duration and the audio length only; never text or audio.
 func logQwenStage(_ stage: String, since start: ContinuousClock.Instant, samples: Int) {
@@ -28,17 +30,41 @@ public struct QwenASRRuntime: CandidateASRRuntime {
   private let aligner: any QwenWordsAligning
   private let speculation: QwenSpeculativeDecodeCache?
   private let dictionary = SenseVoiceDictionaryNormalizer()
+  /// Evaluation only: pass the request's prior stable segments to the model
+  /// as context. The App's runtime never sets it.
+  private let usesPriorContext: Bool
+  /// Dictionary terms go into the prompt only for audio this short (nil:
+  /// always). Spoken-form replacements apply to every result either way.
+  private let dictionaryPromptMaximumSamples: Int?
+  /// Words that merely look or sound like a dictionary entry are rewritten
+  /// to it only for audio this short (nil: always). The entries' own
+  /// spoken forms and spellings apply to every result.
+  private let dictionaryNearMatchMaximumSamples: Int?
 
   public init(
     audioLoader: any SenseVoiceAudioSampleLoading,
     backend: any QwenASRSampleTranscribing,
     aligner: any QwenWordsAligning,
-    speculation: QwenSpeculativeDecodeCache? = nil
+    speculation: QwenSpeculativeDecodeCache? = nil,
+    usesPriorContext: Bool = false,
+    dictionaryPromptMaximumSamples: Int? = nil,
+    dictionaryNearMatchMaximumSamples: Int? = nil
   ) {
     self.audioLoader = audioLoader
     self.backend = backend
     self.aligner = aligner
     self.speculation = speculation
+    self.usesPriorContext = usesPriorContext
+    self.dictionaryPromptMaximumSamples = dictionaryPromptMaximumSamples
+    self.dictionaryNearMatchMaximumSamples = dictionaryNearMatchMaximumSamples
+  }
+
+  /// The terms the model's prompt gets for `sampleCount` samples of audio.
+  public static func promptTerms(
+    _ terms: [String], sampleCount: Int, maximumSamples: Int?
+  ) -> [String] {
+    guard let maximumSamples else { return terms }
+    return sampleCount < maximumSamples ? terms : []
   }
 
   /// Drops every speculative decode, e.g. when a new dictation starts.
@@ -51,9 +77,10 @@ public struct QwenASRRuntime: CandidateASRRuntime {
     await speculation?.clearPause()
   }
 
-  /// Decodes and aligns the dictation window still being filled when the
-  /// speaker pauses (see `QwenSpeculativeDecodeCache`). Returns at once; the
-  /// work runs in the background until finished, replaced or cleared.
+  /// Decodes the dictation window still being filled when the speaker
+  /// pauses (see `QwenSpeculativeDecodeCache`). Returns at once; the work
+  /// runs in the background until finished, replaced or cleared. Text only:
+  /// the aligner stays out of memory while the user dictates.
   public func speculate(
     samples: [Float], dictionaryTerms: [String],
     onText: (@Sendable (String) async -> Void)? = nil
@@ -87,35 +114,84 @@ public struct QwenASRRuntime: CandidateASRRuntime {
     onText: (@Sendable (String) async -> Void)?
   ) -> @Sendable () async -> QwenSpeculativeDecodeCache.Decoded? {
     let backend = backend
-    let aligner = aligner
+    let promptTerms = Self.promptTerms(
+      dictionaryTerms, sampleCount: samples.count, maximumSamples: dictionaryPromptMaximumSamples)
     return {
       let started = ContinuousClock.now
       guard
         let recognized = try? await backend.transcribe(
-          samples: samples, dictionaryTerms: dictionaryTerms)
+          samples: samples, dictionaryTerms: promptTerms)
       else { return nil }
       let raw = recognized.text.trimmingCharacters(in: .whitespacesAndNewlines)
-      var words: [TranscriptAlignmentWord] = []
-      if !raw.isEmpty {
-        guard
-          let aligned = try? await aligner.align(
-            samples: samples, text: raw, language: recognized.language)
-        else { return nil }
-        words = aligned
-      }
       guard !Task.isCancelled else { return nil }
       logQwenStage("qwen-speculate", since: started, samples: samples.count)
       await onText?(raw)
       return QwenSpeculativeDecodeCache.Decoded(
-        samples: samples, dictionaryTerms: dictionaryTerms, recognized: recognized,
-        words: words)
+        samples: samples, dictionaryTerms: dictionaryTerms, recognized: recognized)
     }
   }
 
-  /// Loads the aligner in the background, so the first dictation after the
-  /// App has been idle does not pay for it on the insert path.
+  /// Loads the aligner, e.g. before timing the sentences of earlier
+  /// dictations (`timeDeferredWindow`).
   public func warmAlignment() async {
     try? await aligner.prepare()
+  }
+
+  /// Releases the aligner only. Dictation never needs it: its word timings
+  /// are computed later, with the aligner alone in memory
+  /// (`DeferredWordAlignment`).
+  public func releaseAlignment() async {
+    await aligner.release()
+    QwenRuntimeMemory.trimNow()
+  }
+
+  /// The timed sentences of one recognizer window that dictation recognized
+  /// without word timings (`ASRRecognitionContext.deferWordAlignment`):
+  /// `samples` are the window's audio, the same the recognizer read,
+  /// spanning `startNanoseconds..<endNanoseconds`; `text` is the window's
+  /// segment as stored. Offsets map onto the window exactly as `transcribe`
+  /// maps them; the caller clamps them to the stored segment. Each sentence
+  /// gets a deterministic ID (`DeferredWordAlignment.sentenceID`). Throws
+  /// when the aligner cannot cover the text; nothing is changed then.
+  public func timeDeferredWindow(
+    samples: [Float], text: String, language: String?, replacing pending: UUID,
+    startNanoseconds: UInt64, endNanoseconds: UInt64
+  ) async throws -> [CandidateRuntimeSegment] {
+    guard !samples.isEmpty, samples.count <= QwenASRPinnedArtifact.maximumSamples,
+      endNanoseconds > startNanoseconds,
+      !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    else { throw qwenFailure(.invalidRequest, "qwen-deferred-alignment-input-invalid", false) }
+    do {
+      let started = ContinuousClock.now
+      let words = try await aligner.align(samples: samples, text: text, language: language)
+      logQwenStage("qwen-align-deferred", since: started, samples: samples.count)
+      let duration = Double(samples.count) / 16_000
+      let phrases = try AlignedTranscriptAssembler().assemble(
+        text: text, words: words, durationSeconds: duration,
+        quantizationSeconds: QwenAlignmentPinnedArtifact.quantizationSeconds)
+      let span = endNanoseconds - startNanoseconds
+      func offset(_ seconds: Double) -> UInt64 {
+        min(span, UInt64((seconds / duration * Double(span)).rounded()))
+      }
+      return try phrases.enumerated().map { index, phrase in
+        let sentence = phrase.text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let start = startNanoseconds + offset(phrase.startSeconds)
+        let end = startNanoseconds + offset(phrase.endSeconds)
+        guard !sentence.isEmpty, start < end else {
+          throw qwenFailure(.transientRuntime, "qwen-deferred-alignment-segment-invalid", false)
+        }
+        return CandidateRuntimeSegment(
+          segmentID: DeferredWordAlignment.sentenceID(
+            replacing: pending, ordinal: index, startNanoseconds: start, endNanoseconds: end,
+            text: sentence),
+          monotonicStartNanoseconds: start, monotonicEndNanoseconds: end, text: sentence,
+          confidence: nil)
+      }
+    } catch is CancellationError { throw InferenceEngineError.cancelled } catch let error
+      as InferenceEngineError
+    { throw error } catch {
+      throw qwenFailure(.transientRuntime, "qwen-deferred-alignment-invalid", false)
+    }
   }
 
   /// Releases every model this runtime holds. The next dictation loads them
@@ -172,7 +248,11 @@ public struct QwenASRRuntime: CandidateASRRuntime {
     do {
       let decodeStarted = ContinuousClock.now
       let terms = request.recognitionContext.dictionaryTerms
-      let speculated = await speculation?.take(matching: samples, dictionaryTerms: terms)
+      let prior =
+        usesPriorContext
+        ? request.recognitionContext.priorStableSegments.map(\.text).joined(separator: " ") : ""
+      let speculated =
+        prior.isEmpty ? await speculation?.take(matching: samples, dictionaryTerms: terms) : nil
       if speculation != nil, speculated == nil, await speculation?.hadCandidate == true {
         qwenTimingLogger.notice("speculation not reused: audio or dictionary differs")
       }
@@ -181,7 +261,11 @@ public struct QwenASRRuntime: CandidateASRRuntime {
         result = speculated.recognized
         logQwenStage("qwen-speculative-hit", since: decodeStarted, samples: samples.count)
       } else {
-        result = try await backend.transcribe(samples: samples, dictionaryTerms: terms)
+        result = try await backend.transcribe(
+          samples: samples,
+          dictionaryTerms: Self.promptTerms(
+            terms, sampleCount: samples.count, maximumSamples: dictionaryPromptMaximumSamples),
+          priorText: prior)
         logQwenStage("qwen-decode", since: decodeStarted, samples: samples.count)
       }
       try InferenceCancellation.check()
@@ -191,14 +275,36 @@ public struct QwenASRRuntime: CandidateASRRuntime {
           revisionID: identifier("revision", request: request, text: ""), segments: [],
           detectedLanguage: canonicalLanguage(result.language))
       }
-      let words: [TranscriptAlignmentWord]
-      if let speculated {
-        words = speculated.words
-      } else {
-        let alignStarted = ContinuousClock.now
-        words = try await aligner.align(samples: samples, text: raw, language: result.language)
-        logQwenStage("qwen-align", since: alignStarted, samples: samples.count)
+      let nearMatches = dictionaryNearMatchMaximumSamples.map { samples.count < $0 } ?? true
+      if request.recognitionContext.deferWordAlignment {
+        // Dictation: the text now, its sentences' timings later, with the
+        // aligner alone in memory (`DeferredWordAlignment`). One segment
+        // spans the whole window.
+        let text = dictionary.normalize(
+          raw, dictionaryTerms: request.recognitionContext.dictionaryTerms,
+          dictionaryHints: request.recognitionContext.dictionaryHints, nearMatches: nearMatches
+        ).trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !text.isEmpty else {
+          return CandidateRuntimeOutput(
+            revisionID: identifier("revision-words-deferred", request: request, text: ""),
+            segments: [], detectedLanguage: canonicalLanguage(result.language))
+        }
+        let segment = CandidateRuntimeSegment(
+          segmentID: DeferredWordAlignment.pendingSegmentID(
+            seed: identifier("segment-words-deferred", request: request, text: text)
+              .uuidString),
+          monotonicStartNanoseconds: request.audio.monotonicStartNanoseconds,
+          monotonicEndNanoseconds: request.audio.monotonicEndNanoseconds,
+          text: text, confidence: nil)
+        return CandidateRuntimeOutput(
+          revisionID: identifier("revision-words-deferred", request: request, text: raw),
+          segments: [segment], detectedLanguage: canonicalLanguage(result.language))
       }
+      // A decode taken from the speculation cache is text only; a request
+      // that wants timings aligns it here.
+      let alignStarted = ContinuousClock.now
+      let words = try await aligner.align(samples: samples, text: raw, language: result.language)
+      logQwenStage("qwen-align", since: alignStarted, samples: samples.count)
       try InferenceCancellation.check()
       let duration = Double(samples.count) / 16_000
       let phrases = try AlignedTranscriptAssembler().assemble(
@@ -212,7 +318,8 @@ public struct QwenASRRuntime: CandidateASRRuntime {
         let text = dictionary.normalize(
           phrase.text.trimmingCharacters(in: .whitespacesAndNewlines),
           dictionaryTerms: request.recognitionContext.dictionaryTerms,
-          dictionaryHints: request.recognitionContext.dictionaryHints)
+          dictionaryHints: request.recognitionContext.dictionaryHints,
+          nearMatches: nearMatches)
         let start = offset(phrase.startSeconds)
         let end = offset(phrase.endSeconds)
         guard !text.isEmpty, start < end else {
@@ -278,22 +385,43 @@ public enum QwenASRRuntimeFactory {
       audioLoader: try Float32PCMFileLoader(
         rootDirectory: audioAssetRoot,
         maximumSamples: QwenASRPinnedArtifact.maximumSamples),
-      speculation: QwenSpeculativeDecodeCache())
+      speculation: QwenSpeculativeDecodeCache(),
+      dictionaryPromptMaximumSamples: QwenASRPinnedArtifact.dictionaryPromptMaximumSamples,
+      dictionaryNearMatchMaximumSamples: QwenASRPinnedArtifact.dictionaryPromptMaximumSamples)
   }
 
   /// The same verified artifacts and backends as the App, with a
   /// caller-supplied sample loader for offline evaluation over local files.
+  /// The dictionary length rule defaults to the App's (`make`), so an
+  /// evaluation that does not name it measures what ships; nil means the
+  /// dictionary applies at every length (before 2026-10-06).
   public static func makeForEvaluation(
     modelManager: LocalModelManager,
-    audioLoader: any SenseVoiceAudioSampleLoading
+    audioLoader: any SenseVoiceAudioSampleLoading,
+    usesPriorContext: Bool = false,
+    recognizerDirectory: URL? = nil,
+    dictionaryPromptMaximumSamples: Int? = QwenASRPinnedArtifact.dictionaryPromptMaximumSamples,
+    dictionaryNearMatchMaximumSamples: Int? = QwenASRPinnedArtifact.dictionaryPromptMaximumSamples
   ) async throws -> QwenASRRuntime {
-    try await make(modelManager: modelManager, audioLoader: audioLoader)
+    try await make(
+      modelManager: modelManager, audioLoader: audioLoader, usesPriorContext: usesPriorContext,
+      recognizerDirectory: recognizerDirectory,
+      dictionaryPromptMaximumSamples: dictionaryPromptMaximumSamples,
+      dictionaryNearMatchMaximumSamples: dictionaryNearMatchMaximumSamples)
   }
 
+  /// `recognizerDirectory` (evaluation only) loads a different recognizer
+  /// build — another quantization of the same model — from a local folder
+  /// instead of the verified active artifact; the aligner stays the pinned
+  /// one.
   private static func make(
     modelManager: LocalModelManager,
     audioLoader: any SenseVoiceAudioSampleLoading,
-    speculation: QwenSpeculativeDecodeCache? = nil
+    speculation: QwenSpeculativeDecodeCache? = nil,
+    usesPriorContext: Bool = false,
+    recognizerDirectory: URL? = nil,
+    dictionaryPromptMaximumSamples: Int? = nil,
+    dictionaryNearMatchMaximumSamples: Int? = nil
   ) async throws -> QwenASRRuntime {
     let asr = try await modelManager.discoverActive(
       artifactID: QwenASRPinnedArtifact.artifactID, healthCheck: FileSetModelHealthCheck())
@@ -306,13 +434,16 @@ public enum QwenASRRuntimeFactory {
     else {
       throw qwenFailure(.incompatibleArtifact, "qwen-final-active-artifact-mismatch", true)
     }
-    let backend = QwenASRBackend(verifiedModelDirectory: asr.directory)
+    let backend = QwenASRBackend(verifiedModelDirectory: recognizerDirectory ?? asr.directory)
     let aligner = QwenForcedAlignmentBackend(verifiedModelDirectory: alignment.directory)
     try await backend.prepare()
-    // Not the aligner: word timestamps are history metadata, so its 1.3 GB
-    // loads when a dictation actually needs them, warmed in the background
-    // as the user starts speaking.
+    // Not the aligner: it loads only when word timings are computed, which
+    // for dictation is after the recognizer has left memory
+    // (`DeferredWordAlignment`).
     return QwenASRRuntime(
-      audioLoader: audioLoader, backend: backend, aligner: aligner, speculation: speculation)
+      audioLoader: audioLoader, backend: backend, aligner: aligner, speculation: speculation,
+      usesPriorContext: usesPriorContext,
+      dictionaryPromptMaximumSamples: dictionaryPromptMaximumSamples,
+      dictionaryNearMatchMaximumSamples: dictionaryNearMatchMaximumSamples)
   }
 }

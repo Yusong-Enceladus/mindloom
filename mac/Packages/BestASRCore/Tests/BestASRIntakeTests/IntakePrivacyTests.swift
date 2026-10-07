@@ -284,7 +284,7 @@ final class IntakePrivacyTests: XCTestCase {
         "bundle.zip › inner.zip › deep.txt [document]",
         "bundle.zip › inner.zip › deeper.zip [file, local]",
         "bundle.zip › blob.bin [file, local]",
-        "rejected bundle.zip › secret.txt：加密或无法读取，只保存在压缩包里",
+        "rejected bundle.zip › secret.txt：已加密或无法读取，保留在压缩包中",
       ])
 
     // Through the real store with the link on: only the readable members

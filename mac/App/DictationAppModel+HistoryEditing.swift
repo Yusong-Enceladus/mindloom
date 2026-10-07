@@ -296,7 +296,8 @@ extension DictationAppModel {
       return
     }
     history.reprocessingInProgress = true
-    history.detailStatusMessage = "正在保存新的人工校对版本；旧版本不会被覆盖…"
+    history.detailStatusMessage = "正在保存新的校对版本；旧版本会保留…"
+    let original = selectedHistoryCurrentTranscript?.content
     Task { [weak self] in
       guard let self else { return }
       defer { history.reprocessingInProgress = false }
@@ -305,6 +306,8 @@ extension DictationAppModel {
           sessionID: sessionID,
           content: content
         )
+        // Words the user fixed teach the dictionary (收1-8).
+        if let original { learnFromTranscriptEdit(original: original, edited: edited.content) }
         try? await repository.setAutomaticSessionTitle(sessionID: sessionID, from: edited.content)
         history.detailStatusMessage =
           "人工校对已保存为新版本；旧逐字稿、时间戳和原音仍完整保留"
@@ -383,7 +386,7 @@ extension DictationAppModel {
       history.selectedHistoryTranscripts.append(edited)
       history.transcriptEditDraft = edited.content
       history.detailStatusMessage =
-        "修改已保存；播放时间点、人物线索和原音都保持不变"
+        "修改已保存；播放时间点、说话人信息和原音都保持不变"
       completion?(true)
       return
     }
@@ -404,10 +407,11 @@ extension DictationAppModel {
           segmentID: segment.id,
           replacement: text
         )
+        learnFromTranscriptEdit(original: segment.text, edited: text)
         try? await repository.setAutomaticSessionTitle(
           sessionID: transcript.sessionID, from: edited.content
         )
-        history.detailStatusMessage = "修改已保存；播放时间点、人物线索和原音都保持不变"
+        history.detailStatusMessage = "修改已保存；播放时间点、说话人信息和原音都保持不变"
         await refreshSelectedSpeakerDetails(sessionID: transcript.sessionID)
         await refreshHistoryItems(
           preserveStatus: true,
@@ -431,7 +435,7 @@ extension DictationAppModel {
       history.historyItems.first(where: { $0.sessionID == sessionID })?
         .sourceAudioRetained == true
     else {
-      history.detailStatusMessage = "本地语音识别组件未就绪，或这条记录的原音已由你删除"
+      history.detailStatusMessage = "本地语音识别模型未就绪，或这条记录的录音已删除"
       return
     }
     history.reprocessingInProgress = true
@@ -484,7 +488,7 @@ extension DictationAppModel {
       history.generatingHistoryDocumentTaskID == nil
     else { return }
     guard polishRuntimeReady, let localRuntime else {
-      history.detailStatusMessage = "请先安装并校验本地文字整理组件"
+      history.detailStatusMessage = "请先安装并校验本地文字整理模型"
       return
     }
     history.generatingHistoryDocumentTaskID = taskID

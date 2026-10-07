@@ -2,20 +2,22 @@ import MindloomPhoneKit
 import SwiftUI
 import UIKit
 
-/// 织机键盘 (PHONE-CONTRACT §1–2). A keyboard extension cannot use the
-/// microphone, so the mic key asks the app's voice session to listen and
-/// inserts the final text it returns; each inserted final is sealed into
-/// the outbox. Text typed with other keyboards is never seen.
+/// The Mindloom keyboard (PHONE-SPEC §5.13): our 212 pt panel over the system's keyboard
+/// backdrop. A keyboard extension cannot use the microphone, so the speak key asks the app's voice
+/// session to listen; the live words go into the host field as marked text and the final replaces
+/// them. Text typed with other keyboards is never seen.
 final class KeyboardViewController: UIInputViewController {
+  static let panelHeight: CGFloat = 212
+
   private var model: KeyboardModel!
-  private var host: UIHostingController<KeyboardRootView>?
+  private var host: UIHostingController<KeyboardPanel>?
+  private var heightConstraint: NSLayoutConstraint?
 
   override func viewDidLoad() {
     super.viewDidLoad()
     let model = KeyboardModel(input: self)
     self.model = model
-    let host = UIHostingController(
-      rootView: KeyboardRootView(model: model, globe: GlobeKey(controller: self)))
+    let host = UIHostingController(rootView: KeyboardPanel(model: model))
     host.view.backgroundColor = .clear
     host.view.translatesAutoresizingMaskIntoConstraints = false
     host.sizingOptions = []
@@ -29,9 +31,13 @@ final class KeyboardViewController: UIInputViewController {
     ])
     host.didMove(toParent: self)
     self.host = host
-    let height = view.heightAnchor.constraint(equalToConstant: 272)
+    // The punctuation keys' pop-ups rise above the panel, as the system keyboard's do.
+    view.clipsToBounds = false
+    host.view.clipsToBounds = false
+    let height = view.heightAnchor.constraint(equalToConstant: Self.panelHeight)
     height.priority = UILayoutPriority(999)
     height.isActive = true
+    heightConstraint = height
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -39,9 +45,14 @@ final class KeyboardViewController: UIInputViewController {
     model.appear()
   }
 
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
     model.disappear()
+  }
+
+  override func viewWillLayoutSubviews() {
+    super.viewWillLayoutSubviews()
+    model.width = view.bounds.width > 0 ? view.bounds.width : model.width
   }
 
   override func textDidChange(_ textInput: (any UITextInput)?) {

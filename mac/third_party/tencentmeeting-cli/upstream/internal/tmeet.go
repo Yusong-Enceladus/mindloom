@@ -1,0 +1,80 @@
+package internal
+
+import (
+	"context"
+	"os"
+
+	"tmeet/internal/common"
+	"tmeet/internal/config"
+	"tmeet/internal/core"
+	"tmeet/internal/core/serializable"
+	"tmeet/internal/core/thttp"
+	"tmeet/internal/exception"
+	"tmeet/internal/log"
+)
+
+// Tmeet is the Tencent Meeting client.
+type Tmeet struct {
+	TCtx       context.Context
+	RestClient thttp.Client
+	CGIClient  thttp.Client
+	SystemInfo *common.SystemInfo
+	UserConfig *config.UserConfig
+	CLIVersion string
+	CmdPath    string
+}
+
+// NewTmeet creates a new Tmeet instance.
+func NewTmeet() (*Tmeet, error) {
+	ctx := context.WithValue(context.Background(), log.CtxTraceIDKey, log.GenerateTraceID())
+
+	// Create the config directory.
+	configDir := config.GetConfigDir()
+	if err := os.MkdirAll(configDir, 0700); err != nil {
+		return nil, exception.InitializeFailedError.With("initial config dir:%s failed, reason:%s", configDir, err.Error())
+	}
+
+	// Create the REST client.
+	customClt, err := thttp.NewClient(
+		core.GetOpenEndpoint(),
+		thttp.WithProtocol(thttp.DefaultHttpsProtocol),
+		thttp.WithSerializer(serializable.DefaultSerializer),
+		thttp.WithClient(thttp.DefaultHttpClient),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Create the CGI client.
+	normalClt, err := thttp.NewClient(
+		core.GetCGIEndpoint(),
+		thttp.WithProtocol(thttp.DefaultHttpsProtocol),
+		thttp.WithSerializer(serializable.DefaultSerializer),
+		thttp.WithClient(thttp.DefaultHttpClient),
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	// Load user config first.
+	usr, err := config.GetUserConfig()
+	if exception.Is(err, exception.ParseUserConfigError) ||
+		exception.Is(err, exception.GetUserConfigUnknownError) {
+		return nil, err
+	}
+
+	// Load agent config (plaintext, non-sensitive); missing file is treated as "not set".
+	// Failure to read it should not block CLI startup.
+	agentCfg, _ := config.GetAgentConfig()
+
+	// Build system info; env takes precedence, AgentConfig serves as fallback for Agent/Model.
+	systemInfo := common.GetSystemInfo(agentCfg)
+
+	return &Tmeet{
+		TCtx:       ctx,
+		RestClient: customClt,
+		CGIClient:  normalClt,
+		SystemInfo: systemInfo,
+		UserConfig: usr,
+	}, nil
+}

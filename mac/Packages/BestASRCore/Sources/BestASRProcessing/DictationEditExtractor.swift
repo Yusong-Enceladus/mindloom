@@ -13,6 +13,27 @@ public struct DictationEditPair: Equatable, Sendable {
   }
 }
 
+/// One short substitution and where it sits in the inserted text (`source`)
+/// and in what the field now shows of it (`target`), in characters.
+public struct DictationEditRun: Equatable, Sendable {
+  public let source: Range<Int>
+  public let target: Range<Int>
+  public let pair: DictationEditPair
+}
+
+/// A dictation as inserted and as the field now shows it.
+public struct DictationEdits: Equatable, Sendable {
+  public let source: [Character]
+  public let target: [Character]
+  /// Short substitutions, in order.
+  public let runs: [DictationEditRun]
+  /// Differing runs that were not short substitutions: text added, removed
+  /// or rewritten.
+  public let rejectedRuns: Int
+
+  public var pairs: [DictationEditPair] { runs.map(\.pair) }
+}
+
 /// Recovers what the user fixed in a dictation the App had just inserted.
 ///
 /// The field's later contents are whatever the user has done since: they may
@@ -21,8 +42,15 @@ public struct DictationEditPair: Equatable, Sendable {
 /// rather than guessed at, because a wrong pair would teach the recognizer a
 /// word the user never said.
 public enum DictationEditExtractor {
-  /// The inserted text must still be this recognizable in the field.
+  /// The inserted text must still be this recognizable in the field...
   public static let minimumSimilarity = 0.85
+  /// ...or, in a short dictation, differ in at most this many characters
+  /// with at least `minimumShortContext` of them unchanged and the copy
+  /// about as long as the dictation: one name fixed in 「发给王伟看看」 is a
+  /// third of it (review 10-6 S14). What changed must still be a sound-alike
+  /// word or two (`CorrectionLearning`), so unrelated text teaches nothing.
+  public static let maximumShortEditCharacters = 4
+  public static let minimumShortContext = 4
   /// Longer replacements are rewrites, not corrections of a misheard word.
   public static let maximumPairCharacters = 12
   /// Dictations longer than this are not searched for. A field that large is
@@ -32,17 +60,28 @@ public enum DictationEditExtractor {
   /// Pairs of (recognized, corrected) words, or nothing when the field no
   /// longer holds a recognizable copy of the dictation.
   public static func pairs(inserted: String, fieldContents: String) -> [DictationEditPair] {
+    edits(inserted: inserted, fieldContents: fieldContents)?.pairs ?? []
+  }
+
+  /// The dictation as inserted and as it now reads in the field, character
+  /// by character, with each short substitution's place in both: what
+  /// `CorrectionLearning` widens to whole words. Nil when the field holds no
+  /// recognizable copy of the dictation or the user changed nothing.
+  public static func edits(inserted: String, fieldContents: String) -> DictationEdits? {
     let source = Array(inserted.trimmingCharacters(in: .whitespacesAndNewlines))
     let field = Array(fieldContents)
     guard source.count >= 2, source.count <= maximumComparedCharacters,
       !field.isEmpty, field.count <= maximumComparedCharacters * 3
-    else { return [] }
+    else { return nil }
     var codes: [Character: Int32] = [:]
     let sourceCodes = encode(source, into: &codes)
     let fieldCodes = encode(field, into: &codes)
-    guard let span = locate(sourceCodes, in: fieldCodes) else { return [] }
-    guard span.codes != sourceCodes else { return [] }
-    return substitutions(from: source, sourceCodes, to: Array(field[span.range]), span.codes)
+    guard let span = locate(sourceCodes, in: fieldCodes) else { return nil }
+    guard span.codes != sourceCodes else { return nil }
+    let target = Array(field[span.range])
+    let found = runs(from: source, sourceCodes, to: target, span.codes)
+    return DictationEdits(
+      source: source, target: target, runs: found.runs, rejectedRuns: found.rejected)
   }
 
   private static func encode(_ text: [Character], into codes: inout [Character: Int32]) -> [Int32] {
@@ -72,9 +111,13 @@ public enum DictationEditExtractor {
         best = (score, (start + matched.lowerBound)..<(start + matched.upperBound))
       }
     }
-    guard let best, Double(best.score) / Double(source.count) >= minimumSimilarity else {
-      return nil
-    }
+    guard let best else { return nil }
+    let missing = source.count - best.score
+    let similar = Double(best.score) / Double(source.count) >= minimumSimilarity
+    let shortEdit =
+      missing <= maximumShortEditCharacters && best.score >= minimumShortContext
+      && abs(best.range.count - source.count) <= missing
+    guard similar || shortEdit else { return nil }
     return (best.range, Array(field[best.range]))
   }
 
@@ -144,7 +187,17 @@ public enum DictationEditExtractor {
     from source: [Character], _ sourceCodes: [Int32],
     to target: [Character], _ targetCodes: [Int32]
   ) -> [DictationEditPair] {
-    var pairs: [DictationEditPair] = []
+    runs(from: source, sourceCodes, to: target, targetCodes).runs.map(\.pair)
+  }
+
+  /// The differing runs, and how many differing runs were not short
+  /// substitutions (insertions, deletions, rewrites).
+  static func runs(
+    from source: [Character], _ sourceCodes: [Int32],
+    to target: [Character], _ targetCodes: [Int32]
+  ) -> (runs: [DictationEditRun], rejected: Int) {
+    var pairs: [DictationEditRun] = []
+    var rejected = 0
     let table = SubsequenceTable(sourceCodes, targetCodes)
     var left = 0
     var right = 0
@@ -176,10 +229,18 @@ public enum DictationEditExtractor {
         recognized.count <= maximumPairCharacters, corrected.count <= maximumPairCharacters,
         recognized.contains(where: { $0.isLetter || $0.isNumber }),
         corrected.contains(where: { $0.isLetter || $0.isNumber })
-      else { continue }
-      pairs.append(DictationEditPair(recognized: recognized, corrected: corrected))
+      else {
+        if (recognized + corrected).contains(where: { $0.isLetter || $0.isNumber }) {
+          rejected += 1
+        }
+        continue
+      }
+      pairs.append(
+        DictationEditRun(
+          source: runStartLeft..<left, target: runStartRight..<right,
+          pair: DictationEditPair(recognized: recognized, corrected: corrected)))
     }
-    return pairs
+    return (pairs, rejected)
   }
 
 }

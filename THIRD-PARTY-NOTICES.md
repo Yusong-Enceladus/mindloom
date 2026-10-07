@@ -30,6 +30,13 @@
 
 仅开发或探针使用、不随 App：XcodeGen 2.45.3（MIT）、SwiftSyntax 600.0.1、swift-asn1、swift-system（Apache-2.0）、CMake 4.4.0（BSD-3-Clause）、SQLCipher.swift 4.16.0（BSD 风格社区版，仅 SPIKE-SEC-001）、sherpa-onnx 1.13.2（Apache-2.0，传递依赖 NOTICE 清单尚未完成，仅外部探针）、Argmax OSS / WhisperKit 1.0.0（MIT，仅评测）。
 
+## 决赛更新新增（Mac 端）
+
+- **tencentmeeting-cli（tmeet）v1.0.18**（MIT，Copyright (C) 2026 Tencent）：腾讯会议入口用的腾讯官方命令行工具。上游源码原样放在 [`mac/third_party/tencentmeeting-cli/upstream/`](mac/third_party/tencentmeeting-cli/README.md)（含上游的 LICENSE，固定到 commit `e631b355da2b001d24b82f453b65d96f39c59865`，`upstream.sha256` 逐个文件核对），另有三个补丁（`patches/`：不上报崩溃、刷新登录遇到网络错误时不删登录、登录密钥经继承的文件描述符传入）。补丁是对 MIT 许可代码的修改，随上游一起按 MIT 分发，补丁里新增的测试按本仓库的 Apache-2.0 发布。App 里的 tmeet 二进制静态链接的 Go 代码和许可：Go 标准库与运行时（BSD-3-Clause）、spf13/cobra（Apache-2.0）、spf13/pflag（BSD-3-Clause）、gorilla/websocket（BSD-2-Clause）、itchyny/gojq 与 timefmt-go（MIT）、zalando/go-keyring（MIT）、google.golang.org/protobuf（BSD-3-Clause）；全文在 [mac/Legal/tmeet-Go-LICENSES.txt](mac/Legal/tmeet-Go-LICENSES.txt) 和 [mac/Legal/tencentmeeting-cli-LICENSE-MIT.txt](mac/Legal/tencentmeeting-cli-LICENSE-MIT.txt)。它在运行时连接 `api.meeting.qq.com`、`work.medialab.qq.com` 和 `meeting.tencent.com`，只在入口打开时；Go 工具链只在构建时需要，不随仓库分发。
+- **从网络补充信息**（`mac/Packages/MindloomLookup`，没有第三方代码依赖，只用 Foundation、CryptoKit、Security、PDFKit）：运行时从公开来源取数据，不分发其内容：arXiv API、Crossref、Wikipedia、OpenStreetMap，以及 ccf-deadlines 的会议表（`ccfddl.com`，MIT，运行时下载，不入库）；用户自己填密钥的搜索服务（Brave、Tavily、Exa、Perplexity、百度千帆、博查、智谱）只在用户填了密钥后才连。各来源的使用条款由使用者自己遵守。
+- **按意思找的向量模型**：Qwen3-Embedding-0.6B 的 MLX 4 位（DWQ）转换（`mlx-community`，Apache-2.0，Copyright 2025 Alibaba Cloud）；可选下载、不随 App 分发，没装时搜索按字进行。
+- **标语**（`mac/Packages/MindloomDesign`、[mac/docs/TAGLINES.md](mac/docs/TAGLINES.md)）：引文只用已进入公有领域的作品；游戏或影视的句式只借句式、不用原句；其余是原创句子。
+
 ## Spark 端整理服务依赖
 
 在 `spark/pyproject.toml` 中声明，安装时从 PyPI 获取，不随仓库分发：FastAPI（MIT）、Uvicorn（BSD-3-Clause）、Pydantic（MIT）、HTTPX（BSD-3-Clause）、PyYAML（MIT）、sqlcipher3-wheels 0.5.7（zlib/libpng，Python 绑定；轮子内含 SQLCipher 4.12 社区版，BSD-3-Clause，及其自带的 SQLite，公有领域；不联网）、pytest（MIT，仅测试）、Pillow（MIT-CMU / HPND，仅评测截图工具）。

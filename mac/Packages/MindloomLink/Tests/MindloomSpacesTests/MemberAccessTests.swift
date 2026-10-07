@@ -274,7 +274,7 @@ final class MemberAccessTests: XCTestCase {
     XCTAssertEqual(
       audit.entries.map(\.action),
       ["access.ticket", "access.enroll", "access.ticket", "access.revoke"])
-    XCTAssertEqual(TeamAccess.message("bad_secret"), "邀请码不对")
+    XCTAssertEqual(TeamAccess.message("bad_secret"), "邀请码有误")
   }
 
   func testMemberAccessRecordSurvivesTheFileStoreAndIsSecret() throws {

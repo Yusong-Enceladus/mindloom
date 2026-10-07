@@ -224,7 +224,8 @@ final class BoundedDictationASRAdapterTests: XCTestCase {
       dictionaryHints: (0..<100).map { index in
         ASRDictionaryHint(
           canonicalForm: "canonical-\(index)",
-          spokenForms: (0..<40).map { "spoken-\(index)-\($0)" }
+          spokenForms: (0..<40).map { "spoken-\(index)-\($0)" },
+          explicitOnly: index == 1
         )
       }
     )
@@ -245,6 +246,11 @@ final class BoundedDictationASRAdapterTests: XCTestCase {
       calls[0].recognitionContext.dictionaryHints.first?.spokenForms.count,
       32
     )
+    // Regression (v12 storage): a replacement-only word stays replacement
+    // only on its way to the runtime.
+    XCTAssertEqual(
+      calls[0].recognitionContext.dictionaryHints.map(\.explicitOnly).prefix(3),
+      [false, true, false])
     XCTAssertEqual(calls[1].recognitionContext.priorStableSegments.map(\.text), ["hello"])
   }
 

@@ -50,9 +50,9 @@ enum SpaceAudioSource {
         guard url.standardizedFileURL.path.hasPrefix(root.standardizedFileURL.path + "/") else {
           continue
         }
-        let data = try Data(contentsOf: url, options: [.mappedIfSafe])
         let buffer = try LocalSessionAudioPlayer.decoded(
-          data, descriptor: descriptor, expectedDigest: range.contentDigest, frameOffset: 0)
+          try LocalSessionAudioPlayer.storedBytes(at: url, range: range, descriptor: descriptor),
+          descriptor: descriptor, frameOffset: 0)
         guard let channels = buffer.floatChannelData else { continue }
         let frames = Int(buffer.frameLength)
         let count = Int(buffer.format.channelCount)

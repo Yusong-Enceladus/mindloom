@@ -66,15 +66,11 @@ final class SpacesModel: ObservableObject {
     guard self.app == nil else { return }
     self.app = app
     self.memory = memory
+    screen.myName = Self.myName
     // Agents see the spaces' matters, labelled (AGENT-CONTRACT × SPACES-CONTRACT).
     app.agentAccess.spaces = self
-    // 整根绳 offers the rope my matter is on (the matter map's ropes).
-    ropeOf = { [weak memory] eventID in
-      guard let ropes = memory?.projection?.ropes,
-        let rope = ropes.first(where: { $0.children.contains(eventID) })
-      else { return nil }
-      return (rope.id, rope.title, SpaceRopeRule.matters(of: rope.id, in: ropes).count)
-    }
+    // v11: no rope is offered when sharing (relations are not shown);
+    // `ropeOf` stays nil. Stored rope rules still run as they were set.
     // Nothing an earlier launch decrypted outlives it; nor this one.
     originals.purgeAll()
     NotificationCenter.default.publisher(for: NSApplication.willTerminateNotification)
@@ -124,14 +120,16 @@ final class SpacesModel: ObservableObject {
       } ?? .refusedNotSynthetic
     guard verdict == .allowed else {
       refused = true
-      screen.status = "开发阶段只在合成演示资料库里使用共享空间；你的真实资料库不会发出任何内容"
+      screen.status = "开发阶段，共享空间在合成演示资料库中使用；此资料库的内容保留在这台 Mac 上"
       return nil
     }
-    let stores = SpaceStores.keychain(
+    // A synthetic root keeps its space secrets in files of its own (review
+    // 10-5d R12); the real library in the login Keychain.
+    let stores = SpaceStores.forLibrary(
       dataRoot: dataRoot, sealKeys: KeychainPhoneSealKeyStore(dataRoot: dataRoot))
     self.stores = stores
     guard let device = try? stores.loadOrCreateDevice() else {
-      screen.status = "钥匙串暂不可用；共享空间没有打开"
+      screen.status = "这台 Mac 暂时无法保存，共享空间未打开"
       return nil
     }
     let transport: any SpaceTransport
@@ -150,7 +148,7 @@ final class SpacesModel: ObservableObject {
       }
       self.bridge = bridge
       transport = bridge
-      screen.hostLabel = access.team.map { "「\($0)」的整理设备" } ?? "团队的整理设备"
+      screen.hostLabel = access.team.map { "“\($0)”的 DGX Spark" } ?? "团队的 DGX Spark"
     } else {
       guard app?.remoteOrganizer != nil else { return nil }
       // The space routes ride the organizing link's own forward: the port is
@@ -192,7 +190,7 @@ final class SpacesModel: ObservableObject {
       if isTeamMember, Date().timeIntervalSince(lastAdopt) > 120 {
         lastAdopt = Date()
         if let adopted = try? await engine.adoptSpaces(), !adopted.isEmpty {
-          screen.status = "这台 Mac 已加进 \(adopted.count) 个共享空间（由你的另一台 Mac 添加）"
+          screen.status = "这台 Mac 已加入 \(adopted.count) 个共享空间（由你的另一台 Mac 添加）"
         }
       }
       for state in (try? await engine.allStates()) ?? [] {
@@ -214,7 +212,7 @@ final class SpacesModel: ObservableObject {
       switch state.membership {
       case .pending:
         let after = try await engine.refreshJoin(id)
-        if after.membership == .active { screen.status = "已加入「\(after.name)」" }
+        if after.membership == .active { screen.status = "已加入“\(after.name)”" }
       case .rejected:
         break
       case .active:
@@ -258,9 +256,9 @@ final class SpacesModel: ObservableObject {
     } catch SpaceClientError.accessEnded {
       if (try? await engine.state(id)) != nil {
         // The Spark said so without a member's signed record: nothing deleted.
-        screen.status = "整理设备说你已不在「\(state.name)」里，但没有成员签名的记录；内容先留在这台 Mac 上"
+        screen.status = "DGX Spark 显示你已不在“\(state.name)”中，但没有成员签名的记录；内容暂时保留在这台 Mac 上"
       } else {
-        screen.status = "你已不在「\(state.name)」里；这台 Mac 上它的内容和钥匙已删除"
+        screen.status = "你已不在“\(state.name)”中；这台 Mac 上它的内容已删除"
         if screen.scope == .space(id) { setScope(.mine) }
       }
     } catch {
@@ -298,7 +296,7 @@ final class SpacesModel: ObservableObject {
     let gone = sources.filter { !present.contains($0) && UUID(uuidString: $0) != nil }
     guard !gone.isEmpty else { return }
     if let queued = try? await engine.localItemsDeleted(Set(gone)), queued > 0 {
-      screen.status = "你删掉的 \(queued) 条也会从共享空间里撤回（过了撤回期限的会变成下架申请）"
+      screen.status = "你删除的 \(queued) 条内容也会从共享空间中撤回（已过撤回期限的将提交撤回申请）"
     }
   }
 
@@ -370,7 +368,7 @@ final class SpacesModel: ObservableObject {
     }
     if !waiting.isEmpty {
       screen.status =
-        "共享的事有新素材等你确认（\(Set(waiting).sorted().joined(separator: "、"))）：打开那件事，点「共享这件事…」"
+        "共享的事有新内容等待你确认（\(Set(waiting).sorted().joined(separator: "、"))）：请打开那件事，点按“共享这件事…”"
     }
   }
 
@@ -543,7 +541,7 @@ final class SpacesModel: ObservableObject {
 
   private func run(_ success: String?, _ work: @escaping (SpaceEngine) async throws -> Void) {
     guard let engine = ensureEngine() else {
-      screen.status = "共享空间还没有准备好（先打开整理设备链路）"
+      screen.status = "共享空间尚未就绪。请先打开 DGX Spark 连接。"
       return
     }
     screen.busy = true
@@ -551,62 +549,54 @@ final class SpacesModel: ObservableObject {
       do {
         try await work(engine)
         self?.screen.status = success
+        // v11: what happened is said in a toast (MAC-SPEC §7.6).
+        if let success {
+          CaptureFeedback.shared.show(MemoryToast(success, icon: .symbol("person.2")))
+        }
       } catch {
-        self?.screen.status = Self.message(error)
+        let message = Self.message(error)
+        self?.screen.status = message
+        CaptureFeedback.shared.show(MemoryToast(message, icon: .symbol("person.2")))
       }
       self?.screen.busy = false
       await self?.publish()
     }
   }
 
+  /// Opens a space's page (the main window sets it).
+  var onOpenSpace: ((String) -> Void)?
+
+  /// 退出这个共享空间 (after the user confirmed): this Mac leaves; what it
+  /// shared stays in the space.
+  func leave(_ spaceID: String) {
+    let name = screen.space(spaceID)?.name ?? ""
+    run("已退出“\(name)”") { [weak self] engine in
+      let copies = try await engine.leave(spaceID, withdrawContributions: false)
+      await self?.deleteCopies(copies)
+      await MainActor.run {
+        self?.sheet = nil
+        self?.setScope(.mine)
+      }
+    }
+  }
+
   static func message(_ error: Error) -> String {
     switch error {
-    case SpaceClientError.transport: return "整理设备没有连上；稍后再试"
-    case SpaceEngine.EngineError.queued: return "整理设备没有连上：已记下，连上后会自动发出"
-    case SpaceClientError.accessEnded: return "你已不在这个空间里"
-    case SpaceEngine.EngineError.notAllowed(let right): return "你的角色不能这样做（\(right)）"
+    case SpaceClientError.transport: return "无法连接 DGX Spark。请稍后再试。"
+    case SpaceEngine.EngineError.queued: return "DGX Spark 未连接：已暂存，连接后自动发送"
+    case SpaceClientError.accessEnded: return "你已不在此空间中"
+    case SpaceEngine.EngineError.notAllowed(let right): return "你的角色无权执行此操作（\(right)）"
     case SpaceEngine.EngineError.refused(let code):
       return refusal(code)
     case let error as SpaceClientError:
       if let code = error.serverCode { return refusal(code) }
-      return "整理设备的回答看不懂；没有改动"
-    case is SpaceInviteCode.CodeError: return "邀请码看不懂或已过期"
-    default: return "没有完成；你的内容没有变化"
+      return "无法识别 DGX Spark 的回应，未作更改"
+    case is SpaceInviteCode.CodeError: return "邀请码无法识别或已过期"
+    default: return "未完成，你的内容保持不变"
     }
   }
 
-  static func refusal(_ code: String) -> String {
-    let words: [String: String] = [
-      "window_passed": "已经过了撤回期限；可以删除（会变成下架申请）",
-      "rotation_pending": "有成员刚离开，等管理员换好钥匙再试",
-      "host_key_mismatch": "邀请指向另一台整理设备；没有加入",
-      "invite_used": "这个邀请码已经用过了", "invite_expired": "这个邀请码已经过期",
-      "invite_revoked": "这个邀请码已被收回", "bad_invite_secret": "邀请码不对",
-      "forks_not_allowed": "这个空间不允许存副本",
-      "privacy_takedown": "共享的人自己申请的隐私下架不能拒绝",
-      "too_many_takedowns": "你已有 3 条隐私下架申请没处理完，等维护者处理后再申请",
-      "recording_share_limit": "同一段录音最多共享 15 分钟（可以换一段，或先撤回已共享的那段）",
-      "member_id_taken": "这个成员编号已经属于别人",
-      "approve_mismatch": "申请里的设备和要同意的不一致；没有同意",
-      "join_request_unverified": "这条申请核对不上（不是持邀请码的人发的），不能同意",
-      "bad_wraps": "整理设备列出的设备和成员签过名的记录对不上，没有换钥匙；请检查整理设备",
-      "no_masker": "没有遮号工具，改动没有发出",
-      "originals_not_allowed": "这个空间只留文字", "item_gone": "这条素材已经不在空间里",
-      "archived": "空间已归档，只能查看", "forbidden": "你的角色不能这样做",
-      "owner_cannot_leave": "主人不能离开自己的空间", "last_admin": "空间至少要留一位管理员",
-      "never_shared": "声纹、词典、个人识别习惯和整段录音永远不共享",
-      "audio_needs_segment": "录音只能按片段共享", "segment_too_long": "一段录音最多 15 分钟",
-      "whole_recording": "整段录音不能共享，只能共享其中一段",
-      "one_part_per_recording": "同一段录音只能附一段原音",
-      "audio_too_large": "这段原音太大", "audio_not_allowed": "这个空间不收原音",
-      "snapshot_frozen": "摘要是冻结的，请另分享一份", "quota_exceeded": "你在这个空间的存储满了",
-      "escrow_required": "这个组织要求更多管理员能找回空间；请组织管理员的 Mac 来换钥匙",
-      "no_escrow": "这台 Mac 没有这个空间的托管钥匙", "recovered_key_unverified": "接管时拿到的钥匙对不上，没有接管",
-      "device_member_conflict": "这台 Mac 已经以别人的身份登记过", "device_revoked": "这台 Mac 已经断开，不能再加回",
-      "unknown_member_device": "请选这个人自己正在用的 Mac", "last_admin": "组织至少要留一位管理员",
-    ]
-    return words[code] ?? "整理设备没有接受（\(code)）"
-  }
+  static func refusal(_ code: String) -> String { SpaceRefusalWords.text(code) }
 
   func actions(navigate: @escaping @MainActor (SpaceScope, String?) -> Void) -> SpacesActions {
     SpacesActions(
@@ -627,7 +617,7 @@ final class SpacesModel: ObservableObject {
         NSPasteboard.general.setString(text, forType: .string)
       },
       approve: { [weak self] space, request, role in
-        self?.run("已同意；空间的钥匙已经发给对方的 Mac") {
+        self?.run("已同意，对方现在可以看到此共享空间") {
           try await $0.approve(space, request: request, role: role)
         }
       },
@@ -635,15 +625,16 @@ final class SpacesModel: ObservableObject {
         self?.run("已拒绝") { try await $0.reject(space, requestID: request) }
       },
       setRole: { [weak self] space, member, role in
-        self?.run("已改角色") { try await $0.setRole(space, memberID: member, role: role) }
+        self?.run("已更改角色") { try await $0.setRole(space, memberID: member, role: role) }
       },
       removeMember: { [weak self] space, member in
-        self?.run("已移除；空间换了一把新钥匙") {
+        self?.run("已移出，此人将无法看到之后共享的事") {
           try await $0.removeMember(space, memberID: member)
         }
       },
       leave: { [weak self] space, take in
-        self?.run("已离开空间；这台 Mac 上它的内容和钥匙已删除") { engine in
+        let name = self?.screen.space(space)?.name ?? ""
+        self?.run("已退出“\(name)”") { engine in
           let copies = try await engine.leave(space, withdrawContributions: take)
           await self?.deleteCopies(copies)
           await MainActor.run {
@@ -669,7 +660,7 @@ final class SpacesModel: ObservableObject {
         navigate(.space(space), event)
       },
       resolveProposal: { [weak self] space, proposal, accept in
-        self?.run(accept ? "已采纳" : "已不采纳") {
+        self?.run(accept ? "已采纳" : "已拒绝") {
           _ = try await $0.resolveProposal(space, proposalID: proposal, accept: accept)
         }
       },
@@ -679,12 +670,12 @@ final class SpacesModel: ObservableObject {
         }
       },
       resolveTakedown: { [weak self] space, takedown, accept in
-        self?.run(accept ? "已下架" : "已不同意") {
+        self?.run(accept ? "已撤回" : "已拒绝") {
           try await $0.resolveTakedown(space, takedownID: takedown, accept: accept)
         }
       },
       rejectTakedown: { [weak self] space, takedown, reason in
-        self?.run("已不同意；申请人会看到你的理由") {
+        self?.run("已拒绝，申请人可以看到你的理由") {
           try await $0.resolveTakedown(
             space, takedownID: takedown, accept: false, reason: reason)
         }
@@ -705,7 +696,7 @@ final class SpacesModel: ObservableObject {
       },
       handoverStep: { [weak self] step in self?.handoverStep(step) },
       confirmRecovery: { [weak self] space, device in
-        self?.run("已承认接管；这台 Mac 重新核对了空间的记录") {
+        self?.run("已承认接管，这台 Mac 已重新核对空间记录") {
           try await $0.confirmRecovery(space, deviceID: device)
         }
       },
@@ -719,7 +710,7 @@ final class SpacesModel: ObservableObject {
           do {
             try await engine.cancelOutboxEntry(space, entryID: entry)
             self.screen.outbox[space] = try? await engine.outboxContents(space)
-            self.screen.status = "已取消，不会发出"
+            self.screen.status = "已取消发送"
           } catch {
             self.screen.status = Self.message(error)
           }
@@ -739,7 +730,7 @@ final class SpacesModel: ObservableObject {
   }
 
   private func createSpace(_ draft: SpaceDraft) {
-    run("已建好「\(draft.name)」；现在可以邀请成员了") { [weak self] engine in
+    run(nil) { [weak self] engine in
       var orgID: String?
       var orgMember: String?
       if draft.owner == .org {
@@ -751,8 +742,10 @@ final class SpacesModel: ObservableObject {
         name: draft.name, owner: draft.owner, orgID: orgID, orgMemberID: orgMember,
         policy: draft.policy, displayName: Self.myName, spark: nil)
       await MainActor.run {
-        self?.sheet = .members(spaceID: state.spaceID)
+        // v11: its page opens, then the invite (MAC-SPEC §7.4).
         self?.screen.scope = .space(state.spaceID)
+        self?.onOpenSpace?(state.spaceID)
+        self?.sheet = .invite(spaceID: state.spaceID)
       }
     }
   }
@@ -780,13 +773,13 @@ final class SpacesModel: ObservableObject {
 
   private func join(code: String, name: String) {
     guard let invite = try? SpaceInviteCode.decode(code) else {
-      screen.joinError = "邀请码看不懂或已过期"
+      screen.joinError = "此邀请码已过期。请让对方重新邀请。"
       return
     }
     if let access = try? stores?.access.load() {
       // A team member's Mac pinned the Spark's host key when it enrolled
       // with its own key (v8 B1): the invite must name that same machine.
-      run("已发送申请；对方同意后会自动加入") { [weak self] engine in
+      run("已请求加入“\(invite.spaceName)”。对方同意后即可查看") { [weak self] engine in
         _ = try await engine.join(
           code: invite, displayName: name, localHostKey: access.spark.hostKey)
         await MainActor.run { self?.sheet = nil }
@@ -794,10 +787,10 @@ final class SpacesModel: ObservableObject {
       return
     }
     guard let service = app?.phoneLink.service else {
-      screen.joinError = "整理设备的连接设置无效，无法加入"
+      screen.joinError = "DGX Spark 未连接，暂时无法加入"
       return
     }
-    run("已发送申请；对方同意后会自动加入") { [weak self] engine in
+    run("已请求加入“\(invite.spaceName)”。对方同意后即可查看") { [weak self] engine in
       // The invite must pin the host key this Mac's own link pinned (its
       // known_hosts entry), not merely one the Spark says is its own.
       let endpoint = try await service.sparkEndpoint()
@@ -829,7 +822,7 @@ final class SpacesModel: ObservableObject {
       return
     }
     guard let service = app?.phoneLink.service else {
-      screen.status = "整理设备的连接设置无效，无法生成邀请"
+      screen.status = "DGX Spark 的连接设置无效，无法生成邀请"
       return
     }
     run(nil) { [weak self] engine in
@@ -858,8 +851,20 @@ final class SpacesModel: ObservableObject {
   /// numbers unticked.
   private func prepareShare(_ eventID: String) {
     screen.shareDraft = nil
+    // No space to share into: say so at once (live-mac: the sheet waited on
+    // reading every item first and showed a spinner for seconds).
+    if screen.activeSpaces.filter({ $0.can("share") && !$0.archived }).isEmpty {
+      screen.shareDraft = SpaceShareDraft(
+        eventID: eventID, title: memory?.projection?.event(id: eventID)?.title ?? "这件事",
+        destinations: [], destination: nil, rope: ropeOf?(eventID),
+        review: SpaceShareReview(candidates: []), sharedIn: [:])
+      return
+    }
     Task { [weak self] in
-      guard let self, let entries = await self.entries(forMatter: eventID) else { return }
+      guard let self else { return }
+      // A matter whose items cannot be read still opens the sheet (empty
+      // review) rather than spinning forever.
+      let entries = await self.entries(forMatter: eventID) ?? [:]
       let detail = self.memory?.projection?.event(id: eventID)
       let ordered = entries.values.sorted {
         ($0.candidate.startedAt ?? .distantPast, $0.candidate.id)
@@ -888,8 +893,34 @@ final class SpacesModel: ObservableObject {
         SpaceSnapshotText.Fact(text: $0.text, sourceIDs: $0.itemIDs)
       }
       draft.refreshSnapshot()
+      // v11 「查看会共享什么」: each line's kind from its source, and the
+      // matter's dated steps.
+      let records = self.memory?.projection?.records ?? [:]
+      for entry in entries.values {
+        let record = records[entry.candidate.sourceItemID.uppercased()]
+        draft.kindOf[entry.candidate.id] = Self.shareKind(entry.candidate, record: record)
+      }
+      draft.progressCount =
+        self.memory?.base.matter(eventID)?.steps.filter { $0.date != nil }.count ?? 0
       self.screen.shareDraft = draft
     }
+  }
+
+  /// 聊天和会议记录 · 邮件 · 文件和网页 · 你的口述 (never shared).
+  static func shareKind(_ candidate: SpaceShareCandidate, record: MemoryItemRecord?)
+    -> ShareKind
+  {
+    if candidate.isPrivateDictation || candidate.wireKind == "dictation" { return .dictation }
+    if case .segment = candidate.kind { return .chats }
+    let source = (record?.sourceDisplayName ?? "") + " " + (record?.sourceBundleID ?? "")
+    let lower = source.lowercased()
+    if lower.contains("mail") || source.contains("邮件") || lower.contains("outlook") { return .mail }
+    let chats = ["微信", "wechat", "飞书", "lark", "feishu", "短信", "messages", "claude", "codex",
+      "slack", "腾讯会议", "zoom", "teams", "钉钉", "dingtalk"]
+    if chats.contains(where: { lower.contains($0.lowercased()) }) { return .chats }
+    if record?.inputMode != .userItem { return .chats }
+    return ShareKind.of(wireKind: candidate.wireKind) == .chats && record?.itemKind == nil
+      ? .chats : .files
   }
 
   /// What a matter of mine would send, by space item id.
@@ -1002,11 +1033,14 @@ final class SpacesModel: ObservableObject {
       await MainActor.run {
         self?.sheet = nil
         let refused = report.refused.count
+        let name = self?.screen.space(space)?.name ?? ""
+        CaptureFeedback.shared.show(
+          MemoryToast("已共享到“\(name)”", icon: .symbol("person.2")))
         var line = "已共享 \(report.shared.count) 条"
-        if !report.queued.isEmpty { line += "，\(report.queued.count) 条等联网后发出" }
-        if refused > 0 { line += "，\(refused) 条没有共享" }
-        if report.originalsDropped > 0 { line += "；这个空间只留文字，原件留在你的 Mac 上" }
-        if noAudio > 0 { line += "；\(noAudio) 段的原音不在这台 Mac 上，只共享了文字" }
+        if !report.queued.isEmpty { line += "，\(report.queued.count) 条将在连接后发送" }
+        if refused > 0 { line += "，\(refused) 条未共享" }
+        if report.originalsDropped > 0 { line += "；此空间仅保存文字，原件保留在你的 Mac 上" }
+        if noAudio > 0 { line += "；\(noAudio) 段的录音不在这台 Mac 上，已共享文字" }
         self?.screen.status = line
       }
     }
@@ -1023,7 +1057,7 @@ final class SpacesModel: ObservableObject {
       !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     else { return }
     let itemIDs = Set(review.selected.map { $0.sourceItemID.lowercased() })
-    run("已把这件事的摘要共享到空间；它不会跟着变") { engine in
+    run("已将这件事的摘要共享到空间；摘要内容固定") { engine in
       let state = try await engine.state(spaceID)
       let cites = (state?.activeItems ?? []).filter {
         itemIDs.contains($0.itemID) || itemIDs.contains($0.segment?.parentItemID ?? "")
@@ -1089,7 +1123,7 @@ final class SpacesModel: ObservableObject {
       screen.handover = display
     case .generate:
       display.working = true
-      display.status = "排队中，整理设备空下来就写…"
+      display.status = "正在排队，DGX Spark 空闲后开始生成…"
       display.markdown = nil
       display.packItemID = nil
       screen.handover = display
@@ -1111,10 +1145,10 @@ final class SpacesModel: ObservableObject {
           self?.screen.handover?.working = false
           if report.shared.contains(item) {
             self?.screen.handover?.packItemID = item
-            self?.screen.handover?.done = "交接包已作为快照分享到空间；它引用的素材被撤回时会一起下架"
+            self?.screen.handover?.done = "交接包已作为快照共享到空间；它引用的内容被撤回时，交接包也将撤回"
           } else {
             self?.screen.handover?.done =
-              report.queued.isEmpty ? "没有分享出去（\(report.refused.values.first ?? "")）" : "已记下，连上后分享"
+              report.queued.isEmpty ? "未共享（\(report.refused.values.first ?? "")）" : "已暂存，连接后共享"
           }
         }
       }
@@ -1129,13 +1163,13 @@ final class SpacesModel: ObservableObject {
         try Data(markdown.utf8).write(to: url, options: [.atomic])
         screen.handover?.done = "已导出到 \(url.lastPathComponent)"
       } catch {
-        screen.handover?.done = "没有导出成功"
+        screen.handover?.done = "未能导出"
       }
     case .handOver:
       guard let to = display.to else { return }
       let pack = display.packItemID
       let name = screen.space(spaceID)?.name(of: to) ?? "对方"
-      run("已把这件事交给\(name)" + (pack == nil ? "" : "，附上了交接包")) { [weak self] engine in
+      run("已将这件事交给\(name)" + (pack == nil ? "" : "，并附上交接包")) { [weak self] engine in
         try await engine.handover(spaceID, matterID: matter, to: to, packItemID: pack)
         await MainActor.run { self?.sheet = nil }
       }
@@ -1155,7 +1189,7 @@ final class SpacesModel: ObservableObject {
       guard let packID else {
         screen.handover?.working = false
         screen.handover?.status =
-          reason == "empty" ? "这件事在空间里还没有素材，写不出交接包" : "整理设备正忙，请稍后再试"
+          reason == "empty" ? "这件事在空间中尚无内容，无法生成交接包" : "DGX Spark 正忙，请稍后再试"
         return
       }
       screen.handover?.packID = packID
@@ -1176,7 +1210,7 @@ final class SpacesModel: ObservableObject {
         }
         try await Task.sleep(for: .seconds(4))
       }
-      screen.handover?.status = "等了 10 分钟还没写好；可以稍后再试"
+      screen.handover?.status = "10 分钟内未能生成。请稍后再试。"
     } catch {
       screen.handover?.status = Self.message(error)
     }
@@ -1189,7 +1223,8 @@ final class SpacesModel: ObservableObject {
         $0.active && $0.matterID == eventID
       })
     else { return }
-    run("这件事以后的新素材不再共享；已共享的还在空间里") {
+    let name = screen.space(spaceID)?.name ?? ""
+    run("已停止共享；之前共享的原文保留在“\(name)”中") {
       try await $0.unsharePackage(spaceID, packageID: package.packageID)
     }
     sheet = nil
@@ -1202,28 +1237,28 @@ final class SpacesModel: ObservableObject {
   ) {
     switch action {
     case .withdraw:
-      run("已撤回；成员的 Mac 会删掉它") { try await $0.withdraw(spaceID, itemID: itemID) }
+      run("已撤回，成员 Mac 上的副本将被删除") { try await $0.withdraw(spaceID, itemID: itemID) }
     case .delete:
       run(nil) { [weak self] engine in
         let outcome = try await engine.delete(spaceID, itemID: itemID)
         await MainActor.run {
           self?.screen.status =
             outcome == .takedownRequested
-            ? "已过撤回期限：已向维护者提出下架申请" : "已从空间里删除；你自己的空间里它还在"
+            ? "已过撤回期限：已向维护者提出撤回申请" : "已从空间中删除；它会保留在你自己的空间中"
         }
       }
     case .requestPrivacyTakedown:
-      run("已提出隐私下架申请") {
+      run("已提出隐私撤回申请") {
         try await $0.requestTakedown(spaceID, itemID: itemID, privacy: true, reason: reason)
       }
     case .remove:
       run("已移除") { try await $0.remove(spaceID, itemID: itemID) }
     case .hide:
-      run("已隐藏，只对你；别人还看得到") { try await $0.hide(spaceID, itemID: itemID) }
+      run("已对你隐藏；其他成员仍可看到") { try await $0.hide(spaceID, itemID: itemID) }
     case .unhide:
       run("已取消隐藏") { try await $0.hide(spaceID, itemID: itemID, hidden: false) }
     case .fork:
-      run("已存一份到你的空间；失去这个空间的访问权时会删除") { [weak self] engine in
+      run("已储存副本到你的空间；失去此空间的访问权限时将被删除") { [weak self] engine in
         try await engine.fork(spaceID, itemID: itemID)
         if let copy = await self?.makeForkCopy(spaceID, itemID: itemID, engine: engine) {
           try await engine.recordForkCopy(spaceID, itemID: itemID, localID: copy)
@@ -1327,7 +1362,7 @@ final class SpacesModel: ObservableObject {
       } else if !text.isEmpty {
         details = ["note": .string(text)]
       }
-      run("已提交提议，等维护者处理") { engine in
+      run("已提交提议，等待维护者处理") { engine in
         _ = try await engine.propose(
           spaceID, kind: kind, matterIDs: [original] + (other.map { [$0] } ?? []),
           details: details)
@@ -1340,12 +1375,44 @@ final class SpacesModel: ObservableObject {
   func copySpaceText(_ eventID: String) {
     guard let app, let detail = scopeBase?.projection?.event(id: eventID) else { return }
     let text = EventPlainTextFormatter().format(detail)
-    app.intake.show(app.pasteboardWriter.write(text) ? "已复制这件事的文字" : "复制失败")
+    app.intake.show(app.pasteboardWriter.write(text) ? "已拷贝这件事的文字" : "未能拷贝")
   }
 
   /// A rename on a space's matter page: a maintainer edits, others propose.
   func renameInSpace(eventID: String, title: String) {
     guard let spaceID = screen.scope.spaceID ?? spaceEventsInAll[eventID] else { return }
     propose(spaceID, eventID: eventID, kind: "rename", text: title, other: nil)
+  }
+}
+
+// MARK: - v11 sidebar and sharing
+
+extension SpacesModel {
+  /// Sidebar 共享 rows: the spaces this Mac is an active member of.
+  var sidebarSpaces: [MemorySidebarSpace] {
+    screen.activeSpaces.filter { !$0.archived }.map { space in
+      let others = space.members.filter {
+        $0.memberID != space.memberID && $0.endedAt == nil && !$0.outside
+      }
+      return MemorySidebarSpace(
+        id: space.spaceID, name: space.name,
+        memberNames: others.map { $0.displayName ?? space.knownNames[$0.memberID] ?? "" }
+          .filter { !$0.isEmpty },
+        admins: Set(
+          others.filter { $0.role == .admin }.compactMap {
+            $0.displayName ?? space.knownNames[$0.memberID]
+          }),
+        youAreAdmin: space.role == .admin)
+    }
+  }
+
+  /// My matters shared into a space (the meta line's 「已共享到「…」」).
+  var sharingInfo: [String: MemoryShareInfo] {
+    var result: [String: MemoryShareInfo] = [:]
+    for (eventID, spaceIDs) in screen.sharedMatters {
+      guard let id = spaceIDs.first, let space = screen.space(id) else { continue }
+      result[eventID] = MemoryShareInfo(spaceID: id, spaceName: space.name)
+    }
+    return result
   }
 }

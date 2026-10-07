@@ -37,17 +37,14 @@
 
 ## 装 iPhone App（从源码构建）
 
-还没有发布安装包，也还没有在真 iPhone 上构建和运行过。工程在公开仓库的 `mac/iOS/`，和 Mac 工程分开：
+还没有发布安装包；真机验收的记录不在公开仓库里，所以这里的验证范围是模拟器和测试。工程在公开仓库的 `mac/iOS/`，和 Mac 工程分开：
 
 - 需要：Xcode 27、XcodeGen 2.45.3（只在改了 `project.yml` 时需要，生成好的 `MindloomPhone.xcodeproj` 已入库）、iOS 26.0 以上
   （端上中文识别用的是 iOS 26 的离线语音识别）。
 - **模拟器**：`mac/iOS/script/xcodebuild.sh build`（或 `test`）。脚本把构建产物、包缓存和临时文件都放在
   `PHONE_BUILD_ROOT` 指定的外置卷目录里（例如 `PHONE_BUILD_ROOT=/Volumes/<卷名>/ios-build/phone`），卷没挂上就拒绝构建，
   不会退回系统盘；需要时自动建一个 iOS 26.5 的 iPhone 17 模拟器。两个 Swift 包单独测：`mac/iOS/script/swift_package.sh MindloomLink test`。
-- **真机**：用 Xcode 打开 `mac/iOS/MindloomPhone.xcodeproj`，给 App、键盘扩展、分享扩展三个 target 选你自己的开发者团队。
-  Bundle ID（`com.bestasr.phone` 及其 `.keyboard`、`.share`）和 App Group（`group.com.bestasr.phone`）要换成你团队下的：
-  改 `mac/iOS/project.yml`（三个 target 的 ID 和 `application-groups`）、三个 `.entitlements` 文件和
-  `mac/Packages/MindloomPhoneKit/Sources/MindloomPhoneKit/PhoneAppGroup.swift`，再运行 `mac/iOS/script/generate_project.sh`。
+- **真机**：用 Xcode 打开 `mac/iOS/MindloomPhone.xcodeproj`，给 App、键盘、分享、实时活动和手表 App 选你自己的开发者团队。身份只在一处定义：`mac/iOS/project.yml` 的 `MINDLOOM_PHONE_BUNDLE_ID`（默认 `app.mindloom`；扩展是它加 `.keyboard`、`.share`、`.live`，手表是 `.watchkitapp`）和 `MINDLOOM_APP_GROUP`（默认 `group.<Bundle ID>`），要换成你自己团队下的。`mac/iOS/script/device_build.sh` 接受 `PHONE_BUNDLE_ID`、`PHONE_APP_GROUP`、`PHONE_TEAM`（团队号只在构建时传入，不写进任何文件）和 `PHONE_DEVICE`（指定设备），Release 构建不带任何 DEBUG 钩子；`device_install.sh` 把它装上。
 - 装好后：设置 → 通用 → 键盘 → 添加「织机键盘」并打开「允许完全访问」（键盘和 App 共享 App Group 需要它：键盘把你用麦克风说出、
   插进输入框的那几句封好放进 App Group 里的发件箱，发送由 App 做；你用别的键盘打的字，织机看不到）。然后在 Mac 上打开 Spark 链路，点「连接 iPhone」，在手机上扫码或粘贴配对码。
 

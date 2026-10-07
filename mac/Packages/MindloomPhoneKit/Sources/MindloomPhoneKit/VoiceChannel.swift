@@ -35,17 +35,22 @@ public struct VoiceState: Codable, Equatable, Sendable {
   /// Which on-device recognizer the session uses (diagnostics only).
   public var recognizer: String?
   public var problem: VoiceProblem?
+  /// The microphone is turned off in iOS Settings (written even while no session is alive), so
+  /// the keyboard reads 「麦克风没有打开 去设置」 instead of 「轻点开启语音」.
+  public var microphoneDenied: Bool?
 
   enum CodingKeys: String, CodingKey {
     case recording, seq, recognizer, problem
+    case microphoneDenied = "mic_denied"
     case sessionAliveUntil = "session_alive_until"
     case heartbeatAt = "heartbeat_at"
   }
 
   public init(
     sessionAliveUntil: Double = 0, recording: Bool = false, seq: Int = 0, heartbeatAt: Double = 0,
-    recognizer: String? = nil, problem: VoiceProblem? = nil
+    recognizer: String? = nil, problem: VoiceProblem? = nil, microphoneDenied: Bool? = nil
   ) {
+    self.microphoneDenied = microphoneDenied
     self.sessionAliveUntil = sessionAliveUntil
     self.recording = recording
     self.seq = seq
@@ -145,36 +150,65 @@ public struct VoiceFinals: Codable, Equatable, Sendable {
   }
 }
 
-/// The App Group files between the keyboard and the app (PHONE-CONTRACT §2):
+/// What the keyboard did with finals (`voice/ack`), so the **app** keeps keyboard speech for the
+/// Mac (PHONE-SPEC §7.1: 「键盘说的话也送到 Mac」 → an outbox item, source 键盘). The app has the
+/// final text already; the keyboard only says which utterances it actually inserted, and which
+/// of them the user took back with 「撤销」. Numbers only, never text.
+public struct VoiceAck: Codable, Equatable, Sendable {
+  public static let limit = 16
+  /// Utterance numbers whose final was inserted into a field, oldest first.
+  public var inserted: [Int]
+  /// Utterance numbers taken back within the undo window.
+  public var withdrawn: [Int]
+  /// When `inserted.last` was inserted (seconds since 1970): the undo window runs from here.
+  public var at: Double?
+
+  public init(inserted: [Int] = [], withdrawn: [Int] = [], at: Double? = nil) {
+    self.inserted = inserted
+    self.withdrawn = withdrawn
+    self.at = at
+  }
+
+  public mutating func insert(_ seq: Int, at time: Double) {
+    if !inserted.contains(seq) { inserted.append(seq) }
+    if inserted.count > Self.limit { inserted.removeFirst(inserted.count - Self.limit) }
+    at = time
+  }
+
+  public mutating func withdraw(_ seq: Int) {
+    if !withdrawn.contains(seq) { withdrawn.append(seq) }
+    if withdrawn.count > Self.limit { withdrawn.removeFirst(withdrawn.count - Self.limit) }
+  }
+}
+
+/// The records between the keyboard and the app (PHONE-CONTRACT §2), in the App Group's
+/// `voice/` folder or, without an App Group, in the shared keychain group (`SharedRecords`):
 ///
 /// ```
-/// voice/state.json     VoiceState, written by the app
-/// voice/partial.json   VoiceText of the utterance being spoken
-/// voice/final.json     VoiceFinals
-/// voice/level.bin      4 bytes: the current input level (0…1) for the waveform
+/// state      VoiceState, written by the app
+/// partial    VoiceText of the utterance being spoken
+/// final      VoiceFinals
+/// ack        VoiceAck, written by the keyboard
+/// keyboard   KeyboardStatus, written by the keyboard
+/// level      the current input level (0…1) for the listening animation (`LevelLine`)
 /// ```
 ///
-/// Transcripts sit here only long enough for the keyboard to insert them: the
-/// app removes the partial when the final lands, blanks finals after a
-/// minute, and clears both when the session ends. Audio is never written.
+/// Transcripts sit here only long enough for the keyboard to insert them: the app removes the
+/// partial when the final lands, blanks finals after a minute, and clears both when the session
+/// ends. Audio is never written.
 public final class VoiceChannel: @unchecked Sendable {
-  public let directory: URL
-  private let lock = NSLock()
-  private var levelWriter: Int32 = -1
-  private var levelReader: Int32 = -1
+  public let records: any SharedRecords
+  public let level: any LevelLine
 
-  public var stateFile: URL { directory.appendingPathComponent("state.json") }
-  public var partialFile: URL { directory.appendingPathComponent("partial.json") }
-  public var finalFile: URL { directory.appendingPathComponent("final.json") }
-  public var levelFile: URL { directory.appendingPathComponent("level.bin") }
+  public init(records: any SharedRecords, level: any LevelLine) {
+    self.records = records
+    self.level = level
+  }
 
-  public init(directory: URL, fileManager: FileManager = .default) throws {
-    self.directory = directory
-    try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-    var excluded = URLResourceValues()
-    excluded.isExcludedFromBackup = true
-    var mutable = directory
-    try? mutable.setResourceValues(excluded)
+  /// Files in `directory` (the App Group's `voice/`, or a test folder).
+  public convenience init(directory: URL, fileManager: FileManager = .default) throws {
+    let files = try FileRecords(directory: directory, fileManager: fileManager)
+    self.init(records: files, level: FileLevelLine(file: directory.appendingPathComponent("level.bin")))
   }
 
   /// The channel in the App Group container.
@@ -186,73 +220,69 @@ public final class VoiceChannel: @unchecked Sendable {
       directory: PhoneAppGroup.voiceDirectory(in: container), fileManager: fileManager)
   }
 
-  deinit {
-    if levelWriter >= 0 { close(levelWriter) }
-    if levelReader >= 0 { close(levelReader) }
+  /// True when the records are App Group files (false: the keychain fallback).
+  public var isAppGroup: Bool { records.isAppGroup }
+
+  // MARK: - Records
+
+  public func readState() -> VoiceState? { records.readJSON(VoiceState.self, "state") }
+  public func writeState(_ state: VoiceState) throws { try records.writeJSON(state, as: "state") }
+
+  public func readPartial() -> VoiceText? { records.readJSON(VoiceText.self, "partial") }
+  public func writePartial(_ partial: VoiceText) throws {
+    try records.writeJSON(partial, as: "partial")
+  }
+  public func removePartial() { records.remove("partial") }
+
+  public func readFinals() -> VoiceFinals? { records.readJSON(VoiceFinals.self, "final") }
+  public func writeFinals(_ finals: VoiceFinals) throws { try records.writeJSON(finals, as: "final") }
+
+  public func readAck() -> VoiceAck? { records.readJSON(VoiceAck.self, "ack") }
+  public func writeAck(_ ack: VoiceAck) throws { try records.writeJSON(ack, as: "ack") }
+
+  public func readKeyboardStatus() -> KeyboardStatus? {
+    records.readJSON(KeyboardStatus.self, "keyboard")
+  }
+  public func writeKeyboardStatus(_ status: KeyboardStatus) throws {
+    try records.writeJSON(status, as: "keyboard")
   }
 
-  // MARK: - JSON files
+  /// DEBUG builds only: the keyboard state the screenshot harness wants frozen.
+  /// The screenshot harness's frozen keyboard state (`<state>|<unix seconds>`). A record older
+  /// than `debugRecordLifetime`, or one without its time, is ignored: a forgotten screenshot state
+  /// must never freeze the real keyboard.
+  public func readDebugKeyboardScreen(now: Date = Date()) -> String? {
+    guard let raw = records.read("debug-keyboard").flatMap({ String(data: $0, encoding: .utf8) })
+    else { return nil }
+    let parts = raw.split(separator: "|")
+    guard parts.count == 2, let written = Double(parts[1]),
+      now.timeIntervalSince1970 - written < Self.debugRecordLifetime
+    else { return nil }
+    return String(parts[0])
+  }
 
-  public func readState() -> VoiceState? { read(VoiceState.self, from: stateFile) }
-  public func writeState(_ state: VoiceState) throws { try write(state, to: stateFile) }
+  public func writeDebugKeyboardScreen(_ screen: String?, now: Date = Date()) {
+    if let screen {
+      try? records.write(
+        Data("\(screen)|\(Int(now.timeIntervalSince1970))".utf8), as: "debug-keyboard")
+    } else {
+      records.remove("debug-keyboard")
+    }
+  }
 
-  public func readPartial() -> VoiceText? { read(VoiceText.self, from: partialFile) }
-  public func writePartial(_ partial: VoiceText) throws { try write(partial, to: partialFile) }
-  public func removePartial() { try? FileManager.default.removeItem(at: partialFile) }
+  public static let debugRecordLifetime: TimeInterval = 10 * 60
 
-  public func readFinals() -> VoiceFinals? { read(VoiceFinals.self, from: finalFile) }
-  public func writeFinals(_ finals: VoiceFinals) throws { try write(finals, to: finalFile) }
-
-  /// The highest utterance number found in any file (0 if none), so a
-  /// restarted app keeps counting up and the keyboard never mistakes a new
-  /// final for one it already inserted.
+  /// The highest utterance number found in any record (0 if none), so a restarted app keeps
+  /// counting up and the keyboard never mistakes a new final for one it already inserted.
   public func highestSeq() -> Int {
     max(readState()?.seq ?? 0, readFinals()?.seq ?? 0, readPartial()?.seq ?? 0)
   }
 
-  private func read<T: Decodable>(_ type: T.Type, from url: URL) -> T? {
-    guard let data = try? Data(contentsOf: url) else { return nil }
-    return try? JSONDecoder().decode(type, from: data)
-  }
-
-  private func write<T: Encodable>(_ value: T, to url: URL) throws {
-    let encoder = JSONEncoder()
-    encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
-    let data = try encoder.encode(value)
-    var options: Data.WritingOptions = [.atomic]
-    #if os(iOS)
-      options.insert(.completeFileProtectionUntilFirstUserAuthentication)
-    #endif
-    try data.write(to: url, options: options)
-  }
-
   // MARK: - Level
 
-  /// Writes the input level (0…1) in place: 4 bytes, no rename, no sync.
-  /// Called about 20 times a second while recording.
-  public func writeLevel(_ level: Float) {
-    var value = max(0, min(1, level)).bitPattern.littleEndian
-    lock.lock()
-    defer { lock.unlock() }
-    if levelWriter < 0 {
-      levelWriter = open(levelFile.path, O_WRONLY | O_CREAT, 0o600)
-      guard levelWriter >= 0 else { return }
-    }
-    _ = withUnsafeBytes(of: &value) { pwrite(levelWriter, $0.baseAddress, 4, 0) }
-  }
+  /// Writes the input level (0…1). Called about 40 times a second while listening.
+  public func writeLevel(_ value: Float) { level.write(value) }
 
   /// The last written level, or 0.
-  public func readLevel() -> Float {
-    lock.lock()
-    defer { lock.unlock() }
-    if levelReader < 0 {
-      levelReader = open(levelFile.path, O_RDONLY)
-      guard levelReader >= 0 else { return 0 }
-    }
-    var raw: UInt32 = 0
-    let count = withUnsafeMutableBytes(of: &raw) { pread(levelReader, $0.baseAddress, 4, 0) }
-    guard count == 4 else { return 0 }
-    let level = Float(bitPattern: UInt32(littleEndian: raw))
-    return level.isFinite ? max(0, min(1, level)) : 0
-  }
+  public func readLevel() -> Float { level.read() }
 }

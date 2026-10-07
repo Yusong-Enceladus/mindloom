@@ -9,6 +9,14 @@ import SwiftUI
 
 // History: moved out of ContentView.swift without change.
 extension ContentView {
+  /// 删除这条记录？ in plain words (review v12-B #6): what each button
+  /// deletes, and that it cannot be undone.
+  static func historyDeletionMessage(hasAudio: Bool) -> String {
+    hasAudio
+      ? "可以删除录音并保留文字、人物和时间，也可以删除整条记录。此操作无法撤销。"
+      : "此操作无法撤销。"
+  }
+
   var historyDeletionIsPresented: Binding<Bool> {
     Binding(
       get: { pendingHistoryDeletion != nil },
@@ -181,7 +189,7 @@ extension ContentView {
       .frame(maxWidth: .infinity, maxHeight: .infinity)
     } else if model.history.historyItems.isEmpty {
       ContentUnavailableView(
-        historyHasFilters ? "没有匹配的记录" : "还没有记录",
+        historyHasFilters ? "没有匹配的记录" : "尚无记录",
         systemImage: historyHasFilters ? "magnifyingglass" : "text.cursor",
         description: Text(
           historyHasFilters

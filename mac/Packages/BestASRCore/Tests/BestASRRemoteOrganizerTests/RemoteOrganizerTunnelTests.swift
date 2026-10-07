@@ -274,7 +274,7 @@ final class RemoteOrganizerProvenanceTests: XCTestCase {
   func testSeparateDataRootCanNeverPointAtTheRealLibrary() throws {
     let base = try makeTemporaryDirectory("roots")
     defer { try? FileManager.default.removeItem(at: base) }
-    let real = base.appendingPathComponent("Application Support/bestASR", isDirectory: true)
+    let real = base.appendingPathComponent("Application Support/Mindloom", isDirectory: true)
     try FileManager.default.createDirectory(at: real, withIntermediateDirectories: true)
     func refused(_ requested: String, _ expected: BestASRDataRootSelection.SelectionError) {
       XCTAssertThrowsError(
@@ -346,7 +346,7 @@ final class RemoteOrganizerProvenanceTests: XCTestCase {
   func testLaunchArgumentsNeverFallBackToTheRealLibrary() throws {
     let base = try makeTemporaryDirectory("arguments")
     defer { try? FileManager.default.removeItem(at: base) }
-    let real = base.appendingPathComponent("Application Support/bestASR", isDirectory: true)
+    let real = base.appendingPathComponent("Application Support/Mindloom", isDirectory: true)
     try FileManager.default.createDirectory(at: real, withIntermediateDirectories: true)
     let demo = base.appendingPathComponent("demo").path
     let app = "/Applications/bestASR.app/Contents/MacOS/bestASR"
@@ -422,7 +422,7 @@ final class RemoteOrganizerProvenanceTests: XCTestCase {
 
   func testOwnerRealLibraryIgnoresTheEnvironmentHome() throws {
     let expected = try XCTUnwrap(BestASRDataRootSelection.ownerRealLibraryRoot())
-    XCTAssertTrue(expected.path.hasSuffix("/Library/Application Support/bestASR"))
+    XCTAssertTrue(expected.path.hasSuffix("/Library/Application Support/Mindloom"))
     let previous = getenv("CFFIXED_USER_HOME").map { String(cString: $0) }
     setenv("CFFIXED_USER_HOME", "/tmp/not-the-owner", 1)
     defer {

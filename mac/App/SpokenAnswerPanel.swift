@@ -102,7 +102,7 @@ final class SpokenAnswerPanelController: NSObject {
 
     footnote.font = .systemFont(ofSize: 11)
     footnote.textColor = .tertiaryLabelColor
-    footnote.stringValue = "已复制 · ⌘V 粘贴"
+    footnote.stringValue = "已拷贝 · ⌘V 粘贴"
     footnote.setAccessibilityIdentifier("bestASR.answerPanel.footnote")
     surface.addSubview(footnote)
 

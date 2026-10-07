@@ -3,6 +3,7 @@ import BestASRDomain
 import BestASRInference
 import CryptoKit
 import Foundation
+import MindloomIdentity
 import OSLog
 
 /// Times one step of dictation processing. Only the step name and
@@ -12,7 +13,7 @@ func logProcessingStage(_ stage: String, since start: ContinuousClock.Instant) {
   let milliseconds =
     elapsed.components.seconds * 1_000
     + elapsed.components.attoseconds / 1_000_000_000_000_000
-  Logger(subsystem: "com.bestasr.app", category: "dictation-processing").notice(
+  Logger(subsystem: MindloomIdentity.logSubsystem, category: "dictation-processing").notice(
     "processing timing stage=\(stage, privacy: .public) ms=\(milliseconds, privacy: .public)"
   )
 }

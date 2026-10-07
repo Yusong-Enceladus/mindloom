@@ -1,3 +1,4 @@
+import AppKit
 import BestASRAudioJournal
 import BestASRCandidateAdapters
 import BestASRDictation
@@ -20,56 +21,157 @@ import OSLog
 // History: moved out of LocalDictationRuntime.swift without change; see
 // DICTATION_ARCHITECTURE.md §13.5.
 extension LocalDictationRuntime {
-  /// Rewrites finished recordings at the rate everything already reads them.
+  /// Rewrites finished recordings at the rate everything already reads them,
+  /// and keeps recordings older than 30 days in `archiveFormat` (PRD §0.3
+  /// item 19).
   ///
   /// This waits for the same idle moment the models are released at, because
   /// by then nothing is still reading a session's audio: recognition, the
   /// speaker job and any late polish are long done, and a dictation that
-  /// starts cancels the timer before this runs.
+  /// starts cancels the timer before this runs. A session the user is
+  /// listening to, one whose text is still being delivered, and one with a
+  /// recognition or speaker derivative in use are skipped and taken next time.
   func compactIdleRecordings() async {
-    let sessions = (try? await repository.sessionsWithUncompactedSourceAudio(
-      limit: Self.idleCompactionLimit)) ?? []
-    guard !sessions.isEmpty else { return }
     var reclaimed: UInt64 = 0
     var rewritten = 0
+    var archived = 0
+    var refused = 0
+    // A recording that failed its check keeps its file and is not tried
+    // again while the App runs, so it never holds back the ones after it.
+    let listed =
+      (try? await repository.sessionsWithUncompactedSourceAudio(
+        limit: Self.idleCompactionLimit * 4)) ?? []
+    let sessions = listed.filter { !rewriteRefusedSessionIDs.contains($0) }
+      .prefix(Self.idleCompactionLimit)
     for sessionID in sessions {
-      guard sessionsAwaitingInsertion.isEmpty else { break }
+      guard sessionsAwaitingInsertion.isEmpty, !Task.isCancelled else { break }
+      guard await audioIsFree(sessionID) else { continue }
       do {
         // Through the journal, which owns these files and caches what it has
         // already read from them.
-        let outcome = try await journal.compactSealedRecording(sessionID: sessionID)
+        let outcome = try await journal.compactSealedRecording(
+          sessionID: sessionID, stillFree: stillFree(sessionID))
+        try await applyRewrite(sessionID: sessionID, tracks: outcome.tracks, runs: outcome.runs)
         guard !outcome.alreadyCompact else { continue }
-        try await repository.applySourceAudioCompaction(
-          sessionID: sessionID,
-          tracks: outcome.tracks,
-          chunks: outcome.runs.map {
-            CompactedAudioChunkRecord(
-              trackID: $0.trackID,
-              sequence: $0.sequence,
-              assetReference: $0.assetReference,
-              monotonicStartNanoseconds: $0.monotonicStartNanoseconds,
-              monotonicEndNanoseconds: $0.monotonicEndNanoseconds,
-              frameCount: $0.frameCount,
-              digest: $0.contentDigest,
-              sampleRateHertz: SourceAudioCompaction.sampleRateHertz,
-              channelCount: SourceAudioCompaction.channelCount
-            )
-          }
-        )
         reclaimed += outcome.originalByteCount - outcome.compactedByteCount
         rewritten += 1
+      } catch ProductionAudioJournalError.recordingInUse {
+        // Opened, played or leased while the copy was made: kept as it was,
+        // taken another time.
+        continue
       } catch {
         // A session that cannot be verified keeps its original recording.
-        continue
+        refused += 1
+        rewriteRefusedSessionIDs.insert(sessionID)
       }
     }
-    guard rewritten > 0 else { return }
+    let cutoff = Date().addingTimeInterval(-Self.archivalAge)
+    // An archived recording cannot be opened by a build before this one, so
+    // nothing is archived while such a copy of the App is installed
+    // (`RetainedAudioReaderGate`, review 10-6 S6).
+    let ready =
+      Self.everyInstalledCopyReadsArchivedAudio()
+      ? (try? await repository.sessionsReadyForArchival(
+        recordedBefore: cutoff, limit: Self.idleArchivalLimit * 4,
+        includingLossless: Self.archiveFormat == .opus)) ?? [] : []
+    let old = ready.filter { !rewriteRefusedSessionIDs.contains($0) }
+      .prefix(Self.idleArchivalLimit)
+    for sessionID in old {
+      guard sessionsAwaitingInsertion.isEmpty, !Task.isCancelled else { break }
+      guard await audioIsFree(sessionID) else { continue }
+      do {
+        let outcome = try await journal.archiveSealedRecording(
+          sessionID: sessionID, format: Self.archiveFormat, stillFree: stillFree(sessionID))
+        try await applyRewrite(sessionID: sessionID, tracks: outcome.tracks, runs: outcome.runs)
+        guard !outcome.alreadyArchived else { continue }
+        reclaimed +=
+          outcome.originalByteCount - min(outcome.originalByteCount, outcome.archivedByteCount)
+        archived += 1
+      } catch ProductionAudioJournalError.recordingInUse {
+        continue
+      } catch {
+        // Kept as it was: the new copy did not decode back to the same
+        // recording, or a chunk failed its digest.
+        refused += 1
+        rewriteRefusedSessionIDs.insert(sessionID)
+      }
+    }
+    guard rewritten + archived + refused > 0 else { return }
+    // A long backlog (the first pass after this ships finds every recording
+    // older than 30 days) is taken a bite per idle period: when this pass
+    // was full and did something, the next idle period takes the next bite.
+    if rewritten + archived > 0,
+      sessions.count == Self.idleCompactionLimit || old.count == Self.idleArchivalLimit
+    {
+      scheduleIdleModelRelease()
+    }
     localDictationRuntimeLogger.notice(
       """
       recordings compacted count=\(rewritten, privacy: .public) \
+      archived=\(archived, privacy: .public) kept=\(refused, privacy: .public) \
       reclaimed_mb=\(reclaimed / 1_048_576, privacy: .public)
       """
     )
+  }
+
+  /// Points the audio index and the transcripts' provenance at what the
+  /// journal now holds. Applying it again changes nothing, so a crash between
+  /// the file swap and this update is repaired on the next pass.
+  private func applyRewrite(
+    sessionID: SessionID, tracks: [CaptureTrackDescriptor], runs: [CompactedSourceAudioRun]
+  ) async throws {
+    guard !runs.isEmpty else { return }
+    try await repository.applySourceAudioCompaction(
+      sessionID: sessionID,
+      tracks: tracks,
+      chunks: runs.map {
+        CompactedAudioChunkRecord(
+          trackID: $0.trackID,
+          sequence: $0.sequence,
+          assetReference: $0.assetReference,
+          monotonicStartNanoseconds: $0.monotonicStartNanoseconds,
+          monotonicEndNanoseconds: $0.monotonicEndNanoseconds,
+          frameCount: $0.frameCount,
+          digest: $0.contentDigest,
+          sampleRateHertz: SourceAudioCompaction.sampleRateHertz,
+          channelCount: SourceAudioCompaction.channelCount
+        )
+      }
+    )
+  }
+
+  /// Every copy of the App LaunchServices knows on this Mac reads archived
+  /// recordings (its Info.plist says so).
+  nonisolated static func everyInstalledCopyReadsArchivedAudio() -> Bool {
+    let urls = RetainedAudioReaderGate.appBundleIdentifiers.flatMap {
+      NSWorkspace.shared.urlsForApplications(withBundleIdentifier: $0)
+    }
+    return RetainedAudioReaderGate.allowsArchival(
+      installed: RetainedAudioReaderGate.infoDictionaries(of: urls))
+  }
+
+  /// Asked again by the journal right before it swaps the new copy in: the
+  /// user may have started playing the recording, or another dictation
+  /// started, while the copy was being made (review 10-6 S5).
+  private func stillFree(_ sessionID: SessionID) -> @Sendable () async -> Bool {
+    { [weak self] in
+      guard let self else { return false }
+      return await self.audioIsFree(sessionID)
+    }
+  }
+
+  /// Nothing is reading this recording right now.
+  private func audioIsFree(_ sessionID: SessionID) async -> Bool {
+    guard !audioInUseSessionIDs.contains(sessionID),
+      !sessionsAwaitingInsertion.contains(sessionID)
+    else { return false }
+    return await !journal.hasInferenceLease(sessionID: sessionID)
+  }
+
+  /// The sessions the App is playing or showing a waveform for; a rewrite
+  /// leaves them alone (the player reads chunk files as it goes).
+  func setAudioInUse(_ sessionIDs: Set<SessionID>) {
+    audioInUseSessionIDs = sessionIDs
   }
 
   /// A fresh final transcript must sort after every persisted live draft.

@@ -46,14 +46,19 @@ final class VoiceOnDeviceTests: XCTestCase {
     let recognizer = ScriptedRecognizer(partials: ["合成", "合成：明早"], final: "合成：明早九点站会。")
     let core = VoiceSessionCore(channel: channel, signaling: DarwinSignaling.shared)
     var inserted: [String] = []
+    var marked: [String] = []
+    var kept: [String] = []
+    core.onKeyboardInserted = { final, _ in kept.append(final.text) }
+    let host = KeyboardTextHost(
+      mark: { marked.append($0) }, insert: { inserted.append($0) }, clearMarked: {},
+      textBeforeCursor: { inserted.joined() }, deleteBackward: { _ in })
     let keyboard = KeyboardVoiceController(
-      channel: channel, signaling: DarwinSignaling.shared,
-      insert: { inserted.append($0) }, collect: { _ in .collected }, collectedCount: { 0 })
+      channel: channel, signaling: DarwinSignaling.shared, host: host)
     keyboard.appear()
-    XCTAssertEqual(keyboard.display.mic, .needsSession)
+    XCTAssertEqual(keyboard.display.mic, KeyboardVoiceController.Mic.needsSession)
 
     core.start(recognizer: recognizer)
-    let ready = await waitUntil { keyboard.display.mic == .ready }
+    let ready = await waitUntil { keyboard.display.mic == KeyboardVoiceController.Mic.ready }
     XCTAssertTrue(ready, "the heartbeat reached the keyboard")
 
     keyboard.pressDown()
@@ -62,12 +67,15 @@ final class VoiceOnDeviceTests: XCTestCase {
     recognizer.speak()
     let partial = await waitUntil { keyboard.display.transcript == "合成：明早" }
     XCTAssertTrue(partial, ".partial reached the keyboard")
+    XCTAssertEqual(marked.last, "合成：明早", "the partial is marked text in the field")
 
     try await Task.sleep(for: .milliseconds(400))
     keyboard.pressUp()
     let done = await waitUntil { inserted == ["合成：明早九点站会。"] }
     XCTAssertTrue(done, "the final was inserted exactly once: \(inserted)")
-    XCTAssertEqual(keyboard.display.mic, .ready)
+    XCTAssertEqual(keyboard.display.mic, KeyboardVoiceController.Mic.ready)
+    let acknowledged = await waitUntil { kept == ["合成：明早九点站会。"] }
+    XCTAssertTrue(acknowledged, "the app kept the inserted final for the Mac: \(kept)")
     core.end()
     keyboard.disappear()
   }

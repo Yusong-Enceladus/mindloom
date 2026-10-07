@@ -43,7 +43,7 @@ extension IntakeProcessor {
       (try? fileManager.createDirectory(
         at: directory, withIntermediateDirectories: false,
         attributes: [.posixPermissions: 0o700])) != nil
-    else { return [.rejected("无法展开 \(archiveName)，压缩包只保存在 Mac 上")] }
+    else { return [.rejected("无法展开 \(archiveName)，压缩包保存在这台 Mac 上")] }
     defer { try? fileManager.removeItem(at: directory) }
     var outcomes: [IntakeOutcome] = []
     var step = 0
@@ -90,7 +90,7 @@ extension IntakeProcessor {
         (try? fileManager.createDirectory(at: folder, withIntermediateDirectories: false)) != nil,
         (try? member.data.write(to: file, options: [.withoutOverwriting])) != nil
       else {
-        outcomes.append(.rejected("无法读取 \(label)，未收进来"))
+        outcomes.append(.rejected("无法读取 \(label)，未添加"))
         continue
       }
       let outcome = prepare(
@@ -110,7 +110,7 @@ extension IntakeProcessor {
       }
     }
     for skipped in contents.skipped {
-      outcomes.append(.rejected("\(archiveName) › \(skipped)：加密或无法读取，只保存在压缩包里"))
+      outcomes.append(.rejected("\(archiveName) › \(skipped)：已加密或无法读取，保留在压缩包中"))
     }
     return outcomes
   }
@@ -142,7 +142,7 @@ extension IntakeProcessor {
           originalFilename: filename, attachments: attachments, uniformType: uniformType))
     } catch {
       assetStore.discard(sessionID: context.id)
-      return .rejected("无法保存 \(filename)，未收进来")
+      return .rejected("无法保存 \(filename)，未添加")
     }
   }
 
@@ -152,11 +152,11 @@ extension IntakeProcessor {
       case .tooManyEntries: "文件超过 2000 个"
       case .tooLarge: "展开后超过 200 MB"
       case .ratioExceeded: "压缩比异常"
-      case .tooDeep: "嵌套太深"
+      case .tooDeep: "嵌套层级过深"
       case .unsupported: "格式不受支持"
       default: "无法读取"
       }
-    return "\(name) \(reason)，未展开，压缩包只保存在 Mac 上"
+    return "\(name) \(reason)，未展开，压缩包保存在这台 Mac 上"
   }
 
   /// The file's bytes, opened without following links, when it is a regular

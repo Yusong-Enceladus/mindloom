@@ -1,4 +1,5 @@
 import AVFoundation
+import BestASRAudioJournal
 import BestASRDictation
 import BestASRInference
 import CryptoKit
@@ -11,7 +12,13 @@ enum LocalSessionAudioPlayerError: Error, Equatable, Sendable {
 }
 
 actor LocalSessionAudioPlayer {
-  private let engine = AVAudioEngine()
+  /// Made on the first play, not at launch: an idle App holds no audio
+  /// engine (live-mac: nothing audio is set up until the user plays).
+  private lazy var engine: AVAudioEngine = {
+    let engine = AVAudioEngine()
+    engine.attach(self.node)
+    return engine
+  }()
   private let node = AVAudioPlayerNode()
   private var ranges: [AudioRangeInput] = []
   private var descriptor: CaptureTrackDescriptor?
@@ -25,9 +32,7 @@ actor LocalSessionAudioPlayer {
   private var generation = UUID()
   private var lastFailure: LocalSessionAudioPlayerError?
 
-  init() {
-    engine.attach(node)
-  }
+  init() {}
 
   func load(
     ranges: [AudioRangeInput],
@@ -214,9 +219,50 @@ actor LocalSessionAudioPlayer {
     let digest = SHA256.hash(data: data).map {
       String(format: "%02x", $0)
     }.joined()
+    guard digest == expectedDigest.lowercased() else {
+      throw LocalSessionAudioPlayerError.sourceMissing
+    }
+    return try decoded(data, descriptor: descriptor, frameOffset: requestedOffset)
+  }
+
+  /// The PCM a range stands for, its stored file checked against the digest
+  /// the index recorded: raw PCM as stored, or a recording kept as Opus (or a
+  /// file kept as it was imported, such as Typeless's Ogg) decoded through
+  /// `RetainedAudioCodec`, the one decoder every reader uses.
+  static func storedBytes(
+    at url: URL,
+    range: AudioRangeInput,
+    descriptor: CaptureTrackDescriptor
+  ) throws -> Data {
+    guard RetainedAudioContainer(reference: range.assetReference).isCompressed else {
+      let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+      let digest = SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+      guard digest == range.contentDigest.lowercased() else {
+        throw LocalSessionAudioPlayerError.sourceMissing
+      }
+      return data
+    }
+    let frames = UInt64(
+      (Double(range.monotonicEndNanoseconds - range.monotonicStartNanoseconds)
+        * Double(descriptor.sampleRateHertz) / 1_000_000_000).rounded())
+    do {
+      return try RetainedAudioCodec.pcmBytes(
+        at: url, expectedDigest: range.contentDigest, frameCount: frames,
+        encoding: descriptor.encoding)
+    } catch {
+      throw LocalSessionAudioPlayerError.sourceMissing
+    }
+  }
+
+  /// Samples of bytes already checked against their source.
+  static func decoded(
+    _ data: Data,
+    descriptor: CaptureTrackDescriptor,
+    frameOffset requestedOffset: Int
+  ) throws -> AVAudioPCMBuffer {
     let bytesPerSample = descriptor.encoding == .float32LittleEndian ? 4 : 2
     let bytesPerFrame = bytesPerSample * Int(descriptor.channelCount)
-    guard digest == expectedDigest.lowercased(), bytesPerFrame > 0,
+    guard bytesPerFrame > 0,
       data.count.isMultiple(of: bytesPerFrame)
     else {
       throw LocalSessionAudioPlayerError.sourceMissing
@@ -287,11 +333,9 @@ actor LocalSessionAudioPlayer {
         assetRoot.standardizedFileURL.path + "/"
       )
     else { throw LocalSessionAudioPlayerError.sourceMissing }
-    let data = try Data(contentsOf: sourceURL, options: [.mappedIfSafe])
     let buffer = try Self.decoded(
-      data,
+      try Self.storedBytes(at: sourceURL, range: range, descriptor: descriptor),
       descriptor: descriptor,
-      expectedDigest: range.contentDigest,
       frameOffset: initialFrameOffset
     )
     nextRangeIndex += 1
@@ -442,15 +486,10 @@ actor LocalWaveformSampler {
           assetRoot.standardizedFileURL.path + "/"
         )
       else { throw LocalSessionAudioPlayerError.sourceMissing }
-      let data = try Data(contentsOf: url, options: [.mappedIfSafe])
+      let data = try LocalSessionAudioPlayer.storedBytes(
+        at: url, range: range, descriptor: descriptor)
       guard bytesPerFrame > 0, data.count.isMultiple(of: bytesPerFrame) else {
         throw LocalSessionAudioPlayerError.invalidAudio
-      }
-      let digest = SHA256.hash(data: data).map {
-        String(format: "%02x", $0)
-      }.joined()
-      guard digest == range.contentDigest.lowercased() else {
-        throw LocalSessionAudioPlayerError.sourceMissing
       }
       data.withUnsafeBytes { raw in
         guard raw.baseAddress != nil else { return }

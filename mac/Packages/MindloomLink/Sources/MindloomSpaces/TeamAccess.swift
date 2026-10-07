@@ -68,25 +68,25 @@ public enum TeamAccess {
   /// Plain words for the Spark's enrollment and ticket refusals.
   public static func message(_ code: String) -> String {
     switch code {
-    case "bad_secret": return "邀请码不对"
-    case "ticket_used": return "这个邀请码已经用过了"
-    case "ticket_closed": return "这个邀请码已经过期或被收回"
-    case "ticket_locked": return "这个邀请码试错太多次，已经锁住；请对方重新邀请"
-    case "wrong_member": return "这个邀请只能加同一个人的另一台 Mac"
+    case "bad_secret": return "邀请码有误"
+    case "ticket_used": return "此邀请码已使用"
+    case "ticket_closed": return "此邀请码已过期或已撤销"
+    case "ticket_locked": return "此邀请码尝试次数过多，已锁定。请让对方重新邀请"
+    case "wrong_member": return "此邀请仅可用于添加同一人的另一台 Mac"
     case "member_exists": return "你已经用另一台 Mac 加入过；请让那台 Mac 邀请这台"
     case "device_exists", "device_member_conflict", "device_key_conflict":
       return "这台 Mac 已经以别人的身份登记过，不能再加入"
     case "device_revoked":
-      return "这台 Mac 以前被这台整理设备断开过，不能用原来的设备钥匙再加入；请联系整理设备的主人"
+      return "这台 Mac 以前被这台 DGX Spark 断开过，不能再用原来的身份加入；请联系 DGX Spark 的主人"
     case "member_id_taken":
-      return "这个身份在整理设备上已经是别人的了，不能用来加入；请让对方用他自己的 Mac 邀请这台"
-    case "bad_signature": return "这台 Mac 的设备钥匙对不上，没有加入"
-    case "not_allowed": return "邀请钥匙只能用来加入"
-    case "unavailable": return "整理设备暂时没有响应，请稍后再试"
-    case "too_many_devices": return "一个人最多 4 台 Mac"
+      return "此身份在 DGX Spark 上已属于他人，无法用于加入。请让对方用自己的 Mac 邀请这台 Mac"
+    case "bad_signature": return "这台 Mac 的身份核对不上，没有加入"
+    case "not_allowed": return "此邀请仅可用于加入"
+    case "unavailable": return "DGX Spark 暂时没有响应，请稍后再试"
+    case "too_many_devices": return "每人最多 4 台 Mac"
     case "too_many_tickets": return "没用掉的邀请太多了（最多 20 个）；先收回一些"
-    case "key_in_use", "ticket_exists": return "这把邀请钥匙已经登记过；请重新生成邀请"
-    case "forbidden": return "只有整理设备的主人和组织管理员能邀请新队友"
+    case "key_in_use", "ticket_exists": return "此邀请已登记。请重新生成邀请"
+    case "forbidden": return "仅 DGX Spark 的所有者和管理员可以邀请新成员"
     case "expired": return "邀请码已经过期"
     default: return "没有加入（\(code)）"
     }

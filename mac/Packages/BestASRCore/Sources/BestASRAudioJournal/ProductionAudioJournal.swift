@@ -19,6 +19,9 @@ public enum ProductionAudioJournalError: Error, Equatable, Sendable {
   case sourceRangeMismatch
   case sourceChunkEmpty
   case unsupportedSourceExport
+  /// The recording was opened, played or leased while its new copy was being
+  /// made; it is kept as it was and rewritten another time.
+  case recordingInUse
 }
 
 public enum ProductionAudioJournalState: String, Codable, Sendable {
@@ -147,6 +150,11 @@ public actor ProductionAudioJournal: DictationJournalPort,
   }
 
   private var contexts: [SessionID: OpenContext] = [:]
+  /// Sessions whose new copy is being made (compaction or archival), and
+  /// those of them read in the meantime: a read means someone has the
+  /// recording open, and the swap is called off (review 10-6 S5).
+  private var rewriting: Set<SessionID> = []
+  private var readWhileRewriting: Set<SessionID> = []
   var inferenceLeaseCounts: [String: Int] = [:]
   var inferenceBuilds: Set<String> = []
   var inferenceBuildWaiters: [String: [CheckedContinuation<Void, Never>]] = [:]
@@ -194,6 +202,11 @@ public actor ProductionAudioJournal: DictationJournalPort,
         isDirectory: true
       )
       try? fileManager.removeItem(at: inferenceRoot)
+      // An interrupted rewrite (compaction or archival) leaves only a
+      // disposable copy beside the live journal; see `JournalRewrite`.
+      JournalRewrite.discardLeftover(
+        journalRoot: sessionRoot.appendingPathComponent("journal", isDirectory: true),
+        fileManager: fileManager)
     }
   }
 
@@ -479,6 +492,7 @@ public actor ProductionAudioJournal: DictationJournalPort,
   public func recover(
     sessionID: SessionID
   ) throws -> ProductionAudioJournalRecoveryReport {
+    if rewriting.contains(sessionID) { readWhileRewriting.insert(sessionID) }
     var context = try openContext(for: sessionID)
     let recovery = try context.journal.recover()
     if context.journal.manifest.state == .finalized,
@@ -527,19 +541,78 @@ public actor ProductionAudioJournal: DictationJournalPort,
   /// an open journal keeps each session's manifest in memory, so rewriting
   /// behind its back leaves it handing out ranges whose files are gone — the
   /// recording still plays until the App is restarted, and then cannot be
-  /// played at all. Inside the actor nothing can read the session while it is
-  /// being replaced, and the next read opens what was written.
+  /// played at all.
+  ///
+  /// The new copy is made beside the live journal while this journal keeps
+  /// serving other calls, the session's included. Then, back here, the swap
+  /// happens only if nothing read the session in the meantime, no job holds a
+  /// lease on it, and `stillFree` (the App: nothing playing or delivering it)
+  /// agrees; otherwise the copy is discarded and this throws
+  /// `recordingInUse`. The swap and forgetting the cached session happen with
+  /// no suspension between them, so no read sees the one without the other.
   public func compactSealedRecording(
-    sessionID: SessionID
+    sessionID: SessionID,
+    stillFree: @escaping @Sendable () async -> Bool = { true }
   ) async throws -> SourceAudioCompactionOutcome {
-    let outcome = try await SourceAudioCompaction.compact(
+    beginRewrite(sessionID)
+    defer { endRewrite(sessionID) }
+    let (outcome, staged) = try await SourceAudioCompaction.stage(
       sessionID: sessionID, assetRoot: assetRootURL)
-    guard !outcome.alreadyCompact else { return outcome }
+    if let staged { try await swapIn(staged, sessionID: sessionID, stillFree: stillFree) }
+    return outcome
+  }
+
+  /// Keeps a sealed, compacted recording in `format` (see
+  /// `SourceAudioArchival`), swapped in the way `compactSealedRecording`
+  /// swaps.
+  public func archiveSealedRecording(
+    sessionID: SessionID,
+    format: RetainedAudioArchiveFormat = .lossless,
+    stillFree: @escaping @Sendable () async -> Bool = { true }
+  ) async throws -> SourceAudioArchivalOutcome {
+    beginRewrite(sessionID)
+    defer { endRewrite(sessionID) }
+    let (outcome, staged) = try await SourceAudioArchival.stage(
+      sessionID: sessionID, assetRoot: assetRootURL, format: format)
+    if let staged { try await swapIn(staged, sessionID: sessionID, stillFree: stillFree) }
+    return outcome
+  }
+
+  private func beginRewrite(_ sessionID: SessionID) {
+    rewriting.insert(sessionID)
+    readWhileRewriting.remove(sessionID)
+  }
+
+  private func endRewrite(_ sessionID: SessionID) {
+    rewriting.remove(sessionID)
+    readWhileRewriting.remove(sessionID)
+  }
+
+  private func swapIn(
+    _ staged: StagedJournalRewrite, sessionID: SessionID,
+    stillFree: @Sendable () async -> Bool
+  ) async throws {
+    let free = await stillFree()
+    // No suspension from here on: nothing else runs on this journal between
+    // the last check, the swap, and forgetting the cached session.
+    guard free, !readWhileRewriting.contains(sessionID), !hasInferenceLease(sessionID: sessionID)
+    else {
+      staged.discard(fileManager: fileManager)
+      throw ProductionAudioJournalError.recordingInUse
+    }
+    try staged.commit(fileManager: fileManager)
     contexts[sessionID] = nil
     // Open it once now, so a recording that cannot be read back is a failure
     // here and not the next time the user presses play.
     _ = try openContext(for: sessionID)
-    return outcome
+  }
+
+  /// True while a derivative of this session's audio is leased to a running
+  /// recognition or speaker job; a rewrite waits until it is released.
+  public func hasInferenceLease(sessionID: SessionID) -> Bool {
+    let marker = "/sessions/\(sessionID.rawValue.uuidString.lowercased())/inference/"
+    return inferenceLeaseCounts.keys.contains { $0.contains(marker) }
+      || inferenceBuilds.contains { $0.contains(marker) }
   }
 
   public func sourceTrackDescriptors(
@@ -613,6 +686,8 @@ public actor ProductionAudioJournal: DictationJournalPort,
       let byteOffset: UInt64
       let byteCount: UInt64
       let frameCount: UInt64
+      /// Frames the whole chunk holds, for decoding a compressed one.
+      let chunkFrameCount: UInt64
     }
     var slices: [Slice] = []
     var totalFrames: UInt64 = 0
@@ -654,7 +729,8 @@ public actor ProductionAudioJournal: DictationJournalPort,
           digest: entry.contentDigest,
           byteOffset: byteOffset,
           byteCount: byteCount,
-          frameCount: frameCount
+          frameCount: frameCount,
+          chunkFrameCount: UInt64(entry.frameCount)
         )
       )
       totalFrames += frameCount
@@ -683,6 +759,24 @@ public actor ProductionAudioJournal: DictationJournalPort,
           pcmByteCount: UInt32(totalPCMBytes)
         ))
       for slice in slices {
+        if RetainedAudioContainer(reference: slice.source.lastPathComponent).isCompressed {
+          // A recording kept as Opus is exported as the lossless 16-bit
+          // audio it decodes to (EXPORT-006: a universal lossless format
+          // when the stored codec cannot be cut).
+          let pcm: Data
+          do {
+            pcm = try RetainedAudioCodec.pcmBytes(
+              at: slice.source, expectedDigest: slice.digest,
+              frameCount: slice.chunkFrameCount, encoding: descriptor.encoding)
+          } catch RetainedAudioCodecError.digestMismatch {
+            throw ProductionAudioJournalError.digestMismatch
+          }
+          let start = Int(slice.byteOffset)
+          let end = min(pcm.count, start + Int(slice.byteCount))
+          guard end > start else { throw ProductionAudioJournalError.invalidFrameCount }
+          try output.write(contentsOf: pcm[start..<end])
+          continue
+        }
         let sourceDigest = try Self.fileDigest(slice.source)
         guard sourceDigest == slice.digest.lowercased() else {
           throw ProductionAudioJournalError.digestMismatch
@@ -780,6 +874,7 @@ public actor ProductionAudioJournal: DictationJournalPort,
   }
 
   private func context(for sessionID: SessionID) throws -> OpenContext {
+    if rewriting.contains(sessionID) { readWhileRewriting.insert(sessionID) }
     if let context = contexts[sessionID] { return context }
     return try openContext(for: sessionID)
   }
@@ -970,11 +1065,13 @@ public actor ProductionAudioJournal: DictationJournalPort,
     let handle = try FileHandle(forReadingFrom: url)
     defer { try? handle.close() }
     var hasher = SHA256()
-    while true {
+    // Each chunk released as soon as it is hashed (see LocalModelManager.sha256).
+    while try autoreleasepool(invoking: {
       let data = try handle.read(upToCount: 1_048_576) ?? Data()
-      if data.isEmpty { break }
+      if data.isEmpty { return false }
       hasher.update(data: data)
-    }
+      return true
+    }) {}
     return hasher.finalize().map { String(format: "%02x", $0) }.joined()
   }
 }

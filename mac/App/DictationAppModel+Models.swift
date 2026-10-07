@@ -65,6 +65,16 @@ extension DictationAppModel {
     )
   }
 
+  func setMeaningModelLicenseAccepted(_ accepted: Bool) {
+    models.meaningModelLicenseAccepted = accepted
+    guard !fixtureMode else { return }
+    LocalModelLicenseReceipts.setAccepted(
+      accepted,
+      key: Self.meaningLicenseReceiptKey,
+      receipt: Self.meaningLicenseReceipt
+    )
+  }
+
   func setPolishModelLicenseAccepted(_ accepted: Bool) {
     models.polishModelLicenseAccepted = accepted
     guard !fixtureMode else { return }
@@ -87,29 +97,29 @@ extension DictationAppModel {
   func downloadRecommendedModels() {
     guard models.allowModelDownloads else {
       models.recommendedModelProgressMessage =
-        "组件下载已在隐私设置中关闭；仍可使用高级离线部署选择本地文件夹"
+        "模型下载已在隐私设置中关闭；仍可在高级设置里选择本地文件夹"
       return
     }
     guard canInstallRecommendedModels, !models.recommendedModelInstallInProgress else {
       models.recommendedModelProgressMessage =
-        "请先阅读并接受上方三个本地组件许可"
+        "请先阅读并接受上方三个本地模型许可"
       return
     }
     if fixtureMode {
       models.recommendedModelProgress = 1
       models.modelRuntimeReady = true
       enhancedFinalASRReady = true
-      models.modelReadinessMessage = "本机语音识别测试组件已就绪"
+      models.modelReadinessMessage = "本机语音识别测试模型已就绪"
       polishRuntimeReady = true
-      polishReadinessMessage = "本机文字整理测试组件已就绪"
+      polishReadinessMessage = "本机文字整理测试模型已就绪"
       people.speakerRuntimeReady = true
-      people.speakerReadinessMessage = "本机多人识别测试组件已就绪"
+      people.speakerReadinessMessage = "本机多人识别测试模型已就绪"
       models.recommendedModelProgressMessage =
-        "三个本地组件均已校验并可离线使用"
+        "三个本地模型均已校验，可在本机直接使用"
       return
     }
     guard let localRuntime else {
-      models.recommendedModelProgressMessage = "本地组件服务暂不可用"
+      models.recommendedModelProgressMessage = "本地模型服务暂不可用"
       return
     }
     models.recommendedModelInstallInProgress = true
@@ -118,7 +128,7 @@ extension DictationAppModel {
     models.speakerModelInstallInProgress = true
     models.recommendedModelProgress = 0
     models.recommendedModelProgressMessage =
-      "正在下载并校验语音识别组件…"
+      "正在下载并校验语音识别模型…"
     recommendedModelInstallTask = Task { [weak self] in
       guard let self else { return }
       defer {
@@ -158,8 +168,8 @@ extension DictationAppModel {
         }
         models.modelReadinessMessage =
           models.modelRuntimeReady
-          ? "基础识别仍可用；增强组件安装未完成，可稍后继续"
-          : "本地语音组件尚未准备；录音仍会保留供稍后处理"
+          ? "基础识别仍可用；增强模型安装未完成，可稍后继续"
+          : "本地语音模型尚未准备；录音仍会保留供稍后处理"
         failedComponents.append("语音识别")
       }
       guard !Task.isCancelled else { return }
@@ -176,7 +186,7 @@ extension DictationAppModel {
           }
         }
         people.speakerRuntimeReady = true
-        people.speakerReadinessMessage = "本地多人识别组件已就绪"
+        people.speakerReadinessMessage = "本地多人识别模型已就绪"
       } catch {
         people.speakerRuntimeReady = false
         failedComponents.append("多人识别")
@@ -197,22 +207,36 @@ extension DictationAppModel {
         }
         polishRuntimeReady = true
         polishReadinessMessage =
-          "本地文字整理组件已就绪，并启用事实保护回退"
+          "本地文字整理模型已就绪，并启用事实保护回退"
       } catch {
         polishRuntimeReady = false
         failedComponents.append("文字整理")
       }
+      // v12 search: the meaning model, when its license was accepted.
+      if models.meaningModelLicenseAccepted, !Task.isCancelled {
+        do {
+          try await localRuntime.downloadRecommendedMeaningModel { [weak self] state in
+            Task { @MainActor [weak self] in
+              self?.applyDistributionState(state, component: "按意思搜索", offset: 0, weight: 1)
+            }
+          }
+          await meaningSearch.discover()
+          meaningSearchReady = meaningSearch.embedder != nil
+        } catch {
+          failedComponents.append("按意思搜索")
+        }
+      }
       if failedComponents.isEmpty {
         models.recommendedModelProgress = 1
-        models.recommendedModelProgressMessage = "三个本地组件均已校验并可离线使用"
+        models.recommendedModelProgressMessage = "三个本地模型均已校验，可在本机直接使用"
         statusMessage = "已就绪——按 \(startEndShortcutTitle) 开始本地口述"
       } else {
         models.recommendedModelProgressMessage =
           "\(failedComponents.joined(separator: "、"))未完成；再次点击会从已校验进度继续"
         statusMessage =
           models.modelRuntimeReady
-          ? "语音输入可用；其余本地组件可继续安装"
-          : "语音识别组件尚未完成；可以先录音，稍后继续处理"
+          ? "语音输入可用；其余本地模型可继续安装"
+          : "语音识别模型尚未完成；可以先录音，稍后继续处理"
       }
     }
   }
@@ -220,21 +244,21 @@ extension DictationAppModel {
   func cancelRecommendedModelDownload() {
     guard models.recommendedModelInstallInProgress else { return }
     models.recommendedModelProgressMessage =
-      "正在安全暂停；已校验文件会保留，稍后可继续…"
+      "正在暂停；已校验文件会保留，稍后可继续…"
     recommendedModelInstallTask?.cancel()
   }
 
   func verifyInstalledModels() {
     guard !models.recommendedModelInstallInProgress else { return }
-    models.modelManagementStatusMessage = "正在逐文件校验已安装组件…"
+    models.modelManagementStatusMessage = "正在逐文件校验已安装模型…"
     Task { [weak self] in
       guard let self else { return }
       await discoverInstalledModels()
       models.modelManagementStatusMessage =
         models.modelRuntimeReady
           && enhancedFinalASRReady && people.speakerRuntimeReady && polishRuntimeReady
-        ? "推荐组件文件校验通过；模型将在本机按需加载"
-        : "部分推荐组件尚未准备；已有组件仍可使用，可继续安装缺失部分"
+        ? "推荐模型文件校验通过；模型将在本机按需加载"
+        : "部分推荐模型尚未准备；已有模型仍可使用，可继续安装缺失部分"
       refreshStorageUsage()
     }
   }
@@ -251,10 +275,10 @@ extension DictationAppModel {
         try await localRuntime.restoreLastKnownGoodModel(component)
         await discoverInstalledModels()
         models.modelManagementStatusMessage =
-          "\(component.title)已恢复到上一可用版本；组件文件已重新校验"
+          "\(component.title)已恢复到上一可用版本；模型文件已重新校验"
       } catch {
         models.modelManagementStatusMessage =
-          "没有可恢复的独立上一版本；当前已校验组件未被更改"
+          "没有可恢复的独立上一版本；当前已校验模型未被更改"
       }
     }
   }
@@ -277,7 +301,7 @@ extension DictationAppModel {
 
   func setAutomaticModelUpdates(_ enabled: Bool) {
     guard !enabled || models.allowModelDownloads else {
-      preferencesStatusMessage = "请先允许组件下载"
+      preferencesStatusMessage = "请先允许模型下载"
       return
     }
     models.automaticModelUpdates = enabled
@@ -339,7 +363,7 @@ extension DictationAppModel {
         models.availableAppUpdateURL = nil
         if !silentWhenCurrent {
           models.appUpdateStatusMessage =
-            "暂时无法检查更新；录音、识别和历史仍可完全离线使用"
+            "暂时无法检查更新；录音、识别和历史仍完全在本机运行"
         }
       }
     }
@@ -348,14 +372,14 @@ extension DictationAppModel {
   func chooseAndInstallLocalModel() {
     guard models.modelLicenseAccepted, !models.modelInstallInProgress else {
       models.modelReadinessMessage =
-        "请先阅读并接受上方语音识别组件许可"
+        "请先阅读并接受上方语音识别模型许可"
       return
     }
     let panel = NSOpenPanel()
-    panel.title = "选择已固定版本的混输识别组件文件夹"
-    panel.prompt = "安装本地组件"
+    panel.title = "选择已固定版本的混输识别模型文件夹"
+    panel.prompt = "安装本地模型"
     panel.message =
-      "请选择包含固定 Core ML 模型目录和 vocab.json 的文件夹。应用只在本机复制并逐项校验。"
+      "请选择包含固定 Core ML 模型目录和 vocab.json 的文件夹。Mindloom 会在这台 Mac 上拷贝并逐项校验。"
     panel.canChooseFiles = false
     panel.canChooseDirectories = true
     panel.allowsMultipleSelection = false
@@ -363,7 +387,7 @@ extension DictationAppModel {
 
     models.modelInstallInProgress = true
     models.modelRuntimeReady = false
-    models.modelReadinessMessage = "正在本机校验并安装语音识别组件…"
+    models.modelReadinessMessage = "正在本机校验并安装语音识别模型…"
     Task { [weak self] in
       guard let self else { return }
       defer { models.modelInstallInProgress = false }
@@ -371,12 +395,12 @@ extension DictationAppModel {
         guard let localRuntime else { return }
         try await localRuntime.installModel(from: source)
         models.modelRuntimeReady = true
-        models.modelReadinessMessage = "本地语音识别组件已就绪"
+        models.modelReadinessMessage = "本地语音识别模型已就绪"
         statusMessage = "已就绪——按设置的全局快捷键开始口述"
       } catch {
         models.modelRuntimeReady = false
         models.modelReadinessMessage =
-          "组件被拒绝：文件夹、版本、大小、摘要或运行检查不匹配"
+          "模型被拒绝：文件夹、版本、大小、摘要或运行检查不匹配"
       }
     }
   }
@@ -384,14 +408,14 @@ extension DictationAppModel {
   func chooseAndInstallPolishModel() {
     guard models.polishModelLicenseAccepted, !models.polishModelInstallInProgress else {
       polishReadinessMessage =
-        "请先阅读并接受上方文字整理组件许可"
+        "请先阅读并接受上方文字整理模型许可"
       return
     }
     let panel = NSOpenPanel()
     panel.title = "选择已固定版本的 Qwen3 1.7B MLX 文件夹"
-    panel.prompt = "安装本地文字整理组件"
+    panel.prompt = "安装本地文字整理模型"
     panel.message =
-      "请选择精确固定的 Qwen3-1.7B-MLX-4bit 文件夹。文件只在本机复制并校验，运行时不会联网补文件。"
+      "请选择精确固定的 Qwen3-1.7B-MLX-4bit 文件夹。Mindloom 会在这台 Mac 上拷贝并校验文件。"
     panel.canChooseFiles = false
     panel.canChooseDirectories = true
     panel.allowsMultipleSelection = false
@@ -399,7 +423,7 @@ extension DictationAppModel {
 
     models.polishModelInstallInProgress = true
     polishRuntimeReady = false
-    polishReadinessMessage = "正在本机校验并安装文字整理组件…"
+    polishReadinessMessage = "正在本机校验并安装文字整理模型…"
     Task { [weak self] in
       guard let self else { return }
       defer { models.polishModelInstallInProgress = false }
@@ -408,21 +432,29 @@ extension DictationAppModel {
         try await localRuntime.installPolishModel(from: source)
         polishRuntimeReady = true
         polishReadinessMessage =
-          "本地文字整理组件已就绪，并启用事实保护"
+          "本地文字整理模型已就绪，并启用事实保护"
         statusMessage = "已就绪——本机识别和事实保护整理均可用"
       } catch {
         polishRuntimeReady = false
         polishReadinessMessage =
-          "组件被拒绝：文件夹、版本、大小、摘要或加载检查不匹配"
+          "模型被拒绝：文件夹、版本、大小、摘要或加载检查不匹配"
       }
     }
   }
 
   func discoverInstalledModels() async {
     guard !fixtureMode, let localRuntime else { return }
+    await discoverInstalledModels(on: localRuntime)
+  }
+
+  /// The App's model discovery on `localRuntime` (a test passes its own).
+  func discoverInstalledModels(on localRuntime: LocalDictationRuntime) async {
     models.modelReadinessMessage = "正在检查已验证的本地语音模型…"
     polishReadinessMessage = "正在检查已验证的本地润色模型…"
-    people.speakerReadinessMessage = "正在检查已验证的本地多人识别组件…"
+    people.speakerReadinessMessage = "正在检查已验证的本地多人识别模型…"
+    // Memory-pressure release and the two-version rule (ALIGNMENT
+    // recommendation 8, 收1-4) start here, before any model loads.
+    await localRuntime.startModelHousekeeping()
     await Self.discoverModelsProgressively(
       discoverASR: { [weak self] in
         let ready = await localRuntime.discoverInstalledASR()
@@ -444,6 +476,15 @@ extension DictationAppModel {
     // decoders are warmed. This avoids competing with first-launch checks, but
     // removes the minute-long cold load from the user's first End action.
     await localRuntime.beginFinalASRPrewarm()
+    // v12 search: the meaning model, when installed; its index builds in
+    // the background while nothing is being captured or recognized (the
+    // load just begun counts too, so the index waits for it).
+    meaningSearch.attach(to: self)
+    await meaningSearch.discover()
+    meaningSearchReady = meaningSearch.embedder != nil
+    #if DEBUG
+      runDictationMetricsProbeIfRequested()
+    #endif
   }
 
   nonisolated static func discoverModelsProgressively(

@@ -558,6 +558,32 @@ final class FluidSenseVoiceRuntimeTests: XCTestCase {
     )
   }
 
+  /// Without near matches only what the user wrote down applies: spoken
+  /// forms and the entry's own spelling, never a word one character apart
+  /// (2026-10-06: on long audio near matches wrote entries that were not said).
+  func testWithoutNearMatchesOnlyWrittenDownFormsApply() {
+    let normalizer = SenseVoiceDictionaryNormalizer()
+    let hints = [
+      ASRDictionaryHint(canonicalForm: "bestASR", spokenForms: ["best A S R"]),
+      ASRDictionaryHint(canonicalForm: "OpenAI", spokenForms: []),
+    ]
+    XCTAssertEqual(
+      normalizer.normalize(
+        "声明负责 best a s r，openai 和 open a i",
+        dictionaryTerms: ["张明", "OpenAI"], dictionaryHints: hints, nearMatches: false),
+      "声明负责 bestASR，OpenAI 和 OpenAI")
+    XCTAssertEqual(
+      normalizer.normalize(
+        "声明负责 best a s r，openai 和 open a i",
+        dictionaryTerms: ["张明", "OpenAI"], dictionaryHints: hints),
+      "张明负责 bestASR，OpenAI 和 OpenAI")
+    XCTAssertEqual(
+      normalizer.normalize(
+        "我们的 opanai 账号", dictionaryTerms: ["OpenAI"], dictionaryHints: hints,
+        nearMatches: false),
+      "我们的 opanai 账号")
+  }
+
   func testExplicitSpokenFormsRewriteEveryOccurrenceWithoutCascading() {
     let normalizer = SenseVoiceDictionaryNormalizer()
     let hints = [
@@ -583,6 +609,101 @@ final class FluidSenseVoiceRuntimeTests: XCTestCase {
       ),
       "bestASR and bestASR"
     )
+  }
+
+  /// Regression (v12 storage review): a form learned from one correction is
+  /// replaced only where it stands as whole words; a user's own word is
+  /// replaced as before.
+  func testALearnedChineseFormIsReplacedOnlyAsWholeWords() {
+    let normalizer = SenseVoiceDictionaryNormalizer()
+    let learned = [ASRDictionaryHint(canonicalForm: "议事", spokenForms: ["议室"], explicitOnly: true)]
+    XCTAssertEqual(
+      normalizer.normalize("明天在三楼会议室开会", dictionaryTerms: [], dictionaryHints: learned),
+      "明天在三楼会议室开会", "Never the middle of 会议室")
+    let seat = [ASRDictionaryHint(canonicalForm: "在坐", spokenForms: ["在座"], explicitOnly: true)]
+    XCTAssertEqual(
+      normalizer.normalize("感谢在座的各位", dictionaryTerms: [], dictionaryHints: seat),
+      "感谢在坐的各位")
+    let own = [ASRDictionaryHint(canonicalForm: "议事", spokenForms: ["议室"])]
+    XCTAssertEqual(
+      normalizer.normalize("明天在三楼会议室开会", dictionaryTerms: [], dictionaryHints: own),
+      "明天在三楼会议事开会", "A word the user added keeps its literal replacement")
+  }
+
+  /// Regression (review 10-6 S7): a word learned twice is told to the
+  /// recognizer (`dictionaryTerms`) but is still replaced only where its
+  /// learned form stands as whole words, never searched for among similar
+  /// text.
+  func testATwiceLearnedWordRewritesNothingElse() {
+    let normalizer = SenseVoiceDictionaryNormalizer()
+    let seat = [ASRDictionaryHint(canonicalForm: "在坐", spokenForms: ["在座"], explicitOnly: true)]
+    for text in ["我在做饭", "他在左边", "你在哪", "请大家在座位上坐好"] {
+      XCTAssertEqual(
+        normalizer.normalize(text, dictionaryTerms: ["在坐"], dictionaryHints: seat), text)
+    }
+    XCTAssertEqual(
+      normalizer.normalize("感谢在座的各位", dictionaryTerms: ["在坐"], dictionaryHints: seat),
+      "感谢在坐的各位")
+    let name = [ASRDictionaryHint(canonicalForm: "汪维", spokenForms: ["王伟"], explicitOnly: true)]
+    XCTAssertEqual(
+      normalizer.normalize("王维的诗", dictionaryTerms: ["汪维"], dictionaryHints: name), "王维的诗")
+    let product = [
+      ASRDictionaryHint(
+        canonicalForm: "Claude Code", spokenForms: ["cloud code"], explicitOnly: true)
+    ]
+    for text in ["Google Cloud is down", "the cloud is down", "clause 3 says"] {
+      XCTAssertEqual(
+        normalizer.normalize(text, dictionaryTerms: ["Claude Code"], dictionaryHints: product),
+        text)
+    }
+    XCTAssertEqual(
+      normalizer.normalize(
+        "I opened cloud code today", dictionaryTerms: ["Claude Code"], dictionaryHints: product),
+      "I opened Claude Code today")
+  }
+
+  /// A form learned for a word the user made travels as a second, learned
+  /// hint: replaced only as a whole word. Before, it joined the user's own
+  /// forms and was replaced inside other words too. (The user's word keeps
+  /// its own search, as before learning existed.)
+  func testALearnedFormOfTheUsersWordIsReplacedOnlyAsAWholeWord() {
+    let normalizer = SenseVoiceDictionaryNormalizer()
+    let split = [
+      ASRDictionaryHint(canonicalForm: "Mindloom", spokenForms: []),
+      ASRDictionaryHint(canonicalForm: "Mindloom", spokenForms: ["织机"], explicitOnly: true),
+    ]
+    XCTAssertEqual(
+      normalizer.normalize("纺织机械厂", dictionaryTerms: ["Mindloom"], dictionaryHints: split),
+      "纺织机械厂")
+    let joined = [ASRDictionaryHint(canonicalForm: "Mindloom", spokenForms: ["织机"])]
+    XCTAssertEqual(
+      normalizer.normalize("纺织机械厂", dictionaryTerms: ["Mindloom"], dictionaryHints: joined),
+      "纺Mindloom械厂", "What the user typed as a form is replaced anywhere, as before")
+  }
+
+  /// Regression (review 10-6 S1): the production path — the candidate
+  /// adapter bounds the request before the runtime sees it — keeps a learned
+  /// hint learned, so 「会议室」 stays 「会议室」 end to end.
+  func testALearnedHintStaysLearnedThroughTheCandidateAdapter() async throws {
+    let runtime = FluidSenseVoiceRuntime(
+      audioLoader: FixtureAudioLoader(samples: [Float](repeating: 0.25, count: 320)),
+      backend: FixtureBackend(text: "明天在三楼会议室开会"),
+      activitySegmenter: fixtureActivitySegmenter
+    )
+    let adapter = try FluidSenseVoiceASRAdapter(
+      candidate: try fluidCandidate(), runtime: runtime,
+      artifact: FluidSenseVoicePinnedArtifact.descriptor)
+    let learned = ASRDictionaryHint(canonicalForm: "议事", spokenForms: ["议室"], explicitOnly: true)
+
+    let result = try await adapter.transcribe(
+      makeRequest(
+        recognitionContext: ASRRecognitionContext(
+          dictionaryTerms: ["议事"], dictionaryHints: [learned])))
+
+    XCTAssertEqual(result.segments.map(\.text), ["明天在三楼会议室开会"])
+    let bounded = ASRRecognitionContext(dictionaryTerms: [], dictionaryHints: [learned]).bounded(
+      maximumDictionaryTerms: 64, maximumPriorSegments: 8)
+    XCTAssertEqual(bounded.dictionaryHints.map(\.explicitOnly), [true])
   }
 
   func testAmbiguousSpokenFormFailsClosed() {

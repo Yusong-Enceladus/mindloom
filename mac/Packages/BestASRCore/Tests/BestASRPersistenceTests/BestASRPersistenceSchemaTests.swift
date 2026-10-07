@@ -44,6 +44,9 @@ final class TypelessDictationMigrationTests: XCTestCase {
         BestASRPersistenceSchema.userItemFilesMigrationID,
         BestASRPersistenceSchema.remotePrivacyMigrationID,
         BestASRPersistenceSchema.agentAccessMigrationID,
+        BestASRPersistenceSchema.userOrganizingMigrationID,
+        BestASRPersistenceSchema.agentChangesMigrationID,
+        BestASRPersistenceSchema.learnedCorrectionsMigrationID,
       ]
     )
     XCTAssertEqual(inspection.journalMode, "wal")
@@ -66,11 +69,32 @@ final class TypelessDictationMigrationTests: XCTestCase {
       "remote_organizer_decision_jobs", "remote_organizer_events", "remote_organizer_persons",
       "remote_organizer_questions", "remote_organizer_meta", "remote_organizer_eligible",
       "user_item_details", "remote_mask_map", "remote_mask_offsets", "remote_pending_deletions",
-      "agent_grants", "agent_grant_matters", "agent_audit", "agent_inbox",
+      "agent_grants", "agent_grant_matters", "agent_audit", "agent_inbox", "agent_changes",
+      "user_pins", "user_groups", "user_group_members", "user_step_overrides",
+      "learned_corrections",
     ] {
       XCTAssertTrue(inspection.tableNames.contains(table), table)
     }
     try await store.checkpointAndClose()
+  }
+
+  /// The v12 branches were merged one after another: the library's migration list stays one
+  /// linear, unique list, and `currentUserVersion` is the highest `vN` in it (storage's v28 is
+  /// the only one the seven v12 branches added; search's meaning tables are derived and created
+  /// idempotently, dictation's timing table has its own file and its own migrator).
+  func testTheMigrationListIsLinearAndUnique() throws {
+    let ids = BestASRPersistenceSchema.migrator().migrations
+    XCTAssertEqual(Set(ids).count, ids.count, "a migration id is registered twice")
+    func number(_ id: String) -> Double {
+      let digits = id.dropFirst().prefix { $0.isNumber || $0 == "." }
+      return Double(digits.hasSuffix(".") ? digits.dropLast() : digits) ?? -1
+    }
+    let numbers = ids.map(number)
+    XCTAssertEqual(numbers, numbers.sorted(), "migrations are not in version order")
+    XCTAssertEqual(ids.first, BestASRPersistenceSchema.foundationMigrationID)
+    XCTAssertEqual(ids.last, BestASRPersistenceSchema.learnedCorrectionsMigrationID)
+    XCTAssertEqual(Int(numbers.last ?? 0), BestASRPersistenceSchema.currentUserVersion)
+    XCTAssertEqual(BestASRPersistenceSchema.currentUserVersion, 28)
   }
 
   func testExistingFoundationV2MigratesForwardWithoutLosingSession() async throws {
@@ -310,13 +334,15 @@ final class TypelessDictationMigrationTests: XCTestCase {
     XCTAssertEqual(current.schemaVersion, BestASRPersistenceSchema.currentUserVersion)
     let currentOrder = current.tables.map(\.name)
     XCTAssertEqual(
-      Array(currentOrder.suffix(11)),
+      Array(currentOrder.suffix(15)),
       [
         "source_context_events", "speaker_name_evidence", "events",
         "event_sessions", "event_link_rejections", "event_people",
         "event_candidates",
         "event_text_documents", "event_edit_operations",
         "remote_organizer_decisions", "user_item_details",
+        // v26 (v11): the user's own pins, groups and step marks.
+        "user_pins", "user_groups", "user_group_members", "user_step_overrides",
       ])
     let priorMigrations: [(version: Int, migrationID: String)] = [
       (12, BestASRPersistenceSchema.trackDeviceMetadataMigrationID),
@@ -333,6 +359,13 @@ final class TypelessDictationMigrationTests: XCTestCase {
       (23, BestASRPersistenceSchema.userItemFilesMigrationID),
       // v25 (agent access) added only local tables: a v24 archive imports.
       (24, BestASRPersistenceSchema.remotePrivacyMigrationID),
+      // v26 added the user-organizing tables: a v25 archive imports them empty.
+      (25, BestASRPersistenceSchema.agentAccessMigrationID),
+      // v27 (agent changes) added only local tables: a v26 archive imports.
+      (26, BestASRPersistenceSchema.userOrganizingMigrationID),
+      // v28 (learned corrections) added only local tables: a v27 archive
+      // imports (v12 storage).
+      (27, BestASRPersistenceSchema.agentChangesMigrationID),
     ]
     for (version, migrationID) in priorMigrations {
       let sessionID = UUID().uuidString

@@ -207,12 +207,12 @@ execute_stage() {
     xcode-build)
       xcodebuild "${xcode_arguments[@]}" build-for-testing
       "$repository_root/script/verify_built_permissions.sh" \
-        --app "$derived_data_path/Build/Products/Debug/bestASR.app"
+        --app "$derived_data_path/Build/Products/Debug/Mindloom.app"
       xcodebuild "${release_xcode_arguments[@]}" build
       "$repository_root/script/generate_supply_chain.sh" \
-        --package "$release_derived_data_path/Build/Products/Release/bestASR.app"
+        --package "$release_derived_data_path/Build/Products/Release/Mindloom.app"
       "$repository_root/script/run_release_smoke.sh" \
-        --app "$release_derived_data_path/Build/Products/Release/bestASR.app"
+        --app "$release_derived_data_path/Build/Products/Release/Mindloom.app"
       ;;
     unit-tests)
       xcodebuild "${xcode_arguments[@]}" \
@@ -233,7 +233,7 @@ execute_stage() {
     artifact-manifests)
       "$repository_root/script/validate_artifacts.sh"
       "$repository_root/script/validate_release_package.sh" \
-        --package "$release_derived_data_path/Build/Products/Release/bestASR.app"
+        --package "$release_derived_data_path/Build/Products/Release/Mindloom.app"
       "$repository_root/script/validate_release_evidence.sh"
       "$repository_root/script/validate_traceability.sh"
       python3 "$repository_root/script/delivery_contract_evidence.py" --validate \

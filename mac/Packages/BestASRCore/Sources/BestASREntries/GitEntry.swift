@@ -268,14 +268,14 @@ public enum GitWatch {
         repository.branches.isEmpty
         ? runner.currentBranch(in: url).map { [$0] } ?? [] : repository.branches
       if branches.isEmpty {
-        problems.append(.init(repository: repository.displayName, message: "读不到这个仓库的分支"))
+        problems.append(.init(repository: repository.displayName, message: "无法读取此仓库的分支"))
         continue
       }
       for branch in branches {
         let key = "\(repository.id.uuidString)|\(branch)"
         live.insert(key)
         guard let head = try? runner.head(of: branch, in: url) else {
-          problems.append(.init(repository: repository.displayName, message: "读不到分支 \(branch)"))
+          problems.append(.init(repository: repository.displayName, message: "无法读取分支 \(branch)"))
           continue
         }
         guard let last = state.heads[key] else {

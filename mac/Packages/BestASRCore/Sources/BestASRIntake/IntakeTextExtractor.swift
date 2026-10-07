@@ -56,6 +56,23 @@ public enum IntakeTextExtractor {
     return String(scalars)
   }
 
+  /// The words of a meeting App's exported transcript (a `.txt`, `.md`,
+  /// `.srt` or `.vtt` as text, a `.docx` as the text Word would show), read on this
+  /// Mac to tell whose turn each line is. Nil for any other file or one
+  /// that cannot be read.
+  public static func meetingTranscriptText(fileURL: URL) -> String? {
+    switch IntakeFileClass.classify(fileURL) {
+    case .plainText:
+      return try? plainText(fileURL: fileURL).text
+    case .wordProcessing(.docx):
+      return try? attributedFileText(
+        fileURL: fileURL, type: .officeOpenXML, extractor: IntakeFileClass.WordFormat.docx.extractor
+      ).text
+    default:
+      return nil
+    }
+  }
+
   public static func plainText(fileURL: URL) throws -> Extracted {
     let data = try Data(contentsOf: fileURL, options: [.mappedIfSafe])
     // Refused before decoding when even the most compact decoding (UTF-16
@@ -291,6 +308,11 @@ public enum IntakeFileClass: Equatable, Sendable {
     var extractor: String { "\(rawValue)-attributed-v1" }
   }
 
+  /// What 文件 › 导入会议记录… offers: a meeting App's exported transcript.
+  /// `.md` is what Tencent Meeting's web page downloads (TENCENT-V2.md §5):
+  /// the same `Name(HH:MM:SS):` turns as its `.txt`, read as plain text.
+  public static let meetingTranscriptExtensions = ["txt", "md", "docx", "srt", "vtt"]
+
   public static let imageExtensions: Set<String> = [
     "png", "jpg", "jpeg", "jpe", "tif", "tiff", "heic", "heif", "gif", "bmp", "webp",
   ]
@@ -305,7 +327,9 @@ public enum IntakeFileClass: Equatable, Sendable {
   public static func classify(_ url: URL) -> IntakeFileClass {
     let ext = url.pathExtension.lowercased()
     switch ext {
-    case "txt", "text", "md", "markdown": return .plainText
+    // Subtitles are text (a meeting App's transcript, ALIGNMENT 收2-5);
+    // `.srt` has no system type, and a GB 18030 export is read like a `.txt`.
+    case "txt", "text", "md", "markdown", "srt", "vtt": return .plainText
     case "rtf": return .rtf
     case "html", "htm", "xhtml": return .html
     case "webarchive": return .webArchive

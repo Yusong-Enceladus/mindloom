@@ -199,11 +199,44 @@ final class OutboxStoreTests: XCTestCase {
     XCTAssertEqual(try extensionSide.add(entry), .alreadySent)
   }
 
+  /// A test process has no Mindloom Info keys, so it gets the standard identity.
   func testAppGroupIdentifiers() {
-    XCTAssertEqual(PhoneAppGroup.identifier, "group.com.bestasr.phone")
-    XCTAssertEqual(PhoneAppGroup.keyboardBundleID, "com.bestasr.phone.keyboard")
-    XCTAssertEqual(PhoneAppGroup.shareBundleID, "com.bestasr.phone.share")
+    XCTAssertEqual(PhoneAppGroup.identifier, "group.app.mindloom")
+    XCTAssertEqual(PhoneAppGroup.appBundleID, "app.mindloom")
+    XCTAssertEqual(PhoneAppGroup.keyboardBundleID, "app.mindloom.keyboard")
+    XCTAssertEqual(PhoneAppGroup.shareBundleID, "app.mindloom.share")
+    // Names derived from it.
+    XCTAssertEqual(PhoneNames.outboxRefreshTask, "app.mindloom.outbox-refresh")
+    XCTAssertEqual(PhoneSignal.voiceStart, "app.mindloom.voice.start")
+    XCTAssertEqual(PhoneNames.linkService, "app.mindloom.phone.link")
+    XCTAssertEqual(PhoneNames.appLog, "app.mindloom")
     let container = URL(fileURLWithPath: "/tmp/container")
     XCTAssertEqual(PhoneAppGroup.outboxDirectory(in: container).path, "/tmp/container/outbox")
+  }
+
+  /// The build names the identity in Info.plist (iOS/project.yml); the extensions derive from it.
+  func testIdentityComesFromTheBuild() {
+    let identity = PhoneAppGroup.Identity(info: [
+      "MindloomAppBundleID": "com.bestasr.mindloom",
+      "MindloomAppGroup": "group.com.bestasr.mindloom",
+    ])
+    XCTAssertEqual(identity.appBundleID, "com.bestasr.mindloom")
+    XCTAssertEqual(identity.appGroup, "group.com.bestasr.mindloom")
+    XCTAssertEqual(identity.keyboardBundleID, "com.bestasr.mindloom.keyboard")
+    XCTAssertEqual(identity.shareBundleID, "com.bestasr.mindloom.share")
+  }
+
+  /// Missing, empty or unexpanded values fall back: the bundle id to the standard one, the group
+  /// to `group.<bundle id>`.
+  func testIdentityFallsBack() {
+    XCTAssertEqual(PhoneAppGroup.Identity(info: nil), .standard)
+    XCTAssertEqual(
+      PhoneAppGroup.Identity(info: [
+        "MindloomAppBundleID": "$(MINDLOOM_PHONE_BUNDLE_ID)", "MindloomAppGroup": "",
+      ]),
+      .standard)
+    XCTAssertEqual(
+      PhoneAppGroup.Identity(info: ["MindloomAppBundleID": "com.example.phone"]),
+      PhoneAppGroup.Identity(appBundleID: "com.example.phone", appGroup: "group.com.example.phone"))
   }
 }

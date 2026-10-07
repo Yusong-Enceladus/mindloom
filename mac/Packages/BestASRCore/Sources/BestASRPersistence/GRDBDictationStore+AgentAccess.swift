@@ -3,11 +3,14 @@ import Foundation
 import GRDB
 
 /// The library's agent records (AGENT-CONTRACT §2): grants, per-matter
-/// approvals, the audit list and the Agent 收件箱. Local tables only (schema
-/// v25): never sent, never in a portable archive.
+/// approvals, the audit list, the Agent 收件箱 (schema v25) and the changes
+/// other Apps made (schema v27). Local tables only: never sent, never in a
+/// portable archive.
 extension GRDBDictationStore: AgentAccessRecordStore {
   /// The audit keeps this many rows; older ones go first.
   public static let maximumAgentAuditRows = 20_000
+  /// The change list keeps this many rows; older ones go first.
+  public static let maximumAgentChangeRows = 5_000
 
   public func agentGrants() async throws -> [AgentGrantRecord] {
     let database = try requirePool()
@@ -33,7 +36,7 @@ extension GRDBDictationStore: AgentAccessRecordStore {
           """,
         arguments: [
           grant.grantID.uuidString.lowercased(), grant.clientKey, grant.clientName,
-          grant.clientPath, spaces, grant.terms.range.kind, ids, grant.terms.canPropose,
+          grant.clientPath, spaces, grant.terms.range.kind, ids, grant.terms.canChange,
           grant.terms.duration.rawValue, grant.terms.showNumbers, grant.terms.askForNewMatters,
           grant.createdAt.timeIntervalSince1970, grant.expiresAt?.timeIntervalSince1970,
           grant.mac,
@@ -174,6 +177,65 @@ extension GRDBDictationStore: AgentAccessRecordStore {
     }
   }
 
+  // MARK: - Changes (v27)
+
+  public func appendAgentChange(_ change: AgentChangeRecord) async throws {
+    let database = try requirePool()
+    let ids = try Self.agentJSON(change.matterIDs)
+    try await database.write { db in
+      try db.execute(
+        sql: """
+          INSERT INTO agent_changes (
+            change_id, at, client_key, client_name, grant_id, kind, matter_ids_json, item_id,
+            payload_json, summary, state, undone_at
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          """,
+        arguments: [
+          change.changeID.uuidString.lowercased(), change.at.timeIntervalSince1970,
+          change.clientKey, change.clientName, change.grantID?.uuidString.lowercased(),
+          change.kind.rawValue, ids, change.itemID, change.payload, change.summary,
+          change.state.rawValue, change.undoneAt?.timeIntervalSince1970,
+        ])
+      try db.execute(
+        sql: """
+          DELETE FROM agent_changes WHERE rowid <= (
+            SELECT rowid FROM agent_changes ORDER BY rowid DESC LIMIT 1 OFFSET ?)
+          """,
+        arguments: [Self.maximumAgentChangeRows])
+    }
+  }
+
+  public func agentChanges(clientKey: String?, limit: Int) async throws -> [AgentChangeRecord] {
+    let database = try requirePool()
+    let bounded = max(1, min(limit, Self.maximumAgentChangeRows))
+    return try await database.read { db in
+      let rows: [Row]
+      if let clientKey {
+        rows = try Row.fetchAll(
+          db,
+          sql: "SELECT * FROM agent_changes WHERE client_key = ? ORDER BY rowid DESC LIMIT ?",
+          arguments: [clientKey, bounded])
+      } else {
+        rows = try Row.fetchAll(
+          db, sql: "SELECT * FROM agent_changes ORDER BY rowid DESC LIMIT ?", arguments: [bounded])
+      }
+      return rows.compactMap(Self.agentChange)
+    }
+  }
+
+  public func markAgentChangeUndone(_ changeID: UUID, at: Date) async throws -> Bool {
+    let database = try requirePool()
+    return try await database.write { db in
+      try db.execute(
+        sql: """
+          UPDATE agent_changes SET state = 'undone', undone_at = ?
+          WHERE change_id = ? AND state = 'applied'
+          """,
+        arguments: [at.timeIntervalSince1970, changeID.uuidString.lowercased()])
+      return db.changesCount > 0
+    }
+  }
+
   // MARK: - Rows
 
   private nonisolated static func agentJSON(_ values: [String]) throws -> String {
@@ -193,7 +255,7 @@ extension GRDBDictationStore: AgentAccessRecordStore {
     else { return nil }
     let terms = AgentGrantTerms(
       spaces: Set(agentStrings(row["spaces_json"])), range: range,
-      canPropose: row["can_propose"] ?? false, duration: duration,
+      canChange: row["can_propose"] ?? false, duration: duration,
       showNumbers: row["show_numbers"] ?? false,
       askForNewMatters: row["ask_new_matters"] ?? false)
     return AgentGrantRecord(
@@ -213,6 +275,20 @@ extension GRDBDictationStore: AgentAccessRecordStore {
       grantID: (row["grant_id"] as String?).flatMap(UUID.init(uuidString:)),
       tool: row["tool"] ?? "", outcome: outcome,
       matterIDs: agentStrings(row["matter_ids_json"]), byteCount: row["byte_count"] ?? 0)
+  }
+
+  private nonisolated static func agentChange(_ row: Row) -> AgentChangeRecord? {
+    guard let id = (row["change_id"] as String?).flatMap(UUID.init(uuidString:)),
+      let kind = (row["kind"] as String?).flatMap(AgentChangeRecord.Kind.init(rawValue:)),
+      let state = (row["state"] as String?).flatMap(AgentChangeRecord.State.init(rawValue:))
+    else { return nil }
+    return AgentChangeRecord(
+      changeID: id, at: Date(timeIntervalSince1970: row["at"] ?? 0),
+      clientKey: row["client_key"] ?? "", clientName: row["client_name"] ?? "",
+      grantID: (row["grant_id"] as String?).flatMap(UUID.init(uuidString:)), kind: kind,
+      matterIDs: agentStrings(row["matter_ids_json"]), itemID: row["item_id"],
+      payload: row["payload_json"] ?? "", summary: row["summary"] ?? "", state: state,
+      undoneAt: (row["undone_at"] as Double?).map(Date.init(timeIntervalSince1970:)))
   }
 
   private nonisolated static func agentProposal(_ row: Row) -> AgentInboxProposal? {

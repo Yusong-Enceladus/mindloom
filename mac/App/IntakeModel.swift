@@ -1,4 +1,5 @@
 import BestASRDomain
+import BestASRIntake
 import Combine
 import Foundation
 
@@ -12,9 +13,14 @@ final class IntakeModel: ObservableObject {
   struct PendingMediaImport: Equatable {
     let url: URL
     let source: ItemSourceApplication?
+    /// Its SHA-256, when the drop path hashed it (dedupe); the import
+    /// reuses it while the file is unchanged instead of hashing it again.
+    var hashed: HashedSourceFile? = nil
+
+    var digest: String? { hashed?.digest }
   }
 
-  /// "已收进来 · 来自 微信"; cleared after a few seconds.
+  /// "已收好 · 来自 微信"; cleared after a few seconds.
   @Published var confirmation: String?
   /// The one item the confirmation is about, so its source can be changed
   /// from the toast; nil for several items or a refusal.
@@ -25,6 +31,19 @@ final class IntakeModel: ObservableObject {
   var assetRoot: URL?
 
   var pendingMediaImports: [PendingMediaImport] = []
+  /// Original digests being taken in right now (between the duplicate
+  /// check and the commit), so the same bytes dropped twice at once, or
+  /// again while the first is still on its way, are taken in once.
+  var receiving: Set<String> = []
+  /// The digest of the media import running now (nil: none, or unhashed).
+  var importingDigest: String?
+
+  /// Whether `digest` is already on its way in (being received, queued for
+  /// import, or importing).
+  func isOnItsWay(_ digest: String, importing: Bool) -> Bool {
+    receiving.contains(digest) || pendingMediaImports.contains { $0.digest == digest }
+      || (importing && importingDigest == digest)
+  }
   var confirmationTask: Task<Void, Never>?
 
   func show(

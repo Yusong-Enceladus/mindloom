@@ -92,7 +92,7 @@ final class CalendarEntryTests: XCTestCase {
       chosen: ["work"], state: &state, now: now, timeZone: shanghai)
     XCTAssertEqual(again.count, 1)
     guard case .text(let movedText, _) = again[0].candidate else { return XCTFail() }
-    XCTAssertTrue(movedText.contains("（这条日程有改动，之前收进过一次）"))
+    XCTAssertTrue(movedText.contains("（此日程有更改，之前已添加过一次）"))
     XCTAssertNotEqual(again[0].id, items[1].id)
 
     // Through intake: idempotent by ID (a crash between commit and saving
@@ -162,8 +162,8 @@ final class CalendarEntryTests: XCTestCase {
       matterTitle: "B203 Twin-7 叠衣真机实验", calendar: calendar)
     XCTAssertEqual(draft.title, "把 Twin-7 的数据 发给王老师")
     XCTAssertEqual(draft.due, DateComponents(year: 2026, month: 9, day: 25))
-    XCTAssertEqual(draft.notes, "来自织机：B203 Twin-7 叠衣真机实验")
-    XCTAssertEqual(ReminderDraft.nextStep(text: " ", day: nil, matterTitle: "").title, "织机里的下一步")
+    XCTAssertEqual(draft.notes, "来自 Mindloom：B203 Twin-7 叠衣真机实验")
+    XCTAssertEqual(ReminderDraft.nextStep(text: " ", day: nil, matterTitle: "").title, "Mindloom 中的下一步")
     let writer = CountingReminders()
     let result = await writer.add(draft)
     XCTAssertEqual(result, .added(list: "提醒事项"))

@@ -15,6 +15,20 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "72783C16EAB6EDCA16201140"
+               BuildableName = "MindloomActivity.appex"
+               BlueprintName = "MindloomActivity"
+               ReferencedContainer = "container:MindloomPhone.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "D4C4152A4BA3A378EBACFBD3"
                BuildableName = "MindloomKeyboard.appex"
                BlueprintName = "MindloomKeyboard"
@@ -46,6 +60,20 @@
                BlueprintIdentifier = "3F91EA29517ABC278022909A"
                BuildableName = "MindloomShare.appex"
                BlueprintName = "MindloomShare"
+               ReferencedContainer = "container:MindloomPhone.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "496F6470E487E802698BC033"
+               BuildableName = "MindloomWatch.app"
+               BlueprintName = "MindloomWatch"
                ReferencedContainer = "container:MindloomPhone.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -120,6 +148,17 @@
                BuildableName = "MindloomInboxSSHTests"
                BlueprintName = "MindloomInboxSSHTests"
                ReferencedContainer = "container:../Packages/MindloomPhoneKit">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "MindloomWatchHandoffTests"
+               BuildableName = "MindloomWatchHandoffTests"
+               BlueprintName = "MindloomWatchHandoffTests"
+               ReferencedContainer = "container:../Packages/MindloomWatchHandoff">
             </BuildableReference>
          </TestableReference>
       </Testables>

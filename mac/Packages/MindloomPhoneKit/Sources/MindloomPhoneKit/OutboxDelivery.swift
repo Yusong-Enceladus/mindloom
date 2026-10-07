@@ -74,6 +74,10 @@ public struct DeliveryReport: Equatable, Sendable {
 public actor OutboxDeliverer {
   private let store: OutboxStore
   private let opener: any InboxSessionOpening
+  /// Only entries sealed to this key are sent (nil: all). After pairing with another Mac (or a
+  /// new seal key), entries sealed to the old one stay on the phone: the new Mac could not open
+  /// them, so they must never be marked sent.
+  private let sealKeyID: String?
   private let clock: @Sendable () -> Date
   private var running: Task<DeliveryReport, Never>?
   private var rerunRequested = false
@@ -82,11 +86,12 @@ public actor OutboxDeliverer {
   var hasPendingRerun: Bool { rerunRequested }
 
   public init(
-    store: OutboxStore, opener: any InboxSessionOpening,
+    store: OutboxStore, opener: any InboxSessionOpening, sealKeyID: String? = nil,
     clock: @escaping @Sendable () -> Date = { Date() }
   ) {
     self.store = store
     self.opener = opener
+    self.sealKeyID = sealKeyID
     self.clock = clock
   }
 
@@ -117,7 +122,9 @@ public actor OutboxDeliverer {
   private func run() async -> DeliveryReport {
     var report = DeliveryReport()
     _ = try? store.prune(now: clock())
-    let queued = (try? store.queued()) ?? []
+    let queued = ((try? store.queued()) ?? []).filter { entry in
+      sealKeyID.map { entry.sealKeyID == $0 } ?? true
+    }
     guard !queued.isEmpty else { return report }
 
     let session: any InboxSession
@@ -136,8 +143,14 @@ public actor OutboxDeliverer {
       return report
     }
 
-    for entry in queued {
-      guard let wire = entry.wire else { continue }
+    for snapshot in queued {
+      // Claim it now: an entry withdrawn since the snapshot is not sent, and one being sent can
+      // no longer be withdrawn.
+      guard let entry = try? store.beginSending(id: snapshot.entryID) else { continue }
+      guard let wire = entry.wire else {
+        store.endSending(id: entry.entryID)
+        continue
+      }
       do {
         let receipt = try await session.add(entryID: entry.entryID, wire: wire)
         guard receipt.entryID == entry.entryID else {
@@ -157,7 +170,7 @@ public actor OutboxDeliverer {
       }
     }
     await session.close()
-    report.remaining = (try? store.queued().count) ?? 0
+    report.remaining = (try? store.queued().filter { e in sealKeyID.map { e.sealKeyID == $0 } ?? true }.count) ?? 0
     return report
   }
 

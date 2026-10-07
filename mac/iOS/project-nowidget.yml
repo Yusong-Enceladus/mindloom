@@ -1,0 +1,6 @@
+# The same project without the Live Activity widget, for a device build whose signing cannot make a
+# profile for <bundle id>.live (iOS/script/device_build.sh, mode keychain-nowidget). Generated
+# next to the main project as MindloomPhoneNoWidget.xcodeproj (not committed).
+include:
+  - path: project.yml
+name: MindloomPhoneNoWidget
