@@ -4,7 +4,7 @@ into Unfiled (skill event-consolidate).
 The organizer files one item at a time, so the first items of a matter often seed events of their own
 before the matter's main event is found, and a chat line, an ad or a pickup code can become a one-item
 event. At scale (1,500-1,600 items a week) this left 11-17 times as many events as matters. Questions
-cannot fix it: the question budget is small and during a backfill nobody answers.
+alone cannot fix it: during a backfill nobody answers.
 
 Schedule and budget (the organizer's scheduler calls this; no user action):
   * every `every_items` processed item jobs (at an item barrier, in pipeline mode), and
@@ -78,14 +78,19 @@ class Consolidator:
     def __init__(self, org: Any, *, enabled: bool = True, every_items: int = 25, max_calls: int = 40,
                  subject_max_items: int = 120, unfile_max_items: int = 9, directory_size: int = 32,
                  directory_min_items: int = 3, nearest_k: int = 4, max_checks: int = 4, detail_min_items: int = 10,
-                 idle_min_items: int = 5, idle_after_s: float = 300.0):
+                 idle_min_items: int = 5, idle_after_s: float = 300.0, near_watch: int = 3, grow_min: int = 0,
+                 sweep: bool = False, sweep_max_items: int = 6, sweep_gap: int = 100, twin_max_ratio: float = 4.0):
         self.org = org
         self.enabled = enabled
         self.every_items = max(1, int(every_items))
         self.budget = {"max_calls": max(1, int(max_calls)), "subject_max_items": int(subject_max_items),
                        "unfile_max_items": int(unfile_max_items), "directory_size": int(directory_size),
                        "directory_min_items": int(directory_min_items), "nearest_k": int(nearest_k),
-                       "max_checks": int(max_checks), "detail_min_items": int(detail_min_items)}
+                       "max_checks": int(max_checks), "detail_min_items": int(detail_min_items),
+                       "near_watch": int(near_watch), "grow_min": int(grow_min), "sweep_max_items": int(sweep_max_items),
+                       "sweep_gap": int(sweep_gap), "twin_max_ratio": float(twin_max_ratio)}
+        self.sweep_enabled = bool(sweep)
+        self._sweep_open = True  # a quiet queue may look back (cleared when a sweep plan comes back empty)
         self.jobs_since = 0
         # Idle passes: after idle_min_items new items, after idle_after_s without a new item, or straight after a
         # pass that changed something (its merges give the remaining events new neighbours). A fresh start counts
@@ -106,6 +111,7 @@ class Consolidator:
 
     def note_job(self) -> None:
         self.jobs_since += 1
+        self._sweep_open = True
         self._last_job_t = time.monotonic()
 
     def due(self) -> bool:
@@ -114,16 +120,25 @@ class Consolidator:
 
     def idle_due(self) -> bool:
         """Idle trigger: the queue is empty and some event is eligible. Planning is skipped while the store
-        has not changed since the last empty plan, so an idle worker polling every second costs nothing."""
+        has not changed since the last empty plan, so an idle worker polling every second costs nothing. With
+        the sweep on, a quiet queue also looks back once at the small events kept long ago (see directory.py)."""
         if not self.enabled:
             return False
         cursor = self.org.store.cursor()
         if cursor == self._idle_cursor and not self._more:
             return False
-        if not (self._followup or self._more or self.jobs_since >= self.idle_min_items
-                or time.monotonic() - self._last_job_t >= self.idle_after_s):
+        triggered = (self._followup or self._more or self.jobs_since >= self.idle_min_items
+                     or time.monotonic() - self._last_job_t >= self.idle_after_s)
+        sweeping = self.sweep_enabled and self._sweep_open
+        if not (triggered or sweeping):
             return False
-        plan = self.plan()
+        plan = self.plan() if triggered else {"subjects": []}
+        if not plan["subjects"] and sweeping:
+            plan = self.plan(sweep=True)
+            if not triggered:  # waiting for more items: only the look back may run, not a first judgement
+                plan["subjects"] = [x for x in plan["subjects"] if x.get("sweep")]
+            if not plan["subjects"]:
+                self._sweep_open = False  # nothing old enough to look at again until more items or a pass
         if not plan["subjects"]:
             self._idle_cursor, self._more = cursor, False
             return False
@@ -138,6 +153,7 @@ class Consolidator:
         self._idle_cursor = None
         self._more = False
         self._followup = True
+        self._sweep_open = True
 
     def run(self, pool=None) -> dict:
         """One pass. The model being down propagates (the worker backs off; the pass stays due), and so does the
@@ -152,6 +168,7 @@ class Consolidator:
             self._more = plan.get("waiting", 0) > 0
             stats = self._run(plan, pool)
             self._followup = bool(stats.get("merged") or stats.get("unfiled"))
+            self._sweep_open = True
             return stats
         except ModelUnavailable:
             self.jobs_since = self.every_items
@@ -172,7 +189,7 @@ class Consolidator:
         return self.org.store.one("SELECT 1 FROM event_items WHERE event_id=? AND removed=0 AND attached_by != 'model'",
                                   (event_id,)) is not None
 
-    def plan(self) -> dict:
+    def plan(self, sweep: bool = False) -> dict:
         org, store = self.org, self.org.store
         sizes = {r["event_id"]: r["n"] for r in store.all(
             "SELECT ei.event_id, COUNT(*) AS n FROM event_items ei JOIN events e ON e.event_id = ei.event_id"
@@ -186,10 +203,12 @@ class Consolidator:
             events.append({"event_id": eid, "order": f["order"], "n": sizes[eid], "centroid": f.get("centroid"),
                            "protected": self._protected(eid, ev)})
         checks = {r["event_id"]: {"n_items": r["n_items"], "near": json.loads(r["near"] or "[]"),
+                                  "near_n": json.loads(r["near_n"] or "{}"), "swept": r["swept"], "at_items": r["at_items"],
                                   "outcome": r["outcome"], "n_checks": r["n_checks"]}
                   for r in store.all("SELECT * FROM consolidate_checks")}
         apart = [[r["a"], r["b"]] for r in store.all("SELECT a, b FROM constraints WHERE kind='apart_events'")]
-        return self._plan.plan(events, checks, apart, **self.budget)
+        total = int(store.scalar("SELECT COUNT(*) FROM event_items WHERE removed = 0") or 0)
+        return self._plan.plan(events, checks, apart, sweep=sweep, total_items=total, **self.budget)
 
     # ---- views ---------------------------------------------------------------------------
 
@@ -545,8 +564,10 @@ class Consolidator:
     def _checked(self, event_id: str, ctx: dict, outcome: str, target: Optional[str], run_id: Optional[str]) -> None:
         store = self.org.store
         subject = ctx["subject"]
-        row = store.one("SELECT n_checks FROM consolidate_checks WHERE event_id=?", (event_id,))
+        row = store.one("SELECT n_checks, swept FROM consolidate_checks WHERE event_id=?", (event_id,))
+        total = int(store.scalar("SELECT COUNT(*) FROM event_items WHERE removed = 0") or 0)
+        swept = 1 if (subject.get("sweep") or (row and row.get("swept"))) else 0
         store.x("INSERT OR REPLACE INTO consolidate_checks(event_id, n_items, near, outcome, target, run_id, n_checks,"
-                " created_at) VALUES (?,?,?,?,?,?,?,?)",
+                " created_at, near_n, at_items, swept) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
                 (event_id, len(ctx["snapshot"]), json.dumps(subject["nearest"]), outcome, target, run_id,
-                 (row["n_checks"] if row else 0) + 1, store.now()))
+                 (row["n_checks"] if row else 0) + 1, store.now(), json.dumps(subject.get("near_n") or {}), total, swept))

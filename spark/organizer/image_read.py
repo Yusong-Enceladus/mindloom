@@ -10,6 +10,11 @@ A failed type step reads the image as "other" (plain text lines). An extraction 
 validator after the retry is kept only after skills/image-read/scripts/validate.py sanitize() has emptied
 every value the rules reject. An endpoint that rejects the request (HTTP 4xx, e.g. a text-only model)
 raises ValueError to the caller, which places the item without a reading.
+
+A routed client with a `.fallback` (image_router.FallbackClient) gets a second chance: when its extraction still fails
+the validator after the retry, the image is read again by the fallback (the organizer's own model) and that reading
+is the one kept. `ImageReading.extract_model` / `detect_model` name the model that answered each step, `rerouted` says
+the second read happened.
 """
 
 from __future__ import annotations
@@ -19,6 +24,7 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 from .clients import ChatClient
+from .image_router import RouteStats
 from .skills import Harness, RunResult
 
 SKILL = "image-read"
@@ -38,13 +44,17 @@ class ImageReading:
     attempts: int = 0
     runs: list[RunResult] = field(default_factory=list)
     latency_s: float = 0.0
+    detect_model: Optional[str] = None   # the model that answered the type step (None when forced or it failed)
+    extract_model: Optional[str] = None  # the model that answered the extraction that was kept
+    rerouted: bool = False               # the routed model's extraction failed validation; the fallback re-read it
 
 
 def read_image(harness: Harness, image: bytes, data: dict, *, subject: Optional[str] = None,
                clients: Optional[dict[str, ChatClient]] = None, as_of: Optional[str] = None,
-               forced_type: Optional[str] = None) -> ImageReading:
+               forced_type: Optional[str] = None, stats: Optional[RouteStats] = None) -> ImageReading:
     """Read one image. `data` is the item context shown to the model (source_app, captured_at).
-    `forced_type` skips the type step (eval: extraction with the true type)."""
+    `forced_type` skips the type step (eval: extraction with the true type). `stats` counts which model read which
+    kind (image_router.RouteStats; counts only)."""
     started = time.time()
     reg = harness.registry
     reading_mod = reg.script(SKILL, "reading")
@@ -53,6 +63,7 @@ def read_image(harness: Harness, image: bytes, data: dict, *, subject: Optional[
     runs: list[RunResult] = []
 
     detect_run_id = None
+    detect_model = None
     detected = False
     if forced_type:
         image_type = forced_type
@@ -62,6 +73,7 @@ def read_image(harness: Harness, image: bytes, data: dict, *, subject: Optional[
                           client=clients.get("detect"), max_tokens=DETECT_MAX_TOKENS, as_of=as_of)
         runs.append(det)
         detect_run_id = det.run_id
+        detect_model = det.provenance.get("model")
         detected = det.ok and det.output.get("type") in reading_mod.TYPE_SCHEMAS
         image_type = det.output["type"] if detected else "other"
 
@@ -69,11 +81,23 @@ def read_image(harness: Harness, image: bytes, data: dict, *, subject: Optional[
                       images=[image], subject=subject, task=reading_mod.extract_task(image_type),
                       schema=reading_mod.schema_for(image_type), client=clients.get(image_type), as_of=as_of)
     runs.append(res)
+    rerouted = False
+    alt = getattr(clients.get(image_type), "fallback", None)
+    if not res.ok and alt is not None:
+        # The routed model could not produce a valid extraction (two attempts): the organizer's own model reads it.
+        res = harness.run("image_read", {**data, "type": image_type}, context={"stage": "extract", "type": image_type},
+                          images=[image], subject=subject, task=reading_mod.extract_task(image_type),
+                          schema=reading_mod.schema_for(image_type), client=alt, as_of=as_of)
+        runs.append(res)
+        rerouted = True
     output, sanitized = res.output, 0
     if not res.ok and res.candidate is not None:
         output, sanitized = validate_mod.sanitize(image_type, res.candidate)
     ok = output is not None
     reading = reading_mod.compose(image_type, output) if ok else reading_mod.compose(image_type, {})
+    if stats is not None:
+        stats.record_read(image_type, res.provenance.get("model"), rerouted=rerouted, ok=ok)
     return ImageReading(ok=ok, image_type=image_type, output=output, reading=reading, run_id=res.run_id,
                         detect_run_id=detect_run_id, detected=detected, sanitized=sanitized,
-                        attempts=sum(r.attempts for r in runs), runs=runs, latency_s=time.time() - started)
+                        attempts=sum(r.attempts for r in runs), runs=runs, latency_s=time.time() - started,
+                        detect_model=detect_model, extract_model=res.provenance.get("model"), rerouted=rerouted)

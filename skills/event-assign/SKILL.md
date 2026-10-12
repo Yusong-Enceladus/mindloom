@@ -28,9 +28,10 @@ Assign one new item to a candidate event, start a new event, leave it unfiled, o
 ## 输入 / Input (inside `<data>`)
 
 - `item`: 新素材。`kind`, `source_app`, `started_at`, `persons`（人名，不含机主本人）, `text`（可能被截断）。
-- `candidates`: 0–5 个候选事件，按检索分数排好序（只是提示）。每个候选有：
-  `event_id`（短编号如 `E3`）、`anchor`（这个事件**固定的对象**，最重要）、`title`、`status_line`、`persons`、
-  `first_item`（最早一条素材）、`recent_items`（最近几条），素材带 `item_id`（短编号如 `I12`）。
+- `candidates`: 0–12 个候选事件，按检索分数排好序（只是提示；靠前的分高，也有几个是因为事件大、最近有动静或对象名和新素材相同才排进来的，分数可能不高）。
+  每个候选有：`event_id`（短编号如 `E3`）、`anchor`（这个事件**固定的对象**，最重要）、`title`、`status_line`、`persons`、
+  `first_item`（最早一条素材）、`recent_items`（最近几条；排在后面的候选没有），素材带 `item_id`（短编号如 `I12`）。
+  候选多时仍然只挑最可能的 0–2 个写进 `judged`：先看每个候选的 `anchor`，把和 `item_object` 明显无关的直接略过。
 
 占位符（如〔手机号·a1b2c3〕）是被遮住的号码，原样保留，不要猜、不要改写。
 

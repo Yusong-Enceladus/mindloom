@@ -1,0 +1,191 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 80,
+   "retried": 2,
+   "latency_median_s": 2.278,
+   "latency_p95_s": 3.882,
+   "latency_total_s": 195.6,
+   "prompt_tokens_mean": 5333.2,
+   "completion_tokens_mean": 188.7,
+   "prompt_tokens_total": 437323,
+   "completion_tokens_total": 15470,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 83,
+   "ok": 46,
+   "ok_first_attempt": 39,
+   "retried": 9,
+   "latency_median_s": 2.647,
+   "latency_p95_s": 4.632,
+   "latency_total_s": 232.3,
+   "prompt_tokens_mean": 4523.6,
+   "completion_tokens_mean": 280.3,
+   "prompt_tokens_total": 375455,
+   "completion_tokens_total": 23264,
+   "errors_sample": [
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「已拟定谈判方案」标为 done，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「咖啡机和磨豆机已搬至仓库」的 quote「先把咖啡机和磨豆机先搬到后面仓库」不是所引用素材里的原话; [unsupported_completion] quote「先把咖啡机和磨豆机先搬到后面仓库」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「周师傅他们"
+   ]
+  },
+  "consolidate": {
+   "calls": 39,
+   "ok": 37,
+   "ok_first_attempt": 37,
+   "retried": 2,
+   "latency_median_s": 1.591,
+   "latency_p95_s": 3.258,
+   "latency_total_s": 67.7,
+   "prompt_tokens_mean": 4524.3,
+   "completion_tokens_mean": 135.0,
+   "prompt_tokens_total": 176448,
+   "completion_tokens_total": 5266,
+   "errors_sample": [
+    "[quote] quote.text is not copied verbatim from I23",
+    "[quote_not_about_target] neither the quote nor small_object shares a word with E1's title, object or sample that the small event's items also use: quote the sentence that names the same activity/proje"
+   ]
+  },
+  "group": {
+   "calls": 4,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 2.411,
+   "latency_p95_s": 2.656,
+   "latency_total_s": 8.4,
+   "prompt_tokens_mean": 3254,
+   "completion_tokens_mean": 227,
+   "prompt_tokens_total": 13016,
+   "completion_tokens_total": 908,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters",
+    "[thin] new rope N2 holds fewer than two matters",
+    "[thin] new rope N1 holds fewer than two matters; [thin] new rope N2 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.02,
+   "latency_p95_s": 1.033,
+   "latency_total_s": 2.9,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 12.7,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 38,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 2.933,
+   "latency_p95_s": 6.928,
+   "latency_total_s": 12.4,
+   "prompt_tokens_mean": 6196.3,
+   "completion_tokens_mean": 514.3,
+   "prompt_tokens_total": 18589,
+   "completion_tokens_total": 1543,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 6,
+   "ok": 5,
+   "ok_first_attempt": 3,
+   "retried": 3,
+   "latency_median_s": 7.383,
+   "latency_p95_s": 19.701,
+   "latency_total_s": 76.3,
+   "prompt_tokens_mean": 10617.8,
+   "completion_tokens_mean": 1642.5,
+   "prompt_tokens_total": 63707,
+   "completion_tokens_total": 9855,
+   "errors_sample": [
+    "[blocks] the quote does not name E5"
+   ]
+  },
+  "person": {
+   "calls": 11,
+   "ok": 11,
+   "ok_first_attempt": 11,
+   "retried": 0,
+   "latency_median_s": 0.711,
+   "latency_p95_s": 0.741,
+   "latency_total_s": 7.8,
+   "prompt_tokens_mean": 2535.7,
+   "completion_tokens_mean": 39.6,
+   "prompt_tokens_total": 27893,
+   "completion_tokens_total": 436,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 4.008,
+   "latency_p95_s": 4.283,
+   "latency_total_s": 16.1,
+   "prompt_tokens_mean": 4946,
+   "completion_tokens_mean": 449.8,
+   "prompt_tokens_total": 19784,
+   "completion_tokens_total": 1799,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.196,
+   "latency_p95_s": 1.609,
+   "latency_total_s": 3.9,
+   "prompt_tokens_mean": 3676.7,
+   "completion_tokens_mean": 90.3,
+   "prompt_tokens_total": 11030,
+   "completion_tokens_total": 271,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 9,
+  "attach": 64,
+  "none": 4,
+  "ask": 5
+ },
+ "assign_actions": {
+  "new": 9,
+  "attach": 62,
+  "none": 4,
+  "ask": 3,
+  "ask_suppressed": 4
+ },
+ "final_live_events": 11,
+ "status_line_chars_mean": 13.9,
+ "title_chars_mean": 9.2,
+ "wall_s": 628.4,
+ "items_per_min": 7.83,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 0,
+  "misses": 255
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

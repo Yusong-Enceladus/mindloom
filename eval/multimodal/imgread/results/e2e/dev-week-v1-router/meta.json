@@ -1,0 +1,128 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.1"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.1"
+  },
+  {
+   "name": "event-consolidate",
+   "version": "1.0.1"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.1"
+  },
+  {
+   "name": "handover-pack",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.1"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.3.1"
+  },
+  {
+   "name": "matter-group",
+   "version": "1.0.1"
+  },
+  {
+   "name": "matter-map",
+   "version": "1.1.1"
+  },
+  {
+   "name": "person-resolve",
+   "version": "1.2.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.1"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "38e21794e6d4e3f5",
+  "event-brief": "793b2e5cabce6d33",
+  "event-consolidate": "699b661e54b06358",
+  "file-read": "d8067ac293ce3f75",
+  "handover-pack": "68b8db9c4b1cd22f",
+  "home-rank": "d7cd420618bd9dc5",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "29f706fd7df16ea4",
+  "matter-group": "f896207656e53d2c",
+  "matter-map": "5d18bae97c449866",
+  "person-resolve": "13a38224b1b461cd",
+  "recall": "25c707762a2fd992"
+ },
+ "git": "",
+ "date": "2026-10-07T20:21:46+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--replay-cache",
+  "~/hack/stepfun/out/cache-dev-week-v1",
+  "--keep-db",
+  "--force",
+  "--out",
+  "~/hack/stepfun/out/e2e-dev-week-v1-router"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": "~/hack/stepfun/out/cache-dev-week-v1",
+ "handles": {
+  "E1": "7177ef96-9ef7-48b0-b29c-3fb7445111ec",
+  "E2": "89327a01-f1e2-4177-9d45-aaabebe18037",
+  "E3": "ef6b3ba6-8b23-4402-9c36-487a816de363",
+  "E4": "7f616590-b186-4762-9529-1e5bd59710a4",
+  "E5": "f8d762ba-01db-4d81-99c0-a30f322cadf2",
+  "E6": "09fc8a6e-cf76-414c-9ca1-eb20b455f2d3",
+  "E7": "d84a662c-b9bb-4d39-a3b8-bbc11f84fcbc",
+  "E8": "2b0058ad-bead-4e56-a307-8f2156967b05",
+  "E9": "3e92646f-391b-4d3e-a1ca-3d5c678fb6e2",
+  "E10": "549abdcb-db60-4c33-814a-a66e9c209754",
+  "E11": "0556dc73-1c2c-4aba-a066-25eee07d3bf8",
+  "E12": "99439c7e-12a1-4f78-8d25-f2b579031077",
+  "E13": "42c39f7e-2188-47e1-97ba-54cc8c44f370",
+  "E14": "871eba3e-0411-44ac-8527-4987bc7b9a08",
+  "E15": "a49bc7c9-5343-41fd-846f-1aa9acc8d7cc",
+  "E16": "32a401ec-a4a7-4181-86f6-4e87d3fe8276",
+  "E17": "a1247654-eda8-4ac8-864f-43be06a38511",
+  "E18": "9bb6a3f4-c19c-44f1-93ec-4eb573927235",
+  "E19": "6278690d-3b1f-4b92-ad53-bf5d095baaab"
+ },
+ "bare_max_tokens": null
+}

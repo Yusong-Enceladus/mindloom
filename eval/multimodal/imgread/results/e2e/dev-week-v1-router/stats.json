@@ -1,0 +1,189 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 85,
+   "ok": 85,
+   "ok_first_attempt": 84,
+   "retried": 1,
+   "latency_median_s": 2.282,
+   "latency_p95_s": 2.587,
+   "latency_total_s": 187.2,
+   "prompt_tokens_mean": 5335,
+   "completion_tokens_mean": 186.5,
+   "prompt_tokens_total": 453475,
+   "completion_tokens_total": 15851,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 88,
+   "ok": 52,
+   "ok_first_attempt": 38,
+   "retried": 19,
+   "latency_median_s": 2.499,
+   "latency_p95_s": 5.047,
+   "latency_total_s": 188.5,
+   "prompt_tokens_mean": 5043.2,
+   "completion_tokens_mean": 303.3,
+   "prompt_tokens_total": 443800,
+   "completion_tokens_total": 26694,
+   "errors_sample": [
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「已拟定谈判方案」标为 done，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[relative_date] status_facts[1] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "consolidate": {
+   "calls": 46,
+   "ok": 45,
+   "ok_first_attempt": 44,
+   "retried": 2,
+   "latency_median_s": 1.62,
+   "latency_p95_s": 1.884,
+   "latency_total_s": 75.5,
+   "prompt_tokens_mean": 4555.2,
+   "completion_tokens_mean": 132.5,
+   "prompt_tokens_total": 209537,
+   "completion_tokens_total": 6093,
+   "errors_sample": [
+    "[quote] quote.text is not copied verbatim from I35"
+   ]
+  },
+  "group": {
+   "calls": 4,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 1.899,
+   "latency_p95_s": 1.953,
+   "latency_total_s": 6.7,
+   "prompt_tokens_mean": 3229.2,
+   "completion_tokens_mean": 167.8,
+   "prompt_tokens_total": 12917,
+   "completion_tokens_total": 671,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters",
+    "[thin] new rope N1 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.001,
+   "latency_p95_s": 0.002,
+   "latency_total_s": 0.0,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 12.7,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 38,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 16.906,
+   "latency_p95_s": 19.252,
+   "latency_total_s": 48.9,
+   "prompt_tokens_mean": 4009.3,
+   "completion_tokens_mean": 339.7,
+   "prompt_tokens_total": 12028,
+   "completion_tokens_total": 1019,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 9,
+   "ok": 8,
+   "ok_first_attempt": 4,
+   "retried": 4,
+   "latency_median_s": 8.094,
+   "latency_p95_s": 26.16,
+   "latency_total_s": 109.2,
+   "prompt_tokens_mean": 9904.1,
+   "completion_tokens_mean": 1560.9,
+   "prompt_tokens_total": 89137,
+   "completion_tokens_total": 14048,
+   "errors_sample": [
+    "[blocks] the quote does not name E4"
+   ]
+  },
+  "person": {
+   "calls": 11,
+   "ok": 11,
+   "ok_first_attempt": 11,
+   "retried": 0,
+   "latency_median_s": 0.0,
+   "latency_p95_s": 0.76,
+   "latency_total_s": 1.5,
+   "prompt_tokens_mean": 2536.4,
+   "completion_tokens_mean": 39.7,
+   "prompt_tokens_total": 27900,
+   "completion_tokens_total": 437,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 4.212,
+   "latency_p95_s": 4.519,
+   "latency_total_s": 16.1,
+   "prompt_tokens_mean": 4842.5,
+   "completion_tokens_mean": 443.5,
+   "prompt_tokens_total": 19370,
+   "completion_tokens_total": 1774,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.176,
+   "latency_p95_s": 1.269,
+   "latency_total_s": 3.6,
+   "prompt_tokens_mean": 3668.3,
+   "completion_tokens_mean": 95,
+   "prompt_tokens_total": 11005,
+   "completion_tokens_total": 285,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 67,
+  "none": 4,
+  "ask": 4
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 62,
+  "none": 4,
+  "ask": 3,
+  "ask_suppressed": 6
+ },
+ "final_live_events": 10,
+ "status_line_chars_mean": 14.3,
+ "title_chars_mean": 8.6,
+ "wall_s": 656.9,
+ "items_per_min": 7.49,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 42,
+  "misses": 237
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -132,6 +132,7 @@ class InfraProbe:
             out.append(self._model("embed", self.settings.embed_base_url))
         seen = {self.settings.llm_base_url.rstrip("/"), (self.settings.embed_base_url or "").rstrip("/")}
         for kind, client in sorted((getattr(self.org, "image_clients", None) or {}).items()):
+            client = getattr(client, "primary", client)  # a routed client with a fallback behind it
             http = getattr(client, "_http", None)
             url = str(http.base_url) if http is not None and getattr(http, "base_url", None) else \
                 getattr(client, "base_url", None)
@@ -207,6 +208,7 @@ class InfraProbe:
         root = Path(__file__).resolve().parents[2]
         return {"version": __version__, "revision": revision(root), "uptime_s": round(self.now() - STARTED),
                 "workers": getattr(org, "workers", 1),
+                "image_reads": org.image_route_stats.snapshot() if hasattr(org, "image_route_stats") else None,
                 "personal_store": {"locked": locked, "queue": queue,
                                    "last_error": None if locked else (org.last_error or "").split(":")[0] or None},
                 "spaces": {**self.spaces.stats(), "organizers_unlocked": self.space_orgs.unlocked_count(),

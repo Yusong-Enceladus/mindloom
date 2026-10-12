@@ -29,7 +29,7 @@
 
 ## 替代方案
 
-- Core Data + `NSPersistentCloudKitContainer`：未来 iCloud 同步接入更快，但提前绑定 CloudKit/Core Data，对显式 FTS、复杂人物操作和可替换同步后端控制较弱。
+- Core Data + `NSPersistentCloudKitContainer`：提前绑定 CloudKit/Core Data，对显式 FTS、复杂人物操作和可替换同步后端控制较弱。
 - SwiftData：API 简洁，但当前项目更需要成熟迁移、显式 SQL/FTS 与精细故障注入。
 - 裸 SQLite：依赖最少，但重复实现并发、迁移和类型安全会降低质量。
 

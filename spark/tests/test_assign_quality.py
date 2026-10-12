@@ -257,6 +257,8 @@ def test_open_person_questions_do_not_starve_same_event_questions(org, chat):
 
 
 def test_full_same_event_budget_falls_back_to_new_never_attach(org, chat):
+    org.max_open_questions = 2
+    org.ask_per_day = 2
     chat.handlers["event-assign"] = by_text([("待确认", unsure_about("翻新", "待确认事项"))])
     ingest(org, make_item("店面翻新报价3.8万"))
     org.drain()
@@ -296,6 +298,8 @@ def test_questions_expire_by_the_organizer_clock_and_keep_placements(settings, c
 
 
 def test_answering_does_not_refill_the_days_budget(org, chat):
+    org.max_open_questions = 2
+    org.ask_per_day = 2
     chat.handlers["event-assign"] = by_text([("待确认", unsure_about("翻新", "待确认事项"))])
     ingest(org, make_item("店面翻新报价3.8万"))
     org.drain()

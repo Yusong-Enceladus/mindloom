@@ -1,0 +1,187 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 83,
+   "ok": 83,
+   "ok_first_attempt": 82,
+   "retried": 1,
+   "latency_median_s": 3.135,
+   "latency_p95_s": 4.302,
+   "latency_total_s": 264.8,
+   "prompt_tokens_mean": 5308.0,
+   "completion_tokens_mean": 185.3,
+   "prompt_tokens_total": 440566,
+   "completion_tokens_total": 15379,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 84,
+   "ok": 45,
+   "ok_first_attempt": 38,
+   "retried": 9,
+   "latency_median_s": 3.702,
+   "latency_p95_s": 5.484,
+   "latency_total_s": 321.2,
+   "prompt_tokens_mean": 4550.2,
+   "completion_tokens_mean": 273.6,
+   "prompt_tokens_total": 382216,
+   "completion_tokens_total": 22982,
+   "errors_sample": [
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「已拟定谈判方案」标为 done，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「咖啡机和磨豆机已搬至后仓」的 quote「先把咖啡机和磨豆机先搬到后面仓库」不是所引用素材里的原话; [unsupported_completion] quote「先把咖啡机和磨豆机先搬到后面仓库」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "consolidate": {
+   "calls": 46,
+   "ok": 45,
+   "ok_first_attempt": 43,
+   "retried": 3,
+   "latency_median_s": 2.418,
+   "latency_p95_s": 3.686,
+   "latency_total_s": 117.6,
+   "prompt_tokens_mean": 4658.5,
+   "completion_tokens_mean": 138.6,
+   "prompt_tokens_total": 214289,
+   "completion_tokens_total": 6377,
+   "errors_sample": [
+    "[quote_not_about_target] neither the quote nor small_object shares a word with E3's title, object or sample that the small event's items also use: quote the sentence that names the same activity/proje"
+   ]
+  },
+  "group": {
+   "calls": 5,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 3.289,
+   "latency_p95_s": 3.948,
+   "latency_total_s": 13.8,
+   "prompt_tokens_mean": 3271.6,
+   "completion_tokens_mean": 203,
+   "prompt_tokens_total": 16358,
+   "completion_tokens_total": 1015,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters",
+    "[thin] new rope N1 holds fewer than two matters; [thin] new rope N2 holds fewer than two matters",
+    "[thin] new rope N1 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.621,
+   "latency_p95_s": 1.088,
+   "latency_total_s": 2.3,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 13.3,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 40,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 37.411,
+   "latency_p95_s": 42.717,
+   "latency_total_s": 108.2,
+   "prompt_tokens_mean": 4009.3,
+   "completion_tokens_mean": 339.7,
+   "prompt_tokens_total": 12028,
+   "completion_tokens_total": 1019,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 7,
+   "ok": 5,
+   "ok_first_attempt": 3,
+   "retried": 3,
+   "latency_median_s": 18.574,
+   "latency_p95_s": 32.54,
+   "latency_total_s": 146.5,
+   "prompt_tokens_mean": 9967.3,
+   "completion_tokens_mean": 1749,
+   "prompt_tokens_total": 69771,
+   "completion_tokens_total": 12243,
+   "errors_sample": [
+    "[ungrounded_date] knot k1: 2026-09-17 is neither when its evidence was captured nor a day it names; [ungrounded_date] knot k2: 2026-09-17 is neither when its evidence was captured nor a day it names",
+    "[blocks] the quote does not name E2"
+   ]
+  },
+  "person": {
+   "calls": 11,
+   "ok": 11,
+   "ok_first_attempt": 11,
+   "retried": 0,
+   "latency_median_s": 0.954,
+   "latency_p95_s": 1.439,
+   "latency_total_s": 11.5,
+   "prompt_tokens_mean": 2536.4,
+   "completion_tokens_mean": 40.7,
+   "prompt_tokens_total": 27900,
+   "completion_tokens_total": 448,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 6.29,
+   "latency_p95_s": 6.543,
+   "latency_total_s": 22.8,
+   "prompt_tokens_mean": 4714.5,
+   "completion_tokens_mean": 449,
+   "prompt_tokens_total": 18858,
+   "completion_tokens_total": 1796,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 2,
+   "retried": 1,
+   "latency_median_s": 1.593,
+   "latency_p95_s": 3.803,
+   "latency_total_s": 6.8,
+   "prompt_tokens_mean": 4854.3,
+   "completion_tokens_mean": 127.3,
+   "prompt_tokens_total": 14563,
+   "completion_tokens_total": 382,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 10,
+  "attach": 63,
+  "ask": 5,
+  "none": 5
+ },
+ "assign_actions": {
+  "new": 10,
+  "attach": 61,
+  "ask": 3,
+  "none": 5,
+  "ask_suppressed": 4
+ },
+ "final_live_events": 10,
+ "status_line_chars_mean": 13.5,
+ "title_chars_mean": 9.3,
+ "wall_s": 1022.5,
+ "items_per_min": 4.81,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

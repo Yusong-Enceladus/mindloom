@@ -1,0 +1,225 @@
+{
+ "split": "test",
+ "runs": {
+  "allqwen.r1": {
+   "type_accuracy": 100.0,
+   "still_failing_after_retry": 0,
+   "latency_p50": 4.05,
+   "latency_p90": 6.6,
+   "first_try_valid": 96,
+   "retried": 2,
+   "extraction": {
+    "cer_macro": 0.5,
+    "key_field_em_macro": 98.3,
+    "qa_found_macro": 99.3,
+    "fab_number_rate_macro": 1.4,
+    "unsupported_rate_macro": 0.0,
+    "num_recall": 99.6,
+    "valid_json": 100.0
+   },
+   "wall_s": 461.7
+  },
+  "allqwen.r2": {
+   "type_accuracy": 99.0,
+   "still_failing_after_retry": 1,
+   "latency_p50": 3.83,
+   "latency_p90": 6.27,
+   "first_try_valid": 95,
+   "retried": 3,
+   "extraction": {
+    "cer_macro": 1.4,
+    "key_field_em_macro": 97.9,
+    "qa_found_macro": 99.7,
+    "fab_number_rate_macro": 1.2,
+    "unsupported_rate_macro": 0.0,
+    "num_recall": 99.7,
+    "valid_json": 100.0
+   },
+   "wall_s": 437.9
+  },
+  "router.r1": {
+   "type_accuracy": 98.0,
+   "still_failing_after_retry": 0,
+   "latency_p50": 4.99,
+   "latency_p90": 17.49,
+   "first_try_valid": 95,
+   "retried": 3,
+   "extraction": {
+    "cer_macro": 2.9,
+    "key_field_em_macro": 96.3,
+    "qa_found_macro": 100.0,
+    "fab_number_rate_macro": 1.7,
+    "unsupported_rate_macro": 0.0,
+    "num_recall": 99.3,
+    "valid_json": 100.0
+   },
+   "wall_s": 648.1
+  },
+  "router.r2": {
+   "type_accuracy": 100.0,
+   "still_failing_after_retry": 0,
+   "latency_p50": 4.93,
+   "latency_p90": 17.51,
+   "first_try_valid": 95,
+   "retried": 3,
+   "extraction": {
+    "cer_macro": 0.7,
+    "key_field_em_macro": 98.6,
+    "qa_found_macro": 100.0,
+    "fab_number_rate_macro": 1.3,
+    "unsupported_rate_macro": 0.0,
+    "num_recall": 99.7,
+    "valid_json": 100.0
+   },
+   "wall_s": 648.3
+  }
+ },
+ "by_type": {
+  "chat_screenshot": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 98.5,
+    "headline": {
+     "发送者": 97.4,
+     "时间": 99.3,
+     "条数一致": 100.0
+    },
+    "cer": 0.1,
+    "p50": 3.9
+   },
+   "router": {
+    "model": "Step3-VL-10B 14",
+    "key_em": 97.1,
+    "headline": {
+     "发送者": 100.0,
+     "时间": 94.9,
+     "条数一致": 100.0
+    },
+    "cer": 1.2,
+    "p50": 18.4
+   }
+  },
+  "chart_dashboard": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "数据点": 100.0,
+     "KPI": 100.0
+    },
+    "cer": 0.0,
+    "p50": 3.7
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "数据点": 100.0,
+     "KPI": 100.0
+    },
+    "cer": 0.0,
+    "p50": 3.7
+   }
+  },
+  "slide": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "要点召回": 100.0
+    },
+    "cer": 0.0,
+    "p50": 3.5
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "要点召回": 100.0
+    },
+    "cer": 0.0,
+    "p50": 3.4
+   }
+  },
+  "whiteboard_handwriting": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 94.7,
+    "headline": {
+     "行完全一致": 94.8
+    },
+    "cer": 3.2,
+    "p50": 3.6
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 89.4,
+    "headline": {
+     "行完全一致": 91.8
+    },
+    "cer": 7.5,
+    "p50": 3.5
+   }
+  },
+  "receipt_invoice": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 95.8,
+    "headline": {
+     "明细 F1": 96.5
+    },
+    "cer": 3.2,
+    "p50": 6.3
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 98.7,
+    "headline": {
+     "明细 F1": 100.0
+    },
+    "cer": 3.5,
+    "p50": 6.1
+   }
+  },
+  "scanned_document": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "表格单元格": 100.0
+    },
+    "cer": 0.0,
+    "p50": 5.7
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 100.0,
+    "headline": {
+     "表格单元格": 100.0
+    },
+    "cer": 0.0,
+    "p50": 5.5
+   }
+  },
+  "form_label_sign": {
+   "allqwen": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 97.5,
+    "headline": {
+     "字段值": 96.3
+    },
+    "cer": 0.1,
+    "p50": 4.1
+   },
+   "router": {
+    "model": "Qwen3.6 NVFP4 14",
+    "key_em": 97.0,
+    "headline": {
+     "字段值": 96.3
+    },
+    "cer": 0.1,
+    "p50": 4.0
+   }
+  }
+ }
+}

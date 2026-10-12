@@ -63,6 +63,7 @@ from . import transcripts
 from .persons import People, speakers_in_text
 from .file_read import read_file
 from .image_read import read_image
+from .image_router import RouteStats
 from .skills import Harness, SkillRegistry
 from .store import ItemPurged, Store, StoreLocked
 from .relations import today_of
@@ -97,13 +98,15 @@ def excerpt(text: str, limit: int) -> str:
 
 class Organizer:
     def __init__(self, store: Store, registry: SkillRegistry, harness: Harness,
-                 embedder: Optional[EmbedClient], *, max_open_questions: int = 2, candidates_k: int = 5,
+                 embedder: Optional[EmbedClient], *, max_open_questions: Optional[int] = None, candidates_k: int = 5,
+                 candidates_reserve: int = 0, candidates_reserve_min_sim: float = 0.2, candidates_full_view: int = 5,
                  rank_max_events: int = 40, rank_every_n_items: int = 10, job_max_attempts: int = 3,
-                 clock: Optional[Clock] = None, ask_per_day: int = 2, ask_per_event_per_day: int = 1,
+                 clock: Optional[Clock] = None, ask_per_day: Optional[int] = None,
+                 ask_per_event_per_day: Optional[int] = None,
                  question_ttl_h: float = 72.0, recheck_threshold: float = 0.70, recheck_window_days: float = 7.0,
                  recheck_max: int = 2, owner_ids: tuple[str, ...] | list[str] = (),
                  owner_aliases: tuple[str, ...] | list[str] = ("我",), workers: int = 1, pipeline_lag: int = 2,
-                 image_clients: Optional[dict] = None, inbox=None, unlock_lease_s: float = 0.0,
+                 image_clients: Optional[dict] = None, image_route_stats=None, inbox=None, unlock_lease_s: float = 0.0,
                  log_file=None, consolidate: Optional[dict] = None, people: Optional[dict] = None,
                  maps: Optional[dict] = None, grouping: Optional[dict] = None):
         self.store = store
@@ -118,6 +121,12 @@ class Organizer:
         self.people = People(store, max_open_questions, owner_ids, owner_aliases)
         self.owner_aliases = tuple(owner_aliases)
         self.candidates_k = candidates_k
+        # Retrieval at scale (skills/event-assign/scripts/candidates.py): slots kept for the matters the score alone
+        # would hide. The first candidates_full_view candidates are shown with their first and recent items; the
+        # rest (up to candidates_k) with their anchor, title, status line and first item only (prompt size).
+        self.candidates_reserve = candidates_reserve
+        self.candidates_reserve_min_sim = candidates_reserve_min_sim
+        self.candidates_full_view = max(1, candidates_full_view)
         self.rank_max_events = rank_max_events
         self.rank_every_n_items = rank_every_n_items
         self.job_max_attempts = job_max_attempts
@@ -136,6 +145,8 @@ class Organizer:
         self._brief_rules = registry.script("event-brief", "validate")
         # image-read endpoints per image type ("detect" for the type step); unmapped types use the harness client.
         self.image_clients: dict = dict(image_clients or {})
+        # Counts of which model read which image kind (organizer/image_router.py); no content.
+        self.image_route_stats = image_route_stats if image_route_stats is not None else RouteStats()
         self._rank_floor = registry.script("home-rank", "floor")
         self._units = registry.script("item-split", "units")
         # Pipeline mode (organizer/pipeline.py, workers > 1) runs model calls on a bounded pool and briefs
@@ -765,7 +776,7 @@ class Organizer:
         if not meta.get("local_text") and item.get("text"):
             meta["local_text"] = item["text"]
         res = read_file(self.harness, blob["data"] if blob else None, meta, subject=item_id,
-                        clients=self.image_clients, mask=self.store.mask_text)
+                        clients=self.image_clients, mask=self.store.mask_text, stats=self.image_route_stats)
         # screenshot_run_id marks "read" (and publishes the reading); a reading made without a model call
         # gets a stable local id. Read-then-delete: the file's bytes go in the same transaction.
         run_id = res.run_id or f"file-read:{(item['sha256'] or '')[:24]}:{revision}"
@@ -828,7 +839,7 @@ class Organizer:
             try:
                 res = read_image(self.harness, blob["data"],
                                  {"source_app": item["source_app"].get("name", ""), "captured_at": item["started_at"]},
-                                 subject=item_id, clients=self.image_clients)
+                                 subject=item_id, clients=self.image_clients, stats=self.image_route_stats)
             except ValueError as exc:
                 # The endpoint rejected the request (HTTP 4xx, e.g. a text-only model). Retrying cannot help;
                 # organize the item without its text instead of failing the job and never placing it. The
@@ -1195,7 +1206,18 @@ class Organizer:
             f["centroid"] = None
         f["person_ids"] = sorted(f["person_ids"])
         f["sources"] = sorted(f["sources"])
+        f["n"] = len(f["item_ids"])
+        ev = self.store.get_event(event_id)
+        f["terms"] = sorted(self._terms(" ".join(str(ev.get(k) or "") for k in ("anchor", "title")))) if ev else []
         return f
+
+    def _terms(self, text: str) -> set[str]:
+        """Content words (CJK bigrams minus function words, Latin tokens): what an event's object and an item's text
+        can share. Owner names are not content."""
+        words = self.registry.script("event-consolidate", "validate").terms(text)
+        for alias in self.owner_aliases:
+            words -= self.registry.script("event-consolidate", "validate").terms(alias)
+        return words
 
     def assign(self, item: dict, body: str, embedding: Optional[list[float]],
                current: Optional[dict] = None, reason: Optional[str] = None) -> Optional[str]:
@@ -1211,9 +1233,13 @@ class Organizer:
             "ts": item["started_ts"],
             "person_ids": self.other_persons(item_id, for_matching=True),
             "source": _source_key(item["source_app"]),
+            "terms": sorted(self._terms(excerpt(self.match_body(item), ASSIGN_TEXT_CHARS))),
         }
         forbidden = self.store.forbidden_events_for(item_id)
-        cands = self._candidates.rank_candidates(query, feats.values(), forbidden, self.candidates_k)
+        extra = {}
+        if self.candidates_reserve:
+            extra = {"reserve": self.candidates_reserve, "reserve_min_sim": self.candidates_reserve_min_sim}
+        cands = self._candidates.rank_candidates(query, feats.values(), forbidden, self.candidates_k, **extra)
         handle_to_event: dict[str, str] = {}
         cand_views, cand_item_handles, cand_meta = [], [], []
         read_ids: list[str] = []  # the candidate items whose text the call reads
@@ -1224,7 +1250,8 @@ class Organizer:
             members = [i for i in self.store.matching_item_ids(c["event_id"]) if i != item_id]
             first_view = None
             recent_views = []
-            for n, iid in enumerate(members[:1] + members[1:][-2:]):
+            shown = members[:1] + members[1:][-2:] if rank_i < self.candidates_full_view else members[:1]
+            for n, iid in enumerate(shown):
                 it = self.store.get_item(iid)
                 if not it:
                     continue

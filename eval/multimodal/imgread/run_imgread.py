@@ -10,6 +10,9 @@ a fixed capture time), so nothing but the image tells the model what it is.
   --condition without-skills   the same with the SKILL.md body replaced by a one-line task name
                                (eval/eval_common.strip_skill_text: global rules, schemas, validator, retry stay)
   --forced-type                skip the type step and extract with the true type (isolates extraction)
+  --router stepfun-chat        the image router (organizer/image_router.py): the type step runs on --url as always;
+                               chat screenshots are then extracted by Step3-VL on --step3-url (llama.cpp, loopback),
+                               everything else by --url. Rows name the model that answered each step.
 
 Rows (JSONL) carry the kept extraction as `content`, so eval/multimodal/bench/score_vlm.py scores them like
 a benchmark run; score_imgread.py adds type accuracy, validator and latency numbers.
@@ -34,8 +37,11 @@ REPO = HERE.parents[2]
 sys.path.insert(0, str(REPO / "spark"))
 sys.path.insert(0, str(REPO / "eval"))
 
+from organizer.api import image_route_clients  # noqa: E402
 from organizer.clients import OpenAIChatClient  # noqa: E402
+from organizer.config import Settings  # noqa: E402
 from organizer.image_read import read_image  # noqa: E402
+from organizer.image_router import RouteStats  # noqa: E402
 from organizer.skills import Harness, SkillRegistry  # noqa: E402
 from organizer.store import Store  # noqa: E402
 
@@ -51,6 +57,8 @@ def main() -> None:
     ap.add_argument("--model", default="auto")
     ap.add_argument("--condition", choices=["skills", "without-skills"], default="skills")
     ap.add_argument("--forced-type", action="store_true")
+    ap.add_argument("--router", default="", help="image router preset (stepfun-chat); empty = every kind on --url")
+    ap.add_argument("--step3-url", default="http://127.0.0.1:30001", help="Step3-VL llama.cpp server (loopback)")
     ap.add_argument("--concurrency", type=int, default=1)
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
@@ -74,8 +82,12 @@ def main() -> None:
     client = OpenAIChatClient(args.url, args.model, 900.0)
     harness = Harness(registry, client, store)
     skill = registry.skills["image-read"]
+    stats = RouteStats()
+    clients = image_route_clients(Settings(image_router=args.router, step3_url=args.step3_url, image_routes="",
+                                           llm_timeout_s=900.0), registry, client, stats) if args.router else {}
     meta = {"condition": args.condition, "forced_type": args.forced_type, "model": client.model_id, "url": args.url,
             "prompt_hash": skill.prompt_hash, "skill_version": skill.version, "concurrency": args.concurrency,
+            "router": args.router or None, "step3_url": args.step3_url if args.router else None,
             "split": args.split if not wanted else "ids", "n": len(todo), "started": time.time()}
     lock = threading.Lock()
 
@@ -83,7 +95,7 @@ def main() -> None:
         image = (root / it["image"]).read_bytes()
         t0 = time.time()
         try:
-            res = read_image(harness, image, CONTEXT, subject=it["id"],
+            res = read_image(harness, image, CONTEXT, subject=it["id"], clients=clients, stats=stats,
                              forced_type=it["type"] if args.forced_type else None)
             err = None
         except Exception as exc:  # noqa: BLE001 - recorded; the row is kept so the run completes
@@ -100,6 +112,7 @@ def main() -> None:
                               "prompt_tokens": rec["prompt_tokens"], "completion_tokens": rec["completion_tokens"],
                               "latency_s": round(rec["ended_at"] - rec["started_at"], 3), "errors": r.errors[:6], "attempt_errors": r.attempt_errors})
             row.update({
+                "detect_model": res.detect_model, "extract_model": res.extract_model, "rerouted": res.rerouted,
                 "detected_type": res.image_type, "detected": res.detected, "ok": res.ok, "sanitized": res.sanitized,
                 "steps": steps, "attempts": res.attempts,
                 "prompt_tokens": sum(s["prompt_tokens"] or 0 for s in steps),
@@ -116,6 +129,7 @@ def main() -> None:
     with ThreadPoolExecutor(max_workers=args.concurrency) as pool:
         list(pool.map(work, todo))
     meta["wall_s"] = round(time.time() - meta["started"], 2)
+    meta["route_stats"] = stats.snapshot()
     meta_path = out.with_suffix(".meta.json")
     prev = json.loads(meta_path.read_text()) if meta_path.exists() else {"segments": []}
     prev["segments"].append(meta)

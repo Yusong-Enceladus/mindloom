@@ -32,6 +32,7 @@ from .clock import Clock, from_setting
 from .config import Settings
 from .decisions import answer_question, apply_decision
 from .gate import member_path
+from .image_router import FallbackClient, RouteStats, preset_routes
 from .inbox import InboxStore
 from .infra import InfraProbe
 from .organizer import Organizer
@@ -84,11 +85,17 @@ def chat_clients() -> dict:
     return {"openai": OpenAIChatClient, "step3-llama-native": Step3LlamaNativeClient}
 
 
-def image_route_clients(settings: Settings, registry: SkillRegistry) -> dict[str, ChatClient]:
-    """ORGANIZER_IMAGE_ROUTES -> {image type or "detect": client}. Loopback endpoints only."""
-    if not settings.image_routes.strip():
+def image_route_clients(settings: Settings, registry: SkillRegistry, chat: Optional[ChatClient] = None,
+                        stats: Optional[RouteStats] = None) -> dict[str, ChatClient]:
+    """ORGANIZER_IMAGE_ROUTER (a named preset) and ORGANIZER_IMAGE_ROUTES -> {image type or "detect": client}.
+    Loopback endpoints only. With fallback on (default when a preset is used), each routed client is a
+    FallbackClient: the organizer's own `chat` model reads whatever the routed endpoint does not."""
+    routes = {**preset_routes(settings.image_router, settings.step3_url)}
+    if settings.image_routes.strip():
+        routes.update(json.loads(settings.image_routes))
+    if not routes:
         return {}
-    routes = json.loads(settings.image_routes)
+    fallback = settings.image_route_fallback if settings.image_route_fallback is not None else bool(settings.image_router)
     known = set(registry.script("image-read", "reading").TYPES) | {"detect"}
     clients: dict[str, ChatClient] = {}
     for key, spec in routes.items():
@@ -100,7 +107,12 @@ def image_route_clients(settings: Settings, registry: SkillRegistry) -> dict[str
         backend = spec.get("backend", "openai")
         if backend not in chat_clients():
             raise ValueError(f"ORGANIZER_IMAGE_ROUTES: unsupported backend {backend!r}")
-        clients[key] = chat_clients()[backend](spec["url"], spec.get("model", "auto"), settings.llm_timeout_s)
+        client = chat_clients()[backend](spec["url"], spec.get("model", "auto"), settings.llm_timeout_s)
+        if fallback and chat is not None and key != "detect":
+            client = FallbackClient(client, chat, key, stats or RouteStats())
+        clients[key] = client
+    log.info("image-read routes: %s (fallback to the chat model: %s)",
+             ", ".join(f"{k} -> {urlsplit(v['url']).netloc}" for k, v in routes.items()), fallback)
     return clients
 
 
@@ -117,18 +129,21 @@ def build_organizer(settings: Settings, chat: Optional[ChatClient] = None,
         if settings.chat_backend not in chat_clients():
             raise ValueError(f"unsupported ORGANIZER_CHAT_BACKEND: {settings.chat_backend}")
         chat = chat_clients()[settings.chat_backend](settings.llm_base_url, settings.llm_model, settings.llm_timeout_s)
-    image_clients = image_route_clients(settings, registry)
+    route_stats = RouteStats()
+    image_clients = image_route_clients(settings, registry, chat, route_stats)
     if embedder is None and settings.embed_base_url:
         embedder = OpenAIEmbedClient(settings.embed_base_url, settings.embed_model)
     harness = Harness(registry, chat, store, record_inputs=settings.record_inputs)
     return Organizer(store, registry, harness, embedder,
                      max_open_questions=settings.max_open_questions, candidates_k=settings.candidates_k,
+                     candidates_reserve=settings.candidates_reserve, candidates_reserve_min_sim=settings.candidates_reserve_min_sim,
+                     candidates_full_view=settings.candidates_full_view,
                      rank_max_events=settings.rank_max_events, rank_every_n_items=settings.rank_every_n_items,
                      job_max_attempts=settings.job_max_attempts, clock=clock,
                      ask_per_day=settings.ask_per_day, ask_per_event_per_day=settings.ask_per_event_per_day,
                      question_ttl_h=settings.question_ttl_h, owner_ids=settings.owner_person_ids,
                      owner_aliases=settings.owner_aliases, workers=settings.workers,
-                     pipeline_lag=settings.pipeline_lag, image_clients=image_clients, inbox=inbox,
+                     pipeline_lag=settings.pipeline_lag, image_clients=image_clients, image_route_stats=route_stats, inbox=inbox,
                      unlock_lease_s=settings.unlock_lease_s, log_file=settings.log_file,
                      consolidate={"enabled": settings.consolidate, "every_items": settings.consolidate_every,
                                   "max_calls": settings.consolidate_max_calls,
@@ -136,7 +151,12 @@ def build_organizer(settings: Settings, chat: Optional[ChatClient] = None,
                                   "subject_max_items": settings.consolidate_subject_max,
                                   "unfile_max_items": settings.consolidate_unfile_max,
                                   "directory_size": settings.consolidate_directory_size,
-                                  "directory_min_items": settings.consolidate_directory_min},
+                                  "directory_min_items": settings.consolidate_directory_min,
+                                  "nearest_k": settings.consolidate_nearest_k,
+                                  "near_watch": settings.consolidate_near_watch,
+                                  "max_checks": settings.consolidate_max_checks,
+                                  "grow_min": settings.consolidate_grow_min,
+                                  "sweep": settings.consolidate_sweep, "sweep_gap": settings.consolidate_sweep_gap},
                      people={"enabled": settings.people_pass, "every_items": settings.people_every,
                              "max_calls": settings.people_max_calls},
                      maps={"enabled": settings.maps, "min_items": settings.map_min_items,

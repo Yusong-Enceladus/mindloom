@@ -125,7 +125,7 @@ def pictures_note(n: int) -> str:
 
 
 def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: Optional[str] = None,
-              clients: Optional[dict[str, ChatClient]] = None, as_of: Optional[str] = None,
+              clients: Optional[dict[str, ChatClient]] = None, as_of: Optional[str] = None, stats=None,
               parse: Callable[..., dict] = fileparse.parse_file, image_workers: int = IMAGE_WORKERS,
               mask: Optional[Callable[[str], str]] = None) -> FileReading:
     """Read one file. `meta` is the item's file metadata (filename, mime, sha256, local_text, source_app,
@@ -177,7 +177,7 @@ def read_file(harness: Harness, data: Optional[bytes], meta: dict, *, subject: O
 
         def one(im: dict):
             try:
-                return im, read_image(harness, im["data"], ctx, subject=subject, clients=clients, as_of=as_of)
+                return im, read_image(harness, im["data"], ctx, subject=subject, clients=clients, as_of=as_of, stats=stats)
             except ValueError as exc:  # the endpoint cannot take images: keep the text without this part
                 log.warning("image part %s of %s not read: %s", im["id"], subject, safe_error(exc))
                 return im, None

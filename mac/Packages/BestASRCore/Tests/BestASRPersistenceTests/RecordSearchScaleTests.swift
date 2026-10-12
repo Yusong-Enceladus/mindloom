@@ -109,7 +109,7 @@ enum SyntheticLibrary {
   ]
   static let fillers = ["我们", "今天", "明天", "然后", "已经", "先", "再", "需要", "可以", "这个", "那边", "还是"]
   static let terms = [
-    "GripDiff", "TouchFold", "RoboPrior", "SkillWeave", "Twin-7", "PyTorch", "CUDA", "LaTeX",
+    "GripDiff", "TouchFold", "RoboPrior", "SkillKnit", "Twin-7", "PyTorch", "CUDA", "LaTeX",
     "Overleaf",
     "GitHub", "NC27-4471", "AoE", "baseline", "rebuttal", "checkpoint", "dataset", "PR", "OKR",
   ]

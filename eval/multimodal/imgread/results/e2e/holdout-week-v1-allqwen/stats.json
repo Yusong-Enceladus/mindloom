@@ -1,0 +1,183 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 32,
+   "ok": 32,
+   "ok_first_attempt": 32,
+   "retried": 0,
+   "latency_median_s": 1.901,
+   "latency_p95_s": 2.265,
+   "latency_total_s": 59.7,
+   "prompt_tokens_mean": 4199.1,
+   "completion_tokens_mean": 163.4,
+   "prompt_tokens_total": 134372,
+   "completion_tokens_total": 5230,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 30,
+   "ok": 13,
+   "ok_first_attempt": 7,
+   "retried": 7,
+   "latency_median_s": 2.655,
+   "latency_p95_s": 5.435,
+   "latency_total_s": 85.2,
+   "prompt_tokens_mean": 4918.0,
+   "completion_tokens_mean": 307.7,
+   "prompt_tokens_total": 147539,
+   "completion_tokens_total": 9230,
+   "errors_sample": [
+    "[relative_date] status_facts[0] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」",
+    "[relative_date] status_facts[1] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」",
+    "[unsupported_completion] quote「我就讲《把设计评审开短一点》」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned"
+   ]
+  },
+  "consolidate": {
+   "calls": 12,
+   "ok": 11,
+   "ok_first_attempt": 11,
+   "retried": 1,
+   "latency_median_s": 1.453,
+   "latency_p95_s": 1.828,
+   "latency_total_s": 19.6,
+   "prompt_tokens_mean": 4265.1,
+   "completion_tokens_mean": 134.2,
+   "prompt_tokens_total": 51181,
+   "completion_tokens_total": 1611,
+   "errors_sample": [
+    "[quote_not_about_target] neither the quote nor small_object shares a word with E2's title, object or sample that the small event's items also use: quote the sentence that names the same activity/proje"
+   ]
+  },
+  "group": {
+   "calls": 2,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 0.792,
+   "latency_p95_s": 1.903,
+   "latency_total_s": 2.7,
+   "prompt_tokens_mean": 3014,
+   "completion_tokens_mean": 125,
+   "prompt_tokens_total": 6028,
+   "completion_tokens_total": 250,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 0.846,
+   "latency_p95_s": 0.846,
+   "latency_total_s": 0.8,
+   "prompt_tokens_mean": 4214,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 4214,
+   "completion_tokens_total": 14,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 2.711,
+   "latency_p95_s": 2.711,
+   "latency_total_s": 2.7,
+   "prompt_tokens_mean": 4239,
+   "completion_tokens_mean": 303,
+   "prompt_tokens_total": 4239,
+   "completion_tokens_total": 303,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 0,
+   "retried": 2,
+   "latency_median_s": 18.829,
+   "latency_p95_s": 24.078,
+   "latency_total_s": 42.9,
+   "prompt_tokens_mean": 14426,
+   "completion_tokens_mean": 2842.5,
+   "prompt_tokens_total": 28852,
+   "completion_tokens_total": 5685,
+   "errors_sample": []
+  },
+  "person": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.689,
+   "latency_p95_s": 0.691,
+   "latency_total_s": 2.0,
+   "prompt_tokens_mean": 2514,
+   "completion_tokens_mean": 40,
+   "prompt_tokens_total": 7542,
+   "completion_tokens_total": 120,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 1.589,
+   "latency_p95_s": 3.205,
+   "latency_total_s": 4.8,
+   "prompt_tokens_mean": 3130.5,
+   "completion_tokens_mean": 254.5,
+   "prompt_tokens_total": 6261,
+   "completion_tokens_total": 509,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 1.187,
+   "latency_p95_s": 1.187,
+   "latency_total_s": 1.2,
+   "prompt_tokens_mean": 3538,
+   "completion_tokens_mean": 97,
+   "prompt_tokens_total": 3538,
+   "completion_tokens_total": 97,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 7,
+  "attach": 23,
+  "none": 2
+ },
+ "assign_actions": {
+  "new": 7,
+  "attach": 23,
+  "none": 2
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 12.3,
+ "title_chars_mean": 10.6,
+ "wall_s": 223.2,
+ "items_per_min": 8.6,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 1,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 0,
+  "misses": 96
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

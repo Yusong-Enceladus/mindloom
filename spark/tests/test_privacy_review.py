@@ -277,6 +277,8 @@ COMMON = [
     ("amex_15", "Amex card 3782 822463 10005 expires 09/28", "822463"),
     ("corp_account_non_luhn", "对公账号：755912345610801 开户行招商银行", "755912345610801"),
     ("bank_card_newline", "卡号 6222 0212\n3456 7894", "3456 7894"),
+    ("bank_card_misheard", "卡号 6222 0212 3456 7895 口述时听错了一位", "3456 7895"),
+    ("id_card_misheard", "身份证号是 110105194912310028", "110105194912310028"),
     ("stripe_live", "STRIPE_SECRET_KEY=sk_test_EXAMPLEKEY0000ABCD", "EXAMPLEKEY0000ABCD"),
     ("jwt", "token eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0In0.abcDEF123ghiJKL456", "eyJhbGciOiJIUzI1NiJ9"),
     ("aws_secret", "aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY", "wJalrXUtnFEMI"),

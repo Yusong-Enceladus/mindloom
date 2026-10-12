@@ -15,6 +15,12 @@ the conversational verification-code phrasing the masking evaluation found
 unmasked (a keyword, some chat, then "是 / 为 / ：/ is" and the code, within one
 sentence of up to 40 characters) and its guards.
 
+Spec v5 (amendment of v3, same version string in the vector file): the Luhn check of cards and the check
+character of 18-digit ID numbers no longer decide whether a number is masked, since a number the speech
+recognizer heard wrong in one digit fails them and would be sent unmasked. The shape decides (digit count and
+a card-network prefix or a card word before; region, 19/20 and month/day ranges, or an ID word before); the
+checks only pick the label when the digits could be either.
+
     python3 privacy/make_vectors.py            # rewrite privacy/mask_vectors.json
     python3 privacy/make_vectors.py --check    # exit 1 if the file would change
 """
@@ -224,6 +230,32 @@ POSITIVE = [
     ("验证码发到了，手机号是 13812345678", [("phone", "13812345678")]),
 ]
 
+POSITIVE += [
+    # ---- spec v5: the checksum never decides whether to mask (a number heard wrong in one digit fails it) ----
+    # bank cards: the last digit, a middle digit, grouped, dashed, wrapped, after a card word, or only a network prefix
+    ("卡号 6222021234567891（这串校验不对）", [("bank_card", "6222021234567891")]),
+    ("卡号 6222 0212 3456 7891 128", [("bank_card", "6222 0212 3456 7891 128")]),
+    ("银行卡 6222-0212-3456-7890-129", [("bank_card", "6222-0212-3456-7890-129")]),
+    ("银行卡 4111111111111112", [("bank_card", "4111111111111112")]),
+    ("转到 6222021234567891 这个", [("bank_card", "6222021234567891")]),
+    ("信用卡 5500 0055 5555 5558", [("bank_card", "5500 0055 5555 5558")]),
+    ("卡号 6222 0212\n3456 7895", [("bank_card", "6222 0212\n3456 7895")]),
+    ("账号 1234567812345671", [("bank_card", "1234567812345671")]),
+    ("Amex card 3782 822463 10006 expires 09/28", [("bank_card", "3782 822463 10006")]),
+    # ID numbers: the check character, a digit of the birth date, grouped, with an impossible date after an ID word
+    ("身份证号 110105194912310021（校验位不对）", [("id_card", "110105194912310021")]),
+    ("身份证号 110105194912310028", [("id_card", "110105194912310028")]),
+    ("身份证号 510107200102293214（2001 年没有 2 月 29 日）", [("id_card", "510107200102293214")]),
+    ("身份证号 11010519491331002X", [("id_card", "11010519491331002X")]),
+    ("证件 110101 19900307 1235", [("id_card", "110101 19900307 1235")]),
+    ("甲方 440305199901011236，乙方 510107200002293212", [("id_card", "440305199901011236"), ("id_card", "510107200002293212")]),
+    ("老身份证号 110101900307124", [("id_card", "110101900307124")]),
+    # the checksum picks the label: digits that pass Luhn and fail the ID check, with a card prefix, are a card
+    ("收款 624262199802059972", [("bank_card", "624262199802059972")]),
+    # a misheard number and its right form share nothing, but both are masked in one text
+    ("卡号 6222 0212 3456 7894，再说一遍 6222 0212 3456 7895", [("bank_card", "6222 0212 3456 7894"), ("bank_card", "6222 0212 3456 7895")]),
+]
+
 # False-positive guards: nothing may be masked.
 GUARDS = [
     "组会改到 2026-09-29 14:30，地点 B203",
@@ -232,7 +264,6 @@ GUARDS = [
     "实验编号 EXP-20260912-003 已归档",
     "Python 3.10.2 和 CUDA 12.4，驱动 550.54.15",
     "Twin-7 机器人今天标定，Twin-7 的夹爪换了",
-    "卡号 6222021234567891（这串校验不对）",
     "订单号 2026092912345678 已发货",
     "编号 1234567812345670 只是批次号",
     "账号在备注里写过了，另外这是订单编号 1234567812345670",
@@ -256,8 +287,8 @@ GUARDS = [
     "OTP 功能在 2026 年上线",
     "task-management-pipeline-v2 和 sk-abcdefghijklmnopqrst 都不是密钥",
     "Bearer token 认证在 v2 里",
-    "身份证号 110105194912310021（校验位不对）",
-    "身份证号 510107200102293214（2001 年没有 2 月 29 日）",
+    "编号 110107200113293214（13 月不是日期，没有证件词）",
+    "编号 1234567812345671 只是批次号，校验也不对",
     "新CUDA12 驱动，新H100 集群",
     "GPU 8 × H100，80GB，1,048,576 MB",
     "林知远 9 月 30 日在北京海淀区中关村大街 1 号付了 ¥3,000",

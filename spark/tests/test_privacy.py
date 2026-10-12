@@ -26,7 +26,7 @@ from organizer.store import Store
 
 # The shared vectors file must stay byte-identical with the Mac's copy (privacy/mask_vectors.json in both
 # repositories); this constant changes only together with the file, in both.
-VECTORS_SHA256 = "b256b5a57ad2bc92e963de5427f247c5255397270ed038bf751f0b18ae9fe71f"
+VECTORS_SHA256 = "c379f8cace89883fd5a03c0f1cc8f05db11b0b0a1859b2f18dbcfb9325cbdb70"
 VECTORS = REPO / "privacy" / "mask_vectors.json"
 SENTINEL = "哨兵ZQXV字样"
 # A sealed-shaped phone entry (phone contract section 5): the Spark never opens one. Its wire string is the

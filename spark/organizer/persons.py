@@ -314,7 +314,7 @@ def chat_person_id(name: str) -> str:
 
 
 class People:
-    def __init__(self, store: Store, max_open_questions: int, self_ids: tuple[str, ...] | list[str] = (),
+    def __init__(self, store: Store, max_open_questions: Optional[int], self_ids: tuple[str, ...] | list[str] = (),
                  owner_aliases: Iterable[str] = ()):
         self.store = store
         # Open same_person questions allowed at once (a budget separate from same_event questions).

@@ -1,0 +1,46 @@
+{
+ "segments": [
+  {
+   "condition": "skills",
+   "forced_type": false,
+   "model": "qwen3.6-35b-a3b-nvfp4",
+   "url": "http://127.0.0.1:8000/v1",
+   "prompt_hash": "40a4c917ce1dea3e",
+   "skill_version": "1.0.0",
+   "concurrency": 1,
+   "router": null,
+   "step3_url": null,
+   "split": "test",
+   "n": 98,
+   "started": 1791372222.5010738,
+   "wall_s": 461.66,
+   "route_stats": {
+    "reads": {
+     "chart_dashboard": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "chat_screenshot": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "form_label_sign": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "receipt_invoice": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "scanned_document": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "slide": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     },
+     "whiteboard_handwriting": {
+      "qwen3.6-35b-a3b-nvfp4": 14
+     }
+    },
+    "rerouted": {},
+    "fallbacks": {}
+   }
+  }
+ ]
+}

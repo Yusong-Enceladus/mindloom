@@ -55,7 +55,7 @@
 | 口述识别 · 终稿 | Qwen3-ASR 1.7B 8-bit（MLX）＋用户确认的 41 条词表 | Mac | CER 3.74%（240 条口述），英文词召回 30/41，松手到插入 P50 545 ms / P90 635 ms | [DICTATION_ARCHITECTURE](../mac/DICTATION_ARCHITECTURE.md) |
 | 口述识别 · 实时稿 | SenseVoice small int8（Core ML） | Mac | CER 5.75%，解码中位 150 ms | 同上 |
 | 口述整理 | 规则＋Qwen3-0.6B 8-bit LoRA＋忠实度护栏 | Mac | 对校对稿精确率 98.12%，生成中位 193 ms，630 MB | 同上 |
-| 说话人 / 人物 | FluidAudio 0.15.5＋fluid-speaker-diarization-coreml | Mac | AMI 公开真人留出集：说话人混淆 2.07%，已知人误认 0，错误合并 0 | [IMPLEMENTATION_STATUS](../mac/IMPLEMENTATION_STATUS.md) |
+| 说话人 / 人物 | FluidAudio 0.15.5＋fluid-speaker-diarization-coreml | Mac | AMI 公开真人留出集：说话人混淆 2.07%，已知人误认 0，错误合并 0 | IMPLEMENTATION_STATUS |
 | 翻译 | macOS 系统翻译（端上） | Mac | 未测 | — |
 | 事件归属、卡片、首页、拆段 | Qwen3.6-35B-A3B NVFP4（vLLM，MTP×3，fp8 KV） | 你的 Spark | 留出集 B³ F1：最终版本 0.782（n=2）；当前代码两次均值 0.738 | 各 `BENCHMARK.md`；第 4 节 |
 | 读图 image-read | 同一个 Qwen3.6 | 你的 Spark | 98 张测试图：类型判对 98–100%，关键字段 96.2% / 98.8% | [image-read](../skills/image-read/BENCHMARK.md) |
@@ -336,7 +336,7 @@ file-read 自己的评测集 files-v1（20 类模板、40 个测试文件，n=2�
 - 松手到文字插入：P50 545 ms、P90 635 ms（24 次真实口述）。口述时常驻 5.17 GB，空闲 10 分钟后释放到 0.93 GB。
 - 否决过的方向：用个人历史做 ASR LoRA（CER 2.57% → 8.43%），自动选词表（4.06% 对手选的 3.74%）。
 
-说话人（公开 AMI 真人留出集）：说话人混淆 2.07%，已知人误认 0，错误合并 0，已知查询 15/16，未知拒绝 16/16，RTF 0.0056，峰值内存 0.71 GB；**DER 24.93%、JER 31.78% 偏高**，记为局限。说话人任务在录完之后离线跑；16 GB 机型的发布门槛未测。出处 [IMPLEMENTATION_STATUS](../mac/IMPLEMENTATION_STATUS.md)、[DICTATION_ARCHITECTURE](../mac/DICTATION_ARCHITECTURE.md)。
+说话人（公开 AMI 真人留出集）：说话人混淆 2.07%，已知人误认 0，错误合并 0，已知查询 15/16，未知拒绝 16/16，RTF 0.0056，峰值内存 0.71 GB；**DER 24.93%、JER 31.78% 偏高**，记为局限。说话人任务在录完之后离线跑；16 GB 机型的发布门槛未测。出处 IMPLEMENTATION_STATUS、[DICTATION_ARCHITECTURE](../mac/DICTATION_ARCHITECTURE.md)。
 
 ## 12. 隐私：Spark 实际收到了什么
 

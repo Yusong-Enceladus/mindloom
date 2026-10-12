@@ -1,0 +1,422 @@
+{
+ "scenario_id": "holdout-week-v1",
+ "split": "holdout",
+ "n_items": 32,
+ "summary": {
+  "bcubed_precision": 0.8512820512820514,
+  "bcubed_recall": 0.7946059978668674,
+  "bcubed_f1": 0.8219682063733424,
+  "link_precision": 0.9,
+  "link_recall": 0.8181818181818182,
+  "link_f1": 0.8571428571428572,
+  "segment_link_precision": null,
+  "segment_link_recall": null,
+  "segment_link_f1": null,
+  "split_items_pred": null,
+  "split_items_gold": null,
+  "hard_decoy_leakage": 0.0,
+  "easy_decoy_leakage": 0.0,
+  "noise_abstention": 1.0,
+  "noise_unfiled_rate": 1.0,
+  "noise_singleton_rate": 0.0,
+  "noise_in_real_event_rate": 0.0,
+  "false_unfiled": 0,
+  "unfiled_precision": 1.0,
+  "decoy_seed_ok": "2/2",
+  "absorbed_matters": "none",
+  "pred_event_count": 5,
+  "gold_event_count": 5,
+  "question_count": 2,
+  "asks_total": 1,
+  "asks_per_100_items": 3.12,
+  "max_asks_per_day": 1,
+  "ask_useful_rate": 0.0,
+  "ask_true_yes_rate": 0.5,
+  "asks_suppressed": 0,
+  "status_fact_recall": 0.6875,
+  "plan_as_done": 0,
+  "plan_labelled_done": 0,
+  "unsupported_completion": 0,
+  "relative_date_in_card": 0,
+  "stale_fact_rate": 0.0,
+  "home_rank_ran": "2/2",
+  "home_ndcg5": 1.1101806099065108,
+  "home_ndcg5_recency": 0.9736463499579904,
+  "home_top3_precision": 0.8333333333333333,
+  "home_g3_recall3": 1.0,
+  "home_gross_inversions": 0,
+  "home_clutter5": 0,
+  "ui_titles_over_20": 0,
+  "ui_status_over_54": 0,
+  "card_fact_recall": 0.875,
+  "ui_status_over_24w": 0,
+  "ui_status_width_p50": 11.5,
+  "ui_status_width_p90": 17.5,
+  "ui_status_width_max": 17.5,
+  "ui_fact_date_repeated": 0,
+  "ungrounded_card_dates": 0,
+  "person_link_accuracy": 0.5454545454545454,
+  "person_link_accuracy_cross_source": 0.5625,
+  "checkpoints_scored": 2,
+  "checkpoints_total": 2
+ },
+ "final": {
+  "clustering": {
+   "bcubed": {
+    "precision": 0.8512820512820514,
+    "recall": 0.7946059978668674,
+    "f1": 0.8219682063733424
+   },
+   "link": {
+    "precision": 0.9,
+    "recall": 0.8181818181818182,
+    "f1": 0.8571428571428572,
+    "tp": 27,
+    "n_pred": 30,
+    "n_gold": 33
+   },
+   "decoy_leakage": {
+    "hard": 0.0,
+    "easy": 0.0,
+    "per_decoy": {
+     "ev_studio": {
+      "difficulty": "hard",
+      "decoy_of": "ev_portfolio",
+      "pairs": 24,
+      "leakage": 0.0,
+      "decoy_items": 4
+     },
+     "ev_tablet": {
+      "difficulty": "easy",
+      "decoy_of": "ev_app",
+      "pairs": 30,
+      "leakage": 0.0,
+      "decoy_items": 3
+     }
+    }
+   },
+   "decoy_seed": {
+    "ok": 2,
+    "total": 2,
+    "per_decoy": {
+     "ev_studio": {
+      "seed": "60f08fc6-02d7-5333-a520-465d91854fed",
+      "ok": true
+     },
+     "ev_tablet": {
+      "seed": "dab12d8f-3047-5f86-a254-77b4c709e280",
+      "ok": true
+     }
+    }
+   },
+   "absorbed": {
+    "missing": [],
+    "rate": 1.0
+   },
+   "noise_abstention": {
+    "noise_items": 2,
+    "abstained": 2,
+    "rate": 1.0,
+    "singleton_rate": 0.0,
+    "in_real_event_rate": 0.0,
+    "false_unfiled": 0,
+    "unfiled_precision": 1.0,
+    "false_unfiled_items": []
+   },
+   "pred_event_count": 5,
+   "pred_event_count_multi_item": 5,
+   "gold_event_count": 5,
+   "unassigned_items": 0,
+   "segment_link": null
+  },
+  "event_mapping": {
+   "e39a6ff9-8172-42ce-9f27-a5005d86805d": "ev_app",
+   "6986c881-5062-4640-9baf-2443f27c486b": "ev_portfolio",
+   "3471bffc-bc4d-471d-b4e6-f86202aaeb79": "ev_studio",
+   "bff92e62-fc84-4672-b9da-3dc7aaf7a8ce": "ev_tablet",
+   "58a25bba-280f-4612-9a47-ef397ca00ca4": "ev_talk"
+  },
+  "persons": {
+   "mode": "item_level",
+   "accuracy": 0.5454545454545454,
+   "pairs": 22,
+   "accuracy_cross_source": 0.5625,
+   "pairs_cross_source": 16,
+   "precision_mapped": 1.0,
+   "mean_clusters_per_person": 3.0,
+   "name_match": 1.0,
+   "mapping": {
+    "chat-0ea4032c-3803-54cd-8c22-5b9fca0ca4f3": "p_feng",
+    "ad5d9cb3-3b86-5b18-9051-c08cc80f7458": "p_he",
+    "chat-bbbf6cdd-a3ce-5c5d-aafd-6c2cf8501a9a": "p_ning",
+    "68d3afee-1837-5dbe-8f86-0d46ddab1bc2": "p_owner",
+    "b840cbf9-a250-52a6-bef6-d7e60b8cee44": "p_shi"
+   }
+  },
+  "questions": {
+   "count": 2,
+   "asked_total": 2,
+   "by_kind": {
+    "same_person": 1,
+    "same_event": 1
+   },
+   "per_100_items": 6.25,
+   "resolvable": 2,
+   "true_yes_rate": 0.5,
+   "unresolvable_merged": 0,
+   "asks_total": 1,
+   "asks_per_100_items": 3.12,
+   "max_asks_per_day": 1,
+   "ask_useful_rate": 0.0,
+   "asks_suppressed": 0
+  }
+ },
+ "checkpoints": [
+  {
+   "checkpoint_id": "cp-h3",
+   "label": "周三晚",
+   "n_items": 18,
+   "bcubed_f1": 0.8519269776876267,
+   "link_f1": 0.8823529411764706,
+   "pred_event_count": 4,
+   "gold_event_count": 4,
+   "expected": 7,
+   "recalled": 5,
+   "fact_recall": 0.7142857142857143,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 3,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ungrounded_card_dates": 0,
+   "ungrounded_date_details": [],
+   "card_recalled": 6,
+   "ui_fit": {
+    "cards": 4,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     12.0,
+     11.5,
+     9.0,
+     14.0
+    ],
+    "fact_date_repeated": 0,
+    "facts_total": 8
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 1.2203612198130216,
+    "ndcg5_recency": 1.00995784201943,
+    "top3_precision": 0.6666666666666666,
+    "g3_recall3": 1.0,
+    "gross_inversions": 0,
+    "gross_pairs": 2,
+    "clutter5": 0,
+    "order": [
+     [
+      "e45aa0c4-1811-4733-b817-5a06d6c1d482",
+      "ev_portfolio",
+      3,
+      0.95
+     ],
+     [
+      "e39a6ff9-8172-42ce-9f27-a5005d86805d",
+      "ev_app",
+      3,
+      0.6
+     ],
+     [
+      "3471bffc-bc4d-471d-b4e6-f86202aaeb79",
+      "ev_studio",
+      1,
+      0.5
+     ],
+     [
+      "58a25bba-280f-4612-9a47-ef397ca00ca4",
+      "ev_talk",
+      2,
+      0.4
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "e39a6ff9-8172-42ce-9f27-a5005d86805d",
+     "status_line": "已同意5万，10月12日交付",
+     "recalled": [
+      "f_app_fee_2",
+      "f_app_due_2"
+     ],
+     "missing": []
+    },
+    "ev_portfolio": {
+     "pred_event": "e45aa0c4-1811-4733-b817-5a06d6c1d482",
+     "status_line": "首页已开发完成，19日评审",
+     "recalled": [],
+     "missing": [
+      "f_pf_launch"
+     ]
+    },
+    "ev_talk": {
+     "pred_event": "58a25bba-280f-4612-9a47-ef397ca00ca4",
+     "status_line": "已确认改讲40分钟，9月5日讲座",
+     "recalled": [
+      "f_talk_date",
+      "f_talk_len_2"
+     ],
+     "missing": []
+    },
+    "ev_studio": {
+     "pred_event": "3471bffc-bc4d-471d-b4e6-f86202aaeb79",
+     "status_line": "已谈妥，9月1日搬入",
+     "recalled": [
+      "f_studio_move"
+     ],
+     "missing": [
+      "f_studio_rent"
+     ]
+    }
+   }
+  },
+  {
+   "checkpoint_id": "cp-final",
+   "label": "周日晚（最终）",
+   "n_items": 32,
+   "bcubed_f1": 0.8219682063733424,
+   "link_f1": 0.8571428571428572,
+   "pred_event_count": 5,
+   "gold_event_count": 5,
+   "expected": 9,
+   "recalled": 6,
+   "fact_recall": 0.6666666666666666,
+   "plan_as_done": 0,
+   "plan_labelled_done": 0,
+   "stale_applicable": 6,
+   "stale": 0,
+   "stale_rate": 0.0,
+   "unsupported_completion": 0,
+   "relative_date_in_card": 0,
+   "card_audit": [],
+   "ungrounded_card_dates": 0,
+   "ungrounded_date_details": [],
+   "card_recalled": 8,
+   "ui_fit": {
+    "cards": 5,
+    "titles_over": 0,
+    "status_over": 0,
+    "multi_sentence": 0,
+    "relative_date_lines": 0,
+    "examples": [],
+    "status_over_width": 0,
+    "status_widths": [
+     11.5,
+     10.0,
+     17.5,
+     10.0,
+     5.0
+    ],
+    "fact_date_repeated": 0,
+    "facts_total": 12
+   },
+   "home": {
+    "rank_ran": true,
+    "ndcg5": 1.0,
+    "ndcg5_recency": 0.9373348578965509,
+    "top3_precision": 1.0,
+    "g3_recall3": 1.0,
+    "gross_inversions": 0,
+    "gross_pairs": 4,
+    "clutter5": 0,
+    "order": [
+     [
+      "e39a6ff9-8172-42ce-9f27-a5005d86805d",
+      "ev_app",
+      3,
+      0.9
+     ],
+     [
+      "3471bffc-bc4d-471d-b4e6-f86202aaeb79",
+      "ev_studio",
+      2,
+      0.75
+     ],
+     [
+      "6986c881-5062-4640-9baf-2443f27c486b",
+      "ev_portfolio",
+      2,
+      0.6
+     ],
+     [
+      "58a25bba-280f-4612-9a47-ef397ca00ca4",
+      "ev_talk",
+      2,
+      0.5
+     ],
+     [
+      "bff92e62-fc84-4672-b9da-3dc7aaf7a8ce",
+      "ev_tablet",
+      0,
+      0.1
+     ]
+    ]
+   },
+   "status_details": {
+    "ev_app": {
+     "pred_event": "e39a6ff9-8172-42ce-9f27-a5005d86805d",
+     "status_line": "已同意5万，10月12日交付",
+     "recalled": [
+      "f_app_due_2"
+     ],
+     "missing": [
+      "f_app_stage_2"
+     ]
+    },
+    "ev_portfolio": {
+     "pred_event": "6986c881-5062-4640-9baf-2443f27c486b",
+     "status_line": "组件已生成，8月28日前做移动端懒加载",
+     "recalled": [
+      "f_pf_launch",
+      "f_pf_stage_2"
+     ],
+     "missing": []
+    },
+    "ev_talk": {
+     "pred_event": "58a25bba-280f-4612-9a47-ef397ca00ca4",
+     "status_line": "海报已发，9月5日讲座",
+     "recalled": [
+      "f_talk_date"
+     ],
+     "missing": [
+      "f_talk_len_2"
+     ]
+    },
+    "ev_studio": {
+     "pred_event": "3471bffc-bc4d-471d-b4e6-f86202aaeb79",
+     "status_line": "押金已交，9月1日搬入",
+     "recalled": [
+      "f_studio_move"
+     ],
+     "missing": [
+      "f_studio_deposit"
+     ]
+    },
+    "ev_tablet": {
+     "pred_event": "bff92e62-fc84-4672-b9da-3dc7aaf7a8ce",
+     "status_line": "已修好寄回",
+     "recalled": [
+      "f_tablet_fixed"
+     ],
+     "missing": []
+    }
+   }
+  }
+ ]
+}

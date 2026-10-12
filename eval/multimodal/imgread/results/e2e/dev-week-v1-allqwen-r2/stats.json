@@ -1,0 +1,184 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 82,
+   "ok": 82,
+   "ok_first_attempt": 81,
+   "retried": 1,
+   "latency_median_s": 3.353,
+   "latency_p95_s": 4.577,
+   "latency_total_s": 273.1,
+   "prompt_tokens_mean": 5232.1,
+   "completion_tokens_mean": 183.6,
+   "prompt_tokens_total": 429035,
+   "completion_tokens_total": 15057,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 84,
+   "ok": 48,
+   "ok_first_attempt": 39,
+   "retried": 14,
+   "latency_median_s": 4.026,
+   "latency_p95_s": 8.754,
+   "latency_total_s": 376.0,
+   "prompt_tokens_mean": 4868.5,
+   "completion_tokens_mean": 298.9,
+   "prompt_tokens_total": 408952,
+   "completion_tokens_total": 25111,
+   "errors_sample": [
+    "[unsupported_completion] 事实「正在准备谈判理由」标为 in_progress，必须在 quote 里摘录引用素材中明确说已发生的原话",
+    "[unsupported_completion] 事实「咖啡机和磨豆机已搬至仓库」的 quote「先把咖啡机和磨豆机先搬到后面仓库」不是所引用素材里的原话; [unsupported_completion] quote「先把咖啡机和磨豆机先搬到后面仓库」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned",
+    "[unsupported_completion] quote「第二杯的比例最好」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [relative_date] status_facts[2] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "consolidate": {
+   "calls": 46,
+   "ok": 45,
+   "ok_first_attempt": 44,
+   "retried": 2,
+   "latency_median_s": 2.475,
+   "latency_p95_s": 3.768,
+   "latency_total_s": 118.0,
+   "prompt_tokens_mean": 4538.9,
+   "completion_tokens_mean": 133.9,
+   "prompt_tokens_total": 208788,
+   "completion_tokens_total": 6158,
+   "errors_sample": [
+    "[quote] quote.text is not copied verbatim from I48"
+   ]
+  },
+  "group": {
+   "calls": 4,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 3.103,
+   "latency_p95_s": 3.278,
+   "latency_total_s": 11.4,
+   "prompt_tokens_mean": 3248,
+   "completion_tokens_mean": 191.5,
+   "prompt_tokens_total": 12992,
+   "completion_tokens_total": 766,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.051,
+   "latency_p95_s": 1.546,
+   "latency_total_s": 3.4,
+   "prompt_tokens_mean": 4452,
+   "completion_tokens_mean": 12.7,
+   "prompt_tokens_total": 13356,
+   "completion_tokens_total": 38,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 4.901,
+   "latency_p95_s": 7.211,
+   "latency_total_s": 16.0,
+   "prompt_tokens_mean": 4477,
+   "completion_tokens_mean": 364,
+   "prompt_tokens_total": 13431,
+   "completion_tokens_total": 1092,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 8,
+   "ok": 7,
+   "ok_first_attempt": 5,
+   "retried": 3,
+   "latency_median_s": 16.116,
+   "latency_p95_s": 33.772,
+   "latency_total_s": 135.3,
+   "prompt_tokens_mean": 9387.2,
+   "completion_tokens_mean": 1389.9,
+   "prompt_tokens_total": 75098,
+   "completion_tokens_total": 11119,
+   "errors_sample": [
+    "[strand_dup] item I29 is in both s1 and s3; an item belongs to at most one strand; [blocks] the quote does not name E5"
+   ]
+  },
+  "person": {
+   "calls": 11,
+   "ok": 11,
+   "ok_first_attempt": 11,
+   "retried": 0,
+   "latency_median_s": 1.242,
+   "latency_p95_s": 1.69,
+   "latency_total_s": 12.8,
+   "prompt_tokens_mean": 2535.6,
+   "completion_tokens_mean": 40.1,
+   "prompt_tokens_total": 27892,
+   "completion_tokens_total": 441,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 6.638,
+   "latency_p95_s": 10.232,
+   "latency_total_s": 28.9,
+   "prompt_tokens_mean": 4599,
+   "completion_tokens_mean": 411.5,
+   "prompt_tokens_total": 18396,
+   "completion_tokens_total": 1646,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 1.951,
+   "latency_p95_s": 3.264,
+   "latency_total_s": 7.0,
+   "prompt_tokens_mean": 3656.3,
+   "completion_tokens_mean": 105.3,
+   "prompt_tokens_total": 10969,
+   "completion_tokens_total": 316,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 8,
+  "ask": 4,
+  "attach": 66,
+  "none": 4
+ },
+ "assign_actions": {
+  "new": 8,
+  "ask": 4,
+  "attach": 60,
+  "none": 4,
+  "ask_suppressed": 6
+ },
+ "final_live_events": 9,
+ "status_line_chars_mean": 13.3,
+ "title_chars_mean": 9.2,
+ "wall_s": 988.9,
+ "items_per_min": 4.98,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 3,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

@@ -1,0 +1,185 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 51,
+   "ok": 51,
+   "ok_first_attempt": 51,
+   "retried": 0,
+   "latency_median_s": 2.141,
+   "latency_p95_s": 2.719,
+   "latency_total_s": 111.1,
+   "prompt_tokens_mean": 5646.8,
+   "completion_tokens_mean": 176.4,
+   "prompt_tokens_total": 287987,
+   "completion_tokens_total": 8994,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 49,
+   "ok": 22,
+   "ok_first_attempt": 15,
+   "retried": 9,
+   "latency_median_s": 2.814,
+   "latency_p95_s": 4.971,
+   "latency_total_s": 143.3,
+   "prompt_tokens_mean": 5530.7,
+   "completion_tokens_mean": 332.1,
+   "prompt_tokens_total": 271004,
+   "completion_tokens_total": 16272,
+   "errors_sample": [
+    "[relative_date] status_facts[2] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[2] 的 date 2026-11-15 不在它引用的素材里；素材只给了一个范围（11月9日–11月15日）；写「11月9日那周」或「11月15日前」，或者不写日期，不要挑其中某",
+    "[relative_date] status_facts[1] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」; [relative_date] status_facts[3] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[relative_date] status_facts[3] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」"
+   ]
+  },
+  "consolidate": {
+   "calls": 22,
+   "ok": 22,
+   "ok_first_attempt": 22,
+   "retried": 0,
+   "latency_median_s": 1.711,
+   "latency_p95_s": 2.077,
+   "latency_total_s": 36.4,
+   "prompt_tokens_mean": 4452.8,
+   "completion_tokens_mean": 133.0,
+   "prompt_tokens_total": 97962,
+   "completion_tokens_total": 2927,
+   "errors_sample": []
+  },
+  "group": {
+   "calls": 3,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 2.141,
+   "latency_p95_s": 2.655,
+   "latency_total_s": 4.8,
+   "prompt_tokens_mean": 3131,
+   "completion_tokens_mean": 188.7,
+   "prompt_tokens_total": 9393,
+   "completion_tokens_total": 566,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters; [thin] new rope N2 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 0.001,
+   "latency_p95_s": 0.002,
+   "latency_total_s": 0.0,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 13.5,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 54,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 15.105,
+   "latency_p95_s": 16.502,
+   "latency_total_s": 60.4,
+   "prompt_tokens_mean": 3898,
+   "completion_tokens_mean": 318.5,
+   "prompt_tokens_total": 15592,
+   "completion_tokens_total": 1274,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 5,
+   "ok": 4,
+   "ok_first_attempt": 3,
+   "retried": 2,
+   "latency_median_s": 13.074,
+   "latency_p95_s": 20.978,
+   "latency_total_s": 71.4,
+   "prompt_tokens_mean": 11586.4,
+   "completion_tokens_mean": 1851,
+   "prompt_tokens_total": 57932,
+   "completion_tokens_total": 9255,
+   "errors_sample": [
+    "[quote] knot k3: the quote is not copied verbatim from one of its evidence items; [ungrounded_date] knot k7: 2026-11-19 is neither when its evidence was captured nor a day it names"
+   ]
+  },
+  "person": {
+   "calls": 7,
+   "ok": 7,
+   "ok_first_attempt": 7,
+   "retried": 0,
+   "latency_median_s": 0.0,
+   "latency_p95_s": 0.728,
+   "latency_total_s": 2.1,
+   "prompt_tokens_mean": 2531.7,
+   "completion_tokens_mean": 39.1,
+   "prompt_tokens_total": 17722,
+   "completion_tokens_total": 274,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 2.879,
+   "latency_p95_s": 3.279,
+   "latency_total_s": 17.3,
+   "prompt_tokens_mean": 3970.2,
+   "completion_tokens_mean": 317.3,
+   "prompt_tokens_total": 23821,
+   "completion_tokens_total": 1904,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 15,
+   "ok_first_attempt": 12,
+   "retried": 3,
+   "latency_median_s": 1.207,
+   "latency_p95_s": 2.579,
+   "latency_total_s": 19.4,
+   "prompt_tokens_mean": 4308.1,
+   "completion_tokens_mean": 144.1,
+   "prompt_tokens_total": 64621,
+   "completion_tokens_total": 2161,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 6,
+  "attach": 41,
+  "ask": 2,
+  "none": 2
+ },
+ "assign_actions": {
+  "new": 6,
+  "attach": 41,
+  "ask": 2,
+  "none": 2
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 15.4,
+ "title_chars_mean": 12.9,
+ "wall_s": 469.2,
+ "items_per_min": 5.88,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 3,
+  "segments": 8,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 18,
+  "misses": 158
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 3
+}

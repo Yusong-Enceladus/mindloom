@@ -161,6 +161,85 @@ def test_a_new_near_neighbour_triggers_a_second_look():
     assert "x" not in [s["event_id"] for s in directory.plan(events, checks)["subjects"]]  # max_checks
 
 
+def _ev(eid, order, n, centroid):
+    return {"event_id": eid, "order": order, "n": n, "centroid": centroid, "protected": False}
+
+
+def _subjects(plan):
+    return [s["event_id"] for s in plan["subjects"]]
+
+
+def test_an_invalid_verdict_is_judged_again_until_max_checks():
+    events = [_ev("big", 1, 9, [1.0, 0.0]), _ev("x", 2, 1, [0.9, 0.1])]
+    checks = {"x": {"n_items": 1, "near": ["big"], "outcome": "invalid", "n_checks": 1}}
+    assert "x" in _subjects(directory.plan(events, checks))  # nothing was decided: look again
+    checks["x"]["outcome"] = "kept"
+    assert "x" not in _subjects(directory.plan(events, checks))
+    checks["x"].update(outcome="invalid", n_checks=4)
+    assert "x" not in _subjects(directory.plan(events, checks))
+
+
+def test_a_home_next_to_the_event_that_doubled_is_a_reason_to_look_again():
+    events = [_ev("home", 1, 12, [1.0, 0.0]), _ev("x", 2, 1, [0.9, 0.1])]
+    checks = {"x": {"n_items": 1, "near": ["home"], "near_n": {"home": 5}, "outcome": "kept", "n_checks": 1}}
+    assert "x" not in _subjects(directory.plan(events, checks))  # off by default
+    assert "x" in _subjects(directory.plan(events, checks, grow_min=6))  # 5 -> 12 items
+    checks["x"]["near_n"] = {"home": 8}
+    assert "x" not in _subjects(directory.plan(events, checks, grow_min=6))  # 8 -> 12 is not a doubling
+    small = [_ev("home", 1, 4, [1.0, 0.0]), _ev("x", 2, 1, [0.9, 0.1])]
+    checks["x"]["near_n"] = {"home": 1}
+    assert "x" not in _subjects(directory.plan(small, checks, grow_min=6))  # under grow_min items
+
+
+def test_a_new_home_among_the_five_nearest_counts_with_near_watch():
+    events = [_ev(f"h{i}", i + 1, 6, [1.0, 0.1 * i]) for i in range(5)] + [_ev("x", 9, 1, [1.0, 0.0])]
+    near = [f"h{i}" for i in range(4)]
+    checks = {"x": {"n_items": 1, "near": near, "outcome": "kept", "n_checks": 1}}
+    assert "x" not in _subjects(directory.plan(events, checks, nearest_k=5))  # h4 is the 5th nearest: not watched
+    assert "x" in _subjects(directory.plan(events, checks, nearest_k=5, near_watch=5))
+
+
+def test_sweep_looks_once_more_at_small_events_kept_long_ago():
+    events = [_ev("home", 1, 12, [1.0, 0.0]), _ev("x", 2, 1, [0.9, 0.1]), _ev("y", 3, 8, [0.9, 0.2]),
+              _ev("z", 4, 1, [0.8, 0.2])]
+
+    def check(near, n, at, **kw):
+        return dict({"n_items": n, "near": near, "outcome": "kept", "n_checks": 1, "at_items": at}, **kw)
+    checks = {"home": check(["y", "x", "z"], 12, 10), "x": check(["home", "y", "z"], 1, 10),
+              "y": check(["home", "x", "z"], 8, 10), "z": check(["home", "y", "x"], 1, 150)}
+    plain = _subjects(directory.plan(events, checks, total_items=200, sweep_gap=100))
+    assert plain == []
+    swept = directory.plan(events, checks, sweep=True, total_items=200, sweep_gap=100)
+    assert _subjects(swept) == ["x"]                       # home and y are over sweep_max_items, z was judged 50 items ago
+    assert swept["subjects"][0]["sweep"] is True
+    checks["x"]["swept"] = 1
+    assert _subjects(directory.plan(events, checks, sweep=True, total_items=200)) == []  # once
+    checks["x"].update(swept=0, outcome="merged")
+    assert _subjects(directory.plan(events, checks, sweep=True, total_items=200)) == []  # only kept / skipped
+
+
+def test_the_final_sweep_judges_an_old_kept_fragment_once_the_queue_is_empty(org, chat):
+    org.consolidator.sweep_enabled = True
+    org.consolidator.budget["sweep_gap"] = 3
+    items, frag = cafe_with_fragment(org, chat, "读书会十月书目定了")
+    ingest(org, frag)
+    org.drain()
+    small = event_of(org, frag["item_id"])
+    handle = org.store.event_handle(small)
+    judged = lambda: sum(1 for c in chat.calls if c[0] == "event-consolidate"  # noqa: E731
+                         and c[1]["small"]["event_id"] == handle)
+    assert judged() == 1
+    chat.push("event-assign", *[assign_out("new", obj=f"别的对象{i}") for i in range(4)])
+    ingest(org, *[make_item(f"搬家公司第{i}家报价", minutes=100 + i) for i in range(4)])
+    org.drain()
+    first = judged()
+    assert first >= 2, "four more items later the idle sweep looked at it again"
+    assert org.store.one("SELECT swept FROM consolidate_checks WHERE event_id=?", (small,))["swept"] == 1
+    for _ in range(3):
+        org.drain()
+    assert judged() == first  # swept once, not again
+
+
 # ---- user decisions win --------------------------------------------------------------------
 
 def test_user_renamed_or_placed_events_are_never_judged(org, chat):
@@ -254,8 +333,11 @@ def test_invalid_output_twice_changes_nothing(org, chat):
     chat.push("event-consolidate", bad, bad)
     org.drain()
     small = event_of(org, frag["item_id"])
-    assert small != big
-    assert org.store.one("SELECT outcome FROM consolidate_checks WHERE event_id=?", (small,))["outcome"] == "invalid"
+    assert small != big  # nothing was applied
+    first = org.store.one("SELECT outcome, n_checks FROM consolidate_checks WHERE event_id=?", (small,))
+    # nothing was decided, so the next pass judges the event again (here the default model answers validly: kept)
+    assert first["n_checks"] >= 2 or first["outcome"] == "invalid"
+    assert small == event_of(org, frag["item_id"])
 
 
 def test_fragments_merged_in_one_pass_follow_their_target(org, chat):

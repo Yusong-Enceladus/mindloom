@@ -1,0 +1,117 @@
+{
+ "scenario": "holdout-week-v2",
+ "split": "holdout",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.1"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.1"
+  },
+  {
+   "name": "event-consolidate",
+   "version": "1.0.1"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.1"
+  },
+  {
+   "name": "handover-pack",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.1"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.3.1"
+  },
+  {
+   "name": "matter-group",
+   "version": "1.0.1"
+  },
+  {
+   "name": "matter-map",
+   "version": "1.1.1"
+  },
+  {
+   "name": "person-resolve",
+   "version": "1.2.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.1"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "38e21794e6d4e3f5",
+  "event-brief": "793b2e5cabce6d33",
+  "event-consolidate": "699b661e54b06358",
+  "file-read": "d8067ac293ce3f75",
+  "handover-pack": "68b8db9c4b1cd22f",
+  "home-rank": "d7cd420618bd9dc5",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "29f706fd7df16ea4",
+  "matter-group": "f896207656e53d2c",
+  "matter-map": "5d18bae97c449866",
+  "person-resolve": "13a38224b1b461cd",
+  "recall": "25c707762a2fd992"
+ },
+ "git": "",
+ "date": "2026-10-07T20:44:40+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/holdout-week-v2/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--replay-cache",
+  "~/hack/stepfun/out/cache-holdout-week-v2",
+  "--keep-db",
+  "--force",
+  "--out",
+  "~/hack/stepfun/out/e2e-holdout-week-v2-router"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": "~/hack/stepfun/out/cache-holdout-week-v2",
+ "handles": {
+  "E1": "b30c4004-9dfc-4943-8db5-7e44848288d2",
+  "E2": "977da487-c60d-4fe2-a6cb-1b3bcc56e71d",
+  "E3": "c7cfc13f-d6f2-46a6-b065-05f31194480d",
+  "E4": "edeb46ee-ce6c-495a-8e02-78a64dd5bbfa",
+  "E5": "e5486b1a-f951-415f-9081-40c3adf2e9b4",
+  "E6": "6079a325-c47c-4a0f-85ae-2ac749ca3247",
+  "E7": "f9219461-092e-4f45-9fcb-209dad5bc8c8",
+  "E8": "40d69c79-019a-4016-87c8-84802aef24bd"
+ },
+ "bare_max_tokens": null
+}

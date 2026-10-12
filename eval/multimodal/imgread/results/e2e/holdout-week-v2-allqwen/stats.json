@@ -1,0 +1,187 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 52,
+   "ok": 52,
+   "ok_first_attempt": 51,
+   "retried": 1,
+   "latency_median_s": 2.321,
+   "latency_p95_s": 2.728,
+   "latency_total_s": 119.2,
+   "prompt_tokens_mean": 5783.4,
+   "completion_tokens_mean": 185.6,
+   "prompt_tokens_total": 300737,
+   "completion_tokens_total": 9651,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 50,
+   "ok": 20,
+   "ok_first_attempt": 14,
+   "retried": 11,
+   "latency_median_s": 2.967,
+   "latency_p95_s": 5.968,
+   "latency_total_s": 160.6,
+   "prompt_tokens_mean": 5663.3,
+   "completion_tokens_mean": 342.5,
+   "prompt_tokens_total": 283164,
+   "completion_tokens_total": 17123,
+   "errors_sample": [
+    "[relative_date] status_facts[2] 用了相对时间「本周」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [ungrounded_date] status_facts[2] 的 date 2026-11-15 不在它引用的素材里；素材只给了一个范围（11月9日–11月15日）；写「11月9日那周」或「11月15日前」，或者不写日期，不要挑其中某",
+    "[relative_date] status_facts[1] 里的「周四」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」; [relative_date] status_facts[3] 用了相对时间「明天」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」",
+    "[unsupported_completion] 事实「热电偶昨晚坏，最后一窑11月11日（周三）出」标为 done，但日期 2026-11-11 晚于证据素材的时间 2026-11-10；把已发生的部分和计划的部分拆成两条"
+   ]
+  },
+  "consolidate": {
+   "calls": 22,
+   "ok": 22,
+   "ok_first_attempt": 21,
+   "retried": 1,
+   "latency_median_s": 1.714,
+   "latency_p95_s": 2.251,
+   "latency_total_s": 39.2,
+   "prompt_tokens_mean": 4713.1,
+   "completion_tokens_mean": 142.4,
+   "prompt_tokens_total": 103689,
+   "completion_tokens_total": 3133,
+   "errors_sample": []
+  },
+  "group": {
+   "calls": 3,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 1.977,
+   "latency_p95_s": 2.4,
+   "latency_total_s": 5.2,
+   "prompt_tokens_mean": 3196.7,
+   "completion_tokens_mean": 173,
+   "prompt_tokens_total": 9590,
+   "completion_tokens_total": 519,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters; [thin] new rope N2 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 0.891,
+   "latency_p95_s": 0.948,
+   "latency_total_s": 3.6,
+   "prompt_tokens_mean": 4299,
+   "completion_tokens_mean": 13.5,
+   "prompt_tokens_total": 17196,
+   "completion_tokens_total": 54,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 4,
+   "ok": 4,
+   "ok_first_attempt": 4,
+   "retried": 0,
+   "latency_median_s": 3.003,
+   "latency_p95_s": 3.326,
+   "latency_total_s": 11.8,
+   "prompt_tokens_mean": 4324,
+   "completion_tokens_mean": 334,
+   "prompt_tokens_total": 17296,
+   "completion_tokens_total": 1336,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 5,
+   "ok": 3,
+   "ok_first_attempt": 0,
+   "retried": 4,
+   "latency_median_s": 16.432,
+   "latency_p95_s": 25.296,
+   "latency_total_s": 86.9,
+   "prompt_tokens_mean": 14189.4,
+   "completion_tokens_mean": 2245.8,
+   "prompt_tokens_total": 70947,
+   "completion_tokens_total": 11229,
+   "errors_sample": [
+    "[blocks] the quote for E4 states no dependency (等…再 / …之后才… / 取决于)",
+    "[who] knot k1: 'Peggy' appears nowhere in the matter"
+   ]
+  },
+  "person": {
+   "calls": 7,
+   "ok": 7,
+   "ok_first_attempt": 7,
+   "retried": 0,
+   "latency_median_s": 0.717,
+   "latency_p95_s": 0.728,
+   "latency_total_s": 4.9,
+   "prompt_tokens_mean": 2524.4,
+   "completion_tokens_mean": 39.3,
+   "prompt_tokens_total": 17671,
+   "completion_tokens_total": 275,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 6,
+   "ok": 6,
+   "ok_first_attempt": 6,
+   "retried": 0,
+   "latency_median_s": 2.904,
+   "latency_p95_s": 3.248,
+   "latency_total_s": 17.5,
+   "prompt_tokens_mean": 3984.2,
+   "completion_tokens_mean": 321.7,
+   "prompt_tokens_total": 23905,
+   "completion_tokens_total": 1930,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 15,
+   "ok": 14,
+   "ok_first_attempt": 13,
+   "retried": 2,
+   "latency_median_s": 1.193,
+   "latency_p95_s": 2.56,
+   "latency_total_s": 25.2,
+   "prompt_tokens_mean": 4078.8,
+   "completion_tokens_mean": 154.7,
+   "prompt_tokens_total": 61182,
+   "completion_tokens_total": 2320,
+   "errors_sample": [
+    "segments[0].gist is wider than 20 (中文字算1); matters[3] has no segment; drop it or give it its units"
+   ]
+  }
+ },
+ "assign_decisions": {
+  "new": 7,
+  "attach": 42,
+  "none": 3
+ },
+ "assign_actions": {
+  "new": 7,
+  "attach": 41,
+  "none": 3,
+  "ask": 1
+ },
+ "final_live_events": 7,
+ "status_line_chars_mean": 14.9,
+ "title_chars_mean": 14,
+ "wall_s": 477.2,
+ "items_per_min": 5.78,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 15,
+  "split_items": 4,
+  "segments": 10,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 0,
+  "misses": 187
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 4
+}

@@ -1,0 +1,183 @@
+{
+ "per_job": {
+  "assign": {
+   "calls": 32,
+   "ok": 32,
+   "ok_first_attempt": 31,
+   "retried": 1,
+   "latency_median_s": 2.06,
+   "latency_p95_s": 2.353,
+   "latency_total_s": 63.8,
+   "prompt_tokens_mean": 4597.4,
+   "completion_tokens_mean": 178.2,
+   "prompt_tokens_total": 147118,
+   "completion_tokens_total": 5702,
+   "errors_sample": []
+  },
+  "brief": {
+   "calls": 31,
+   "ok": 15,
+   "ok_first_attempt": 11,
+   "retried": 6,
+   "latency_median_s": 2.034,
+   "latency_p95_s": 3.272,
+   "latency_total_s": 56.6,
+   "prompt_tokens_mean": 4788.2,
+   "completion_tokens_mean": 296.8,
+   "prompt_tokens_total": 148433,
+   "completion_tokens_total": 9200,
+   "errors_sample": [
+    "[ungrounded_date] status_facts[2] 的 date 2026-08-20 不在它引用的素材里；素材只给了一个范围（8月17日–8月20日）；写「8月17日那周」或「8月20日前」，或者不写日期，不要挑其中某一天（没有就留空 \"\"）",
+    "[relative_date] status_facts[1] 用了相对时间「今日」，请按该素材的 captured_at 换算成绝对日期，如「9月22日」; [unsupported_completion] quote「高保真我今天下午发您」没有说已经发生（缺少 已/了/完成/通过…）；计划请标 planned; [unsupported_completion] quote「高保真我今天下午发您",
+    "[relative_date] status_facts[1] 里的「周三」要写成绝对日期，星期只能放在日期后的括号里，如「9月22日（周二）」"
+   ]
+  },
+  "consolidate": {
+   "calls": 16,
+   "ok": 16,
+   "ok_first_attempt": 16,
+   "retried": 0,
+   "latency_median_s": 1.557,
+   "latency_p95_s": 1.852,
+   "latency_total_s": 23.8,
+   "prompt_tokens_mean": 4029.2,
+   "completion_tokens_mean": 124.8,
+   "prompt_tokens_total": 64468,
+   "completion_tokens_total": 1997,
+   "errors_sample": []
+  },
+  "group": {
+   "calls": 3,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 2.038,
+   "latency_p95_s": 2.57,
+   "latency_total_s": 4.6,
+   "prompt_tokens_mean": 3065.3,
+   "completion_tokens_mean": 181,
+   "prompt_tokens_total": 9196,
+   "completion_tokens_total": 543,
+   "errors_sample": [
+    "[thin] new rope N1 holds fewer than two matters; [thin] new rope N2 holds fewer than two matters"
+   ]
+  },
+  "image_detect": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 0.001,
+   "latency_p95_s": 0.001,
+   "latency_total_s": 0.0,
+   "prompt_tokens_mean": 4214,
+   "completion_tokens_mean": 14,
+   "prompt_tokens_total": 4214,
+   "completion_tokens_total": 14,
+   "errors_sample": []
+  },
+  "image_read": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 13.586,
+   "latency_p95_s": 13.586,
+   "latency_total_s": 13.6,
+   "prompt_tokens_mean": 3898,
+   "completion_tokens_mean": 275,
+   "prompt_tokens_total": 3898,
+   "completion_tokens_total": 275,
+   "errors_sample": []
+  },
+  "map": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 0,
+   "retried": 2,
+   "latency_median_s": 16.037,
+   "latency_p95_s": 16.412,
+   "latency_total_s": 32.4,
+   "prompt_tokens_mean": 14748.5,
+   "completion_tokens_mean": 2105.5,
+   "prompt_tokens_total": 29497,
+   "completion_tokens_total": 4211,
+   "errors_sample": []
+  },
+  "person": {
+   "calls": 3,
+   "ok": 3,
+   "ok_first_attempt": 3,
+   "retried": 0,
+   "latency_median_s": 0.0,
+   "latency_p95_s": 0.0,
+   "latency_total_s": 0.0,
+   "prompt_tokens_mean": 2514,
+   "completion_tokens_mean": 40,
+   "prompt_tokens_total": 7542,
+   "completion_tokens_total": 120,
+   "errors_sample": []
+  },
+  "rank": {
+   "calls": 2,
+   "ok": 2,
+   "ok_first_attempt": 2,
+   "retried": 0,
+   "latency_median_s": 1.799,
+   "latency_p95_s": 2.369,
+   "latency_total_s": 4.2,
+   "prompt_tokens_mean": 2993,
+   "completion_tokens_mean": 220,
+   "prompt_tokens_total": 5986,
+   "completion_tokens_total": 440,
+   "errors_sample": []
+  },
+  "split": {
+   "calls": 1,
+   "ok": 1,
+   "ok_first_attempt": 1,
+   "retried": 0,
+   "latency_median_s": 1.188,
+   "latency_p95_s": 1.188,
+   "latency_total_s": 1.2,
+   "prompt_tokens_mean": 3566,
+   "completion_tokens_mean": 97,
+   "prompt_tokens_total": 3566,
+   "completion_tokens_total": 97,
+   "errors_sample": []
+  }
+ },
+ "assign_decisions": {
+  "new": 5,
+  "attach": 24,
+  "none": 2,
+  "ask": 1
+ },
+ "assign_actions": {
+  "new": 5,
+  "attach": 24,
+  "none": 2,
+  "ask": 1
+ },
+ "final_live_events": 5,
+ "status_line_chars_mean": 12,
+ "title_chars_mean": 10,
+ "wall_s": 201.8,
+ "items_per_min": 9.52,
+ "workers": 1,
+ "pipeline_lag": null,
+ "stream": false,
+ "split": {
+  "calls": 1,
+  "split_items": 0,
+  "segments": 0,
+  "rejected": 0
+ },
+ "questions_answered_by_gold": null,
+ "replay_cache": {
+  "hits": 21,
+  "misses": 79
+ },
+ "embed_failures": 0,
+ "items_without_embedding": 0
+}

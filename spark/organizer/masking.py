@@ -241,25 +241,29 @@ OTP_SRCS = [
 ]
 OTP_GROUPS = [1, 1, 1]
 
-# --- id card (validated: calendar date + ISO 7064 MOD 11-2)
+# --- id card (shape: region digit, 19/20 and month/day ranges; the ISO 7064 check character never decides whether
+# to mask, it only picks the label when the digits could also be a card number: see _id_validate)
 ID_SRCS = [
     r"(?<![0-9" + BR + r"])[1-9][0-9]{5}(?:19|20)[0-9]{2}(?:0[1-9]|1[0-2])"
     r"(?:0[1-9]|[12][0-9]|3[01])[0-9]{3}[0-9Xx](?![0-9" + BR + r"])",
 ]
 ID_SRCS += [
-    # 1 (v2) written in groups 6-8-4 (spaces or dashes); the date must be valid (the check digit is not required)
+    # 1 (v2) written in groups 6-8-4 (spaces or dashes); the date shape is required (the check digit is not)
     r"(?<![0-9" + BR + r"])[1-9][0-9]{5}([ \-])(?:19|20)[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])\1"
     r"[0-9]{3}[0-9Xx](?![0-9A-Za-z" + BR + r"])",
     # 2 (v2) the old 15-digit number (YYMMDD, 19YY): an ID word within 12 characters before
     r"(?<![0-9A-Za-z" + BR + r"])[1-9][0-9]{5}[0-9]{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12][0-9]|3[01])[0-9]{3}"
     r"(?![0-9A-Za-z" + BR + r"])",
+    # 3 (v5) eighteen characters with an ID word within 12 characters before, whatever the digits: a number the
+    # recognizer heard wrong in the date or the check character is still the person's ID number
+    r"(?<![0-9A-Za-z" + BR + r"])[0-9]{17}[0-9Xx](?![0-9A-Za-z" + BR + r"])",
 ]
-ID_GROUPS = [0, 0, 0]
+ID_GROUPS = [0, 0, 0, 0]
 # Keyword windows are searched with an end position (Python) / range end (ICU): no lookahead in these, so both
 # engines agree at the window's edge.
 ID_KEYWORD_SRC = r"身份证|证件|身份号|(?<![A-Za-z])(?:ID|Id|id)"
 
-# --- bank card (validated: Luhn + keyword-or-IIN)
+# --- bank card (validated: card-network prefix or card word within 12 characters; the Luhn check never decides)
 BANK_SRCS = [
     # 0 contiguous 16-19 digits
     r"(?<![0-9A-Za-z" + BR + r"])[0-9]{16,19}(?![0-9A-Za-z" + BR + r"])",
@@ -271,7 +275,7 @@ BANK_SRCS += [
     # 2 (v2) four groups of four whose separators differ (a card wrapped onto the next line): space, dash, newline
     r"(?<![0-9A-Za-z" + BR + r"])(?<![0-9" + RB + r"][ \-\n])[0-9]{4}[ \-\n]{1,2}[0-9]{4}[ \-\n]{1,2}[0-9]{4}"
     r"[ \-\n]{1,2}[0-9]{4}(?:[ \-\n]{1,2}[0-9]{1,3})?(?![0-9A-Za-z" + BR + r"])(?![ \-\n][0-9" + LB + r"])",
-    # 3 (v2) American Express 4-6-5 (15 digits, Luhn)
+    # 3 (v2) American Express 4-6-5 (15 digits)
     r"(?<![0-9A-Za-z" + BR + r"])3[47][0-9]{2}([ \-]?)[0-9]{6}\1[0-9]{5}(?![0-9A-Za-z" + BR + r"])"
     r"(?![ \-][0-9" + LB + r"])",
     # 4 (v2) an account number after an account word: 12-20 digits, no Luhn check (value = group 1)
@@ -495,8 +499,10 @@ def _keyword_in(rx: "re.Pattern[str]", text: str, w0: int, w1: int, claimed: Lis
 
 
 def _bank_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
+    # v5: no Luhn requirement. A card number the recognizer heard wrong in one digit fails the check and is still
+    # the person's card number; the check is not consulted here (the label is bank_card either way).
     digits = _strip_separators(value)
-    if not 16 <= len(digits) <= 19 or not _luhn_ok(digits):
+    if not 16 <= len(digits) <= 19:
         return False
     if _BANK_IIN_RX.match(digits):
         return True
@@ -504,8 +510,7 @@ def _bank_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, i
 
 
 def _amex_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
-    digits = _strip_separators(value)
-    return len(digits) == 15 and _luhn_ok(digits)
+    return len(_strip_separators(value)) == 15
 
 
 def _account_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
@@ -532,7 +537,11 @@ def _plate_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, 
 
 
 def _id_validate(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
-    return _id_ok(value)
+    """v5: the shape (the pattern) decides. The check character only picks the label: digits that fail the ID
+    check, pass Luhn and start like a card number are left for the bank-card detector."""
+    if not _id_ok(value) and value.isdigit() and _luhn_ok(value) and _BANK_IIN_RX.match(value):
+        return False
+    return True
 
 
 def _date_ok(year: int, month: int, day: int) -> bool:
@@ -544,8 +553,7 @@ def _date_ok(year: int, month: int, day: int) -> bool:
 
 
 def _id_grouped_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
-    v = _strip_separators(value)
-    return len(v) == 18 and _date_ok(int(v[6:10]), int(v[10:12]), int(v[12:14]))
+    return len(_strip_separators(value)) == 18
 
 
 def _id15_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
@@ -553,11 +561,15 @@ def _id15_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, i
         _keyword_in(_ID_KW_RX, text, max(0, v0 - BANK_KEYWORD_WINDOW), v0, claimed)
 
 
+def _id18_keyword_ok(text: str, v0: int, v1: int, value: str, claimed: List[Tuple[int, int]]) -> bool:
+    return _keyword_in(_ID_KW_RX, text, max(0, v0 - BANK_KEYWORD_WINDOW), v0, claimed)
+
+
 DETECTORS: Tuple[_Detector, ...] = (
     _Detector("secret", _compile(SECRET_SRCS, SECRET_GROUPS, [None] * len(SECRET_SRCS))),
     _Detector("password", _compile(PASSWORD_SRCS, PASSWORD_GROUPS, [None] * len(PASSWORD_SRCS))),
     _Detector("otp", _compile(OTP_SRCS, OTP_GROUPS, [None] * len(OTP_SRCS))),
-    _Detector("id_card", _compile(ID_SRCS, ID_GROUPS, [_id_validate, _id_grouped_ok, _id15_ok])),
+    _Detector("id_card", _compile(ID_SRCS, ID_GROUPS, [_id_validate, _id_grouped_ok, _id15_ok, _id18_keyword_ok])),
     _Detector("bank_card", _compile(BANK_SRCS, BANK_GROUPS, [_bank_ok, _bank_ok, _bank_ok, _amex_ok, _account_ok])),
     _Detector("phone", _compile(PHONE_SRCS, PHONE_GROUPS, [None] * len(PHONE_SRCS))),
     _Detector("landline", _compile(LANDLINE_SRCS, LANDLINE_GROUPS,

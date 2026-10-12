@@ -599,6 +599,11 @@ class Store:
             "CREATE TABLE IF NOT EXISTS consolidate_checks(event_id TEXT PRIMARY KEY, n_items INTEGER NOT NULL,"
             " near TEXT NOT NULL DEFAULT '[]', outcome TEXT NOT NULL, target TEXT, run_id TEXT,"
             " n_checks INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL)")
+        # sizes of the nearest events at the check (a home that has grown since is a reason to look again), the
+        # number of items in the store then, and whether the final sweep has looked at the event.
+        self._add_col("consolidate_checks", "near_n", "TEXT NOT NULL DEFAULT '{}'")
+        self._add_col("consolidate_checks", "at_items", "INTEGER NOT NULL DEFAULT 0")
+        self._add_col("consolidate_checks", "swept", "INTEGER NOT NULL DEFAULT 0")
         # --- people pass (skill person-resolve, organizer/people_pass.py). persons.status: NULL (a person),
         # 'role' (a role or desk that speaks in chats: 客服, 组委会) or 'not_person' (a label, heading, code key or
         # phrase read as a speaker; it keeps no links). person_checks: one verdict per judged person record
@@ -1537,14 +1542,15 @@ class Store:
     def open_questions(self) -> list[dict]:
         return self.all("SELECT * FROM questions WHERE status='open' ORDER BY q_seq, question_id")
 
-    def create_question(self, kind: str, a: str, b: str, prompt_zh: str, limit: int,
+    def create_question(self, kind: str, a: str, b: str, prompt_zh: str, limit: Optional[int] = None,
                         item_id: Optional[str] = None, run_id: Optional[str] = None, *,
                         day_key: Optional[str] = None, per_day: Optional[int] = None,
                         per_event_per_day: Optional[int] = None, provisional: Optional[dict] = None,
                         b_items: Optional[list[str]] = None, dry_run: bool = False) -> Optional[str]:
         """Create an open question unless a budget or an existing question/answer blocks it.
 
-        limit            max open questions of this kind (same_event and same_person have separate budgets,
+        limit            None means no ceiling; otherwise max open questions of this kind
+                         (same_event and same_person have separate budgets,
                          so unanswered person questions cannot starve "is this the same event?").
         per_day          max questions of this kind whose subject item falls on day_key (item date, not the
                          wall clock), answered or not, so answering does not refill the day.
@@ -1554,7 +1560,8 @@ class Store:
         with self.tx():
             if any(self.is_tombstoned(x) for x in (item_id, a, b) if x):
                 return None  # never a question about a deleted item
-            if int(self.scalar("SELECT COUNT(*) FROM questions WHERE status='open' AND kind=?", (kind,))) >= limit:
+            if limit is not None and int(self.scalar(
+                    "SELECT COUNT(*) FROM questions WHERE status='open' AND kind=?", (kind,))) >= limit:
                 return None
             if item_id and self.one("SELECT 1 FROM questions WHERE item_id=? AND kind=?", (item_id, kind)):
                 return None  # at most one question of this kind per item, ever

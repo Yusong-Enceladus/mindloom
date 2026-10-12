@@ -1,0 +1,125 @@
+{
+ "scenario": "dev-week-v1",
+ "split": "dev",
+ "condition": "skills",
+ "threshold": null,
+ "llm_url": "http://127.0.0.1:8000/v1",
+ "model": "qwen3.6-35b-a3b-nvfp4",
+ "vision_model": null,
+ "vision_llm_url": null,
+ "embed_model": "qwen3-embedding-0.6b",
+ "embed_url": "http://127.0.0.1:8013/v1",
+ "skills": [
+  {
+   "name": "event-assign",
+   "version": "2.1.1"
+  },
+  {
+   "name": "event-brief",
+   "version": "1.4.1"
+  },
+  {
+   "name": "event-consolidate",
+   "version": "1.0.1"
+  },
+  {
+   "name": "file-read",
+   "version": "1.0.1"
+  },
+  {
+   "name": "handover-pack",
+   "version": "1.0.0"
+  },
+  {
+   "name": "home-rank",
+   "version": "1.3.1"
+  },
+  {
+   "name": "image-read",
+   "version": "1.0.0"
+  },
+  {
+   "name": "item-split",
+   "version": "1.3.1"
+  },
+  {
+   "name": "matter-group",
+   "version": "1.0.1"
+  },
+  {
+   "name": "matter-map",
+   "version": "1.1.1"
+  },
+  {
+   "name": "person-resolve",
+   "version": "1.2.1"
+  },
+  {
+   "name": "recall",
+   "version": "0.1.1"
+  }
+ ],
+ "prompt_hashes": {
+  "event-assign": "38e21794e6d4e3f5",
+  "event-brief": "793b2e5cabce6d33",
+  "event-consolidate": "699b661e54b06358",
+  "file-read": "d8067ac293ce3f75",
+  "handover-pack": "68b8db9c4b1cd22f",
+  "home-rank": "d7cd420618bd9dc5",
+  "image-read": "40a4c917ce1dea3e",
+  "item-split": "29f706fd7df16ea4",
+  "matter-group": "f896207656e53d2c",
+  "matter-map": "5d18bae97c449866",
+  "person-resolve": "13a38224b1b461cd",
+  "recall": "25c707762a2fd992"
+ },
+ "git": "",
+ "date": "2026-10-07T21:15:11+08:00",
+ "argv": [
+  "eval/run_eval.py",
+  "--scenario",
+  "eval/scenarios/dev-week-v1/scenario.json",
+  "--condition",
+  "skills",
+  "--llm-url",
+  "http://127.0.0.1:8000/v1",
+  "--embed-url",
+  "http://127.0.0.1:8013/v1",
+  "--keep-db",
+  "--force",
+  "--out",
+  "../out/e2e-dev-week-v1-allqwen-r2"
+ ],
+ "no_rank": false,
+ "oracle_assign": false,
+ "workers": 1,
+ "pipeline_lag": 2,
+ "stream": false,
+ "owner_aliases": [
+  "我"
+ ],
+ "clock": "replay",
+ "answer_questions": "none",
+ "replay_cache": null,
+ "handles": {
+  "E1": "fcdd7267-bbc6-4ead-9d88-f2a711104b71",
+  "E2": "abb6b3c3-7cc8-47db-ab4c-fe537d85a73a",
+  "E3": "8bce0d34-596d-49de-b4d2-0c5197fee2e8",
+  "E4": "7467c9b7-0668-4222-a2eb-579080b562c3",
+  "E5": "3a506a69-cb91-4016-9474-918f599547e8",
+  "E6": "1156a4d0-7860-47a1-8fac-f4960898f284",
+  "E7": "36bd8db7-d147-4781-a688-223e6fe8c1eb",
+  "E8": "61d08f91-ad78-4ac3-92ea-02108aa5e667",
+  "E9": "4bb6d241-4bb4-4c33-b5c4-d7105f1ecafe",
+  "E10": "a03d4a24-05ab-42d0-bf51-9c505c7b5c72",
+  "E11": "5e3b7998-8fca-4854-8b0e-f35f0cf9a612",
+  "E12": "17693496-40d3-4a28-b066-bdc86f9486db",
+  "E13": "34fa8eba-bec2-4265-a506-c710bca45b2f",
+  "E14": "1006f783-3bd5-4edb-8d05-a82affa4a4ee",
+  "E15": "d65317fc-6956-4894-9cf2-a563e86fdf75",
+  "E16": "2fe85c65-dc1b-458a-8b31-56d16571fc50",
+  "E17": "7c0b8ade-df7a-48c5-a43f-963db969bfaf",
+  "E18": "1e3ee4cb-7920-4651-b6f3-ca8d9a89b677"
+ },
+ "bare_max_tokens": null
+}

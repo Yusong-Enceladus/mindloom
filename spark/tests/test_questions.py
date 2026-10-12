@@ -33,6 +33,9 @@ def test_ask_creates_one_question_and_keeps_item_in_its_own_event(org, chat):
 
 
 def test_same_event_questions_have_their_own_open_and_daily_budget(org, chat):
+    org.max_open_questions = 2
+    org.ask_per_day = 2
+    org.ask_per_event_per_day = 1
     ingest(org, make_item("咖啡馆菜单", minutes=0))
     org.drain()
     chat.handlers["event-assign"] = _ask_always
@@ -46,6 +49,22 @@ def test_same_event_questions_have_their_own_open_and_daily_budget(org, chat):
     # the grammar never changes with the question budget: ask is always offered
     enums = [c[2]["properties"]["decision"]["enum"] for c in chat.calls if c[0] == "event-assign"]
     assert all(e == ["attach", "new", "none", "ask"] for e in enums)
+
+
+def test_default_questions_have_no_count_ceiling_and_still_deduplicate(org):
+    assert org.max_open_questions is None
+    assert org.ask_per_day is None
+    assert org.ask_per_event_per_day is None
+    for index in range(12):
+        assert org.store.create_question(
+            "same_event", f"subject-{index}", "target", "这是同一件事吗？",
+            org.max_open_questions, day_key="2026-10-10", per_day=org.ask_per_day,
+            per_event_per_day=org.ask_per_event_per_day,
+        )
+    assert len(org.store.open_questions()) == 12
+    assert org.store.create_question("same_event", "subject-0", "target", "重复问题") is None
+    assert org.store.create_question("same_event", "target", "subject-0", "反向重复问题") is None
+    assert len(org.store.open_questions()) == 12
 
 
 def test_answer_yes_moves_item_and_cleans_up(org, chat):

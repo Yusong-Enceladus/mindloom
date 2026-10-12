@@ -27,7 +27,7 @@
 | 人物整理 person-resolve 1.2.1（评测的是 1.2.0） | 同上 | Spark | 同上 | 同样在整理后状态上跑人物整理：人物关联 0.301 → 0.447（lab）、0.290 → 0.477（pm）、0.269 → 0.417（留出 startup）；显示的人物记录 157 → 65、216 → 102、110 → 52（2026-09-30 · [person-resolve](../skills/person-resolve/BENCHMARK.md)） | 只查库里已知的人的名字；产品或项目的昵称偶尔被当成人 |
 | 线索图 matter-map 1.1.0 | 同上 | Spark | 同上 | lab / pm 整理后状态的副本：画了 26 / 32 件事，全部存下（首页 6 件都有），存下的原话全部逐字（192 / 188 个结复核）；有子线索的事上线比只画一股线更纯（B³ 精确率 0.815 对 0.728、0.793 对 0.718）；每件事平均输入 40,422 / 31,209 token（2026-10-01 · [matter-map](../skills/matter-map/BENCHMARK.md)） | 大事件第一次输出多半要把某条素材列在两股线上或原话不逐字，靠重问后去掉不合格的结存下；只看最近 160 条 |
 | 成股 matter-group 1.0.1 | 同上 | Spark | 同上 | 同样两份副本各 6 根绳；lab 绳上两两成对的事与场景关联对得上的比例，5 次运行在 7/19 到 13/15 之间；技能用例 21/21（2026-10-01 · [matter-group](../skills/matter-group/BENCHMARK.md)） | 常给一件事单独搓绳再被解散，lab 39 件只挂上 13–23 件；两次运行挂法不同 |
-| 读图 image-read 1.0.0 | Qwen3.6-35B-A3B NVFP4（vLLM，同一个模型读图） | Spark | 四个本地 VLM 比过：Q8_0 同样准但慢一倍；Step3-VL-10B 读图表差（数据点 89.7%）且最慢；Qwen3-VL-8B 会给聊天补上图里没画的时间（85.9%） | mm-v1 test 98 张：类型判对 98% / 100%，关键字段 EM 96.2% / 98.8%（无技能正文 65.7% / 59.4%），p50 4.09 / 3.87 s（2026-09-28 · [image-read](../skills/image-read/BENCHMARK.md)，[VLM benchmark](../eval/multimodal/BENCHMARK.md)） | 合成图比真实照片干净；vLLM 在 temperature 0 下也不完全确定，边界图的类型判断会抖 |
+| 读图 image-read 1.0.0 | Qwen3.6-35B-A3B NVFP4（vLLM，同一个模型读图）；比赛演示实例上聊天截图改由 StepFun Step3-VL-10B Q8_0（llama.cpp）读，见[读图路由](#读图路由聊天截图--step3-vl) | Spark | 四个本地 VLM 比过：Q8_0 同样准但慢一倍；Step3-VL-10B 读图表差（数据点 89.7%）且最慢；Qwen3-VL-8B 会给聊天补上图里没画的时间（85.9%） | mm-v1 test 98 张：类型判对 98% / 100%，关键字段 EM 96.2% / 98.8%（无技能正文 65.7% / 59.4%），p50 4.09 / 3.87 s（2026-09-28 · [image-read](../skills/image-read/BENCHMARK.md)，[VLM benchmark](../eval/multimodal/BENCHMARK.md)） | 合成图比真实照片干净；vLLM 在 temperature 0 下也不完全确定，边界图的类型判断会抖 |
 | 读文件 file-read 1.0.0 | 解析：确定性代码（沙箱子进程，无模型）；文件里的图片：Qwen3.6-35B-A3B NVFP4（image-read）；概要和关键字段：同一个 Qwen3.6 | Spark | 文字靠解析器逐字读出（不让模型转写），模型只写一句概要和票据类字段，校验器要求其中的数字和值都能在文字里找到；有技能 / 无技能正文比过 | files-v1 test 40 个文件（20 类模板）：类型 40/40，解析文字召回 100%，图片部分召回 100% / 100%（无技能正文 93.8% / 91.7%），概要首次合规 36/38（无技能正文 1–2/38），p50 7.4 / 7.8 s（共用服务）（2026-09-29 · [file-read](../skills/file-read/BENCHMARK.md)，[FILE_READ](FILE_READ.md)） | 合成文件比真实文件干净；.msg 没有真实样本；n = 2 |
 | 候选检索向量 | Qwen3-Embedding-0.6B（vLLM pooling） | Spark | 4B 的 R@5 只高 0–1.4 个点，代价是时延 1.6–3.2 倍、预留内存约 3 倍；词法基线在大候选池里只有 76.0% | R@5：dev 98.6%，留出集 100%，压力池 98.1%；单条 p50 25 ms（2026-09-28 · [eval/retrieval](../eval/retrieval/README.md)） | 嵌入服务挂掉时整理器退回不用向量的模式，压力池 R@5 掉到 59.6% |
 | 合成数据生成 | Qwen3.6-35B-A3B NVFP4（3–4 台 Spark）＋DeepSeek-V4-Flash（两台 Spark TP2） | Spark | 用手上所有已部署的服务并行写；金标准来自确定性计划，不来自模型 | 三个场景各约 1,500–1,600 条；scale-lab 里单节点忙时 140–250 tok/s（Qwen）、40–47 tok/s（DeepSeek）（2026-09-28 · `throughput.json`（生成运行记录，含大量合成素材，未放进公开快照），其余见"合成数据生成"） | 吞吐受计划依赖、校验重试和共享节点限制，不代表服务上限 |
@@ -110,7 +110,7 @@ item-split 1.1.1 只在调参集上评过（[item-split BENCHMARK][isb]）：spl
 
 ### 读图（image-read）
 
-先判类型（7 类加 other），再按该类型的 schema 抽取，最后由校验器拒绝图上找不到的字段和数字，重试一次仍不合格的值被清空。所有类型都走同一个 Qwen3.6 NVFP4；`ORGANIZER_IMAGE_ROUTES` 可以把某一类改到别的端点，现在没用。
+先判类型（7 类加 other），再按该类型的 schema 抽取，最后由校验器拒绝图上找不到的字段和数字，重试一次仍不合格的值被清空。默认所有类型都走同一个 Qwen3.6 NVFP4；`ORGANIZER_IMAGE_ROUTES` 可以把某一类改到别的端点，`ORGANIZER_IMAGE_ROUTER=stepfun-chat` 是把聊天截图交给 Step3-VL 的预设（下一节），比赛演示实例开着它。
 
 **模型选型**（mm-v1 test 98 张，中性提示、类型直接给定、每个模型两次单路，2026-09-28 · [eval/multimodal/BENCHMARK.md](../eval/multimodal/BENCHMARK.md)）：
 
@@ -131,6 +131,22 @@ item-split 1.1.1 只在调参集上评过（[item-split BENCHMARK][isb]）：spl
 | 无技能正文 r1 / r2 | 84.7% / 82.7% | 21.2% / 25.0% | 65.7% / 59.4% | 92.7% / 91.7% | 4.5% / 4.5% | 4.38 / 10.86 s；4.32 / 13.08 s |
 
 r1 有 2 张白板照片被判成幻灯片，手写一类的分数因此掉了下来。比 benchmark 慢约 1.2 s，因为多了一步判类型，系统提示也更长。
+
+### 读图路由：聊天截图 → Step3-VL
+
+2026-10-07 起，比赛演示（预览）实例的整理器开着 `ORGANIZER_IMAGE_ROUTER=stepfun-chat`（代码 `spark/organizer/image_router.py`，分支 finals-stepfun）：image-read 的类型步（64 token 的短请求，仍由 Qwen3.6 NVFP4 做）判出聊天截图时，抽取这一步由 StepFun **Step3-VL-10B**（Q8_0 + F16 视觉投影，llama.cpp，原生 `/completion` 预填空思考块，只监听 `127.0.0.1`，GPU 16.8 GiB）读；图表、幻灯片、手写、小票、扫描件、标签和 other 都留在 Qwen3.6 NVFP4。Step3 服务不可达、拒绝请求，或抽取两次都过不了校验器，由 Qwen3.6 重读（用真实的读图路径、指向一个没有服务的端口实测过）。每个类型由哪个模型读了几张，只记计数，写进日志和 `/v1/infra/health`。服务由 `ops/step3vl_ctl.sh` 管理（用户空间、setsid 加重启监督，重启机器后需要重新启动）；关掉路由只要把 `ORGANIZER_IMAGE_ROUTER` 置空。
+
+实测（mm-v1 test 98 张，全部合成，节点上没有其他客户端；全部数字和复现命令见 [eval/multimodal/BENCHMARK.md](../eval/multimodal/BENCHMARK.md)"读图路由"一节，2026-10-07）：
+
+| | 全部 Qwen3.6 NVFP4 | 路由（聊天 → Step3-VL） |
+|---|---|---|
+| 聊天截图 14 张：发送者 / 时间 / 消息原文完全一致 | 97.4% / 99.3% / 98.7% | **100%** / 94.9% / 93.6% |
+| 聊天截图读图（类型步 + 抽取）p50 | 3.9 s | 18.4 s（抽取 17.7 s，最长 33.5 s） |
+| 其余六类 + other | 同一个 Qwen，类型步不变 | 不变（两个条件的差别是 Qwen 的运行间波动） |
+| 整个 test 98 张的墙钟 | 438–462 s | 648 s |
+| 整个整理器，3 个合成场景共 8 张截图 | 8 张都归进正确的事 | 8 张都归进正确的事；B³ F1 没有显示更好（dev 0.785 对 0.809，两个 holdout 与全部 Qwen 同一水平），dev 上困难干扰泄漏在路由两次运行里为 0.179、0.357（全部 Qwen 两次为 0），原因没有查清 |
+
+所以对外的说法是：Step3-VL 是演示实例的整理器里真实运行的、默认读聊天截图的一步（发送者全对，GPU 上多占 16.8 GiB），不是整理质量上的升级；它读聊天比 Qwen 慢约 5.7 倍，时间标签和原文逐字一致率更低，图表等其余类型仍由 Qwen3.6 NVFP4 读。
 
 ### 候选检索向量
 
@@ -153,6 +169,7 @@ event-assign 只在检索出的前 5 个候选里选，所以 R@5 是归事件�
 |---|---|---|---|
 | vLLM 0.30.0 · Qwen3.6-35B-A3B NVFP4＋MTP | spark-F（整理器主模型）、spark-B、spark-E；读图评测另在 spark-C 起了独占副本 | MTP×3 投机解码，fp8 KV，262k ctx；读图副本 max-num-seqs 4、util 0.45 | 单流约 100 tok/s，读入 5.7k–7.2k tok/s（2026-09-25 · 团队内部测量记录（未公开））；读图输出单路 124.3 tok/s，并发 4 时 240.5 tok/s，预留 49.9 GiB（2026-09-28 · [VLM benchmark](../eval/multimodal/BENCHMARK.md)） |
 | llama.cpp d834d44 · Qwen3.6-35B-A3B Q8_0＋MTP 草稿 | spark-A | -np 2，ctx 131072 | 约 70 tok/s（团队内部测量记录，未公开）；读图单路 60.2 tok/s，并发 4 为 73.3 tok/s（[VLM benchmark](../eval/multimodal/BENCHMARK.md)） |
+| llama.cpp d834d44 · Step3-VL-10B Q8_0 + mmproj F16（演示实例的读图路由） | 演示（预览）实例所在的 Spark | `-np 2`，ctx 32768，`127.0.0.1:30001` | GPU 16.8 GiB；聊天截图抽取 p50 17.7 s（[读图路由](../eval/multimodal/BENCHMARK.md)，2026-10-07） |
 | llama.cpp · Step3-VL-10B / Qwen3-VL-8B Q8_0 | spark-A / spark-C | 预填空 `<think></think>`（Step3） | 读图并发 4：50.5 / 57.6 tok/s（[VLM benchmark](../eval/multimodal/BENCHMARK.md)）；只用于对照。Step3-VL 改走 llama.cpp 原生 `/completion` 并预填空的思考块后，`eval/probe_models.py` 的四道小题从 2/4 到 4/4，同一张截图 70.17 s → 19.16 s（2026-09-26 首轮评测，报告未公开） |
 | vLLM 0.30.0 TP2 · DeepSeek-V4-Flash | spark-D＋spark-G | 必须关闭思考，否则输出预算全被推理用完 | 输出约 34 tok/s，读入 1.4k–2.3k tok/s，JSON 结构化输出约 2–3 s（团队内部测量记录，未公开） |
 | vLLM pooling · Qwen3-Embedding-0.6B | 与整理器同卡 | max-model-len 8192，max-num-seqs 16 | 16 条一批 224 条/秒，预留 5.9 GiB（[eval/retrieval](../eval/retrieval/README.md)） |

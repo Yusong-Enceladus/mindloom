@@ -14,6 +14,12 @@ def _env(name: str, default: str) -> str:
     return os.environ.get(name, default)
 
 
+def _env_flag(name: str) -> Optional[bool]:
+    """None when unset or empty, else whether it reads as true."""
+    value = os.environ.get(name, "").strip().lower()
+    return None if not value else value in ("1", "true", "yes", "on")
+
+
 @dataclass
 class Settings:
     data_dir: Path = field(default_factory=lambda: Path(_env("ORGANIZER_DATA_DIR", str(Path.home() / "hack" / "organizer-data"))))
@@ -28,23 +34,32 @@ class Settings:
     # "model": "auto", "backend": "openai" | "step3-llama-native"}}. Unset types use the chat endpoint above
     # (the mm-v1 benchmark picks Qwen3.6-35B-A3B NVFP4 for all seven types: eval/multimodal/BENCHMARK.md).
     image_routes: str = field(default_factory=lambda: _env("ORGANIZER_IMAGE_ROUTES", ""))
+    # A named route table (organizer/image_router.py): "stepfun-chat" sends chat screenshots to StepFun Step3-VL on
+    # step3_url (llama.cpp, loopback) and everything else to the chat endpoint. Entries in image_routes win over the
+    # preset. Off by default.
+    image_router: str = field(default_factory=lambda: _env("ORGANIZER_IMAGE_ROUTER", ""))
+    step3_url: str = field(default_factory=lambda: _env("ORGANIZER_STEP3_URL", "http://127.0.0.1:30001"))
+    # Read again with the chat endpoint's model when a routed endpoint is down, rejects a request, or its extraction
+    # fails validation twice. Unset = on when a preset is used, off for plain image_routes. ("1" / "0")
+    image_route_fallback: Optional[bool] = field(default_factory=lambda: _env_flag("ORGANIZER_IMAGE_ROUTE_FALLBACK"))
     llm_timeout_s: float = field(default_factory=lambda: float(_env("ORGANIZER_LLM_TIMEOUT", "180")))
     # OpenAI-compatible embeddings endpoint (vLLM --runner pooling).
     embed_base_url: str = field(default_factory=lambda: _env("ORGANIZER_EMBED_URL", "http://127.0.0.1:8002/v1"))
     embed_model: str = field(default_factory=lambda: _env("ORGANIZER_EMBED_MODEL", "auto"))
-    # Open questions allowed at once, per kind (same_event and same_person are budgeted separately).
-    max_open_questions: int = 2
-    # same_event questions per calendar day of the subject item, and per target event per day.
-    ask_per_day: int = 2
-    ask_per_event_per_day: int = 1
+    # No question-count ceiling by default (EVENT-012). The store still deduplicates by
+    # subject and pair, and unanswered questions expire. Explicit budgets remain available
+    # to callers that need to exercise the legacy bounded mode.
+    max_open_questions: Optional[int] = None
+    ask_per_day: Optional[int] = None
+    ask_per_event_per_day: Optional[int] = None
     # Unanswered questions expire after this many hours (by the organizer clock); placements stay.
     question_ttl_h: float = 72.0
     # Model-visible / semantic time: "wall" (live default), "replay" (latest captured item time, for
     # replaying historical items) or "fixed:<ISO>" (tests). /v1/health reports it.
     # A historical stream or backfill (items captured days or weeks before they are sent) MUST use
-    # "replay": with "wall", question expiry (question_ttl_h) never passes, so the first questions keep the
-    # question budget full for the whole run (every later ask becomes a provisional new event and every
-    # merge question is dropped), and "today" for rank and dates is the wall clock, not the stream's time.
+    # "replay": with "wall", question expiry (question_ttl_h) never passes during a fast backfill,
+    # and "today" for rank and dates is the wall clock, not the stream's time. Explicit question
+    # budgets, when configured, can also remain full for the whole run.
     clock: str = field(default_factory=lambda: _env("ORGANIZER_CLOCK", "wall"))
     # Items keep the local offset the Mac sent; a UTC ("Z") capture time is read in ORGANIZER_TZ (IANA
     # name, default this host's zone) for dates, 今天/明天 and daily budgets. Read by skills/event-brief/
@@ -59,7 +74,12 @@ class Settings:
         v.strip() for v in _env("ORGANIZER_OWNER_ALIASES", "我").split(",") if v.strip()))
     # Eval only (synthetic data): store each model call's user message in runs.input_text.
     record_inputs: bool = False
-    candidates_k: int = 5
+    # event-assign candidates (skills/event-assign/scripts/candidates.py). 12 slots, 4 of them reserved for the events
+    # the score alone hides (named object, largest, most recent); the first 5 are shown in full, the rest compactly.
+    candidates_k: int = field(default_factory=lambda: int(_env("ORGANIZER_CANDIDATES_K", "12")))
+    candidates_reserve: int = field(default_factory=lambda: int(_env("ORGANIZER_CANDIDATES_RESERVE", "4")))
+    candidates_reserve_min_sim: float = field(default_factory=lambda: float(_env("ORGANIZER_CANDIDATES_RESERVE_MIN_SIM", "0.2")))
+    candidates_full_view: int = field(default_factory=lambda: int(_env("ORGANIZER_CANDIDATES_FULL_VIEW", "5")))
     rank_max_events: int = 40
     rank_every_n_items: int = 10
     job_max_attempts: int = 3
@@ -82,8 +102,18 @@ class Settings:
     consolidate_subject_max: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_SUBJECT_MAX", "120")))
     consolidate_unfile_max: int = 9
     # The matter directory the model sees: the largest events (at least consolidate_directory_min items).
-    consolidate_directory_size: int = 32
+    consolidate_directory_size: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_DIRECTORY_SIZE", "40")))
     consolidate_directory_min: int = 3
+    # How many nearest events a subject is compared with, how many nearest count as "a new home appeared" and how often an
+    # event may be judged at all; a home that doubled (and holds consolidate_grow_min items) is a reason to look again.
+    consolidate_nearest_k: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_NEAREST_K", "8")))
+    consolidate_near_watch: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_NEAR_WATCH", "5")))
+    consolidate_max_checks: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_MAX_CHECKS", "6")))
+    consolidate_grow_min: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_GROW_MIN", "6")))
+    # Sweep: once the queue is empty and nothing else is eligible, one more look at each small event kept at least
+    # consolidate_sweep_gap items ago (ORGANIZER_CONSOLIDATE_SWEEP=0 turns it off).
+    consolidate_sweep: bool = field(default_factory=lambda: _env("ORGANIZER_CONSOLIDATE_SWEEP", "1") != "0")
+    consolidate_sweep_gap: int = field(default_factory=lambda: int(_env("ORGANIZER_CONSOLIDATE_SWEEP_GAP", "100")))
     # People pass (organizer/people_pass.py, skill person-resolve): re-reads speakers with today's rules, judges
     # new person records (person / role / not a person, name variants) and links people to the items that
     # name them. ORGANIZER_PEOPLE=0 turns it off.
